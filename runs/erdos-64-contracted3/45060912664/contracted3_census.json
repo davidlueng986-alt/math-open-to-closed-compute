@@ -1,0 +1,33 @@
+{
+  "additional_witnesses_in_artifacts": 0,
+  "complete_census_of_restricted_family": true,
+  "counts": {
+    "16": {
+      "base_graphs": 4060,
+      "exact_checked": 4953820,
+      "exact_unknown": 0,
+      "excluded_by_monodromy": 1509554615,
+      "skipped_triangle_edges": 20495,
+      "triangle_free_contraction_edges": 76945,
+      "voltage_assignments_total": 1514508435,
+      "witnesses": 0
+    },
+    "18": {
+      "base_graphs": 41301,
+      "exact_checked": 8574372,
+      "exact_unknown": 0,
+      "excluded_by_monodromy": 53725307040,
+      "skipped_triangle_edges": 205139,
+      "triangle_free_contraction_edges": 909988,
+      "voltage_assignments_total": 53733881412,
+      "witnesses": 0
+    }
+  },
+  "exact_unknown": 0,
+  "original_problem": "OPEN",
+  "problem": "ERDOS-64",
+  "restricted_family_absence_certified": true,
+  "scope": "C3 covers of contracted cubic base graphs from order 16,18 only; one degree4 vertex per base",
+  "warning": "No inference for general graphs; see exact restricted-family scope.",
+  "witness_candidates": []
+}
