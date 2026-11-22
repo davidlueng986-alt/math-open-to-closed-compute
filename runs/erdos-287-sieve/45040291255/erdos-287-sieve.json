@@ -1,0 +1,27 @@
+{
+  "problem": "Erd\u0151s #287 (JSP-000244)",
+  "mathematical_status": "OPEN (unconditional finite lower bound extended; not a global proof)",
+  "shards_expected": 32,
+  "shards_present": 32,
+  "missing_shards": [],
+  "base_verified": {
+    "B_max": 500,
+    "killed_by_B_forbidden": 255,
+    "killed_by_pair": 244
+  },
+  "chain64_links_verified": 39,
+  "chain64_exceeds_2_64": true,
+  "proth_n_range": [
+    33,
+    3322
+  ],
+  "proth_certs_verified": 3290,
+  "highest_contiguous_n": 3322,
+  "first_gap_n": null,
+  "pending_exponents": [],
+  "total_proth_tests": 10709193,
+  "total_shard_wall_seconds": 21929.325,
+  "unconditional_lower_bound_digits": 1010,
+  "unconditional_lower_bound_log10": 1009.487,
+  "all_exponents_closed_zero_gap": true
+}
