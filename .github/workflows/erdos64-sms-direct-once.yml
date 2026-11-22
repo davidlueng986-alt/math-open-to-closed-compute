@@ -1,0 +1,72 @@
+name: ERDOS-64 direct SAT (not just graph lifts) n41 and n43
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['jobs/erdos-64-sms-direct/launch.txt']
+permissions:
+  contents: read
+concurrency:
+  group: erdos64-sms-direct-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  shard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        shard: [0, 1]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Build pinned SMS Glasgow CaDiCaL with positive-control support
+        run: bash jobs/erdos-64-sms-direct/setup.sh
+      - name: Direct counterexample query minDegree3 no power-two cycle
+        run: |
+          mkdir -p out
+          start=$(date +%s)
+          bash jobs/erdos-64-sms-direct/run.sh "${{ matrix.shard }}" 2 out
+          printf '{"shard": %s, "seconds": %s}\n' '${{ matrix.shard }}' "$(( $(date +%s) - start ))" > out/_timing.json
+      - name: Preserve solver input output and proof-search logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shard-${{ matrix.shard }}
+          path: out/
+          retention-days: 7
+          if-no-files-found: warn
+  collect:
+    needs: [shard]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    env:
+      JOB: erdos-64-sms-direct
+      SHARDS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: shard-*
+          path: shards
+      - name: Check both SAT query statuses without promoting timeout
+        run: python3 scripts/collect.py
+      - name: Preserve summary and audit data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: summary
+          path: summary/
+          retention-days: 30
+      - name: Commit summary to results branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/commit_results.sh
+      - name: Enforce complete shard output
+        run: python3 scripts/collect.py --check
