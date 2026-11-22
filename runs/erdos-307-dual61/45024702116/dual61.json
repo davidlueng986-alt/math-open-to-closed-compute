@@ -1,0 +1,34 @@
+{
+  "problem": "Erd\u0151s #307",
+  "mathematical_status": "OPEN",
+  "support_size": 61,
+  "side_sizes_even_first": [
+    49,
+    12
+  ],
+  "two_tail_case_excluded": true,
+  "missing_shards": [],
+  "same_side": {
+    "cores": 1909377,
+    "admissible": 553610,
+    "nodes": 55916891,
+    "reconstructions": 21515167,
+    "fractions": 994288,
+    "supports": 0,
+    "roots": 0
+  },
+  "opposite_sides": {
+    "small_q_supports": 166428,
+    "small_q_convergents": 22852,
+    "fourth_powers": 0,
+    "d_cores": 29826042,
+    "coprime_cores": 18854239,
+    "pairs": 134229907,
+    "contained": 23030453,
+    "prefixes_processed": 30800,
+    "opposite_candidates": 0,
+    "large_q_supports": 49995,
+    "large_q_prefixes": 30800
+  },
+  "candidate_details": []
+}
