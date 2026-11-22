@@ -1,0 +1,533 @@
+{
+  "best_near_miss": {
+    "c16": 39,
+    "c4": 0,
+    "c8": 0,
+    "graph": {
+      "adj": [
+        [
+          4,
+          10,
+          57
+        ],
+        [
+          31,
+          22,
+          41
+        ],
+        [
+          19,
+          54,
+          6
+        ],
+        [
+          35,
+          16,
+          31
+        ],
+        [
+          25,
+          0,
+          14
+        ],
+        [
+          34,
+          28,
+          37
+        ],
+        [
+          2,
+          19,
+          51
+        ],
+        [
+          44,
+          9,
+          39
+        ],
+        [
+          38,
+          48,
+          23
+        ],
+        [
+          7,
+          44,
+          50
+        ],
+        [
+          56,
+          0,
+          57
+        ],
+        [
+          41,
+          15,
+          29
+        ],
+        [
+          26,
+          22,
+          39
+        ],
+        [
+          49,
+          34,
+          18
+        ],
+        [
+          56,
+          25,
+          4
+        ],
+        [
+          29,
+          47,
+          11
+        ],
+        [
+          51,
+          35,
+          3
+        ],
+        [
+          47,
+          50,
+          20
+        ],
+        [
+          13,
+          42,
+          49
+        ],
+        [
+          6,
+          2,
+          35
+        ],
+        [
+          17,
+          56,
+          47
+        ],
+        [
+          46,
+          26,
+          32
+        ],
+        [
+          12,
+          39,
+          1
+        ],
+        [
+          8,
+          33,
+          48
+        ],
+        [
+          57,
+          38,
+          45
+        ],
+        [
+          4,
+          52,
+          14
+        ],
+        [
+          21,
+          44,
+          12
+        ],
+        [
+          30,
+          53,
+          46
+        ],
+        [
+          34,
+          52,
+          5
+        ],
+        [
+          15,
+          11,
+          50
+        ],
+        [
+          36,
+          27,
+          46
+        ],
+        [
+          1,
+          3,
+          41
+        ],
+        [
+          40,
+          21,
+          53
+        ],
+        [
+          42,
+          43,
+          23
+        ],
+        [
+          28,
+          5,
+          13
+        ],
+        [
+          16,
+          19,
+          3
+        ],
+        [
+          30,
+          45,
+          48
+        ],
+        [
+          54,
+          5,
+          55
+        ],
+        [
+          8,
+          45,
+          24
+        ],
+        [
+          7,
+          22,
+          12
+        ],
+        [
+          53,
+          43,
+          32
+        ],
+        [
+          1,
+          31,
+          11
+        ],
+        [
+          18,
+          33,
+          43
+        ],
+        [
+          40,
+          42,
+          33
+        ],
+        [
+          9,
+          7,
+          26
+        ],
+        [
+          36,
+          24,
+          38
+        ],
+        [
+          27,
+          21,
+          30
+        ],
+        [
+          17,
+          15,
+          20
+        ],
+        [
+          23,
+          8,
+          36
+        ],
+        [
+          13,
+          18,
+          51
+        ],
+        [
+          17,
+          9,
+          29
+        ],
+        [
+          6,
+          16,
+          49
+        ],
+        [
+          28,
+          25,
+          55
+        ],
+        [
+          32,
+          40,
+          27
+        ],
+        [
+          37,
+          55,
+          2
+        ],
+        [
+          54,
+          37,
+          52
+        ],
+        [
+          10,
+          20,
+          14
+        ],
+        [
+          0,
+          10,
+          24
+        ]
+      ],
+      "n": 58
+    }
+  },
+  "lift_families": [
+    {
+      "all_shards_completed": true,
+      "exhausted": true,
+      "n": 60,
+      "name": "FlowerJ5 x Z3",
+      "noC4": 177147,
+      "noC4_32": 0,
+      "noC4_8": 90,
+      "noC4_8_16": 0,
+      "tested": 177147,
+      "total_space": 177147
+    },
+    {
+      "all_shards_completed": true,
+      "exhausted": true,
+      "n": 60,
+      "name": "Dodecahedron x Z3",
+      "noC4": 177147,
+      "noC4_32": 0,
+      "noC4_8": 42,
+      "noC4_8_16": 0,
+      "tested": 177147,
+      "total_space": 177147
+    },
+    {
+      "all_shards_completed": true,
+      "exhausted": true,
+      "n": 72,
+      "name": "McGee x Z3",
+      "noC4": 1594323,
+      "noC4_32": 0,
+      "noC4_8": 16,
+      "noC4_8_16": 0,
+      "tested": 1594323,
+      "total_space": 1594323
+    },
+    {
+      "all_shards_completed": true,
+      "exhausted": true,
+      "n": 84,
+      "name": "Heawood x D3",
+      "noC4": 1679616,
+      "noC4_32": 0,
+      "noC4_8": 29248,
+      "noC4_8_16": 0,
+      "tested": 1679616,
+      "total_space": 1679616
+    },
+    {
+      "all_shards_completed": true,
+      "exhausted": true,
+      "n": 84,
+      "name": "Heawood x Z6",
+      "noC4": 1679616,
+      "noC4_32": 0,
+      "noC4_8": 35104,
+      "noC4_8_16": 0,
+      "tested": 1679616,
+      "total_space": 1679616
+    },
+    {
+      "all_shards_completed": true,
+      "exhausted": true,
+      "n": 120,
+      "name": "Petersen x A4",
+      "noC4": 2985984,
+      "noC4_32": 0,
+      "noC4_8": 741456,
+      "noC4_8_16": 0,
+      "tested": 2985984,
+      "total_space": 2985984
+    },
+    {
+      "all_shards_completed": true,
+      "exhausted": true,
+      "n": 120,
+      "name": "Petersen x D6",
+      "noC4": 2985984,
+      "noC4_32": 0,
+      "noC4_8": 658848,
+      "noC4_8_16": 0,
+      "tested": 2985984,
+      "total_space": 2985984
+    },
+    {
+      "all_shards_completed": true,
+      "exhausted": true,
+      "n": 120,
+      "name": "Petersen x Dic3",
+      "noC4": 2985984,
+      "noC4_32": 0,
+      "noC4_8": 777792,
+      "noC4_8_16": 0,
+      "tested": 2985984,
+      "total_space": 2985984
+    },
+    {
+      "all_shards_completed": true,
+      "exhausted": true,
+      "n": 80,
+      "name": "FlowerJ5 x Z4",
+      "noC4": 4194304,
+      "noC4_32": 0,
+      "noC4_8": 30720,
+      "noC4_8_16": 0,
+      "tested": 4194304,
+      "total_space": 4194304
+    },
+    {
+      "all_shards_completed": true,
+      "exhausted": true,
+      "n": 84,
+      "name": "Coxeter x Z3",
+      "noC4": 14348907,
+      "noC4_32": 0,
+      "noC4_8": 3424,
+      "noC4_8_16": 0,
+      "tested": 14348907,
+      "total_space": 14348907
+    },
+    {
+      "all_shards_completed": true,
+      "exhausted": true,
+      "n": 90,
+      "name": "TutteCoxeter x Z3",
+      "noC4": 43046721,
+      "noC4_32": 0,
+      "noC4_8": 2,
+      "noC4_8_16": 0,
+      "tested": 43046721,
+      "total_space": 43046721
+    }
+  ],
+  "mathematical_status": "OPEN",
+  "problem": "Erd\u0151s #64 (Erd\u0151s\u2013Gy\u00e1rf\u00e1s Conjecture)",
+  "sa_orders": [
+    {
+      "evals": 72276379,
+      "minC16_at_0C8": 151,
+      "n": 41,
+      "zeroC4_8_16": 0,
+      "zeroC8": 1760509
+    },
+    {
+      "evals": 63733025,
+      "minC16_at_0C8": 127,
+      "n": 43,
+      "zeroC4_8_16": 0,
+      "zeroC8": 1773941
+    },
+    {
+      "evals": 56511275,
+      "minC16_at_0C8": 107,
+      "n": 45,
+      "zeroC4_8_16": 0,
+      "zeroC8": 1814998
+    },
+    {
+      "evals": 51123056,
+      "minC16_at_0C8": 108,
+      "n": 47,
+      "zeroC4_8_16": 0,
+      "zeroC8": 1849254
+    },
+    {
+      "evals": 46512232,
+      "minC16_at_0C8": 72,
+      "n": 49,
+      "zeroC4_8_16": 0,
+      "zeroC8": 1878851
+    },
+    {
+      "evals": 41525668,
+      "minC16_at_0C8": 63,
+      "n": 50,
+      "zeroC4_8_16": 0,
+      "zeroC8": 2095605
+    },
+    {
+      "evals": 38489810,
+      "minC16_at_0C8": 82,
+      "n": 52,
+      "zeroC4_8_16": 0,
+      "zeroC8": 2121718
+    },
+    {
+      "evals": 35761018,
+      "minC16_at_0C8": 72,
+      "n": 54,
+      "zeroC4_8_16": 0,
+      "zeroC8": 2148941
+    },
+    {
+      "evals": 33536741,
+      "minC16_at_0C8": 67,
+      "n": 56,
+      "zeroC4_8_16": 0,
+      "zeroC8": 2170275
+    },
+    {
+      "evals": 31461256,
+      "minC16_at_0C8": 39,
+      "n": 58,
+      "zeroC4_8_16": 0,
+      "zeroC8": 2196991
+    },
+    {
+      "evals": 29673825,
+      "minC16_at_0C8": 63,
+      "n": 60,
+      "zeroC4_8_16": 0,
+      "zeroC8": 2204237
+    },
+    {
+      "evals": 28040537,
+      "minC16_at_0C8": 54,
+      "n": 62,
+      "zeroC4_8_16": 0,
+      "zeroC8": 2226931
+    },
+    {
+      "evals": 22775278,
+      "minC16_at_0C8": 84,
+      "n": 70,
+      "zeroC4_8_16": 0,
+      "zeroC8": 2238931
+    }
+  ],
+  "shards_expected": 16,
+  "shards_merged": 16
+}
