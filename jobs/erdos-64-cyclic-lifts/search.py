@@ -96,6 +96,7 @@ def main():
     geng=shutil.which('nauty-geng') or shutil.which('geng')
     if not geng:raise RuntimeError('nauty geng missing: no certified coverage')
     totals={};witness=[];unknown=0;start=time.monotonic()
+    tables={}
     for n in EXPECTED:
         fam=FAMILIES[n]
         if not fam:continue
@@ -113,7 +114,10 @@ def main():
             chords=chords_of(g);q=len(chords)
             for m in fam:
                 s=counts[str(m)];s['base_graphs']+=1
-                table=np.indices((m,)*q,dtype=np.int16).reshape(q,-1).T.copy()
+                key=(m,q)
+                if key not in tables:
+                    tables[key]=np.indices((m,)*q,dtype=np.int16).reshape(q,-1).T.copy()
+                table=tables[key]
                 s['assignments_total']+=len(table)
                 allowed=prune(g,m,chords,table)
                 s['excluded_by_base_cycles']+=len(table)-len(allowed)
