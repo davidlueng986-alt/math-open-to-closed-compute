@@ -1,0 +1,32 @@
+{
+  "count_by_base_order": {
+    "20": {
+      "base_graphs": 510489,
+      "subdivision_candidates": 0,
+      "survive_4_8": 3,
+      "survive_4_8_3_7_16": 0,
+      "witnesses": 0
+    },
+    "22": {
+      "base_graphs": 7319447,
+      "subdivision_candidates": 0,
+      "survive_4_8": 27,
+      "survive_4_8_3_7_16": 0,
+      "witnesses": 0
+    },
+    "24": {
+      "base_graphs": 117940535,
+      "subdivision_candidates": 0,
+      "survive_4_8": 377,
+      "survive_4_8_3_7_16": 0,
+      "witnesses": 0
+    }
+  },
+  "family_excluded": true,
+  "full_problem_status": "OPEN",
+  "problem": "ERDOS-64",
+  "restricted_search_complete": true,
+  "scope": "All cubic edge-subdivision two-block graphs derived from connected cubic base order 20,22,24",
+  "warning": "Does not cover noncubic base graphs, cutvertex designs beyond this exact construction, or biconnected arbitrary graphs.",
+  "witnesses": []
+}
