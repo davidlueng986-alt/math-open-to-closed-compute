@@ -4,6 +4,9 @@ name: sharded-run
 # Started by hand only (Actions tab -> sharded-run -> Run workflow); nothing here runs on a schedule.
 
 on:
+  push:
+    branches: ['compute/erdos-64-search-20261122']
+    paths: ['.github/workflows/sharded-run.yml']
   workflow_dispatch:
     inputs:
       job:
@@ -31,11 +34,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: sharded-run-${{ inputs.job }}
+  group: sharded-run-${{ inputs.job || 'erdos-64-search' }}
   cancel-in-progress: false
 
 jobs:
   plan:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.before == 'd5056d1c977bfb5ce5939e05ac99dc041d597849' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
@@ -44,33 +48,33 @@ jobs:
       - uses: actions/checkout@v4
       - id: plan
         env:
-          JOB: ${{ inputs.job }}
-          SHARDS: ${{ inputs.shards }}
-          TIMEOUT_MINUTES: ${{ inputs.timeout_minutes }}
-          MAX_PARALLEL: ${{ inputs.max_parallel }}
+          JOB: ${{ inputs.job || 'erdos-64-search' }}
+          SHARDS: ${{ inputs.shards || 16 }}
+          TIMEOUT_MINUTES: ${{ inputs.timeout_minutes || 30 }}
+          MAX_PARALLEL: ${{ inputs.max_parallel || 20 }}
         run: python3 scripts/plan.py >> "$GITHUB_OUTPUT"
 
   shard:
     needs: plan
     runs-on: ubuntu-latest
-    timeout-minutes: ${{ inputs.timeout_minutes }}
+    timeout-minutes: ${{ inputs.timeout_minutes || 30 }}
     strategy:
       fail-fast: false
-      max-parallel: ${{ inputs.max_parallel }}
+      max-parallel: ${{ inputs.max_parallel || 20 }}
       matrix:
         shard: ${{ fromJSON(needs.plan.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up the job
         env:
-          JOB: ${{ inputs.job }}
+          JOB: ${{ inputs.job || 'erdos-64-search' }}
         run: |
           if [ -f "jobs/$JOB/setup.sh" ]; then bash "jobs/$JOB/setup.sh"; fi
       - name: Run shard ${{ matrix.shard }}
         env:
-          JOB: ${{ inputs.job }}
+          JOB: ${{ inputs.job || 'erdos-64-search' }}
           SHARD: ${{ matrix.shard }}
-          SHARDS: ${{ inputs.shards }}
+          SHARDS: ${{ inputs.shards || 16 }}
         run: |
           mkdir -p out
           start=$(date +%s)
@@ -100,8 +104,8 @@ jobs:
           path: shards
       - name: Merge shard results
         env:
-          JOB: ${{ inputs.job }}
-          SHARDS: ${{ inputs.shards }}
+          JOB: ${{ inputs.job || 'erdos-64-search' }}
+          SHARDS: ${{ inputs.shards || 16 }}
         run: python3 scripts/collect.py
       - name: Keep the summary
         uses: actions/upload-artifact@v4
@@ -112,7 +116,7 @@ jobs:
       - name: Commit the summary to the results branch
         env:
           GH_TOKEN: ${{ github.token }}
-          JOB: ${{ inputs.job }}
+          JOB: ${{ inputs.job || 'erdos-64-search' }}
         run: bash scripts/commit_results.sh
       - name: Fail the run if any shard is missing or the merge failed
         run: python3 scripts/collect.py --check
