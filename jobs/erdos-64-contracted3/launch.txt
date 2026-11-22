@@ -1,0 +1,3 @@
+2026-11-23 authorized public run for JSP-000082 / Erdős–Gyárfás.
+Goal: find a genuine counterexample in a NON-CUBIC graph family not covered by previous cubic cyclic and S3 lifts.
+Generate every connected cubic F of order 16 or 18 (counts 4060 / 41301). Contract every edge not in a triangle to obtain a simple base H with exactly one degree-4 vertex and all others degree 3. Enumerate all C3 voltage covers of H (orders 45/51), prune using exact cycle monodromy, then run an independent finite C4/C8/C16/C32 checker on all surviving covers. 32 shards, <=300 min per shard, <=8 concurrent; fail if any shred missing or count mismatch. This finite family is NOT a proof of the universal conjecture. Any candidate must be independently re-verified and formalized in Lean.
