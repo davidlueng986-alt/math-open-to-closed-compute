@@ -1,0 +1,35 @@
+{
+  "any_full_no_witness": false,
+  "counterexample_candidates": [],
+  "family_census_complete": true,
+  "original_status": "OPEN unless a witness independently proves NO",
+  "problem": "ERDOS-64",
+  "scope": "every connected cubic F of order20,22,24, every edge e, K=F-e with no C4,C8,C16; all ring lengths 2..128",
+  "statistics": {
+    "20": {
+      "after_C16_intersection": 0,
+      "after_C4_C8_edge_intersection": 3,
+      "base_graphs": 510489,
+      "connected_twoport_edge_candidates": 0,
+      "ring_witnesses": 0,
+      "small_path_ratio_candidates": 0
+    },
+    "22": {
+      "after_C16_intersection": 0,
+      "after_C4_C8_edge_intersection": 27,
+      "base_graphs": 7319447,
+      "connected_twoport_edge_candidates": 0,
+      "ring_witnesses": 0,
+      "small_path_ratio_candidates": 0
+    },
+    "24": {
+      "after_C16_intersection": 0,
+      "after_C4_C8_edge_intersection": 377,
+      "base_graphs": 117940535,
+      "connected_twoport_edge_candidates": 0,
+      "ring_witnesses": 0,
+      "small_path_ratio_candidates": 0
+    }
+  },
+  "warning": "NO candidate implies only no witness within this bounded family and ring lengths; not original YES."
+}

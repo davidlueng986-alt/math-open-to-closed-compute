@@ -1,0 +1,2322 @@
+{
+  "job": "erdos-64-twoport-ring",
+  "run_id": "45062060432",
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45062060432",
+  "commit": "b70c0ed03fa83545a8cabb0bc454f8b4344621b5",
+  "shards_expected": 64,
+  "shards_with_result": 64,
+  "missing_shards": [],
+  "seconds_per_shard": {
+    "0": 1311,
+    "1": 1749,
+    "2": 1425,
+    "3": 1535,
+    "4": 1820,
+    "5": 1184,
+    "6": 1622,
+    "7": 1115,
+    "8": 1026,
+    "9": 1474,
+    "10": 1327,
+    "11": 693,
+    "12": 1850,
+    "13": 1342,
+    "14": 2188,
+    "15": 1614,
+    "16": 1740,
+    "17": 1589,
+    "18": 1732,
+    "19": 1890,
+    "20": 1210,
+    "21": 2385,
+    "22": 1104,
+    "23": 1057,
+    "24": 964,
+    "25": 1668,
+    "26": 1380,
+    "27": 1122,
+    "28": 1829,
+    "29": 1159,
+    "30": 2023,
+    "31": 1550,
+    "32": 2246,
+    "33": 1227,
+    "34": 1828,
+    "35": 1242,
+    "36": 2251,
+    "37": 1868,
+    "38": 1081,
+    "39": 1558,
+    "40": 1283,
+    "41": 1303,
+    "42": 1880,
+    "43": 955,
+    "44": 2122,
+    "45": 1369,
+    "46": 1361,
+    "47": 2533,
+    "48": 1788,
+    "49": 1402,
+    "50": 1392,
+    "51": 1614,
+    "52": 2267,
+    "53": 1308,
+    "54": 2081,
+    "55": 2282,
+    "56": 1221,
+    "57": 1479,
+    "58": 1599,
+    "59": 1960,
+    "60": 1035,
+    "61": 1768,
+    "62": 925,
+    "63": 1917
+  },
+  "complete": true,
+  "results": {
+    "0": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 0,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 10435,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 101668,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 4,
+          "base_graphs": 2189084,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "1": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 1,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 6101,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 2,
+          "base_graphs": 126403,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 4,
+          "base_graphs": 1980901,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "2": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 2,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 8125,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 109192,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 28,
+          "base_graphs": 2416061,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "3": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 3,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 8721,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 121363,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 8,
+          "base_graphs": 2261012,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "4": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 4,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 5334,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 54609,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 2062178,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "5": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 5,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 7945,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 85585,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 1144497,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "6": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 6,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 7325,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 150562,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 1683114,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "7": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 7,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 7737,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 128527,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 7,
+          "base_graphs": 1288098,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "8": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 8,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 5600,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 106304,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 1154403,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "9": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 9,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 4984,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 124046,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 3,
+          "base_graphs": 2122903,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "10": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 10,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 7602,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 87408,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 1126563,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "11": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 11,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 10940,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 129859,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 972715,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "12": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 12,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 7707,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 105731,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 7,
+          "base_graphs": 1895040,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "13": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 13,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 10468,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 91191,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 3,
+          "base_graphs": 1580099,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "14": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 14,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 9600,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 156148,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 2,
+          "base_graphs": 2310629,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "15": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 15,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 5443,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 169126,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 6,
+          "base_graphs": 2743367,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "16": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 16,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 3992,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 165779,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 8,
+          "base_graphs": 1874267,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "17": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 17,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 8409,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 106054,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 4,
+          "base_graphs": 1785309,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "18": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 18,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 10393,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 146399,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 2,
+          "base_graphs": 1265419,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "19": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 19,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 12402,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 158257,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 2562326,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "20": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 20,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 5571,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 73528,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 1331315,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "21": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 21,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 6638,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 67965,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 3,
+          "base_graphs": 2708821,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "22": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 22,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 8308,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 148079,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 1172852,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "23": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 23,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 6690,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 80481,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 10,
+          "base_graphs": 1355856,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "24": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 24,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 9462,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 77737,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 1054161,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "25": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 25,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 8744,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 149733,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 2,
+          "base_graphs": 1184173,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "26": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 26,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 6985,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 123146,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 14,
+          "base_graphs": 1345091,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "27": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 27,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 5610,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 93584,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 825243,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "28": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 28,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 8078,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 75474,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 4,
+          "base_graphs": 1709479,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "29": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 29,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 6522,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 81438,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 7,
+          "base_graphs": 2480959,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "30": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 30,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 6606,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 89111,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 2,
+          "base_graphs": 1955595,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "31": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 31,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 7857,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 71801,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 1488731,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "32": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 32,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 6408,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 75563,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 3,
+          "base_graphs": 2528400,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "33": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 33,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 10014,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 167923,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 2,
+          "base_graphs": 1534543,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "34": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 34,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 8576,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 124969,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 15,
+          "base_graphs": 2507984,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "35": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 35,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 6344,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 165636,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 1452706,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "36": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 36,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 5530,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 99934,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 2570552,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "37": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 37,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 6348,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 84059,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 1830775,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "38": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 38,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 7063,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 139992,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 2332893,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "39": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 39,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 6964,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 123305,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 2,
+          "base_graphs": 1414958,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "40": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 40,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 8686,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 217444,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 2,
+          "base_graphs": 2026100,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "41": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 41,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 10406,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 114957,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 2,
+          "base_graphs": 1357767,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "42": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 42,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 9040,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 88599,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 1450905,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "43": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 43,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 12923,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 107712,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 8,
+          "base_graphs": 1526536,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "44": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 44,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 6686,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 89338,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 6,
+          "base_graphs": 2046587,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "45": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 45,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 9032,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 3,
+          "base_graphs": 158344,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 2,
+          "base_graphs": 1658179,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "46": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 46,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 11173,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 78646,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 41,
+          "base_graphs": 2113621,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "47": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 47,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 9974,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 123485,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 18,
+          "base_graphs": 3291109,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "48": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 48,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 9381,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 91320,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 11,
+          "base_graphs": 2336223,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "49": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 49,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 4899,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 93912,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 15,
+          "base_graphs": 1571431,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "50": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 50,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 10402,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 92036,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 1255006,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "51": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 51,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 8743,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 84791,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 2486344,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "52": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 52,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 7455,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 2,
+          "base_graphs": 167468,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 32,
+          "base_graphs": 2223611,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "53": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 53,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 9545,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 80989,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 7,
+          "base_graphs": 1399598,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "54": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 54,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 8462,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 108551,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 2,
+          "base_graphs": 2836662,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "55": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 55,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 8269,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 110950,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 5,
+          "base_graphs": 2430322,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "56": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 56,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 4699,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 125533,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 2,
+          "base_graphs": 1557835,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "57": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 57,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 7690,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 84424,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 2,
+          "base_graphs": 1594005,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "58": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 58,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 7851,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 106066,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 24,
+          "base_graphs": 2906785,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "59": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 59,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 9180,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 165711,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 8,
+          "base_graphs": 1938824,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "60": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 60,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 7112,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 4,
+          "base_graphs": 127924,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 10,
+          "base_graphs": 1379107,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "61": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 61,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 8205,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 141836,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 11,
+          "base_graphs": 2655235,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "62": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 62,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 11684,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 117939,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 1145635,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    },
+    "63": {
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "two-port K=F-e, F cubic order20,22,24; cyclic ring with 2<=t<=128",
+      "shard": 63,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 0,
+          "base_graphs": 5411,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "22": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 1,
+          "base_graphs": 103803,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        },
+        "24": {
+          "after_C16_intersection": 0,
+          "after_C4_C8_edge_intersection": 10,
+          "base_graphs": 1550036,
+          "connected_twoport_edge_candidates": 0,
+          "ring_witnesses": 0,
+          "small_path_ratio_candidates": 0
+        }
+      },
+      "witness_count": 0,
+      "witnesses": []
+    }
+  },
+  "merge": {
+    "exit_code": 0,
+    "output": "complete restricted census; original-NO candidates: 0\n"
+  }
+}
