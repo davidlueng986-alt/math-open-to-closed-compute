@@ -1,0 +1,3906 @@
+{
+  "job": "erdos-64-cyclic-lifts",
+  "run_id": "45022723009",
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45022723009",
+  "commit": "35514cf35f8975f26d0fc3b01504bdfd4bd90942",
+  "shards_expected": 16,
+  "shards_with_result": 16,
+  "missing_shards": [],
+  "seconds_per_shard": {
+    "0": 748,
+    "1": 548,
+    "2": 766,
+    "3": 1001,
+    "4": 425,
+    "5": 849,
+    "6": 464,
+    "7": 705,
+    "8": 735,
+    "9": 493,
+    "10": 584,
+    "11": 939,
+    "12": 617,
+    "13": 890,
+    "14": 1107,
+    "15": 566
+  },
+  "complete": true,
+  "results": {
+    "0": {
+      "families": {
+        "4": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "6": [
+          7,
+          8,
+          9,
+          10
+        ],
+        "8": [
+          6,
+          7
+        ],
+        "10": [
+          5,
+          6
+        ],
+        "12": [
+          4,
+          5
+        ],
+        "14": [
+          3,
+          4
+        ],
+        "16": [
+          3
+        ],
+        "18": [
+          3
+        ],
+        "20": [
+          3
+        ]
+      },
+      "graph_base_count_expected": {
+        "4": 1,
+        "6": 2,
+        "8": 5,
+        "10": 19,
+        "12": 85,
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "cyclic covers of all connected cubic bases order 4..20, total order 41..63",
+      "seconds": 748.292,
+      "shard": 0,
+      "shards": 16,
+      "statistics": {
+        "10": {
+          "5": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "12": {
+          "4": {
+            "assignments_total": 81920,
+            "base_graphs": 5,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 81920,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "5": {
+            "assignments_total": 390625,
+            "base_graphs": 5,
+            "checked_survivors": 24744,
+            "excluded_by_base_cycles": 365881,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "14": {
+          "3": {
+            "assignments_total": 236196,
+            "base_graphs": 36,
+            "checked_survivors": 1218,
+            "excluded_by_base_cycles": 234978,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "4": {
+            "assignments_total": 2359296,
+            "base_graphs": 36,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 2359296,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "16": {
+          "3": {
+            "assignments_total": 4369626,
+            "base_graphs": 222,
+            "checked_survivors": 9266,
+            "excluded_by_base_cycles": 4360360,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "18": {
+          "3": {
+            "assignments_total": 148212990,
+            "base_graphs": 2510,
+            "checked_survivors": 28286,
+            "excluded_by_base_cycles": 148184704,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "20": {
+          "3": {
+            "assignments_total": 5163303609,
+            "base_graphs": 29147,
+            "checked_survivors": 991386,
+            "excluded_by_base_cycles": 5162312223,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "4": {
+          "11": {
+            "assignments_total": 1331,
+            "base_graphs": 1,
+            "checked_survivors": 1000,
+            "excluded_by_base_cycles": 331,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "12": {
+            "assignments_total": 1728,
+            "base_graphs": 1,
+            "checked_survivors": 512,
+            "excluded_by_base_cycles": 1216,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "13": {
+            "assignments_total": 2197,
+            "base_graphs": 1,
+            "checked_survivors": 1728,
+            "excluded_by_base_cycles": 469,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "14": {
+            "assignments_total": 2744,
+            "base_graphs": 1,
+            "checked_survivors": 1728,
+            "excluded_by_base_cycles": 1016,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "15": {
+            "assignments_total": 3375,
+            "base_graphs": 1,
+            "checked_survivors": 2744,
+            "excluded_by_base_cycles": 631,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "6": {
+          "10": {
+            "assignments_total": 10000,
+            "base_graphs": 1,
+            "checked_survivors": 960,
+            "excluded_by_base_cycles": 9040,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 2401,
+            "base_graphs": 1,
+            "checked_survivors": 510,
+            "excluded_by_base_cycles": 1891,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "8": {
+            "assignments_total": 4096,
+            "base_graphs": 1,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 4096,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "9": {
+            "assignments_total": 6561,
+            "base_graphs": 1,
+            "checked_survivors": 2072,
+            "excluded_by_base_cycles": 4489,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "8": {
+          "6": {
+            "assignments_total": 7776,
+            "base_graphs": 1,
+            "checked_survivors": 256,
+            "excluded_by_base_cycles": 7520,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 16807,
+            "base_graphs": 1,
+            "checked_survivors": 2988,
+            "excluded_by_base_cycles": 13819,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "1": {
+      "families": {
+        "4": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "6": [
+          7,
+          8,
+          9,
+          10
+        ],
+        "8": [
+          6,
+          7
+        ],
+        "10": [
+          5,
+          6
+        ],
+        "12": [
+          4,
+          5
+        ],
+        "14": [
+          3,
+          4
+        ],
+        "16": [
+          3
+        ],
+        "18": [
+          3
+        ],
+        "20": [
+          3
+        ]
+      },
+      "graph_base_count_expected": {
+        "4": 1,
+        "6": 2,
+        "8": 5,
+        "10": 19,
+        "12": 85,
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "cyclic covers of all connected cubic bases order 4..20, total order 41..63",
+      "seconds": 547.774,
+      "shard": 1,
+      "shards": 16,
+      "statistics": {
+        "10": {
+          "5": {
+            "assignments_total": 31250,
+            "base_graphs": 2,
+            "checked_survivors": 888,
+            "excluded_by_base_cycles": 30362,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "6": {
+            "assignments_total": 93312,
+            "base_graphs": 2,
+            "checked_survivors": 256,
+            "excluded_by_base_cycles": 93056,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "12": {
+          "4": {
+            "assignments_total": 32768,
+            "base_graphs": 2,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 32768,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "5": {
+            "assignments_total": 156250,
+            "base_graphs": 2,
+            "checked_survivors": 5776,
+            "excluded_by_base_cycles": 150474,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "14": {
+          "3": {
+            "assignments_total": 223074,
+            "base_graphs": 34,
+            "checked_survivors": 10624,
+            "excluded_by_base_cycles": 212450,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "4": {
+            "assignments_total": 2228224,
+            "base_graphs": 34,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 2228224,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "16": {
+          "3": {
+            "assignments_total": 5511240,
+            "base_graphs": 280,
+            "checked_survivors": 11388,
+            "excluded_by_base_cycles": 5499852,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "18": {
+          "3": {
+            "assignments_total": 140595669,
+            "base_graphs": 2381,
+            "checked_survivors": 65862,
+            "excluded_by_base_cycles": 140529807,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "20": {
+          "3": {
+            "assignments_total": 4780666089,
+            "base_graphs": 26987,
+            "checked_survivors": 1067964,
+            "excluded_by_base_cycles": 4779598125,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "4": {
+          "11": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "12": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "13": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "14": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "15": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "6": {
+          "10": {
+            "assignments_total": 10000,
+            "base_graphs": 1,
+            "checked_survivors": 5120,
+            "excluded_by_base_cycles": 4880,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 2401,
+            "base_graphs": 1,
+            "checked_survivors": 1512,
+            "excluded_by_base_cycles": 889,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "8": {
+            "assignments_total": 4096,
+            "base_graphs": 1,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 4096,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "9": {
+            "assignments_total": 6561,
+            "base_graphs": 1,
+            "checked_survivors": 4608,
+            "excluded_by_base_cycles": 1953,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "8": {
+          "6": {
+            "assignments_total": 7776,
+            "base_graphs": 1,
+            "checked_survivors": 512,
+            "excluded_by_base_cycles": 7264,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 16807,
+            "base_graphs": 1,
+            "checked_survivors": 4464,
+            "excluded_by_base_cycles": 12343,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "2": {
+      "families": {
+        "4": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "6": [
+          7,
+          8,
+          9,
+          10
+        ],
+        "8": [
+          6,
+          7
+        ],
+        "10": [
+          5,
+          6
+        ],
+        "12": [
+          4,
+          5
+        ],
+        "14": [
+          3,
+          4
+        ],
+        "16": [
+          3
+        ],
+        "18": [
+          3
+        ],
+        "20": [
+          3
+        ]
+      },
+      "graph_base_count_expected": {
+        "4": 1,
+        "6": 2,
+        "8": 5,
+        "10": 19,
+        "12": 85,
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "cyclic covers of all connected cubic bases order 4..20, total order 41..63",
+      "seconds": 765.782,
+      "shard": 2,
+      "shards": 16,
+      "statistics": {
+        "10": {
+          "5": {
+            "assignments_total": 46875,
+            "base_graphs": 3,
+            "checked_survivors": 1672,
+            "excluded_by_base_cycles": 45203,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "6": {
+            "assignments_total": 139968,
+            "base_graphs": 3,
+            "checked_survivors": 1024,
+            "excluded_by_base_cycles": 138944,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "12": {
+          "4": {
+            "assignments_total": 114688,
+            "base_graphs": 7,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 114688,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "5": {
+            "assignments_total": 546875,
+            "base_graphs": 7,
+            "checked_survivors": 30156,
+            "excluded_by_base_cycles": 516719,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "14": {
+          "3": {
+            "assignments_total": 157464,
+            "base_graphs": 24,
+            "checked_survivors": 1846,
+            "excluded_by_base_cycles": 155618,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "4": {
+            "assignments_total": 1572864,
+            "base_graphs": 24,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 1572864,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "16": {
+          "3": {
+            "assignments_total": 5668704,
+            "base_graphs": 288,
+            "checked_survivors": 10362,
+            "excluded_by_base_cycles": 5658342,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "18": {
+          "3": {
+            "assignments_total": 162443799,
+            "base_graphs": 2751,
+            "checked_survivors": 54726,
+            "excluded_by_base_cycles": 162389073,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "20": {
+          "3": {
+            "assignments_total": 6554616147,
+            "base_graphs": 37001,
+            "checked_survivors": 865032,
+            "excluded_by_base_cycles": 6553751115,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "4": {
+          "11": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "12": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "13": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "14": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "15": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "6": {
+          "10": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "8": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "9": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "8": {
+          "6": {
+            "assignments_total": 23328,
+            "base_graphs": 3,
+            "checked_survivors": 2304,
+            "excluded_by_base_cycles": 21024,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 50421,
+            "base_graphs": 3,
+            "checked_survivors": 18672,
+            "excluded_by_base_cycles": 31749,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "3": {
+      "families": {
+        "4": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "6": [
+          7,
+          8,
+          9,
+          10
+        ],
+        "8": [
+          6,
+          7
+        ],
+        "10": [
+          5,
+          6
+        ],
+        "12": [
+          4,
+          5
+        ],
+        "14": [
+          3,
+          4
+        ],
+        "16": [
+          3
+        ],
+        "18": [
+          3
+        ],
+        "20": [
+          3
+        ]
+      },
+      "graph_base_count_expected": {
+        "4": 1,
+        "6": 2,
+        "8": 5,
+        "10": 19,
+        "12": 85,
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "cyclic covers of all connected cubic bases order 4..20, total order 41..63",
+      "seconds": 1000.848,
+      "shard": 3,
+      "shards": 16,
+      "statistics": {
+        "10": {
+          "5": {
+            "assignments_total": 62500,
+            "base_graphs": 4,
+            "checked_survivors": 6824,
+            "excluded_by_base_cycles": 55676,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "6": {
+            "assignments_total": 186624,
+            "base_graphs": 4,
+            "checked_survivors": 2432,
+            "excluded_by_base_cycles": 184192,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "12": {
+          "4": {
+            "assignments_total": 131072,
+            "base_graphs": 8,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 131072,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "5": {
+            "assignments_total": 625000,
+            "base_graphs": 8,
+            "checked_survivors": 48632,
+            "excluded_by_base_cycles": 576368,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "14": {
+          "3": {
+            "assignments_total": 262440,
+            "base_graphs": 40,
+            "checked_survivors": 1116,
+            "excluded_by_base_cycles": 261324,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "4": {
+            "assignments_total": 2621440,
+            "base_graphs": 40,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 2621440,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "16": {
+          "3": {
+            "assignments_total": 5708070,
+            "base_graphs": 290,
+            "checked_survivors": 15184,
+            "excluded_by_base_cycles": 5692886,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "18": {
+          "3": {
+            "assignments_total": 154413135,
+            "base_graphs": 2615,
+            "checked_survivors": 19496,
+            "excluded_by_base_cycles": 154393639,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "20": {
+          "3": {
+            "assignments_total": 6860371869,
+            "base_graphs": 38727,
+            "checked_survivors": 612594,
+            "excluded_by_base_cycles": 6859759275,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "4": {
+          "11": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "12": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "13": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "14": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "15": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "6": {
+          "10": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "8": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "9": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "8": {
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "4": {
+      "families": {
+        "4": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "6": [
+          7,
+          8,
+          9,
+          10
+        ],
+        "8": [
+          6,
+          7
+        ],
+        "10": [
+          5,
+          6
+        ],
+        "12": [
+          4,
+          5
+        ],
+        "14": [
+          3,
+          4
+        ],
+        "16": [
+          3
+        ],
+        "18": [
+          3
+        ],
+        "20": [
+          3
+        ]
+      },
+      "graph_base_count_expected": {
+        "4": 1,
+        "6": 2,
+        "8": 5,
+        "10": 19,
+        "12": 85,
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "cyclic covers of all connected cubic bases order 4..20, total order 41..63",
+      "seconds": 424.697,
+      "shard": 4,
+      "shards": 16,
+      "statistics": {
+        "10": {
+          "5": {
+            "assignments_total": 15625,
+            "base_graphs": 1,
+            "checked_survivors": 320,
+            "excluded_by_base_cycles": 15305,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "6": {
+            "assignments_total": 46656,
+            "base_graphs": 1,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 46656,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "12": {
+          "4": {
+            "assignments_total": 163840,
+            "base_graphs": 10,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 163840,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "5": {
+            "assignments_total": 781250,
+            "base_graphs": 10,
+            "checked_survivors": 53188,
+            "excluded_by_base_cycles": 728062,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "14": {
+          "3": {
+            "assignments_total": 183708,
+            "base_graphs": 28,
+            "checked_survivors": 618,
+            "excluded_by_base_cycles": 183090,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "4": {
+            "assignments_total": 1835008,
+            "base_graphs": 28,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 1835008,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "16": {
+          "3": {
+            "assignments_total": 4349943,
+            "base_graphs": 221,
+            "checked_survivors": 4450,
+            "excluded_by_base_cycles": 4345493,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "18": {
+          "3": {
+            "assignments_total": 152405469,
+            "base_graphs": 2581,
+            "checked_survivors": 67394,
+            "excluded_by_base_cycles": 152338075,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "20": {
+          "3": {
+            "assignments_total": 4905200430,
+            "base_graphs": 27690,
+            "checked_survivors": 598496,
+            "excluded_by_base_cycles": 4904601934,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "4": {
+          "11": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "12": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "13": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "14": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "15": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "6": {
+          "10": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "8": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "9": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "8": {
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "5": {
+      "families": {
+        "4": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "6": [
+          7,
+          8,
+          9,
+          10
+        ],
+        "8": [
+          6,
+          7
+        ],
+        "10": [
+          5,
+          6
+        ],
+        "12": [
+          4,
+          5
+        ],
+        "14": [
+          3,
+          4
+        ],
+        "16": [
+          3
+        ],
+        "18": [
+          3
+        ],
+        "20": [
+          3
+        ]
+      },
+      "graph_base_count_expected": {
+        "4": 1,
+        "6": 2,
+        "8": 5,
+        "10": 19,
+        "12": 85,
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "cyclic covers of all connected cubic bases order 4..20, total order 41..63",
+      "seconds": 848.001,
+      "shard": 5,
+      "shards": 16,
+      "statistics": {
+        "10": {
+          "5": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "12": {
+          "4": {
+            "assignments_total": 81920,
+            "base_graphs": 5,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 81920,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "5": {
+            "assignments_total": 390625,
+            "base_graphs": 5,
+            "checked_survivors": 24632,
+            "excluded_by_base_cycles": 365993,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "14": {
+          "3": {
+            "assignments_total": 177147,
+            "base_graphs": 27,
+            "checked_survivors": 886,
+            "excluded_by_base_cycles": 176261,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "4": {
+            "assignments_total": 1769472,
+            "base_graphs": 27,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 1769472,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "16": {
+          "3": {
+            "assignments_total": 5373459,
+            "base_graphs": 273,
+            "checked_survivors": 8620,
+            "excluded_by_base_cycles": 5364839,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "18": {
+          "3": {
+            "assignments_total": 147150108,
+            "base_graphs": 2492,
+            "checked_survivors": 12684,
+            "excluded_by_base_cycles": 147137424,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "20": {
+          "3": {
+            "assignments_total": 5571981738,
+            "base_graphs": 31454,
+            "checked_survivors": 583412,
+            "excluded_by_base_cycles": 5571398326,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "4": {
+          "11": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "12": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "13": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "14": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "15": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "6": {
+          "10": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "8": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "9": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "8": {
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "6": {
+      "families": {
+        "4": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "6": [
+          7,
+          8,
+          9,
+          10
+        ],
+        "8": [
+          6,
+          7
+        ],
+        "10": [
+          5,
+          6
+        ],
+        "12": [
+          4,
+          5
+        ],
+        "14": [
+          3,
+          4
+        ],
+        "16": [
+          3
+        ],
+        "18": [
+          3
+        ],
+        "20": [
+          3
+        ]
+      },
+      "graph_base_count_expected": {
+        "4": 1,
+        "6": 2,
+        "8": 5,
+        "10": 19,
+        "12": 85,
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "cyclic covers of all connected cubic bases order 4..20, total order 41..63",
+      "seconds": 463.442,
+      "shard": 6,
+      "shards": 16,
+      "statistics": {
+        "10": {
+          "5": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "12": {
+          "4": {
+            "assignments_total": 65536,
+            "base_graphs": 4,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 65536,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "5": {
+            "assignments_total": 312500,
+            "base_graphs": 4,
+            "checked_survivors": 11824,
+            "excluded_by_base_cycles": 300676,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "14": {
+          "3": {
+            "assignments_total": 157464,
+            "base_graphs": 24,
+            "checked_survivors": 804,
+            "excluded_by_base_cycles": 156660,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "4": {
+            "assignments_total": 1572864,
+            "base_graphs": 24,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 1572864,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "16": {
+          "3": {
+            "assignments_total": 4979799,
+            "base_graphs": 253,
+            "checked_survivors": 10558,
+            "excluded_by_base_cycles": 4969241,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "18": {
+          "3": {
+            "assignments_total": 172836423,
+            "base_graphs": 2927,
+            "checked_survivors": 26444,
+            "excluded_by_base_cycles": 172809979,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "20": {
+          "3": {
+            "assignments_total": 5429024109,
+            "base_graphs": 30647,
+            "checked_survivors": 763330,
+            "excluded_by_base_cycles": 5428260779,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "4": {
+          "11": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "12": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "13": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "14": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "15": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "6": {
+          "10": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "8": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "9": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "8": {
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "7": {
+      "families": {
+        "4": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "6": [
+          7,
+          8,
+          9,
+          10
+        ],
+        "8": [
+          6,
+          7
+        ],
+        "10": [
+          5,
+          6
+        ],
+        "12": [
+          4,
+          5
+        ],
+        "14": [
+          3,
+          4
+        ],
+        "16": [
+          3
+        ],
+        "18": [
+          3
+        ],
+        "20": [
+          3
+        ]
+      },
+      "graph_base_count_expected": {
+        "4": 1,
+        "6": 2,
+        "8": 5,
+        "10": 19,
+        "12": 85,
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "cyclic covers of all connected cubic bases order 4..20, total order 41..63",
+      "seconds": 704.628,
+      "shard": 7,
+      "shards": 16,
+      "statistics": {
+        "10": {
+          "5": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "12": {
+          "4": {
+            "assignments_total": 81920,
+            "base_graphs": 5,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 81920,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "5": {
+            "assignments_total": 390625,
+            "base_graphs": 5,
+            "checked_survivors": 15140,
+            "excluded_by_base_cycles": 375485,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "14": {
+          "3": {
+            "assignments_total": 98415,
+            "base_graphs": 15,
+            "checked_survivors": 560,
+            "excluded_by_base_cycles": 97855,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "4": {
+            "assignments_total": 983040,
+            "base_graphs": 15,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 983040,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "16": {
+          "3": {
+            "assignments_total": 4428675,
+            "base_graphs": 225,
+            "checked_survivors": 9278,
+            "excluded_by_base_cycles": 4419397,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "18": {
+          "3": {
+            "assignments_total": 155357919,
+            "base_graphs": 2631,
+            "checked_survivors": 74266,
+            "excluded_by_base_cycles": 155283653,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "20": {
+          "3": {
+            "assignments_total": 4854536388,
+            "base_graphs": 27404,
+            "checked_survivors": 311808,
+            "excluded_by_base_cycles": 4854224580,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "4": {
+          "11": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "12": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "13": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "14": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "15": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "6": {
+          "10": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "8": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "9": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "8": {
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "8": {
+      "families": {
+        "4": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "6": [
+          7,
+          8,
+          9,
+          10
+        ],
+        "8": [
+          6,
+          7
+        ],
+        "10": [
+          5,
+          6
+        ],
+        "12": [
+          4,
+          5
+        ],
+        "14": [
+          3,
+          4
+        ],
+        "16": [
+          3
+        ],
+        "18": [
+          3
+        ],
+        "20": [
+          3
+        ]
+      },
+      "graph_base_count_expected": {
+        "4": 1,
+        "6": 2,
+        "8": 5,
+        "10": 19,
+        "12": 85,
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "cyclic covers of all connected cubic bases order 4..20, total order 41..63",
+      "seconds": 735.045,
+      "shard": 8,
+      "shards": 16,
+      "statistics": {
+        "10": {
+          "5": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "12": {
+          "4": {
+            "assignments_total": 65536,
+            "base_graphs": 4,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 65536,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "5": {
+            "assignments_total": 312500,
+            "base_graphs": 4,
+            "checked_survivors": 7212,
+            "excluded_by_base_cycles": 305288,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "14": {
+          "3": {
+            "assignments_total": 354294,
+            "base_graphs": 54,
+            "checked_survivors": 2170,
+            "excluded_by_base_cycles": 352124,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "4": {
+            "assignments_total": 3538944,
+            "base_graphs": 54,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 3538944,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "16": {
+          "3": {
+            "assignments_total": 4881384,
+            "base_graphs": 248,
+            "checked_survivors": 8642,
+            "excluded_by_base_cycles": 4872742,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "18": {
+          "3": {
+            "assignments_total": 160258986,
+            "base_graphs": 2714,
+            "checked_survivors": 21712,
+            "excluded_by_base_cycles": 160237274,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "20": {
+          "3": {
+            "assignments_total": 5028317595,
+            "base_graphs": 28385,
+            "checked_survivors": 632756,
+            "excluded_by_base_cycles": 5027684839,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "4": {
+          "11": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "12": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "13": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "14": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "15": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "6": {
+          "10": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "8": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "9": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "8": {
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "9": {
+      "families": {
+        "4": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "6": [
+          7,
+          8,
+          9,
+          10
+        ],
+        "8": [
+          6,
+          7
+        ],
+        "10": [
+          5,
+          6
+        ],
+        "12": [
+          4,
+          5
+        ],
+        "14": [
+          3,
+          4
+        ],
+        "16": [
+          3
+        ],
+        "18": [
+          3
+        ],
+        "20": [
+          3
+        ]
+      },
+      "graph_base_count_expected": {
+        "4": 1,
+        "6": 2,
+        "8": 5,
+        "10": 19,
+        "12": 85,
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "cyclic covers of all connected cubic bases order 4..20, total order 41..63",
+      "seconds": 493.551,
+      "shard": 9,
+      "shards": 16,
+      "statistics": {
+        "10": {
+          "5": {
+            "assignments_total": 15625,
+            "base_graphs": 1,
+            "checked_survivors": 464,
+            "excluded_by_base_cycles": 15161,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "6": {
+            "assignments_total": 46656,
+            "base_graphs": 1,
+            "checked_survivors": 256,
+            "excluded_by_base_cycles": 46400,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "12": {
+          "4": {
+            "assignments_total": 65536,
+            "base_graphs": 4,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 65536,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "5": {
+            "assignments_total": 312500,
+            "base_graphs": 4,
+            "checked_survivors": 7304,
+            "excluded_by_base_cycles": 305196,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "14": {
+          "3": {
+            "assignments_total": 229635,
+            "base_graphs": 35,
+            "checked_survivors": 4698,
+            "excluded_by_base_cycles": 224937,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "4": {
+            "assignments_total": 2293760,
+            "base_graphs": 35,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 2293760,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "16": {
+          "3": {
+            "assignments_total": 4664871,
+            "base_graphs": 237,
+            "checked_survivors": 7444,
+            "excluded_by_base_cycles": 4657427,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "18": {
+          "3": {
+            "assignments_total": 147563451,
+            "base_graphs": 2499,
+            "checked_survivors": 52720,
+            "excluded_by_base_cycles": 147510731,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "20": {
+          "3": {
+            "assignments_total": 5735134125,
+            "base_graphs": 32375,
+            "checked_survivors": 721440,
+            "excluded_by_base_cycles": 5734412685,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "4": {
+          "11": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "12": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "13": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "14": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "15": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "6": {
+          "10": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "8": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "9": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "8": {
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "10": {
+      "families": {
+        "4": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "6": [
+          7,
+          8,
+          9,
+          10
+        ],
+        "8": [
+          6,
+          7
+        ],
+        "10": [
+          5,
+          6
+        ],
+        "12": [
+          4,
+          5
+        ],
+        "14": [
+          3,
+          4
+        ],
+        "16": [
+          3
+        ],
+        "18": [
+          3
+        ],
+        "20": [
+          3
+        ]
+      },
+      "graph_base_count_expected": {
+        "4": 1,
+        "6": 2,
+        "8": 5,
+        "10": 19,
+        "12": 85,
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "cyclic covers of all connected cubic bases order 4..20, total order 41..63",
+      "seconds": 583.826,
+      "shard": 10,
+      "shards": 16,
+      "statistics": {
+        "10": {
+          "5": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "12": {
+          "4": {
+            "assignments_total": 49152,
+            "base_graphs": 3,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 49152,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "5": {
+            "assignments_total": 234375,
+            "base_graphs": 3,
+            "checked_survivors": 56608,
+            "excluded_by_base_cycles": 177767,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "14": {
+          "3": {
+            "assignments_total": 328050,
+            "base_graphs": 50,
+            "checked_survivors": 3896,
+            "excluded_by_base_cycles": 324154,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "4": {
+            "assignments_total": 3276800,
+            "base_graphs": 50,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 3276800,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "16": {
+          "3": {
+            "assignments_total": 4901067,
+            "base_graphs": 249,
+            "checked_survivors": 9164,
+            "excluded_by_base_cycles": 4891903,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "18": {
+          "3": {
+            "assignments_total": 156952242,
+            "base_graphs": 2658,
+            "checked_survivors": 30616,
+            "excluded_by_base_cycles": 156921626,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "20": {
+          "3": {
+            "assignments_total": 5070301434,
+            "base_graphs": 28622,
+            "checked_survivors": 343380,
+            "excluded_by_base_cycles": 5069958054,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "4": {
+          "11": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "12": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "13": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "14": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "15": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "6": {
+          "10": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "8": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "9": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "8": {
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "11": {
+      "families": {
+        "4": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "6": [
+          7,
+          8,
+          9,
+          10
+        ],
+        "8": [
+          6,
+          7
+        ],
+        "10": [
+          5,
+          6
+        ],
+        "12": [
+          4,
+          5
+        ],
+        "14": [
+          3,
+          4
+        ],
+        "16": [
+          3
+        ],
+        "18": [
+          3
+        ],
+        "20": [
+          3
+        ]
+      },
+      "graph_base_count_expected": {
+        "4": 1,
+        "6": 2,
+        "8": 5,
+        "10": 19,
+        "12": 85,
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "cyclic covers of all connected cubic bases order 4..20, total order 41..63",
+      "seconds": 938.842,
+      "shard": 11,
+      "shards": 16,
+      "statistics": {
+        "10": {
+          "5": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "12": {
+          "4": {
+            "assignments_total": 180224,
+            "base_graphs": 11,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 180224,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "5": {
+            "assignments_total": 859375,
+            "base_graphs": 11,
+            "checked_survivors": 149828,
+            "excluded_by_base_cycles": 709547,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "14": {
+          "3": {
+            "assignments_total": 249318,
+            "base_graphs": 38,
+            "checked_survivors": 7592,
+            "excluded_by_base_cycles": 241726,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "4": {
+            "assignments_total": 2490368,
+            "base_graphs": 38,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 2490368,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "16": {
+          "3": {
+            "assignments_total": 5511240,
+            "base_graphs": 280,
+            "checked_survivors": 10784,
+            "excluded_by_base_cycles": 5500456,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "18": {
+          "3": {
+            "assignments_total": 151283538,
+            "base_graphs": 2562,
+            "checked_survivors": 51582,
+            "excluded_by_base_cycles": 151231956,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "20": {
+          "3": {
+            "assignments_total": 6676670430,
+            "base_graphs": 37690,
+            "checked_survivors": 1086040,
+            "excluded_by_base_cycles": 6675584390,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "4": {
+          "11": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "12": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "13": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "14": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "15": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "6": {
+          "10": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "8": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "9": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "8": {
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "12": {
+      "families": {
+        "4": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "6": [
+          7,
+          8,
+          9,
+          10
+        ],
+        "8": [
+          6,
+          7
+        ],
+        "10": [
+          5,
+          6
+        ],
+        "12": [
+          4,
+          5
+        ],
+        "14": [
+          3,
+          4
+        ],
+        "16": [
+          3
+        ],
+        "18": [
+          3
+        ],
+        "20": [
+          3
+        ]
+      },
+      "graph_base_count_expected": {
+        "4": 1,
+        "6": 2,
+        "8": 5,
+        "10": 19,
+        "12": 85,
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "cyclic covers of all connected cubic bases order 4..20, total order 41..63",
+      "seconds": 616.721,
+      "shard": 12,
+      "shards": 16,
+      "statistics": {
+        "10": {
+          "5": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "12": {
+          "4": {
+            "assignments_total": 32768,
+            "base_graphs": 2,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 32768,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "5": {
+            "assignments_total": 156250,
+            "base_graphs": 2,
+            "checked_survivors": 5996,
+            "excluded_by_base_cycles": 150254,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "14": {
+          "3": {
+            "assignments_total": 170586,
+            "base_graphs": 26,
+            "checked_survivors": 1520,
+            "excluded_by_base_cycles": 169066,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "4": {
+            "assignments_total": 1703936,
+            "base_graphs": 26,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 1703936,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "16": {
+          "3": {
+            "assignments_total": 5471874,
+            "base_graphs": 278,
+            "checked_survivors": 9280,
+            "excluded_by_base_cycles": 5462594,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "18": {
+          "3": {
+            "assignments_total": 103926240,
+            "base_graphs": 1760,
+            "checked_survivors": 69152,
+            "excluded_by_base_cycles": 103857088,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "20": {
+          "3": {
+            "assignments_total": 5371451334,
+            "base_graphs": 30322,
+            "checked_survivors": 867042,
+            "excluded_by_base_cycles": 5370584292,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "4": {
+          "11": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "12": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "13": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "14": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "15": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "6": {
+          "10": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "8": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "9": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "8": {
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "13": {
+      "families": {
+        "4": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "6": [
+          7,
+          8,
+          9,
+          10
+        ],
+        "8": [
+          6,
+          7
+        ],
+        "10": [
+          5,
+          6
+        ],
+        "12": [
+          4,
+          5
+        ],
+        "14": [
+          3,
+          4
+        ],
+        "16": [
+          3
+        ],
+        "18": [
+          3
+        ],
+        "20": [
+          3
+        ]
+      },
+      "graph_base_count_expected": {
+        "4": 1,
+        "6": 2,
+        "8": 5,
+        "10": 19,
+        "12": 85,
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "cyclic covers of all connected cubic bases order 4..20, total order 41..63",
+      "seconds": 889.884,
+      "shard": 13,
+      "shards": 16,
+      "statistics": {
+        "10": {
+          "5": {
+            "assignments_total": 15625,
+            "base_graphs": 1,
+            "checked_survivors": 760,
+            "excluded_by_base_cycles": 14865,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "6": {
+            "assignments_total": 46656,
+            "base_graphs": 1,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 46656,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "12": {
+          "4": {
+            "assignments_total": 65536,
+            "base_graphs": 4,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 65536,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "5": {
+            "assignments_total": 312500,
+            "base_graphs": 4,
+            "checked_survivors": 27428,
+            "excluded_by_base_cycles": 285072,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "14": {
+          "3": {
+            "assignments_total": 196830,
+            "base_graphs": 30,
+            "checked_survivors": 1082,
+            "excluded_by_base_cycles": 195748,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "4": {
+            "assignments_total": 1966080,
+            "base_graphs": 30,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 1966080,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "16": {
+          "3": {
+            "assignments_total": 5038848,
+            "base_graphs": 256,
+            "checked_survivors": 10248,
+            "excluded_by_base_cycles": 5028600,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "18": {
+          "3": {
+            "assignments_total": 156184605,
+            "base_graphs": 2645,
+            "checked_survivors": 39602,
+            "excluded_by_base_cycles": 156145003,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "20": {
+          "3": {
+            "assignments_total": 6198019236,
+            "base_graphs": 34988,
+            "checked_survivors": 901132,
+            "excluded_by_base_cycles": 6197118104,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "4": {
+          "11": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "12": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "13": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "14": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "15": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "6": {
+          "10": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "8": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "9": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "8": {
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "14": {
+      "families": {
+        "4": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "6": [
+          7,
+          8,
+          9,
+          10
+        ],
+        "8": [
+          6,
+          7
+        ],
+        "10": [
+          5,
+          6
+        ],
+        "12": [
+          4,
+          5
+        ],
+        "14": [
+          3,
+          4
+        ],
+        "16": [
+          3
+        ],
+        "18": [
+          3
+        ],
+        "20": [
+          3
+        ]
+      },
+      "graph_base_count_expected": {
+        "4": 1,
+        "6": 2,
+        "8": 5,
+        "10": 19,
+        "12": 85,
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "cyclic covers of all connected cubic bases order 4..20, total order 41..63",
+      "seconds": 1106.761,
+      "shard": 14,
+      "shards": 16,
+      "statistics": {
+        "10": {
+          "5": {
+            "assignments_total": 31250,
+            "base_graphs": 2,
+            "checked_survivors": 912,
+            "excluded_by_base_cycles": 30338,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "6": {
+            "assignments_total": 93312,
+            "base_graphs": 2,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 93312,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "12": {
+          "4": {
+            "assignments_total": 65536,
+            "base_graphs": 4,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 65536,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "5": {
+            "assignments_total": 312500,
+            "base_graphs": 4,
+            "checked_survivors": 6832,
+            "excluded_by_base_cycles": 305668,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "14": {
+          "3": {
+            "assignments_total": 255879,
+            "base_graphs": 39,
+            "checked_survivors": 2028,
+            "excluded_by_base_cycles": 253851,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "4": {
+            "assignments_total": 2555904,
+            "base_graphs": 39,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 2555904,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "16": {
+          "3": {
+            "assignments_total": 4172796,
+            "base_graphs": 212,
+            "checked_survivors": 6412,
+            "excluded_by_base_cycles": 4166384,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "18": {
+          "3": {
+            "assignments_total": 197637003,
+            "base_graphs": 3347,
+            "checked_survivors": 30902,
+            "excluded_by_base_cycles": 197606101,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "20": {
+          "3": {
+            "assignments_total": 7365417966,
+            "base_graphs": 41578,
+            "checked_survivors": 276368,
+            "excluded_by_base_cycles": 7365141598,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "4": {
+          "11": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "12": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "13": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "14": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "15": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "6": {
+          "10": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "8": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "9": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "8": {
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "15": {
+      "families": {
+        "4": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "6": [
+          7,
+          8,
+          9,
+          10
+        ],
+        "8": [
+          6,
+          7
+        ],
+        "10": [
+          5,
+          6
+        ],
+        "12": [
+          4,
+          5
+        ],
+        "14": [
+          3,
+          4
+        ],
+        "16": [
+          3
+        ],
+        "18": [
+          3
+        ],
+        "20": [
+          3
+        ]
+      },
+      "graph_base_count_expected": {
+        "4": 1,
+        "6": 2,
+        "8": 5,
+        "10": 19,
+        "12": 85,
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "cyclic covers of all connected cubic bases order 4..20, total order 41..63",
+      "seconds": 565.421,
+      "shard": 15,
+      "shards": 16,
+      "statistics": {
+        "10": {
+          "5": {
+            "assignments_total": 78125,
+            "base_graphs": 5,
+            "checked_survivors": 7804,
+            "excluded_by_base_cycles": 70321,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "6": {
+            "assignments_total": 233280,
+            "base_graphs": 5,
+            "checked_survivors": 4992,
+            "excluded_by_base_cycles": 228288,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "12": {
+          "4": {
+            "assignments_total": 114688,
+            "base_graphs": 7,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 114688,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "5": {
+            "assignments_total": 546875,
+            "base_graphs": 7,
+            "checked_survivors": 61136,
+            "excluded_by_base_cycles": 485739,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "14": {
+          "3": {
+            "assignments_total": 59049,
+            "base_graphs": 9,
+            "checked_survivors": 296,
+            "excluded_by_base_cycles": 58753,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "4": {
+            "assignments_total": 589824,
+            "base_graphs": 9,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 589824,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "16": {
+          "3": {
+            "assignments_total": 4881384,
+            "base_graphs": 248,
+            "checked_survivors": 10364,
+            "excluded_by_base_cycles": 4871020,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "18": {
+          "3": {
+            "assignments_total": 131561172,
+            "base_graphs": 2228,
+            "checked_survivors": 109338,
+            "excluded_by_base_cycles": 131451834,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "20": {
+          "3": {
+            "assignments_total": 4866582384,
+            "base_graphs": 27472,
+            "checked_survivors": 533964,
+            "excluded_by_base_cycles": 4866048420,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "4": {
+          "11": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "12": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "13": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "14": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "15": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "6": {
+          "10": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "8": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "9": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        },
+        "8": {
+          "6": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          },
+          "7": {
+            "assignments_total": 0,
+            "base_graphs": 0,
+            "checked_survivors": 0,
+            "excluded_by_base_cycles": 0,
+            "unknown_cutoffs": 0,
+            "witness_count": 0
+          }
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    }
+  },
+  "merge": {
+    "exit_code": 0,
+    "output": "base census complete; witness candidates 0 unknowns 0 family-excluded True\n"
+  }
+}
