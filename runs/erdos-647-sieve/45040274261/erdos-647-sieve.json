@@ -1,0 +1,22 @@
+{
+  "all_shards_complete": true,
+  "mathematical_status": "OPEN",
+  "max_depth": 20,
+  "max_depth_kill_tau": 32,
+  "max_depth_n": "349850700622874931480",
+  "n_end": "1000000000000000000000",
+  "n_start": "9174471185880000000",
+  "problem": "Erd\u0151s #647",
+  "range_exhausted": true,
+  "shards_expected": 16,
+  "shards_present": 16,
+  "tiled_exactly": true,
+  "total_prime7_survivors": 29805,
+  "total_shard_wall_seconds": 6357.732,
+  "total_t1_survivors": 147348370512,
+  "total_t2_survivors": 5565179914,
+  "total_t3_survivors": 601703912,
+  "total_u_tested": 72726519831529,
+  "wheel_classes": 786,
+  "wheel_modulus": 10708457760
+}
