@@ -1,0 +1,10 @@
+One-shot authorized public computation for Erdős–Gyárfás JSP-000082 (2026-11-22).
+Method: enumerate all connected cubic graphs F with |V(F)| in {20,22,24}, and all edges e.
+Subdivide e to one degree-two vertex then glue two copies at that vertex.
+This gives graphs G with 41,45,49 vertices and delta(G)=3. A single witness, if found,
+would refute the exact original conjecture after independent verification.
+Each graph is filtered by exact common-cycle edge intersection (4,8,16) and
+exclusion (3,7,15), and candidates are independently checked as whole blocks.
+All 64 shards must complete; each shard timeout < 6 hours.
+Expected isomorphism-class counts: 510489, 7319447, 117940535.
+No publication of mathematical conclusion without certified witness or proof.
