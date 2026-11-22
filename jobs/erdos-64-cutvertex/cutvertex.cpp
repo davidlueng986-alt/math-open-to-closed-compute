@@ -132,7 +132,7 @@ void process(const string&line,int n){
   if(has_cycle(h,4)||has_cycle(h,8)||has_cycle(h,16))
    throw runtime_error("independent exact witness verification failed");
   G g=glue(h);
-  if(g.n!=2*n+1||g.m!=3*n+3)
+  if(g.n!=2*n+1||g.m!=3*n+2)
    throw runtime_error("witness graph size invariant failed");
   for(int d:g.degree)if(d<3)
    throw runtime_error("witness min-degree invalid");
