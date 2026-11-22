@@ -1,0 +1,4 @@
+One-shot authorized public research run: 2026-11-22.
+Target: JSP-000082 = Erdős–Gyárfás conjecture (#64).
+Scope: all biconnected cubic base graphs of orders 14,16,18,20 and all S3 3-sheet permutation lifts; not all finite graphs. 16 nauty shards, maximum four concurrent, maximum 330 minutes per shard, exact graph cycle DFS with unknown cutoff.
+This is an OPEN original problem and a counterexample search; no published proof is claimed.
