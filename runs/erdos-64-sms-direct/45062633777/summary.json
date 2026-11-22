@@ -1,0 +1,19 @@
+{
+  "job": "erdos-64-sms-direct",
+  "run_id": "45062633777",
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45062633777",
+  "commit": "31f335372af52ef5b588086e28649263f5773736",
+  "shards_expected": 2,
+  "shards_with_result": 0,
+  "missing_shards": [
+    0,
+    1
+  ],
+  "seconds_per_shard": {},
+  "complete": false,
+  "results": {},
+  "merge": {
+    "exit_code": 1,
+    "output": "Traceback (most recent call last):\n  File \"/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/jobs/erdos-64-sms-direct/merge.py\", line 10, in <module>\n    if not p.is_file():raise RuntimeError(f\"missing shard {i}\")\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: missing shard 0\n"
+  }
+}
