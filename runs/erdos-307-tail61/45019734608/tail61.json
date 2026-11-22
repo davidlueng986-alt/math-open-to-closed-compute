@@ -1,0 +1,36 @@
+{
+  "problem": "Erd\u0151s #307",
+  "mathematical_status": "OPEN",
+  "side_sizes_even_first": [
+    [
+      11,
+      50
+    ],
+    [
+      13,
+      48
+    ],
+    [
+      49,
+      12
+    ],
+    [
+      47,
+      14
+    ]
+  ],
+  "single_tail_sectors_excluded": true,
+  "height": 609560875805190030554252117,
+  "missing_shards": [],
+  "counts": {
+    "supports": 408314775,
+    "reciprocity_kills": 235658673,
+    "mass_kills": 0,
+    "uncovered": 0,
+    "reconstructed": 14,
+    "derivative_matches": 0,
+    "composite_tails": 0,
+    "candidates": 0
+  },
+  "candidate_details": []
+}
