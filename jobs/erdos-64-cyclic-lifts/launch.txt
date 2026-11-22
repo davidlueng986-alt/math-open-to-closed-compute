@@ -1,0 +1,7 @@
+Launch: 2026-11-22
+JSP: JSP-000082
+Problem: Erdős–Gyárfás conjecture (#64)
+Workflow: .github/workflows/erdos64-cyclic-lifts-once.yml
+Scope: exhaustive connected cubic bases of order 4..20; cyclic covers of 41..63 vertices; 16 nauty-partitioned shards.
+Requirement: every shard < 330 minutes; unresolved checks must be reported as unknown, not excluded.
+This is a disproof attempt, not proof that the open problem is closed.
