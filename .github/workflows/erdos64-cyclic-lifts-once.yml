@@ -1,0 +1,70 @@
+name: ERDOS-64 cyclic cover exhaustive counterexample search
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'jobs/erdos-64-cyclic-lifts/launch.txt'
+permissions:
+  contents: read
+concurrency:
+  group: erdos64-cyclic-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  shard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    strategy:
+      fail-fast: false
+      max-parallel: 16
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install graph generator and compile oracle
+        run: bash jobs/erdos-64-cyclic-lifts/setup.sh
+      - name: Exact cyclic cover search
+        run: |
+          mkdir -p out
+          start=$(date +%s)
+          bash jobs/erdos-64-cyclic-lifts/run.sh "${{ matrix.shard }}" 16 out
+          printf '{"shard": %s, "seconds": %s}\n' '${{ matrix.shard }}' "$(( $(date +%s) - start ))" > out/_timing.json
+      - name: Save evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shard-${{ matrix.shard }}
+          path: out/
+          retention-days: 7
+          if-no-files-found: warn
+  collect:
+    needs: [shard]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    env:
+      JOB: erdos-64-cyclic-lifts
+      SHARDS: '16'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: shard-*
+          path: shards
+      - name: Check complete graph and voltage coverage
+        run: python3 scripts/collect.py
+      - name: Preserve result artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: summary
+          path: summary/
+          retention-days: 30
+      - name: Commit result to results branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/commit_results.sh
+      - name: Fail if any shard missing or invalid
+        run: python3 scripts/collect.py --check
