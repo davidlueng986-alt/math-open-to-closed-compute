@@ -1,0 +1,57 @@
+{
+  "additional_witnesses_in_artifacts": 0,
+  "base_graph_census_complete": true,
+  "caution": "Does NOT cover nonbiconnected bases, more layers, unequal vertex degrees, or arbitrary finite graphs; not a universal proof.",
+  "mathematical_status": "OPEN",
+  "problem": "ERDOS-64",
+  "restricted_family_absence_certified": true,
+  "scope": "all degree-3 S3 permutation covers of biconnected cubic base graphs of order 14,16,18,20",
+  "statistics": {
+    "14": {
+      "base_graphs": 509,
+      "biconnected_bases": 480,
+      "excluded_by_monodromy": 9055961,
+      "excluded_nonbiconnected": 29,
+      "parity_patterns": 1423,
+      "unknown_cutoffs": 0,
+      "verified_survivors": 280342,
+      "voltage_assignments_total": 9336303,
+      "witnesses": 0
+    },
+    "16": {
+      "base_graphs": 4060,
+      "biconnected_bases": 3874,
+      "excluded_by_monodromy": 185474336,
+      "excluded_nonbiconnected": 186,
+      "parity_patterns": 9482,
+      "unknown_cutoffs": 0,
+      "verified_survivors": 1159870,
+      "voltage_assignments_total": 186634206,
+      "witnesses": 0
+    },
+    "18": {
+      "base_graphs": 41301,
+      "biconnected_bases": 39866,
+      "excluded_by_monodromy": 4788979421,
+      "excluded_nonbiconnected": 1435,
+      "parity_patterns": 81251,
+      "unknown_cutoffs": 0,
+      "verified_survivors": 8810878,
+      "voltage_assignments_total": 4797790299,
+      "witnesses": 0
+    },
+    "20": {
+      "base_graphs": 510489,
+      "biconnected_bases": 497818,
+      "excluded_by_monodromy": 177538601310,
+      "excluded_nonbiconnected": 12671,
+      "parity_patterns": 1002514,
+      "unknown_cutoffs": 0,
+      "verified_survivors": 53746248,
+      "voltage_assignments_total": 177592347558,
+      "witnesses": 0
+    }
+  },
+  "unknown_exact_check_cutoffs": 0,
+  "witness_candidates": []
+}

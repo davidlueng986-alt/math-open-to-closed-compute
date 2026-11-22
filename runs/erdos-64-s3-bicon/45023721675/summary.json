@@ -1,0 +1,1042 @@
+{
+  "job": "erdos-64-s3-bicon",
+  "run_id": "45023721675",
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45023721675",
+  "commit": "139ef80e4a5911be6c9642ddd15f8f864a0158a0",
+  "shards_expected": 16,
+  "shards_with_result": 16,
+  "missing_shards": [],
+  "seconds_per_shard": {
+    "0": 1328,
+    "1": 701,
+    "2": 990,
+    "3": 1211,
+    "4": 1007,
+    "5": 1056,
+    "6": 1004,
+    "7": 961,
+    "8": 1221,
+    "9": 993,
+    "10": 1250,
+    "11": 909,
+    "12": 1012,
+    "13": 921,
+    "14": 1420,
+    "15": 979
+  },
+  "complete": true,
+  "results": {
+    "0": {
+      "expected_all_connected_cubic_bases": {
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "ALL S3 three-sheet covers of connected biconnected cubic bases of orders 14,16,18,20 only",
+      "seconds": 1327.41,
+      "shard": 0,
+      "shards": 16,
+      "statistics": {
+        "14": {
+          "base_graphs": 36,
+          "biconnected_bases": 35,
+          "excluded_by_monodromy": 665718,
+          "excluded_nonbiconnected": 1,
+          "parity_patterns": 102,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 3504,
+          "voltage_assignments_total": 669222,
+          "witnesses": 0
+        },
+        "16": {
+          "base_graphs": 222,
+          "biconnected_bases": 220,
+          "excluded_by_monodromy": 10443178,
+          "excluded_nonbiconnected": 2,
+          "parity_patterns": 550,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 382472,
+          "voltage_assignments_total": 10825650,
+          "witnesses": 0
+        },
+        "18": {
+          "base_graphs": 2510,
+          "biconnected_bases": 2435,
+          "excluded_by_monodromy": 289989289,
+          "excluded_nonbiconnected": 75,
+          "parity_patterns": 4911,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 350,
+          "voltage_assignments_total": 289989639,
+          "witnesses": 0
+        },
+        "20": {
+          "base_graphs": 29147,
+          "biconnected_bases": 28079,
+          "excluded_by_monodromy": 10025391305,
+          "excluded_nonbiconnected": 1068,
+          "parity_patterns": 56621,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 4848982,
+          "voltage_assignments_total": 10030240287,
+          "witnesses": 0
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "1": {
+      "expected_all_connected_cubic_bases": {
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "ALL S3 three-sheet covers of connected biconnected cubic bases of orders 14,16,18,20 only",
+      "seconds": 700.821,
+      "shard": 1,
+      "shards": 16,
+      "statistics": {
+        "14": {
+          "base_graphs": 34,
+          "biconnected_bases": 28,
+          "excluded_by_monodromy": 736754,
+          "excluded_nonbiconnected": 6,
+          "parity_patterns": 128,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 103054,
+          "voltage_assignments_total": 839808,
+          "witnesses": 0
+        },
+        "16": {
+          "base_graphs": 280,
+          "biconnected_bases": 272,
+          "excluded_by_monodromy": 13930875,
+          "excluded_nonbiconnected": 8,
+          "parity_patterns": 709,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 24372,
+          "voltage_assignments_total": 13955247,
+          "witnesses": 0
+        },
+        "18": {
+          "base_graphs": 2381,
+          "biconnected_bases": 2329,
+          "excluded_by_monodromy": 288921360,
+          "excluded_nonbiconnected": 52,
+          "parity_patterns": 4934,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 2426406,
+          "voltage_assignments_total": 291347766,
+          "witnesses": 0
+        },
+        "20": {
+          "base_graphs": 26987,
+          "biconnected_bases": 26408,
+          "excluded_by_monodromy": 9397577231,
+          "excluded_nonbiconnected": 579,
+          "parity_patterns": 53053,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 602560,
+          "voltage_assignments_total": 9398179791,
+          "witnesses": 0
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "2": {
+      "expected_all_connected_cubic_bases": {
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "ALL S3 three-sheet covers of connected biconnected cubic bases of orders 14,16,18,20 only",
+      "seconds": 990.577,
+      "shard": 2,
+      "shards": 16,
+      "statistics": {
+        "14": {
+          "base_graphs": 24,
+          "biconnected_bases": 23,
+          "excluded_by_monodromy": 502730,
+          "excluded_nonbiconnected": 1,
+          "parity_patterns": 78,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 9028,
+          "voltage_assignments_total": 511758,
+          "witnesses": 0
+        },
+        "16": {
+          "base_graphs": 288,
+          "biconnected_bases": 279,
+          "excluded_by_monodromy": 13293315,
+          "excluded_nonbiconnected": 9,
+          "parity_patterns": 677,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 32076,
+          "voltage_assignments_total": 13325391,
+          "witnesses": 0
+        },
+        "18": {
+          "base_graphs": 2751,
+          "biconnected_bases": 2699,
+          "excluded_by_monodromy": 319986237,
+          "excluded_nonbiconnected": 52,
+          "parity_patterns": 5419,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 294,
+          "voltage_assignments_total": 319986531,
+          "witnesses": 0
+        },
+        "20": {
+          "base_graphs": 37001,
+          "biconnected_bases": 35727,
+          "excluded_by_monodromy": 12779134663,
+          "excluded_nonbiconnected": 1274,
+          "parity_patterns": 72165,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 4678592,
+          "voltage_assignments_total": 12783813255,
+          "witnesses": 0
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "3": {
+      "expected_all_connected_cubic_bases": {
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "ALL S3 three-sheet covers of connected biconnected cubic bases of orders 14,16,18,20 only",
+      "seconds": 1210.544,
+      "shard": 3,
+      "shards": 16,
+      "statistics": {
+        "14": {
+          "base_graphs": 40,
+          "biconnected_bases": 36,
+          "excluded_by_monodromy": 559500,
+          "excluded_nonbiconnected": 4,
+          "parity_patterns": 86,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 4746,
+          "voltage_assignments_total": 564246,
+          "witnesses": 0
+        },
+        "16": {
+          "base_graphs": 290,
+          "biconnected_bases": 277,
+          "excluded_by_monodromy": 14054024,
+          "excluded_nonbiconnected": 13,
+          "parity_patterns": 734,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 393298,
+          "voltage_assignments_total": 14447322,
+          "witnesses": 0
+        },
+        "18": {
+          "base_graphs": 2615,
+          "biconnected_bases": 2511,
+          "excluded_by_monodromy": 299436927,
+          "excluded_nonbiconnected": 104,
+          "parity_patterns": 5071,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 552,
+          "voltage_assignments_total": 299437479,
+          "witnesses": 0
+        },
+        "20": {
+          "base_graphs": 38727,
+          "biconnected_bases": 37458,
+          "excluded_by_monodromy": 13365038194,
+          "excluded_nonbiconnected": 1269,
+          "parity_patterns": 75448,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 348662,
+          "voltage_assignments_total": 13365386856,
+          "witnesses": 0
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "4": {
+      "expected_all_connected_cubic_bases": {
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "ALL S3 three-sheet covers of connected biconnected cubic bases of orders 14,16,18,20 only",
+      "seconds": 1007.098,
+      "shard": 4,
+      "shards": 16,
+      "statistics": {
+        "14": {
+          "base_graphs": 28,
+          "biconnected_bases": 28,
+          "excluded_by_monodromy": 392022,
+          "excluded_nonbiconnected": 0,
+          "parity_patterns": 60,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 1638,
+          "voltage_assignments_total": 393660,
+          "witnesses": 0
+        },
+        "16": {
+          "base_graphs": 221,
+          "biconnected_bases": 216,
+          "excluded_by_monodromy": 9687023,
+          "excluded_nonbiconnected": 5,
+          "parity_patterns": 493,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 16696,
+          "voltage_assignments_total": 9703719,
+          "witnesses": 0
+        },
+        "18": {
+          "base_graphs": 2581,
+          "biconnected_bases": 2444,
+          "excluded_by_monodromy": 295206740,
+          "excluded_nonbiconnected": 137,
+          "parity_patterns": 5012,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 746848,
+          "voltage_assignments_total": 295953588,
+          "witnesses": 0
+        },
+        "20": {
+          "base_graphs": 27690,
+          "biconnected_bases": 27086,
+          "excluded_by_monodromy": 9632040650,
+          "excluded_nonbiconnected": 604,
+          "parity_patterns": 54382,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 1567504,
+          "voltage_assignments_total": 9633608154,
+          "witnesses": 0
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "5": {
+      "expected_all_connected_cubic_bases": {
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "ALL S3 three-sheet covers of connected biconnected cubic bases of orders 14,16,18,20 only",
+      "seconds": 1055.412,
+      "shard": 5,
+      "shards": 16,
+      "statistics": {
+        "14": {
+          "base_graphs": 27,
+          "biconnected_bases": 27,
+          "excluded_by_monodromy": 404618,
+          "excluded_nonbiconnected": 0,
+          "parity_patterns": 62,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 2164,
+          "voltage_assignments_total": 406782,
+          "witnesses": 0
+        },
+        "16": {
+          "base_graphs": 273,
+          "biconnected_bases": 256,
+          "excluded_by_monodromy": 11206448,
+          "excluded_nonbiconnected": 17,
+          "parity_patterns": 570,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 12862,
+          "voltage_assignments_total": 11219310,
+          "witnesses": 0
+        },
+        "18": {
+          "base_graphs": 2492,
+          "biconnected_bases": 2438,
+          "excluded_by_monodromy": 294358497,
+          "excluded_nonbiconnected": 54,
+          "parity_patterns": 4985,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 768,
+          "voltage_assignments_total": 294359265,
+          "witnesses": 0
+        },
+        "20": {
+          "base_graphs": 31454,
+          "biconnected_bases": 30802,
+          "excluded_by_monodromy": 10947098295,
+          "excluded_nonbiconnected": 652,
+          "parity_patterns": 61797,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 54864,
+          "voltage_assignments_total": 10947153159,
+          "witnesses": 0
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "6": {
+      "expected_all_connected_cubic_bases": {
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "ALL S3 three-sheet covers of connected biconnected cubic bases of orders 14,16,18,20 only",
+      "seconds": 1003.995,
+      "shard": 6,
+      "shards": 16,
+      "statistics": {
+        "14": {
+          "base_graphs": 24,
+          "biconnected_bases": 23,
+          "excluded_by_monodromy": 326808,
+          "excluded_nonbiconnected": 1,
+          "parity_patterns": 50,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 1242,
+          "voltage_assignments_total": 328050,
+          "witnesses": 0
+        },
+        "16": {
+          "base_graphs": 253,
+          "biconnected_bases": 238,
+          "excluded_by_monodromy": 11243084,
+          "excluded_nonbiconnected": 15,
+          "parity_patterns": 572,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 15592,
+          "voltage_assignments_total": 11258676,
+          "witnesses": 0
+        },
+        "18": {
+          "base_graphs": 2927,
+          "biconnected_bases": 2855,
+          "excluded_by_monodromy": 340708982,
+          "excluded_nonbiconnected": 72,
+          "parity_patterns": 5770,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 3748,
+          "voltage_assignments_total": 340712730,
+          "witnesses": 0
+        },
+        "20": {
+          "base_graphs": 30647,
+          "biconnected_bases": 30090,
+          "excluded_by_monodromy": 10742130792,
+          "excluded_nonbiconnected": 557,
+          "parity_patterns": 60654,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 2543346,
+          "voltage_assignments_total": 10744674138,
+          "witnesses": 0
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "7": {
+      "expected_all_connected_cubic_bases": {
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "ALL S3 three-sheet covers of connected biconnected cubic bases of orders 14,16,18,20 only",
+      "seconds": 960.986,
+      "shard": 7,
+      "shards": 16,
+      "statistics": {
+        "14": {
+          "base_graphs": 15,
+          "biconnected_bases": 12,
+          "excluded_by_monodromy": 240979,
+          "excluded_nonbiconnected": 3,
+          "parity_patterns": 37,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 1778,
+          "voltage_assignments_total": 242757,
+          "witnesses": 0
+        },
+        "16": {
+          "base_graphs": 225,
+          "biconnected_bases": 218,
+          "excluded_by_monodromy": 10760107,
+          "excluded_nonbiconnected": 7,
+          "parity_patterns": 549,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 45860,
+          "voltage_assignments_total": 10805967,
+          "witnesses": 0
+        },
+        "18": {
+          "base_graphs": 2631,
+          "biconnected_bases": 2531,
+          "excluded_by_monodromy": 307879316,
+          "excluded_nonbiconnected": 100,
+          "parity_patterns": 5254,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 2364130,
+          "voltage_assignments_total": 310243446,
+          "witnesses": 0
+        },
+        "20": {
+          "base_graphs": 27404,
+          "biconnected_bases": 27118,
+          "excluded_by_monodromy": 9666095574,
+          "excluded_nonbiconnected": 286,
+          "parity_patterns": 54566,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 107628,
+          "voltage_assignments_total": 9666203202,
+          "witnesses": 0
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "8": {
+      "expected_all_connected_cubic_bases": {
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "ALL S3 three-sheet covers of connected biconnected cubic bases of orders 14,16,18,20 only",
+      "seconds": 1220.248,
+      "shard": 8,
+      "shards": 16,
+      "statistics": {
+        "14": {
+          "base_graphs": 54,
+          "biconnected_bases": 53,
+          "excluded_by_monodromy": 938222,
+          "excluded_nonbiconnected": 1,
+          "parity_patterns": 144,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 6562,
+          "voltage_assignments_total": 944784,
+          "witnesses": 0
+        },
+        "16": {
+          "base_graphs": 248,
+          "biconnected_bases": 231,
+          "excluded_by_monodromy": 10750789,
+          "excluded_nonbiconnected": 17,
+          "parity_patterns": 547,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 15812,
+          "voltage_assignments_total": 10766601,
+          "witnesses": 0
+        },
+        "18": {
+          "base_graphs": 2714,
+          "biconnected_bases": 2569,
+          "excluded_by_monodromy": 304101986,
+          "excluded_nonbiconnected": 145,
+          "parity_patterns": 5150,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 364,
+          "voltage_assignments_total": 304102350,
+          "witnesses": 0
+        },
+        "20": {
+          "base_graphs": 28385,
+          "biconnected_bases": 27143,
+          "excluded_by_monodromy": 9735358601,
+          "excluded_nonbiconnected": 1242,
+          "parity_patterns": 55059,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 18178072,
+          "voltage_assignments_total": 9753536673,
+          "witnesses": 0
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "9": {
+      "expected_all_connected_cubic_bases": {
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "ALL S3 three-sheet covers of connected biconnected cubic bases of orders 14,16,18,20 only",
+      "seconds": 992.406,
+      "shard": 9,
+      "shards": 16,
+      "statistics": {
+        "14": {
+          "base_graphs": 35,
+          "biconnected_bases": 33,
+          "excluded_by_monodromy": 651312,
+          "excluded_nonbiconnected": 2,
+          "parity_patterns": 102,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 17910,
+          "voltage_assignments_total": 669222,
+          "witnesses": 0
+        },
+        "16": {
+          "base_graphs": 237,
+          "biconnected_bases": 223,
+          "excluded_by_monodromy": 9982598,
+          "excluded_nonbiconnected": 14,
+          "parity_patterns": 508,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 16366,
+          "voltage_assignments_total": 9998964,
+          "witnesses": 0
+        },
+        "18": {
+          "base_graphs": 2499,
+          "biconnected_bases": 2384,
+          "excluded_by_monodromy": 288040396,
+          "excluded_nonbiconnected": 115,
+          "parity_patterns": 4878,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 626,
+          "voltage_assignments_total": 288041022,
+          "witnesses": 0
+        },
+        "20": {
+          "base_graphs": 32375,
+          "biconnected_bases": 31706,
+          "excluded_by_monodromy": 11235546027,
+          "excluded_nonbiconnected": 669,
+          "parity_patterns": 63425,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 2448,
+          "voltage_assignments_total": 11235548475,
+          "witnesses": 0
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "10": {
+      "expected_all_connected_cubic_bases": {
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "ALL S3 three-sheet covers of connected biconnected cubic bases of orders 14,16,18,20 only",
+      "seconds": 1250.448,
+      "shard": 10,
+      "shards": 16,
+      "statistics": {
+        "14": {
+          "base_graphs": 50,
+          "biconnected_bases": 50,
+          "excluded_by_monodromy": 1066438,
+          "excluded_nonbiconnected": 0,
+          "parity_patterns": 172,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 62054,
+          "voltage_assignments_total": 1128492,
+          "witnesses": 0
+        },
+        "16": {
+          "base_graphs": 249,
+          "biconnected_bases": 234,
+          "excluded_by_monodromy": 12156457,
+          "excluded_nonbiconnected": 15,
+          "parity_patterns": 619,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 27320,
+          "voltage_assignments_total": 12183777,
+          "witnesses": 0
+        },
+        "18": {
+          "base_graphs": 2658,
+          "biconnected_bases": 2584,
+          "excluded_by_monodromy": 310371034,
+          "excluded_nonbiconnected": 74,
+          "parity_patterns": 5270,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 817196,
+          "voltage_assignments_total": 311188230,
+          "witnesses": 0
+        },
+        "20": {
+          "base_graphs": 28622,
+          "biconnected_bases": 28229,
+          "excluded_by_monodromy": 10047747782,
+          "excluded_nonbiconnected": 393,
+          "parity_patterns": 56722,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 384352,
+          "voltage_assignments_total": 10048132134,
+          "witnesses": 0
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "11": {
+      "expected_all_connected_cubic_bases": {
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "ALL S3 three-sheet covers of connected biconnected cubic bases of orders 14,16,18,20 only",
+      "seconds": 909.276,
+      "shard": 11,
+      "shards": 16,
+      "statistics": {
+        "14": {
+          "base_graphs": 38,
+          "biconnected_bases": 34,
+          "excluded_by_monodromy": 1066552,
+          "excluded_nonbiconnected": 4,
+          "parity_patterns": 172,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 61940,
+          "voltage_assignments_total": 1128492,
+          "witnesses": 0
+        },
+        "16": {
+          "base_graphs": 280,
+          "biconnected_bases": 266,
+          "excluded_by_monodromy": 12973030,
+          "excluded_nonbiconnected": 14,
+          "parity_patterns": 660,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 17750,
+          "voltage_assignments_total": 12990780,
+          "witnesses": 0
+        },
+        "18": {
+          "base_graphs": 2562,
+          "biconnected_bases": 2463,
+          "excluded_by_monodromy": 301412202,
+          "excluded_nonbiconnected": 99,
+          "parity_patterns": 5144,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 2335854,
+          "voltage_assignments_total": 303748056,
+          "witnesses": 0
+        },
+        "20": {
+          "base_graphs": 37690,
+          "biconnected_bases": 35799,
+          "excluded_by_monodromy": 12712266766,
+          "excluded_nonbiconnected": 1891,
+          "parity_patterns": 71762,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 156248,
+          "voltage_assignments_total": 12712423014,
+          "witnesses": 0
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "12": {
+      "expected_all_connected_cubic_bases": {
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "ALL S3 three-sheet covers of connected biconnected cubic bases of orders 14,16,18,20 only",
+      "seconds": 1011.09,
+      "shard": 12,
+      "shards": 16,
+      "statistics": {
+        "14": {
+          "base_graphs": 26,
+          "biconnected_bases": 25,
+          "excluded_by_monodromy": 340552,
+          "excluded_nonbiconnected": 1,
+          "parity_patterns": 52,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 620,
+          "voltage_assignments_total": 341172,
+          "witnesses": 0
+        },
+        "16": {
+          "base_graphs": 278,
+          "biconnected_bases": 263,
+          "excluded_by_monodromy": 12180194,
+          "excluded_nonbiconnected": 15,
+          "parity_patterns": 620,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 23266,
+          "voltage_assignments_total": 12203460,
+          "witnesses": 0
+        },
+        "18": {
+          "base_graphs": 1760,
+          "biconnected_bases": 1658,
+          "excluded_by_monodromy": 198048406,
+          "excluded_nonbiconnected": 102,
+          "parity_patterns": 3354,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 1940,
+          "voltage_assignments_total": 198050346,
+          "witnesses": 0
+        },
+        "20": {
+          "base_graphs": 30322,
+          "biconnected_bases": 29351,
+          "excluded_by_monodromy": 10484524307,
+          "excluded_nonbiconnected": 971,
+          "parity_patterns": 59187,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 275182,
+          "voltage_assignments_total": 10484799489,
+          "witnesses": 0
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "13": {
+      "expected_all_connected_cubic_bases": {
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "ALL S3 three-sheet covers of connected biconnected cubic bases of orders 14,16,18,20 only",
+      "seconds": 921.366,
+      "shard": 13,
+      "shards": 16,
+      "statistics": {
+        "14": {
+          "base_graphs": 30,
+          "biconnected_bases": 28,
+          "excluded_by_monodromy": 484378,
+          "excluded_nonbiconnected": 2,
+          "parity_patterns": 74,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 1136,
+          "voltage_assignments_total": 485514,
+          "witnesses": 0
+        },
+        "16": {
+          "base_graphs": 256,
+          "biconnected_bases": 242,
+          "excluded_by_monodromy": 11705622,
+          "excluded_nonbiconnected": 14,
+          "parity_patterns": 596,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 25446,
+          "voltage_assignments_total": 11731068,
+          "witnesses": 0
+        },
+        "18": {
+          "base_graphs": 2645,
+          "biconnected_bases": 2596,
+          "excluded_by_monodromy": 309475159,
+          "excluded_nonbiconnected": 49,
+          "parity_patterns": 5241,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 650,
+          "voltage_assignments_total": 309475809,
+          "witnesses": 0
+        },
+        "20": {
+          "base_graphs": 34988,
+          "biconnected_bases": 34470,
+          "excluded_by_monodromy": 12349173050,
+          "excluded_nonbiconnected": 518,
+          "parity_patterns": 69722,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 1870084,
+          "voltage_assignments_total": 12351043134,
+          "witnesses": 0
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "14": {
+      "expected_all_connected_cubic_bases": {
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "ALL S3 three-sheet covers of connected biconnected cubic bases of orders 14,16,18,20 only",
+      "seconds": 1420.152,
+      "shard": 14,
+      "shards": 16,
+      "statistics": {
+        "14": {
+          "base_graphs": 39,
+          "biconnected_bases": 38,
+          "excluded_by_monodromy": 588048,
+          "excluded_nonbiconnected": 1,
+          "parity_patterns": 90,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 2442,
+          "voltage_assignments_total": 590490,
+          "witnesses": 0
+        },
+        "16": {
+          "base_graphs": 212,
+          "biconnected_bases": 208,
+          "excluded_by_monodromy": 9887981,
+          "excluded_nonbiconnected": 4,
+          "parity_patterns": 505,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 51934,
+          "voltage_assignments_total": 9939915,
+          "witnesses": 0
+        },
+        "18": {
+          "base_graphs": 3347,
+          "biconnected_bases": 3260,
+          "excluded_by_monodromy": 387830311,
+          "excluded_nonbiconnected": 87,
+          "parity_patterns": 6569,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 62570,
+          "voltage_assignments_total": 387892881,
+          "witnesses": 0
+        },
+        "20": {
+          "base_graphs": 41578,
+          "biconnected_bases": 41351,
+          "excluded_by_monodromy": 14729153189,
+          "excluded_nonbiconnected": 227,
+          "parity_patterns": 83223,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 13551592,
+          "voltage_assignments_total": 14742704781,
+          "witnesses": 0
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "15": {
+      "expected_all_connected_cubic_bases": {
+        "14": 509,
+        "16": 4060,
+        "18": 41301,
+        "20": 510489
+      },
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "scope": "ALL S3 three-sheet covers of connected biconnected cubic bases of orders 14,16,18,20 only",
+      "seconds": 978.424,
+      "shard": 15,
+      "shards": 16,
+      "statistics": {
+        "14": {
+          "base_graphs": 9,
+          "biconnected_bases": 7,
+          "excluded_by_monodromy": 91330,
+          "excluded_nonbiconnected": 2,
+          "parity_patterns": 14,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 524,
+          "voltage_assignments_total": 91854,
+          "witnesses": 0
+        },
+        "16": {
+          "base_graphs": 248,
+          "biconnected_bases": 231,
+          "excluded_by_monodromy": 11219611,
+          "excluded_nonbiconnected": 17,
+          "parity_patterns": 573,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 58748,
+          "voltage_assignments_total": 11278359,
+          "witnesses": 0
+        },
+        "18": {
+          "base_graphs": 2228,
+          "biconnected_bases": 2110,
+          "excluded_by_monodromy": 253212579,
+          "excluded_nonbiconnected": 118,
+          "parity_patterns": 4289,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 48582,
+          "voltage_assignments_total": 253261161,
+          "witnesses": 0
+        },
+        "20": {
+          "base_graphs": 27472,
+          "biconnected_bases": 27001,
+          "excluded_by_monodromy": 9690324884,
+          "excluded_nonbiconnected": 471,
+          "parity_patterns": 54728,
+          "unknown_cutoffs": 0,
+          "verified_survivors": 4576132,
+          "voltage_assignments_total": 9694901016,
+          "witnesses": 0
+        }
+      },
+      "unknown_cutoffs": 0,
+      "witness_overflow": 0,
+      "witnesses": []
+    }
+  },
+  "merge": {
+    "exit_code": 0,
+    "output": "S3 bicon connected cubic base census OK; witnesses=0; cutoffs=0\n"
+  }
+}
