@@ -1,0 +1,67 @@
+{
+  "coverage": [
+    {
+      "completed_max_prime_count": 293,
+      "exact_tests": 142441,
+      "max_prime": 2381,
+      "min_max_prime": 2,
+      "nodes": 1187727450,
+      "pending_max_primes": [],
+      "signature_hits": 142441,
+      "size": 61,
+      "square_hits": 0,
+      "suffix_queries": 844124444
+    },
+    {
+      "completed_max_prime_count": 24,
+      "exact_tests": 761423,
+      "max_prime": 439,
+      "min_max_prime": 2,
+      "nodes": 14203074597,
+      "pending_max_primes": [],
+      "signature_hits": 761423,
+      "size": 62,
+      "square_hits": 0,
+      "suffix_queries": 9999018209
+    },
+    {
+      "completed_max_prime_count": 16,
+      "exact_tests": 1724314,
+      "max_prime": 397,
+      "min_max_prime": 2,
+      "nodes": 29133602351,
+      "pending_max_primes": [],
+      "signature_hits": 1724314,
+      "size": 63,
+      "square_hits": 0,
+      "suffix_queries": 15371550401
+    },
+    {
+      "completed_max_prime_count": 11,
+      "exact_tests": 120390,
+      "max_prime": 373,
+      "min_max_prime": 2,
+      "nodes": 4368211241,
+      "pending_max_primes": [],
+      "signature_hits": 120390,
+      "size": 64,
+      "square_hits": 0,
+      "suffix_queries": 1431676569
+    },
+    {
+      "completed_max_prime_count": 7,
+      "exact_tests": 61231,
+      "max_prime": 383,
+      "min_max_prime": 2,
+      "nodes": 344652640,
+      "pending_max_primes": [],
+      "signature_hits": 61231,
+      "size": 70,
+      "square_hits": 0,
+      "suffix_queries": 44726306
+    }
+  ],
+  "described_domain_exhausted": true,
+  "mathematical_status": "OPEN",
+  "problem": "Erd\u0151s #307"
+}
