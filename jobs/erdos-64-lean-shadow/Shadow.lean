@@ -156,8 +156,8 @@ theorem near_of_global_descent
       by_contra hnot
       obtain ⟨W,H,fw,dh,hsize,hnH,htransfer⟩ :=
         hstep V G hnear hnot
-      letI : Fintype W := fw
-      letI : DecidableRel H.Adj := dh
+      let _ : Fintype W := fw
+      let _ : DecidableRel H.Adj := dh
       have hlt : Fintype.card W < n := by
         rw [← hn]
         exact hsize
@@ -176,8 +176,8 @@ theorem erdos64_of_global_descent
         k ≥ 2 ∧ c.IsCycle ∧ c.length = 2 ^ k := by
   intro V G instV instG hmin
   rcases isEmpty_or_nonempty V with hempty | hnonempty
-  · letI : IsEmpty V := hempty
-    have hz : G.minDegree = 0 := SimpleGraph.minDegree_of_subsingleton
+  · let _ : IsEmpty V := hempty
+    have hz : G.minDegree = 0 := SimpleGraph.minDegree_of_subsingleton G
     omega
   · obtain ⟨w⟩ := hnonempty
     have hall : ∀ v, 3 ≤ G.degree v :=
