@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
+if command -v smsg >/dev/null 2>&1 && python3 -c 'from pysms.graph_builder import GraphEncodingBuilder' >/dev/null 2>&1; then
+  echo 'Using preinstalled SMS and PySMS.'
+  exit 0
+fi
 sudo apt-get update -qq
 sudo apt-get install -y -qq git cmake ninja-build build-essential pkg-config \
   libboost-all-dev libgmp-dev zlib1g-dev libtbb-dev

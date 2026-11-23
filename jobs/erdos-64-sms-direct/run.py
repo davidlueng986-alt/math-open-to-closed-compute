@@ -7,7 +7,7 @@ SMS + Glasgow subgraph solver + CaDiCaL. A timeout is UNKNOWN.
 Any SAT solution must be decoded, independently checked and then Lean formalized.
 The restricted n/degree family is not the universal theorem.
 """
-import json,os,sys,time,subprocess
+import json,os,sys,time,subprocess,shutil
 from pathlib import Path
 from pysms.graph_builder import GraphEncodingBuilder
 
@@ -30,7 +30,7 @@ def save_case(out,n,control=False):
 
 def solve(n,out,control=False,budget=18000):
     cnf,cyc,edges,lengths=save_case(out,n,control)
-    exe=str(Path.home()/".local/bin/smsg")
+    exe=shutil.which("smsg") or str(Path.home()/".local/bin/smsg")
     cmd=[exe,"--vertices",str(n),"--connected","--cutoff","0",
          "--forbidden-subgraph-file",str(cyc.absolute()),
          "--dimacs",str(cnf.absolute())]

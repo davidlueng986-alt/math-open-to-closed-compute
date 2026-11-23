@@ -1,0 +1,134 @@
+name: sharded-toolbox-run
+
+# Runs one job from jobs/<name>/ split into independent shards.
+# Started manually using a prebuilt GHCR toolbox.
+
+on:
+  workflow_dispatch:
+    inputs:
+      job:
+        description: Job folder under jobs/
+        required: true
+        default: selftest
+        type: string
+      shards:
+        description: Number of shards (1-256)
+        required: true
+        default: 4
+        type: number
+      timeout_minutes:
+        description: Per-shard time limit in minutes (GitHub stops any job at 360)
+        required: true
+        default: 330
+        type: number
+      toolbox:
+        description: Prebuilt toolbox image
+        required: true
+        type: choice
+        default: sat
+        options: [sat, sage, lean]
+      max_parallel:
+        description: Shards running at once (the Free plan allows 20 concurrent jobs)
+        required: true
+        default: 20
+        type: number
+
+permissions:
+  contents: read
+  packages: read
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: sharded-toolbox-run-${{ inputs.job }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: plan
+        env:
+          JOB: ${{ inputs.job }}
+          SHARDS: ${{ inputs.shards }}
+          TIMEOUT_MINUTES: ${{ inputs.timeout_minutes }}
+          MAX_PARALLEL: ${{ inputs.max_parallel }}
+        run: python3 scripts/plan.py >> "$GITHUB_OUTPUT"
+
+  shard:
+    needs: plan
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-${{ inputs.toolbox }}:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    timeout-minutes: ${{ inputs.timeout_minutes }}
+    strategy:
+      fail-fast: false
+      max-parallel: ${{ inputs.max_parallel }}
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up the job
+        env:
+          JOB: ${{ inputs.job }}
+        run: |
+          if [ -f "jobs/$JOB/setup.sh" ]; then bash "jobs/$JOB/setup.sh"; fi
+      - name: Run shard ${{ matrix.shard }}
+        env:
+          JOB: ${{ inputs.job }}
+          SHARD: ${{ matrix.shard }}
+          SHARDS: ${{ inputs.shards }}
+        run: |
+          mkdir -p out
+          start=$(date +%s)
+          bash "jobs/$JOB/run.sh" "$SHARD" "$SHARDS" out
+          printf '{"shard": %s, "seconds": %s}\n' "$SHARD" "$(( $(date +%s) - start ))" > out/_timing.json
+      - name: Keep this shard's output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shard-${{ matrix.shard }}
+          path: out/
+          retention-days: 7
+          if-no-files-found: warn
+
+  collect:
+    needs: [plan, shard]
+    if: ${{ always() && needs.plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: shard-*
+          path: shards
+      - name: Merge shard results
+        env:
+          JOB: ${{ inputs.job }}
+          SHARDS: ${{ inputs.shards }}
+        run: python3 scripts/collect.py
+      - name: Keep the summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: summary
+          path: summary/
+          retention-days: 30
+      - name: Commit the summary to the results branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JOB: ${{ inputs.job }}
+        run: bash scripts/commit_results.sh
+      - name: Fail the run if any shard is missing or the merge failed
+        run: python3 scripts/collect.py --check
