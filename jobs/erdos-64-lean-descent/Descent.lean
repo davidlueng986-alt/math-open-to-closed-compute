@@ -177,7 +177,7 @@ theorem degree_add_new_edge_left {V : Type*} [Fintype V] [DecidableEq V]
         · exact Or.inl rfl
         · exact False.elim (hab h')
     · rintro (rfl | h)
-      · exact Or.inr ⟨Or.inl ⟨rfl, rfl⟩, hab⟩
+      · exact Or.inr ⟨Or.inl ⟨by trivial, by trivial⟩, hab⟩
       · exact Or.inl h
   have hb : b ∉ G.neighborFinset a := by
     exact fun h => hn ((G.mem_neighborFinset a b).mp h)
@@ -200,8 +200,8 @@ theorem repair_two_same_color_ports {V : Type*} [Fintype V] [DecidableEq V]
   have hn : ¬ G.Adj a b := fun h => hc a b h hcolor
   have hn' : ¬ G.Adj b a := fun h => hn h.symm
   have hda := degree_add_new_edge_left G a b hab hn
-  have hdb := degree_add_new_edge_left G b a hab.symm hn'
-  rw [SimpleGraph.edge_comm b a] at hdb
+  have hdb : (G ⊔ SimpleGraph.edge a b).degree b = G.degree b + 1 := by
+    simpa only [SimpleGraph.edge_comm b a] using degree_add_new_edge_left G b a hab.symm hn'
   refine ⟨same_color_edge_safe color hc a b hab hcolor hG, ?_⟩
   intro x hx
   by_cases hxa : x = a
