@@ -1,6 +1,6 @@
 FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl git zstd build-essential && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl git zstd build-essential python3 sudo && rm -rf /var/lib/apt/lists/*
 ENV ELAN_HOME=/opt/elan
 ENV PATH="/opt/elan/bin:$PATH"
 RUN curl -fsSL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none && elan toolchain install leanprover/lean4:v4.36.0 && elan default leanprover/lean4:v4.36.0

@@ -1,0 +1,52 @@
+name: Verify published math toolboxes
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Build math toolboxes"]
+    types: [completed]
+permissions:
+  contents: read
+  packages: read
+jobs:
+  verify:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        toolbox: [sat, sage, lean]
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-${{ matrix.toolbox }}:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify installed tool and run repository selftest
+        env:
+          TOOLBOX: ${{ matrix.toolbox }}
+        run: |
+          set -euo pipefail
+          case "$TOOLBOX" in
+            sat)
+              bash jobs/erdos-64-sms-direct/setup.sh
+              python3 -c 'from pysms.graph_builder import GraphEncodingBuilder; import pysat'
+              command -v smsg
+              ;;
+            sage)
+              sage -c 'assert factor(360).value() == 360'
+              ;;
+            lean)
+              cd /opt/mathlib4
+              printf 'import Mathlib\n#check Nat.add_comm\n' > /tmp/verify.lean
+              lake env lean /tmp/verify.lean
+              cd "$GITHUB_WORKSPACE"
+              ;;
+          esac
+          mkdir -p shards/shard-0 summary
+          bash jobs/selftest/run.sh 0 1 shards/shard-0
+          python3 jobs/selftest/merge.py shards summary

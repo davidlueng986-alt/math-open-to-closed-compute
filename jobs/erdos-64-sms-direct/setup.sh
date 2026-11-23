@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-if command -v smsg >/dev/null 2>&1 && python3 -c 'from pysms.graph_builder import GraphEncodingBuilder' >/dev/null 2>&1; then
+if [ "${MATH_COMPUTE_SMS_REV:-}" = "464f12f" ] && command -v smsg >/dev/null 2>&1 && python3 -c 'from pysms.graph_builder import GraphEncodingBuilder' >/dev/null 2>&1; then
   echo 'Using preinstalled SMS and PySMS.'
   exit 0
 fi

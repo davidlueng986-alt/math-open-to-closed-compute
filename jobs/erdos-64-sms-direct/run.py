@@ -30,7 +30,9 @@ def save_case(out,n,control=False):
 
 def solve(n,out,control=False,budget=18000):
     cnf,cyc,edges,lengths=save_case(out,n,control)
-    exe=shutil.which("smsg") or str(Path.home()/".local/bin/smsg")
+    exe=str(Path.home()/".local/bin/smsg")
+    if not Path(exe).is_file():
+        exe=shutil.which("smsg") or exe
     cmd=[exe,"--vertices",str(n),"--connected","--cutoff","0",
          "--forbidden-subgraph-file",str(cyc.absolute()),
          "--dimacs",str(cnf.absolute())]
