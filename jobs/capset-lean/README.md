@@ -12,6 +12,8 @@ For a cap `K`, let `K₀`, `K₁`, `K₂` be its three layers. For any finite su
 
 The formal statement does not need subset assumptions: it counts the original endpoints that are absent from each actual cap layer. It follows by charging each representation to a deleted endpoint; addition cancellation makes each endpoint occur at most once for a fixed sum.
 
+The new two-plus-two deletion theorem proves that a surviving hole with at least three original representations lies in the union of two explicit double-translate intersections. Its cardinality is consequently at most the sum of their cardinalities; a cap-layer corollary derives the hole condition from the actual cap. This is the combinatorial step behind the new capacity-40 bound for two almost-complete Hill layers.
+
 The source also proves exact ordered-pair/fiber counting, mixed-sum avoidance for the actual three layers, disjointness of the negative cap and its restricted sumset, and the cardinality bound `|S| + |S restricted-plus S| ≤ |G|`. Nonempty examples attain both bounds.
 
 ## Reproduce

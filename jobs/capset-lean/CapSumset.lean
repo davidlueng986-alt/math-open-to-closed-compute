@@ -176,6 +176,7 @@ theorem card_add_restrictedSumset_le [Fintype G]
 
 /-- A nonempty cap with two distinct points; verified by Lean's kernel. -/
 theorem two_point_cap : IsCap ({0, 1} : Finset (ZMod 3)) := by
+  unfold IsCap
   decide
 
 /-- The restricted-sumset cardinality bound is attained. -/
@@ -190,7 +191,181 @@ theorem deletion_bound_sharp :
     (representations ({0, 1} : Finset (ZMod 3)) {0, 1} (-1)).card = 1 ∧
     (({0, 1} : Finset (ZMod 3)) \ {0}).card +
       (({0, 1} : Finset (ZMod 3)) \ {0, 1}).card = 1 := by
+  unfold MixedAvoid
   decide
+
+/-! ## Two-plus-two deletion holes and double-translate intersections -/
+
+/-- Translation of a finite set. -/
+def translate (a : G) (S : Finset G) : Finset G := S.image fun b => a + b
+
+theorem mem_translate_iff (a t : G) (S : Finset G) :
+    t ∈ translate a S ↔ t - a ∈ S := by
+  classical
+  constructor
+  · intro ht
+    rcases Finset.mem_image.mp ht with ⟨b, hb, hbt⟩
+    have heq : t - a = b := by
+      calc
+        t - a = (a + b) - a := by rw [hbt]
+        _ = b := by abel
+    simpa [heq] using hb
+  · intro ht
+    exact Finset.mem_image.mpr ⟨t - a, ht, by abel⟩
+
+/-- At most one of a pair can pass a predicate unless both pass. -/
+theorem pair_filter_card_le_one (a b : G) (P : G → Prop) [DecidablePred P]
+    (h : ¬ (P a ∧ P b)) :
+    (({a, b} : Finset G).filter P).card ≤ 1 := by
+  apply Finset.card_le_one.mpr
+  intro x hx y hy
+  have hx' : (x = a ∨ x = b) ∧ P x := by simpa using hx
+  have hy' : (y = a ∨ y = b) ∧ P y := by simpa using hy
+  aesop
+
+/-- Every original representation of a hole uses an active deleted endpoint. -/
+theorem representation_card_le_active_deletions
+    (A B D₁ D₂ : Finset G) (t : G)
+    (hHole : representationFirst (A \ D₁) (B \ D₂) t = ∅) :
+    (representations A B t).card ≤
+      (representationFirst D₁ B t).card + (representationFirst D₂ A t).card := by
+  classical
+  have hsub : representationFirst A B t ⊆
+      representationFirst D₁ B t ∪
+        (representationFirst D₂ A t).image (fun b => t - b) := by
+    intro a ha
+    have ha' : a ∈ A ∧ t - a ∈ B := by
+      simpa [representationFirst] using ha
+    by_cases haD : a ∈ D₁
+    · apply Finset.mem_union.mpr
+      left
+      exact Finset.mem_filter.mpr ⟨haD, ha'.2⟩
+    · have hbD : t - a ∈ D₂ := by
+        by_contra hbD
+        have hs : a ∈ representationFirst (A \ D₁) (B \ D₂) t := by
+          apply Finset.mem_filter.mpr
+          exact ⟨Finset.mem_sdiff.mpr ⟨ha'.1, haD⟩,
+            Finset.mem_sdiff.mpr ⟨ha'.2, hbD⟩⟩
+        rw [hHole] at hs
+        exact Finset.not_mem_empty a hs
+      apply Finset.mem_union.mpr
+      right
+      apply Finset.mem_image.mpr
+      refine ⟨t - a, ?_, by abel⟩
+      apply Finset.mem_filter.mpr
+      refine ⟨hbD, ?_⟩
+      have heq : t - (t - a) = a := by abel
+      simpa [heq] using ha'.1
+  calc
+    (representations A B t).card = (representationFirst A B t).card :=
+      representations_card_eq A B t
+    _ ≤ (representationFirst D₁ B t ∪
+        (representationFirst D₂ A t).image (fun b => t - b)).card :=
+      Finset.card_le_card hsub
+    _ ≤ (representationFirst D₁ B t).card +
+        ((representationFirst D₂ A t).image (fun b => t - b)).card :=
+      Finset.card_union_le _ _
+    _ ≤ (representationFirst D₁ B t).card + (representationFirst D₂ A t).card :=
+      Nat.add_le_add_left Finset.card_image_le _
+
+/--
+After deleting two endpoints on each side, a hole with at least three
+original representations belongs to one of two double-translate
+intersections.  No distinctness or membership hypotheses on the named
+deleted endpoints are needed for this covering statement.
+-/
+theorem three_representation_hole_mem_double_translate
+    (A B : Finset G) (a₁ a₂ b₁ b₂ t : G)
+    (hHole : representationFirst (A \ {a₁, a₂}) (B \ {b₁, b₂}) t = ∅)
+    (hThree : 3 ≤ (representations A B t).card) :
+    t ∈ (translate a₁ B ∩ translate a₂ B) ∪
+      (translate b₁ A ∩ translate b₂ A) := by
+  classical
+  by_contra hNot
+  have hA : ¬ (t - a₁ ∈ B ∧ t - a₂ ∈ B) := by
+    intro hBoth
+    apply hNot
+    apply Finset.mem_union.mpr
+    left
+    exact Finset.mem_inter.mpr ⟨(mem_translate_iff a₁ t B).mpr hBoth.1,
+      (mem_translate_iff a₂ t B).mpr hBoth.2⟩
+  have hB : ¬ (t - b₁ ∈ A ∧ t - b₂ ∈ A) := by
+    intro hBoth
+    apply hNot
+    apply Finset.mem_union.mpr
+    right
+    exact Finset.mem_inter.mpr ⟨(mem_translate_iff b₁ t A).mpr hBoth.1,
+      (mem_translate_iff b₂ t A).mpr hBoth.2⟩
+  have hca : (representationFirst ({a₁, a₂} : Finset G) B t).card ≤ 1 :=
+    pair_filter_card_le_one a₁ a₂ (fun a => t - a ∈ B) hA
+  have hcb : (representationFirst ({b₁, b₂} : Finset G) A t).card ≤ 1 :=
+    pair_filter_card_le_one b₁ b₂ (fun b => t - b ∈ A) hB
+  have hle := representation_card_le_active_deletions A B {a₁, a₂} {b₁, b₂} t hHole
+  omega
+
+/-- Points in a specified finite region with at least three representations. -/
+def highRepresentationPoints (A B Z : Finset G) : Finset G :=
+  Z.filter fun t => 3 ≤ (representations A B t).card
+
+/-- A finite family of deletion holes is covered by the two intersections. -/
+theorem high_representation_holes_subset
+    (A B Z : Finset G) (a₁ a₂ b₁ b₂ : G)
+    (hHole : ∀ t ∈ Z,
+      representationFirst (A \ {a₁, a₂}) (B \ {b₁, b₂}) t = ∅) :
+    highRepresentationPoints A B Z ⊆
+      (translate a₁ B ∩ translate a₂ B) ∪
+        (translate b₁ A ∩ translate b₂ A) := by
+  intro t ht
+  have ht' : t ∈ Z ∧ 3 ≤ (representations A B t).card := by
+    simpa [highRepresentationPoints] using ht
+  exact three_representation_hole_mem_double_translate A B a₁ a₂ b₁ b₂ t
+    (hHole t ht'.1) ht'.2
+
+/-- The covering theorem yields a concrete cardinality estimate. -/
+theorem high_representation_holes_card_le
+    (A B Z : Finset G) (a₁ a₂ b₁ b₂ : G)
+    (hHole : ∀ t ∈ Z,
+      representationFirst (A \ {a₁, a₂}) (B \ {b₁, b₂}) t = ∅) :
+    (highRepresentationPoints A B Z).card ≤
+      (translate a₁ B ∩ translate a₂ B).card +
+        (translate b₁ A ∩ translate b₂ A).card := by
+  calc
+    (highRepresentationPoints A B Z).card ≤
+        ((translate a₁ B ∩ translate a₂ B) ∪
+          (translate b₁ A ∩ translate b₂ A)).card :=
+      Finset.card_le_card (high_representation_holes_subset A B Z a₁ a₂ b₁ b₂ hHole)
+    _ ≤ (translate a₁ B ∩ translate a₂ B).card +
+        (translate b₁ A ∩ translate b₂ A).card := Finset.card_union_le _ _
+
+/-- Cap slices satisfy the deletion-hole hypothesis needed by the new cover. -/
+theorem cap_slice_deletion_holes [Fintype G]
+    {K : Finset (G × ZMod 3)} (hK : IsCap K)
+    (A B D₁ D₂ : Finset G)
+    (hA : A \ D₁ ⊆ slice K 0) (hB : B \ D₂ ⊆ slice K 1) :
+    ∀ t ∈ negativeSet (slice K 2),
+      representationFirst (A \ D₁) (B \ D₂) t = ∅ := by
+  intro t ht
+  rcases Finset.mem_image.mp ht with ⟨c, hc, rfl⟩
+  apply Finset.eq_empty_iff_forall_not_mem.mpr
+  intro a ha
+  have ha' : a ∈ A \ D₁ ∧ -c - a ∈ B \ D₂ := by
+    simpa [representationFirst] using ha
+  exact cap_slices_mixed hK a (hA ha'.1) (-c - a) (hB ha'.2) c hc (by abel)
+
+/--
+Cap-specific version of the two-plus-two intersection bound.  The right
+side counts overlaps of explicit translates, not an assumed hole bound.
+-/
+theorem cap_two_deletion_high_holes_card_le [Fintype G]
+    {K : Finset (G × ZMod 3)} (hK : IsCap K)
+    (A B : Finset G) (a₁ a₂ b₁ b₂ : G)
+    (hA : A \ {a₁, a₂} ⊆ slice K 0)
+    (hB : B \ {b₁, b₂} ⊆ slice K 1) :
+    (highRepresentationPoints A B (negativeSet (slice K 2))).card ≤
+      (translate a₁ B ∩ translate a₂ B).card +
+        (translate b₁ A ∩ translate b₂ A).card := by
+  exact high_representation_holes_card_le A B (negativeSet (slice K 2))
+    a₁ a₂ b₁ b₂ (cap_slice_deletion_holes hK A B {a₁, a₂} {b₁, b₂} hA hB)
 
 end Capset
 
@@ -203,3 +378,12 @@ end Capset
 #print axioms Capset.two_point_cap
 #print axioms Capset.two_point_packing_sharp
 #print axioms Capset.deletion_bound_sharp
+
+#print axioms Capset.mem_translate_iff
+#print axioms Capset.pair_filter_card_le_one
+#print axioms Capset.representation_card_le_active_deletions
+#print axioms Capset.three_representation_hole_mem_double_translate
+#print axioms Capset.high_representation_holes_subset
+#print axioms Capset.high_representation_holes_card_le
+#print axioms Capset.cap_slice_deletion_holes
+#print axioms Capset.cap_two_deletion_high_holes_card_le
