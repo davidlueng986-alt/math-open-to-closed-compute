@@ -1,1 +1,1 @@
-E073 2026-11-24 bounded proof-producing case census
+E073 retry with explicit GNU feature macro for DRAT-trim

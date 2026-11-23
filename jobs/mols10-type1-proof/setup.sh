@@ -7,7 +7,7 @@ git -C "$d/cadical" checkout -q 6b3d70b9ce00ecbce3f829bab76d185f0e92618c
 sudo install "$d/cadical/build/cadical" /usr/local/bin/cadical
 git clone -q https://github.com/marijnheule/drat-trim.git "$d/drat-trim"
 git -C "$d/drat-trim" checkout -q 2e3b2dc0ecf938addbd779d42877b6ed69d9a985
-(cd "$d/drat-trim"; make drat-trim)
+(cd "$d/drat-trim"; gcc -D_GNU_SOURCE -std=c99 -O2 drat-trim.c -o drat-trim)
 sudo install "$d/drat-trim/drat-trim" /usr/local/bin/drat-trim
 cadical --version
 rm -rf "$d"
