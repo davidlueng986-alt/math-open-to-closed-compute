@@ -4,7 +4,8 @@ on:
   push:
     branches: ['capset/cap062-sumset']
     paths:
-      - 'jobs/capset-lean/**'
+      - 'jobs/capset-lean/CapSumset.lean'
+      - 'jobs/capset-lean/audit.py'
       - '.github/workflows/capset-sumset-lean.yml'
   workflow_dispatch:
 

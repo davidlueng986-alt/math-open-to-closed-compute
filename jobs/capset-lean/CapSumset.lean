@@ -372,6 +372,86 @@ theorem cap_two_deletion_high_holes_card_le [Fintype G]
   exact high_representation_holes_card_le A B (negativeSet (slice K 2))
     a₁ a₂ b₁ b₂ (cap_slice_deletion_holes hK A B {a₁, a₂} {b₁, b₂} hA hB)
 
+/-! ## Four-representation refinement -/
+
+/-- Four representations of a two-plus-two deletion hole force both overlaps. -/
+theorem four_representation_hole_mem_both_double_translates
+    (A B : Finset G) (a₁ a₂ b₁ b₂ t : G)
+    (hHole : representationFirst (A \ {a₁, a₂}) (B \ {b₁, b₂}) t = ∅)
+    (hFour : 4 ≤ (representations A B t).card) :
+    t ∈ (translate a₁ B ∩ translate a₂ B) ∩
+      (translate b₁ A ∩ translate b₂ A) := by
+  classical
+  have hA2 : (representationFirst ({a₁, a₂} : Finset G) B t).card ≤ 2 := by
+    calc
+      _ ≤ ({a₁, a₂} : Finset G).card := Finset.card_filter_le _ _
+      _ ≤ 2 := Finset.card_le_two
+  have hB2 : (representationFirst ({b₁, b₂} : Finset G) A t).card ≤ 2 := by
+    calc
+      _ ≤ ({b₁, b₂} : Finset G).card := Finset.card_filter_le _ _
+      _ ≤ 2 := Finset.card_le_two
+  have hle := representation_card_le_active_deletions A B {a₁, a₂} {b₁, b₂} t hHole
+  apply Finset.mem_inter.mpr
+  constructor
+  · by_contra hNot
+    have hA : ¬ (t - a₁ ∈ B ∧ t - a₂ ∈ B) := by
+      intro hBoth
+      apply hNot
+      exact Finset.mem_inter.mpr ⟨(mem_translate_iff a₁ t B).mpr hBoth.1,
+        (mem_translate_iff a₂ t B).mpr hBoth.2⟩
+    have hA1 : (representationFirst ({a₁, a₂} : Finset G) B t).card ≤ 1 :=
+      pair_filter_card_le_one a₁ a₂ (fun a => t - a ∈ B) hA
+    omega
+  · by_contra hNot
+    have hB : ¬ (t - b₁ ∈ A ∧ t - b₂ ∈ A) := by
+      intro hBoth
+      apply hNot
+      exact Finset.mem_inter.mpr ⟨(mem_translate_iff b₁ t A).mpr hBoth.1,
+        (mem_translate_iff b₂ t A).mpr hBoth.2⟩
+    have hB1 : (representationFirst ({b₁, b₂} : Finset G) A t).card ≤ 1 :=
+      pair_filter_card_le_one b₁ b₂ (fun b => t - b ∈ A) hB
+    omega
+
+/-- The four-representation holes lie in the intersection, not just its union. -/
+theorem four_representation_holes_card_le
+    (A B Z : Finset G) (a₁ a₂ b₁ b₂ : G)
+    (hHole : ∀ t ∈ Z,
+      representationFirst (A \ {a₁, a₂}) (B \ {b₁, b₂}) t = ∅) :
+    (Z.filter fun t => 4 ≤ (representations A B t).card).card ≤
+      ((translate a₁ B ∩ translate a₂ B) ∩
+        (translate b₁ A ∩ translate b₂ A)).card := by
+  apply Finset.card_le_card
+  intro t ht
+  have ht' : t ∈ Z ∧ 4 ≤ (representations A B t).card := by simpa using ht
+  exact four_representation_hole_mem_both_double_translates A B a₁ a₂ b₁ b₂ t
+    (hHole t ht'.1) ht'.2
+
+/-! ## A genuine cap realizing all deletion-hole hypotheses -/
+
+def squareCap : Finset (ZMod 3 × ZMod 3) :=
+  {(0, 0), (0, 1), (1, 0), (1, 1)}
+
+def squareDeletion : Finset (ZMod 3 × ZMod 3) := {(0, 0), (0, 1)}
+
+def fivePointLayerCap : Finset ((ZMod 3 × ZMod 3) × ZMod 3) :=
+  {((1, 0), 0), ((1, 1), 0), ((1, 0), 1), ((1, 1), 1), ((2, 2), 2)}
+
+/--
+A nonempty actual cap with two-point deletions on each enlarged cap layer
+and a third-layer point whose negation originally had four representations.
+This witnesses consistency of every substantive hypothesis of the new cover.
+-/
+theorem two_deletion_cap_nonvacuous :
+    IsCap squareCap ∧ IsCap fivePointLayerCap ∧
+    squareCap \ squareDeletion = slice fivePointLayerCap 0 ∧
+    squareCap \ squareDeletion = slice fivePointLayerCap 1 ∧
+    ((2, 2) : ZMod 3 × ZMod 3) ∈ slice fivePointLayerCap 2 ∧
+    representationFirst (squareCap \ squareDeletion) (squareCap \ squareDeletion)
+      ((1, 1) : ZMod 3 × ZMod 3) = ∅ ∧
+    (representations squareCap squareCap ((1, 1) : ZMod 3 × ZMod 3)).card = 4 := by
+  unfold IsCap
+  decide
+
 end Capset
 
 #print axioms Capset.representations_card_eq
@@ -392,3 +472,7 @@ end Capset
 #print axioms Capset.high_representation_holes_card_le
 #print axioms Capset.cap_slice_deletion_holes
 #print axioms Capset.cap_two_deletion_high_holes_card_le
+
+#print axioms Capset.four_representation_hole_mem_both_double_translates
+#print axioms Capset.four_representation_holes_card_le
+#print axioms Capset.two_deletion_cap_nonvacuous

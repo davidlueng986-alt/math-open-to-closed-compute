@@ -28,7 +28,7 @@ def main():
         dependencies[name] = sorted(used)
     result = {
         "status": "PASS",
-        "scope": "Named cap and sumset lemmas only; not a formal proof of r_3(7) <= 284 or the exact maximum.",
+        "scope": "Named cap and sumset lemmas only; not a formal proof of a seven-dimensional numerical bound or the exact maximum.",
         "source_sha256": hashlib.sha256(source_path.read_bytes()).hexdigest(),
         "lean": "4.36.0",
         "mathlib": "fc4f59e577feb1a4956671bc04ac18aaaf8cd842",
