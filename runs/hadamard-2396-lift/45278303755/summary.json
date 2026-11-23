@@ -1,0 +1,924 @@
+{
+  "job": "hadamard-2396-lift",
+  "run_id": "45278303755",
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45278303755",
+  "commit": "9f90d309f16e9b86abd3dd470a3ec521fff36459",
+  "shards_expected": 16,
+  "shards_with_result": 16,
+  "missing_shards": [],
+  "seconds_per_shard": {
+    "0": 1,
+    "1": 1,
+    "2": 496,
+    "3": 1,
+    "4": 1,
+    "5": 1,
+    "6": 19,
+    "7": 11,
+    "8": 2,
+    "9": 2,
+    "10": 1,
+    "11": 2,
+    "12": 0,
+    "13": 1,
+    "14": 1,
+    "15": 1
+  },
+  "complete": true,
+  "results": {
+    "0": {
+      "shard": 0,
+      "shards": 16,
+      "seed_count": 256,
+      "statuses": {
+        "inconsistent": 236,
+        "norm_rejected": 20
+      },
+      "consistent_dimensions": {
+        "18": 9,
+        "16": 5,
+        "17": 4,
+        "20": 2
+      },
+      "signings_evaluated": 0,
+      "norm_and_mod16": 0,
+      "norm_and_mod32": 0,
+      "exact_projection_signings": 0,
+      "best": null,
+      "mod32_example": null,
+      "enumerated": []
+    },
+    "1": {
+      "shard": 1,
+      "shards": 16,
+      "seed_count": 256,
+      "statuses": {
+        "inconsistent": 245,
+        "norm_rejected": 10,
+        "exhausted": 1
+      },
+      "consistent_dimensions": {
+        "17": 3,
+        "18": 2,
+        "20": 1,
+        "16": 4,
+        "22": 1
+      },
+      "signings_evaluated": 65536,
+      "norm_and_mod16": 4096,
+      "norm_and_mod32": 0,
+      "exact_projection_signings": 0,
+      "best": {
+        "seed": 2753,
+        "row_sums": [
+          9,
+          -15,
+          17,
+          -2
+        ],
+        "supports": [
+          "0x9188001c126900b40b4025920e000462400",
+          "0xe00c40282204908a09241442481105008c01c",
+          "0xa20219680e8023542d0ab1005c05a6101140",
+          "0x20403080103200c401024a188b10431c00022"
+        ],
+        "negative": [
+          "0x108000c004800a40b0000000c000420000",
+          "0xc00400282004100209201042080105000800c",
+          "0x2202192004000200010010000c00a2100100",
+          "0x403080100000c4000048180010010c00020"
+        ],
+        "score": [
+          39936,
+          64,
+          56
+        ]
+      },
+      "mod32_example": null,
+      "enumerated": [
+        {
+          "seed": 2753,
+          "dim": 16,
+          "samples": 65536,
+          "norm_hits": 4096,
+          "mod32_hits": 0,
+          "exact": 0
+        }
+      ]
+    },
+    "2": {
+      "shard": 2,
+      "shards": 16,
+      "seed_count": 256,
+      "statuses": {
+        "inconsistent": 235,
+        "norm_rejected": 20,
+        "exhausted": 1
+      },
+      "consistent_dimensions": {
+        "18": 7,
+        "16": 6,
+        "20": 3,
+        "17": 4,
+        "24": 1
+      },
+      "signings_evaluated": 16777216,
+      "norm_and_mod16": 16777216,
+      "norm_and_mod32": 0,
+      "exact_projection_signings": 0,
+      "best": {
+        "seed": 2466,
+        "row_sums": [
+          17,
+          -7,
+          -15,
+          -6
+        ],
+        "supports": [
+          "0x1846aa054c1a8000560ca815588600000",
+          "0x2908410012800617ad7a1800520020842500",
+          "0xcd4f4380441032840000085302088070bcacc",
+          "0x14020515040589914006100748204080101800"
+        ],
+        "negative": [
+          "0xa044818000044042804000200000",
+          "0x808400000000207a9780000420000840100",
+          "0xcd0d0080041030000000081102088060a8a00",
+          "0x14020405000180914002100400000000101800"
+        ],
+        "score": [
+          25088,
+          48,
+          47
+        ]
+      },
+      "mod32_example": null,
+      "enumerated": [
+        {
+          "seed": 2466,
+          "dim": 24,
+          "samples": 16777216,
+          "norm_hits": 16777216,
+          "mod32_hits": 0,
+          "exact": 0
+        }
+      ]
+    },
+    "3": {
+      "shard": 3,
+      "shards": 16,
+      "seed_count": 256,
+      "statuses": {
+        "inconsistent": 250,
+        "norm_rejected": 5,
+        "exhausted": 1
+      },
+      "consistent_dimensions": {
+        "17": 3,
+        "18": 2,
+        "22": 1
+      },
+      "signings_evaluated": 131072,
+      "norm_and_mod16": 0,
+      "norm_and_mod32": 0,
+      "exact_projection_signings": 0,
+      "best": null,
+      "mod32_example": null,
+      "enumerated": [
+        {
+          "seed": 3059,
+          "dim": 17,
+          "samples": 131072,
+          "norm_hits": 0,
+          "mod32_hits": 0,
+          "exact": 0
+        }
+      ]
+    },
+    "4": {
+      "shard": 4,
+      "shards": 16,
+      "seed_count": 256,
+      "statuses": {
+        "inconsistent": 243,
+        "norm_rejected": 12,
+        "exhausted": 1
+      },
+      "consistent_dimensions": {
+        "16": 5,
+        "17": 3,
+        "18": 3,
+        "20": 1,
+        "24": 1
+      },
+      "signings_evaluated": 65536,
+      "norm_and_mod16": 16384,
+      "norm_and_mod32": 0,
+      "exact_projection_signings": 0,
+      "best": {
+        "seed": 2372,
+        "row_sums": [
+          -3,
+          21,
+          -7,
+          -10
+        ],
+        "supports": [
+          "0x806aa2608000b1448048a340004191558040",
+          "0x32d00008e090408320c130408241c40002d30",
+          "0x1c50101910428b420961a410b450822602028e",
+          "0x1049591003a095004420056041040808040012"
+        ],
+        "negative": [
+          "0x4a0200800090408048a200000011148000",
+          "0x120000082000000100c020000041040000120",
+          "0x4001019000282400161a40094400020020204",
+          "0x10085110018085000400012001040808040000"
+        ],
+        "score": [
+          33280,
+          48,
+          50
+        ]
+      },
+      "mod32_example": null,
+      "enumerated": [
+        {
+          "seed": 2372,
+          "dim": 16,
+          "samples": 65536,
+          "norm_hits": 16384,
+          "mod32_hits": 0,
+          "exact": 0
+        }
+      ]
+    },
+    "5": {
+      "shard": 5,
+      "shards": 16,
+      "seed_count": 256,
+      "statuses": {
+        "inconsistent": 250,
+        "norm_rejected": 6
+      },
+      "consistent_dimensions": {
+        "19": 3,
+        "17": 1,
+        "16": 2
+      },
+      "signings_evaluated": 0,
+      "norm_and_mod16": 0,
+      "norm_and_mod32": 0,
+      "exact_projection_signings": 0,
+      "best": null,
+      "mod32_example": null,
+      "enumerated": []
+    },
+    "6": {
+      "shard": 6,
+      "shards": 16,
+      "seed_count": 256,
+      "statuses": {
+        "inconsistent": 231,
+        "exhausted": 6,
+        "norm_rejected": 19
+      },
+      "consistent_dimensions": {
+        "16": 9,
+        "20": 4,
+        "18": 6,
+        "17": 4,
+        "19": 2
+      },
+      "signings_evaluated": 2031616,
+      "norm_and_mod16": 794624,
+      "norm_and_mod32": 0,
+      "exact_projection_signings": 0,
+      "best": {
+        "seed": 3798,
+        "row_sums": [
+          17,
+          -7,
+          -15,
+          6
+        ],
+        "supports": [
+          "0x85d000221a021191e2621016110002e8400",
+          "0x1808012ec0412d800804006d2080dd2004060",
+          "0x8752269015a4c00600001800c96a025912b84",
+          "0x410cad0040013400800149120004206a90460"
+        ],
+        "negative": [
+          "0x848000220000008020020010110000c0400",
+          "0x1000012c800104800804004d2000410004040",
+          "0x854222901480000400000800006a024112a80",
+          "0x4008a80040001000000108000004002210440"
+        ],
+        "score": [
+          32256,
+          48,
+          46
+        ]
+      },
+      "mod32_example": null,
+      "enumerated": [
+        {
+          "seed": 54,
+          "dim": 16,
+          "samples": 65536,
+          "norm_hits": 0,
+          "mod32_hits": 0,
+          "exact": 0
+        },
+        {
+          "seed": 1510,
+          "dim": 16,
+          "samples": 65536,
+          "norm_hits": 4096,
+          "mod32_hits": 0,
+          "exact": 0
+        },
+        {
+          "seed": 1638,
+          "dim": 18,
+          "samples": 262144,
+          "norm_hits": 262144,
+          "mod32_hits": 0,
+          "exact": 0
+        },
+        {
+          "seed": 1926,
+          "dim": 20,
+          "samples": 1048576,
+          "norm_hits": 262144,
+          "mod32_hits": 0,
+          "exact": 0
+        },
+        {
+          "seed": 2422,
+          "dim": 16,
+          "samples": 65536,
+          "norm_hits": 4096,
+          "mod32_hits": 0,
+          "exact": 0
+        },
+        {
+          "seed": 3798,
+          "dim": 19,
+          "samples": 524288,
+          "norm_hits": 262144,
+          "mod32_hits": 0,
+          "exact": 0
+        }
+      ]
+    },
+    "7": {
+      "shard": 7,
+      "shards": 16,
+      "seed_count": 256,
+      "statuses": {
+        "inconsistent": 241,
+        "norm_rejected": 12,
+        "exhausted": 3
+      },
+      "consistent_dimensions": {
+        "17": 4,
+        "16": 4,
+        "18": 4,
+        "22": 1,
+        "19": 2
+      },
+      "signings_evaluated": 1114112,
+      "norm_and_mod16": 528384,
+      "norm_and_mod32": 0,
+      "exact_projection_signings": 0,
+      "best": {
+        "seed": 4055,
+        "row_sums": [
+          -19,
+          9,
+          -11,
+          6
+        ],
+        "supports": [
+          "0xa612101108024932080413249004220212194",
+          "0x4180062a05202084c330c8410128151800608",
+          "0x6540c032d4924830c304924ad300c0a9800",
+          "0x4505800804004000032dc4c02a02205411030"
+        ],
+        "negative": [
+          "0xa002001108020832000411241004220210004",
+          "0x4000062a00000000821040000108041800400",
+          "0x4000c4924810c1041248d0008081800",
+          "0x500000800004000000500c00a00001411020"
+        ],
+        "score": [
+          23552,
+          48,
+          52
+        ]
+      },
+      "mod32_example": null,
+      "enumerated": [
+        {
+          "seed": 951,
+          "dim": 16,
+          "samples": 65536,
+          "norm_hits": 4096,
+          "mod32_hits": 0,
+          "exact": 0
+        },
+        {
+          "seed": 4039,
+          "dim": 19,
+          "samples": 524288,
+          "norm_hits": 262144,
+          "mod32_hits": 0,
+          "exact": 0
+        },
+        {
+          "seed": 4055,
+          "dim": 19,
+          "samples": 524288,
+          "norm_hits": 262144,
+          "mod32_hits": 0,
+          "exact": 0
+        }
+      ]
+    },
+    "8": {
+      "shard": 8,
+      "shards": 16,
+      "seed_count": 256,
+      "statuses": {
+        "inconsistent": 239,
+        "norm_rejected": 15,
+        "exhausted": 2
+      },
+      "consistent_dimensions": {
+        "22": 2,
+        "19": 2,
+        "20": 5,
+        "17": 4,
+        "16": 3,
+        "18": 1
+      },
+      "signings_evaluated": 131072,
+      "norm_and_mod16": 16384,
+      "norm_and_mod32": 0,
+      "exact_projection_signings": 0,
+      "best": {
+        "seed": 1768,
+        "row_sums": [
+          9,
+          -11,
+          -19,
+          -6
+        ],
+        "supports": [
+          "0x141b00007000381a20c0c1160700038000360a",
+          "0x8a082a8889080405900268080424445504144",
+          "0x1007112062807a5062d182978051812238020",
+          "0x2002d4087854a920220811080080042500018"
+        ],
+        "negative": [
+          "0x10100000400028020080c01405000080000208",
+          "0x208288089080001900068000420404100100",
+          "0x7112062802250400080920050810238000",
+          "0x290005014a920000001080080002000018"
+        ],
+        "score": [
+          50688,
+          64,
+          58
+        ]
+      },
+      "mod32_example": null,
+      "enumerated": [
+        {
+          "seed": 1768,
+          "dim": 16,
+          "samples": 65536,
+          "norm_hits": 16384,
+          "mod32_hits": 0,
+          "exact": 0
+        },
+        {
+          "seed": 2888,
+          "dim": 16,
+          "samples": 65536,
+          "norm_hits": 0,
+          "mod32_hits": 0,
+          "exact": 0
+        }
+      ]
+    },
+    "9": {
+      "shard": 9,
+      "shards": 16,
+      "seed_count": 256,
+      "statuses": {
+        "inconsistent": 233,
+        "norm_rejected": 20,
+        "exhausted": 3
+      },
+      "consistent_dimensions": {
+        "18": 6,
+        "22": 2,
+        "16": 7,
+        "17": 4,
+        "20": 3,
+        "19": 1
+      },
+      "signings_evaluated": 327680,
+      "norm_and_mod16": 32768,
+      "norm_and_mod32": 0,
+      "exact_projection_signings": 0,
+      "best": {
+        "seed": 3465,
+        "row_sums": [
+          -15,
+          13,
+          -3,
+          14
+        ],
+        "supports": [
+          "0x50051085648040182c0d06008049a84228028",
+          "0xb0088021032a6074000b8195302100440340",
+          "0xa4ba64180009188013f200462400060997494",
+          "0xa001b0033028124402580092119000700802"
+        ],
+        "negative": [
+          "0x1005108160004008200106008001a84008020",
+          "0xa0000000010a4060000b0010200000000140",
+          "0x2488600000011880110000462000020181490",
+          "0x100022020124002400012001000200000"
+        ],
+        "score": [
+          29696,
+          48,
+          49
+        ]
+      },
+      "mod32_example": null,
+      "enumerated": [
+        {
+          "seed": 1465,
+          "dim": 16,
+          "samples": 65536,
+          "norm_hits": 16384,
+          "mod32_hits": 0,
+          "exact": 0
+        },
+        {
+          "seed": 3465,
+          "dim": 17,
+          "samples": 131072,
+          "norm_hits": 16384,
+          "mod32_hits": 0,
+          "exact": 0
+        },
+        {
+          "seed": 3577,
+          "dim": 17,
+          "samples": 131072,
+          "norm_hits": 0,
+          "mod32_hits": 0,
+          "exact": 0
+        }
+      ]
+    },
+    "10": {
+      "shard": 10,
+      "shards": 16,
+      "seed_count": 256,
+      "statuses": {
+        "inconsistent": 237,
+        "norm_rejected": 19
+      },
+      "consistent_dimensions": {
+        "22": 2,
+        "17": 4,
+        "16": 6,
+        "20": 1,
+        "18": 6
+      },
+      "signings_evaluated": 0,
+      "norm_and_mod16": 0,
+      "norm_and_mod32": 0,
+      "exact_projection_signings": 0,
+      "best": null,
+      "mod32_example": null,
+      "enumerated": []
+    },
+    "11": {
+      "shard": 11,
+      "shards": 16,
+      "seed_count": 256,
+      "statuses": {
+        "inconsistent": 234,
+        "norm_rejected": 21,
+        "exhausted": 1
+      },
+      "consistent_dimensions": {
+        "16": 9,
+        "18": 7,
+        "20": 3,
+        "19": 1,
+        "24": 1,
+        "17": 1
+      },
+      "signings_evaluated": 262144,
+      "norm_and_mod16": 65536,
+      "norm_and_mod32": 0,
+      "exact_projection_signings": 0,
+      "best": {
+        "seed": 3755,
+        "row_sums": [
+          9,
+          -19,
+          -11,
+          -6
+        ],
+        "supports": [
+          "0xc00dc60a010050800e1c004280201418ec00c",
+          "0x80308090642016b1e35a010982404300400",
+          "0x2360096504898761000021b8644829a401b10",
+          "0x8004215d322080628801081d850009081000"
+        ],
+        "negative": [
+          "0x444000000108002140000002010188800c",
+          "0x80300090240016a0035a000902400000400",
+          "0x2260084504808101000020a0400820a401810",
+          "0x15c0200804088010019850000080000"
+        ],
+        "score": [
+          45056,
+          64,
+          59
+        ]
+      },
+      "mod32_example": null,
+      "enumerated": [
+        {
+          "seed": 3755,
+          "dim": 18,
+          "samples": 262144,
+          "norm_hits": 65536,
+          "mod32_hits": 0,
+          "exact": 0
+        }
+      ]
+    },
+    "12": {
+      "shard": 12,
+      "shards": 16,
+      "seed_count": 256,
+      "statuses": {
+        "inconsistent": 239,
+        "exhausted": 2,
+        "norm_rejected": 15
+      },
+      "consistent_dimensions": {
+        "16": 8,
+        "17": 5,
+        "19": 1,
+        "20": 2,
+        "18": 1
+      },
+      "signings_evaluated": 131072,
+      "norm_and_mod16": 4096,
+      "norm_and_mod32": 0,
+      "exact_projection_signings": 0,
+      "best": {
+        "seed": 92,
+        "row_sums": [
+          13,
+          13,
+          -15,
+          6
+        ],
+        "supports": [
+          "0x1086040a0148b488084084044b44a014081842",
+          "0x16143909400400516001a2800800a4270a1a0",
+          "0x210b82162070a4241926090943811a1074210",
+          "0xaaf70160094401080002011008a0002111280"
+        ],
+        "negative": [
+          "0x20002000824080000000409048010001042",
+          "0x404000140040040400100800000a02208080",
+          "0x200882142000a0040122080940011a1064010",
+          "0x80f3006009400000000000100020000100000"
+        ],
+        "score": [
+          33280,
+          64,
+          50
+        ]
+      },
+      "mod32_example": null,
+      "enumerated": [
+        {
+          "seed": 92,
+          "dim": 16,
+          "samples": 65536,
+          "norm_hits": 4096,
+          "mod32_hits": 0,
+          "exact": 0
+        },
+        {
+          "seed": 2636,
+          "dim": 16,
+          "samples": 65536,
+          "norm_hits": 0,
+          "mod32_hits": 0,
+          "exact": 0
+        }
+      ]
+    },
+    "13": {
+      "shard": 13,
+      "shards": 16,
+      "seed_count": 256,
+      "statuses": {
+        "norm_rejected": 16,
+        "inconsistent": 237,
+        "exhausted": 3
+      },
+      "consistent_dimensions": {
+        "16": 7,
+        "18": 8,
+        "17": 2,
+        "22": 1,
+        "20": 1
+      },
+      "signings_evaluated": 196608,
+      "norm_and_mod16": 2048,
+      "norm_and_mod32": 0,
+      "exact_projection_signings": 0,
+      "best": {
+        "seed": 4045,
+        "row_sums": [
+          5,
+          5,
+          -15,
+          18
+        ],
+        "supports": [
+          "0x800d100b2048c54001e000a8c48134022c004",
+          "0x1e80608083202a058000681501304041805e0",
+          "0x100328b145083009a1c0e164030428a3453002",
+          "0x710010006810a02012800092201c9001a750"
+        ],
+        "negative": [
+          "0x800500080000c00001e00008c40000002c000",
+          "0x14806000020000008000401100300001804a0",
+          "0x100228000508100180c0c06002042800453002",
+          "0x600000002810202002000082000400002000"
+        ],
+        "score": [
+          57344,
+          64,
+          54
+        ]
+      },
+      "mod32_example": null,
+      "enumerated": [
+        {
+          "seed": 541,
+          "dim": 16,
+          "samples": 65536,
+          "norm_hits": 0,
+          "mod32_hits": 0,
+          "exact": 0
+        },
+        {
+          "seed": 925,
+          "dim": 16,
+          "samples": 65536,
+          "norm_hits": 0,
+          "mod32_hits": 0,
+          "exact": 0
+        },
+        {
+          "seed": 4045,
+          "dim": 16,
+          "samples": 65536,
+          "norm_hits": 2048,
+          "mod32_hits": 0,
+          "exact": 0
+        }
+      ]
+    },
+    "14": {
+      "shard": 14,
+      "shards": 16,
+      "seed_count": 256,
+      "statuses": {
+        "inconsistent": 243,
+        "norm_rejected": 10,
+        "exhausted": 3
+      },
+      "consistent_dimensions": {
+        "16": 8,
+        "20": 2,
+        "22": 1,
+        "18": 2
+      },
+      "signings_evaluated": 196608,
+      "norm_and_mod16": 0,
+      "norm_and_mod32": 0,
+      "exact_projection_signings": 0,
+      "best": null,
+      "mod32_example": null,
+      "enumerated": [
+        {
+          "seed": 2334,
+          "dim": 16,
+          "samples": 65536,
+          "norm_hits": 0,
+          "mod32_hits": 0,
+          "exact": 0
+        },
+        {
+          "seed": 2398,
+          "dim": 16,
+          "samples": 65536,
+          "norm_hits": 0,
+          "mod32_hits": 0,
+          "exact": 0
+        },
+        {
+          "seed": 3470,
+          "dim": 16,
+          "samples": 65536,
+          "norm_hits": 0,
+          "mod32_hits": 0,
+          "exact": 0
+        }
+      ]
+    },
+    "15": {
+      "shard": 15,
+      "shards": 16,
+      "seed_count": 256,
+      "statuses": {
+        "inconsistent": 239,
+        "norm_rejected": 16,
+        "exhausted": 1
+      },
+      "consistent_dimensions": {
+        "18": 5,
+        "16": 7,
+        "20": 2,
+        "17": 2,
+        "19": 1
+      },
+      "signings_evaluated": 262144,
+      "norm_and_mod16": 16384,
+      "norm_and_mod32": 0,
+      "exact_projection_signings": 0,
+      "best": {
+        "seed": 479,
+        "row_sums": [
+          -15,
+          17,
+          9,
+          2
+        ],
+        "supports": [
+          "0x4c870020502a01844408886015028100384c8",
+          "0x10200088e0c010842b2d35084200c1c4400102",
+          "0x20209250a204b6390924271b4811429241010",
+          "0xd5508820109010101a04020012ec80420000c"
+        ],
+        "negative": [
+          "0x4c870020400801040000806000008000380c8",
+          "0x88a08000840000000842004140400000",
+          "0x2020904082040200090400120011408201000",
+          "0xd4008020001010001200020010c4000000008"
+        ],
+        "score": [
+          46080,
+          64,
+          57
+        ]
+      },
+      "mod32_example": null,
+      "enumerated": [
+        {
+          "seed": 479,
+          "dim": 18,
+          "samples": 262144,
+          "norm_hits": 16384,
+          "mod32_hits": 0,
+          "exact": 0
+        }
+      ]
+    }
+  },
+  "merge": {
+    "exit_code": 0,
+    "output": "seeds=4096, signings=21692416, norm+mod16=18257920, norm+mod32=0, exact=0, best=[23552, 48, 52]\n"
+  }
+}
