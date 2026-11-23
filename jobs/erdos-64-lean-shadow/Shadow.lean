@@ -18,7 +18,7 @@ variable (hb : ∀ {a b : W}, H.Adj a b → G.Adj (mid s(a,b)) (f b))
 def expand {a b : W} (p : H.Walk a b) : G.Walk (f a) (f b) :=
   match p with
   | .nil => .nil
-  | .cons h q => .cons (ha h) (.cons (hb h) (expand f mid ha hb q))
+  | .cons h q => .cons (ha h) (.cons (hb h) (expand q))
 
 theorem length_expand {a b : W} (p : H.Walk a b) :
     (expand f mid ha hb p).length = 2 * p.length := by
@@ -71,6 +71,7 @@ theorem cycle_expand {a : W} (c : H.Walk a a) (hc : c.IsCycle)
   rwa [Walk.support_tail_of_not_nil _ hnil]
 
 /-- Exact original power-cycle witness, with the exponent increased by one. -/
+include ha hb in
 theorem power_cycle_expand {a : W} (c : H.Walk a a) (hc : c.IsCycle)
     (hf : Function.Injective f)
     (hm : (c.edges.map mid).Nodup)
