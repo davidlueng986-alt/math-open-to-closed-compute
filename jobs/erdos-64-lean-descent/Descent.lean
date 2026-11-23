@@ -184,6 +184,31 @@ theorem degree_add_new_edge_left {V : Type*} [Fintype V] [DecidableEq V]
   rw [← SimpleGraph.card_neighborFinset_eq_degree, hset,
     Finset.card_insert_of_notMem hb, SimpleGraph.card_neighborFinset_eq_degree]
 
+/-- The degree at the second endpoint also increases by one.  Prove
+    directly to avoid dependent rewriting of decidable graph instances. -/
+theorem degree_add_new_edge_right {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] (a b : V)
+    (hab : a ≠ b) (hn : ¬ G.Adj a b) :
+    (G ⊔ SimpleGraph.edge a b).degree b = G.degree b + 1 := by
+  have hset : (G ⊔ SimpleGraph.edge a b).neighborFinset b =
+      insert a (G.neighborFinset b) := by
+    ext x
+    simp only [SimpleGraph.mem_neighborFinset, SimpleGraph.sup_adj,
+      Finset.mem_insert, SimpleGraph.edge_adj]
+    constructor
+    · rintro (h | h)
+      · exact Or.inr h
+      · rcases h.1 with ⟨h', _⟩ | ⟨_, rfl⟩
+        · exact False.elim (hab h'.symm)
+        · exact Or.inl rfl
+    · rintro (rfl | h)
+      · exact Or.inr ⟨Or.inr ⟨by trivial, by trivial⟩, hab.symm⟩
+      · exact Or.inl h
+  have ha : a ∉ G.neighborFinset b := by
+    exact fun h => hn (((G.mem_neighborFinset b a).mp h).symm)
+  rw [← SimpleGraph.card_neighborFinset_eq_degree, hset,
+    Finset.card_insert_of_notMem ha, SimpleGraph.card_neighborFinset_eq_degree]
+
 /-- One complete degree-and-cycle safe repair. Two degree-two vertices
     in one bipartition side are repaired while leaving at most the
     designated third defect. The global unavoidability of such a
@@ -198,10 +223,8 @@ theorem repair_two_same_color_ports {V : Type*} [Fintype V] [DecidableEq V]
     PowerFree (G ⊔ SimpleGraph.edge a b) ∧
     ∀ x, x ≠ w → 3 ≤ (G ⊔ SimpleGraph.edge a b).degree x := by
   have hn : ¬ G.Adj a b := fun h => hc a b h hcolor
-  have hn' : ¬ G.Adj b a := fun h => hn h.symm
   have hda := degree_add_new_edge_left G a b hab hn
-  have hdb : (G ⊔ SimpleGraph.edge a b).degree b = G.degree b + 1 := by
-    simpa only [SimpleGraph.edge_comm b a] using degree_add_new_edge_left G b a hab.symm hn'
+  have hdb := degree_add_new_edge_right G a b hab hn
   refine ⟨same_color_edge_safe color hc a b hab hcolor hG, ?_⟩
   intro x hx
   by_cases hxa : x = a
@@ -222,6 +245,7 @@ theorem repair_two_same_color_ports {V : Type*} [Fintype V] [DecidableEq V]
 #print axioms power_free_after_parity_repair
 #print axioms same_color_edge_safe
 #print axioms degree_add_new_edge_left
+#print axioms degree_add_new_edge_right
 #print axioms repair_two_same_color_ports
 
 end Erdos64Descent
