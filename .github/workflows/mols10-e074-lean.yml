@@ -1,0 +1,41 @@
+name: MOLS10 E074 Lean lemma kernel audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'jobs/mols10-lemma-proof/Proof.lean'
+      - 'jobs/mols10-lemma-proof/launch.txt'
+permissions:
+  contents: read
+  packages: read
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and audit actual lemmas
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          cd /opt/mathlib4
+          lake env lean -DwarningAsError=true "$GITHUB_WORKSPACE/jobs/mols10-lemma-proof/Proof.lean" 2>&1 | tee "$GITHUB_WORKSPACE/out/lean.log"
+          if grep -q 'sorryAx' "$GITHUB_WORKSPACE/out/lean.log"; then exit 1; fi
+          printf '%s\n' 'Kernel accepted the conditional lifting obstruction; original MOLS10 remains OPEN.' > "$GITHUB_WORKSPACE/out/VERIFIED.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mols10-e074-lean-audit
+          path: |
+            out/
+            jobs/mols10-lemma-proof/Proof.lean
+          retention-days: 30
