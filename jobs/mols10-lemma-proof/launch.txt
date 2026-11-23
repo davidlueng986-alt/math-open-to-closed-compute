@@ -1,1 +1,1 @@
-E074 kernel audit
+E074 v2: repair zero-color branch, add full layered rigidity theorem and arithmetic determinant lemma
