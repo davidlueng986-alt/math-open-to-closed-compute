@@ -1,1 +1,1 @@
-E074 v2: repair zero-color branch, add full layered rigidity theorem and arithmetic determinant lemma
+E074 v3 duplicate parity kernel audit
