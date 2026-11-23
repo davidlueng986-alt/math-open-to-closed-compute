@@ -1,0 +1,53 @@
+{
+  "problem": "ERDOS-64",
+  "scope": "connected bipartite graphs of order 21,23,25,27, with exactly three degree2 vertices and all others degree3",
+  "cases": [
+    {
+      "n": 21,
+      "forbidden": [
+        4,
+        8,
+        16
+      ],
+      "status": "UNSAT_SOLVER_REPORTED",
+      "return_code": 20,
+      "seconds": 4.023
+    },
+    {
+      "n": 23,
+      "forbidden": [
+        4,
+        8,
+        16
+      ],
+      "status": "UNSAT_SOLVER_REPORTED",
+      "return_code": 20,
+      "seconds": 7.683
+    },
+    {
+      "n": 25,
+      "forbidden": [
+        4,
+        8,
+        16
+      ],
+      "status": "UNSAT_SOLVER_REPORTED",
+      "return_code": 20,
+      "seconds": 19.768
+    },
+    {
+      "n": 27,
+      "forbidden": [
+        4,
+        8,
+        16
+      ],
+      "status": "UNSAT_SOLVER_REPORTED",
+      "return_code": 20,
+      "seconds": 36.9
+    }
+  ],
+  "witnesses": [],
+  "positive_controls_passed": true,
+  "note": "SAT witnesses must be audited and Lean-formalized; UNSAT or timeout of this family is not a proof of the original conjecture."
+}

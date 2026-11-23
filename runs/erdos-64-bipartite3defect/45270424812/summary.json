@@ -1,0 +1,426 @@
+{
+  "job": "erdos-64-bipartite3defect",
+  "run_id": "45270424812",
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45270424812",
+  "commit": "6bf7d792a50d07976da6c26147f998f94257b0d7",
+  "shards_expected": 4,
+  "shards_with_result": 4,
+  "missing_shards": [],
+  "seconds_per_shard": {
+    "0": 5,
+    "1": 8,
+    "2": 21,
+    "3": 38
+  },
+  "complete": true,
+  "results": {
+    "0": {
+      "problem": "ERDOS-64",
+      "shard": 0,
+      "shards": 4,
+      "control": {
+        "n": 13,
+        "forbidden": [
+          4
+        ],
+        "status": "SAT_INDEPENDENTLY_CHECKED",
+        "return_code": 10,
+        "seconds": 0.164,
+        "graph6": "L????[qTBOR?h?",
+        "edges": [
+          [
+            0,
+            11
+          ],
+          [
+            0,
+            12
+          ],
+          [
+            1,
+            9
+          ],
+          [
+            1,
+            10
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            10
+          ],
+          [
+            2,
+            12
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            3,
+            9
+          ],
+          [
+            3,
+            11
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            11
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            5,
+            9
+          ],
+          [
+            5,
+            12
+          ],
+          [
+            6,
+            7
+          ],
+          [
+            6,
+            8
+          ]
+        ]
+      },
+      "target": {
+        "n": 21,
+        "forbidden": [
+          4,
+          8,
+          16
+        ],
+        "status": "UNSAT_SOLVER_REPORTED",
+        "return_code": 20,
+        "seconds": 4.023
+      },
+      "witness": null
+    },
+    "1": {
+      "problem": "ERDOS-64",
+      "shard": 1,
+      "shards": 4,
+      "control": {
+        "n": 13,
+        "forbidden": [
+          4
+        ],
+        "status": "SAT_INDEPENDENTLY_CHECKED",
+        "return_code": 10,
+        "seconds": 0.164,
+        "graph6": "L????[qTBOR?h?",
+        "edges": [
+          [
+            0,
+            11
+          ],
+          [
+            0,
+            12
+          ],
+          [
+            1,
+            9
+          ],
+          [
+            1,
+            10
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            10
+          ],
+          [
+            2,
+            12
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            3,
+            9
+          ],
+          [
+            3,
+            11
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            11
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            5,
+            9
+          ],
+          [
+            5,
+            12
+          ],
+          [
+            6,
+            7
+          ],
+          [
+            6,
+            8
+          ]
+        ]
+      },
+      "target": {
+        "n": 23,
+        "forbidden": [
+          4,
+          8,
+          16
+        ],
+        "status": "UNSAT_SOLVER_REPORTED",
+        "return_code": 20,
+        "seconds": 7.683
+      },
+      "witness": null
+    },
+    "2": {
+      "problem": "ERDOS-64",
+      "shard": 2,
+      "shards": 4,
+      "control": {
+        "n": 13,
+        "forbidden": [
+          4
+        ],
+        "status": "SAT_INDEPENDENTLY_CHECKED",
+        "return_code": 10,
+        "seconds": 0.165,
+        "graph6": "L????[qTBOR?h?",
+        "edges": [
+          [
+            0,
+            11
+          ],
+          [
+            0,
+            12
+          ],
+          [
+            1,
+            9
+          ],
+          [
+            1,
+            10
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            10
+          ],
+          [
+            2,
+            12
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            3,
+            9
+          ],
+          [
+            3,
+            11
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            11
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            5,
+            9
+          ],
+          [
+            5,
+            12
+          ],
+          [
+            6,
+            7
+          ],
+          [
+            6,
+            8
+          ]
+        ]
+      },
+      "target": {
+        "n": 25,
+        "forbidden": [
+          4,
+          8,
+          16
+        ],
+        "status": "UNSAT_SOLVER_REPORTED",
+        "return_code": 20,
+        "seconds": 19.768
+      },
+      "witness": null
+    },
+    "3": {
+      "problem": "ERDOS-64",
+      "shard": 3,
+      "shards": 4,
+      "control": {
+        "n": 13,
+        "forbidden": [
+          4
+        ],
+        "status": "SAT_INDEPENDENTLY_CHECKED",
+        "return_code": 10,
+        "seconds": 0.164,
+        "graph6": "L????[qTBOR?h?",
+        "edges": [
+          [
+            0,
+            11
+          ],
+          [
+            0,
+            12
+          ],
+          [
+            1,
+            9
+          ],
+          [
+            1,
+            10
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            10
+          ],
+          [
+            2,
+            12
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            3,
+            9
+          ],
+          [
+            3,
+            11
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            11
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            5,
+            9
+          ],
+          [
+            5,
+            12
+          ],
+          [
+            6,
+            7
+          ],
+          [
+            6,
+            8
+          ]
+        ]
+      },
+      "target": {
+        "n": 27,
+        "forbidden": [
+          4,
+          8,
+          16
+        ],
+        "status": "UNSAT_SOLVER_REPORTED",
+        "return_code": 20,
+        "seconds": 36.9
+      },
+      "witness": null
+    }
+  },
+  "merge": {
+    "exit_code": 0,
+    "output": "[(21, 'UNSAT_SOLVER_REPORTED'), (23, 'UNSAT_SOLVER_REPORTED'), (25, 'UNSAT_SOLVER_REPORTED'), (27, 'UNSAT_SOLVER_REPORTED')] witnesses 0\n"
+  }
+}
