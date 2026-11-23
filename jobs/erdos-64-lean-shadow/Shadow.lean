@@ -91,3 +91,101 @@ theorem power_cycle_expand {a : W} (c : H.Walk a a) (hc : c.IsCycle)
 #print axioms power_cycle_expand
 
 end Erdos64Shadow
+
+/-! Well-founded closure contract: this connects a genuinely global safe
+    descent theorem to the exact original Erdős #64 conclusion. The global
+    descent is an explicit, as-yet-unproved premise, not an axiom or a sorry. -/
+namespace Erdos64Closure
+open SimpleGraph
+open scoped Sym2
+universe u
+
+def HasPower {V : Type u} (G : SimpleGraph V) : Prop :=
+  ∃ (k : ℕ) (v : V) (c : G.Walk v v),
+    2 ≤ k ∧ c.IsCycle ∧ c.length = 2 ^ k
+
+def Near {V : Type u} (G : SimpleGraph V)
+    [Fintype V] [DecidableRel G.Adj] : Prop :=
+  (∃ v, 3 ≤ G.degree v) ∧
+    (∃ w, ∀ v, v ≠ w → 3 ≤ G.degree v)
+
+/-- A safe smaller near graph, with the actual original-cycle implication. -/
+def SafeStep {V : Type u} (G : SimpleGraph V) [Fintype V] : Prop :=
+  ∃ (W : Type u) (H : SimpleGraph W) (fw : Fintype W)
+    (dh : DecidableRel H.Adj),
+    @Fintype.card W fw < Fintype.card V ∧
+    @Near W H fw dh ∧ (HasPower H → HasPower G)
+
+/-- A genuinely disjoint midpoint shadow is sufficient for a safe step.
+    This packages the previously verified lifting result into the descent
+    interface used by the final induction. -/
+theorem safe_step_of_uniform_shadow {V W : Type u}
+    (G : SimpleGraph V) (H : SimpleGraph W)
+    [Fintype V] [Fintype W] [DecidableRel H.Adj]
+    (hsize : Fintype.card W < Fintype.card V) (hnear : Near H)
+    (f : W → V) (mid : Sym2 W → V)
+    (ha : ∀ {a b : W}, H.Adj a b → G.Adj (f a) (mid s(a,b)))
+    (hb : ∀ {a b : W}, H.Adj a b → G.Adj (mid s(a,b)) (f b))
+    (hf : Function.Injective f)
+    (hn : ∀ {a : W} (c : H.Walk a a), c.IsCycle →
+      (c.edges.map mid).Nodup)
+    (hd : ∀ {a : W} (c : H.Walk a a), c.IsCycle →
+      (c.support.tail.map f).Disjoint (c.edges.map mid)) :
+    SafeStep G := by
+  refine ⟨W, H, inferInstance, inferInstance, hsize, hnear, ?_⟩
+  rintro ⟨k,a,c,hk,hc,hl⟩
+  exact Erdos64Shadow.power_cycle_expand f mid ha hb c hc hf
+    (hn c hc) (hd c hc) hk hl
+
+/-- Complete induction over the order of arbitrary finite near graphs.
+    The only unproved global obligation is the supplied safe-step premise. -/
+theorem near_of_global_descent
+    (hstep : ∀ (V : Type u) (G : SimpleGraph V)
+      [Fintype V] [DecidableRel G.Adj],
+      Near G → ¬ HasPower G → SafeStep G) :
+    ∀ (V : Type u) (G : SimpleGraph V) [Fintype V] [DecidableRel G.Adj],
+      Near G → HasPower G := by
+  classical
+  have go : ∀ n : ℕ, ∀ (V : Type u) (G : SimpleGraph V)
+      [Fintype V] [DecidableRel G.Adj],
+      Fintype.card V = n → Near G → HasPower G := by
+    intro n
+    induction n using Nat.strong_induction_on with
+    | h n ih =>
+      intro V G instV instG hn hnear
+      by_contra hnot
+      obtain ⟨W,H,fw,dh,hsize,hnH,htransfer⟩ :=
+        hstep V G hnear hnot
+      letI : Fintype W := fw
+      letI : DecidableRel H.Adj := dh
+      have hlt : Fintype.card W < n := by
+        rw [← hn]
+        exact hsize
+      exact hnot (htransfer (ih (Fintype.card W) hlt W H rfl hnH))
+  intro V G instV instG hnear
+  exact go (Fintype.card V) V G rfl hnear
+
+/-- The conclusion exactly matches the original Formal Conjectures statement.
+    This is a conditional closure contract, not a proof of hstep. -/
+theorem erdos64_of_global_descent
+    (hstep : ∀ (V : Type u) (G : SimpleGraph V)
+      [Fintype V] [DecidableRel G.Adj],
+      Near G → ¬ HasPower G → SafeStep G) :
+    ∀ (V : Type u) (G : SimpleGraph V) [Fintype V] [DecidableRel G.Adj],
+      G.minDegree ≥ 3 → ∃ (k : ℕ) (v : V) (c : G.Walk v v),
+        k ≥ 2 ∧ c.IsCycle ∧ c.length = 2 ^ k := by
+  intro V G instV instG hmin
+  rcases isEmpty_or_nonempty V with hempty | hnonempty
+  · letI : IsEmpty V := hempty
+    have hz : G.minDegree = 0 := SimpleGraph.minDegree_of_subsingleton
+    omega
+  · obtain ⟨w⟩ := hnonempty
+    have hall : ∀ v, 3 ≤ G.degree v :=
+      fun v => hmin.trans (G.minDegree_le_degree v)
+    exact near_of_global_descent hstep V G
+      ⟨⟨w, hall w⟩, ⟨w, fun v _ => hall v⟩⟩
+
+#print axioms safe_step_of_uniform_shadow
+#print axioms near_of_global_descent
+#print axioms erdos64_of_global_descent
+end Erdos64Closure
