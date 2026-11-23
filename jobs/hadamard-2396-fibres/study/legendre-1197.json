@@ -1,0 +1,114 @@
+{
+  "length": 1197,
+  "row_sums": [
+    1,
+    1
+  ],
+  "projections": {
+    "9": {
+      "first": [
+        -17,
+        -5,
+        9,
+        -13,
+        -5,
+        9,
+        19,
+        -5,
+        9
+      ],
+      "second": [
+        -17,
+        -3,
+        -3,
+        17,
+        -3,
+        -3,
+        19,
+        -3,
+        -3
+      ],
+      "origin": 2130,
+      "nonzero": -266
+    },
+    "7": {
+      "first": [
+        -11,
+        15,
+        15,
+        -11,
+        15,
+        -11,
+        -11
+      ],
+      "second": [
+        -5,
+        13,
+        13,
+        -11,
+        13,
+        -11,
+        -11
+      ],
+      "origin": 2054,
+      "nonzero": -342
+    },
+    "19": {
+      "first": [
+        -17,
+        11,
+        -9,
+        -9,
+        11,
+        11,
+        11,
+        11,
+        -9,
+        11,
+        -9,
+        11,
+        -9,
+        -9,
+        -9,
+        -9,
+        11,
+        11,
+        -9
+      ],
+      "second": [
+        1,
+        3,
+        -3,
+        -3,
+        3,
+        3,
+        3,
+        3,
+        -3,
+        3,
+        -3,
+        3,
+        -3,
+        -3,
+        -3,
+        -3,
+        3,
+        3,
+        -3
+      ],
+      "origin": 2270,
+      "nonzero": -126
+    }
+  },
+  "nontrivial_fourier_modes_verified": 32,
+  "negative_bit_masks_hex": [
+    "0x12e45368108ac9117c7250a74cba79f9074f7ef74c0b1a8f8e76bf628d574813a3420536e7d1efd93273f6ace2d2dedd7175fb246ab0449f1b3029b63e8e3e0939ac932f5736ee8b9dbfd8a715c626f8d1811893f47f3541c544bd72a9a7741c5dfa89baae1037ce8c08459d21e10a8c2a05fb95473ba0e36fd449d16181367c404c388b691854765026ccaa79db072f7ee64e0b148f",
+    "0xfb1489b8330291c628ec5ec7bd6e5c7717af5a3d95e72f37d84edde188468e23c542d72da973c1b0bd7ad0ecaf39dbbae274ef0c523479182a16b96d4b9e1d0cebd447e4fd2e99c713a57a42d1a388e850b5ce6a5cf0c82711621e27e974de38bd29c2168d3c5662852e5750c604c1198b50b33f4b86f7c5e94e90b461f2bb14a9703a02902628ec5a85bd6e5c371faf523195a30f9"
+  ],
+  "full_nonzero_shift_pairs": 598,
+  "full_shift_pairs_matching_minus_two": 9,
+  "full_maximum_absolute_error": 1700,
+  "full_paf_at_one": -34,
+  "q63_shift_pairs_matching_minus_38": 0,
+  "q63_paf_at_one": -70
+}

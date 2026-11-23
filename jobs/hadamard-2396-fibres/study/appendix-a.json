@@ -1,0 +1,92 @@
+{
+  "source": "Hexagon 2611.00637v1, Tables A1 and A2; orbit parameters from the A1 caption. Groups in lexicographic order. Hex digits use 1 for −1, most significant bit first. This extract contains the two width-12 controls. Source data licensed CC0 1.0.",
+  "url": "https://hexagonmath.org/2611.00637v1",
+  "witnesses": [
+    {
+      "order": 668,
+      "border": 12,
+      "group": [
+        2,
+        2,
+        41
+      ],
+      "blocks": [
+        "00A3059FD76E4C22946CFE14C6E704348D0B6563C",
+        "807F63A73BF8D937C5EC292C743EFCAAAF9B9AE22",
+        "A6626A87798B65C3B11D6D57A99212F0BEE975A11",
+        "52474B747DBC5A4699AFA1D87EE88DD5B247BCA2B"
+      ],
+      "frame_columns": [
+        "5A53",
+        "5AAC",
+        "5569",
+        "5596",
+        "363A",
+        "36C5",
+        "3935",
+        "39CA",
+        "6C5C",
+        "6CA3",
+        "6366",
+        "6399"
+      ],
+      "frame_rows": [
+        "55C9",
+        "5AC6",
+        "533C",
+        "5C33",
+        "3566",
+        "3A69",
+        "3393",
+        "3C9C",
+        "6655",
+        "66AA",
+        "695A",
+        "69A5"
+      ]
+    },
+    {
+      "order": 1916,
+      "border": 12,
+      "group": [
+        2,
+        2,
+        119
+      ],
+      "blocks": [
+        "4AC6F042629D39ABBC82574D87EC1723E623B6D3B401DB49F32B2903C39EA7C86FF901526334A6C544D5773B147FD28EC4228076FF219B88F037873",
+        "8CF934D01EF85868FE6CD984A4A15F1DF12B85E862983CC76EBEDCEB000B831155C941D185329F566695EEB93BA86F516D781DB882CA453792D09DC",
+        "E2741AA6E0ACE53287A6042FD92E06A879D72A4E876688B2E34DC0A420F2EA0584842EF9209A597F42263ABC6C704C0296676AF3D354731A5C28EB0",
+        "F1C7BA6D8B13A7993008335608D3B5EB1B965A1B3F6248923224E3B51F029DE3EAB298161849418A9B7C287AF6982902CD5E51BBD1CA552DD6808FC"
+      ],
+      "frame_columns": [
+        "5A53",
+        "5AAC",
+        "5569",
+        "5596",
+        "363A",
+        "36C5",
+        "3935",
+        "39CA",
+        "6C5C",
+        "6CA3",
+        "6366",
+        "6399"
+      ],
+      "frame_rows": [
+        "55C9",
+        "5AC6",
+        "533C",
+        "5C33",
+        "3566",
+        "3A69",
+        "3393",
+        "3C9C",
+        "6655",
+        "66AA",
+        "695A",
+        "69A5"
+      ]
+    }
+  ]
+}

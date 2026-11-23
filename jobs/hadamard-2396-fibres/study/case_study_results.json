@@ -1,0 +1,116 @@
+{
+  "controls": {
+    "668": {
+      "k": 41,
+      "mixed": 3,
+      "nonzero_shift_equations_checked": 160,
+      "quartic_minimum_exchange_distance": 24,
+      "fourth_block_centers_tried": 9,
+      "exchange_distance_by_center": [
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24
+      ],
+      "positive_control": "original signs pass the norm sieve and every shift modulo 16 and 32"
+    },
+    "1916": {
+      "k": 119,
+      "mixed": 219,
+      "nonzero_shift_equations_checked": 472
+    }
+  },
+  "projection_2396": {
+    "three_nontrivial_layers": [
+      {
+        "support_mask_hex": "0x93",
+        "signs_in_increasing_cell_order": [
+          1,
+          -1,
+          -1,
+          1
+        ]
+      },
+      {
+        "support_mask_hex": "0x6c",
+        "signs_in_increasing_cell_order": [
+          1,
+          -1,
+          1,
+          -1
+        ]
+      },
+      {
+        "support_mask_hex": "0xa500",
+        "signs_in_increasing_cell_order": [
+          1,
+          -1,
+          1,
+          -1
+        ]
+      }
+    ],
+    "fourth_support_mask_hex": "0x5a00",
+    "shifts_verified": 444
+  },
+  "legendre_mod_3": {
+    "117_known_sorted_triples": [
+      [
+        -5,
+        -3,
+        9
+      ],
+      [
+        -5,
+        3,
+        3
+      ]
+    ],
+    "117_candidates": 3,
+    "1197_candidates": 28,
+    "1197_example": [
+      [
+        -31,
+        11,
+        21
+      ],
+      [
+        -5,
+        -1,
+        7
+      ]
+    ]
+  },
+  "alternative_support_witness": {
+    "seed": 4055,
+    "row_sums": [
+      -19,
+      9,
+      -11,
+      6
+    ],
+    "score": [
+      23552,
+      48,
+      52
+    ],
+    "mod32_failures_in_74_shifts": 44
+  },
+  "bases": {
+    "linear": 96,
+    "norm": 1244,
+    "norm_after_elimination": 192,
+    "parity": 288
+  },
+  "one_exchange": {
+    "linear": 888000,
+    "norm": 72546048,
+    "norm_after_elimination": 53280,
+    "parity": 46108512
+  }
+}

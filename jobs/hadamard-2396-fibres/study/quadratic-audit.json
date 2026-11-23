@@ -1,0 +1,219 @@
+{
+  "distinct_supports": 4096,
+  "statuses": {
+    "exhausted": 28,
+    "inconsistent": 3832,
+    "norm_rejected": 236
+  },
+  "all_mod16_affine_spaces_by_dimension": {
+    "16": 90,
+    "17": 48,
+    "18": 69,
+    "19": 13,
+    "20": 30,
+    "22": 11,
+    "24": 3
+  },
+  "signings_in_all_mod16_spaces": 165019648,
+  "mod32_before_any_norm_sieve": [],
+  "spaces_passing_norm_sieve": [
+    {
+      "seed": 54,
+      "dimension": 16,
+      "norm_and_mod16": 0,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 92,
+      "dimension": 16,
+      "norm_and_mod16": 4096,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 479,
+      "dimension": 18,
+      "norm_and_mod16": 16384,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 541,
+      "dimension": 16,
+      "norm_and_mod16": 0,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 925,
+      "dimension": 16,
+      "norm_and_mod16": 0,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 951,
+      "dimension": 16,
+      "norm_and_mod16": 4096,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 1465,
+      "dimension": 16,
+      "norm_and_mod16": 16384,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 1510,
+      "dimension": 16,
+      "norm_and_mod16": 4096,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 1638,
+      "dimension": 18,
+      "norm_and_mod16": 262144,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 1768,
+      "dimension": 16,
+      "norm_and_mod16": 16384,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 1926,
+      "dimension": 20,
+      "norm_and_mod16": 262144,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 2334,
+      "dimension": 16,
+      "norm_and_mod16": 0,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 2372,
+      "dimension": 16,
+      "norm_and_mod16": 16384,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 2398,
+      "dimension": 16,
+      "norm_and_mod16": 0,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 2422,
+      "dimension": 16,
+      "norm_and_mod16": 4096,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 2466,
+      "dimension": 24,
+      "norm_and_mod16": 16777216,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 2636,
+      "dimension": 16,
+      "norm_and_mod16": 0,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 2753,
+      "dimension": 16,
+      "norm_and_mod16": 4096,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 2888,
+      "dimension": 16,
+      "norm_and_mod16": 0,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 3059,
+      "dimension": 17,
+      "norm_and_mod16": 0,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 3465,
+      "dimension": 17,
+      "norm_and_mod16": 16384,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 3470,
+      "dimension": 16,
+      "norm_and_mod16": 0,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 3577,
+      "dimension": 17,
+      "norm_and_mod16": 0,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 3755,
+      "dimension": 18,
+      "norm_and_mod16": 65536,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 3798,
+      "dimension": 19,
+      "norm_and_mod16": 262144,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 4039,
+      "dimension": 19,
+      "norm_and_mod16": 262144,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 4045,
+      "dimension": 16,
+      "norm_and_mod16": 2048,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    },
+    {
+      "seed": 4055,
+      "dimension": 19,
+      "norm_and_mod16": 262144,
+      "mod32_before_norm": 0,
+      "mod32_and_norm": 0
+    }
+  ],
+  "norm_and_mod16": 18257920,
+  "mod32_with_norm": 0
+}

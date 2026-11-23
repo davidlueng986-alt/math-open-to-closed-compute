@@ -20,3 +20,7 @@ python3 jobs/hadamard-2396-fibres/merge.py /tmp/hadamard-census /tmp/hadamard-su
 ```
 
 Requires only Python 3. Use the repository's sharded-run workflow to split the 46 base classes. The published result includes the counts for every disposition and representatives of any unresolved or exact projection.
+
+## Results and case study
+
+The [case study](study/CASE_STUDY.md) gives the proved exclusions, the three exact component certificates, the independent quadratic audit, and two length-1197 sign sequences satisfying three exact Legendre projections. The [research prompt](study/CASE_STUDY_PROMPT.md) is available separately.
