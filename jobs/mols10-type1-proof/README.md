@@ -1,0 +1,6 @@
+# E073: 3-MOLS(10) Type-1 proof-producing search
+This campaign targets the exact 10×10 problem under the (2,2,2,4,6) relation and E072's canonical 4×4 block. Case data are the 124 oriented representatives from wave4/agent1_type1_22class/isotopy_cases.json in the E072 evidence archive. No transpose reduction is used. We intentionally label the scope conditional on the archived classification, not a new proof that the classification is exhaustive.
+
+Two encodings: five-coordinate candidate exact cover with all ten pair projections, and a factored cell/pair CNF with triangle support. Every SAT model is independently checked for all 10 pair projections, and every solver UNSAT is checked using pinned DRAT-trim. A per-case timeout or resource cap is UNKNOWN; only verified UNSAT with retained proof is counted in the durable evidence ledger. Order-5 SAT and order-3 UNSAT calibration before each shard. No recurring schedule.
+
+8 shards, at most 4 concurrent, 75s per case plus bounded checking, 45min runner cap. Proof archives capped to preserve proportional storage. A full 100-point OA is sufficient to close YES regardless of the Type-1 scope. Type-1 NO never proves global NO. Source: E072 report, https://docs.google.com/document/d/1XGDJjJatrPpehGsvRV9b5j7hAqk4wH55cVatUatgib4/edit
