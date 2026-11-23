@@ -1,0 +1,16 @@
+{
+  "job": "mols10-coarse-lift",
+  "run_id": "45274509425",
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45274509425",
+  "commit": "93465868788f9a771814a5a8dd4b5b15380ac7f4",
+  "shards_expected": 4,
+  "shards_with_result": 4,
+  "missing_shards": [],
+  "seconds_per_shard": {},
+  "complete": true,
+  "results": "too large to inline; see the shard artifacts",
+  "merge": {
+    "exit_code": 0,
+    "output": "{'problem': 'MOLS10-3', 'status': 'OPEN', 'restricted_coset_census': {'shard_cases': 21824, 'repeated_two_pairs': 31, 'duplicate_four_agree': 570, 'rank_filter': 18006, 'csp_unsat': 3217, 'unknown': 0, 'nodes': 1278757}, 'heuristic_totals': {'tested': 17861225, 'viable': 7331131, 'closed': 7330512, 'unknown': 619, 'nodes': 117947139}}\n"
+  }
+}
