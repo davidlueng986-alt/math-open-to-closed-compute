@@ -1,0 +1,60 @@
+name: CAPSET sumset Lean kernel verification
+
+on:
+  push:
+    branches: ['capset/cap062-sumset']
+    paths:
+      - 'jobs/capset-lean/**'
+      - '.github/workflows/capset-sumset-lean.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: capset-sumset-lean-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  kernel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean@sha256:8ba27c4e6be1aff22d80e6444f3ef7a4d0fc0438bcadf55ef39d2c17c74ae116
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact toolchain and proof bytes
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          cd /opt/mathlib4
+          test "$(git -c safe.directory=/opt/mathlib4 rev-parse HEAD)" = fc4f59e577feb1a4956671bc04ac18aaaf8cd842
+          lean --version | tee "$GITHUB_WORKSPACE/out/toolchain.txt"
+          lean --version | grep -F 'version 4.36.0,'
+          git -c safe.directory=/opt/mathlib4 rev-parse HEAD >> "$GITHUB_WORKSPACE/out/toolchain.txt"
+          cd "$GITHUB_WORKSPACE"
+          sha256sum jobs/capset-lean/CapSumset.lean | tee out/source.sha256
+      - name: Kernel-check cap and sumset theorems
+        run: |
+          set -euo pipefail
+          cd /opt/mathlib4
+          lake env lean -DwarningAsError=true "$GITHUB_WORKSPACE/jobs/capset-lean/CapSumset.lean" 2>&1 | tee "$GITHUB_WORKSPACE/out/lean.log"
+      - name: Audit theorem dependencies
+        run: python3 jobs/capset-lean/audit.py jobs/capset-lean/CapSumset.lean out/lean.log out/result.json
+      - name: Preserve proof, dependency audit and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: capset-sumset-kernel-${{ github.run_attempt }}
+          path: |
+            out/
+            jobs/capset-lean/
+          retention-days: 30
+          if-no-files-found: error
