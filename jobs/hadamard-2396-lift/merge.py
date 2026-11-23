@@ -26,8 +26,10 @@ def replay(cert):
 def main(src, out):
     paths=list(src.glob("shard-*/result.json"))
     stats, dims = Counter(),Counter()
-    tested=valid=exact=0
+    tested=valid=mod32=exact=0
     winners=[]
+    examples=[]
+    enumerated=[]
     for f in paths:
         r=json.loads(f.read_text())
         if (r["shards"]!=len(paths) or f.parent.name!=f"shard-{r['shard']}"
@@ -36,6 +38,23 @@ def main(src, out):
             raise ValueError("incomplete seed coverage")
         stats.update(r["statuses"]); dims.update(r["consistent_dimensions"])
         tested+=r["signings_evaluated"]; valid+=r["norm_and_mod16"]; exact+=r["exact_projection_signings"]
+        mod32+=r["norm_and_mod32"]
+        rows=r["enumerated"]
+        if (len(rows)!=r["statuses"].get("exhausted",0) or len({row["seed"] for row in rows})!=len(rows)
+                or any(row["seed"] not in range(r["shard"],SEEDS,len(paths)) for row in rows)
+                or any(row["samples"]!=1 << row["dim"] for row in rows)):
+            raise ValueError("incomplete affine enumeration")
+        for field,total in (("samples","signings_evaluated"),("norm_hits","norm_and_mod16"),
+                            ("mod32_hits","norm_and_mod32"),("exact","exact_projection_signings")):
+            if sum(row[field] for row in rows)!=r[total]:
+                raise ValueError("seed counts disagree with shard")
+        enumerated.extend(rows)
+        if bool(r["mod32_example"])!=bool(r["norm_and_mod32"]):
+            raise ValueError("missing mod-32 example")
+        if r["mod32_example"]:
+            if any(value%32 for value in replay(r["mod32_example"])):
+                raise ValueError("invalid mod-32 example")
+            examples.append(r["mod32_example"])
         if r["best"]:
             replay(r["best"])
             winners.append(r["best"])
@@ -43,12 +62,15 @@ def main(src, out):
         raise ValueError("missing seeds")
     best=min(winners,key=lambda c:(c["score"],c["seed"])) if winners else None
     summary={"seed_count":SEEDS,"statuses":stats,"consistent_dimensions":dims,"signings_evaluated":tested,
-             "norm_and_mod16":valid,"exact_projection_signings":exact,"best":best}
+             "norm_and_mod16":valid,"norm_and_mod32":mod32,"exact_projection_signings":exact,
+             "best":best,"mod32_example":min(examples,key=lambda c:c["seed"]) if examples else None,
+             "enumerated":sorted(enumerated,key=lambda row:row["seed"])}
     if best:
         summary["half_autocorrelations"]=replay(best)
     out.mkdir(parents=True,exist_ok=True)
     (out/"lift.json").write_text(json.dumps(summary,indent=2)+"\n")
-    print(f"seeds={SEEDS}, signings={tested}, norm+mod16={valid}, exact={exact}, best={best['score'] if best else None}")
+    print(f"seeds={SEEDS}, signings={tested}, norm+mod16={valid}, norm+mod32={mod32}, "
+          f"exact={exact}, best={best['score'] if best else None}")
 
 
 if __name__=="__main__":

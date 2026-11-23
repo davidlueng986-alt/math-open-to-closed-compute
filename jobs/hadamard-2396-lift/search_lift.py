@@ -9,7 +9,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "hadamard-2396-fibr
 import search as fibre
 
 SEEDS = 4096
-MAX_FREE = 18
 STRIDE = 2*fibre.P
 GRID = sum(fibre.ALL << (STRIDE*f) for f in range(4))
 
@@ -57,17 +56,21 @@ def correlations(occupied):
 def score(negative, terms, cutoff):
     packed = sum(u << (STRIDE*f) for f,u in enumerate(negative))
     energy, peak, misses = 0, 0, 0
+    passes_mod32 = True
     for s, common, adjacent, baseline in terms:
         shifted = ((packed << s) | (packed >> (149-s))) & GRID
         value = baseline - 8*((packed ^ shifted) & common).bit_count() - 4*(packed & adjacent).bit_count()
         if value % 16:
             raise AssertionError("affine point failed a shift congruence")
+        if value % 32:
+            passes_mod32 = False
         energy += value*value
         peak = max(peak,abs(value))
         misses += int(value != 0)
-        if energy > cutoff:
-            return None
-    return (energy,peak,misses)
+        # A pruned point can no longer affect either the best score or the mod-32 count.
+        if energy > cutoff and not passes_mod32:
+            return None, False
+    return (energy, peak, misses), passes_mod32
 
 
 def search_seed(seed, incumbent):
@@ -82,16 +85,17 @@ def search_seed(seed, incumbent):
     targets = set(fibre.compatible_norms(forms, fibre.norm_targets(sizes)))
     if not targets:
         return {"status":"norm_rejected","dim":dim}
-    # Vary the lowest MAX_FREE affine coordinates and fix any higher coordinates to zero.
+    # Gray-code iteration covers every binary solution at this fixed support.
     masks = [0]*(dim+1)
     for i, form in forms.items():
         for j in fibre.bits(form):
             masks[j] |= 1 << i
     terms = correlations(occupied)
-    samples = 1 << min(dim,MAX_FREE)
+    samples = 1 << dim
     word = masks[0]
     best = None
-    norm_hits = exact = 0
+    norm_hits = mod32_hits = exact = 0
+    mod32_example = None
     cutoff = incumbent
     for n in range(samples):
         if n:
@@ -101,22 +105,30 @@ def search_seed(seed, incumbent):
         if rows not in targets:
             continue
         norm_hits += 1
-        metric = score(neg,terms,cutoff)
+        metric, passes_mod32 = score(neg,terms,cutoff)
+        mod32_hits += int(passes_mod32)
         if metric is None:
             continue
         exact += int(metric[0]==0)
-        if best is None or metric < tuple(best["score"]):
-            best = {"seed":seed,"row_sums":rows,"supports":[hex(x) for x in occupied],
-                    "negative":[hex(x) for x in neg],"score":metric}
+        improves = metric[0] <= cutoff and (best is None or metric < tuple(best["score"]))
+        if improves or (passes_mod32 and mod32_example is None):
+            certificate = {"seed":seed,"row_sums":rows,"supports":[hex(x) for x in occupied],
+                           "negative":[hex(x) for x in neg],"score":metric}
+            if passes_mod32 and mod32_example is None:
+                mod32_example = certificate
+        if improves:
+            best = certificate
             cutoff = metric[0]
-    return {"status":"capped" if dim>MAX_FREE else "exhausted","dim":dim,"samples":samples,
-            "norm_hits":norm_hits,"exact":exact,"best":best}
+    return {"status":"exhausted","dim":dim,"samples":samples,"norm_hits":norm_hits,
+            "mod32_hits":mod32_hits,"exact":exact,"best":best,"mod32_example":mod32_example}
 
 
 def run(shard, shards):
     stats, dimensions = Counter(), Counter()
-    total = valid = exact = 0
+    total = valid = mod32_hits = exact = 0
     best = None
+    mod32_example = None
+    enumerated = []
     for seed in range(shard, SEEDS, shards):
         res = search_seed(seed, best["score"][0] if best else 10**12)
         stats[res["status"]] += 1
@@ -124,13 +136,20 @@ def run(shard, shards):
             dimensions[res["dim"]] += 1
         total += res.get("samples",0)
         valid += res.get("norm_hits",0)
+        mod32_hits += res.get("mod32_hits",0)
         exact += res.get("exact",0)
+        if res["status"] == "exhausted":
+            enumerated.append({"seed": seed, **{key: res[key] for key in
+                               ("dim", "samples", "norm_hits", "mod32_hits", "exact")}})
+        if mod32_example is None:
+            mod32_example = res.get("mod32_example")
         cand = res.get("best")
         if cand and (best is None or (cand["score"],cand["seed"]) < (best["score"],best["seed"])):
             best=cand
     return {"shard":shard,"shards":shards,"seed_count":len(range(shard,SEEDS,shards)),
             "statuses":stats,"consistent_dimensions":dimensions,"signings_evaluated":total,
-            "norm_and_mod16":valid,"exact_projection_signings":exact,"best":best}
+            "norm_and_mod16":valid,"norm_and_mod32":mod32_hits,"exact_projection_signings":exact,
+            "best":best,"mod32_example":mod32_example,"enumerated":enumerated}
 
 
 if __name__ == "__main__":
