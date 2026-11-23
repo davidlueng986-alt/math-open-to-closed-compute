@@ -449,8 +449,14 @@ theorem two_deletion_cap_nonvacuous :
     representationFirst (squareCap \ squareDeletion) (squareCap \ squareDeletion)
       ((1, 1) : ZMod 3 × ZMod 3) = ∅ ∧
     (representations squareCap squareCap ((1, 1) : ZMod 3 × ZMod 3)).card = 4 := by
-  unfold IsCap squareCap fivePointLayerCap squareDeletion slice representationFirst representations
-  decide
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · norm_num [IsCap, squareCap]
+  · norm_num [IsCap, fivePointLayerCap]
+  · decide
+  · decide
+  · decide
+  · decide
+  · decide
 
 /-! ## Stability of the full sumset under fewer deletions than its multiplicity -/
 
