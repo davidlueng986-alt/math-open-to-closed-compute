@@ -1,6 +1,9 @@
 name: Verify published math toolboxes
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/verify-math-toolboxes.yml']
   workflow_run:
     workflows: ["Build math toolboxes"]
     types: [completed]
@@ -9,7 +12,7 @@ permissions:
   packages: read
 jobs:
   verify:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
