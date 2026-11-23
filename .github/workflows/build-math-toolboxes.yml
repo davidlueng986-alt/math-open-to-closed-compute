@@ -11,7 +11,7 @@ permissions:
   contents: read
   packages: write
 concurrency:
-  group: math-toolboxes-${{ github.ref }}
+  group: math-toolboxes-${{ github.ref }}-${{ github.sha }}
   cancel-in-progress: false
 jobs:
   build:
