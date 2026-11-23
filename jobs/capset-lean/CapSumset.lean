@@ -450,7 +450,8 @@ theorem two_deletion_cap_nonvacuous :
       ((1, 1) : ZMod 3 × ZMod 3) = ∅ ∧
     (representations squareCap squareCap ((1, 1) : ZMod 3 × ZMod 3)).card = 4 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · norm_num [IsCap, squareCap] <;> decide
+  · norm_num [IsCap, squareCap]
+    decide
   · intro a ha b hb c hc
     simp only [fivePointLayerCap, Finset.mem_insert, Finset.mem_singleton] at ha hb hc
     rcases ha with rfl | rfl | rfl | rfl | rfl <;>
