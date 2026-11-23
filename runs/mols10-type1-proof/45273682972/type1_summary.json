@@ -1,0 +1,11 @@
+{
+  "problem": "MOLS10-3",
+  "status": "OPEN",
+  "cases_expected": 124,
+  "cases_reported": 0,
+  "unsat_checked_with_retained_proof": 0,
+  "unsat_checked_no_retained_proof": 0,
+  "sat_witnesses": [],
+  "cases": {},
+  "scope": "Restricted Type-1 normalization only; never claims global NO"
+}

@@ -1,0 +1,25 @@
+{
+  "job": "mols10-type1-proof",
+  "run_id": "45273682972",
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45273682972",
+  "commit": "3688f0f56f208f7e8f9ece60922d270fb8cb2a6e",
+  "shards_expected": 8,
+  "shards_with_result": 0,
+  "missing_shards": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "seconds_per_shard": {},
+  "complete": false,
+  "results": {},
+  "merge": {
+    "exit_code": 1,
+    "output": "{\"problem\": \"MOLS10-3\", \"status\": \"OPEN\", \"cases_expected\": 124, \"cases_reported\": 0, \"unsat_checked_with_retained_proof\": 0, \"unsat_checked_no_retained_proof\": 0, \"scope\": \"Restricted Type-1 normalization only; never claims global NO\"}\nTraceback (most recent call last):\n  File \"/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/jobs/mols10-type1-proof/merge.py\", line 21, in <module>\n    assert len(results)==124,\"incomplete case census\"\n           ^^^^^^^^^^^^^^^^^\nAssertionError: incomplete case census\n"
+  }
+}
