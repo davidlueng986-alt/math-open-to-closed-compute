@@ -248,7 +248,7 @@ theorem representation_card_le_active_deletions
           exact ⟨Finset.mem_sdiff.mpr ⟨ha'.1, haD⟩,
             Finset.mem_sdiff.mpr ⟨ha'.2, hbD⟩⟩
         rw [hHole] at hs
-        simpa using hs
+        simp at hs
       apply Finset.mem_union.mpr
       right
       apply Finset.mem_image.mpr
