@@ -87,7 +87,7 @@ theorem walk_parity_one_exception {V : Type*} [DecidableEq V]
         intro h
         exact he ((hc a b hab).mp (Fin.ext h))
       simp only [Walk.length_cons, Walk.edges_cons, List.count_cons]
-      simp [he, Ne.symm he]
+      simp [he]
       omega
 
 /-- A same-color exception cannot occur in an even simple cycle:
@@ -133,6 +133,86 @@ theorem power_free_after_parity_repair {V : Type*} [DecidableEq V]
   obtain ⟨d, hd, hl⟩ := even_cycle_transfer color e hc hold c hcyc heven
   exact hG k v d hk hd (hl.trans hlen)
 
+/-- The concrete simple-graph operation used in parity repair. No new
+    power cycle can be created by adding one same-color edge to a
+    bipartite power-free graph. -/
+theorem same_color_edge_safe {V : Type*} [DecidableEq V]
+    {G : SimpleGraph V} (color : V → Fin 2)
+    (hc : ∀ u v, G.Adj u v → color u ≠ color v)
+    (a b : V) (hab : a ≠ b) (hcolor : color a = color b)
+    (hG : PowerFree G) :
+    PowerFree (G ⊔ SimpleGraph.edge a b) := by
+  apply power_free_after_parity_repair color s(a,b) _ _ hG
+  · intro u v huv
+    constructor
+    · intro hsame
+      rcases (SimpleGraph.sup_adj G (SimpleGraph.edge a b) u v).mp huv with h | h
+      · exact False.elim ((hc u v h) hsame)
+      · exact ((SimpleGraph.adj_edge a b).mp h).1.symm
+    · intro he
+      rcases Sym2.eq_iff.mp he with ⟨rfl,rfl⟩ | ⟨rfl,rfl⟩
+      · exact hcolor
+      · exact hcolor.symm
+  · intro f hf hne
+    rw [SimpleGraph.edgeSet_sup] at hf
+    rcases hf with hg | he
+    · exact hg
+    · rw [SimpleGraph.edgeSet_edge_of_ne hab] at he
+      exact False.elim (hne (Set.mem_singleton_iff.mp he))
+
+/-- Adding a new edge increases the degree at its first endpoint by one. -/
+theorem degree_add_new_edge_left {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] (a b : V)
+    (hab : a ≠ b) (hn : ¬ G.Adj a b) :
+    (G ⊔ SimpleGraph.edge a b).degree a = G.degree a + 1 := by
+  have hset : (G ⊔ SimpleGraph.edge a b).neighborFinset a =
+      insert b (G.neighborFinset a) := by
+    ext x
+    simp only [SimpleGraph.mem_neighborFinset, SimpleGraph.sup_adj,
+      Finset.mem_insert, SimpleGraph.edge_adj]
+    constructor
+    · rintro (h | h)
+      · exact Or.inr h
+      · rcases h.1 with ⟨_, rfl⟩ | ⟨h', _⟩
+        · exact Or.inl rfl
+        · exact False.elim (hab h')
+    · rintro (rfl | h)
+      · exact Or.inr ⟨Or.inl ⟨rfl, rfl⟩, hab⟩
+      · exact Or.inl h
+  have hb : b ∉ G.neighborFinset a := by
+    exact fun h => hn ((G.mem_neighborFinset a b).mp h)
+  rw [← SimpleGraph.card_neighborFinset_eq_degree, hset,
+    Finset.card_insert_of_notMem hb, SimpleGraph.card_neighborFinset_eq_degree]
+
+/-- One complete degree-and-cycle safe repair. Two degree-two vertices
+    in one bipartition side are repaired while leaving at most the
+    designated third defect. The global unavoidability of such a
+    subgraph is not assumed. -/
+theorem repair_two_same_color_ports {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] (color : V → Fin 2)
+    (hc : ∀ u v, G.Adj u v → color u ≠ color v)
+    (a b w : V) (hab : a ≠ b) (hcolor : color a = color b)
+    (ha : G.degree a = 2) (hb : G.degree b = 2)
+    (hrest : ∀ x, x ≠ a → x ≠ b → x ≠ w → 3 ≤ G.degree x)
+    (hG : PowerFree G) :
+    PowerFree (G ⊔ SimpleGraph.edge a b) ∧
+    ∀ x, x ≠ w → 3 ≤ (G ⊔ SimpleGraph.edge a b).degree x := by
+  have hn : ¬ G.Adj a b := fun h => hc a b h hcolor
+  have hn' : ¬ G.Adj b a := fun h => hn h.symm
+  have hda := degree_add_new_edge_left G a b hab hn
+  have hdb := degree_add_new_edge_left G b a hab.symm hn'
+  rw [SimpleGraph.edge_comm b a] at hdb
+  refine ⟨same_color_edge_safe color hc a b hab hcolor hG, ?_⟩
+  intro x hx
+  by_cases hxa : x = a
+  · subst x
+    omega
+  by_cases hxb : x = b
+  · subst x
+    omega
+  exact (hrest x hxa hxb hx).trans
+    (G.degree_le_of_le (v := x) (H := G ⊔ SimpleGraph.edge a b) le_sup_left)
+
 #print axioms power_cycle_of_disjoint_paths
 #print axioms dyadic_collision
 #print axioms forbidden_dyadic_collision
@@ -140,5 +220,8 @@ theorem power_free_after_parity_repair {V : Type*} [DecidableEq V]
 #print axioms even_cycle_avoids_exception
 #print axioms even_cycle_transfer
 #print axioms power_free_after_parity_repair
+#print axioms same_color_edge_safe
+#print axioms degree_add_new_edge_left
+#print axioms repair_two_same_color_ports
 
 end Erdos64Descent
