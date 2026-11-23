@@ -1,0 +1,23 @@
+{
+  "note": "All restrictions are explicit. No inference for arbitrary min-degree-3 graphs.",
+  "original_problem": "OPEN",
+  "problem": "ERDOS-64",
+  "restricted_family_census_complete": true,
+  "restricted_family_excluded": true,
+  "scope": "All C3 regular voltage covers of every simple one-edge contraction of a connected cubic graph on 20 vertices; noncubic cover on 57 vertices",
+  "statistics": {
+    "base_graphs": 510489,
+    "exact_checked": 158986884,
+    "exact_unknown": 0,
+    "excluded_by_monodromy": 75257805426,
+    "excluded_by_triple": 2198239797816,
+    "skipped_triangle_edges": 2479812,
+    "triangle_free_contraction_edges": 12834858,
+    "triple_unsat_contractions": 12409128,
+    "voltage_assignments_total": 2273656590126,
+    "witnesses": 0
+  },
+  "unknown_exact_oracle_cases": 0,
+  "witness_candidates": [],
+  "witness_overflow_in_shard_artifacts": 0
+}

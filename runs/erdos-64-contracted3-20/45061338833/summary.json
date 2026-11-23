@@ -4,10 +4,8 @@
   "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45061338833",
   "commit": "3d191cd250272a8948ad2bf09190d5966feeaaff",
   "shards_expected": 64,
-  "shards_with_result": 63,
-  "missing_shards": [
-    21
-  ],
+  "shards_with_result": 64,
+  "missing_shards": [],
   "seconds_per_shard": {
     "0": 2748,
     "1": 2280,
@@ -30,6 +28,7 @@
     "18": 4001,
     "19": 3256,
     "20": 1497,
+    "21": 1652,
     "22": 3257,
     "23": 1608,
     "24": 2632,
@@ -73,7 +72,7 @@
     "62": 4500,
     "63": 1545
   },
-  "complete": false,
+  "complete": true,
   "results": {
     "0": {
       "elapsed_seconds": 2747.7728695660003,
@@ -635,6 +634,33 @@
           "triangle_free_contraction_edges": 145619,
           "triple_unsat_contractions": 142120,
           "voltage_assignments_total": 25795968993,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "21": {
+      "elapsed_seconds": 1650.968139995,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 21,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 6638,
+          "exact_checked": 1752178,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 953955887,
+          "excluded_by_triple": 28712340054,
+          "skipped_triangle_edges": 31663,
+          "triangle_free_contraction_edges": 167477,
+          "triple_unsat_contractions": 162082,
+          "voltage_assignments_total": 29668048119,
           "witnesses": 0
         }
       },
@@ -1778,7 +1804,7 @@
     }
   },
   "merge": {
-    "exit_code": 1,
-    "output": "Traceback (most recent call last):\n  File \"/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/jobs/erdos-64-contracted3-20/merge.py\", line 11, in <module>\n    if not p.is_file():raise RuntimeError(f'missing shard {i}')\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: missing shard 21\n"
+    "exit_code": 0,
+    "output": "Base census verified; witness 0 unknown 0\n"
   }
 }
