@@ -1,0 +1,994 @@
+{
+  "job": "erdos-64-one-defect-minimal",
+  "run_id": "45275770543",
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45275770543",
+  "commit": "edcf94b4345474f24000cd455396d9e64a351f91",
+  "shards_expected": 8,
+  "shards_with_result": 8,
+  "missing_shards": [],
+  "seconds_per_shard": {
+    "0": 6,
+    "1": 11,
+    "2": 18,
+    "3": 31,
+    "4": 41,
+    "5": 97,
+    "6": 130,
+    "7": 201
+  },
+  "complete": true,
+  "results": {
+    "0": {
+      "problem": "ERDOS-64",
+      "shard": 0,
+      "shards": 8,
+      "control": {
+        "n": 15,
+        "forbidden": [
+          4
+        ],
+        "status": "SAT_INDEPENDENTLY_CHECKED",
+        "return_code": 10,
+        "seconds": 0.365,
+        "edges": [
+          [
+            0,
+            13
+          ],
+          [
+            0,
+            14
+          ],
+          [
+            1,
+            11
+          ],
+          [
+            1,
+            12
+          ],
+          [
+            1,
+            14
+          ],
+          [
+            2,
+            9
+          ],
+          [
+            2,
+            10
+          ],
+          [
+            2,
+            14
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            3,
+            13
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            4,
+            8
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            12
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            5,
+            9
+          ],
+          [
+            5,
+            11
+          ],
+          [
+            6,
+            8
+          ],
+          [
+            7,
+            13
+          ],
+          [
+            9,
+            10
+          ],
+          [
+            11,
+            12
+          ]
+        ],
+        "graph6": "N???WgYH@Og_Q@cO[??"
+      },
+      "target": {
+        "n": 21,
+        "forbidden": [
+          4,
+          8,
+          16
+        ],
+        "status": "UNSAT_SOLVER_REPORTED",
+        "return_code": 20,
+        "seconds": 6.075
+      },
+      "witness": null
+    },
+    "1": {
+      "problem": "ERDOS-64",
+      "shard": 1,
+      "shards": 8,
+      "control": {
+        "n": 15,
+        "forbidden": [
+          4
+        ],
+        "status": "SAT_INDEPENDENTLY_CHECKED",
+        "return_code": 10,
+        "seconds": 0.365,
+        "edges": [
+          [
+            0,
+            13
+          ],
+          [
+            0,
+            14
+          ],
+          [
+            1,
+            11
+          ],
+          [
+            1,
+            12
+          ],
+          [
+            1,
+            14
+          ],
+          [
+            2,
+            9
+          ],
+          [
+            2,
+            10
+          ],
+          [
+            2,
+            14
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            3,
+            13
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            4,
+            8
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            12
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            5,
+            9
+          ],
+          [
+            5,
+            11
+          ],
+          [
+            6,
+            8
+          ],
+          [
+            7,
+            13
+          ],
+          [
+            9,
+            10
+          ],
+          [
+            11,
+            12
+          ]
+        ],
+        "graph6": "N???WgYH@Og_Q@cO[??"
+      },
+      "target": {
+        "n": 22,
+        "forbidden": [
+          4,
+          8,
+          16
+        ],
+        "status": "UNSAT_SOLVER_REPORTED",
+        "return_code": 20,
+        "seconds": 9.933
+      },
+      "witness": null
+    },
+    "2": {
+      "problem": "ERDOS-64",
+      "shard": 2,
+      "shards": 8,
+      "control": {
+        "n": 15,
+        "forbidden": [
+          4
+        ],
+        "status": "SAT_INDEPENDENTLY_CHECKED",
+        "return_code": 10,
+        "seconds": 0.365,
+        "edges": [
+          [
+            0,
+            13
+          ],
+          [
+            0,
+            14
+          ],
+          [
+            1,
+            11
+          ],
+          [
+            1,
+            12
+          ],
+          [
+            1,
+            14
+          ],
+          [
+            2,
+            9
+          ],
+          [
+            2,
+            10
+          ],
+          [
+            2,
+            14
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            3,
+            13
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            4,
+            8
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            12
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            5,
+            9
+          ],
+          [
+            5,
+            11
+          ],
+          [
+            6,
+            8
+          ],
+          [
+            7,
+            13
+          ],
+          [
+            9,
+            10
+          ],
+          [
+            11,
+            12
+          ]
+        ],
+        "graph6": "N???WgYH@Og_Q@cO[??"
+      },
+      "target": {
+        "n": 23,
+        "forbidden": [
+          4,
+          8,
+          16
+        ],
+        "status": "UNSAT_SOLVER_REPORTED",
+        "return_code": 20,
+        "seconds": 16.814
+      },
+      "witness": null
+    },
+    "3": {
+      "problem": "ERDOS-64",
+      "shard": 3,
+      "shards": 8,
+      "control": {
+        "n": 15,
+        "forbidden": [
+          4
+        ],
+        "status": "SAT_INDEPENDENTLY_CHECKED",
+        "return_code": 10,
+        "seconds": 0.365,
+        "edges": [
+          [
+            0,
+            13
+          ],
+          [
+            0,
+            14
+          ],
+          [
+            1,
+            11
+          ],
+          [
+            1,
+            12
+          ],
+          [
+            1,
+            14
+          ],
+          [
+            2,
+            9
+          ],
+          [
+            2,
+            10
+          ],
+          [
+            2,
+            14
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            3,
+            13
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            4,
+            8
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            12
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            5,
+            9
+          ],
+          [
+            5,
+            11
+          ],
+          [
+            6,
+            8
+          ],
+          [
+            7,
+            13
+          ],
+          [
+            9,
+            10
+          ],
+          [
+            11,
+            12
+          ]
+        ],
+        "graph6": "N???WgYH@Og_Q@cO[??"
+      },
+      "target": {
+        "n": 24,
+        "forbidden": [
+          4,
+          8,
+          16
+        ],
+        "status": "UNSAT_SOLVER_REPORTED",
+        "return_code": 20,
+        "seconds": 30.253
+      },
+      "witness": null
+    },
+    "4": {
+      "problem": "ERDOS-64",
+      "shard": 4,
+      "shards": 8,
+      "control": {
+        "n": 15,
+        "forbidden": [
+          4
+        ],
+        "status": "SAT_INDEPENDENTLY_CHECKED",
+        "return_code": 10,
+        "seconds": 0.265,
+        "edges": [
+          [
+            0,
+            13
+          ],
+          [
+            0,
+            14
+          ],
+          [
+            1,
+            11
+          ],
+          [
+            1,
+            12
+          ],
+          [
+            1,
+            14
+          ],
+          [
+            2,
+            9
+          ],
+          [
+            2,
+            10
+          ],
+          [
+            2,
+            14
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            3,
+            13
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            4,
+            8
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            12
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            5,
+            9
+          ],
+          [
+            5,
+            11
+          ],
+          [
+            6,
+            8
+          ],
+          [
+            7,
+            13
+          ],
+          [
+            9,
+            10
+          ],
+          [
+            11,
+            12
+          ]
+        ],
+        "graph6": "N???WgYH@Og_Q@cO[??"
+      },
+      "target": {
+        "n": 25,
+        "forbidden": [
+          4,
+          8,
+          16
+        ],
+        "status": "UNSAT_SOLVER_REPORTED",
+        "return_code": 20,
+        "seconds": 40.632
+      },
+      "witness": null
+    },
+    "5": {
+      "problem": "ERDOS-64",
+      "shard": 5,
+      "shards": 8,
+      "control": {
+        "n": 15,
+        "forbidden": [
+          4
+        ],
+        "status": "SAT_INDEPENDENTLY_CHECKED",
+        "return_code": 10,
+        "seconds": 0.365,
+        "edges": [
+          [
+            0,
+            13
+          ],
+          [
+            0,
+            14
+          ],
+          [
+            1,
+            11
+          ],
+          [
+            1,
+            12
+          ],
+          [
+            1,
+            14
+          ],
+          [
+            2,
+            9
+          ],
+          [
+            2,
+            10
+          ],
+          [
+            2,
+            14
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            3,
+            13
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            4,
+            8
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            12
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            5,
+            9
+          ],
+          [
+            5,
+            11
+          ],
+          [
+            6,
+            8
+          ],
+          [
+            7,
+            13
+          ],
+          [
+            9,
+            10
+          ],
+          [
+            11,
+            12
+          ]
+        ],
+        "graph6": "N???WgYH@Og_Q@cO[??"
+      },
+      "target": {
+        "n": 26,
+        "forbidden": [
+          4,
+          8,
+          16
+        ],
+        "status": "UNSAT_SOLVER_REPORTED",
+        "return_code": 20,
+        "seconds": 96.574
+      },
+      "witness": null
+    },
+    "6": {
+      "problem": "ERDOS-64",
+      "shard": 6,
+      "shards": 8,
+      "control": {
+        "n": 15,
+        "forbidden": [
+          4
+        ],
+        "status": "SAT_INDEPENDENTLY_CHECKED",
+        "return_code": 10,
+        "seconds": 0.264,
+        "edges": [
+          [
+            0,
+            13
+          ],
+          [
+            0,
+            14
+          ],
+          [
+            1,
+            11
+          ],
+          [
+            1,
+            12
+          ],
+          [
+            1,
+            14
+          ],
+          [
+            2,
+            9
+          ],
+          [
+            2,
+            10
+          ],
+          [
+            2,
+            14
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            3,
+            13
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            4,
+            8
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            12
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            5,
+            9
+          ],
+          [
+            5,
+            11
+          ],
+          [
+            6,
+            8
+          ],
+          [
+            7,
+            13
+          ],
+          [
+            9,
+            10
+          ],
+          [
+            11,
+            12
+          ]
+        ],
+        "graph6": "N???WgYH@Og_Q@cO[??"
+      },
+      "target": {
+        "n": 27,
+        "forbidden": [
+          4,
+          8,
+          16
+        ],
+        "status": "UNSAT_SOLVER_REPORTED",
+        "return_code": 20,
+        "seconds": 129.506
+      },
+      "witness": null
+    },
+    "7": {
+      "problem": "ERDOS-64",
+      "shard": 7,
+      "shards": 8,
+      "control": {
+        "n": 15,
+        "forbidden": [
+          4
+        ],
+        "status": "SAT_INDEPENDENTLY_CHECKED",
+        "return_code": 10,
+        "seconds": 0.214,
+        "edges": [
+          [
+            0,
+            13
+          ],
+          [
+            0,
+            14
+          ],
+          [
+            1,
+            11
+          ],
+          [
+            1,
+            12
+          ],
+          [
+            1,
+            14
+          ],
+          [
+            2,
+            9
+          ],
+          [
+            2,
+            10
+          ],
+          [
+            2,
+            14
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            3,
+            13
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            4,
+            8
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            12
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            5,
+            9
+          ],
+          [
+            5,
+            11
+          ],
+          [
+            6,
+            8
+          ],
+          [
+            7,
+            13
+          ],
+          [
+            9,
+            10
+          ],
+          [
+            11,
+            12
+          ]
+        ],
+        "graph6": "N???WgYH@Og_Q@cO[??"
+      },
+      "target": {
+        "n": 28,
+        "forbidden": [
+          4,
+          8,
+          16
+        ],
+        "status": "UNSAT_SOLVER_REPORTED",
+        "return_code": 20,
+        "seconds": 200.257
+      },
+      "witness": null
+    }
+  },
+  "merge": {
+    "exit_code": 0,
+    "output": "[(21, 'UNSAT_SOLVER_REPORTED'), (22, 'UNSAT_SOLVER_REPORTED'), (23, 'UNSAT_SOLVER_REPORTED'), (24, 'UNSAT_SOLVER_REPORTED'), (25, 'UNSAT_SOLVER_REPORTED'), (26, 'UNSAT_SOLVER_REPORTED'), (27, 'UNSAT_SOLVER_REPORTED'), (28, 'UNSAT_SOLVER_REPORTED')] witnesses 0\n"
+  }
+}

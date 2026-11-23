@@ -1,0 +1,96 @@
+{
+  "problem": "ERDOS-64",
+  "scope": "minimum-order/size one-defect candidate branch, n=21..28, invariant structural constraints",
+  "cases": [
+    {
+      "n": 21,
+      "forbidden": [
+        4,
+        8,
+        16
+      ],
+      "status": "UNSAT_SOLVER_REPORTED",
+      "return_code": 20,
+      "seconds": 6.075
+    },
+    {
+      "n": 22,
+      "forbidden": [
+        4,
+        8,
+        16
+      ],
+      "status": "UNSAT_SOLVER_REPORTED",
+      "return_code": 20,
+      "seconds": 9.933
+    },
+    {
+      "n": 23,
+      "forbidden": [
+        4,
+        8,
+        16
+      ],
+      "status": "UNSAT_SOLVER_REPORTED",
+      "return_code": 20,
+      "seconds": 16.814
+    },
+    {
+      "n": 24,
+      "forbidden": [
+        4,
+        8,
+        16
+      ],
+      "status": "UNSAT_SOLVER_REPORTED",
+      "return_code": 20,
+      "seconds": 30.253
+    },
+    {
+      "n": 25,
+      "forbidden": [
+        4,
+        8,
+        16
+      ],
+      "status": "UNSAT_SOLVER_REPORTED",
+      "return_code": 20,
+      "seconds": 40.632
+    },
+    {
+      "n": 26,
+      "forbidden": [
+        4,
+        8,
+        16
+      ],
+      "status": "UNSAT_SOLVER_REPORTED",
+      "return_code": 20,
+      "seconds": 96.574
+    },
+    {
+      "n": 27,
+      "forbidden": [
+        4,
+        8,
+        16
+      ],
+      "status": "UNSAT_SOLVER_REPORTED",
+      "return_code": 20,
+      "seconds": 129.506
+    },
+    {
+      "n": 28,
+      "forbidden": [
+        4,
+        8,
+        16
+      ],
+      "status": "UNSAT_SOLVER_REPORTED",
+      "return_code": 20,
+      "seconds": 200.257
+    }
+  ],
+  "witnesses": [],
+  "note": "solver UNSAT and timeout not global proof; independently check any SAT witness and Lean formalize"
+}
