@@ -1,0 +1,1 @@
+2026-11-24: authorized Lean verification of the mathematical YES proof lemmas. Formal Conjectures mathlib revision 0df444a360eaa60ab8c11dca51a86af692955474. Check exact graph walks, simple-cycle predicate, dyadic collision and parity repair invariant. Warnings fail the build; audit theorem axioms. This checks lemmas, not the open universal assertion.
