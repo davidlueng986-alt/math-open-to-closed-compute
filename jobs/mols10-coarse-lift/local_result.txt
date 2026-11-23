@@ -1,0 +1,1 @@
+total_representatives 21824 shard_cases 21824 repeated_two_pairs 31 duplicate_four_agree 570 rank_filter 18006 csp_unsat 3217 unknown 0 nodes 1278757

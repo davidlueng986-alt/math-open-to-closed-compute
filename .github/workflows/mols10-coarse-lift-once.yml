@@ -1,0 +1,59 @@
+name: MOLS10 E073 coarse lift exact replay and broader search
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'jobs/mols10-coarse-lift/launch.txt'
+permissions:
+  contents: read
+concurrency:
+  group: mols10-coarse-lift
+  cancel-in-progress: false
+jobs:
+  shard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        shard: [0,1,2,3]
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          mkdir -p out
+          bash jobs/mols10-coarse-lift/run.sh "${{ matrix.shard }}" 4 out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shard-${{ matrix.shard }}
+          path: out/
+          retention-days: 7
+          if-no-files-found: warn
+  collect:
+    needs: [shard]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    env:
+      JOB: mols10-coarse-lift
+      SHARDS: '4'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: shard-*
+          path: shards
+      - run: python3 scripts/collect.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: summary
+          path: summary/
+          retention-days: 30
+      - run: bash scripts/commit_results.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: python3 scripts/collect.py --check
