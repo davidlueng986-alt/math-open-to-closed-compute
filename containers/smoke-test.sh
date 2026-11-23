@@ -7,7 +7,7 @@ case "$toolbox" in
     docker run --rm --entrypoint bash "$image" -c 'set -eu; command -v smsg; command -v nauty-geng; command -v z3; command -v minisat; python3 -c "from pysms.graph_builder import GraphEncodingBuilder; import pysat,networkx,numpy"'
     ;;
   sage)
-    docker run --rm --entrypoint bash "$image" -c 'set -eu; sage -c "assert factor(360) == 2^3 * 3^2 * 5"; command -v nauty-geng; command -v z3; command -v minisat'
+    docker run --rm --entrypoint bash "$image" -c 'set -eu; sage -c "assert factor(360).value() == 360 and len(factor(360)) == 3"; command -v nauty-geng; command -v z3; command -v minisat'
     ;;
   lean)
     docker run --rm --entrypoint bash "$image" -c 'set -eu; lean --version; cd /opt/mathlib4; printf "import Mathlib\n#check Nat.add_comm\n" > /tmp/smoke.lean; lake env lean /tmp/smoke.lean'
