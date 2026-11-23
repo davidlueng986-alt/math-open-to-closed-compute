@@ -213,6 +213,7 @@ theorem mem_translate_iff (a t : G) (S : Finset G) :
   · intro ht
     exact Finset.mem_image.mpr ⟨t - a, ht, by abel⟩
 
+omit [AddCommGroup G] in
 /-- At most one of a pair can pass a predicate unless both pass. -/
 theorem pair_filter_card_le_one (a b : G) (P : G → Prop) [DecidablePred P]
     (h : ¬ (P a ∧ P b)) :
@@ -247,7 +248,7 @@ theorem representation_card_le_active_deletions
           exact ⟨Finset.mem_sdiff.mpr ⟨ha'.1, haD⟩,
             Finset.mem_sdiff.mpr ⟨ha'.2, hbD⟩⟩
         rw [hHole] at hs
-        exact Finset.not_mem_empty a hs
+        simpa using hs
       apply Finset.mem_union.mpr
       right
       apply Finset.mem_image.mpr
@@ -346,11 +347,15 @@ theorem cap_slice_deletion_holes [Fintype G]
       representationFirst (A \ D₁) (B \ D₂) t = ∅ := by
   intro t ht
   rcases Finset.mem_image.mp ht with ⟨c, hc, rfl⟩
-  apply Finset.eq_empty_iff_forall_not_mem.mpr
-  intro a ha
-  have ha' : a ∈ A \ D₁ ∧ -c - a ∈ B \ D₂ := by
-    simpa [representationFirst] using ha
-  exact cap_slices_mixed hK a (hA ha'.1) (-c - a) (hB ha'.2) c hc (by abel)
+  ext a
+  constructor
+  · intro ha
+    exfalso
+    have ha' : a ∈ A \ D₁ ∧ -c - a ∈ B \ D₂ := by
+      simpa [representationFirst] using ha
+    exact cap_slices_mixed hK a (hA ha'.1) (-c - a) (hB ha'.2) c hc (by abel)
+  · intro ha
+    simp at ha
 
 /--
 Cap-specific version of the two-plus-two intersection bound.  The right
