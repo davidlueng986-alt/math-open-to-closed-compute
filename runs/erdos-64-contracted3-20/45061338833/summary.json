@@ -1,0 +1,1784 @@
+{
+  "job": "erdos-64-contracted3-20",
+  "run_id": "45061338833",
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45061338833",
+  "commit": "3d191cd250272a8948ad2bf09190d5966feeaaff",
+  "shards_expected": 64,
+  "shards_with_result": 63,
+  "missing_shards": [
+    21
+  ],
+  "seconds_per_shard": {
+    "0": 2748,
+    "1": 2280,
+    "2": 2356,
+    "3": 3504,
+    "4": 1966,
+    "5": 3036,
+    "6": 2079,
+    "7": 2295,
+    "8": 1514,
+    "9": 1839,
+    "10": 2774,
+    "11": 4053,
+    "12": 1650,
+    "13": 4010,
+    "14": 2786,
+    "15": 1385,
+    "16": 1459,
+    "17": 2986,
+    "18": 4001,
+    "19": 3256,
+    "20": 1497,
+    "22": 3257,
+    "23": 1608,
+    "24": 2632,
+    "25": 3471,
+    "26": 1883,
+    "27": 1490,
+    "28": 3026,
+    "29": 2007,
+    "30": 1742,
+    "31": 2833,
+    "32": 1471,
+    "33": 3837,
+    "34": 2236,
+    "35": 2162,
+    "36": 1471,
+    "37": 2500,
+    "38": 1967,
+    "39": 2583,
+    "40": 3157,
+    "41": 3301,
+    "42": 3163,
+    "43": 3305,
+    "44": 1844,
+    "45": 2505,
+    "46": 3887,
+    "47": 2518,
+    "48": 3788,
+    "49": 1524,
+    "50": 3690,
+    "51": 2783,
+    "52": 1619,
+    "53": 3610,
+    "54": 2878,
+    "55": 2392,
+    "56": 1192,
+    "57": 2193,
+    "58": 2154,
+    "59": 2527,
+    "60": 2879,
+    "61": 2070,
+    "62": 4500,
+    "63": 1545
+  },
+  "complete": false,
+  "results": {
+    "0": {
+      "elapsed_seconds": 2747.7728695660003,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 0,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 10435,
+          "exact_checked": 6817284,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1734714873,
+          "excluded_by_triple": 45105169140,
+          "skipped_triangle_edges": 48599,
+          "triangle_free_contraction_edges": 264451,
+          "triple_unsat_contractions": 254620,
+          "voltage_assignments_total": 46846701297,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "1": {
+      "elapsed_seconds": 2279.206526034,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 1,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 6101,
+          "exact_checked": 8634322,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1172581874,
+          "excluded_by_triple": 25695172350,
+          "skipped_triangle_edges": 31312,
+          "triangle_free_contraction_edges": 151718,
+          "triple_unsat_contractions": 145050,
+          "voltage_assignments_total": 26876388546,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "2": {
+      "elapsed_seconds": 2355.1579788080003,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 2,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 8125,
+          "exact_checked": 1851820,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1380249074,
+          "excluded_by_triple": 35143484742,
+          "skipped_triangle_edges": 37562,
+          "triangle_free_contraction_edges": 206188,
+          "triple_unsat_contractions": 198386,
+          "voltage_assignments_total": 36525585636,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "3": {
+      "elapsed_seconds": 3503.3025297689996,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 3,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 8721,
+          "exact_checked": 796998,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1305484980,
+          "excluded_by_triple": 37238248017,
+          "skipped_triangle_edges": 44045,
+          "triangle_free_contraction_edges": 217585,
+          "triple_unsat_contractions": 210211,
+          "voltage_assignments_total": 38544529995,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "4": {
+      "elapsed_seconds": 1965.8481907030002,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 4,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 5334,
+          "exact_checked": 810870,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 576865497,
+          "excluded_by_triple": 23976315009,
+          "skipped_triangle_edges": 21412,
+          "triangle_free_contraction_edges": 138608,
+          "triple_unsat_contractions": 135347,
+          "voltage_assignments_total": 24553991376,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "5": {
+      "elapsed_seconds": 3035.641952164,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 5,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 7945,
+          "exact_checked": 2106184,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1682384639,
+          "excluded_by_triple": 32739777099,
+          "skipped_triangle_edges": 44024,
+          "triangle_free_contraction_edges": 194326,
+          "triple_unsat_contractions": 184817,
+          "voltage_assignments_total": 34424267922,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "6": {
+      "elapsed_seconds": 2078.774064254,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 6,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 7325,
+          "exact_checked": 3830850,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1298553894,
+          "excluded_by_triple": 31049794719,
+          "skipped_triangle_edges": 37121,
+          "triangle_free_contraction_edges": 182629,
+          "triple_unsat_contractions": 175277,
+          "voltage_assignments_total": 32352179463,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "7": {
+      "elapsed_seconds": 2294.828295155,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 7,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 7737,
+          "exact_checked": 761442,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1345910052,
+          "excluded_by_triple": 32612408406,
+          "skipped_triangle_edges": 40410,
+          "triangle_free_contraction_edges": 191700,
+          "triple_unsat_contractions": 184098,
+          "voltage_assignments_total": 33959079900,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "8": {
+      "elapsed_seconds": 1514.385520261,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 8,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 5600,
+          "exact_checked": 342588,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 741903342,
+          "excluded_by_triple": 24375072906,
+          "skipped_triangle_edges": 26212,
+          "triangle_free_contraction_edges": 141788,
+          "triple_unsat_contractions": 137598,
+          "voltage_assignments_total": 25117318836,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "9": {
+      "elapsed_seconds": 1838.131477158,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 9,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 4984,
+          "exact_checked": 2619624,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 554684838,
+          "excluded_by_triple": 21967468029,
+          "skipped_triangle_edges": 22367,
+          "triangle_free_contraction_edges": 127153,
+          "triple_unsat_contractions": 124007,
+          "voltage_assignments_total": 22524772491,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "10": {
+      "elapsed_seconds": 2774.386480816,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 10,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 7602,
+          "exact_checked": 2019980,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 855017206,
+          "excluded_by_triple": 32622151491,
+          "skipped_triangle_edges": 39069,
+          "triangle_free_contraction_edges": 188991,
+          "triple_unsat_contractions": 184153,
+          "voltage_assignments_total": 33479188677,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "11": {
+      "elapsed_seconds": 4052.9924458540004,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 11,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 10940,
+          "exact_checked": 4829670,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1881077292,
+          "excluded_by_triple": 47257682337,
+          "skipped_triangle_edges": 50783,
+          "triangle_free_contraction_edges": 277417,
+          "triple_unsat_contractions": 266771,
+          "voltage_assignments_total": 49143589299,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "12": {
+      "elapsed_seconds": 1650.175668949,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 12,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 7707,
+          "exact_checked": 2663870,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1720799293,
+          "excluded_by_triple": 31186552203,
+          "skipped_triangle_edges": 45432,
+          "triangle_free_contraction_edges": 185778,
+          "triple_unsat_contractions": 176049,
+          "voltage_assignments_total": 32910015366,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "13": {
+      "elapsed_seconds": 4009.80844805,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 13,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 10468,
+          "exact_checked": 9454812,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1722511407,
+          "excluded_by_triple": 43356905397,
+          "skipped_triangle_edges": 59512,
+          "triangle_free_contraction_edges": 254528,
+          "triple_unsat_contractions": 244751,
+          "voltage_assignments_total": 45088871616,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "14": {
+      "elapsed_seconds": 2785.15124384,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 14,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 9600,
+          "exact_checked": 964590,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1408594089,
+          "excluded_by_triple": 40838052204,
+          "skipped_triangle_edges": 49511,
+          "triangle_free_contraction_edges": 238489,
+          "triple_unsat_contractions": 230532,
+          "voltage_assignments_total": 42247610883,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "15": {
+      "elapsed_seconds": 1384.97951422,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 15,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 5443,
+          "exact_checked": 1341834,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 877130139,
+          "excluded_by_triple": 23661347643,
+          "skipped_triangle_edges": 24762,
+          "triangle_free_contraction_edges": 138528,
+          "triple_unsat_contractions": 133569,
+          "voltage_assignments_total": 24539819616,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "16": {
+      "elapsed_seconds": 1458.849647216,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 16,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 3992,
+          "exact_checked": 920272,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 567898745,
+          "excluded_by_triple": 17507260863,
+          "skipped_triangle_edges": 17720,
+          "triangle_free_contraction_edges": 102040,
+          "triple_unsat_contractions": 98829,
+          "voltage_assignments_total": 18076079880,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "17": {
+      "elapsed_seconds": 2986.003656055,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 17,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 8409,
+          "exact_checked": 2096292,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 828191697,
+          "excluded_by_triple": 37190064033,
+          "skipped_triangle_edges": 37644,
+          "triangle_free_contraction_edges": 214626,
+          "triple_unsat_contractions": 209939,
+          "voltage_assignments_total": 38020352022,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "18": {
+      "elapsed_seconds": 4000.053873123,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 18,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 10393,
+          "exact_checked": 1320068,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1883346865,
+          "excluded_by_triple": 42936889860,
+          "skipped_triangle_edges": 58771,
+          "triangle_free_contraction_edges": 253019,
+          "triple_unsat_contractions": 242380,
+          "voltage_assignments_total": 44821556793,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "19": {
+      "elapsed_seconds": 3256.220745447,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 19,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 12402,
+          "exact_checked": 7655262,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 2308010322,
+          "excluded_by_triple": 53831784654,
+          "skipped_triangle_edges": 55106,
+          "triangle_free_contraction_edges": 316954,
+          "triple_unsat_contractions": 303882,
+          "voltage_assignments_total": 56147450238,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "20": {
+      "elapsed_seconds": 1496.463788212,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 20,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 5571,
+          "exact_checked": 744378,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 619092975,
+          "excluded_by_triple": 25176131640,
+          "skipped_triangle_edges": 21511,
+          "triangle_free_contraction_edges": 145619,
+          "triple_unsat_contractions": 142120,
+          "voltage_assignments_total": 25795968993,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "22": {
+      "elapsed_seconds": 3256.1948701180004,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 22,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 8308,
+          "exact_checked": 3491922,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 926529828,
+          "excluded_by_triple": 36170937342,
+          "skipped_triangle_edges": 39804,
+          "triangle_free_contraction_edges": 209436,
+          "triple_unsat_contractions": 204186,
+          "voltage_assignments_total": 37100959092,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "23": {
+      "elapsed_seconds": 1608.09092278,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 23,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 6690,
+          "exact_checked": 3429650,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 900197197,
+          "excluded_by_triple": 28002866319,
+          "skipped_triangle_edges": 37522,
+          "triangle_free_contraction_edges": 163178,
+          "triple_unsat_contractions": 158077,
+          "voltage_assignments_total": 28906493166,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "24": {
+      "elapsed_seconds": 2632.1001560590003,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 24,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 9462,
+          "exact_checked": 2182578,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1106226201,
+          "excluded_by_triple": 40748415822,
+          "skipped_triangle_edges": 47577,
+          "triangle_free_contraction_edges": 236283,
+          "triple_unsat_contractions": 230026,
+          "voltage_assignments_total": 41856824601,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "25": {
+      "elapsed_seconds": 3470.4155575699997,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 25,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 8744,
+          "exact_checked": 4556752,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1725106556,
+          "excluded_by_triple": 37880760186,
+          "skipped_triangle_edges": 38718,
+          "triangle_free_contraction_edges": 223602,
+          "triple_unsat_contractions": 213838,
+          "voltage_assignments_total": 39610423494,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "26": {
+      "elapsed_seconds": 1882.007134238,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 26,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 6985,
+          "exact_checked": 1569112,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1165652471,
+          "excluded_by_triple": 30180002949,
+          "skipped_triangle_edges": 32594,
+          "triangle_free_contraction_edges": 176956,
+          "triple_unsat_contractions": 170367,
+          "voltage_assignments_total": 31347224532,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "27": {
+      "elapsed_seconds": 1490.0001906940001,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 27,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 5610,
+          "exact_checked": 425270,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 531724318,
+          "excluded_by_triple": 25200223632,
+          "skipped_triangle_edges": 23040,
+          "triangle_free_contraction_edges": 145260,
+          "triple_unsat_contractions": 142256,
+          "voltage_assignments_total": 25732373220,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "28": {
+      "elapsed_seconds": 3025.615502506,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 28,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 8078,
+          "exact_checked": 1550824,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1392950360,
+          "excluded_by_triple": 34496189604,
+          "skipped_triangle_edges": 39736,
+          "triangle_free_contraction_edges": 202604,
+          "triple_unsat_contractions": 194732,
+          "voltage_assignments_total": 35890690788,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "29": {
+      "elapsed_seconds": 2007.173177594,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 29,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 6522,
+          "exact_checked": 1197740,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1011197365,
+          "excluded_by_triple": 27891972297,
+          "skipped_triangle_edges": 32494,
+          "triangle_free_contraction_edges": 163166,
+          "triple_unsat_contractions": 157451,
+          "voltage_assignments_total": 28904367402,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "30": {
+      "elapsed_seconds": 1742.727827328,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 30,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 6606,
+          "exact_checked": 2449680,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 744756366,
+          "excluded_by_triple": 29799845487,
+          "skipped_triangle_edges": 25741,
+          "triangle_free_contraction_edges": 172439,
+          "triple_unsat_contractions": 168221,
+          "voltage_assignments_total": 30547051533,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "31": {
+      "elapsed_seconds": 2832.952920868,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 31,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 7857,
+          "exact_checked": 1730324,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 791533942,
+          "excluded_by_triple": 34353940563,
+          "skipped_triangle_edges": 37303,
+          "triangle_free_contraction_edges": 198407,
+          "triple_unsat_contractions": 193929,
+          "voltage_assignments_total": 35147204829,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "32": {
+      "elapsed_seconds": 1470.1648468399999,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 32,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 6408,
+          "exact_checked": 1916022,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 940151724,
+          "excluded_by_triple": 28065576357,
+          "skipped_triangle_edges": 28491,
+          "triangle_free_contraction_edges": 163749,
+          "triple_unsat_contractions": 158431,
+          "voltage_assignments_total": 29007644103,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "33": {
+      "elapsed_seconds": 3836.033734993,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 33,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 10014,
+          "exact_checked": 2452124,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1042715176,
+          "excluded_by_triple": 43498445850,
+          "skipped_triangle_edges": 48970,
+          "triangle_free_contraction_edges": 251450,
+          "triple_unsat_contractions": 245550,
+          "voltage_assignments_total": 44543613150,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "34": {
+      "elapsed_seconds": 2235.267934597,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 34,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 8576,
+          "exact_checked": 5910910,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 2191420478,
+          "excluded_by_triple": 34948977336,
+          "skipped_triangle_edges": 47588,
+          "triangle_free_contraction_edges": 209692,
+          "triple_unsat_contractions": 197288,
+          "voltage_assignments_total": 37146308724,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "35": {
+      "elapsed_seconds": 2161.237279652,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 35,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 6344,
+          "exact_checked": 2539080,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 851663754,
+          "excluded_by_triple": 26834050413,
+          "skipped_triangle_edges": 34019,
+          "triangle_free_contraction_edges": 156301,
+          "triple_unsat_contractions": 151479,
+          "voltage_assignments_total": 27688253247,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "36": {
+      "elapsed_seconds": 1470.4826892209999,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 36,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 5530,
+          "exact_checked": 3127022,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1000587880,
+          "excluded_by_triple": 23994915444,
+          "skipped_triangle_edges": 24782,
+          "triangle_free_contraction_edges": 141118,
+          "triple_unsat_contractions": 135452,
+          "voltage_assignments_total": 24998630346,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "37": {
+      "elapsed_seconds": 2499.6409445550003,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 37,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 6348,
+          "exact_checked": 752184,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 758854152,
+          "excluded_by_triple": 27955390923,
+          "skipped_triangle_edges": 28343,
+          "triangle_free_contraction_edges": 162097,
+          "triple_unsat_contractions": 157809,
+          "voltage_assignments_total": 28714997259,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "38": {
+      "elapsed_seconds": 1967.314069468,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 38,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 7063,
+          "exact_checked": 1574718,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1166355453,
+          "excluded_by_triple": 30521542365,
+          "skipped_triangle_edges": 33002,
+          "triangle_free_contraction_edges": 178888,
+          "triple_unsat_contractions": 172295,
+          "voltage_assignments_total": 31689472536,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "39": {
+      "elapsed_seconds": 2583.088019492,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 39,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 6964,
+          "exact_checked": 815900,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 571368910,
+          "excluded_by_triple": 31847310513,
+          "skipped_triangle_edges": 25911,
+          "triangle_free_contraction_edges": 183009,
+          "triple_unsat_contractions": 179779,
+          "voltage_assignments_total": 32419495323,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "40": {
+      "elapsed_seconds": 3156.989857031,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 40,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 8686,
+          "exact_checked": 4921920,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 2178414855,
+          "excluded_by_triple": 36894051396,
+          "skipped_triangle_edges": 39987,
+          "triangle_free_contraction_edges": 220593,
+          "triple_unsat_contractions": 208268,
+          "voltage_assignments_total": 39077388171,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "41": {
+      "elapsed_seconds": 3300.844184242,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 41,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 10406,
+          "exact_checked": 913694,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1211303227,
+          "excluded_by_triple": 46578855033,
+          "skipped_triangle_edges": 42398,
+          "triangle_free_contraction_edges": 269782,
+          "triple_unsat_contractions": 262939,
+          "voltage_assignments_total": 47791071954,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "42": {
+      "elapsed_seconds": 3163.322283777,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 42,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 9040,
+          "exact_checked": 2239548,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1190668350,
+          "excluded_by_triple": 38496346011,
+          "skipped_triangle_edges": 47153,
+          "triangle_free_contraction_edges": 224047,
+          "triple_unsat_contractions": 217313,
+          "voltage_assignments_total": 39689253909,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "43": {
+      "elapsed_seconds": 3305.089844176,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 43,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 12923,
+          "exact_checked": 4926342,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 3242709609,
+          "excluded_by_triple": 53647906068,
+          "skipped_triangle_edges": 66513,
+          "triangle_free_contraction_edges": 321177,
+          "triple_unsat_contractions": 302844,
+          "voltage_assignments_total": 56895542019,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "44": {
+      "elapsed_seconds": 1843.79068461,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 44,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 6686,
+          "exact_checked": 3236564,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1522707694,
+          "excluded_by_triple": 28734483429,
+          "skipped_triangle_edges": 29759,
+          "triangle_free_contraction_edges": 170821,
+          "triple_unsat_contractions": 162207,
+          "voltage_assignments_total": 30260427687,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "45": {
+      "elapsed_seconds": 2504.950218299,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 45,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 9032,
+          "exact_checked": 1270330,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1257181958,
+          "excluded_by_triple": 38085719265,
+          "skipped_triangle_edges": 48861,
+          "triangle_free_contraction_edges": 222099,
+          "triple_unsat_contractions": 214995,
+          "voltage_assignments_total": 39344171553,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "46": {
+      "elapsed_seconds": 3886.918265805,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 46,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 11173,
+          "exact_checked": 660396,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 782152197,
+          "excluded_by_triple": 49973877288,
+          "skipped_triangle_edges": 48667,
+          "triangle_free_contraction_edges": 286523,
+          "triple_unsat_contractions": 282104,
+          "voltage_assignments_total": 50756689881,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "47": {
+      "elapsed_seconds": 2517.788829533,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 47,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 9974,
+          "exact_checked": 2495390,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1387399972,
+          "excluded_by_triple": 42285874635,
+          "skipped_triangle_edges": 52669,
+          "triangle_free_contraction_edges": 246551,
+          "triple_unsat_contractions": 238705,
+          "voltage_assignments_total": 43675769997,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "48": {
+      "elapsed_seconds": 3787.7239631109996,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 48,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 9381,
+          "exact_checked": 3871784,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1798598941,
+          "excluded_by_triple": 40624944363,
+          "skipped_triangle_edges": 41926,
+          "triangle_free_contraction_edges": 239504,
+          "triple_unsat_contractions": 229329,
+          "voltage_assignments_total": 42427415088,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "49": {
+      "elapsed_seconds": 1523.7222608030002,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 49,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 4899,
+          "exact_checked": 729624,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 347895672,
+          "excluded_by_triple": 21824687547,
+          "skipped_triangle_edges": 21801,
+          "triangle_free_contraction_edges": 125169,
+          "triple_unsat_contractions": 123201,
+          "voltage_assignments_total": 22173312843,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "50": {
+      "elapsed_seconds": 3690.678007341,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 50,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 10402,
+          "exact_checked": 2248814,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1070021977,
+          "excluded_by_triple": 43987017276,
+          "skipped_triangle_edges": 57699,
+          "triangle_free_contraction_edges": 254361,
+          "triple_unsat_contractions": 248308,
+          "voltage_assignments_total": 45059288067,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "51": {
+      "elapsed_seconds": 2783.140948226,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 51,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 8743,
+          "exact_checked": 99376,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 448082534,
+          "excluded_by_triple": 40768610580,
+          "skipped_triangle_edges": 29620,
+          "triangle_free_contraction_edges": 232670,
+          "triple_unsat_contractions": 230140,
+          "voltage_assignments_total": 41216792490,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "52": {
+      "elapsed_seconds": 1619.021133623,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 52,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 7455,
+          "exact_checked": 4023028,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1257263612,
+          "excluded_by_triple": 31657586076,
+          "skipped_triangle_edges": 37822,
+          "triangle_free_contraction_edges": 185828,
+          "triple_unsat_contractions": 178708,
+          "voltage_assignments_total": 32918872716,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "53": {
+      "elapsed_seconds": 3609.7555882750003,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 53,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 9545,
+          "exact_checked": 4637900,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1439818738,
+          "excluded_by_triple": 40465866357,
+          "skipped_triangle_edges": 49765,
+          "triangle_free_contraction_edges": 236585,
+          "triple_unsat_contractions": 228431,
+          "voltage_assignments_total": 41910322995,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "54": {
+      "elapsed_seconds": 2876.9945564470004,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 54,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 8462,
+          "exact_checked": 2317694,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1305204313,
+          "excluded_by_triple": 34665542136,
+          "skipped_triangle_edges": 50791,
+          "triangle_free_contraction_edges": 203069,
+          "triple_unsat_contractions": 195688,
+          "voltage_assignments_total": 35973064143,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "55": {
+      "elapsed_seconds": 2391.6321805009998,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 55,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 8269,
+          "exact_checked": 1629576,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 901288683,
+          "excluded_by_triple": 35891930817,
+          "skipped_triangle_edges": 40362,
+          "triangle_free_contraction_edges": 207708,
+          "triple_unsat_contractions": 202611,
+          "voltage_assignments_total": 36794849076,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "56": {
+      "elapsed_seconds": 1192.281276623,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 56,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 4699,
+          "exact_checked": 1107652,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 508898561,
+          "excluded_by_triple": 19957203873,
+          "skipped_triangle_edges": 25432,
+          "triangle_free_contraction_edges": 115538,
+          "triple_unsat_contractions": 112659,
+          "voltage_assignments_total": 20467210086,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "57": {
+      "elapsed_seconds": 2192.821377884,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 57,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 7690,
+          "exact_checked": 1470174,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 831829314,
+          "excluded_by_triple": 33046595703,
+          "skipped_triangle_edges": 39447,
+          "triangle_free_contraction_edges": 191253,
+          "triple_unsat_contractions": 186549,
+          "voltage_assignments_total": 33879895191,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "58": {
+      "elapsed_seconds": 2153.953688052,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 58,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 7851,
+          "exact_checked": 601370,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 807366097,
+          "excluded_by_triple": 35420365503,
+          "skipped_triangle_edges": 31020,
+          "triangle_free_contraction_edges": 204510,
+          "triple_unsat_contractions": 199949,
+          "voltage_assignments_total": 36228332970,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "59": {
+      "elapsed_seconds": 2526.9321763020002,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 59,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 9180,
+          "exact_checked": 2739616,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1044199154,
+          "excluded_by_triple": 39581725680,
+          "skipped_triangle_edges": 46050,
+          "triangle_free_contraction_edges": 229350,
+          "triple_unsat_contractions": 223440,
+          "voltage_assignments_total": 40628664450,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "60": {
+      "elapsed_seconds": 2878.4429909789997,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 60,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 7112,
+          "exact_checked": 3808576,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1512215450,
+          "excluded_by_triple": 29442717135,
+          "skipped_triangle_edges": 38597,
+          "triangle_free_contraction_edges": 174763,
+          "triple_unsat_contractions": 166205,
+          "voltage_assignments_total": 30958741161,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "61": {
+      "elapsed_seconds": 2069.603893053,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 61,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 8205,
+          "exact_checked": 795256,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1033388930,
+          "excluded_by_triple": 35168993910,
+          "skipped_triangle_edges": 41782,
+          "triangle_free_contraction_edges": 204368,
+          "triple_unsat_contractions": 198530,
+          "voltage_assignments_total": 36203178096,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "62": {
+      "elapsed_seconds": 4499.3716545590005,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 62,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 11684,
+          "exact_checked": 1403844,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 1250139711,
+          "excluded_by_triple": 50178304926,
+          "skipped_triangle_edges": 60197,
+          "triangle_free_contraction_edges": 290323,
+          "triple_unsat_contractions": 283258,
+          "voltage_assignments_total": 51429848481,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    },
+    "63": {
+      "elapsed_seconds": 1544.295614928,
+      "expected_counts": {
+        "20": 510489
+      },
+      "problem": "ERDOS-64",
+      "scope": "C3 covers of one-edge contractions of all connected cubic bases order 20",
+      "shard": 63,
+      "shards": 64,
+      "statistics": {
+        "20": {
+          "base_graphs": 5411,
+          "exact_checked": 831416,
+          "exact_unknown": 0,
+          "excluded_by_monodromy": 691104766,
+          "excluded_by_triple": 24289156611,
+          "skipped_triangle_edges": 21311,
+          "triangle_free_contraction_edges": 141019,
+          "triple_unsat_contractions": 137113,
+          "voltage_assignments_total": 24981092793,
+          "witnesses": 0
+        }
+      },
+      "status": "OPEN",
+      "witness_overflow": 0,
+      "witnesses": []
+    }
+  },
+  "merge": {
+    "exit_code": 1,
+    "output": "Traceback (most recent call last):\n  File \"/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/jobs/erdos-64-contracted3-20/merge.py\", line 11, in <module>\n    if not p.is_file():raise RuntimeError(f'missing shard {i}')\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: missing shard 21\n"
+  }
+}
