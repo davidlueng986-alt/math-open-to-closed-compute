@@ -1,0 +1,25 @@
+{
+  "job": "hadamard-2396-fibres",
+  "run_id": "45275528620",
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45275528620",
+  "commit": "4ba25d65bbfd54e2de9d79dcdcb8d848321e179a",
+  "shards_expected": 8,
+  "shards_with_result": 0,
+  "missing_shards": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "seconds_per_shard": {},
+  "complete": false,
+  "results": {},
+  "merge": {
+    "exit_code": 1,
+    "output": "Traceback (most recent call last):\n  File \"/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/jobs/hadamard-2396-fibres/merge.py\", line 88, in <module>\n    main(Path(sys.argv[1]), Path(sys.argv[2]))\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/jobs/hadamard-2396-fibres/merge.py\", line 39, in main\n    raise ValueError(\"incomplete base partition\")\nValueError: incomplete base partition\n"
+  }
+}
