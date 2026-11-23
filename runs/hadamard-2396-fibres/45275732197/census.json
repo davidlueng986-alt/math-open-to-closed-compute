@@ -1,0 +1,26 @@
+{
+  "prime": 149,
+  "group_generator": 2,
+  "base_labelled": {
+    "row_norm": 148,
+    "mod4": 1384,
+    "shift_inconsistent": 96,
+    "affine_norm": 192
+  },
+  "one_exchange_labelled": {
+    "row_norm": 239760,
+    "mod4": 118414800,
+    "shift_inconsistent": 888000,
+    "affine_norm": 53280
+  },
+  "move_representatives": {
+    "row_norm": 672,
+    "mod4": 80320,
+    "shift_inconsistent": 683,
+    "affine_norm": 21
+  },
+  "base_classes": 46,
+  "base_count": 1820,
+  "one_exchange_count": 119595840,
+  "survivor_representatives": 0
+}

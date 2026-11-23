@@ -1,0 +1,558 @@
+{
+  "job": "hadamard-2396-fibres",
+  "run_id": "45275732197",
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45275732197",
+  "commit": "db40ef4a735fd9aba40a644feae253c2ce4808ab",
+  "shards_expected": 8,
+  "shards_with_result": 8,
+  "missing_shards": [],
+  "seconds_per_shard": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 1,
+    "4": 0,
+    "5": 1,
+    "6": 0,
+    "7": 1
+  },
+  "complete": true,
+  "results": {
+    "0": {
+      "shard": 0,
+      "shards": 8,
+      "classes": [
+        {
+          "mask": 15,
+          "base_multiplicity": 3,
+          "base_status": "row_norm",
+          "base_evidence": null,
+          "moves": {
+            "row_norm": 16,
+            "mod4": 1760
+          },
+          "survivors": []
+        },
+        {
+          "mask": 90,
+          "base_multiplicity": 6,
+          "base_status": "row_norm",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1760,
+            "row_norm": 8,
+            "shift_inconsistent": 8
+          },
+          "survivors": []
+        },
+        {
+          "mask": 4107,
+          "base_multiplicity": 24,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 4138,
+          "base_multiplicity": 48,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 12298,
+          "base_multiplicity": 12,
+          "base_status": "row_norm",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1620,
+            "row_norm": 156
+          },
+          "survivors": []
+        },
+        {
+          "mask": 20497,
+          "base_multiplicity": 24,
+          "base_status": "shift_inconsistent",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1620,
+            "shift_inconsistent": 156
+          },
+          "survivors": []
+        }
+      ]
+    },
+    "1": {
+      "shard": 1,
+      "shards": 8,
+      "classes": [
+        {
+          "mask": 23,
+          "base_multiplicity": 48,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 275,
+          "base_multiplicity": 48,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 4115,
+          "base_multiplicity": 96,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 4369,
+          "base_multiplicity": 32,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 12305,
+          "base_multiplicity": 48,
+          "base_status": "shift_inconsistent",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1620,
+            "shift_inconsistent": 156
+          },
+          "survivors": []
+        },
+        {
+          "mask": 20498,
+          "base_multiplicity": 48,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        }
+      ]
+    },
+    "2": {
+      "shard": 2,
+      "shards": 8,
+      "classes": [
+        {
+          "mask": 27,
+          "base_multiplicity": 48,
+          "base_status": "row_norm",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1760,
+            "row_norm": 8,
+            "shift_inconsistent": 2,
+            "affine_norm": 6
+          },
+          "survivors": []
+        },
+        {
+          "mask": 277,
+          "base_multiplicity": 24,
+          "base_status": "shift_inconsistent",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1768,
+            "shift_inconsistent": 8
+          },
+          "survivors": []
+        },
+        {
+          "mask": 4117,
+          "base_multiplicity": 48,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 4370,
+          "base_multiplicity": 96,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 12306,
+          "base_multiplicity": 96,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 20514,
+          "base_multiplicity": 24,
+          "base_status": "affine_norm",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1620,
+            "shift_inconsistent": 156
+          },
+          "survivors": []
+        }
+      ]
+    },
+    "3": {
+      "shard": 3,
+      "shards": 8,
+      "classes": [
+        {
+          "mask": 51,
+          "base_multiplicity": 24,
+          "base_status": "row_norm",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1760,
+            "row_norm": 8,
+            "shift_inconsistent": 8
+          },
+          "survivors": []
+        },
+        {
+          "mask": 278,
+          "base_multiplicity": 48,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 4118,
+          "base_multiplicity": 96,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 4386,
+          "base_multiplicity": 96,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 12322,
+          "base_multiplicity": 48,
+          "base_status": "affine_norm",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1620,
+            "shift_inconsistent": 156
+          },
+          "survivors": []
+        },
+        {
+          "mask": 28673,
+          "base_multiplicity": 24,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        }
+      ]
+    },
+    "4": {
+      "shard": 4,
+      "shards": 8,
+      "classes": [
+        {
+          "mask": 53,
+          "base_multiplicity": 24,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 282,
+          "base_multiplicity": 24,
+          "base_status": "affine_norm",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1760,
+            "shift_inconsistent": 16
+          },
+          "survivors": []
+        },
+        {
+          "mask": 4122,
+          "base_multiplicity": 48,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 4642,
+          "base_multiplicity": 32,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 20483,
+          "base_multiplicity": 12,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 28674,
+          "base_multiplicity": 24,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        }
+      ]
+    },
+    "5": {
+      "shard": 5,
+      "shards": 8,
+      "classes": [
+        {
+          "mask": 54,
+          "base_multiplicity": 24,
+          "base_status": "row_norm",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1760,
+            "row_norm": 8,
+            "shift_inconsistent": 4,
+            "affine_norm": 4
+          },
+          "survivors": []
+        },
+        {
+          "mask": 291,
+          "base_multiplicity": 96,
+          "base_status": "affine_norm",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1760,
+            "affine_norm": 11,
+            "shift_inconsistent": 5
+          },
+          "survivors": []
+        },
+        {
+          "mask": 4131,
+          "base_multiplicity": 96,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 12291,
+          "base_multiplicity": 24,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 20485,
+          "base_multiplicity": 6,
+          "base_status": "row_norm",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1620,
+            "row_norm": 156
+          },
+          "survivors": []
+        },
+        {
+          "mask": 61440,
+          "base_multiplicity": 1,
+          "base_status": "row_norm",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        }
+      ]
+    },
+    "6": {
+      "shard": 6,
+      "shards": 8,
+      "classes": [
+        {
+          "mask": 58,
+          "base_multiplicity": 24,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 293,
+          "base_multiplicity": 48,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 4133,
+          "base_multiplicity": 48,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 12293,
+          "base_multiplicity": 12,
+          "base_status": "row_norm",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1620,
+            "row_norm": 156
+          },
+          "survivors": []
+        },
+        {
+          "mask": 20486,
+          "base_multiplicity": 12,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        }
+      ]
+    },
+    "7": {
+      "shard": 7,
+      "shards": 8,
+      "classes": [
+        {
+          "mask": 85,
+          "base_multiplicity": 6,
+          "base_status": "row_norm",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1768,
+            "shift_inconsistent": 8
+          },
+          "survivors": []
+        },
+        {
+          "mask": 4103,
+          "base_multiplicity": 24,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 4134,
+          "base_multiplicity": 96,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 12294,
+          "base_multiplicity": 24,
+          "base_status": "mod4",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1776
+          },
+          "survivors": []
+        },
+        {
+          "mask": 20490,
+          "base_multiplicity": 6,
+          "base_status": "row_norm",
+          "base_evidence": null,
+          "moves": {
+            "mod4": 1620,
+            "row_norm": 156
+          },
+          "survivors": []
+        }
+      ]
+    }
+  },
+  "merge": {
+    "exit_code": 0,
+    "output": "{\"prime\": 149, \"group_generator\": 2, \"base_labelled\": {\"row_norm\": 148, \"mod4\": 1384, \"shift_inconsistent\": 96, \"affine_norm\": 192}, \"one_exchange_labelled\": {\"row_norm\": 239760, \"mod4\": 118414800, \"shift_inconsistent\": 888000, \"affine_norm\": 53280}, \"move_representatives\": {\"row_norm\": 672, \"mod4\": 80320, \"shift_inconsistent\": 683, \"affine_norm\": 21}, \"base_classes\": 46, \"base_count\": 1820, \"one_exchange_count\": 119595840, \"survivor_representatives\": 0}\n"
+  }
+}
