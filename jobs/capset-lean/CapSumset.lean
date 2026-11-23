@@ -449,7 +449,99 @@ theorem two_deletion_cap_nonvacuous :
     representationFirst (squareCap \ squareDeletion) (squareCap \ squareDeletion)
       ((1, 1) : ZMod 3 × ZMod 3) = ∅ ∧
     (representations squareCap squareCap ((1, 1) : ZMod 3 × ZMod 3)).card = 4 := by
-  unfold IsCap
+  unfold IsCap squareCap fivePointLayerCap squareDeletion slice representationFirst representations
+  decide
+
+/-! ## Stability of the full sumset under fewer deletions than its multiplicity -/
+
+/-- The full finite sumset, including diagonal pairs. -/
+def sumset (A B : Finset G) : Finset G :=
+  (A.product B).image fun p => p.1 + p.2
+
+theorem mem_sumset_iff (A B : Finset G) (t : G) :
+    t ∈ sumset A B ↔ ∃ a ∈ A, ∃ b ∈ B, a + b = t := by
+  constructor
+  · intro ht
+    rcases Finset.mem_image.mp ht with ⟨p, hp, hpt⟩
+    have hp' := Finset.mem_product.mp hp
+    exact ⟨p.1, hp'.1, p.2, hp'.2, hpt⟩
+  · rintro ⟨a, ha, b, hb, hab⟩
+    exact Finset.mem_image.mpr ⟨(a, b), Finset.mem_product.mpr ⟨ha, hb⟩, hab⟩
+
+theorem representationFirst_eq_empty_of_not_mem_sumset
+    (A B : Finset G) (t : G) (ht : t ∉ sumset A B) :
+    representationFirst A B t = ∅ := by
+  ext a
+  constructor
+  · intro ha
+    exfalso
+    have ha' : a ∈ A ∧ t - a ∈ B := by
+      simpa [representationFirst] using ha
+    exact ht ((mem_sumset_iff A B t).mpr ⟨a, ha'.1, t - a, ha'.2, by abel⟩)
+  · intro ha
+    simp at ha
+
+/--
+Every attained sum survives if each original representation fibre has at
+least `k` elements and fewer than `k` endpoints are deleted in total.
+The sumset equality is proved, not included among the hypotheses.
+-/
+theorem sumset_eq_after_few_deletions
+    (A B D₁ D₂ : Finset G) (k : ℕ)
+    (hSmall : D₁.card + D₂.card < k)
+    (hRep : ∀ t ∈ sumset A B, k ≤ (representations A B t).card) :
+    sumset (A \ D₁) (B \ D₂) = sumset A B := by
+  classical
+  ext t
+  constructor
+  · intro ht
+    rcases (mem_sumset_iff (A \ D₁) (B \ D₂) t).mp ht with ⟨a, ha, b, hb, hab⟩
+    exact (mem_sumset_iff A B t).mpr
+      ⟨a, (Finset.mem_sdiff.mp ha).1, b, (Finset.mem_sdiff.mp hb).1, hab⟩
+  · intro ht
+    by_contra hNot
+    have hHole := representationFirst_eq_empty_of_not_mem_sumset
+      (A \ D₁) (B \ D₂) t hNot
+    have hActive := representation_card_le_active_deletions A B D₁ D₂ t hHole
+    have hA : (representationFirst D₁ B t).card ≤ D₁.card :=
+      Finset.card_filter_le _ _
+    have hB : (representationFirst D₂ A t).card ≤ D₂.card :=
+      Finset.card_filter_le _ _
+    have hUpper := hActive.trans (Nat.add_le_add hA hB)
+    have hLower := hRep t ht
+    omega
+
+/--
+When the completed sumset survives the deletions, an actual cap's third
+slice must avoid the negatives of that full sumset.  This is the precise
+bridge to the reflected-45-cap application once its multiplicity is proved.
+-/
+theorem cap_slice_avoids_completed_sumset [Fintype G]
+    {K : Finset (G × ZMod 3)} (hK : IsCap K)
+    (A B D₁ D₂ : Finset G) (k : ℕ)
+    (hA : A \ D₁ ⊆ slice K 0) (hB : B \ D₂ ⊆ slice K 1)
+    (hSmall : D₁.card + D₂.card < k)
+    (hRep : ∀ t ∈ sumset A B, k ≤ (representations A B t).card) :
+    ∀ c ∈ slice K 2, -c ∉ sumset A B := by
+  intro c hc hsum
+  have heq := sumset_eq_after_few_deletions A B D₁ D₂ k hSmall hRep
+  have hsurvive : -c ∈ sumset (A \ D₁) (B \ D₂) := by
+    rw [heq]
+    exact hsum
+  rcases (mem_sumset_iff (A \ D₁) (B \ D₂) (-c)).mp hsurvive with
+    ⟨a, ha, b, hb, hab⟩
+  have hzero : a + b + c = 0 := by rw [hab]; simp
+  exact cap_slices_mixed hK a (hA ha) b (hB hb) c hc hzero
+
+/-- A nonempty example with two genuinely deleted endpoints and k=3. -/
+theorem sumset_stability_nonvacuous :
+    ({0} : Finset (ZMod 3)).card + ({1} : Finset (ZMod 3)).card < 3 ∧
+    (∀ t ∈ sumset (Finset.univ : Finset (ZMod 3)) Finset.univ,
+      3 ≤ (representations (Finset.univ : Finset (ZMod 3)) Finset.univ t).card) ∧
+    sumset ((Finset.univ : Finset (ZMod 3)) \ {0})
+      ((Finset.univ : Finset (ZMod 3)) \ {1}) =
+        sumset (Finset.univ : Finset (ZMod 3)) Finset.univ := by
+  unfold sumset representations
   decide
 
 end Capset
@@ -476,3 +568,9 @@ end Capset
 #print axioms Capset.four_representation_hole_mem_both_double_translates
 #print axioms Capset.four_representation_holes_card_le
 #print axioms Capset.two_deletion_cap_nonvacuous
+
+#print axioms Capset.mem_sumset_iff
+#print axioms Capset.representationFirst_eq_empty_of_not_mem_sumset
+#print axioms Capset.sumset_eq_after_few_deletions
+#print axioms Capset.cap_slice_avoids_completed_sumset
+#print axioms Capset.sumset_stability_nonvacuous
