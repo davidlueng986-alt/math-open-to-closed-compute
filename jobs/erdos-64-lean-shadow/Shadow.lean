@@ -43,7 +43,8 @@ theorem tail_support_expand_perm {a b : W} (p : H.Walk a b) :
       ((expand f mid ha hb q).cons_tail_support).symm
     conv_lhs => rw [he]
     conv_rhs => rw [hq, List.map_cons]
-    exact ((ih.cons (f b)).cons (mid s(a,b))).trans List.perm_middle.symm
+    exact ((ih.cons (f b)).cons (mid s(a,b))).trans
+      (List.perm_middle (l₁ := f b :: q.support.tail.map f) (l₂ := q.edges.map mid)).symm
 
 /-- Any simple cycle in a shadow with distinct midpoint images and
     no branch-midpoint overlap lifts to a genuine simple cycle. -/
@@ -70,8 +71,8 @@ theorem cycle_expand {a : W} (c : H.Walk a a) (hc : c.IsCycle)
   refine ⟨Walk.IsPath.mk' ?_, hlen⟩
   rwa [Walk.support_tail_of_not_nil _ hnil]
 
-/-- Exact original power-cycle witness, with the exponent increased by one. -/
 include ha hb in
+/-- Exact original power-cycle witness, with the exponent increased by one. -/
 theorem power_cycle_expand {a : W} (c : H.Walk a a) (hc : c.IsCycle)
     (hf : Function.Injective f)
     (hm : (c.edges.map mid).Nodup)
