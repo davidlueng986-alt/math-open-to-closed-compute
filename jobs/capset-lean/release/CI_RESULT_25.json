@@ -1,0 +1,138 @@
+{
+  "status": "PASS",
+  "scope": "Named cap and sumset lemmas only; not a formal proof of a seven-dimensional numerical bound or the exact maximum.",
+  "source_sha256": "95dcee638e9b142ae0a88c679218280ac4418f5b3388848b5b3dcc034ef04516",
+  "lean": "4.36.0",
+  "mathlib": "fc4f59e577feb1a4956671bc04ac18aaaf8cd842",
+  "image_digest": "sha256:8ba27c4e6be1aff22d80e6444f3ef7a4d0fc0438bcadf55ef39d2c17c74ae116",
+  "commit": "9b77624cf060f7a874232f464e72ac5fe5cc5b59",
+  "run_id": "45285247933",
+  "run_attempt": "1",
+  "theorem_dependencies": {
+    "Capset.representations_card_eq": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.representation_card_le_deleted": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.cap_slices_mixed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.cap_slice_representation_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.negative_disjoint_restrictedSumset": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.card_add_restrictedSumset_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.two_point_cap": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.two_point_packing_sharp": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.deletion_bound_sharp": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.mem_translate_iff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.pair_filter_card_le_one": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.representation_card_le_active_deletions": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.three_representation_hole_mem_double_translate": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.high_representation_holes_subset": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.high_representation_holes_card_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.cap_slice_deletion_holes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.cap_two_deletion_high_holes_card_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.four_representation_hole_mem_both_double_translates": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.four_representation_holes_card_le": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.two_deletion_cap_nonvacuous": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.mem_sumset_iff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.representationFirst_eq_empty_of_not_mem_sumset": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.sumset_eq_after_few_deletions": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.cap_slice_avoids_completed_sumset": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "Capset.sumset_stability_nonvacuous": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

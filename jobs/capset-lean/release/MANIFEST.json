@@ -1,0 +1,64 @@
+{
+  "status": "PASS",
+  "source_sha256": "95dcee638e9b142ae0a88c679218280ac4418f5b3388848b5b3dcc034ef04516",
+  "verified_commit": "9b77624cf060f7a874232f464e72ac5fe5cc5b59",
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45285247933",
+  "scope": "25 named Lean lemmas, including helpers and examples; not the full numerical upper-bound proof.",
+  "files": [
+    {
+      "path": "CI_RESULT_25.json",
+      "bytes": 3421,
+      "sha256": "7ab848c2c3e9832037d3f8142693db5ec58d95d5442299eafd115ef1e54f1f3c"
+    },
+    {
+      "path": "CapSumset.lean",
+      "bytes": 24429,
+      "sha256": "95dcee638e9b142ae0a88c679218280ac4418f5b3388848b5b3dcc034ef04516"
+    },
+    {
+      "path": "DECLARATION_AUDIT.json",
+      "bytes": 1311,
+      "sha256": "226fe599720dbec2780adfdf3e0c0acbdf6af9ade5c0a3e11a11faffb8a41e91"
+    },
+    {
+      "path": "DEPENDENCIES.json",
+      "bytes": 1601,
+      "sha256": "3cf58ab092c20fc81b1be4485cd5fa67fcf8c6aae7aa25676b8d9a9123a3beb3"
+    },
+    {
+      "path": "MATHEMATICAL_AUDIT.md",
+      "bytes": 5601,
+      "sha256": "0ef202d4794f49528892b5c5f8a8092492b21eb3dbd74bdfd5a25eebf824befd"
+    },
+    {
+      "path": "NONVACUITY_AUDIT.json",
+      "bytes": 1738,
+      "sha256": "005c7c123e98363660672776613a5c7034fe95a708423ee34fee09598fac3ce6"
+    },
+    {
+      "path": "README.md",
+      "bytes": 6203,
+      "sha256": "67a89894967142b46edd90f0b91cd6e376591b12138b07c550a1e57cee102823"
+    },
+    {
+      "path": "SUMSET_STABILITY_NONVACUITY_AUDIT.json",
+      "bytes": 2957,
+      "sha256": "8e0e737abe178c2aedad3c3510adab4f39ea136a27bb17726df6b1dce1c2bad6"
+    },
+    {
+      "path": "VERIFICATION_25.json",
+      "bytes": 681,
+      "sha256": "abcd7a31606c99531032a959571ee0623fcf04b961e7753987f04bed7328cc6b"
+    },
+    {
+      "path": "lean_axioms_25.log",
+      "bytes": 2451,
+      "sha256": "f405b44e62515aa704eb679d394fca14428540047723478f3e718cf1306ffe30"
+    },
+    {
+      "path": "verify_nonvacuity.py",
+      "bytes": 5767,
+      "sha256": "0124a9d8d6a66b0795c45b356504e14cfe3ab245e6cd669d015d64765182da9f"
+    }
+  ]
+}

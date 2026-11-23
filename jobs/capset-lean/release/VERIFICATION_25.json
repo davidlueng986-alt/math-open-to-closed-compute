@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "source_sha256": "95dcee638e9b142ae0a88c679218280ac4418f5b3388848b5b3dcc034ef04516",
+  "commit": "9b77624cf060f7a874232f464e72ac5fe5cc5b59",
+  "run_id": 45285247933,
+  "job_id": 138079773528,
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45285247933",
+  "theorem_count": 25,
+  "kernel_check": "PASS with -DwarningAsError=true",
+  "axiom_audit": "PASS; only propext/Classical.choice/Quot.sound",
+  "actual_ci_result": "CI_RESULT_25.json",
+  "actual_axiom_log": "lean_axioms_25.log",
+  "scope": "Named cap and sumset lemmas only; not a formal proof of a seven-dimensional numerical bound or the exact maximum."
+}

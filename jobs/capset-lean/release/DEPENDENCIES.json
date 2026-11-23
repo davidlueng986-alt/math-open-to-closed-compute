@@ -1,0 +1,29 @@
+{
+  "lean_toolchain": "leanprover/lean4:v4.36.0",
+  "mathlib_repository": "https://github.com/leanprover-community/mathlib4",
+  "mathlib_commit": "fc4f59e577feb1a4956671bc04ac18aaaf8cd842",
+  "prebuilt_image_name": "math-compute-lean",
+  "prebuilt_image_reference": "ghcr.io/davidlueng986-alt/math-compute-lean@sha256:8ba27c4e6be1aff22d80e6444f3ef7a4d0fc0438bcadf55ef39d2c17c74ae116",
+  "prebuilt_image_digest": "sha256:8ba27c4e6be1aff22d80e6444f3ef7a4d0fc0438bcadf55ef39d2c17c74ae116",
+  "prebuilt_image_mathlib_directory": "/opt/mathlib4",
+  "compile_command": "lake env lean -DwarningAsError=true \"$GITHUB_WORKSPACE/jobs/capset-lean/CapSumset.lean\"",
+  "compile_working_directory": "/opt/mathlib4",
+  "source_import": "Mathlib",
+  "proof_trust_requirements": {
+    "sorry_or_admit": false,
+    "new_axiom_declarations": false,
+    "native_decide": false,
+    "headline_axiom_audit": "#print axioms for every headline theorem; reject sorryAx"
+  },
+  "verification_status": "PASS",
+  "verified_commit": "9b77624cf060f7a874232f464e72ac5fe5cc5b59",
+  "verified_run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45285247933",
+  "verified_source_sha256": "95dcee638e9b142ae0a88c679218280ac4418f5b3388848b5b3dcc034ef04516",
+  "verified_headline_count": 25,
+  "verified_source_file": "CapSumset.lean",
+  "verified_run_id": 45285247933,
+  "verified_job_id": 138079773528,
+  "actual_ci_result": "CI_RESULT_25.json",
+  "actual_axiom_log": "lean_axioms_25.log",
+  "scope": "Cap and sumset lemmas only; not a full Lean proof of r_3(7) <= 281 or of the exact maximum."
+}

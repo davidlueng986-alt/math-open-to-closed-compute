@@ -1,38 +1,15 @@
-# CAP062: cap-specific sumset lemmas in Lean
+# Cap 專用和集引理：已通過 Lean 核心驗證
 
-This job kernel-checks reusable lemmas for caps in a finite additive group and for the three layers of a cap in `G × ZMod 3`.
+25 項具名定理、輔助引理與非空例子已在公開 GitHub Actions 通過編譯及逐項公理稽核。固定來源版本使用 Lean 4.36.0、mathlib commit `fc4f59e577feb1a4956671bc04ac18aaaf8cd842` 及固定容器 digest。
 
-## Main theorem
+- [成功執行與完整步驟](https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45285247933)
+- [已驗證的固定原始碼](https://github.com/davidlueng986-alt/math-open-to-closed-compute/blob/9b77624cf060f7a874232f464e72ac5fe5cc5b59/jobs/capset-lean/CapSumset.lean)
+- [數學內容、定義與重現方法](release/README.md)
+- [實際 CI 稽核結果](release/CI_RESULT_25.json)
+- [固定依賴](release/DEPENDENCIES.json)；[交付雜湊清單](release/MANIFEST.json)
 
-For a cap `K`, let `K₀`, `K₁`, `K₂` be its three layers. For any finite supersets or enlargements `A`, `B` of the first two layers, and `c ∈ K₂`,
+原始碼 SHA256：`95dcee638e9b142ae0a88c679218280ac4418f5b3388848b5b3dcc034ef04516`。
 
-```
-#{(a,b) ∈ A × B : a+b = -c} ≤ |A \ K₀| + |B \ K₁|.
-```
+內容包括真正 cap 的三層混合禁制、刪點後的表示數上界、restricted sumset 基數界、兩側各刪兩點的高表示數洞覆蓋，以及正表示數足夠時的完整和集穩定性。所有25項宣告均有實際 `#print axioms` 記錄；依賴限於 `propext`、`Classical.choice`、`Quot.sound`，沒有未證明洞或新增公理。
 
-The formal statement does not need subset assumptions: it counts the original endpoints that are absent from each actual cap layer. It follows by charging each representation to a deleted endpoint; addition cancellation makes each endpoint occur at most once for a fixed sum.
-
-The new two-plus-two deletion theorem proves that a surviving hole with at least three original representations lies in the union of two explicit double-translate intersections. Its cardinality is consequently at most the sum of their cardinalities; a cap-layer corollary derives the hole condition from the actual cap. This is the combinatorial step behind the new capacity-40 bound for two almost-complete Hill layers.
-
-The source also proves exact ordered-pair/fiber counting, mixed-sum avoidance for the actual three layers, disjointness of the negative cap and its restricted sumset, and the cardinality bound `|S| + |S restricted-plus S| ≤ |G|`. Nonempty examples attain both bounds.
-
-## Reproduce
-
-Toolchain: Lean 4.36.0. Mathlib: `fc4f59e577feb1a4956671bc04ac18aaaf8cd842`.
-The workflow pins the already tested container by digest:
-`ghcr.io/davidlueng986-alt/math-compute-lean@sha256:8ba27c4e6be1aff22d80e6444f3ef7a4d0fc0438bcadf55ef39d2c17c74ae116`.
-
-Inside that container:
-
-```sh
-cd /opt/mathlib4
-lake env lean -DwarningAsError=true /path/to/CapSumset.lean
-```
-
-Every headline theorem has a `#print axioms` audit. CI accepts only Lean's standard `propext`, `Classical.choice`, and `Quot.sound`; it rejects unproved or native-evaluation axioms. The workflow checks exact source bytes and preserves the source, versions, compiler log, and a machine-readable result.
-
-## Scope
-
-The theorems are finite combinatorial lemmas. This is not an end-to-end Lean proof of the seven-dimensional upper bound or of the exact cap-set maximum. No imported classification theorem is assumed in this module. A successful Actions run is required before calling this source verified.
-
-The isolated branch is `capset/cap062-sumset`; the workflow is `.github/workflows/capset-sumset-lean.yml`. This is a finite verification job with a 20-minute hard limit, not a recurring task.
+此形式化驗證集合計數與 cap 切層引理。整個七維數值上界的分類輸入、格子證書與精確最大值尚未端到端形式化。數學範圍與非空性稽核詳見 release 文件。
