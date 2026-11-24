@@ -78,4 +78,48 @@ theorem initial_pair_transport {S : Type*} (s : Equiv.Perm S)
 #print axioms normalized_column_preserved
 #print axioms canonical_second_row_preserved
 #print axioms initial_pair_transport
+
+/-- Ten rows have two equal three-bit parity signatures. -/
+theorem common_signature_rows (f : Fin 10 → (Fin 3 → Bool)) :
+    ∃ r s, r ≠ s ∧ f r = f s := by
+  classical
+  by_contra hn
+  have hf : Function.Injective f := by
+    intro r s h
+    by_contra hrs
+    exact hn ⟨r, s, hrs, h⟩
+  have hc := Fintype.card_le_of_injective f hf
+  norm_num at hc
+
+theorem units_eq_of_positive_bit (a b : ℤˣ)
+    (h : decide (a = 1) = decide (b = 1)) : a = b := by
+  rcases Int.units_eq_one_or a with ha | ha <;>
+    rcases Int.units_eq_one_or b with hb | hb <;>
+    norm_num [ha, hb] at h ⊢
+
+/-- All three relative second rows can simultaneously be chosen even. -/
+theorem simultaneous_even_relative_rows
+    (rows : Fin 3 → Fin 10 → Equiv.Perm (Fin 10)) :
+    ∃ r s, r ≠ s ∧ ∀ k,
+      Equiv.Perm.sign ((rows k r)⁻¹ * rows k s) = 1 := by
+  let bits : Fin 10 → (Fin 3 → Bool) :=
+    fun r k => decide (Equiv.Perm.sign (rows k r) = 1)
+  obtain ⟨r, s, hrs, hbits⟩ := common_signature_rows bits
+  refine ⟨r, s, hrs, ?_⟩
+  intro k
+  have heq : Equiv.Perm.sign (rows k r) = Equiv.Perm.sign (rows k s) :=
+    units_eq_of_positive_bit _ _ (congrFun hbits k)
+  rw [Equiv.Perm.sign_mul, Equiv.Perm.sign_inv, heq]
+  rcases Int.units_eq_one_or (Equiv.Perm.sign (rows k s)) with h | h <;> simp [h]
+
+theorem conjugation_preserves_sign (s p : Equiv.Perm (Fin 10)) :
+    Equiv.Perm.sign (s * p * s⁻¹) = Equiv.Perm.sign p := by
+  rw [map_mul, map_mul, map_inv]
+  simp [mul_comm, mul_left_comm]
+
+#print axioms common_signature_rows
+#print axioms units_eq_of_positive_bit
+#print axioms simultaneous_even_relative_rows
+#print axioms conjugation_preserves_sign
+
 end MOLS10.E077

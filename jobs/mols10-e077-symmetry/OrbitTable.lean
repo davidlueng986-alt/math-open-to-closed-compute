@@ -12,7 +12,7 @@ structure Shard where
   reps : List (Nat × Nat)
   transports : List Transport
 
-def at (xs : List Nat) (i : Nat) : Nat := xs[i]?.getD 100
+def entry (xs : List Nat) (i : Nat) : Nat := xs[i]?.getD 100
 
 def validPermutation (xs : List Nat) : Bool :=
   xs.length == 10 && (List.range 10).all (fun y =>
@@ -23,14 +23,14 @@ def allPairs : List (Nat × Nat) :=
     ((List.range 10).filter (fun b => decide (2 ≤ a ∧ a < b))).map (fun b => (a,b)))
 
 def transportValid (s : Shard) (t : Transport) : Bool :=
-  validPermutation t.perm && at t.perm 0 == 0 &&
-  (List.range 10).all (fun x => at t.perm (at s.p x) == at s.p (at t.perm x)) &&
+  validPermutation t.perm && entry t.perm 0 == 0 &&
+  (List.range 10).all (fun x => entry t.perm (entry s.p x) == entry s.p (entry t.perm x)) &&
   s.reps.contains t.target &&
-  ((at t.perm t.input.1 == t.target.1 && at t.perm t.input.2 == t.target.2) ||
-   (at t.perm t.input.1 == t.target.2 && at t.perm t.input.2 == t.target.1))
+  ((entry t.perm t.input.1 == t.target.1 && entry t.perm t.input.2 == t.target.2) ||
+   (entry t.perm t.input.1 == t.target.2 && entry t.perm t.input.2 == t.target.1))
 
 def shardValid (s : Shard) : Bool :=
-  validPermutation s.p && at s.p 0 == 1 &&
+  validPermutation s.p && entry s.p 0 == 1 &&
   (s.transports.map Transport.input == allPairs) &&
   (s.reps.all (fun ab => allPairs.contains ab)) &&
   s.transports.all (transportValid s)
@@ -445,6 +445,11 @@ theorem shard11_checked : shardValid shard11 = true := by decide
 #print axioms shard11_checked
 
 def allShards : List Shard := [shard0,shard1,shard2,shard3,shard4,shard5,shard6,shard7,shard8,shard9,shard10,shard11]
+
+def parityShards : List Shard := [shard1,shard2,shard6,shard8,shard9,shard10]
+
+theorem parity_representative_count : ((parityShards.map (fun s => s.reps.length)).sum) = 31 := by decide
+#print axioms parity_representative_count
 
 theorem original_pair_count : allPairs.length = 28 := by decide
 
