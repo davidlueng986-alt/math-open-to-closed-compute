@@ -1,0 +1,2354 @@
+{
+  "job": "hadamard-2396-squares",
+  "run_id": "45468476344",
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45468476344",
+  "commit": "79f5d2e04e112e75cb79fdc66206b79d3575a828",
+  "shards_expected": 16,
+  "shards_with_result": 16,
+  "missing_shards": [],
+  "seconds_per_shard": {
+    "0": 19,
+    "1": 25,
+    "2": 21,
+    "3": 26,
+    "4": 23,
+    "5": 21,
+    "6": 26,
+    "7": 28,
+    "8": 29,
+    "9": 26,
+    "10": 16,
+    "11": 26,
+    "12": 18,
+    "13": 21,
+    "14": 28,
+    "15": 26
+  },
+  "complete": true,
+  "results": {
+    "0": {
+      "shard": 0,
+      "shards": 16,
+      "started_orientations": 512,
+      "witnesses": {
+        "full": {
+          "raw_energy": 51616,
+          "quotient_energy_all_shifts": 378272,
+          "negative_masks": [
+            "0x1e27c8fd144034c4b1fcc84c02b4adef3a514bbd9e0feab2a0cf1df68f46670d775b5d74b647db018805d6bd01057bb041bd874ccf2c2ec8586e97fb3d3449dd3a109cafcc03a53712f99984ad1d2c4d49a55e93d389082cf87c706176bec94ceb9e43aea9181854646db17644fd567160015777af79c0b6ad8a235c0f458a5b9e769e10c59e8fd18f89ea4c11f02ef2a939e2596739",
+            "0xfa1cc602b06755052f2c1767c3a27c6fd4959f96316cce1acff293f77742fca6f3314a642336a0fb8c5459ae9fc592e203ca1031ebc6af09b6cd9609e1001acbc1403908a0231dc1ef1abfa018f058b51373a7ece8f4ba08858b19b45b24e748bd7d05add091664a6fe169e8cd74a11e12738a6791cf8f5afd4bcfdab8dbbdd92efa157842a6cd986b394c292d1eaeabb4d1f48436a"
+          ],
+          "template": [
+            [
+              68719739393,
+              68719477248,
+              1
+            ],
+            [
+              8209,
+              8208,
+              -1
+            ]
+          ],
+          "template_id": 2480,
+          "orientation": 1,
+          "seed": 309921,
+          "source": "fresh/42000 quotient 14000 12000 68000 full 34000 38000",
+          "raw_exact_pairs": 210,
+          "raw_peak_error": 76,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -2,
+          "quotient_energies": {
+            "57": 11312,
+            "63": 191728,
+            "133": 39600,
+            "399": 56448
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        "quotient": {
+          "raw_energy": 171136,
+          "quotient_energy_all_shifts": 7616,
+          "negative_masks": [
+            "0x107543b5147e51bd6d59d6dc02ca6658821b768d9ef67fd5525b67968cb549a39273a9f4b5b186dc42543f3d06e9c48bd51e144cc0b5593f712933fb2206f633689fd4aff266fce3b7e60184d1d6dbf403186e932e1cf75e2c06106084952789c36a83ad5f47c59e3584b1718846ade4c3d25778722f371fea2e2341bdfa6409113a9f2fa0c5537091196a32db4b97b89419e2a0f0d6",
+            "0xa1f2565560624a7998d1b7cc73a8c696bb2edec9513abfe810841149976e19434d5c4f09a36d7330b18e53559e767d54f87a05c7ea81e02441a5bda5e3c784912f904ed0a13f617632ba101013cea1daa832f88cfc8c48d3f309277463dd00f6503878258173ad37b5eb92e86ef337f5a6667c66f6d0aaad956023d877c5e6377eadcd7d5fda7a05cb96fc231767c110f18e94124f5"
+          ],
+          "template": [
+            [
+              153,
+              8,
+              -1
+            ],
+            [
+              193,
+              192,
+              1
+            ]
+          ],
+          "template_id": 400,
+          "orientation": 2,
+          "seed": 610001,
+          "source": "warm/900000 quotient 110000 8500",
+          "raw_exact_pairs": 64,
+          "raw_peak_error": 100,
+          "raw_paf_at_one": -22,
+          "raw_paf_at_399": 2,
+          "quotient_energies": {
+            "57": 191520,
+            "63": 3808,
+            "133": 95696,
+            "399": 146000
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      },
+      "polished": [
+        {
+          "law": "cyclic",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b8d619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a2ebc2500867add81461af96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+            "0x13578fe7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d3569253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f76df277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc6ad408e8e0773ccdceca32bd1683f3162edc53101fca80f4f560b33b59366d3f874"
+          ],
+          "seed": 141008,
+          "raw_energy": 33664,
+          "raw_exact_pairs": 235,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 2,
+          "quotient_energies": {
+            "57": 93456,
+            "63": 231520,
+            "133": 49536,
+            "399": 35696
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        {
+          "law": "plane",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0xa02e9a21ab9d9f819b682f25f457ed6abc5ded1a4ea5ec101e6372efa8d0ba83501088559c902c908a17d5cd608cc2148f4d18f617749e24afc387c41c2d7a90f35c3a135aeb99758b22f995fc6519ddd3032b8323dfa0d9156a014bdd72e2eb9cff3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d91a8a882079bc537f73dcbc9bc663c05d8bed1cb",
+            "0x1caaeed020b536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df893fa6f107d451d9a1131f8e952500e2f40d09d86c938d1efd817103b5f33fb736b1bbb141d03a08b4cbec4718c2e77d3dfad20380dc78d14d39c29fad63e439fcd2e9e9375505c0a817b8e4abeed2298b3a68abe495703e9cb9620e7f48d6b05fab64c7eb1acbc3d342a4051aa4c6318db3856ced"
+          ],
+          "seed": 720004,
+          "raw_energy": 34240,
+          "raw_exact_pairs": 147,
+          "raw_peak_error": 48,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": 30,
+          "quotient_energies": {
+            "57": 132416,
+            "63": 241888,
+            "133": 52320,
+            "399": 48832
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      ]
+    },
+    "1": {
+      "shard": 1,
+      "shards": 16,
+      "started_orientations": 529,
+      "witnesses": {
+        "full": {
+          "raw_energy": 48832,
+          "quotient_energy_all_shifts": 266144,
+          "negative_masks": [
+            "0x1525cb3f58165ec7e7f8c7c89a0a71e9975954a4af5252bf78df23c4edb53717c773215173315b34e8452e748ae8bbd8813c36dfd0b7af1dd94d76d91203487638175ce3922da66116f6151c01c92ae141ba47a28e310574a842420384eed3dccbe2276bdff82d342495f8bc89bd3cb1e1f0c46071f915b7ae6b0571ba44215999b0d347af9dd9d1800df2e2cdf680fab630d300df34",
+            "0x1ce6a7ec1bb566f9747c166e5c5c08b0b054f7e9a3dea205b6c4755af6ecf2235b4dac654102f1ddd428348cef9f2e0af1e6420f1278853938d91f38879d5e3ffb7f8d20b95188f29027b29a47b877c64c9908be02c3b73af304d81adc2fa760fd6b1359ec32d40c4b8f8098eea8aec13bc414aabbf231d61a02a4e42652689af163106497914a5351aa74a4b5aba5f7157ddf8c2d87"
+          ],
+          "template": [
+            [
+              2101761,
+              2097152,
+              -1
+            ],
+            [
+              8589934601,
+              8589934600,
+              -1
+            ]
+          ],
+          "template_id": 1601,
+          "orientation": 3,
+          "seed": 306407,
+          "source": "fresh/42000 quotient 14000 12000 68000 full 34000 38000",
+          "raw_exact_pairs": 219,
+          "raw_peak_error": 68,
+          "raw_paf_at_one": -6,
+          "raw_paf_at_399": 22,
+          "quotient_energies": {
+            "57": 32112,
+            "63": 135664,
+            "133": 113776,
+            "399": 53760
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        "quotient": {
+          "raw_energy": 204192,
+          "quotient_energy_all_shifts": 9216,
+          "negative_masks": [
+            "0x2c38eeee7b3887048364c6be551d4a2c9c043e251c50821c7ed1d4912db822ab91f7c4a896c314e148d94437f526f2d78ad42b03bc206762a4f9e06c4e89aa1ce528f5c3ffb01ceda7db6636a6465bed8ad015c196b93cb9a6ccffeeb5beea2afbf3c91029247c8ee2fcf08336989497084ab8b04507ec48c93daa75116f6bfdc616de27938761d0bae0da970b9dd63a1762d9f85a3",
+            "0xab4a6e752f06d0a58da1478ced41752e91cf3c486ce8d8984546d04bcc4ad3a3e65bcd1d5426eef1a6815f5c71e506d656640dd433a797211f99adc2518a6a9b97e84e9fc1a6bde3425a508edaf959f049d279b12ee3388230c8250f5703e25dd7fa7cdac8cf6c609aef9f04fd48b55bb86e6fbb90a7aff1a87004423a2bec8f868d9209c6066f353bde62cb24dfcbf1150fa980202"
+          ],
+          "template": [
+            [
+              4617,
+              4616,
+              -1
+            ],
+            [
+              262209,
+              262208,
+              -1
+            ]
+          ],
+          "template_id": 977,
+          "orientation": 3,
+          "seed": 610031,
+          "source": "warm/900000 quotient 110000 8500",
+          "raw_exact_pairs": 56,
+          "raw_peak_error": 100,
+          "raw_paf_at_one": -14,
+          "raw_paf_at_399": 10,
+          "quotient_energies": {
+            "57": 148464,
+            "63": 4608,
+            "133": 73552,
+            "399": 132688
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      },
+      "polished": [
+        {
+          "law": "cyclic",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b8d619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a2ebc2500867add81461af96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+            "0x13578fe7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d3569253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f76df277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc6ad408e8e0773ccdceca32bd1683f3162edc53101fca80f4f560b33b59366d3f874"
+          ],
+          "seed": 141008,
+          "raw_energy": 33664,
+          "raw_exact_pairs": 235,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 2,
+          "quotient_energies": {
+            "57": 93456,
+            "63": 231520,
+            "133": 49536,
+            "399": 35696
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        {
+          "law": "plane",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0xa02e9a21ab9d9f819b682f25f457ed6abc5ded1a4ea5ec181e6372efa8d0ba83501088559c902c908a17d5cd608cc2148f4918f617748e24afc387c41c2d7a90f35c3a135aeb99758b22f995fc6519ddd3032b8323ffa0d9156a014bdd72e2eb9cff3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d91a8a882079bc537f73dcbc9bc663c05d8bed1cb",
+            "0x1caaeed020b536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df813fa6f107d451d9a1131f8e952500e2f40d09d86c938d1efd817103b5f33fb736b3bbb141d03a08b4cbec4718c2e77d3dfad20380dc78d14d39c29fad63e439fcd2e9e9375505c0a817b8e4abeed2298b3a68abe495703e9cb9620e7f48d6b05fab64c7eb1acbc3d342a4051aa4c6318db3856ced"
+          ],
+          "seed": 141404,
+          "raw_energy": 34432,
+          "raw_exact_pairs": 174,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 6,
+          "raw_paf_at_399": 22,
+          "quotient_energies": {
+            "57": 139328,
+            "63": 225808,
+            "133": 50912,
+            "399": 46176
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      ]
+    },
+    "2": {
+      "shard": 2,
+      "shards": 16,
+      "started_orientations": 531,
+      "witnesses": {
+        "full": {
+          "raw_energy": 52064,
+          "quotient_energy_all_shifts": 536416,
+          "negative_masks": [
+            "0x1b850f1748a14604babb4798fb74416b2cda5424ed8e31f28dd922846a4df5cd2d7723d07840ff01385d2b769d0bb3b3290c7cdbff71be4a892d62d54d8f28d888d774f32d3575345776453d6ff9ac5bc2bae7e052524001ee4302867c28c916c7e0a6602e7d08e03e90faea6ab71719d1fae04fb3cd42e7ce6f0d2c362ccff95198c2f0b77c8494005d538cfc703879b6d091dcbe70",
+            "0xeb8fdeabb24e42150c0a2435d7f0d04f82d9fb3219c8965a436a56bf260a4a27ea80c0f481a5c5f9fe37448fdae750e6670c3a7361833b017f4142ccf58b32db525890028d350d62c929edb64adc78f3571103c44cadfa841d46d1e5039666518ce7950741f464782cd448adef3ea57ad41bc8edd44b8f93711f4aee33f7ac4a36530f5156b6eefe5863587b01bee8e7d675dc206ef"
+          ],
+          "template": [
+            [
+              4169,
+              4160,
+              1
+            ],
+            [
+              274877915137,
+              274877915136,
+              -1
+            ]
+          ],
+          "template_id": 930,
+          "orientation": 1,
+          "seed": 610060,
+          "source": "warm/900000 full 110000 18000 600000 full 150000 9000",
+          "raw_exact_pairs": 172,
+          "raw_peak_error": 76,
+          "raw_paf_at_one": 6,
+          "raw_paf_at_399": -42,
+          "quotient_energies": {
+            "57": 94496,
+            "63": 270800,
+            "133": 41792,
+            "399": 44128
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        "quotient": {
+          "raw_energy": 216032,
+          "quotient_energy_all_shifts": 8128,
+          "negative_masks": [
+            "0x19f11c1bd7d0771f3e536185c4942b78250a181e9248e59c9e79aaf095c07d110a3e13398743efb976df4ae5631d12c3b408fffc0b1cfd2bb324e59ab515ac1afcc47a6cdc406eb8bf505c02ac9bbf521276dd9f908426124edb7679f0a0953186d46f9fa52cb0aebcf169544c9c2784d539e7b39f8b23ddc7f942d62ea04d8d4a965d00067500782644ec6c966733a9faeaee186a17",
+            "0xa783fe4abf815a61943267f75c6ee0a6b2e97eb60ef6f780230b51b5087689832a42cee8dd5c42b07fb358b763145e7564000222924536277b51b20e124708975e787187462d797ad17a2f3fd5ecd1c3679286d370ec28e47c495dcb6b55c2914ef9895bb0732df988e874140c303679dc61a99e7256a995616fc809ffc9e04696b29a9e4cc276e61ba153e53157d8d755f2cb9e0f3"
+          ],
+          "template": [
+            [
+              34360131585,
+              34359738368,
+              1
+            ],
+            [
+              805306369,
+              536870912,
+              1
+            ]
+          ],
+          "template_id": 2370,
+          "orientation": 0,
+          "seed": 610063,
+          "source": "warm/900000 quotient 110000 8500",
+          "raw_exact_pairs": 92,
+          "raw_peak_error": 136,
+          "raw_paf_at_one": 6,
+          "raw_paf_at_399": 18,
+          "quotient_energies": {
+            "57": 50768,
+            "63": 4064,
+            "133": 135104,
+            "399": 217904
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      },
+      "polished": [
+        {
+          "law": "cyclic",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0x18fd14f2b0fe0c56744b78530acaddee203a2b930ef308b8d619ddabaeb7a71b9afedd8e75b47b2d575ed74886e27be8f70b85a5c0a22ffd352290292228099be0c89303f23b27faa7498eccd16d2966224570132f6b0b5a2ebc2500877add81461ef96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1419305a8814e7d322ffd1e52603f96a23270f52799c94752a1873a",
+            "0x13578fe7b5e09397e31c467900f7ea4b0f9057e71a8977fe0b4d35038643599f205f2edfa45d8634220d3569253181fa1dac48e48f05da58e04d1aabad6760d05a57a60eeca4f76df276e4c6cc528a4888b9a407551645073a458d687284593befefa9bc3365287a6c8ee552500f342d71cedf3fc6ad400e8e0773cedcece32bd1683f3162cdc53501fc280f4f560933b59366d3f875"
+          ],
+          "seed": 720045,
+          "raw_energy": 32960,
+          "raw_exact_pairs": 192,
+          "raw_peak_error": 48,
+          "raw_paf_at_one": 6,
+          "raw_paf_at_399": -18,
+          "quotient_energies": {
+            "57": 70848,
+            "63": 208064,
+            "133": 35696,
+            "399": 39040
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        {
+          "law": "plane",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0xa02eda21ab9d9e819b482f21f4576d6aac5ded1a4ee5ec181e6372efa8d0ba83509088559c922c908a17d5cd608cc2148f4918f617749e24afc387c41c2d7a91f35c3a135aeb99758b32f997fc6559ddd3032b8323ffa0d9156a014bdd72e0eb9cff3412fc3c4d0c0c650a17946cb78295794c9b43ef2a43f25a40279db8e7eb32d91a8a882079bc537f73ddbc9be663c45d8bed1ca",
+            "0x1caaeed0203536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df893fa6f107d451d9a1131f8e852502e2f44d09d86c938d1edd817503b5f33fa736b3bbb141d03a08b4cbec6718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4a3eed2298b3a68afe495f03e8cb9620e7f48d6b05faa64c7cb1acbc3d342a4051aa6c631cdb3856cec"
+          ],
+          "seed": 720045,
+          "raw_energy": 33312,
+          "raw_exact_pairs": 165,
+          "raw_peak_error": 52,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": 14,
+          "quotient_energies": {
+            "57": 151056,
+            "63": 269760,
+            "133": 43488,
+            "399": 44800
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      ]
+    },
+    "3": {
+      "shard": 3,
+      "shards": 16,
+      "started_orientations": 529,
+      "witnesses": {
+        "full": {
+          "raw_energy": 54464,
+          "quotient_energy_all_shifts": 342208,
+          "negative_masks": [
+            "0xeb77ffd5e9bb66b10dfa64cd701a9b47913978cb565e00c244ab5d4db9a76507e582d701beff9b39a1336b45a553e466590465e79cca580103517de50f59d0dbaa79ee517810a1e339791113a19760f0bf94fb8b983aca87dc45237abab9045e0ea0703813aa246728db82d34b862544dc065c10fd288fef61a06334e115acb2972d5ca47332ef0e189fff904a66eb07578c93f6f8d",
+            "0x10b4daafc9b6589c2cdaece9f85a747c011d02c6ebd65b90d4579f4066f501219e6a7858613137c85e679ce6aff8e281e57952fb92b71daf11e7be918602ef13a902cc72ba2fecaa34dc343e41c4bd77056c05f60e3a3a5860eece8ac5dca5a5dabb2e79dfd4c1860427ead8896cc5d5a494e02a746ba77f24b34de7b96304c88c204267a9d612f3ab2cd0a2d96916bee0729780d41b"
+          ],
+          "template": [
+            [
+              27,
+              8,
+              1
+            ],
+            [
+              21,
+              16,
+              1
+            ]
+          ],
+          "template_id": 211,
+          "orientation": 0,
+          "seed": 610091,
+          "source": "warm/900000 full 110000 18000 600000 full 150000 9000",
+          "raw_exact_pairs": 200,
+          "raw_peak_error": 60,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -46,
+          "quotient_energies": {
+            "57": 8048,
+            "63": 171104,
+            "133": 66240,
+            "399": 35952
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        "quotient": {
+          "raw_energy": 171904,
+          "quotient_energy_all_shifts": 8576,
+          "negative_masks": [
+            "0x1d21c5ef833d1e94f7f0da692c4cf96fb6496fc7c3fb439338ff454236af352f4733cc5cc1855f45ecc4f46fee9032b8803f82e91066bdd9db4a1eb083a16bfe3c198c38b129e5711eeab4aa5749a8c1510104ce23201934c834ccda9eecab7c8b0b2ad96bbc4c34a54fe399e1bcdeb0e244d2a8a1e9d135a90368e01a63e95d9760086cefd6c9d99dac44b44568a0ea8d33bfa5ce18",
+            "0x1794bbf620f6c25cf41cec8ae281c2dc72b46a447328937da3b07c53f3ca00682b36952d2a2551e67d5be73c8ce679d961d16d154fa16b7f72f36c41a9839626493dcd9831b44c1affe156833acebb033a8475aeaea8fd64c664bd30d79c69903aa24ca4c960fbfb405ffbfafe179a6c0d0cae43941bf19ec3b187b233535051d30e95e9d7ff168890d86d0a033d188a4303b6404bf"
+          ],
+          "template": [
+            [
+              561,
+              32,
+              -1
+            ],
+            [
+              515,
+              512,
+              -1
+            ]
+          ],
+          "template_id": 515,
+          "orientation": 3,
+          "seed": 610093,
+          "source": "warm/900000 quotient 110000 8500",
+          "raw_exact_pairs": 135,
+          "raw_peak_error": 124,
+          "raw_paf_at_one": -10,
+          "raw_paf_at_399": -50,
+          "quotient_energies": {
+            "57": 567504,
+            "63": 4288,
+            "133": 179648,
+            "399": 214752
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      },
+      "polished": [
+        {
+          "law": "cyclic",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b8d619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a2ebc2500867add81461af96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+            "0x13578fe7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d3569253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f76df277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc6ad408e8e0773ccdceca32bd1683f3162edc53101fca80f4f560b33b59366d3f874"
+          ],
+          "seed": 141008,
+          "raw_energy": 33664,
+          "raw_exact_pairs": 235,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 2,
+          "quotient_energies": {
+            "57": 93456,
+            "63": 231520,
+            "133": 49536,
+            "399": 35696
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        {
+          "law": "plane",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0xa02e9a21ab9d9f819b682f25f457ed6abc5ded1a4ea5ec181e6372efa8d0ba83501088559c902c908a17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b22f995fc6519ddd3032b8323ffa0d9156a014bdd72e2eb9cff3412fc3d4d0c2c650a17946cb792957b4c9b43ef2a43f35a40279db8e7eb32d91a8a882079bc537f73dcbc9bc663c05d8bed1ca",
+            "0x1caaeed020b536b134e484166a4ca804b065d319cfdbe365f4a63cbf2cae70a1df813fa6f107d451d9a1131f8e952500e2f40d09d86c938d1efd817503b5f33fb736b3bbb141d03208b4cbec4718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9375505c0a817b8e4abeed2298b1a68abe495703e9cb9620e7f48d6b05fab64c7eb1acbc3d342a4051aa4c6318db3856ced"
+          ],
+          "seed": 720065,
+          "raw_energy": 34240,
+          "raw_exact_pairs": 138,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 26,
+          "quotient_energies": {
+            "57": 143936,
+            "63": 242176,
+            "133": 45216,
+            "399": 37136
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      ]
+    },
+    "4": {
+      "shard": 4,
+      "shards": 16,
+      "started_orientations": 538,
+      "witnesses": {
+        "full": {
+          "raw_energy": 52640,
+          "quotient_energy_all_shifts": 353536,
+          "negative_masks": [
+            "0x1230647f59b3dddde9d1984899617efd8b0fe9a4a9c04e97407249c4e2992b47b629d550692963940ef0c6f4be584a9b4457c6dfb4d64d9e53ba96ddc8c0cd713db81ee233eaac673da9951f42ce3afd178547b4482f2d4c45384a0e88f683ad9116277187808dd6916df8ca39cc7d758a00e40c113b963d798b05a97bc1264c3670d3f22c97d7fade8df1a1d3e29cac0930d5cec11d",
+            "0x7724742fc87ebd2c355d733d0391ac3df0775723b1496ebea637029c7789bfee203a68a222a0266a2b421c009de897c14de29b696dbca54f289480b1edb42e46f9f23468bdcb34db9e6ee5402a200a81f9bb122c8f551e61401a72348467ad9b361fd2a44e16f7ed59a4c1ebf07982403efad261cbc5c1c6a55d77f60cef30e19cd77561aa8fd7e90f6b8c1bfdcc9a49786434e1961"
+          ],
+          "template": [
+            [
+              2199030595585,
+              2199026401280,
+              -1
+            ],
+            [
+              67108865,
+              67108864,
+              -1
+            ]
+          ],
+          "template_id": 3508,
+          "orientation": 3,
+          "seed": 610121,
+          "source": "warm/900000 full 110000 18000 600000 full 150000 9000",
+          "raw_exact_pairs": 218,
+          "raw_peak_error": 76,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 10,
+          "quotient_energies": {
+            "57": 21584,
+            "63": 176768,
+            "133": 61424,
+            "399": 34736
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        "quotient": {
+          "raw_energy": 200032,
+          "quotient_energy_all_shifts": 8960,
+          "negative_masks": [
+            "0x6fd49450e37b1c0804bcb3c3659a7c7583b4d4df7d5ffe2e61b00165cfa4facfaf346f4112f8e4a9755e13e4fd5d934771da84a52cd7be4350e4bf206f6e3c5e09124b5bb86f186a7fae1b04217812e2323aeea099d5aea6c7190b2ca966cc143818209414d4b4f365ab238b457d046c06e71ea0a3cec5bed562e654def928117ca846640cabe648cf95ea10bd94d98af998b87736b",
+            "0x71dcb28c926ddd9c38ac7e3b97b7695dfb954f2e9904e47e91f236862712ae6e4fb2009683960d6ab452c86bdf8481c0f3c333bbe964194c56d7c15ce40c764101749722aaa984d66f63a3f40ce16a9a13a11e44c2f7de56842ee8e40f622ff4be35e70d781df7326970aca99caf83fe1f5200e55369c2bae70cdaffbcb736199a542f72c83fda58022d183c38ac81ab66695c2c14d"
+          ],
+          "template": [
+            [
+              771,
+              770,
+              1
+            ],
+            [
+              34359738497,
+              34359738496,
+              -1
+            ]
+          ],
+          "template_id": 580,
+          "orientation": 1,
+          "seed": 610120,
+          "source": "warm/900000 quotient 110000 8500",
+          "raw_exact_pairs": 75,
+          "raw_peak_error": 188,
+          "raw_paf_at_one": -18,
+          "raw_paf_at_399": -10,
+          "quotient_energies": {
+            "57": 59552,
+            "63": 4480,
+            "133": 181712,
+            "399": 128064
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      },
+      "polished": [
+        {
+          "law": "cyclic",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b8d619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a2ebc2500867add81461af96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+            "0x13578fe7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d3569253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f76df277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc6ad408e8e0773ccdceca32bd1683f3162edc53101fca80f4f560b33b59366d3f874"
+          ],
+          "seed": 141008,
+          "raw_energy": 33664,
+          "raw_exact_pairs": 235,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 2,
+          "quotient_energies": {
+            "57": 93456,
+            "63": 231520,
+            "133": 49536,
+            "399": 35696
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        {
+          "law": "plane",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0xa02e9a21ab9d9f819b682f25f457ed6abc5ded1a4ea5ec181e6372efa8d0ba83501088559c902c908a17d5cd608cc2148f4918f617748e24afc387c41c2d7a90f35c3a135aeb99758b22f995fc6519ddd3032b8323ffa0d9156a014bdd72e2eb9cff3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d91a8a882079bc537f73dcbc9bc663c05d8bed1cb",
+            "0x1caaeed020b536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df813fa6f107d451d9a1131f8e952500e2f40d09d86c938d1efd817103b5f33fb736b3bbb141d03a08b4cbec4718c2e77d3dfad20380dc78d14d39c29fad63e439fcd2e9e9375505c0a817b8e4abeed2298b3a68abe495703e9cb9620e7f48d6b05fab64c7eb1acbc3d342a4051aa4c6318db3856ced"
+          ],
+          "seed": 141404,
+          "raw_energy": 34432,
+          "raw_exact_pairs": 174,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 6,
+          "raw_paf_at_399": 22,
+          "quotient_energies": {
+            "57": 139328,
+            "63": 225808,
+            "133": 50912,
+            "399": 46176
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      ]
+    },
+    "5": {
+      "shard": 5,
+      "shards": 16,
+      "started_orientations": 534,
+      "witnesses": {
+        "full": {
+          "raw_energy": 43520,
+          "quotient_energy_all_shifts": 322336,
+          "negative_masks": [
+            "0x1905689364040890e93f4a406b64d70448f327d170a2b845d73fe779d45c5608c2aba379650bfda7af61839493b7205ac5a1b445f303d2783a1adee3d0c6e028d8eea8dcc73e8807dc579c0adf5b33397dc9e1bd64836d1448ff173751ca497927d418e3e1cd3a297a3353e4a7ca19d879d7ff7f66a2fed62b0327cb56255ec0006bd51b1f130beb361aecef16b522cd0a96b58a607",
+            "0x768b7906dce5210c3603696f0aa2947df6cb6387a3271e3eab4f6bd453455aee3a4aba226b1be46a5ea3b1220f9b13e12621d128cb5bbd4ffd12143ba07a3e4656ff1d6c245714d8c064b76b19184a87458fb67ee1059e6838733a905886ad81c68d43edd7d4f7d89801e578837d822bfdb293472ccdc91123c9fd9ac2fb314e91fe71f836afd4f715318528c58c9cf548c06607e69"
+          ],
+          "template": [
+            [
+              16781833,
+              16777728,
+              1
+            ],
+            [
+              32769,
+              32768,
+              -1
+            ]
+          ],
+          "template_id": 3141,
+          "orientation": 1,
+          "seed": 610151,
+          "source": "warm/900000 full 110000 18000 600000 full 150000 9000",
+          "raw_exact_pairs": 182,
+          "raw_peak_error": 60,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": 34,
+          "quotient_energies": {
+            "57": 98208,
+            "63": 163760,
+            "133": 27472,
+            "399": 65296
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        "quotient": {
+          "raw_energy": 220384,
+          "quotient_energy_all_shifts": 9344,
+          "negative_masks": [
+            "0x157b026da3410726e745556d24b4c32b972271df420b253b7a297973154ffc1fc29fb47e8644cd2ce39c042b610317f8968e23600760f67df609dfa4bdadb8f676de0c18cd3047e1ab64b8e28f7be9e03a1f1c4fd34483761e08f5d97f21dfd92777489e2a2e2d3ffdbfa71662991ca753a55ab7a3817518cac278dc16b4a10750e62810f67cd96812a8044c66358381933b2e55aab3",
+            "0xf39b9fae94bf43393c02a43b8a125217e288f926a24e82ea83c85e96718643466b44d0a66ebd97bafcbf642a05d77560621c7b38ddc2720d7761405b8d41a4c24619b52c7c3029d2e1b9e7eba9d670930615177f88a96a44bf46f8928b9f47d0c8e7c7e851a7a77aa4d4ed73cf9b237fc41a8351f4028b99519dddb6f161b45ef75621a0519aded6d861059903f6a8b6d26167e66a6"
+          ],
+          "template": [
+            [
+              68987912195,
+              268435456,
+              -1
+            ],
+            [
+              259,
+              2,
+              1
+            ]
+          ],
+          "template_id": 2693,
+          "orientation": 2,
+          "seed": 610151,
+          "source": "warm/900000 quotient 110000 8500",
+          "raw_exact_pairs": 72,
+          "raw_peak_error": 160,
+          "raw_paf_at_one": 10,
+          "raw_paf_at_399": -74,
+          "quotient_energies": {
+            "57": 47952,
+            "63": 4672,
+            "133": 342768,
+            "399": 224384
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      },
+      "polished": [
+        {
+          "law": "cyclic",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b8d619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a2ebc2500867add81461af96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+            "0x13578fe7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d3569253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f76df277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc6ad408e8e0773ccdceca32bd1683f3162edc53101fca80f4f560b33b59366d3f874"
+          ],
+          "seed": 141008,
+          "raw_energy": 33664,
+          "raw_exact_pairs": 235,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 2,
+          "quotient_energies": {
+            "57": 93456,
+            "63": 231520,
+            "133": 49536,
+            "399": 35696
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        {
+          "law": "plane",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0xa02e9a21ab9d9f819b682f25f457ed6abc5ded1a4ea5ec181e6372efa8d0ba83501088559c902c908a17d5cd608cc2148f4918f617748e24afc387c41c2d7a90f35c3a135aeb99758b22f995fc6519ddd3032b8323ffa0d9156a014bdd72e2eb9cff3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d91a8a882079bc537f73dcbc9bc663c05d8bed1cb",
+            "0x1caaeed020b536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df813fa6f107d451d9a1131f8e952500e2f40d09d86c938d1efd817103b5f33fb736b3bbb141d03a08b4cbec4718c2e77d3dfad20380dc78d14d39c29fad63e439fcd2e9e9375505c0a817b8e4abeed2298b3a68abe495703e9cb9620e7f48d6b05fab64c7eb1acbc3d342a4051aa4c6318db3856ced"
+          ],
+          "seed": 141404,
+          "raw_energy": 34432,
+          "raw_exact_pairs": 174,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 6,
+          "raw_paf_at_399": 22,
+          "quotient_energies": {
+            "57": 139328,
+            "63": 225808,
+            "133": 50912,
+            "399": 46176
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      ]
+    },
+    "6": {
+      "shard": 6,
+      "shards": 16,
+      "started_orientations": 532,
+      "witnesses": {
+        "full": {
+          "raw_energy": 55232,
+          "quotient_energy_all_shifts": 388096,
+          "negative_masks": [
+            "0x115b5cb18c1e14b6ef05e0d53308e52b87a31aaffd776b3bdb2baf9249b7641f809219bd3ba5fd2463975f2e1ad177fb9e98946af8a4365fe604b1b35224f8f25684d2371223c761ebd100b5315de8f0bb746ce0ab0881575cde14a787bddb9b22da8a234b1e2dbbf6e4226d80f91dae4512714023615788e7ac6f331f74e527023a07cee5dcd12ca7105bf051349300f84b8129e6b0",
+            "0xe567c98fe8a4051d11fa085d7224585fa979a3a35263867a342aef1db15c6a670401b2b1af0b85786335a80586bf91c5dd0df367db123906094a50e580e836d5ba4f8450677105ff190585119f5068c8ff4d938fe5b5daf35df7737251a626bf0d84d029e595e5a50e10c2f0a7bfa6d0d190dc57254988e77b8563bb50f7a2a2a1674dbb10bef32e740bfdaf89aef3478ea4970b76c"
+          ],
+          "template": [
+            [
+              68719739393,
+              68719738880,
+              -1
+            ],
+            [
+              17179869313,
+              17179869312,
+              -1
+            ]
+          ],
+          "template_id": 2630,
+          "orientation": 3,
+          "seed": 610180,
+          "source": "warm/900000 full 110000 18000 600000 full 150000 9000",
+          "raw_exact_pairs": 120,
+          "raw_peak_error": 68,
+          "raw_paf_at_one": -6,
+          "raw_paf_at_399": 10,
+          "quotient_energies": {
+            "57": 68976,
+            "63": 194048,
+            "133": 117664,
+            "399": 96272
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        "quotient": {
+          "raw_energy": 224160,
+          "quotient_energy_all_shifts": 7680,
+          "negative_masks": [
+            "0xace9be808728f45982c6e663bf3d3cf68f407f9ecc104f68785857e6ad3bf8c39c66c247d7c4a1b112fb41e976219b57be9030be782ebe22ce71d716c6901c9c34389b37eb83596c05ebbbde86b0f1eec691ae15d654e8bf2e4f084e2624c027eab526512a90ac94c0f12a21397734b34c5105f419dea420400ad0fd28d9eb2c56782b37e0fa60729a3d32b66d37d57e52d90d38b7f",
+            "0x1ad368a165a45135f81589f4a16e670da983cafc599a7d77076a1f3502254cc7381158b2a8118c151291dd333ca9d59b7c95b150b435739a223ef9c3cb063179ceb0c0de20265476fbb9296765d7cede9ba63f44461ccd0b1d7eb3ee14914303a19fc4b07f4f1ccaf0763f0ac85b7f4d48374b0cf205924cfdf41ba8bdbd2eaf3eaeeef5a04fc63ccf318986ca12bd202a0825c0f2fc"
+          ],
+          "template": [
+            [
+              4194311,
+              4194310,
+              1
+            ],
+            [
+              2199025352705,
+              2097152,
+              -1
+            ]
+          ],
+          "template_id": 1654,
+          "orientation": 1,
+          "seed": 610181,
+          "source": "warm/900000 quotient 110000 8500",
+          "raw_exact_pairs": 54,
+          "raw_peak_error": 132,
+          "raw_paf_at_one": 18,
+          "raw_paf_at_399": -114,
+          "quotient_energies": {
+            "57": 28880,
+            "63": 3840,
+            "133": 78832,
+            "399": 254496
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      },
+      "polished": [
+        {
+          "law": "cyclic",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b8d619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a2ebc2500867add81461af96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+            "0x13578fe7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d3569253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f76df277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc6ad408e8e0773ccdceca32bd1683f3162edc53101fca80f4f560b33b59366d3f874"
+          ],
+          "seed": 141008,
+          "raw_energy": 33664,
+          "raw_exact_pairs": 235,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 2,
+          "quotient_energies": {
+            "57": 93456,
+            "63": 231520,
+            "133": 49536,
+            "399": 35696
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        {
+          "law": "plane",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0xa02e9a21ab9d9e819b482f25f457ed6aac5ded1a4ea5ec181e6372efa8d0ba83509088559c922c90ca17d5cd608cc2148f4918f617749e24afc387c41c2d7a91f35c3a135aeb99758b32f997fc6559ddd3032b8323ffa0d9156a014bdd72e2eb9cff3412fc3c4d0c0c650a17946cb782957b4c9b43ef2a43f35a40279db8e7eb32d91a8a882079bc537f73dcbc9bc663c05d8b6d1ca",
+            "0x1caaeed0203536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70e1df893fa6f107d451d9a1131f8e852500e2f44d09d86c938d1efd817503b5f33fa736b3bbb101d03208b4cbec6718c6e77d3dfac20380dc78d14d39c29ead63e439fcd2e9e9375505c0a817f8e4abeed3298b3a68afe495f03e9cb9620e7f48d6b05faa64c7cb1acbc3d342a4051aa4c6318db3856cec"
+          ],
+          "seed": 720124,
+          "raw_energy": 33312,
+          "raw_exact_pairs": 146,
+          "raw_peak_error": 52,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 30,
+          "quotient_energies": {
+            "57": 143936,
+            "63": 238224,
+            "133": 42128,
+            "399": 41056
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      ]
+    },
+    "7": {
+      "shard": 7,
+      "shards": 16,
+      "started_orientations": 536,
+      "witnesses": {
+        "full": {
+          "raw_energy": 54784,
+          "quotient_energy_all_shifts": 386624,
+          "negative_masks": [
+            "0x14bc1df56bdc4de1e4c96a5cb48e56e5903e0fac627a0ea77411959555a52b67deee4df307906354db7ff7b262a84f1ae749c45208324f9d158613c4b300db77a1c196d0d06aa06a255b8172b5ce62e726e16f7fa62d9d7866f41b999477e3e5568e841f7e824d071c4cbe15c9c5fcd6944268b0f53895fb450e1cd0b3d720c0477ae00dac9bdae22d999476c3fa849ded180e2081ad",
+            "0x1d9b9ed5c024a52fb6866419eb7f8f3935a01326cd99ad1ebd2dac802862ec554c9e3fd8f81eddb1fb8f13a79db776d2aea84c79fe087509866582954f7cbc5e9646b67b28d34e386a55c02d443ffe43b8fde5d045cea4311acd0ec6523991772efc8ee0701eb823eea8abead6f0369f758a624ecb4301e8868e492cc7b049e7c0584bf5557588a923d8438722262003f192b1cb2694"
+          ],
+          "template": [
+            [
+              268451969,
+              268451840,
+              -1
+            ],
+            [
+              34359739393,
+              1024,
+              1
+            ]
+          ],
+          "template_id": 2087,
+          "orientation": 2,
+          "seed": 610210,
+          "source": "warm/900000 full 110000 18000 600000 full 150000 9000",
+          "raw_exact_pairs": 172,
+          "raw_peak_error": 84,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -30,
+          "quotient_energies": {
+            "57": 71888,
+            "63": 193312,
+            "133": 30976,
+            "399": 39888
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        "quotient": {
+          "raw_energy": 215840,
+          "quotient_energy_all_shifts": 7744,
+          "negative_masks": [
+            "0x4487bf5071d754ec521ae5c240c26dfd2ef878dd37efcdbf3b2859615ac6b9ed1a06df58383e2a6c1f3b73f6a8dc8fcda510448107d48d56fb713f2939685e745a394bc91063f43cd9e81a2179e1ca4f7696ecea29d69ff85e410fb9cb21aca10aa829bed41af19920cb31decc658eb8cc253a0bb1fdd01740e2af02f89b0342d7a8c4c8406fb0ae9994cf48ac4c74c6559af247158",
+            "0x3513c10afe1bd560b11219735f7bfca4f8a983b7089dcf84b78aabb504a2f98a03413af0c5f4a2a26db4b8a7524d9e51c00fd22274f6a66e314e122edf200805ce471146dce3785ff114af3ce0f093892f6f87d55bd42c70fdb3dbc7af25cbb84d0d81431c923fab8f0060275d7012cdd3b199fc91d6e0dd7ecfe8ecb8c972d629f24b14c0c353866521d0f1ad55b297acf0cd75373"
+          ],
+          "template": [
+            [
+              4617,
+              512,
+              -1
+            ],
+            [
+              266241,
+              266240,
+              1
+            ]
+          ],
+          "template_id": 983,
+          "orientation": 2,
+          "seed": 610214,
+          "source": "warm/900000 quotient 110000 8500",
+          "raw_exact_pairs": 54,
+          "raw_peak_error": 112,
+          "raw_paf_at_one": 18,
+          "raw_paf_at_399": -78,
+          "quotient_energies": {
+            "57": 12368,
+            "63": 3872,
+            "133": 467200,
+            "399": 272592
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      },
+      "polished": [
+        {
+          "law": "cyclic",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b8d619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a2ebc2500867add81461af96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+            "0x13578fe7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d3569253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f76df277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc6ad408e8e0773ccdceca32bd1683f3162edc53101fca80f4f560b33b59366d3f874"
+          ],
+          "seed": 141008,
+          "raw_energy": 33664,
+          "raw_exact_pairs": 235,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 2,
+          "quotient_energies": {
+            "57": 93456,
+            "63": 231520,
+            "133": 49536,
+            "399": 35696
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        {
+          "law": "plane",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0xa02e9a21ab9d9f819b682f25f457ed6abc5ded1a4ea5ec101e6372efa8d0ba83501088559c902c908a17d5cd608cc2148f4d18f617749e24afc387c41c2d7a90f35c3a135aeb99758b22f995fc6519ddd3032b8323dfa0d9156a014bdd72e2eb9cff3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d91a8a882079bc537f73dcbc9bc663c05d8bed1cb",
+            "0x1caaeed020b536b134e484162a4ca004b065d319cfdbe365f4a63cbf2cae70e1df893fa6f107d451dda1131f8e952500e2f40d09d86c938d1efd817103b5f33fb736b1bbb101d03208b4cbec4718c2e77d3dfad20380dc78d14d39c29fad63e439fcd2e9e9375505c0a817b8e4abeed2298b3a68abe495703e9cb9620e7f48d6b05fab64c7eb1acfc3d342a4051aa4c6318db3856ced"
+          ],
+          "seed": 720142,
+          "raw_energy": 34144,
+          "raw_exact_pairs": 181,
+          "raw_peak_error": 52,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 26,
+          "quotient_energies": {
+            "57": 135504,
+            "63": 256192,
+            "133": 44624,
+            "399": 41136
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      ]
+    },
+    "8": {
+      "shard": 8,
+      "shards": 16,
+      "started_orientations": 544,
+      "witnesses": {
+        "full": {
+          "raw_energy": 41088,
+          "quotient_energy_all_shifts": 244032,
+          "negative_masks": [
+            "0x16458c2609975d46e13a41fa39187f8f9bd858c1e9524c5be3dd2b0e63fd2ebff17710c46b216864804d4ddebbc858f8592cb08bbaf660dc696cfa71d68003f5485445b21b2a176fd67027bf23cf08ecc03622f48a2f596faa5a888fcdf23beacfd3b2734f896d582ef6d28ca9d2dc68f13690023115d4878fe7adb53b8ba239d2a983c6ac06df11063f51e0c28c8d7bba559504c358",
+            "0x1dfd1de0719ed04ff6496a76890b6df9b43a0fd8097078bf3e19853da1b147174af64ca2ebb99bb5f35ff511bae9fbd8b7098115b0952e19b5061949d2460c7ee0c183ca12a72e70a75bab4f10d53ac222e13b04ac1925322ef4b34f819ad351468bd5f35758ac2f3c4e1d8d98753e86d4470e00565b115bc50491b1fd0429814f6ffacf211dc8642db321f3d8f6a399ed0c7522f735"
+          ],
+          "template": [
+            [
+              185,
+              160,
+              -1
+            ],
+            [
+              33,
+              0,
+              -1
+            ]
+          ],
+          "template_id": 2856,
+          "orientation": 3,
+          "seed": 610240,
+          "source": "warm/900000 full 110000 18000 600000 full 150000 9000",
+          "raw_exact_pairs": 210,
+          "raw_peak_error": 68,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": -26,
+          "quotient_energies": {
+            "57": 9056,
+            "63": 122016,
+            "133": 13664,
+            "399": 44480
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        "quotient": {
+          "raw_energy": 199680,
+          "quotient_energy_all_shifts": 8832,
+          "negative_masks": [
+            "0x609db3dae37548dc1a0efcd3758247ddae9048f75d26b9761bf83d358fce106f5ba617e1921d79e89c7aeaa5fcb629c4a39766272f41cb44f4777a6468c6d6514035e153b13ecc74ede10f143bcbbadf16a4c780a482fed88e255b6ccbc86ce0aa208014d148f51a615a628aaec787be4f059ca376bbc21a46a7e252f61327585b224e695d7ff8da8081fa0a163ce4ae63b0984641e",
+            "0x158b12e60856ff21e6a7747a729b7b2594e233c1ee54c527fda9fd0e4df13c27cd96bcc4373b6d54f99e15de03fc1718aa8a008ac29ef69d8e019a713651bb7696ce87b3dae840604b45a7b480cbe2e3fa5d22f38ca49d719e8c8881c1e1e3d6267bb22f57ae4d21ffaed2349d99fc9b5786907259809560c297ad55fab721f7486982072e5bd88833bf5263c63a8041d1158202caac"
+          ],
+          "template": [
+            [
+              49155,
+              32768,
+              -1
+            ],
+            [
+              268468225,
+              268435456,
+              -1
+            ]
+          ],
+          "template_id": 1272,
+          "orientation": 3,
+          "seed": 610240,
+          "source": "warm/900000 quotient 110000 8500",
+          "raw_exact_pairs": 92,
+          "raw_peak_error": 172,
+          "raw_paf_at_one": 6,
+          "raw_paf_at_399": -38,
+          "quotient_energies": {
+            "57": 43856,
+            "63": 4416,
+            "133": 83792,
+            "399": 115792
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      },
+      "polished": [
+        {
+          "law": "cyclic",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b8d619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a2ebc2500867add81461af96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+            "0x13578fe7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d3569253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f76df277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc6ad408e8e0773ccdceca32bd1683f3162edc53101fca80f4f560b33b59366d3f874"
+          ],
+          "seed": 141008,
+          "raw_energy": 33664,
+          "raw_exact_pairs": 235,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 2,
+          "quotient_energies": {
+            "57": 93456,
+            "63": 231520,
+            "133": 49536,
+            "399": 35696
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        {
+          "law": "plane",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0xa02e9a21ab9d9f819b682f25f457ed6abc5ded1a4ea5ec181e6372efa8d0ba83501088559c902c908a17d5cd608cc2148f4918f617748e24afc387c41c2d7a90f35c3a135aeb99758b22f995fc6519ddd3032b8323ffa0d9156a014bdd72e2eb9cff3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d91a8a882079bc537f73dcbc9bc663c05d8bed1cb",
+            "0x1caaeed020b536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df813fa6f107d451d9a1131f8e952500e2f40d09d86c938d1efd817103b5f33fb736b3bbb141d03a08b4cbec4718c2e77d3dfad20380dc78d14d39c29fad63e439fcd2e9e9375505c0a817b8e4abeed2298b3a68abe495703e9cb9620e7f48d6b05fab64c7eb1acbc3d342a4051aa4c6318db3856ced"
+          ],
+          "seed": 141404,
+          "raw_energy": 34432,
+          "raw_exact_pairs": 174,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 6,
+          "raw_paf_at_399": 22,
+          "quotient_energies": {
+            "57": 139328,
+            "63": 225808,
+            "133": 50912,
+            "399": 46176
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      ]
+    },
+    "9": {
+      "shard": 9,
+      "shards": 16,
+      "started_orientations": 539,
+      "witnesses": {
+        "full": {
+          "raw_energy": 44896,
+          "quotient_energy_all_shifts": 139328,
+          "negative_masks": [
+            "0x1bdb0f2c15b8e0d57a0747ee414708ecada254e999eca2b58f29335e8280c343289f2065a9da9315379d2c9d3e3f2b8b3e8c320cb9180f9aa62d7f7fc15c4938c6d74fae3491a474eb7733877cb02edababa0a8434c10d031e42d06eb00ec31327e713b1b41014ebfe9791495e256f0e51f43709de7992c8ce72a3a2e4456fa759a39fe911bf442c002be9bfb1f2bb01b67de5ba253d",
+            "0x18304f434cc4e0537dd3c730f29f0dc0a20f5574fe18b8ed107330244f60c7f316232691361aaa7d4af5217601bfd94bc45c29daca192b3b538d48d3375e023b3d9720f7c8d632fb3df7ed34a4b503d517bbb7e384db571c4441aaa15112772d93e5e62e74497496949a7a34de5faff581efe172da1c33bd6e550f54e50e2c4c19ccc705100943fa80f5da47b8dfb4acb7c0820a3366"
+          ],
+          "template": [
+            [
+              6147,
+              6146,
+              -1
+            ],
+            [
+              4195329,
+              4195328,
+              -1
+            ]
+          ],
+          "template_id": 1001,
+          "orientation": 3,
+          "seed": 304007,
+          "source": "fresh/42000 quotient 14000 12000 68000 full 34000 38000",
+          "raw_exact_pairs": 216,
+          "raw_peak_error": 68,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": -38,
+          "quotient_energies": {
+            "57": 3744,
+            "63": 69664,
+            "133": 81584,
+            "399": 44272
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        "quotient": {
+          "raw_energy": 230080,
+          "quotient_energy_all_shifts": 7424,
+          "negative_masks": [
+            "0x785893e3a09e0e982b84bca1e370c955cd84c812728ba466ddd13cffd48c2a4ed77434652dab0d2b84dee58c92fec14292dbe8757590084896e76681dde574498517f818d979804567a57d81eb4562bc022c22af4d9fce1aa734113781f20f6cf82314a3453cb602c55d4bf7e62f018f0789ce7da768c678d7bb47ce55b13f9dfb1b05911a3bc910c4f36dfa98a4a7baef55b7635cc",
+            "0x941ed7b25a5683c5f328b40207c153ae7c9cdb5539e99119bfe11e7046c840a0139451680021d8f60c1e6fb2d9ef6ad9835a7c01e7b3473eb7e54e68f9abcaa4c31189ca95f4dd9deba9de247a5f990d1a3565642faa397c97061ea5c598e3a89866098ecde96b8a25d775aef780ba9e861db2eb8437b85bd493aee2130bd3dbff4ad749974611dcc850884b821f36a2f6127cc1692"
+          ],
+          "template": [
+            [
+              549758173185,
+              549758173184,
+              1
+            ],
+            [
+              134217737,
+              134217736,
+              -1
+            ]
+          ],
+          "template_id": 2729,
+          "orientation": 1,
+          "seed": 610273,
+          "source": "warm/900000 quotient 110000 8500",
+          "raw_exact_pairs": 46,
+          "raw_peak_error": 152,
+          "raw_paf_at_one": -6,
+          "raw_paf_at_399": 30,
+          "quotient_energies": {
+            "57": 22608,
+            "63": 3712,
+            "133": 349728,
+            "399": 279136
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      },
+      "polished": [
+        {
+          "law": "cyclic",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0x18fd10f2b0fe0c56744978534acaddee203a2b930ef308b8d619ddabaeb7a71b9afedd8e75b45b2d575ed7c886e27beaf70b85a5c8a22ffd3502902d2228099be0c89303f23b27faa7498eccd16d2966224570032f6b0b5a6ebc2500867adda1461af96dda98310f3f6c44b183f546c7d603bc786159e55bc18df1439305a881467d332ffd3e52603f96223260f52799c90752a9873b",
+            "0x13578fe7b5609397e31c467940f7ea4b0f9057c71a8977fe0b4d3503864359df205f2edea45d8634220d3569253181fa1dac48e48f05da58e04d1aabad67e0d05a57a60eeca4f76df277e4c6cc528a488839a407551645073a458d687284593befeba9bc3365287a6e8ee552500f342d71cedf3fc6ad408e8e0773ccdcece32bd1683f3162cdc53501fc280f4f560933b59366d3f875"
+          ],
+          "seed": 720182,
+          "raw_energy": 31776,
+          "raw_exact_pairs": 227,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -14,
+          "quotient_energies": {
+            "57": 68048,
+            "63": 188160,
+            "133": 51456,
+            "399": 35696
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        {
+          "law": "plane",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0xa02e9a21ab9d9f819b682f25f457ed6abc5ded1a4ea5ec181e6372efa8d0ba83501088559c902c908a17d5cd608cc2148f4918f617748e24afc387c41c2d7a90f35c3a135aeb99758b22f995fc6519ddd3032b8323ffa0d9156a014bdd72e2eb9cff3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d91a8a882079bc537f73dcbc9bc663c05d8bed1cb",
+            "0x1caaeed020b536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df813fa6f107d451d9a1131f8e952500e2f40d09d86c938d1efd817103b5f33fb736b3bbb141d03a08b4cbec4718c2e77d3dfad20380dc78d14d39c29fad63e439fcd2e9e9375505c0a817b8e4abeed2298b3a68abe495703e9cb9620e7f48d6b05fab64c7eb1acbc3d342a4051aa4c6318db3856ced"
+          ],
+          "seed": 141404,
+          "raw_energy": 34432,
+          "raw_exact_pairs": 174,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 6,
+          "raw_paf_at_399": 22,
+          "quotient_energies": {
+            "57": 139328,
+            "63": 225808,
+            "133": 50912,
+            "399": 46176
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      ]
+    },
+    "10": {
+      "shard": 10,
+      "shards": 16,
+      "started_orientations": 540,
+      "witnesses": {
+        "full": {
+          "raw_energy": 50688,
+          "quotient_energy_all_shifts": 213120,
+          "negative_masks": [
+            "0x46367ed882e8a08c575966d3b6bd577d343f7efedb5098372ea65526833952ed311ac7c78bc1fcec090342e9cf2723cd096426bf482bcf57a191fb14a692fe76ebf8c3322bb69c39ba7b0bd5065b1a45b190ce06d6a3bfe9d04d4860258aec8a16b0a6052bccf1cf18fa2ab937cd8e04bc4704c40cafd14fa026d29d123b01f316202ff7b52fb58d1a853937469c7e0157b91e38e0a",
+            "0x16731051c7a18ecf61577915a455d8d89a02293ed38d02dde269d8b0164bb3d3f21ed7b9804c62bc869ec3276d0208c8548bad781b42893c7222c19685e944357ec8327cadb8beefbb48c8226e681bec1a47fdde1163676e5eb93efa7b6617e9a610ce98a2a1a55efd782b18738e2c65562b63ab85bf349cc1dc4ae45248620f46de4d607e855f783ed04c8d65c78fa1cbcaaf9f8957"
+          ],
+          "template": [
+            [
+              6147,
+              4096,
+              -1
+            ],
+            [
+              4195329,
+              4195328,
+              -1
+            ]
+          ],
+          "template_id": 1002,
+          "orientation": 3,
+          "seed": 304011,
+          "source": "fresh/42000 quotient 14000 12000 68000 full 34000 38000",
+          "raw_exact_pairs": 252,
+          "raw_peak_error": 88,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 10,
+          "quotient_energies": {
+            "57": 2592,
+            "63": 106560,
+            "133": 36224,
+            "399": 40560
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        "quotient": {
+          "raw_energy": 251008,
+          "quotient_energy_all_shifts": 8960,
+          "negative_masks": [
+            "0x32ae7eebcd4f1910be4966b539f2e644f65f7c3345cdfa4c8a6754bc9e08960a781ac4e1f1b075a2da034c813aec30702f642a66a1d5fa6def91e2e775aeb00373f8f0558d6e08d08a7b6d1a4a6a7397d99003184de1ec49104cd25d194e4bc396f3907754453f5c38fc424de4de1332bc4bd52dc28ae303a03f616e9e71756b961348510fb35cfd1aebb67bb7b5ac61577400a502f",
+            "0x12e7d8b4ffea0296287ee0dfd4e2c86a08511a8a3aa733b8c6cfbf99d617d159bb5a19ea24f4b72014075f806473a3e171b8d43685a19e4e3844b30ba82fe891fa04d546e675e72e92d10256f970ac7e49f4693f7f50004af8de1f38270cd9a0eade9d3c1a7431cc64e48c13022d054165120dbd66e94656a7bed7cb9464c69b823b763bf3fc1655a71abc1a6d741df2f81e4ef1bc30"
+          ],
+          "template": [
+            [
+              134242305,
+              16384,
+              1
+            ],
+            [
+              134217731,
+              134217728,
+              1
+            ]
+          ],
+          "template_id": 1850,
+          "orientation": 0,
+          "seed": 610302,
+          "source": "warm/900000 quotient 110000 8500",
+          "raw_exact_pairs": 55,
+          "raw_peak_error": 164,
+          "raw_paf_at_one": 30,
+          "raw_paf_at_399": -18,
+          "quotient_energies": {
+            "57": 26208,
+            "63": 4480,
+            "133": 282224,
+            "399": 228768
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      },
+      "polished": [
+        {
+          "law": "cyclic",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b8d619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a2ebc2500867add81461af96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+            "0x13578fe7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d3569253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f76df277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc6ad408e8e0773ccdceca32bd1683f3162edc53101fca80f4f560b33b59366d3f874"
+          ],
+          "seed": 141008,
+          "raw_energy": 33664,
+          "raw_exact_pairs": 235,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 2,
+          "quotient_energies": {
+            "57": 93456,
+            "63": 231520,
+            "133": 49536,
+            "399": 35696
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        {
+          "law": "plane",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0xa02e9a21ab9d9f819b682f25f457ed6abc5ded1a4ea5ec181e6372efa8d0ba83501088559c902c908a17d5cd608cc2148f4918f617748e24afc387c41c2d7a90f35c3a135aeb99758b22f995fc6519ddd3032b8323ffa0d9156a014bdd72e2eb9cff3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d91a8a882079bc537f73dcbc9bc663c05d8bed1cb",
+            "0x1caaeed020b536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df813fa6f107d451d9a1131f8e952500e2f40d09d86c938d1efd817103b5f33fb736b3bbb141d03a08b4cbec4718c2e77d3dfad20380dc78d14d39c29fad63e439fcd2e9e9375505c0a817b8e4abeed2298b3a68abe495703e9cb9620e7f48d6b05fab64c7eb1acbc3d342a4051aa4c6318db3856ced"
+          ],
+          "seed": 141404,
+          "raw_energy": 34432,
+          "raw_exact_pairs": 174,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 6,
+          "raw_paf_at_399": 22,
+          "quotient_energies": {
+            "57": 139328,
+            "63": 225808,
+            "133": 50912,
+            "399": 46176
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      ]
+    },
+    "11": {
+      "shard": 11,
+      "shards": 16,
+      "started_orientations": 534,
+      "witnesses": {
+        "full": {
+          "raw_energy": 53056,
+          "quotient_energy_all_shifts": 489152,
+          "negative_masks": [
+            "0x9cc40e25e0657549e2bd0729f3a6b8f65ff7bd0b51264721f936d2cfb75fecc09e39c805a31e803757455d4d9eb19b5bb5e819f7eb4e3c3ada8985a5e0d81cad19c81e50a701510c5e1af1901fb0c12e71533a8ce474893a41caa3744a24832535ff7425f291aa915ee58ee8a9b538b830785c67395cbc36b85863fbe8d9db0126dd4d7b62ea00697b77fc2f690735c9904d940eb78",
+            "0x1d3128db26664bddf7d3000067fa1addb60adb35549216d738782ce718749bc7463d1d179c300295eed9527b55ea88988404c7c06eb3c899d33c84e26e0bc57e3cf49a9d6a5cbc793f319de1c1a21ec112b556594e776d340f5c69f44546037d85dc6084dce19c36bae977628b067eb5d901fbde74bf91bddf893a0da0c9694d7254acb79aa7c9fc47858f02afc2a0a9392128c8195d"
+          ],
+          "template": [
+            [
+              268451969,
+              268451840,
+              1
+            ],
+            [
+              549755846657,
+              549755846656,
+              -1
+            ]
+          ],
+          "template_id": 2123,
+          "orientation": 1,
+          "seed": 610330,
+          "source": "warm/900000 full 110000 18000 600000 full 150000 9000",
+          "raw_exact_pairs": 186,
+          "raw_peak_error": 84,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 42,
+          "quotient_energies": {
+            "57": 72224,
+            "63": 244576,
+            "133": 80000,
+            "399": 73264
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        "quotient": {
+          "raw_energy": 197440,
+          "quotient_energy_all_shifts": 8384,
+          "negative_masks": [
+            "0xc973caa6454fbc0d49f28e2a29f32c7f0928ad05658f6e335488f6d0de0dbae5c5c5802971b8247da1bdcd303af893ced819390421fcad10016bc42375f43ef8ae0c9ddd8dcb15a73193f6084b204878a64134384f559b93ffee3e1d0c66a47e49f748ff5e14e0278675f74df07dadc5c158b72dabcd96ed5a19a56eccfb8eb6625ec051a8aeab06f270a67bfd8e431682422027968",
+            "0x26676e651373a68497dbc7a8858b1b6cb57a3c18bd3d001c2c2dd0ea6fe166ab348fcc4e12719c6003295ddafc4be2f51d3409d9aefa4d678b39a7986b31fa17baa85eabb0d0947918ca78e630170bc4f4d23860bb1b9ceb5ac824acfcbaaa8f03bb7f9c9fac7dc512ed9d8a530c9600e86962a2cd2de167087a1e70813b61a2469da66cb127752fbbf60a00ca8dff44115f7855f89"
+          ],
+          "template": [
+            [
+              134242305,
+              134217728,
+              -1
+            ],
+            [
+              4294967299,
+              2,
+              -1
+            ]
+          ],
+          "template_id": 1867,
+          "orientation": 3,
+          "seed": 610335,
+          "source": "warm/900000 quotient 110000 8500",
+          "raw_exact_pairs": 54,
+          "raw_peak_error": 132,
+          "raw_paf_at_one": 22,
+          "raw_paf_at_399": 106,
+          "quotient_energies": {
+            "57": 186704,
+            "63": 4192,
+            "133": 681264,
+            "399": 258800
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      },
+      "polished": [
+        {
+          "law": "cyclic",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0x18fd14f2b07e0c46744978534acaddee203a2bb30ef708b85619cdabaeb7a71b9afedd8e75b47b2d575ed74886e27be8f70b85a5c8a22ffd352290292228099be0c89103f23b27faa7498eccd16d2966224570032f6b0b5a6ebc2d00877add81461ef96dda98310f3d6c44b183f546c7d6039c786559e5dbc18df1439305a881467d332ffd1e52643f96a23260f52799c90752a9873b",
+            "0x13578fe7b5e09397e31e467900f7ea4b0e9057e71a8977fe0b4d35038643599f205f2edea45da634220d3569253181fa1dac48e48705da58e04d1aafad6760d05a57a40eece4f76df277e4c6cc528a488839a407551445073a458d687384593befeba9bc3365287a6e8ee552500f342c71cedf3fc2ad408e8e0773cedceca32bd1683e3162edc53501fca80f5f560b33b59366d3f874"
+          ],
+          "seed": 720225,
+          "raw_energy": 33248,
+          "raw_exact_pairs": 182,
+          "raw_peak_error": 40,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -2,
+          "quotient_energies": {
+            "57": 76688,
+            "63": 208640,
+            "133": 40960,
+            "399": 37248
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        {
+          "law": "plane",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0xa02e9a21ab9d9e819b682f21f4576d6aac5ded1a4ea5ec181e6372efa8d0ba83509088559c902c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d90a8a882079fc537773dcbc9be663c05d8bed1cb",
+            "0x1caaead0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70a1df813fa6f107d451d9a1131f8e852500e2f40d09d86c938d1efd817503b5f33fa736b3bbb141d03208b4cbec6718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4abeed2298b3a68afe495f03e9cb9600e7f48d6b85fab64c7cb1acbc3d342a4151aa6c631cdb38d6cec"
+          ],
+          "seed": 720224,
+          "raw_energy": 33920,
+          "raw_exact_pairs": 255,
+          "raw_peak_error": 56,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": 30,
+          "quotient_energies": {
+            "57": 151488,
+            "63": 201104,
+            "133": 50864,
+            "399": 52736
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      ]
+    },
+    "12": {
+      "shard": 12,
+      "shards": 16,
+      "started_orientations": 537,
+      "witnesses": {
+        "full": {
+          "raw_energy": 58688,
+          "quotient_energy_all_shifts": 489472,
+          "negative_masks": [
+            "0x1d69dc524b0c7ddff762e112bd2c3fd9b6691920e13acedf3abfb88c71242fd743ba17804a836ab5e5c743d6f89c58d89238ac9b3c3e6919ff44c050db10447e740433f0000abe718ed0c73b358f1ac07177e3ece2af6536c8d9029f14f613580ad4b652ed89bc3da4f85acfcdde3ea3e52a8084bd3f1111a7cd8cb82bc829158ad9c1dc8ca5c949a6d755d493c6a1cafbc49d604354",
+            "0xd20acf177ae1d1117f00054c56af744764cdbac11b34de4b8f42d959037ade047251db388b56e5be8e957b17ce251068064c4543ca67ba1dbdc91ceca28a30e2d7492cc227a70911c318143516f870154b56f1c6f6c5eb4835c1b7e07f0647c9dde85905b8d52348aec3d0b83dfe2b1b9026f8c610ca9351f9c12ab9baf595cfa7afcfffc6b29db4791ad92725b62ef39486de1c26e"
+          ],
+          "template": [
+            [
+              68719739393,
+              68719738880,
+              -1
+            ],
+            [
+              68719493121,
+              16384,
+              1
+            ]
+          ],
+          "template_id": 2652,
+          "orientation": 2,
+          "seed": 610362,
+          "source": "warm/900000 full 110000 18000 600000 full 150000 9000",
+          "raw_exact_pairs": 180,
+          "raw_peak_error": 80,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": -46,
+          "quotient_energies": {
+            "57": 19616,
+            "63": 244736,
+            "133": 56352,
+            "399": 37264
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        "quotient": {
+          "raw_energy": 263072,
+          "quotient_energy_all_shifts": 7744,
+          "negative_masks": [
+            "0x1f21e65bfc820205f3f29501d232c049bf49f1363f0331b7a8fe68e1cf57d1076739b71b3274b615acc002e00973a19a00366ff6dfa19b18db79c48f1c2fa07c3c3e3a478e7564751ea5dc5429708ec9519fd532df520524890967236608437c89746d2a9a741c74a3b96c7e022d3e30eba9cd6766c910b5bad9577f94242b5db8d47753f36dcdddd2c4baca7c52a8ea13e24359bc34",
+            "0x74577631a7076b5c33bbf705fd62009dedba5f5a4cee377ebdad122f8c470c6e178e4955d53f416a052a5ecd73d259c191321cf6b3c9314e91358bc6515f06458ab00217c41d44dd78eac99ed98caa8c34b34b91682c5e7eda0a814f4ad42fac023e345bd371f78311e60e04cab3829cee7f4dbfbe51c87f0552404ae7c73392dec10a187edfd10f8b4772e8512c9784741d8906cf5"
+          ],
+          "template": [
+            [
+              585,
+              584,
+              -1
+            ],
+            [
+              8589934601,
+              8589934600,
+              -1
+            ]
+          ],
+          "template_id": 556,
+          "orientation": 3,
+          "seed": 610362,
+          "source": "warm/900000 quotient 110000 8500",
+          "raw_exact_pairs": 65,
+          "raw_peak_error": 132,
+          "raw_paf_at_one": 14,
+          "raw_paf_at_399": 6,
+          "quotient_energies": {
+            "57": 30896,
+            "63": 3872,
+            "133": 396912,
+            "399": 191712
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      },
+      "polished": [
+        {
+          "law": "cyclic",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0x18fd14f2b0fe0c56744978534acaddee203a2bb30ef308b8d619ddabacb7a71b9afedd8e75b47b2d535ed7c886f27be8f70b85a5c0a22ffd352290292228099be0c89103f23b27faa7498eccd16d2966224570132f6b0b5a2ebc2d00877add81461ef96dda98310f3f6c44b183f546c6d6039c786559e55bc18df1439305a881467d332ffd1e52643f96a23260f52799c90752a1873b",
+            "0x13578fe7b5e09397e31c467940f7ea4b0e9057e71a8977fe0b4d2503864359df205f2edfa45d8634220d3569253181fa1dac48e48f05da58e04d1aabad6760d04a57a60eece4f76df277e4c6cc528a4888b9a407551445073a458d687384593befeba9bc3365287a6c8ee552500f342d71cedf3fc2ad400e8e0773cedceca32bd1683e3162edc53101fca80f5f560b33b59366d3f875"
+          ],
+          "seed": 720241,
+          "raw_energy": 33216,
+          "raw_exact_pairs": 203,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -18,
+          "quotient_energies": {
+            "57": 70352,
+            "63": 213792,
+            "133": 41984,
+            "399": 40544
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        {
+          "law": "plane",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0xa02e9a21ab9d9f819b682f25f457ed6abc5ded1a4ea5ec101e6372efa8d0ba83501088559c902c908a17d5cd608cc2148f4d18f617749e24afc387c41c2d7a90f35c3a135aeb99758b22f995fc6519ddd3032b8323dfa0d9156a014bdd72e2eb9cff3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d91a8a882079bc537f73dcbc9bc663c05d8bed1cb",
+            "0x1caaeed020b536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df893fa6f107d451d9a1131f8e952500e2f40d09d86c938d1efd817103b5f33fb736b1bbb141d03a08b4cbec4718c2e77d3dfad20380dc78d14d39c29fad63e439fcd2e9e9375505c0a817b8e4abeed2298b3a68abe495703e9cb9620e7f48d6b05fab64c7eb1acbc3d342a4051aa4c6318db3856ced"
+          ],
+          "seed": 720241,
+          "raw_energy": 34240,
+          "raw_exact_pairs": 147,
+          "raw_peak_error": 48,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": 30,
+          "quotient_energies": {
+            "57": 132416,
+            "63": 241888,
+            "133": 52320,
+            "399": 48832
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      ]
+    },
+    "13": {
+      "shard": 13,
+      "shards": 16,
+      "started_orientations": 534,
+      "witnesses": {
+        "full": {
+          "raw_energy": 49920,
+          "quotient_energy_all_shifts": 516288,
+          "negative_masks": [
+            "0x1778fec00c120d6cf5e466e6bb484cfc61057e9cc0baabbda4d255e2b4ec31e825f2c64fe46b226620d349f910769ff95ac0209ef680bd7f06d1f757dbcc1e27a578fbb4d53a749b276b3adaf3408b008b90ac1d3cb09d63a44d8c57e1e5a99efeb12e628102fbe6c8f93a6666559a471c41257aa79df1e8e02a91c0545f50bd1638b90d18ef17501ab434c31d4d3b3b53db05d2538",
+            "0x1f1591d1caa81b78e53e28c5267ce09440b1c0dbfad3f7e5e7bb2d6ce13c8948a32037430fc843276d76abc0c63c5d7b4189e4ed5815307b32427fb096ef042ec857ea7a6b6d608bfd251947c76ca3213f0ceb27d5cc4d20cd35822331550b182c4032832473baeb4c1b07b524b3185c558556dc6250f5de73a276bd5fc558d0b12977b70cdb07ca449fa9f7b1653a8fcf9c3fbb0f5"
+          ],
+          "template": [
+            [
+              4169,
+              4160,
+              -1
+            ],
+            [
+              2199023779841,
+              524288,
+              1
+            ]
+          ],
+          "template_id": 941,
+          "orientation": 2,
+          "seed": 610390,
+          "source": "warm/900000 full 110000 18000 600000 full 150000 9000",
+          "raw_exact_pairs": 189,
+          "raw_peak_error": 56,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": 34,
+          "quotient_energies": {
+            "57": 25088,
+            "63": 258144,
+            "133": 27776,
+            "399": 49936
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        "quotient": {
+          "raw_energy": 309632,
+          "quotient_energy_all_shifts": 8704,
+          "negative_masks": [
+            "0x5db2f0394c5e323860507b142bd020554a2d4779e1cb52eff2832228f68d874c89d229db60aa472f79929ed019f8556be8479ecce59d385a63d68bf3fdfb346d6f7622fc9d44208eb376c84a6b2c622babab493c0d69cf31f43ac61580170d325e5ebaee4667b2bfa926136fe09f08f59ffd7769e808dc8de65635e64b711a7798c1f14124bb82c4074ea45be1e410136c3e24e38ac",
+            "0x1d925c638690c4ac3697e97127174d3a358709d7d5482b10bd6399221bc1e4494c02549d9b58fd89fab7c5ef5b2b76a0acd9e1e87310356982a6d8b6554c7c9e8f80003d1cb3cdb079d8aca12cfdfd439fe734c89448a23154f8a4f7f13d8d57b293ea83b61e9022d67e636c5af8069d0427f3c3d363616c65d56a36f770c9ee0eec0dc135f408beaeb4cfeff1212024eb43a91aa693"
+          ],
+          "template": [
+            [
+              585,
+              8,
+              1
+            ],
+            [
+              521,
+              512,
+              1
+            ]
+          ],
+          "template_id": 541,
+          "orientation": 0,
+          "seed": 610390,
+          "source": "warm/900000 quotient 110000 8500",
+          "raw_exact_pairs": 54,
+          "raw_peak_error": 164,
+          "raw_paf_at_one": -6,
+          "raw_paf_at_399": -114,
+          "quotient_energies": {
+            "57": 1783904,
+            "63": 4352,
+            "133": 232256,
+            "399": 471936
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      },
+      "polished": [
+        {
+          "law": "cyclic",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b8d619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a2ebc2500867add81461af96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+            "0x13578fe7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d3569253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f76df277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc6ad408e8e0773ccdceca32bd1683f3162edc53101fca80f4f560b33b59366d3f874"
+          ],
+          "seed": 141008,
+          "raw_energy": 33664,
+          "raw_exact_pairs": 235,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 2,
+          "quotient_energies": {
+            "57": 93456,
+            "63": 231520,
+            "133": 49536,
+            "399": 35696
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        {
+          "law": "plane",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0xa02e9a21ab9d9e819b482f21f4576d6aac5ded1a4ee5ec181e6372efa8d0ba83501088459c902c908a17d5cd608cc2348f4918f697749e24afc387c41c2d7a91f35c3a135eeb99f58b32f997fc6559dddb032b8323dfa0d9156a014bcd72e0eb9cbf341afc3d4d0c2c650a17946cb792957b4c9b43ef2243f25a40279db8e7eb32d91a8a882079fc537773dcbc9bc663c45d8bed1ca",
+            "0x1caaeed020b536b134e484162a4ca004b065d319cfdbe36574a62cbf2cae70a1df813fa7f107d451dda1139f8e952500e2f44d09d86c928d1edd817103b5f33fb736b3bbb141d03a08b4cbec4718c2e77dbdfac20380dc78d14d39c29fad63c439fcd2e9e9375505c2a817b8e4abeed3298b1a68abe495f03e9cb9600e7f48d6b85fab64c7eb1acbc3d342a4051aa4c6318db3856ced"
+          ],
+          "seed": 720265,
+          "raw_energy": 33952,
+          "raw_exact_pairs": 183,
+          "raw_peak_error": 48,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 26,
+          "quotient_energies": {
+            "57": 147392,
+            "63": 237424,
+            "133": 47616,
+            "399": 43504
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      ]
+    },
+    "14": {
+      "shard": 14,
+      "shards": 16,
+      "started_orientations": 531,
+      "witnesses": {
+        "full": {
+          "raw_energy": 55200,
+          "quotient_energy_all_shifts": 555648,
+          "negative_masks": [
+            "0x1bdda50d3635606f7a0813ac475c0d9cadb8fc4d15daa81d8f1c62579aecc65328f582779902b8bd334868395f9f7cc93f26ba447a7820baa5786fee479c9538c07d6c8d39130ef4e62371c147b55bdaa0128e1802c9af036b13d176dc1b17134d4101816c1aa4eb2bd3b528ee786f0ffb7c5fcabe53b2cb9b72322425116fa1fb82bde4910744255469afa4a087bb1b1eb9698c279f",
+            "0x134a250be743855cfda151557debdedc71cf11b34ddd8b7585478b3d8e20746866db7ae1d173b166a68038857b4fb9f85662d26620f2f97d1f9c12e67320962397e3005784f24493425c8d1e4052ab1049ff82905bb0dd463093d34d2dac29ddd74c905f1d81fb609b80460c57579b4bbab3ddac8599fbf1acc760689053548f8de34a5493ff1f752d0bf2618f2d0bf13cb4889573d"
+          ],
+          "template": [
+            [
+              4169,
+              4160,
+              -1
+            ],
+            [
+              17180000257,
+              17180000256,
+              -1
+            ]
+          ],
+          "template_id": 910,
+          "orientation": 3,
+          "seed": 610422,
+          "source": "warm/900000 full 110000 18000 600000 full 150000 9000",
+          "raw_exact_pairs": 108,
+          "raw_peak_error": 76,
+          "raw_paf_at_one": -6,
+          "raw_paf_at_399": -14,
+          "quotient_energies": {
+            "57": 26064,
+            "63": 277824,
+            "133": 43280,
+            "399": 37616
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        "quotient": {
+          "raw_energy": 206816,
+          "quotient_energy_all_shifts": 9280,
+          "negative_masks": [
+            "0x1092ba543fc80924ac942d1e55b4d70f00848129312f1d725564989fd1478c8d9c0c75e70ec42c005eab83187912d5b1ece164063f2372cf02f7c36afd2ab1d39f6217844c7e552a781d83d39d67cc779cef6a3df37cc85953e8113f775149a7bcb49116aacf0982ca38944f435355dd3ca21d97a405c7ec14deb6bc11bdc4eee4dbb5d8f86e92bb6a9bbddc7a101427635d4d7192f9",
+            "0x162b21eb07563d74f76358b0adc42e8c644b0230edab6bddae4eacbaceddb128304b34ef502833e60aa0a49878f8bcd90e23ea5ca79ce37fad1e629279f48226f6e7d0bf934a6c1980456ccc7f22fb05c5ec00302d707d6938b4540dd06d698bc7439edee6027bcc9b1c5b0ee0529a03fb89e7abab93f1412ebf14434c4351ee0913a24b29d715b724e2224fff7d3e752b77284b937"
+          ],
+          "template": [
+            [
+              549774950401,
+              18874368,
+              1
+            ],
+            [
+              32769,
+              0,
+              -1
+            ]
+          ],
+          "template_id": 3422,
+          "orientation": 1,
+          "seed": 610423,
+          "source": "warm/900000 quotient 110000 8500",
+          "raw_exact_pairs": 37,
+          "raw_peak_error": 128,
+          "raw_paf_at_one": -14,
+          "raw_paf_at_399": -6,
+          "quotient_energies": {
+            "57": 358704,
+            "63": 4640,
+            "133": 434144,
+            "399": 301104
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      },
+      "polished": [
+        {
+          "law": "cyclic",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0x18dd10f2b8fe0c44740b78535acaddee203a2b932ef308b0d619ddabeeb7a74b98f6dd8ef5b45b0d575ed74986f27ba8f70b85a7c8a22ffd2522902d2228099bc0c8930bf23b25faa7488edcf16d2966224570332f6b0b5a2ebc2540877acd81461af9edda98110b3f6c45b183f546c7d6039e786159e5cbc18df5439305a881467d3b2ffd1e52243f96323260f12719c94772a1873b",
+            "0x13578fe7b5e09397e31c467900f7ea4b0f9057c71a8977fe0b4d35038643599f205f2edfa45d8634220d3569253181fa1dac48e48f05da58e04d1aabad67e0d05a57a60eeca4f76df276e4c6ec528a4888b9a407551445073a458d687284593befefa9bc3365287a6c8ee5525007342d71ceff3fc6ad408e8e0773ccdceca32bd1683e3162edc53501fca80f4f560933b59366d3f875"
+          ],
+          "seed": 720285,
+          "raw_energy": 29568,
+          "raw_exact_pairs": 172,
+          "raw_peak_error": 64,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": 26,
+          "quotient_energies": {
+            "57": 73296,
+            "63": 198624,
+            "133": 40944,
+            "399": 35728
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        {
+          "law": "plane",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0xa02e9a21ab9d9f819b682f25f457ed6abc5ded1a4ea5ec181e6372efa8d0ba83501088559c902c908a17d5cd608cc2148f4918f617748e24afc387c41c2d7a90f35c3a135aeb99758b22f995fc6519ddd3032b8323ffa0d9156a014bdd72e2eb9cff3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d91a8a882079bc537f73dcbc9bc663c05d8bed1cb",
+            "0x1caaeed020b536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df813fa6f107d451d9a1131f8e952500e2f40d09d86c938d1efd817103b5f33fb736b3bbb141d03a08b4cbec4718c2e77d3dfad20380dc78d14d39c29fad63e439fcd2e9e9375505c0a817b8e4abeed2298b3a68abe495703e9cb9620e7f48d6b05fab64c7eb1acbc3d342a4051aa4c6318db3856ced"
+          ],
+          "seed": 141404,
+          "raw_energy": 34432,
+          "raw_exact_pairs": 174,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 6,
+          "raw_paf_at_399": 22,
+          "quotient_energies": {
+            "57": 139328,
+            "63": 225808,
+            "133": 50912,
+            "399": 46176
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      ]
+    },
+    "15": {
+      "shard": 15,
+      "shards": 16,
+      "started_orientations": 521,
+      "witnesses": {
+        "full": {
+          "raw_energy": 50048,
+          "quotient_energy_all_shifts": 182752,
+          "negative_masks": [
+            "0x1e6cf49e5a855934f16ab88adf2c7e0fba7daa00a51e4d73a296deccfb2d08cf73e8db415a0104058562dad4d89845ba53739e9f7c7653d87df2a65c5b80b1fd7128ffe1016a55778489571927c6cccc6544c3b8c22ec92ea1bf4a171cd14b68581c3742ef870c5d0361d8eee94b5e63ae1884c4b405d09331bb843a39bdaa10ae11d1d4a86ecf43ff4ff7c4c210afde48f4d944c0f9",
+            "0x1d3f910419cc4d1ce16ab96e90f44c1c4818c38c97c2ae7df6e92b821a1e3e6881843a0eb98f2567283eb07babb691fbcb1fd19b8100b17a2766115d34c4262ce21737a10b3b048fa9b4a2f34fc06b299e2f9c4a44b55d319f332cf903e6293a880d6f3f6115faae2500bcddae7b98d6c7b2200d37c1f4cb56c89b2f74e75afaf9f4bcd35a9f03dec5241f7f1dad1226e8cb52aa565"
+          ],
+          "template": [
+            [
+              2101761,
+              2101760,
+              -1
+            ],
+            [
+              8589934601,
+              8589934600,
+              -1
+            ]
+          ],
+          "template_id": 1599,
+          "orientation": 3,
+          "seed": 610451,
+          "source": "warm/900000 full 110000 18000 600000 full 150000 9000",
+          "raw_exact_pairs": 217,
+          "raw_peak_error": 68,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": -18,
+          "quotient_energies": {
+            "57": 39536,
+            "63": 93968,
+            "133": 30832,
+            "399": 44608
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        "quotient": {
+          "raw_energy": 304480,
+          "quotient_energy_all_shifts": 8768,
+          "negative_masks": [
+            "0x14ca75e3d87b6008a427b271dac00d5111e7bff6aee6b9e2f7a2f520ec9cc5e5d9888c9975e2bec0d5b275e4864ff112fad2c1ffc9f93b0d2eb0189d209ea657d7ad8263f7577822c983ac1cdbb59466ffd135b33ad8707b9594ae00ad1861c2304fef6d8c5dd909d3ce68f12e7794cb0f47e4793e4e05c073154543252e40b6236c532a91689a0ef5b4f238a85805445d42d2bc3660",
+            "0xe089aa7ddcd8ae311a264f991add8a07aec12c6b83d124c21b5bf00c32b92b075ae38d82e8c117b8def1de43092ae464a6850feac4384204fe5ba9bfbebda0d1546c66641bd929f4c552417b660630df4fc25a5e173d6adc2ce8e2d1b4fb46e1effaf36e2f372518ea6e847f32aa27bb596e51484f4282106b74798505a5a74c028579c7bb12f8b233c79556daf6c4ff012c4679dc7"
+          ],
+          "template": [
+            [
+              45,
+              32,
+              1
+            ],
+            [
+              97,
+              64,
+              1
+            ]
+          ],
+          "template_id": 255,
+          "orientation": 0,
+          "seed": 610454,
+          "source": "warm/900000 quotient 110000 8500",
+          "raw_exact_pairs": 63,
+          "raw_peak_error": 172,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -58,
+          "quotient_energies": {
+            "57": 29936,
+            "63": 4384,
+            "133": 349296,
+            "399": 240704
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      },
+      "polished": [
+        {
+          "law": "cyclic",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0x18dd10f2b8fe0c54740b78535acad5ee203a2bb32ef708b0d619cdabecb7a70b98fedd8ff5b45b0d575ed7c986e27ba8f70bc5a7c8a22efd250290292228099bc0c8930bf23b25faa7488edcd16d296622c570332f690b5a6ebc2540867acd81461ef9ed5a98110b3d6c45b183fd46c7d603be786159e5cbc18df5439305a881467d3b2ffd1e52243f96b23270f12719c90772a1873b",
+            "0x13578fe7b5609397e31e467940f7e24b0e9057e71a8d77fe8b4d35038643599f20572edea45da634220d35e9253181fa1dac08e48f05db58e06d1aabad6760d04a57a60eeca4f765f277e4c6cc528a488839a417551645077a4585687384593befeba9bc3365287a6c8ee5525007342c71ceff3fc2ad400e8e0773ccdcece32bd9683f3162edc53101fc280f4f560b33b59366dbf874"
+          ],
+          "seed": 720304,
+          "raw_energy": 31584,
+          "raw_exact_pairs": 193,
+          "raw_peak_error": 56,
+          "raw_paf_at_one": 6,
+          "raw_paf_at_399": 22,
+          "quotient_energies": {
+            "57": 58320,
+            "63": 190272,
+            "133": 28160,
+            "399": 32672
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        },
+        {
+          "law": "plane",
+          "group": [
+            1,
+            64,
+            253,
+            442,
+            505,
+            568,
+            631,
+            757,
+            883
+          ],
+          "negative_masks": [
+            "0xa02e9a21ab9d9f819b682f25f457ed6abc5ded1a4ea5ec181e6372efa8d0ba83501088559c902c908a17d5cd608cc2148f4918f617748e24afc387c41c2d7a90f35c3a135aeb99758b22f995fc6519ddd3032b8323ffa0d9156a014bdd72e2eb9cff3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d91a8a882079bc537f73dcbc9bc663c05d8bed1cb",
+            "0x1caaeed020b536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df813fa6f107d451d9a1131f8e952500e2f40d09d86c938d1efd817103b5f33fb736b3bbb141d03a08b4cbec4718c2e77d3dfad20380dc78d14d39c29fad63e439fcd2e9e9375505c0a817b8e4abeed2298b3a68abe495703e9cb9620e7f48d6b05fab64c7eb1acbc3d342a4051aa4c6318db3856ced"
+          ],
+          "seed": 141404,
+          "raw_energy": 34432,
+          "raw_exact_pairs": 174,
+          "raw_peak_error": 44,
+          "raw_paf_at_one": 6,
+          "raw_paf_at_399": 22,
+          "quotient_energies": {
+            "57": 139328,
+            "63": 225808,
+            "133": 50912,
+            "399": 46176
+          },
+          "lag_classes": 94,
+          "word_orbits": 189
+        }
+      ]
+    }
+  },
+  "merge": {
+    "exit_code": 0,
+    "output": "8521 sparse orientations, original energy 41088, quotient energy 7424\n"
+  }
+}
