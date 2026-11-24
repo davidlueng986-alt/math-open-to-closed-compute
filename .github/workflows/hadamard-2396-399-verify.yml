@@ -1,11 +1,17 @@
 name: Verify Hadamard 2396 lifts and symmetry bounds
 on:
   workflow_dispatch:
+    inputs:
+      records_only:
+        description: Check the new full-correlation records and exact local neighborhood
+        type: boolean
+        default: false
 permissions:
   contents: read
 
 jobs:
   certificates:
+    if: ${{ !inputs.records_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -14,15 +20,8 @@ jobs:
         run: |
           python3 jobs/hadamard-2396-399/certificate.py
           python3 jobs/hadamard-2396-squares/verify.py
-      - name: Install Lean 4.36.0 and verify the release hash
-        run: |
-          set -euo pipefail
-          pkg=lean-4.36.0-linux.tar.zst
-          cd "$RUNNER_TEMP"
-          curl -fLsS --retry 3 -o "$pkg" "https://github.com/leanprover/lean4/releases/download/v4.36.0/$pkg"
-          echo "2b7ab1ed8b92d2e6abfaf41344823b510064dbc9c0260cac73eb496ab2dea6eb  $pkg" | sha256sum --check
-          tar --zstd -xf "$pkg" --wildcards 'lean-4.36.0-linux/bin/*' 'lean-4.36.0-linux/lib/*'
-          echo "$RUNNER_TEMP/lean-4.36.0-linux/bin" >> "$GITHUB_PATH"
+      - name: Install the verified Lean 4.36.0 release
+        run: bash jobs/hadamard-2396-399/install_lean.sh
       - name: Kernel-check all 200 listed original shifts and the shear obstruction
         run: |
           set -euo pipefail
@@ -34,6 +33,7 @@ jobs:
             if grep -q 'sorryAx' "$RUNNER_TEMP/$name.log"; then exit 1; fi
           done
   templates:
+    if: ${{ !inputs.records_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     defaults:
@@ -63,3 +63,30 @@ jobs:
           python3 check_templates.py "$RUNNER_TEMP/plane.txt" "$RUNNER_TEMP/plane.log" --plane
           python3 plane_sieve.py "$RUNNER_TEMP/plane.txt" "$RUNNER_TEMP/quotients" | tee "$RUNNER_TEMP/plane-sieve.log"
           diff -u plane-expected.txt "$RUNNER_TEMP/plane-sieve.log"
+
+  original-records:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Recheck the complete word masks and all 598 correlations
+        run: |
+          python3 jobs/hadamard-2396-coverage/check_records.py
+          python3 jobs/hadamard-2396-coverage/remaining.py
+      - name: Verify the exact singleton neighborhood and planted control
+        run: |
+          set -euo pipefail
+          g++ -O3 -std=c++17 -mpopcnt -Wall -Wextra -Werror jobs/hadamard-2396-squares/repair.cpp -o "$RUNNER_TEMP/repair"
+          python3 jobs/hadamard-2396-squares/neighborhood.py "$RUNNER_TEMP/repair"
+      - name: Install the verified Lean 4.36.0 release
+        run: bash jobs/hadamard-2396-399/install_lean.sh
+      - name: Kernel-check all cyclic scores and shift counts
+        run: |
+          set -euo pipefail
+          export LEAN_PATH="$RUNNER_TEMP/hadamard-records"
+          mkdir -p "$LEAN_PATH"
+          for path in hadamard-2396-projections/Triples hadamard-2396-coverage/SquareAction hadamard-2396-coverage/Coverage; do
+            name=${path##*/}
+            (cd "jobs/${path%/*}" && lean -j1 -M5500 -DwarningAsError=true -o "$LEAN_PATH/$name.olean" "$name.lean") | tee "$RUNNER_TEMP/$name.log"
+            if grep -q 'sorryAx' "$RUNNER_TEMP/$name.log"; then exit 1; fi
+          done
