@@ -1,0 +1,97 @@
+{
+  "version": "mols-composition-cnf-v2",
+  "n": 2,
+  "squares": 2,
+  "parts": [
+    2
+  ],
+  "amo": "pairwise",
+  "pair_symmetry": true,
+  "channel_reverse": false,
+  "even_second_rows": false,
+  "parity_variables": 0,
+  "parity_clauses": 0,
+  "variables": [
+    {
+      "id": 1,
+      "square": "L1",
+      "r": 1,
+      "c": 0,
+      "value": 1
+    },
+    {
+      "id": 2,
+      "square": "L1",
+      "r": 1,
+      "c": 1,
+      "value": 0
+    },
+    {
+      "id": 3,
+      "square": "Z0_1",
+      "r": 1,
+      "c": 0,
+      "value": 1
+    },
+    {
+      "id": 4,
+      "square": "Z0_1",
+      "r": 1,
+      "c": 1,
+      "value": 0
+    }
+  ],
+  "fixed": {
+    "L0": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        1
+      ],
+      [
+        1,
+        0,
+        1
+      ],
+      [
+        1,
+        1,
+        0
+      ]
+    ],
+    "L1": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        1
+      ]
+    ],
+    "Z0_1": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        1
+      ]
+    ]
+  },
+  "semantic_variables": 4,
+  "nvars": 4,
+  "clauses": 14,
+  "pair_orbits": null,
+  "cnf_sha256": "7e0a71b77d467edaead791366e32c8cd20b1aab744d1c51f35bfaf0132cefca9"
+}

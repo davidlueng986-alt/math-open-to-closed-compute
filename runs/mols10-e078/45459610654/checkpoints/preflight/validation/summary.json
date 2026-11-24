@@ -1,0 +1,245 @@
+{
+  "cases": [
+    {
+      "n": 2,
+      "squares": 1,
+      "parts": [
+        2
+      ],
+      "sat": true,
+      "stats": {
+        "restarts": 0,
+        "conflicts": 0,
+        "decisions": 0,
+        "propagations": 0
+      },
+      "cnf_sha256": "e160232d0ce8816f12ecdcdc7bb0e939b55fb5ca43414ae6077dfa3989655732",
+      "status": "SAT_VERIFIED"
+    },
+    {
+      "n": 2,
+      "squares": 2,
+      "parts": [
+        2
+      ],
+      "sat": false,
+      "stats": {
+        "restarts": 0,
+        "conflicts": 0,
+        "decisions": 0,
+        "propagations": 4
+      },
+      "cnf_sha256": "7e0a71b77d467edaead791366e32c8cd20b1aab744d1c51f35bfaf0132cefca9",
+      "status": "UNSAT_VERIFIED",
+      "proof_check": {
+        "status": "UNSAT_VERIFIED",
+        "cnf": "base.cnf",
+        "cnf_sha256": "7e0a71b77d467edaead791366e32c8cd20b1aab744d1c51f35bfaf0132cefca9",
+        "drat": "proof.drat",
+        "drat_sha256": "3906e588f4c765d8289c8edd524d8f8a779a069586b1cbd29e16c3ebe635fe93",
+        "drat_format_observed": "ascii_drat",
+        "checker_source": "https://github.com/marijnheule/drat-trim/tree/2e3b2dc0ecf938addbd779d42877b6ed69d9a985",
+        "drat_check": {
+          "command": [
+            "drat-trim",
+            "out/validation/n2_m2_2/base.cnf",
+            "out/validation/n2_m2_2/proof.drat",
+            "-L",
+            "out/validation/n2_m2_2/proof.lrat",
+            "-t",
+            "60"
+          ],
+          "returncode": 0,
+          "timed_out": false,
+          "stop_reason": null,
+          "disk_reserve_bytes": 0,
+          "seconds": 0.25088008099999826,
+          "log": "proof.drat-check.log"
+        },
+        "lrat": "proof.lrat",
+        "lrat_sha256": "a3e85c38dddf6a6a3b74d6edf47e38cf9f722aa6f51206af186ba67f9ea32b2a",
+        "lrat_check": {
+          "command": [
+            "lrat-check",
+            "out/validation/n2_m2_2/base.cnf",
+            "out/validation/n2_m2_2/proof.lrat"
+          ],
+          "returncode": 0,
+          "timed_out": false,
+          "stop_reason": null,
+          "disk_reserve_bytes": 0,
+          "seconds": 0.25090343000000104,
+          "log": "proof.lrat-check.log"
+        }
+      }
+    },
+    {
+      "n": 3,
+      "squares": 2,
+      "parts": [
+        3
+      ],
+      "sat": true,
+      "stats": {
+        "restarts": 0,
+        "conflicts": 0,
+        "decisions": 0,
+        "propagations": 26
+      },
+      "cnf_sha256": "205d703b799d1a18ace7f3ba6b487b519ae5f64f160fc463479473e29294e29b",
+      "status": "SAT_VERIFIED"
+    },
+    {
+      "n": 3,
+      "squares": 3,
+      "parts": [
+        3
+      ],
+      "sat": false,
+      "stats": {
+        "restarts": 0,
+        "conflicts": 0,
+        "decisions": 0,
+        "propagations": 50
+      },
+      "cnf_sha256": "0cd1bdc897d864acb7df7b2615af35f3af19d15a148453cf1d5b2bdb3d208ae8",
+      "status": "UNSAT_VERIFIED",
+      "proof_check": {
+        "status": "UNSAT_VERIFIED",
+        "cnf": "base.cnf",
+        "cnf_sha256": "0cd1bdc897d864acb7df7b2615af35f3af19d15a148453cf1d5b2bdb3d208ae8",
+        "drat": "proof.drat",
+        "drat_sha256": "8e4f32bd7964611a963465be998eaad425cc09d46e1941dcfbdbba56a89b73bd",
+        "drat_format_observed": "ascii_drat",
+        "checker_source": "https://github.com/marijnheule/drat-trim/tree/2e3b2dc0ecf938addbd779d42877b6ed69d9a985",
+        "drat_check": {
+          "command": [
+            "drat-trim",
+            "out/validation/n3_m3_3/base.cnf",
+            "out/validation/n3_m3_3/proof.drat",
+            "-L",
+            "out/validation/n3_m3_3/proof.lrat",
+            "-t",
+            "60"
+          ],
+          "returncode": 0,
+          "timed_out": false,
+          "stop_reason": null,
+          "disk_reserve_bytes": 0,
+          "seconds": 0.2508333620000016,
+          "log": "proof.drat-check.log"
+        },
+        "lrat": "proof.lrat",
+        "lrat_sha256": "4e7e8381334a760dd1501136ce2c38a64328b746b1d88b986ed81055e9cc69e3",
+        "lrat_check": {
+          "command": [
+            "lrat-check",
+            "out/validation/n3_m3_3/base.cnf",
+            "out/validation/n3_m3_3/proof.lrat"
+          ],
+          "returncode": 0,
+          "timed_out": false,
+          "stop_reason": null,
+          "disk_reserve_bytes": 0,
+          "seconds": 0.25087290700000153,
+          "log": "proof.lrat-check.log"
+        }
+      }
+    },
+    {
+      "n": 4,
+      "squares": 3,
+      "parts": [
+        2,
+        2
+      ],
+      "sat": true,
+      "stats": {
+        "restarts": 0,
+        "conflicts": 0,
+        "decisions": 0,
+        "propagations": 18
+      },
+      "cnf_sha256": "a376217b53d67e0dbf056bf460f538106623f9244893a75ae9824dbf43b2e8a8",
+      "status": "SAT_VERIFIED"
+    },
+    {
+      "n": 4,
+      "squares": 3,
+      "parts": [
+        4
+      ],
+      "sat": false,
+      "stats": {
+        "restarts": 0,
+        "conflicts": 3,
+        "decisions": 5,
+        "propagations": 101
+      },
+      "cnf_sha256": "ecde9cb8cd765b380b4633f9fc61f641267bd645ebbcab8f7bf316af00f4ad0e",
+      "status": "UNSAT_VERIFIED",
+      "proof_check": {
+        "status": "UNSAT_VERIFIED",
+        "cnf": "base.cnf",
+        "cnf_sha256": "ecde9cb8cd765b380b4633f9fc61f641267bd645ebbcab8f7bf316af00f4ad0e",
+        "drat": "proof.drat",
+        "drat_sha256": "5bef09182c87cc8e85f2d10637379f0c150e556f01ef4ea5dce165f649c68185",
+        "drat_format_observed": "ascii_drat",
+        "checker_source": "https://github.com/marijnheule/drat-trim/tree/2e3b2dc0ecf938addbd779d42877b6ed69d9a985",
+        "drat_check": {
+          "command": [
+            "drat-trim",
+            "out/validation/n4_m3_4/base.cnf",
+            "out/validation/n4_m3_4/proof.drat",
+            "-L",
+            "out/validation/n4_m3_4/proof.lrat",
+            "-t",
+            "60"
+          ],
+          "returncode": 0,
+          "timed_out": false,
+          "stop_reason": null,
+          "disk_reserve_bytes": 0,
+          "seconds": 0.2508196150000046,
+          "log": "proof.drat-check.log"
+        },
+        "lrat": "proof.lrat",
+        "lrat_sha256": "a1983a7a91b6a69327a79bed35ea9ae1dba0ee7870b7214982d065f77a6ffe96",
+        "lrat_check": {
+          "command": [
+            "lrat-check",
+            "out/validation/n4_m3_4/base.cnf",
+            "out/validation/n4_m3_4/proof.lrat"
+          ],
+          "returncode": 0,
+          "timed_out": false,
+          "stop_reason": null,
+          "disk_reserve_bytes": 0,
+          "seconds": 0.251112569,
+          "log": "proof.lrat-check.log"
+        }
+      }
+    },
+    {
+      "n": 5,
+      "squares": 3,
+      "parts": [
+        5
+      ],
+      "sat": true,
+      "stats": {
+        "restarts": 0,
+        "conflicts": 15,
+        "decisions": 23,
+        "propagations": 1307
+      },
+      "cnf_sha256": "a97ebbcf771f19ec7c4110564b9af63274f445ec74b6289002a51d11199bd217",
+      "status": "SAT_VERIFIED"
+    }
+  ],
+  "n4_m3_normalized_models_exhausted": 1,
+  "exhausted_formula_status": "UNSAT_VERIFIED",
+  "checker_source": "https://github.com/marijnheule/drat-trim/tree/2e3b2dc0ecf938addbd779d42877b6ed69d9a985",
+  "parity_gadget_permutations_checked": 872,
+  "n9_simultaneous_even_positive": "SAT_VERIFIED"
+}

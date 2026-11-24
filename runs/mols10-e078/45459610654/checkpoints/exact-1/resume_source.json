@@ -1,0 +1,77 @@
+{
+  "status": "SOURCE_IDENTITY_VERIFIED",
+  "shard": 1,
+  "source_run_id": 45301881745,
+  "source_queue_sha256": "9f0fe1d7e4ced60069da03a69e5d0c3af2f751e52ae41be986b076929d89a564",
+  "source_manifest_sha256": "9150a509365f770b7ff4a08fee29a405e0c81aebcc5705cc2441e24e4f913336",
+  "source_leaf_status_counts": {
+    "UNSAT_VERIFIED": 4,
+    "PENDING": 23
+  },
+  "imported_certified_count": 4,
+  "imported_certificates": [
+    {
+      "node": "root01",
+      "cube": [
+        -522,
+        523
+      ],
+      "parent": "root0",
+      "evidence": "attempts/root01_0000/result.json",
+      "files_sha256": {
+        "attempts/root01_0000/instance.cnf": "959c5b0de11567481b0ac28829ee87c0e1bfa51d04c44e8260d64417cce7dbf6",
+        "attempts/root01_0000/proof.lrat": "01248471fba3c658b2e7f36fb229fae577200f5a649e32c3884638f1b59e256f",
+        "attempts/root01_0000/proof.drat": "b2e7707c0fd19e7ac4943a79fcdff13f3f556703b38278382f371f9e6d633c6f"
+      }
+    },
+    {
+      "node": "root001",
+      "cube": [
+        -522,
+        -523,
+        524
+      ],
+      "parent": "root00",
+      "evidence": "attempts/root001_0000/result.json",
+      "files_sha256": {
+        "attempts/root001_0000/instance.cnf": "383ec47bb83ad93b6555be00e80d167a41d91cdda709acfd452570f0cfdc52d5",
+        "attempts/root001_0000/proof.lrat": "c26a6e85e33e0457644475dc007921608afbf88c0e40957f1d1c2e0a2a5b86d2",
+        "attempts/root001_0000/proof.drat": "9246355f84d0ec015b71589e5afdf91e73e5a66701db58b80ed51589606244b8"
+      }
+    },
+    {
+      "node": "root0001",
+      "cube": [
+        -522,
+        -523,
+        -524,
+        525
+      ],
+      "parent": "root000",
+      "evidence": "attempts/root0001_0000/result.json",
+      "files_sha256": {
+        "attempts/root0001_0000/instance.cnf": "8dd1b527819d0496959fecd9d2eafd70e87281e388eebf6451830b86c21007d7",
+        "attempts/root0001_0000/proof.lrat": "ed2421999743023b52a31650200c3aa36ab0bdace01cb94ed409701aeea88833",
+        "attempts/root0001_0000/proof.drat": "ca09b7f51a95c0032a8c2a9990af4d5567217d513eb37a76d5e423cbdd392f19"
+      }
+    },
+    {
+      "node": "root00000",
+      "cube": [
+        -522,
+        -523,
+        -524,
+        -525,
+        -526
+      ],
+      "parent": "root0000",
+      "evidence": "attempts/root00000_0000/result.json",
+      "files_sha256": {
+        "attempts/root00000_0000/instance.cnf": "77a590d0b47e1b293b3ef9fea0c71b58674329d8e181be9d24fd45989c174f3e",
+        "attempts/root00000_0000/proof.lrat": "fa143d27254ea4e808271d2f50f072114c845e5101313f353e66277ca198c827",
+        "attempts/root00000_0000/proof.drat": "14e4af66d64ca4d0ff4c03ed9d58c96ef6f57c7151a62f639a9517f1390754a4"
+      }
+    }
+  ],
+  "meaning": "Identity and certificate-byte preservation only; fresh replay is still required."
+}

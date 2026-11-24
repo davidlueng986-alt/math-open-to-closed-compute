@@ -1,0 +1,28 @@
+{
+  "status": "SOURCE_IDENTITY_VERIFIED",
+  "shard": 6,
+  "source_run_id": 45301881745,
+  "source_queue_sha256": "7b16fec9399bf5f0abdea98a14a1fa4d741a68c1509be6388f67bd82c781ba6f",
+  "source_manifest_sha256": "9150a509365f770b7ff4a08fee29a405e0c81aebcc5705cc2441e24e4f913336",
+  "source_leaf_status_counts": {
+    "UNSAT_VERIFIED": 1,
+    "PENDING": 27
+  },
+  "imported_certified_count": 1,
+  "imported_certificates": [
+    {
+      "node": "root0",
+      "cube": [
+        -522
+      ],
+      "parent": "root",
+      "evidence": "attempts/root0_0000/result.json",
+      "files_sha256": {
+        "attempts/root0_0000/instance.cnf": "10aab6e5c0ce9f2600802f3abe660db81ff7f6d93a183e4fa6df84a0165900e8",
+        "attempts/root0_0000/proof.lrat": "447c44f28dac7dceb2d6b31b17958f9836059d37135e6bbed5d4576efb2d5cd5",
+        "attempts/root0_0000/proof.drat": "d29d4544d085984b4faa1563b42e545e04d426a33fbb84ad420fad89009925b0"
+      }
+    }
+  ],
+  "meaning": "Identity and certificate-byte preservation only; fresh replay is still required."
+}

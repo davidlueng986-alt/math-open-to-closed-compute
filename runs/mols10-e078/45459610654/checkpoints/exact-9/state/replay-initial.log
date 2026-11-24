@@ -1,0 +1,1 @@
+{"shard": 9, "parts": [4, 6], "task_status": "未完成任務", "nodes": 55, "leaves": 28, "leaf_status_counts": {"UNSAT_VERIFIED": 1, "PENDING": 27}, "coverage": "all unresolved leaves retained; no percentage estimate", "coverage_tree_verified": true, "lrat_certificates_replayed": 1}

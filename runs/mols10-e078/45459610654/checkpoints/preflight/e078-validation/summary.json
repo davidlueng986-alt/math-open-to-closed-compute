@@ -1,0 +1,642 @@
+{
+  "status": "PASS",
+  "checks": {
+    "bcp": {
+      "exhaustive_small_formula_checks": 60,
+      "failed_literal_example": {
+        "method": "BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD",
+        "lookahead_limit": 64,
+        "probed_variables": 2,
+        "rejected_one_sided_variables": [
+          1
+        ],
+        "changes_base_or_cube": false,
+        "bcp_assigned_variables": 0,
+        "selected_variable": 2,
+        "selected_both_polarities_bcp_consistent": true
+      },
+      "both_children_saved_without_closure": true
+    },
+    "six_unchanged_encodings_and_splits": [
+      {
+        "shard": 1,
+        "base_cnf_hash_unchanged": true,
+        "selection": {
+          "method": "BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD",
+          "lookahead_limit": 64,
+          "probed_variables": 1,
+          "rejected_one_sided_variables": [],
+          "changes_base_or_cube": false,
+          "bcp_assigned_variables": 38,
+          "selected_variable": 522,
+          "selected_both_polarities_bcp_consistent": true
+        }
+      },
+      {
+        "shard": 2,
+        "base_cnf_hash_unchanged": true,
+        "selection": {
+          "method": "BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD",
+          "lookahead_limit": 64,
+          "probed_variables": 1,
+          "rejected_one_sided_variables": [],
+          "changes_base_or_cube": false,
+          "bcp_assigned_variables": 38,
+          "selected_variable": 522,
+          "selected_both_polarities_bcp_consistent": true
+        }
+      },
+      {
+        "shard": 6,
+        "base_cnf_hash_unchanged": true,
+        "selection": {
+          "method": "BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD",
+          "lookahead_limit": 64,
+          "probed_variables": 1,
+          "rejected_one_sided_variables": [],
+          "changes_base_or_cube": false,
+          "bcp_assigned_variables": 38,
+          "selected_variable": 522,
+          "selected_both_polarities_bcp_consistent": true
+        }
+      },
+      {
+        "shard": 8,
+        "base_cnf_hash_unchanged": true,
+        "selection": {
+          "method": "BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD",
+          "lookahead_limit": 64,
+          "probed_variables": 1,
+          "rejected_one_sided_variables": [],
+          "changes_base_or_cube": false,
+          "bcp_assigned_variables": 38,
+          "selected_variable": 522,
+          "selected_both_polarities_bcp_consistent": true
+        }
+      },
+      {
+        "shard": 9,
+        "base_cnf_hash_unchanged": true,
+        "selection": {
+          "method": "BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD",
+          "lookahead_limit": 64,
+          "probed_variables": 1,
+          "rejected_one_sided_variables": [],
+          "changes_base_or_cube": false,
+          "bcp_assigned_variables": 38,
+          "selected_variable": 522,
+          "selected_both_polarities_bcp_consistent": true
+        }
+      },
+      {
+        "shard": 10,
+        "base_cnf_hash_unchanged": true,
+        "selection": {
+          "method": "BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD",
+          "lookahead_limit": 64,
+          "probed_variables": 1,
+          "rejected_one_sided_variables": [],
+          "changes_base_or_cube": false,
+          "bcp_assigned_variables": 38,
+          "selected_variable": 522,
+          "selected_both_polarities_bcp_consistent": true
+        }
+      }
+    ],
+    "recorded_e077_trivial_leaf_selections": [
+      {
+        "shard": 1,
+        "old_cube": [
+          -522,
+          523
+        ],
+        "bcp_conflict": true,
+        "selection": {
+          "method": "BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD",
+          "lookahead_limit": 64,
+          "probed_variables": 4,
+          "rejected_one_sided_variables": [
+            523,
+            524,
+            525
+          ],
+          "changes_base_or_cube": false,
+          "bcp_assigned_variables": 39,
+          "selected_variable": 526,
+          "selected_both_polarities_bcp_consistent": true
+        }
+      },
+      {
+        "shard": 1,
+        "old_cube": [
+          -522,
+          -523,
+          524
+        ],
+        "bcp_conflict": true,
+        "selection": {
+          "method": "BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD",
+          "lookahead_limit": 64,
+          "probed_variables": 3,
+          "rejected_one_sided_variables": [
+            524,
+            525
+          ],
+          "changes_base_or_cube": false,
+          "bcp_assigned_variables": 40,
+          "selected_variable": 526,
+          "selected_both_polarities_bcp_consistent": true
+        }
+      },
+      {
+        "shard": 1,
+        "old_cube": [
+          -522,
+          -523,
+          -524,
+          525
+        ],
+        "bcp_conflict": true,
+        "selection": {
+          "method": "BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD",
+          "lookahead_limit": 64,
+          "probed_variables": 2,
+          "rejected_one_sided_variables": [
+            525
+          ],
+          "changes_base_or_cube": false,
+          "bcp_assigned_variables": 41,
+          "selected_variable": 526,
+          "selected_both_polarities_bcp_consistent": true
+        }
+      },
+      {
+        "shard": 1,
+        "old_cube": [
+          -522,
+          -523,
+          -524,
+          -525,
+          -526
+        ],
+        "bcp_conflict": false,
+        "selection": {
+          "method": "BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD",
+          "lookahead_limit": 64,
+          "probed_variables": 1,
+          "rejected_one_sided_variables": [],
+          "changes_base_or_cube": false,
+          "bcp_assigned_variables": 42,
+          "selected_variable": 526,
+          "selected_both_polarities_bcp_consistent": true
+        }
+      },
+      {
+        "shard": 2,
+        "old_cube": [
+          -522,
+          523
+        ],
+        "bcp_conflict": true,
+        "selection": {
+          "method": "BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD",
+          "lookahead_limit": 64,
+          "probed_variables": 2,
+          "rejected_one_sided_variables": [
+            523
+          ],
+          "changes_base_or_cube": false,
+          "bcp_assigned_variables": 39,
+          "selected_variable": 524,
+          "selected_both_polarities_bcp_consistent": true
+        }
+      },
+      {
+        "shard": 2,
+        "old_cube": [
+          -522,
+          -523,
+          -524
+        ],
+        "bcp_conflict": false,
+        "selection": {
+          "method": "BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD",
+          "lookahead_limit": 64,
+          "probed_variables": 1,
+          "rejected_one_sided_variables": [],
+          "changes_base_or_cube": false,
+          "bcp_assigned_variables": 40,
+          "selected_variable": 524,
+          "selected_both_polarities_bcp_consistent": true
+        }
+      },
+      {
+        "shard": 6,
+        "old_cube": [
+          -522
+        ],
+        "bcp_conflict": false,
+        "selection": {
+          "method": "BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD",
+          "lookahead_limit": 64,
+          "probed_variables": 1,
+          "rejected_one_sided_variables": [],
+          "changes_base_or_cube": false,
+          "bcp_assigned_variables": 38,
+          "selected_variable": 522,
+          "selected_both_polarities_bcp_consistent": true
+        }
+      },
+      {
+        "shard": 8,
+        "old_cube": [
+          -522,
+          -523
+        ],
+        "bcp_conflict": false,
+        "selection": {
+          "method": "BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD",
+          "lookahead_limit": 64,
+          "probed_variables": 1,
+          "rejected_one_sided_variables": [],
+          "changes_base_or_cube": false,
+          "bcp_assigned_variables": 39,
+          "selected_variable": 523,
+          "selected_both_polarities_bcp_consistent": true
+        }
+      },
+      {
+        "shard": 9,
+        "old_cube": [
+          -522,
+          -523,
+          -524
+        ],
+        "bcp_conflict": false,
+        "selection": {
+          "method": "BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD",
+          "lookahead_limit": 64,
+          "probed_variables": 1,
+          "rejected_one_sided_variables": [],
+          "changes_base_or_cube": false,
+          "bcp_assigned_variables": 40,
+          "selected_variable": 524,
+          "selected_both_polarities_bcp_consistent": true
+        }
+      },
+      {
+        "shard": 10,
+        "old_cube": [
+          -522,
+          -523,
+          -524,
+          -525
+        ],
+        "bcp_conflict": false,
+        "selection": {
+          "method": "BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD",
+          "lookahead_limit": 64,
+          "probed_variables": 1,
+          "rejected_one_sided_variables": [],
+          "changes_base_or_cube": false,
+          "bcp_assigned_variables": 41,
+          "selected_variable": 525,
+          "selected_both_polarities_bcp_consistent": true
+        }
+      }
+    ],
+    "actual_solver_proof_formats_and_replay": [
+      {
+        "case": "kissat_binary",
+        "launch": {
+          "command": [
+            "kissat",
+            "--time=30",
+            "out/e078-validation/kissat_binary/instance.cnf",
+            "out/e078-validation/kissat_binary/proof.drat"
+          ],
+          "returncode": 20,
+          "seconds": 0.2508913899999996,
+          "stop_reason": null,
+          "launched": true,
+          "proof_format_expected": "binary_drat",
+          "proof_format_observed": "binary_drat",
+          "requested_max_proof_bytes": 8388608,
+          "effective_max_proof_bytes": 8388608,
+          "disk_free_bytes_at_start": 91210387456,
+          "disk_reserve_bytes": 0,
+          "proof_expansion_factor": 1.0
+        },
+        "proof_bytes": 418,
+        "proof_check": {
+          "status": "UNSAT_VERIFIED",
+          "cnf": "instance.cnf",
+          "cnf_sha256": "c8a59526385b925866951e9ea410a123c4d8715d7144f038539eebbff2b2c222",
+          "drat": "proof.drat",
+          "drat_sha256": "c5eec42909d6ea1eeaadf58668f7f0cb1e1309d2e8485b63d8ef8e46d2112711",
+          "drat_format_observed": "binary_drat",
+          "checker_source": "https://github.com/marijnheule/drat-trim/tree/2e3b2dc0ecf938addbd779d42877b6ed69d9a985",
+          "drat_check": {
+            "command": [
+              "drat-trim",
+              "out/e078-validation/kissat_binary/instance.cnf",
+              "out/e078-validation/kissat_binary/proof.drat",
+              "-L",
+              "out/e078-validation/kissat_binary/proof.lrat",
+              "-t",
+              "30"
+            ],
+            "returncode": 0,
+            "timed_out": false,
+            "stop_reason": null,
+            "disk_reserve_bytes": 0,
+            "seconds": 0.2510626719999962,
+            "log": "proof.drat-check.log"
+          },
+          "lrat": "proof.lrat",
+          "lrat_sha256": "ce516e01e40e9c8b800168668d713d00540592bd93f129560419cf86b6e4b60c",
+          "lrat_check": {
+            "command": [
+              "lrat-check",
+              "out/e078-validation/kissat_binary/instance.cnf",
+              "out/e078-validation/kissat_binary/proof.lrat"
+            ],
+            "returncode": 0,
+            "timed_out": false,
+            "stop_reason": null,
+            "disk_reserve_bytes": 0,
+            "seconds": 0.25089024400000426,
+            "log": "proof.lrat-check.log"
+          }
+        }
+      },
+      {
+        "case": "kissat_ascii",
+        "launch": {
+          "command": [
+            "kissat",
+            "--no-binary",
+            "--time=30",
+            "out/e078-validation/kissat_ascii/instance.cnf",
+            "out/e078-validation/kissat_ascii/proof.drat"
+          ],
+          "returncode": 20
+        },
+        "proof_bytes": 988,
+        "proof_check": {
+          "status": "UNSAT_VERIFIED",
+          "cnf": "instance.cnf",
+          "cnf_sha256": "c8a59526385b925866951e9ea410a123c4d8715d7144f038539eebbff2b2c222",
+          "drat": "proof.drat",
+          "drat_sha256": "078c1e12e306d847d88327cbd656050a2f82ee3b9af3b5b62809ac3b659e319e",
+          "drat_format_observed": "ascii_drat",
+          "checker_source": "https://github.com/marijnheule/drat-trim/tree/2e3b2dc0ecf938addbd779d42877b6ed69d9a985",
+          "drat_check": {
+            "command": [
+              "drat-trim",
+              "out/e078-validation/kissat_ascii/instance.cnf",
+              "out/e078-validation/kissat_ascii/proof.drat",
+              "-L",
+              "out/e078-validation/kissat_ascii/proof.lrat",
+              "-t",
+              "30"
+            ],
+            "returncode": 0,
+            "timed_out": false,
+            "stop_reason": null,
+            "disk_reserve_bytes": 0,
+            "seconds": 0.2506293590000013,
+            "log": "proof.drat-check.log"
+          },
+          "lrat": "proof.lrat",
+          "lrat_sha256": "ce516e01e40e9c8b800168668d713d00540592bd93f129560419cf86b6e4b60c",
+          "lrat_check": {
+            "command": [
+              "lrat-check",
+              "out/e078-validation/kissat_ascii/instance.cnf",
+              "out/e078-validation/kissat_ascii/proof.lrat"
+            ],
+            "returncode": 0,
+            "timed_out": false,
+            "stop_reason": null,
+            "disk_reserve_bytes": 0,
+            "seconds": 0.25084425200000027,
+            "log": "proof.lrat-check.log"
+          }
+        }
+      },
+      {
+        "case": "pysat_ascii",
+        "launch": {
+          "command": [
+            "/usr/bin/python3",
+            "/__w/math-open-to-closed-compute/math-open-to-closed-compute/jobs/mols10-e077-exact/pysat_worker.py",
+            "out/e078-validation/pysat_ascii/instance.cnf",
+            "out/e078-validation/pysat_ascii/proof.drat",
+            "--solver",
+            "cadical195"
+          ],
+          "returncode": 20,
+          "seconds": 0.25077796699999766,
+          "stop_reason": null,
+          "launched": true,
+          "proof_format_expected": "ascii_drat",
+          "proof_format_observed": "ascii_drat",
+          "requested_max_proof_bytes": 8388608,
+          "effective_max_proof_bytes": 8388608,
+          "disk_free_bytes_at_start": 91210330112,
+          "disk_reserve_bytes": 0,
+          "proof_expansion_factor": 1.0
+        },
+        "proof_bytes": 552,
+        "proof_check": {
+          "status": "UNSAT_VERIFIED",
+          "cnf": "instance.cnf",
+          "cnf_sha256": "c8a59526385b925866951e9ea410a123c4d8715d7144f038539eebbff2b2c222",
+          "drat": "proof.drat",
+          "drat_sha256": "aac3be5cc0c4467daed4043301ca5fa391c3bb72be26b5545f10912379298185",
+          "drat_format_observed": "ascii_drat",
+          "checker_source": "https://github.com/marijnheule/drat-trim/tree/2e3b2dc0ecf938addbd779d42877b6ed69d9a985",
+          "drat_check": {
+            "command": [
+              "drat-trim",
+              "out/e078-validation/pysat_ascii/instance.cnf",
+              "out/e078-validation/pysat_ascii/proof.drat",
+              "-L",
+              "out/e078-validation/pysat_ascii/proof.lrat",
+              "-t",
+              "30"
+            ],
+            "returncode": 0,
+            "timed_out": false,
+            "stop_reason": null,
+            "disk_reserve_bytes": 0,
+            "seconds": 0.2509306980000048,
+            "log": "proof.drat-check.log"
+          },
+          "lrat": "proof.lrat",
+          "lrat_sha256": "a86ab0b42daed79871d7c5ec6946b00b2c37e4c00fc4aa2fec3953352bfb6a2a",
+          "lrat_check": {
+            "command": [
+              "lrat-check",
+              "out/e078-validation/pysat_ascii/instance.cnf",
+              "out/e078-validation/pysat_ascii/proof.lrat"
+            ],
+            "returncode": 0,
+            "timed_out": false,
+            "stop_reason": null,
+            "disk_reserve_bytes": 0,
+            "seconds": 0.25106171599999527,
+            "log": "proof.lrat-check.log"
+          }
+        }
+      }
+    ],
+    "disk_deferral_preserves_completed_proof": {
+      "deferred_check": {
+        "status": "UNSAT_AWAITING_VERIFICATION",
+        "cnf": "instance.cnf",
+        "cnf_sha256": "c8a59526385b925866951e9ea410a123c4d8715d7144f038539eebbff2b2c222",
+        "drat": "proof.drat",
+        "drat_sha256": "c5eec42909d6ea1eeaadf58668f7f0cb1e1309d2e8485b63d8ef8e46d2112711",
+        "drat_format_observed": "binary_drat",
+        "checker_source": "https://github.com/marijnheule/drat-trim/tree/2e3b2dc0ecf938addbd779d42877b6ed69d9a985",
+        "drat_check": {
+          "command": [
+            "drat-trim",
+            "out/e078-validation/deferred/instance.cnf",
+            "out/e078-validation/deferred/proof.drat",
+            "-L",
+            "out/e078-validation/deferred/proof.lrat",
+            "-t",
+            "30"
+          ],
+          "returncode": null,
+          "timed_out": false,
+          "stop_reason": "DISK_RESERVE_LIMIT",
+          "disk_reserve_bytes": 91211345920,
+          "seconds": 2.695599999924525e-05,
+          "log": "proof.drat-check.log"
+        },
+        "verification_deferred": "DISK_RESERVE_LIMIT"
+      },
+      "resumed_status": "UNSAT_VERIFIED",
+      "budget": {
+        "requested_max_proof_bytes": 17179869184,
+        "effective_max_proof_bytes": 0,
+        "disk_free_bytes_at_start": 91210285056,
+        "disk_reserve_bytes": 91211345920,
+        "proof_expansion_factor": 3.0
+      },
+      "launch_skipped": {
+        "command": [
+          "kissat",
+          "--time=30",
+          "out/e078-validation/deferred/instance.cnf",
+          "out/e078-validation/deferred/unstarted.drat"
+        ],
+        "returncode": null,
+        "seconds": 0,
+        "stop_reason": "DISK_RESERVE_LIMIT",
+        "launched": false,
+        "proof_format_expected": "binary_drat",
+        "requested_max_proof_bytes": 17179869184,
+        "effective_max_proof_bytes": 0,
+        "disk_free_bytes_at_start": 91210285056,
+        "disk_reserve_bytes": 91211345920,
+        "proof_expansion_factor": 3.0
+      }
+    },
+    "time_deferral_preserves_completed_proof": {
+      "status": "UNSAT_AWAITING_VERIFICATION",
+      "cnf": "instance.cnf",
+      "cnf_sha256": "c8a59526385b925866951e9ea410a123c4d8715d7144f038539eebbff2b2c222",
+      "drat": "proof.drat",
+      "drat_sha256": "c5eec42909d6ea1eeaadf58668f7f0cb1e1309d2e8485b63d8ef8e46d2112711",
+      "drat_format_observed": "binary_drat",
+      "checker_source": "https://github.com/marijnheule/drat-trim/tree/2e3b2dc0ecf938addbd779d42877b6ed69d9a985",
+      "drat_check": {
+        "command": [
+          "drat-trim",
+          "out/e078-validation/deferred/instance.cnf",
+          "out/e078-validation/deferred/proof.drat",
+          "-L",
+          "out/e078-validation/deferred/proof.lrat",
+          "-t",
+          "1"
+        ],
+        "returncode": 0,
+        "timed_out": false,
+        "stop_reason": null,
+        "disk_reserve_bytes": 0,
+        "seconds": 0.2512820140000045,
+        "log": "proof.drat-check.log"
+      },
+      "lrat": "proof.lrat",
+      "lrat_sha256": "ce516e01e40e9c8b800168668d713d00540592bd93f129560419cf86b6e4b60c",
+      "lrat_check": {
+        "command": [
+          "out/e078-validation/slow-lrat-check.py",
+          "out/e078-validation/deferred/instance.cnf",
+          "out/e078-validation/deferred/proof.lrat"
+        ],
+        "returncode": -15,
+        "timed_out": true,
+        "stop_reason": "CHECK_TIME_LIMIT",
+        "disk_reserve_bytes": 0,
+        "seconds": 1.0029687700000025,
+        "log": "proof.lrat-check.log"
+      },
+      "verification_deferred": "CHECK_TIME_LIMIT"
+    },
+    "existing_lrat_resume_preserves_certificate_bytes": {
+      "status": "UNSAT_VERIFIED",
+      "sha256": {
+        "instance.cnf": "ecde9cb8cd765b380b4633f9fc61f641267bd645ebbcab8f7bf316af00f4ad0e",
+        "proof.drat": "ae38459a278bcd6dcf290158667f81b6054e1a6c96e45eb67bcbc85550fba175",
+        "proof.lrat": "6847aef1ddcffc87cb367d644ce14fe7975d8b1276f9a0792d9ebba363cddcfe"
+      }
+    },
+    "actual_kissat_sat_unsat_queues": [
+      {
+        "shard": 0,
+        "parts": [
+          2,
+          2
+        ],
+        "task_status": "VERIFIED_SAT_WITNESS",
+        "nodes": 1,
+        "leaves": 1,
+        "leaf_status_counts": {
+          "SAT_VERIFIED": 1
+        },
+        "coverage": "all unresolved leaves retained; no percentage estimate",
+        "coverage_tree_verified": true,
+        "lrat_certificates_replayed": 0
+      },
+      {
+        "shard": 1,
+        "parts": [
+          4
+        ],
+        "task_status": "SHARD_EXHAUSTED_WITH_CERTIFICATES",
+        "nodes": 1,
+        "leaves": 1,
+        "leaf_status_counts": {
+          "UNSAT_VERIFIED": 1
+        },
+        "coverage": "all unresolved leaves retained; no percentage estimate",
+        "coverage_tree_verified": true,
+        "lrat_certificates_replayed": 1
+      }
+    ]
+  },
+  "trust_boundary": "BCP chooses variables only; proof checkers still gate every negative leaf.",
+  "upstream_format_audit": {
+    "kissat_commit": "8af8e56f174b778aef3aa45af9f739b2a5f492c2",
+    "source": "https://github.com/arminbiere/kissat/blob/8af8e56f174b778aef3aa45af9f739b2a5f492c2/src/application.c",
+    "regular_file_default": "binary_drat",
+    "E077_already_binary": true,
+    "format_change_speedup_claim": false
+  }
+}

@@ -1,0 +1,212 @@
+{
+  "version": "mols-composition-cnf-v2",
+  "n": 10,
+  "squares": 3,
+  "normalization": "equal row-parity signature in all squares",
+  "even_row_normalization": true,
+  "required_shards": [
+    {
+      "shard": 1,
+      "parts": [
+        2,
+        2,
+        2,
+        4
+      ],
+      "cnf_sha256": "cccc7fb250b8a2c848b87da0f3f2f14668b07637a832db696f8566cdd3e450ee",
+      "nvars": 4748,
+      "clauses": 79012,
+      "pair_representatives": [
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          6,
+          7
+        ],
+        [
+          6,
+          8
+        ]
+      ]
+    },
+    {
+      "shard": 2,
+      "parts": [
+        2,
+        2,
+        3,
+        3
+      ],
+      "cnf_sha256": "0dc9f53481a43ce9dc339a07f725f456a8789dfbe751ad88f189d4142d763a7d",
+      "nvars": 4748,
+      "clauses": 79013,
+      "pair_representatives": [
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          4,
+          7
+        ]
+      ]
+    },
+    {
+      "shard": 6,
+      "parts": [
+        2,
+        8
+      ],
+      "cnf_sha256": "66a61f37e990df1c6161fb72986891c399e3c440dedb77caabb29f03586e7835",
+      "nvars": 4748,
+      "clauses": 79013,
+      "pair_representatives": [
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          2,
+          6
+        ]
+      ]
+    },
+    {
+      "shard": 8,
+      "parts": [
+        3,
+        7
+      ],
+      "cnf_sha256": "af2fad549535f80afc43131d607f3a35bc6e8fc2cff30b19570dbf5a0c466617",
+      "nvars": 4748,
+      "clauses": 79013,
+      "pair_representatives": [
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          3,
+          6
+        ]
+      ]
+    },
+    {
+      "shard": 9,
+      "parts": [
+        4,
+        6
+      ],
+      "cnf_sha256": "25acd3e1c216a865650ab1ca15037b63a07545f90c815625c0d8009b80cec1df",
+      "nvars": 4748,
+      "clauses": 79011,
+      "pair_representatives": [
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          4,
+          7
+        ]
+      ]
+    },
+    {
+      "shard": 10,
+      "parts": [
+        5,
+        5
+      ],
+      "cnf_sha256": "81de15aeed3fc19edc4220cc1b6b812f3aadfc3355d1ffc6dd09542c9ecabf0e",
+      "nvars": 4748,
+      "clauses": 79009,
+      "pair_representatives": [
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          5,
+          7
+        ]
+      ]
+    }
+  ],
+  "pair_representatives_total": 31,
+  "task_status": "\u672a\u5b8c\u6210\u4efb\u52d9",
+  "coverage": "every solution has a representative in at least one listed shard; omitted odd shards are not asserted UNSAT"
+}

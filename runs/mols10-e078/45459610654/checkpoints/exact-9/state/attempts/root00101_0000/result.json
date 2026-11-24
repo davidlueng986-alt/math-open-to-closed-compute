@@ -1,0 +1,52 @@
+{
+  "solver": {
+    "command": [
+      "kissat",
+      "--time=3600",
+      "out/state/attempts/root00101_0000/instance.cnf",
+      "out/state/attempts/root00101_0000/proof.drat"
+    ],
+    "returncode": 0,
+    "seconds": 3600.075292645999,
+    "stop_reason": null,
+    "launched": true,
+    "proof_format_expected": "binary_drat",
+    "proof_format_observed": "binary_drat",
+    "requested_max_proof_bytes": 17179869184,
+    "effective_max_proof_bytes": 17179869184,
+    "disk_free_bytes_at_start": 94811181056,
+    "disk_reserve_bytes": 8589934592,
+    "proof_expansion_factor": 3.0
+  },
+  "solver_status": "UNKNOWN",
+  "solver_stats": [
+    "c conflicts:                         54225977            15063.59 per second",
+    "c decisions:                        232606772                4.29 per conflict",
+    "c restarts:                           1231706               44    interval",
+    "c maximum-resident-set-size:        107577344 bytes        103 MB",
+    "c process-time:                             1h            3599.80 seconds"
+  ],
+  "cnf_sha256": "7e961a756fef7e0ee3a18ab69518432cc03aad63fbaf75b499a1833cfbc872b1",
+  "cube": [
+    -522,
+    -523,
+    524,
+    -1335,
+    1336
+  ],
+  "status": "UNKNOWN",
+  "discarded_incomplete_drat": {
+    "bytes": 12883675501,
+    "sha256": "38fbf650bfd12fdaebae68c8f81cdaa7a8e59062eb0efbc4b7740e2d8e851893"
+  },
+  "split_selection": {
+    "method": "BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD",
+    "lookahead_limit": 64,
+    "probed_variables": 1,
+    "rejected_one_sided_variables": [],
+    "changes_base_or_cube": false,
+    "bcp_assigned_variables": 157,
+    "selected_variable": 530,
+    "selected_both_polarities_bcp_consistent": true
+  }
+}

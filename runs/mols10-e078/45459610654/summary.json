@@ -1,0 +1,515 @@
+{
+  "problem": "MOLS10-3",
+  "task_status": "未完成任務",
+  "exact": [
+    {
+      "shard": 1,
+      "present": true,
+      "verification_source": "Cached per-shard replay record; the collector does not replay LRAT certificates.",
+      "verified_summary": {
+        "shard": 1,
+        "parts": [
+          2,
+          2,
+          2,
+          4
+        ],
+        "task_status": "未完成任務",
+        "nodes": 63,
+        "leaves": 32,
+        "leaf_status_counts": {
+          "UNSAT_VERIFIED": 4,
+          "PENDING": 28
+        },
+        "coverage": "all unresolved leaves retained; no percentage estimate",
+        "coverage_tree_verified": true,
+        "lrat_certificates_replayed": 4,
+        "record_binding": {
+          "queue_sha256": "322f2d6a0fc99d910bb48c7249bbfa1ccaa22652023660ee33c00187a479cc5f",
+          "base_cnf_sha256": "cccc7fb250b8a2c848b87da0f3f2f14668b07637a832db696f8566cdd3e450ee",
+          "mapping_sha256": "37bacafcd0330eac9b2ea6b74296303861b7e352fef7abd8956dcfbbef4cd4c2",
+          "shard": 1,
+          "n": 10,
+          "squares": 3,
+          "parts": [
+            2,
+            2,
+            2,
+            4
+          ],
+          "even_row_normalization": true,
+          "verify_returncode": 0,
+          "stage": "final",
+          "verified_unix": 1795561031.4497402
+        }
+      },
+      "replay_status": {
+        "stage": "final",
+        "verify_returncode": 0,
+        "timed_out": false,
+        "overall_budget_seconds": 1800,
+        "per_certificate_seconds": 900,
+        "elapsed_seconds": 1.6176443950007524,
+        "queue_sha256_before": "322f2d6a0fc99d910bb48c7249bbfa1ccaa22652023660ee33c00187a479cc5f",
+        "source": "Fresh bounded queue_search.py verify; cached closure is not accepted.",
+        "status": "VERIFIED_CURRENT_STATE",
+        "queue_sha256_after": "322f2d6a0fc99d910bb48c7249bbfa1ccaa22652023660ee33c00187a479cc5f"
+      },
+      "task_status": "未完成任務",
+      "base_cnf_sha256": "cccc7fb250b8a2c848b87da0f3f2f14668b07637a832db696f8566cdd3e450ee",
+      "queue_sha256": "322f2d6a0fc99d910bb48c7249bbfa1ccaa22652023660ee33c00187a479cc5f",
+      "identity_errors": [],
+      "leaf_status_counts": {
+        "UNSAT_VERIFIED": 4,
+        "PENDING": 28
+      },
+      "cached_verification_binding": {
+        "valid": true,
+        "errors": []
+      },
+      "resume_source_validation": {
+        "valid": true,
+        "errors": [],
+        "source_run_id": 45301881745,
+        "expected_imported_certificates": 4,
+        "preservation": {
+          "status": "IMPORTED_CERTIFICATES_PRESERVED",
+          "shard": 1,
+          "source_run_id": 45301881745,
+          "source_manifest_sha256": "9150a509365f770b7ff4a08fee29a405e0c81aebcc5705cc2441e24e4f913336",
+          "source_queue_sha256": "9f0fe1d7e4ced60069da03a69e5d0c3af2f751e52ae41be986b076929d89a564",
+          "current_queue_sha256": "322f2d6a0fc99d910bb48c7249bbfa1ccaa22652023660ee33c00187a479cc5f",
+          "preserved_count": 4,
+          "node_statuses": {
+            "root01": "UNSAT_VERIFIED",
+            "root001": "UNSAT_VERIFIED",
+            "root0001": "UNSAT_VERIFIED",
+            "root00000": "UNSAT_VERIFIED"
+          },
+          "meaning": "Original evidence bytes remain intact; deferred replay is not closure."
+        }
+      }
+    },
+    {
+      "shard": 2,
+      "present": true,
+      "verification_source": "Cached per-shard replay record; the collector does not replay LRAT certificates.",
+      "verified_summary": {
+        "shard": 2,
+        "parts": [
+          2,
+          2,
+          3,
+          3
+        ],
+        "task_status": "未完成任務",
+        "nodes": 77,
+        "leaves": 39,
+        "leaf_status_counts": {
+          "UNSAT_VERIFIED": 2,
+          "PENDING": 37
+        },
+        "coverage": "all unresolved leaves retained; no percentage estimate",
+        "coverage_tree_verified": true,
+        "lrat_certificates_replayed": 2,
+        "record_binding": {
+          "queue_sha256": "efcf0a952928e2b56096f031ac6524c91307392e7a1cee1a9984efc96bac94e9",
+          "base_cnf_sha256": "0dc9f53481a43ce9dc339a07f725f456a8789dfbe751ad88f189d4142d763a7d",
+          "mapping_sha256": "081e47ed3c6b5d6263ab3ebf56c5f768a073f57fe971c9777943076c38758279",
+          "shard": 2,
+          "n": 10,
+          "squares": 3,
+          "parts": [
+            2,
+            2,
+            3,
+            3
+          ],
+          "even_row_normalization": true,
+          "verify_returncode": 0,
+          "stage": "final",
+          "verified_unix": 1795561017.11221
+        }
+      },
+      "replay_status": {
+        "stage": "final",
+        "verify_returncode": 0,
+        "timed_out": false,
+        "overall_budget_seconds": 1800,
+        "per_certificate_seconds": 900,
+        "elapsed_seconds": 1.0159765669995977,
+        "queue_sha256_before": "efcf0a952928e2b56096f031ac6524c91307392e7a1cee1a9984efc96bac94e9",
+        "source": "Fresh bounded queue_search.py verify; cached closure is not accepted.",
+        "status": "VERIFIED_CURRENT_STATE",
+        "queue_sha256_after": "efcf0a952928e2b56096f031ac6524c91307392e7a1cee1a9984efc96bac94e9"
+      },
+      "task_status": "未完成任務",
+      "base_cnf_sha256": "0dc9f53481a43ce9dc339a07f725f456a8789dfbe751ad88f189d4142d763a7d",
+      "queue_sha256": "efcf0a952928e2b56096f031ac6524c91307392e7a1cee1a9984efc96bac94e9",
+      "identity_errors": [],
+      "leaf_status_counts": {
+        "UNSAT_VERIFIED": 2,
+        "PENDING": 37
+      },
+      "cached_verification_binding": {
+        "valid": true,
+        "errors": []
+      },
+      "resume_source_validation": {
+        "valid": true,
+        "errors": [],
+        "source_run_id": 45301881745,
+        "expected_imported_certificates": 2,
+        "preservation": {
+          "status": "IMPORTED_CERTIFICATES_PRESERVED",
+          "shard": 2,
+          "source_run_id": 45301881745,
+          "source_manifest_sha256": "9150a509365f770b7ff4a08fee29a405e0c81aebcc5705cc2441e24e4f913336",
+          "source_queue_sha256": "3d54a4abf48f8a23d558e2966ae482b47eddc58e2f4efefe5709d64ba6212caa",
+          "current_queue_sha256": "efcf0a952928e2b56096f031ac6524c91307392e7a1cee1a9984efc96bac94e9",
+          "preserved_count": 2,
+          "node_statuses": {
+            "root01": "UNSAT_VERIFIED",
+            "root000": "UNSAT_VERIFIED"
+          },
+          "meaning": "Original evidence bytes remain intact; deferred replay is not closure."
+        }
+      }
+    },
+    {
+      "shard": 6,
+      "present": true,
+      "verification_source": "Cached per-shard replay record; the collector does not replay LRAT certificates.",
+      "verified_summary": {
+        "shard": 6,
+        "parts": [
+          2,
+          8
+        ],
+        "task_status": "未完成任務",
+        "nodes": 65,
+        "leaves": 33,
+        "leaf_status_counts": {
+          "UNSAT_VERIFIED": 1,
+          "PENDING": 32
+        },
+        "coverage": "all unresolved leaves retained; no percentage estimate",
+        "coverage_tree_verified": true,
+        "lrat_certificates_replayed": 1,
+        "record_binding": {
+          "queue_sha256": "ae32698b6a246cf8a4a8918faff24a7467f9d48f1275e4d0edd4d1ef0dd4e14f",
+          "base_cnf_sha256": "66a61f37e990df1c6161fb72986891c399e3c440dedb77caabb29f03586e7835",
+          "mapping_sha256": "71f14d0dbaf673fa8d39cef46a3d3d8971f86589426cc1d11d6c817331fdea1a",
+          "shard": 6,
+          "n": 10,
+          "squares": 3,
+          "parts": [
+            2,
+            8
+          ],
+          "even_row_normalization": true,
+          "verify_returncode": 0,
+          "stage": "final",
+          "verified_unix": 1795561045.4889882
+        }
+      },
+      "replay_status": {
+        "stage": "final",
+        "verify_returncode": 0,
+        "timed_out": false,
+        "overall_budget_seconds": 1800,
+        "per_certificate_seconds": 900,
+        "elapsed_seconds": 0.6152457290008897,
+        "queue_sha256_before": "ae32698b6a246cf8a4a8918faff24a7467f9d48f1275e4d0edd4d1ef0dd4e14f",
+        "source": "Fresh bounded queue_search.py verify; cached closure is not accepted.",
+        "status": "VERIFIED_CURRENT_STATE",
+        "queue_sha256_after": "ae32698b6a246cf8a4a8918faff24a7467f9d48f1275e4d0edd4d1ef0dd4e14f"
+      },
+      "task_status": "未完成任務",
+      "base_cnf_sha256": "66a61f37e990df1c6161fb72986891c399e3c440dedb77caabb29f03586e7835",
+      "queue_sha256": "ae32698b6a246cf8a4a8918faff24a7467f9d48f1275e4d0edd4d1ef0dd4e14f",
+      "identity_errors": [],
+      "leaf_status_counts": {
+        "UNSAT_VERIFIED": 1,
+        "PENDING": 32
+      },
+      "cached_verification_binding": {
+        "valid": true,
+        "errors": []
+      },
+      "resume_source_validation": {
+        "valid": true,
+        "errors": [],
+        "source_run_id": 45301881745,
+        "expected_imported_certificates": 1,
+        "preservation": {
+          "status": "IMPORTED_CERTIFICATES_PRESERVED",
+          "shard": 6,
+          "source_run_id": 45301881745,
+          "source_manifest_sha256": "9150a509365f770b7ff4a08fee29a405e0c81aebcc5705cc2441e24e4f913336",
+          "source_queue_sha256": "7b16fec9399bf5f0abdea98a14a1fa4d741a68c1509be6388f67bd82c781ba6f",
+          "current_queue_sha256": "ae32698b6a246cf8a4a8918faff24a7467f9d48f1275e4d0edd4d1ef0dd4e14f",
+          "preserved_count": 1,
+          "node_statuses": {
+            "root0": "UNSAT_VERIFIED"
+          },
+          "meaning": "Original evidence bytes remain intact; deferred replay is not closure."
+        }
+      }
+    },
+    {
+      "shard": 8,
+      "present": true,
+      "verification_source": "Cached per-shard replay record; the collector does not replay LRAT certificates.",
+      "verified_summary": {
+        "shard": 8,
+        "parts": [
+          3,
+          7
+        ],
+        "task_status": "未完成任務",
+        "nodes": 75,
+        "leaves": 38,
+        "leaf_status_counts": {
+          "UNSAT_VERIFIED": 1,
+          "PENDING": 37
+        },
+        "coverage": "all unresolved leaves retained; no percentage estimate",
+        "coverage_tree_verified": true,
+        "lrat_certificates_replayed": 1,
+        "record_binding": {
+          "queue_sha256": "eb4b459c8d658dd7adfc0b1733458295afe145c8c15db22aba162df9dd7eddd7",
+          "base_cnf_sha256": "af2fad549535f80afc43131d607f3a35bc6e8fc2cff30b19570dbf5a0c466617",
+          "mapping_sha256": "5b0f69f1e0d0be21ca496757b55d7f6dcdd2279681eaef170cbc1eb38634cce3",
+          "shard": 8,
+          "n": 10,
+          "squares": 3,
+          "parts": [
+            3,
+            7
+          ],
+          "even_row_normalization": true,
+          "verify_returncode": 0,
+          "stage": "final",
+          "verified_unix": 1795561027.287056
+        }
+      },
+      "replay_status": {
+        "stage": "final",
+        "verify_returncode": 0,
+        "timed_out": false,
+        "overall_budget_seconds": 1800,
+        "per_certificate_seconds": 900,
+        "elapsed_seconds": 0.6152564049989451,
+        "queue_sha256_before": "eb4b459c8d658dd7adfc0b1733458295afe145c8c15db22aba162df9dd7eddd7",
+        "source": "Fresh bounded queue_search.py verify; cached closure is not accepted.",
+        "status": "VERIFIED_CURRENT_STATE",
+        "queue_sha256_after": "eb4b459c8d658dd7adfc0b1733458295afe145c8c15db22aba162df9dd7eddd7"
+      },
+      "task_status": "未完成任務",
+      "base_cnf_sha256": "af2fad549535f80afc43131d607f3a35bc6e8fc2cff30b19570dbf5a0c466617",
+      "queue_sha256": "eb4b459c8d658dd7adfc0b1733458295afe145c8c15db22aba162df9dd7eddd7",
+      "identity_errors": [],
+      "leaf_status_counts": {
+        "UNSAT_VERIFIED": 1,
+        "PENDING": 37
+      },
+      "cached_verification_binding": {
+        "valid": true,
+        "errors": []
+      },
+      "resume_source_validation": {
+        "valid": true,
+        "errors": [],
+        "source_run_id": 45301881745,
+        "expected_imported_certificates": 1,
+        "preservation": {
+          "status": "IMPORTED_CERTIFICATES_PRESERVED",
+          "shard": 8,
+          "source_run_id": 45301881745,
+          "source_manifest_sha256": "9150a509365f770b7ff4a08fee29a405e0c81aebcc5705cc2441e24e4f913336",
+          "source_queue_sha256": "a32c37f8694c034b5f9dfa96637df3e4e6a629a4d18b4cacb07c8e38842ce334",
+          "current_queue_sha256": "eb4b459c8d658dd7adfc0b1733458295afe145c8c15db22aba162df9dd7eddd7",
+          "preserved_count": 1,
+          "node_statuses": {
+            "root00": "UNSAT_VERIFIED"
+          },
+          "meaning": "Original evidence bytes remain intact; deferred replay is not closure."
+        }
+      }
+    },
+    {
+      "shard": 9,
+      "present": true,
+      "verification_source": "Cached per-shard replay record; the collector does not replay LRAT certificates.",
+      "verified_summary": {
+        "shard": 9,
+        "parts": [
+          4,
+          6
+        ],
+        "task_status": "未完成任務",
+        "nodes": 65,
+        "leaves": 33,
+        "leaf_status_counts": {
+          "UNSAT_VERIFIED": 1,
+          "PENDING": 32
+        },
+        "coverage": "all unresolved leaves retained; no percentage estimate",
+        "coverage_tree_verified": true,
+        "lrat_certificates_replayed": 1,
+        "record_binding": {
+          "queue_sha256": "2f31f91e5d93a978ec3e69669d0ae68560d29c1476e24aec3fff57e45c745beb",
+          "base_cnf_sha256": "25acd3e1c216a865650ab1ca15037b63a07545f90c815625c0d8009b80cec1df",
+          "mapping_sha256": "7efc5c7be7aea8abaaa42f85dcab93680cf51b9ff1dd83ae3abd5c54a3fe9001",
+          "shard": 9,
+          "n": 10,
+          "squares": 3,
+          "parts": [
+            4,
+            6
+          ],
+          "even_row_normalization": true,
+          "verify_returncode": 0,
+          "stage": "final",
+          "verified_unix": 1795561024.4474833
+        }
+      },
+      "replay_status": {
+        "stage": "final",
+        "verify_returncode": 0,
+        "timed_out": false,
+        "overall_budget_seconds": 1800,
+        "per_certificate_seconds": 900,
+        "elapsed_seconds": 0.5650458269992669,
+        "queue_sha256_before": "2f31f91e5d93a978ec3e69669d0ae68560d29c1476e24aec3fff57e45c745beb",
+        "source": "Fresh bounded queue_search.py verify; cached closure is not accepted.",
+        "status": "VERIFIED_CURRENT_STATE",
+        "queue_sha256_after": "2f31f91e5d93a978ec3e69669d0ae68560d29c1476e24aec3fff57e45c745beb"
+      },
+      "task_status": "未完成任務",
+      "base_cnf_sha256": "25acd3e1c216a865650ab1ca15037b63a07545f90c815625c0d8009b80cec1df",
+      "queue_sha256": "2f31f91e5d93a978ec3e69669d0ae68560d29c1476e24aec3fff57e45c745beb",
+      "identity_errors": [],
+      "leaf_status_counts": {
+        "UNSAT_VERIFIED": 1,
+        "PENDING": 32
+      },
+      "cached_verification_binding": {
+        "valid": true,
+        "errors": []
+      },
+      "resume_source_validation": {
+        "valid": true,
+        "errors": [],
+        "source_run_id": 45301881745,
+        "expected_imported_certificates": 1,
+        "preservation": {
+          "status": "IMPORTED_CERTIFICATES_PRESERVED",
+          "shard": 9,
+          "source_run_id": 45301881745,
+          "source_manifest_sha256": "9150a509365f770b7ff4a08fee29a405e0c81aebcc5705cc2441e24e4f913336",
+          "source_queue_sha256": "dcbb23497cd32ea9984bae845588af5ef5b521306a22504eb17e55af967de0cc",
+          "current_queue_sha256": "2f31f91e5d93a978ec3e69669d0ae68560d29c1476e24aec3fff57e45c745beb",
+          "preserved_count": 1,
+          "node_statuses": {
+            "root000": "UNSAT_VERIFIED"
+          },
+          "meaning": "Original evidence bytes remain intact; deferred replay is not closure."
+        }
+      }
+    },
+    {
+      "shard": 10,
+      "present": true,
+      "verification_source": "Cached per-shard replay record; the collector does not replay LRAT certificates.",
+      "verified_summary": {
+        "shard": 10,
+        "parts": [
+          5,
+          5
+        ],
+        "task_status": "未完成任務",
+        "nodes": 63,
+        "leaves": 32,
+        "leaf_status_counts": {
+          "UNSAT_VERIFIED": 1,
+          "PENDING": 31
+        },
+        "coverage": "all unresolved leaves retained; no percentage estimate",
+        "coverage_tree_verified": true,
+        "lrat_certificates_replayed": 1,
+        "record_binding": {
+          "queue_sha256": "e2566e0b5abe3d6d1c5db679d2d0a14ea9a09efbd736216cfaa6c3bc711b7fb3",
+          "base_cnf_sha256": "81de15aeed3fc19edc4220cc1b6b812f3aadfc3355d1ffc6dd09542c9ecabf0e",
+          "mapping_sha256": "b317a4dc0205ef6354045be3753942ca095b0dd13cf15b8d1fb9e6359f738fe2",
+          "shard": 10,
+          "n": 10,
+          "squares": 3,
+          "parts": [
+            5,
+            5
+          ],
+          "even_row_normalization": true,
+          "verify_returncode": 0,
+          "stage": "final",
+          "verified_unix": 1795561017.586724
+        }
+      },
+      "replay_status": {
+        "stage": "final",
+        "verify_returncode": 0,
+        "timed_out": false,
+        "overall_budget_seconds": 1800,
+        "per_certificate_seconds": 900,
+        "elapsed_seconds": 0.6651559460005956,
+        "queue_sha256_before": "e2566e0b5abe3d6d1c5db679d2d0a14ea9a09efbd736216cfaa6c3bc711b7fb3",
+        "source": "Fresh bounded queue_search.py verify; cached closure is not accepted.",
+        "status": "VERIFIED_CURRENT_STATE",
+        "queue_sha256_after": "e2566e0b5abe3d6d1c5db679d2d0a14ea9a09efbd736216cfaa6c3bc711b7fb3"
+      },
+      "task_status": "未完成任務",
+      "base_cnf_sha256": "81de15aeed3fc19edc4220cc1b6b812f3aadfc3355d1ffc6dd09542c9ecabf0e",
+      "queue_sha256": "e2566e0b5abe3d6d1c5db679d2d0a14ea9a09efbd736216cfaa6c3bc711b7fb3",
+      "identity_errors": [],
+      "leaf_status_counts": {
+        "UNSAT_VERIFIED": 1,
+        "PENDING": 31
+      },
+      "cached_verification_binding": {
+        "valid": true,
+        "errors": []
+      },
+      "resume_source_validation": {
+        "valid": true,
+        "errors": [],
+        "source_run_id": 45301881745,
+        "expected_imported_certificates": 1,
+        "preservation": {
+          "status": "IMPORTED_CERTIFICATES_PRESERVED",
+          "shard": 10,
+          "source_run_id": 45301881745,
+          "source_manifest_sha256": "9150a509365f770b7ff4a08fee29a405e0c81aebcc5705cc2441e24e4f913336",
+          "source_queue_sha256": "409edb821fa789a4701a1251d34270d71e224411b35c885d255712f1f0e47df5",
+          "current_queue_sha256": "e2566e0b5abe3d6d1c5db679d2d0a14ea9a09efbd736216cfaa6c3bc711b7fb3",
+          "preserved_count": 1,
+          "node_statuses": {
+            "root0000": "UNSAT_VERIFIED"
+          },
+          "meaning": "Original evidence bytes remain intact; deferred replay is not closure."
+        }
+      }
+    }
+  ],
+  "construction": [],
+  "construction_status": "NOT_RUN_IN_E078",
+  "source_run_id": 45301881745,
+  "witnesses": [],
+  "global_nonexistence_claim": false,
+  "manifest_sha256": "b7f91c32fd4ff44c7c707f8cf42bac6a2de6891b5aa02653064e092db12783db",
+  "verification_boundary": "The collector checks manifest/queue identity and cached replay bindings, but does not replay proofs. Global UNSAT still requires verify_family.py on all complete state archives.",
+  "coverage": "Six simultaneous-even canonical cycle shards; 31 centralizer first-pair representatives. Missing and unresolved leaves remain explicit.",
+  "resume": "Download the corresponding exact-N artifact and resume its saved state. Solver learned clauses are not retained. E078 does not run construction.",
+  "imported_certificates_expected": 10,
+  "source_manifest_sha256": "9150a509365f770b7ff4a08fee29a405e0c81aebcc5705cc2441e24e4f913336"
+}

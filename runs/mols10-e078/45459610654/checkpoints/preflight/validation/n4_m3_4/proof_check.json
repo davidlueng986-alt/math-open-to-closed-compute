@@ -1,0 +1,41 @@
+{
+  "status": "UNSAT_VERIFIED",
+  "cnf": "base.cnf",
+  "cnf_sha256": "ecde9cb8cd765b380b4633f9fc61f641267bd645ebbcab8f7bf316af00f4ad0e",
+  "drat": "proof.drat",
+  "drat_sha256": "5bef09182c87cc8e85f2d10637379f0c150e556f01ef4ea5dce165f649c68185",
+  "drat_format_observed": "ascii_drat",
+  "checker_source": "https://github.com/marijnheule/drat-trim/tree/2e3b2dc0ecf938addbd779d42877b6ed69d9a985",
+  "drat_check": {
+    "command": [
+      "drat-trim",
+      "out/validation/n4_m3_4/base.cnf",
+      "out/validation/n4_m3_4/proof.drat",
+      "-L",
+      "out/validation/n4_m3_4/proof.lrat",
+      "-t",
+      "60"
+    ],
+    "returncode": 0,
+    "timed_out": false,
+    "stop_reason": null,
+    "disk_reserve_bytes": 0,
+    "seconds": 0.2508196150000046,
+    "log": "proof.drat-check.log"
+  },
+  "lrat": "proof.lrat",
+  "lrat_sha256": "a1983a7a91b6a69327a79bed35ea9ae1dba0ee7870b7214982d065f77a6ffe96",
+  "lrat_check": {
+    "command": [
+      "lrat-check",
+      "out/validation/n4_m3_4/base.cnf",
+      "out/validation/n4_m3_4/proof.lrat"
+    ],
+    "returncode": 0,
+    "timed_out": false,
+    "stop_reason": null,
+    "disk_reserve_bytes": 0,
+    "seconds": 0.251112569,
+    "log": "proof.lrat-check.log"
+  }
+}

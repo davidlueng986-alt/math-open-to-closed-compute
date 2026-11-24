@@ -1,0 +1,3 @@
+c pysat_stats {"restarts": 0, "conflicts": 32, "decisions": 35, "propagations": 290}
+c wall_seconds 0.0005797520000001555
+s UNSATISFIABLE

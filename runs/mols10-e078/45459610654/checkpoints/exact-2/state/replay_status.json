@@ -1,0 +1,12 @@
+{
+  "stage": "final",
+  "verify_returncode": 0,
+  "timed_out": false,
+  "overall_budget_seconds": 1800,
+  "per_certificate_seconds": 900,
+  "elapsed_seconds": 1.0159765669995977,
+  "queue_sha256_before": "efcf0a952928e2b56096f031ac6524c91307392e7a1cee1a9984efc96bac94e9",
+  "source": "Fresh bounded queue_search.py verify; cached closure is not accepted.",
+  "status": "VERIFIED_CURRENT_STATE",
+  "queue_sha256_after": "efcf0a952928e2b56096f031ac6524c91307392e7a1cee1a9984efc96bac94e9"
+}

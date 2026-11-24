@@ -1,0 +1,61 @@
+{
+  "solver": {
+    "command": [
+      "kissat",
+      "--time=900",
+      "out/state/attempts/root0_0000/instance.cnf",
+      "out/state/attempts/root0_0000/proof.drat"
+    ],
+    "returncode": 20,
+    "seconds": 0.2508092670000224,
+    "stop_reason": null
+  },
+  "solver_status": "UNSATISFIABLE",
+  "solver_stats": [
+    "c conflicts:                               25              238.10 per second",
+    "c decisions:                              484               19.36 per conflict",
+    "c maximum-resident-set-size:         41414656 bytes         39 MB",
+    "c process-time:                                              0.10 seconds"
+  ],
+  "cnf_sha256": "10aab6e5c0ce9f2600802f3abe660db81ff7f6d93a183e4fa6df84a0165900e8",
+  "cube": [
+    -522
+  ],
+  "status": "UNSAT_VERIFIED",
+  "proof_check": {
+    "status": "UNSAT_VERIFIED",
+    "cnf": "instance.cnf",
+    "cnf_sha256": "10aab6e5c0ce9f2600802f3abe660db81ff7f6d93a183e4fa6df84a0165900e8",
+    "drat": "proof.drat",
+    "drat_sha256": "d29d4544d085984b4faa1563b42e545e04d426a33fbb84ad420fad89009925b0",
+    "checker_source": "https://github.com/marijnheule/drat-trim/tree/2e3b2dc0ecf938addbd779d42877b6ed69d9a985",
+    "drat_check": {
+      "command": [
+        "drat-trim",
+        "out/state/attempts/root0_0000/instance.cnf",
+        "out/state/attempts/root0_0000/proof.drat",
+        "-L",
+        "out/state/attempts/root0_0000/proof.lrat",
+        "-t",
+        "900"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "seconds": 0.1642588729999943,
+      "log": "proof.drat-check.log"
+    },
+    "lrat": "proof.lrat",
+    "lrat_sha256": "447c44f28dac7dceb2d6b31b17958f9836059d37135e6bbed5d4576efb2d5cd5",
+    "lrat_check": {
+      "command": [
+        "lrat-check",
+        "out/state/attempts/root0_0000/instance.cnf",
+        "out/state/attempts/root0_0000/proof.lrat"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "seconds": 0.06426749399997789,
+      "log": "proof.lrat-check.log"
+    }
+  }
+}

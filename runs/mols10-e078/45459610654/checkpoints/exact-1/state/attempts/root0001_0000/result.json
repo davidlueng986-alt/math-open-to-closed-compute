@@ -1,0 +1,64 @@
+{
+  "solver": {
+    "command": [
+      "kissat",
+      "--time=900",
+      "out/state/attempts/root0001_0000/instance.cnf",
+      "out/state/attempts/root0001_0000/proof.drat"
+    ],
+    "returncode": 20,
+    "seconds": 0.25090878899936797,
+    "stop_reason": null
+  },
+  "solver_status": "UNSATISFIABLE",
+  "solver_stats": [
+    "c conflicts:                                1              106.86 per second",
+    "c decisions:                                0                0.00 per conflict",
+    "c maximum-resident-set-size:         42156032 bytes         40 MB",
+    "c process-time:                                              0.01 seconds"
+  ],
+  "cnf_sha256": "8dd1b527819d0496959fecd9d2eafd70e87281e388eebf6451830b86c21007d7",
+  "cube": [
+    -522,
+    -523,
+    -524,
+    525
+  ],
+  "status": "UNSAT_VERIFIED",
+  "proof_check": {
+    "status": "UNSAT_VERIFIED",
+    "cnf": "instance.cnf",
+    "cnf_sha256": "8dd1b527819d0496959fecd9d2eafd70e87281e388eebf6451830b86c21007d7",
+    "drat": "proof.drat",
+    "drat_sha256": "ca09b7f51a95c0032a8c2a9990af4d5567217d513eb37a76d5e423cbdd392f19",
+    "checker_source": "https://github.com/marijnheule/drat-trim/tree/2e3b2dc0ecf938addbd779d42877b6ed69d9a985",
+    "drat_check": {
+      "command": [
+        "drat-trim",
+        "out/state/attempts/root0001_0000/instance.cnf",
+        "out/state/attempts/root0001_0000/proof.drat",
+        "-L",
+        "out/state/attempts/root0001_0000/proof.lrat",
+        "-t",
+        "900"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "seconds": 0.1643184469994594,
+      "log": "proof.drat-check.log"
+    },
+    "lrat": "proof.lrat",
+    "lrat_sha256": "ed2421999743023b52a31650200c3aa36ab0bdace01cb94ed409701aeea88833",
+    "lrat_check": {
+      "command": [
+        "lrat-check",
+        "out/state/attempts/root0001_0000/instance.cnf",
+        "out/state/attempts/root0001_0000/proof.lrat"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "seconds": 0.0640330919995904,
+      "log": "proof.lrat-check.log"
+    }
+  }
+}

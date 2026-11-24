@@ -1,0 +1,86 @@
+{
+  "solver": {
+    "command": [
+      "kissat",
+      "--time=19",
+      "out/e078-validation/n4_shard1/attempts/root_0000/instance.cnf",
+      "out/e078-validation/n4_shard1/attempts/root_0000/proof.drat"
+    ],
+    "returncode": 20,
+    "seconds": 0.250824190000003,
+    "stop_reason": null,
+    "launched": true,
+    "proof_format_expected": "binary_drat",
+    "proof_format_observed": "binary_drat",
+    "requested_max_proof_bytes": 8388608,
+    "effective_max_proof_bytes": 8388608,
+    "disk_free_bytes_at_start": 91210117120,
+    "disk_reserve_bytes": 0,
+    "proof_expansion_factor": 3.0
+  },
+  "solver_status": "UNSATISFIABLE",
+  "solver_stats": [
+    "c conflicts:                                0                0.00 per second",
+    "c decisions:                                0                0.00 per conflict",
+    "c maximum-resident-set-size:         61833216 bytes         59 MB",
+    "c process-time:                                              0.00 seconds"
+  ],
+  "cnf_sha256": "ecde9cb8cd765b380b4633f9fc61f641267bd645ebbcab8f7bf316af00f4ad0e",
+  "cube": [],
+  "status": "UNSAT_VERIFIED",
+  "proof_check": {
+    "status": "UNSAT_VERIFIED",
+    "cnf": "instance.cnf",
+    "cnf_sha256": "ecde9cb8cd765b380b4633f9fc61f641267bd645ebbcab8f7bf316af00f4ad0e",
+    "drat": "proof.drat",
+    "drat_sha256": "ae38459a278bcd6dcf290158667f81b6054e1a6c96e45eb67bcbc85550fba175",
+    "drat_format_observed": "binary_drat",
+    "checker_source": "https://github.com/marijnheule/drat-trim/tree/2e3b2dc0ecf938addbd779d42877b6ed69d9a985",
+    "drat_check": {
+      "command": [
+        "drat-trim",
+        "out/e078-validation/n4_shard1/attempts/root_0000/instance.cnf",
+        "out/e078-validation/n4_shard1/attempts/root_0000/proof.drat",
+        "-L",
+        "out/e078-validation/n4_shard1/attempts/root_0000/proof.lrat",
+        "-t",
+        "5"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "stop_reason": null,
+      "disk_reserve_bytes": 0,
+      "seconds": 0.2508331589999955,
+      "log": "proof.drat-check.log"
+    },
+    "lrat": "proof.lrat",
+    "lrat_sha256": "6847aef1ddcffc87cb367d644ce14fe7975d8b1276f9a0792d9ebba363cddcfe",
+    "lrat_check": {
+      "command": [
+        "lrat-check",
+        "out/e078-validation/n4_shard1/attempts/root_0000/instance.cnf",
+        "out/e078-validation/n4_shard1/attempts/root_0000/proof.lrat"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "stop_reason": null,
+      "disk_reserve_bytes": 0,
+      "seconds": 0.2510662620000019,
+      "log": "proof.lrat-check.log"
+    },
+    "resume_lrat_replay": {
+      "command": [
+        "lrat-check",
+        "out/e078-validation/n4_shard1/attempts/root_0000/instance.cnf",
+        "out/e078-validation/n4_shard1/attempts/root_0000/proof.lrat"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "stop_reason": null,
+      "disk_reserve_bytes": 0,
+      "seconds": 0.25082646799999964,
+      "log": "resume-lrat.log",
+      "verified": true
+    }
+  }
+}

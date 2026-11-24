@@ -1,0 +1,13 @@
+{
+  "status": "IMPORTED_CERTIFICATES_PRESERVED",
+  "shard": 6,
+  "source_run_id": 45301881745,
+  "source_manifest_sha256": "9150a509365f770b7ff4a08fee29a405e0c81aebcc5705cc2441e24e4f913336",
+  "source_queue_sha256": "7b16fec9399bf5f0abdea98a14a1fa4d741a68c1509be6388f67bd82c781ba6f",
+  "current_queue_sha256": "ae32698b6a246cf8a4a8918faff24a7467f9d48f1275e4d0edd4d1ef0dd4e14f",
+  "preserved_count": 1,
+  "node_statuses": {
+    "root0": "UNSAT_VERIFIED"
+  },
+  "meaning": "Original evidence bytes remain intact; deferred replay is not closure."
+}

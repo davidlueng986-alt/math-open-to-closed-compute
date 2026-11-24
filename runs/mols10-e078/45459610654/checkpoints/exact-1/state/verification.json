@@ -1,0 +1,37 @@
+{
+  "shard": 1,
+  "parts": [
+    2,
+    2,
+    2,
+    4
+  ],
+  "task_status": "\u672a\u5b8c\u6210\u4efb\u52d9",
+  "nodes": 63,
+  "leaves": 32,
+  "leaf_status_counts": {
+    "UNSAT_VERIFIED": 4,
+    "PENDING": 28
+  },
+  "coverage": "all unresolved leaves retained; no percentage estimate",
+  "coverage_tree_verified": true,
+  "lrat_certificates_replayed": 4,
+  "record_binding": {
+    "queue_sha256": "322f2d6a0fc99d910bb48c7249bbfa1ccaa22652023660ee33c00187a479cc5f",
+    "base_cnf_sha256": "cccc7fb250b8a2c848b87da0f3f2f14668b07637a832db696f8566cdd3e450ee",
+    "mapping_sha256": "37bacafcd0330eac9b2ea6b74296303861b7e352fef7abd8956dcfbbef4cd4c2",
+    "shard": 1,
+    "n": 10,
+    "squares": 3,
+    "parts": [
+      2,
+      2,
+      2,
+      4
+    ],
+    "even_row_normalization": true,
+    "verify_returncode": 0,
+    "stage": "final",
+    "verified_unix": 1795561031.4497402
+  }
+}

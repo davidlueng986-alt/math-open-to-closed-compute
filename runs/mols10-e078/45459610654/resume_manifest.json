@@ -1,0 +1,207 @@
+{
+  "source_run_id": 45301881745,
+  "source_results_ref": "1e2fef09c368d6c6eaac5c7c302d6ea65eb3a58c",
+  "source_launch_commit": "f637dfe99cc56ab322eac5ca0949ce01f5ac0dca",
+  "n": 10,
+  "squares": 3,
+  "even_row_normalization": true,
+  "certified_leaves_to_preserve": 10,
+  "scope": "Fixed E077 source state identity; certificates still require fresh replay.",
+  "shards": [
+    {
+      "shard": 1,
+      "source_queue_sha256": "9f0fe1d7e4ced60069da03a69e5d0c3af2f751e52ae41be986b076929d89a564",
+      "base_cnf_sha256": "cccc7fb250b8a2c848b87da0f3f2f14668b07637a832db696f8566cdd3e450ee",
+      "mapping_sha256": "37bacafcd0330eac9b2ea6b74296303861b7e352fef7abd8956dcfbbef4cd4c2",
+      "parts": [
+        2,
+        2,
+        2,
+        4
+      ],
+      "node_count": 53,
+      "leaf_status_counts": {
+        "UNSAT_VERIFIED": 4,
+        "PENDING": 23
+      },
+      "certified_nodes": {
+        "root01": {
+          "cube": [
+            -522,
+            523
+          ],
+          "parent": "root0",
+          "evidence": "attempts/root01_0000/result.json"
+        },
+        "root001": {
+          "cube": [
+            -522,
+            -523,
+            524
+          ],
+          "parent": "root00",
+          "evidence": "attempts/root001_0000/result.json"
+        },
+        "root0001": {
+          "cube": [
+            -522,
+            -523,
+            -524,
+            525
+          ],
+          "parent": "root000",
+          "evidence": "attempts/root0001_0000/result.json"
+        },
+        "root00000": {
+          "cube": [
+            -522,
+            -523,
+            -524,
+            -525,
+            -526
+          ],
+          "parent": "root0000",
+          "evidence": "attempts/root00000_0000/result.json"
+        }
+      }
+    },
+    {
+      "shard": 2,
+      "source_queue_sha256": "3d54a4abf48f8a23d558e2966ae482b47eddc58e2f4efefe5709d64ba6212caa",
+      "base_cnf_sha256": "0dc9f53481a43ce9dc339a07f725f456a8789dfbe751ad88f189d4142d763a7d",
+      "mapping_sha256": "081e47ed3c6b5d6263ab3ebf56c5f768a073f57fe971c9777943076c38758279",
+      "parts": [
+        2,
+        2,
+        3,
+        3
+      ],
+      "node_count": 67,
+      "leaf_status_counts": {
+        "UNSAT_VERIFIED": 2,
+        "PENDING": 32
+      },
+      "certified_nodes": {
+        "root01": {
+          "cube": [
+            -522,
+            523
+          ],
+          "parent": "root0",
+          "evidence": "attempts/root01_0000/result.json"
+        },
+        "root000": {
+          "cube": [
+            -522,
+            -523,
+            -524
+          ],
+          "parent": "root00",
+          "evidence": "attempts/root000_0000/result.json"
+        }
+      }
+    },
+    {
+      "shard": 6,
+      "source_queue_sha256": "7b16fec9399bf5f0abdea98a14a1fa4d741a68c1509be6388f67bd82c781ba6f",
+      "base_cnf_sha256": "66a61f37e990df1c6161fb72986891c399e3c440dedb77caabb29f03586e7835",
+      "mapping_sha256": "71f14d0dbaf673fa8d39cef46a3d3d8971f86589426cc1d11d6c817331fdea1a",
+      "parts": [
+        2,
+        8
+      ],
+      "node_count": 55,
+      "leaf_status_counts": {
+        "UNSAT_VERIFIED": 1,
+        "PENDING": 27
+      },
+      "certified_nodes": {
+        "root0": {
+          "cube": [
+            -522
+          ],
+          "parent": "root",
+          "evidence": "attempts/root0_0000/result.json"
+        }
+      }
+    },
+    {
+      "shard": 8,
+      "source_queue_sha256": "a32c37f8694c034b5f9dfa96637df3e4e6a629a4d18b4cacb07c8e38842ce334",
+      "base_cnf_sha256": "af2fad549535f80afc43131d607f3a35bc6e8fc2cff30b19570dbf5a0c466617",
+      "mapping_sha256": "5b0f69f1e0d0be21ca496757b55d7f6dcdd2279681eaef170cbc1eb38634cce3",
+      "parts": [
+        3,
+        7
+      ],
+      "node_count": 65,
+      "leaf_status_counts": {
+        "UNSAT_VERIFIED": 1,
+        "PENDING": 32
+      },
+      "certified_nodes": {
+        "root00": {
+          "cube": [
+            -522,
+            -523
+          ],
+          "parent": "root0",
+          "evidence": "attempts/root00_0000/result.json"
+        }
+      }
+    },
+    {
+      "shard": 9,
+      "source_queue_sha256": "dcbb23497cd32ea9984bae845588af5ef5b521306a22504eb17e55af967de0cc",
+      "base_cnf_sha256": "25acd3e1c216a865650ab1ca15037b63a07545f90c815625c0d8009b80cec1df",
+      "mapping_sha256": "7efc5c7be7aea8abaaa42f85dcab93680cf51b9ff1dd83ae3abd5c54a3fe9001",
+      "parts": [
+        4,
+        6
+      ],
+      "node_count": 55,
+      "leaf_status_counts": {
+        "UNSAT_VERIFIED": 1,
+        "PENDING": 27
+      },
+      "certified_nodes": {
+        "root000": {
+          "cube": [
+            -522,
+            -523,
+            -524
+          ],
+          "parent": "root00",
+          "evidence": "attempts/root000_0000/result.json"
+        }
+      }
+    },
+    {
+      "shard": 10,
+      "source_queue_sha256": "409edb821fa789a4701a1251d34270d71e224411b35c885d255712f1f0e47df5",
+      "base_cnf_sha256": "81de15aeed3fc19edc4220cc1b6b812f3aadfc3355d1ffc6dd09542c9ecabf0e",
+      "mapping_sha256": "b317a4dc0205ef6354045be3753942ca095b0dd13cf15b8d1fb9e6359f738fe2",
+      "parts": [
+        5,
+        5
+      ],
+      "node_count": 53,
+      "leaf_status_counts": {
+        "UNSAT_VERIFIED": 1,
+        "PENDING": 26
+      },
+      "certified_nodes": {
+        "root0000": {
+          "cube": [
+            -522,
+            -523,
+            -524,
+            -525
+          ],
+          "parent": "root000",
+          "evidence": "attempts/root0000_0000/result.json"
+        }
+      }
+    }
+  ]
+}
