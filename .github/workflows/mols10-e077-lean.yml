@@ -1,0 +1,47 @@
+name: MOLS10 E077 applied symmetry Lean audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'jobs/mols10-e077-symmetry/**'
+      - '.github/workflows/mols10-e077-lean.yml'
+permissions:
+  contents: read
+  packages: read
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the symmetry action and all 336 orbit transports
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          cd /opt/mathlib4
+          lake env lean --version | tee "$GITHUB_WORKSPACE/out/version.log"
+          result=0
+          for source in Symmetry OrbitTable; do
+            if ! lake env lean -DwarningAsError=true "$GITHUB_WORKSPACE/jobs/mols10-e077-symmetry/$source.lean" 2>&1 | tee "$GITHUB_WORKSPACE/out/$source.log"; then
+              result=1
+            fi
+          done
+          if grep -Eq 'sorryAx|Lean.ofReduceBool|native_decide' "$GITHUB_WORKSPACE/out/"*.log; then result=1; fi
+          exit "$result"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mols10-e077-symmetry-lean
+          path: |
+            out/
+            jobs/mols10-e077-symmetry/
+          retention-days: 30
