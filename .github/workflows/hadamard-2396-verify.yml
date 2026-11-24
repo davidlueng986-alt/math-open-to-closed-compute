@@ -33,6 +33,7 @@ jobs:
           python check.py
           python replay.py "$RUNNER_TEMP/diagonal"
           python groups.py
+          python residuals.py
       - name: Install pinned Lean 4.36.0
         run: |
           set -euo pipefail
