@@ -11,6 +11,7 @@ from verify import LENGTH, QUOTIENTS, original, paf, representatives, words  # n
 
 SEED = json.loads((HERE / "seed.json").read_text())
 CERT = json.loads((HERE / "certificate.json").read_text())
+EXTENSION = json.loads((HERE / "extension.json").read_text())
 CRT = {(i % 63, i % 19): i for i in range(LENGTH)}
 GROUPS = {"both": (19, 63), "extend57": (57, 63)}
 
@@ -89,26 +90,29 @@ def evaluate(masks, mode, *, scalar=False):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--signs", choices=["seed", "certificate"])
+    parser.add_argument("--signs", choices=["seed", "certificate", "extension"])
     parser.add_argument("--replay", type=Path, help="check the exact output of the seed-1210 search")
     args = parser.parse_args()
     if args.signs:
-        sys.stdout.write(sign_input((SEED if args.signs == "seed" else CERT)["negative_masks"]))
+        sys.stdout.write(sign_input({"seed": SEED, "certificate": CERT, "extension": EXTENSION}[args.signs]["negative_masks"]))
         return
     if args.replay and unpack(json.loads(args.replay.read_text())) != CERT["negative_masks"]:
         raise ValueError("search replay returned different signs")
-    stats = evaluate(CERT["negative_masks"], "both", scalar=True)
-    if (CERT["subgroup_orders"] != list(GROUPS["both"]) or stats["target_energy"] or
-            any(stats[k] != CERT[k] for k in stats.keys() & CERT.keys())):
-        raise ValueError("certificate discrepancy")
-    for data in [SEED, CERT]:
+    report = {}
+    for data, mode in ((CERT, "both"), (EXTENSION, "extend57")):
+        stats = evaluate(data["negative_masks"], mode, scalar=True)
+        if (data["subgroup_orders"] != list(GROUPS[mode]) or stats["target_energy"] or
+                any(stats[k] != data[k] for k in stats.keys() & data.keys())):
+            raise ValueError(f"certificate discrepancy for {mode}")
+        report[mode] = stats
+    for data in [SEED, CERT, EXTENSION]:
         if data["length"] != LENGTH or data["multiplier"] != 463:
             raise ValueError("certificate header mismatch")
     initial = evaluate(SEED["negative_masks"], "both", scalar=True)
     if sum(initial["constant_triples"]) != 199:
         raise ValueError("seed fails the order-three equation")
     modes = {j*(LENGTH//q) for q in QUOTIENTS for j in range(1, q)}
-    print(json.dumps({"projected_frequencies": len(modes), **stats}, indent=2))
+    print(json.dumps({"projected_frequencies": len(modes), **report}, indent=2))
 
 
 if __name__ == "__main__":

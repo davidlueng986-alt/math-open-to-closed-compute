@@ -25,13 +25,13 @@ jobs:
           python construct.py
           python check_shapes.py
           python check_neighborhood.py
-      - name: Reproduce the order-63 and order-19 witness
+      - name: Reproduce both diagonal-multiplier witnesses
         working-directory: jobs/hadamard-2396-diagonal
         run: |
           set -euo pipefail
           g++ -std=c++17 -O3 -mpopcnt -Wall -Wextra -Werror search.cpp -o "$RUNNER_TEMP/diagonal"
-          python check.py --signs seed | "$RUNNER_TEMP/diagonal" both 1210 200000 300000 > "$RUNNER_TEMP/replay.json"
-          python check.py --replay "$RUNNER_TEMP/replay.json"
+          python check.py
+          python replay.py "$RUNNER_TEMP/diagonal"
           python groups.py
       - name: Install pinned Lean 4.36.0
         run: |
@@ -52,5 +52,7 @@ jobs:
             lean -j1 -M5500 -DwarningAsError=true -o "$LEAN_PATH/$f.olean" "$f.lean" | tee "$RUNNER_TEMP/$f.log"
             if grep -q 'sorryAx' "$RUNNER_TEMP/$f.log"; then exit 1; fi
           done
-          lean -j1 -M5500 -DwarningAsError=true ../hadamard-2396-diagonal/Diagonal.lean | tee "$RUNNER_TEMP/Diagonal.log"
-          if grep -q 'sorryAx' "$RUNNER_TEMP/Diagonal.log"; then exit 1; fi
+          for f in Diagonal Extension; do
+            lean -j1 -M5500 -DwarningAsError=true -o "$LEAN_PATH/$f.olean" "../hadamard-2396-diagonal/$f.lean" | tee "$RUNNER_TEMP/$f.log"
+            if grep -q 'sorryAx' "$RUNNER_TEMP/$f.log"; then exit 1; fi
+          done

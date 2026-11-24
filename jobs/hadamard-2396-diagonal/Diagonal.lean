@@ -6,7 +6,7 @@ set_option maxHeartbeats 0
 set_option maxRecDepth 1000000
 
 /-- Every Boolean check on the first n indices follows from the range computation. -/
-private theorem checked {n : Nat} {test : Nat → Bool}
+theorem checked {n : Nat} {test : Nat → Bool}
     (h : (List.range n).all test = true) (i : Fin n) : test i.val = true :=
   List.all_eq_true.mp h i.val (List.mem_range.mpr i.isLt)
 
