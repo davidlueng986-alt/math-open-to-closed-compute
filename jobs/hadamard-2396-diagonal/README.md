@@ -23,12 +23,19 @@ The first search balances rectangles in $(x\bmod3,x\bmod7)$ across two represent
 
 The order-57 extension adds three quotient equations for column shifts $y=1,2,4$ and six original representatives $(21,y)$ for $y=1,2,4,5,8,10$. A 12-shard run made 72 trials. Seed 1250 in shard 6 reached zero quotient error and solved 56 of the 58 target pairs. Its two remaining original correlations were 10 at shift 342 and −14 at shift 456. Restarting only the within-triple phase search with seed 710 solved both. The resulting words have 98 and 101 constant triples. [Public run](https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45324284634) · [Per-seed results](https://github.com/davidlueng986-alt/math-open-to-closed-compute/blob/b6f6da9d0efc8295e69e40455692827e88708561/runs/hadamard-2396-diagonal/45324284634/summary.json) · [Three-stage replay](replay.py)
 
+## What remains
+
+The 399-point compression of the extension has combined autocorrelation **42** at shift 1, against a target of −6. It fails 171 of 199 nonzero shift pairs in that quotient. For each quotient shift the three lifted original errors sum to its projected error. Each original error is divisible by four. Minimizing the sum of their squares for each fixed sum gives a full squared-error lower bound of **167,520** for every pair with these same 399-point margins. The within-triple phase moves preserve those margins. A full solution along this route requires changing the triple sums. [399-point calculation](residuals.py)
+
+There are 206 original shift classes after reflection and multiplication by 463. In coordinates $e(s)=P_A(s)+P_B(s)+2$ for $s\ne0$, set $e(0)=0$. Each exact compression gives equations $\sum_{s\equiv t\bmod q}e(s)=0$. These have rank 45 over the rationals. Adding the two exact original subgroups raises the rank to 64, leaving 142 free residual coordinates. Under precisely those hypotheses, zero error at 142 explicitly listed original shifts suffices for all 598 pairs. The count describes linear constraints on the correlations. The binary sign conditions still have to be realized. [Exact rational elimination and shift list](residuals.py)
+
 ## Reproduce
 
 Run from this directory, using Python 3.10 or newer and a C++17 compiler. A mask bit of 1 represents a negative sign, with position zero in the low bit. The checker computes all 598 correlations by both direct summation and bit rotations, and checks the margins, their correlations, the multiplier and the subgroup equations.
 
 ```sh
 python3 check.py
+python3 residuals.py --shifts
 g++ -std=c++17 -O3 -mpopcnt -Wall -Wextra -Werror search.cpp -o /tmp/hadamard-diagonal
 python3 replay.py /tmp/hadamard-diagonal
 ```
