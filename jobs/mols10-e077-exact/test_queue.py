@@ -15,7 +15,10 @@ def main():
         init_state(NS(state=state,n=4,squares=3,shard=shard,amo='pairwise',even_row_normalization=False))
         d,q,m=load_state(state)
         if name=='split_unsat':
-            _,clauses=read_dimacs(d/'base.cnf');lit=choose_split(m,[],clauses);assert lit is not None
+            # This lifecycle test deliberately creates two children of an
+            # already UNSAT control. Bypass failed-literal selection here;
+            # test_e078.py separately checks the production lookahead.
+            _,clauses=read_dimacs(d/'base.cnf');lit=choose_split(m,[],clauses,lookahead_candidates=0);assert lit is not None
             split_node(q,'root',lit)
             # Simulate a persisted running leaf after process interruption.
             q['nodes']['root0']['status']='RUNNING';save_state(d,q)

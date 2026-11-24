@@ -9,7 +9,7 @@ from __future__ import annotations
 import argparse,collections,hashlib,itertools,json,math,os,pathlib,re,shutil,signal,subprocess,sys,time
 from encode import (VERSION,Formula,decode_model,encode,enforce_even_permutation,partitions,read_dimacs,sha256_file,
                     verify_model_cnf,verify_squares,write_instance)
-from proof import replay_lrat,verify_unsat
+from proof import detect_drat_format,replay_lrat,verify_unsat
 
 HERE=pathlib.Path(__file__).resolve().parent
 QUEUE_VERSION='mols-cube-queue-v1'
@@ -67,64 +67,127 @@ def parse_solver_log(path):
 
 def terminate(process):
     if process.poll() is not None:return
-    os.killpg(process.pid,signal.SIGTERM)
+    try:os.killpg(process.pid,signal.SIGTERM)
+    except ProcessLookupError:return
     try:process.wait(timeout=5)
     except subprocess.TimeoutExpired:
-        os.killpg(process.pid,signal.SIGKILL);process.wait()
+        try:os.killpg(process.pid,signal.SIGKILL)
+        except ProcessLookupError:pass
+        process.wait()
 
-def launch_solver(solver,cnf,proof,log,seconds,max_proof_bytes):
+def proof_budget(directory,max_proof_bytes,disk_reserve_bytes=0,proof_expansion_factor=1.0):
+    """Bound proof output while reserving room for checking and saved state.
+
+    The expansion factor is an engineering allowance, not a proved bound on
+    LRAT expansion. A separate live disk guard also protects the reserve.
+    """
+    if max_proof_bytes<=0 or disk_reserve_bytes<0 or proof_expansion_factor<1:
+        raise ValueError('invalid bounded-proof disk policy')
+    free=shutil.disk_usage(directory).free
+    effective=min(max_proof_bytes,max(0,int((free-disk_reserve_bytes)/proof_expansion_factor)))
+    return {'requested_max_proof_bytes':max_proof_bytes,'effective_max_proof_bytes':effective,
+            'disk_free_bytes_at_start':free,'disk_reserve_bytes':disk_reserve_bytes,
+            'proof_expansion_factor':proof_expansion_factor}
+
+def launch_solver(solver,cnf,proof,log,seconds,max_proof_bytes,
+                  disk_reserve_bytes=0,proof_expansion_factor=1.0):
+    budget=proof_budget(pathlib.Path(proof).parent,max_proof_bytes,disk_reserve_bytes,proof_expansion_factor)
     if solver.startswith('pysat:'):
         command=[sys.executable,str(HERE/'pysat_worker.py'),str(cnf),str(proof),'--solver',solver.split(':',1)[1]]
-    else:command=[solver,f'--time={max(1,int(seconds))}',str(cnf),str(proof)]
+        expected_format='ascii_drat'
+    else:
+        # Kissat 4.0.4 already defaults to binary DRAT for regular files.
+        # There is deliberately no unsupported '--binary' flag. '--no-binary'
+        # and stdout are the upstream ASCII alternatives, neither used here.
+        command=[solver,f'--time={max(1,int(seconds))}',str(cnf),str(proof)]
+        expected_format='binary_drat'
     start=time.monotonic();reason=None
     with open(log,'wb') as output:
+        if budget['effective_max_proof_bytes']<1024*1024:
+            return {'command':command,'returncode':None,'seconds':0,'stop_reason':'DISK_RESERVE_LIMIT',
+                    'launched':False,'proof_format_expected':expected_format,**budget}
         process=subprocess.Popen(command,stdout=output,stderr=subprocess.STDOUT,start_new_session=True)
         try:
             while process.poll() is None:
                 if time.monotonic()-start>seconds+10:
                     reason='WALL_LIMIT';terminate(process);break
-                if proof.exists() and proof.stat().st_size>max_proof_bytes:
+                if proof.exists() and proof.stat().st_size>budget['effective_max_proof_bytes']:
                     reason='PROOF_SIZE_LIMIT';terminate(process);break
+                if disk_reserve_bytes and shutil.disk_usage(pathlib.Path(proof).parent).free<disk_reserve_bytes:
+                    reason='DISK_RESERVE_LIMIT';terminate(process);break
                 time.sleep(0.25)
         except BaseException:
             terminate(process);raise
-    return {'command':command,'returncode':process.returncode,'seconds':time.monotonic()-start,'stop_reason':reason}
+    return {'command':command,'returncode':process.returncode,'seconds':time.monotonic()-start,
+            'stop_reason':reason,'launched':True,'proof_format_expected':expected_format,
+            'proof_format_observed':detect_drat_format(proof),**budget}
+
+class UnitPropagator:
+    """Occurrence-indexed BCP used only to choose a branching variable.
+
+    No result from this class closes a leaf, adds a clause to the base CNF,
+    or changes a saved cube. Both children of every actual split are kept.
+    """
+    def __init__(self,clauses):
+        self.lengths=[];self.xors=[];self.occurrences=collections.defaultdict(list);self.units=[]
+        self.empty=False
+        for clause in clauses:
+            unique=list(dict.fromkeys(clause))
+            if any(-lit in unique for lit in unique):continue
+            if not unique:self.empty=True;continue
+            index=len(self.lengths);self.lengths.append(len(unique));value=0
+            for lit in unique:value^=lit;self.occurrences[lit].append(index)
+            self.xors.append(value)
+            if len(unique)==1:self.units.append(unique[0])
+
+    def propagate(self,assumptions):
+        if self.empty:return None
+        lengths=self.lengths.copy();xors=self.xors.copy();satisfied=bytearray(len(lengths))
+        assigned={};pending=collections.deque(self.units);pending.extend(assumptions)
+        while pending:
+            lit=pending.popleft();variable=abs(lit);truth=lit>0
+            if variable in assigned:
+                if assigned[variable]!=truth:return None
+                continue
+            assigned[variable]=truth
+            for index in self.occurrences.get(lit,()):satisfied[index]=1
+            for index in self.occurrences.get(-lit,()):
+                if satisfied[index]:continue
+                lengths[index]-=1;xors[index]^=-lit
+                if lengths[index]==0:return None
+                if lengths[index]==1:pending.append(xors[index])
+        return assigned
 
 def unit_closure(clauses,assumptions):
-    """Simple independent unit propagation, used only for split selection.
+    return UnitPropagator(clauses).propagate(assumptions)
 
-    Its output never closes a branch or inserts a learned clause. Correctness
-    of the coverage tree therefore does not depend on this heuristic.
-    """
-    assigned={}
-    for lit in assumptions:
-        if abs(lit) in assigned and assigned[abs(lit)]!=(lit>0):return None
-        assigned[abs(lit)]=lit>0
-    changed=True
-    while changed:
-        changed=False
-        for clause in clauses:
-            remaining=[];satisfied=False
-            for lit in clause:
-                value=assigned.get(abs(lit))
-                if value is None:remaining.append(lit)
-                elif value==(lit>0):satisfied=True;break
-            if satisfied:continue
-            if not remaining:return None
-            if len(remaining)==1:
-                lit=remaining[0];assigned[abs(lit)]=lit>0;changed=True
-    return assigned
-
-def choose_split(m,cube,base):
-    assigned=unit_closure(base,cube)
+def choose_split(m,cube,base,lookahead_candidates=64,diagnostics=None):
+    propagator=UnitPropagator(base);assigned=propagator.propagate(cube)
+    info={'method':'BCP_AND_BOUNDED_FAILED_LITERAL_LOOKAHEAD','lookahead_limit':lookahead_candidates,
+          'probed_variables':0,'rejected_one_sided_variables':[],'changes_base_or_cube':False}
+    if diagnostics is not None:diagnostics.update(info);info=diagnostics
     if assigned is None:return None
+    info['bcp_assigned_variables']=len(assigned)
     # Prefer original variables. First nontrivial second-row cells come before
     # later rows; channels are only a fallback. This changes efficiency only.
     candidates=sorted(m['variables'],key=lambda v:(not v['square'].startswith('L'),v['r'],v['c'],v['square'],v['value']))
-    for v in candidates:
-        if v['id'] not in assigned:return v['id']
-    for v in range(1,m['nvars']+1):
-        if v not in assigned:return v
+    ordered=list(dict.fromkeys([v['id'] for v in candidates]+list(range(1,m['nvars']+1))))
+    for variable in ordered:
+        if variable in assigned:continue
+        if info['probed_variables']>=lookahead_candidates:
+            info.update(selected_variable=variable,lookahead_limit_reached=True)
+            return variable
+        info['probed_variables']+=1
+        negative=propagator.propagate(list(cube)+[-variable])
+        positive=propagator.propagate(list(cube)+[variable])
+        if negative is None or positive is None:
+            info['rejected_one_sided_variables'].append(variable)
+            if negative is None and positive is None:
+                info['both_polarities_conflict']=variable
+                return None
+            continue
+        info.update(selected_variable=variable,selected_both_polarities_bcp_consistent=True)
+        return variable
     return None
 
 def split_node(q,key,lit):
@@ -174,7 +237,8 @@ def finish_attempt(d,q,m,key,path,solver_result,args):
         result['status']='UNSAT_AWAITING_VERIFICATION'
         atomic_json(path/'result.json',result)
         node['status']='UNSAT_AWAITING_VERIFICATION';node['evidence']=str((path/'result.json').relative_to(d));save_state(d,q)
-        checked=verify_unsat(path/'instance.cnf',path/'proof.drat',args.drat_trim,args.lrat_check,args.check_seconds)
+        checked=verify_unsat(path/'instance.cnf',path/'proof.drat',args.drat_trim,args.lrat_check,args.check_seconds,
+                             disk_reserve_bytes=getattr(args,'disk_reserve_bytes',0))
         result['proof_check']=checked;result['status']=checked['status'];node['status']=checked['status']
     else:
         node['status']='UNKNOWN'
@@ -183,10 +247,13 @@ def finish_attempt(d,q,m,key,path,solver_result,args):
                                              'sha256':sha256_file(path/'proof.drat')}
         (path/'proof.drat').unlink()
     atomic_json(path/'result.json',result)
-    if node['status']=='UNKNOWN' and args.split_unknown:
+    if node['status']=='UNKNOWN' and args.split_unknown and solver_result.get('stop_reason')!='DISK_RESERVE_LIMIT':
         _,base=read_dimacs(d/'base.cnf')
-        lit=choose_split(m,node['cube'],base)
+        selection={}
+        lit=choose_split(m,node['cube'],base,getattr(args,'split_lookahead',64),selection)
+        result['split_selection']=selection
         if lit is not None:split_node(q,key,lit)
+        atomic_json(path/'result.json',result)
     save_state(d,q)
     print(json.dumps({'node':key,'status':result['status'],'solver_seconds':solver_result.get('seconds'),
                       'queue':queue_summary(q)},ensure_ascii=False),flush=True)
@@ -194,7 +261,23 @@ def finish_attempt(d,q,m,key,path,solver_result,args):
 def resume_unverified(d,q,key,args):
     node=q['nodes'][key];path=d/node['evidence'];result=json.loads(path.read_text());folder=path.parent
     assert result['cnf_sha256']==sha256_file(folder/'instance.cnf')
-    checked=verify_unsat(folder/'instance.cnf',folder/'proof.drat',args.drat_trim,args.lrat_check,args.check_seconds)
+    previous=result.get('proof_check',{})
+    if previous.get('lrat') and previous.get('lrat_sha256'):
+        # A bounded final replay may defer an already generated certificate.
+        # Replay it directly: conversion must never overwrite that LRAT.
+        assert previous['cnf_sha256']==result['cnf_sha256']
+        assert sha256_file(folder/previous['lrat'])==previous['lrat_sha256']
+        checked=dict(previous)
+        replay=replay_lrat(folder/'instance.cnf',folder/previous['lrat'],args.lrat_check,
+                           folder/'resume-lrat.log',args.check_seconds)
+        checked['resume_lrat_replay']=replay
+        checked['status']=('UNSAT_VERIFIED' if replay['verified'] else
+                           'UNSAT_AWAITING_VERIFICATION' if replay.get('stop_reason') else 'UNSAT_UNVERIFIED')
+        if replay.get('stop_reason'):checked['verification_deferred']=replay['stop_reason']
+        else:checked.pop('verification_deferred',None)
+    else:
+        checked=verify_unsat(folder/'instance.cnf',folder/'proof.drat',args.drat_trim,args.lrat_check,args.check_seconds,
+                             disk_reserve_bytes=getattr(args,'disk_reserve_bytes',0))
     result['proof_check']=checked;result['status']=checked['status'];node['status']=checked['status']
     atomic_json(path,result);save_state(d,q)
     return checked['status']
@@ -251,8 +334,10 @@ def run_state(args):
         slice_seconds=min(args.slice_seconds,remaining-2*args.check_seconds-30)
         path=make_attempt(d,q,key)
         try:
-            process_result=launch_solver(args.solver,path/'instance.cnf',path/'proof.drat',path/'solver.log',slice_seconds,args.max_proof_bytes)
+            process_result=launch_solver(args.solver,path/'instance.cnf',path/'proof.drat',path/'solver.log',slice_seconds,args.max_proof_bytes,
+                                         getattr(args,'disk_reserve_bytes',0),getattr(args,'proof_expansion_factor',1.0))
             finish_attempt(d,q,m,key,path,process_result,args)
+            if process_result.get('stop_reason')=='DISK_RESERVE_LIMIT':break
         except Exception as error:
             q['nodes'][key]['status']='ERROR';q['nodes'][key]['last_error']=repr(error)
             save_state(d,q);raise
@@ -377,15 +462,26 @@ def validate(args):
              'parity_gadget_permutations_checked':parity_cases,'n9_simultaneous_even_positive':'SAT_VERIFIED'}
     atomic_json(out/'summary.json',summary);print(json.dumps(summary),flush=True)
 
+def handle_termination(signum,frame):
+    # A bounded workflow wrapper sends SIGTERM to this Python process group.
+    # Solver/checker children have their own groups, so unwind their cleanup
+    # handlers before exiting; ignore a repeated TERM during that cleanup.
+    signal.signal(signum,signal.SIG_IGN)
+    raise SystemExit(128+signum)
+
 def main():
+    signal.signal(signal.SIGTERM,handle_termination)
     ap=argparse.ArgumentParser();commands=ap.add_subparsers(dest='command',required=True)
     p=commands.add_parser('init');p.add_argument('--state',required=True);p.add_argument('--n',type=int,default=10)
     p.add_argument('--squares',type=int,default=3);p.add_argument('--shard',type=int,default=0)
     p.add_argument('--amo',choices=['pairwise','sequential'],default='pairwise')
     p.add_argument('--even-row-normalization',action='store_true')
     p=commands.add_parser('run');p.add_argument('--state',required=True)
-    p.add_argument('--seconds',type=float,default=18000);p.add_argument('--slice-seconds',type=float,default=900)
-    p.add_argument('--solver',default='kissat');p.add_argument('--max-proof-bytes',type=int,default=2*1024**3)
+    p.add_argument('--seconds',type=float,default=18000);p.add_argument('--slice-seconds',type=float,default=3600)
+    p.add_argument('--solver',default='kissat');p.add_argument('--max-proof-bytes',type=int,default=16*1024**3)
+    p.add_argument('--disk-reserve-bytes',type=int,default=8*1024**3)
+    p.add_argument('--proof-expansion-factor',type=float,default=3.0)
+    p.add_argument('--split-lookahead',type=int,default=64)
     p.add_argument('--split-unknown',action=argparse.BooleanOptionalAction,default=True)
     p.add_argument('--drat-trim',default='drat-trim');p.add_argument('--lrat-check',default='lrat-check')
     p.add_argument('--check-seconds',type=float,default=900)

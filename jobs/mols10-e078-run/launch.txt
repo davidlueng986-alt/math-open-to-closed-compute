@@ -1,0 +1,2 @@
+MOLS10 E078: one-shot exact-only resume from run 45301881745.
+Unchanged six-shard encoding; retained source certificates; BCP-aware splitting; disk-bounded proof budget.

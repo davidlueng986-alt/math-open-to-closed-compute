@@ -1,0 +1,6 @@
+{
+  "image": "ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc",
+  "source_run": 45301881745,
+  "source_job": 138136491982,
+  "observed_log_line": "2026-11-24T01:03:01.1563795Z Digest: sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc"
+}

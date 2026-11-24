@@ -1,0 +1,165 @@
+name: MOLS10 E078 exact-only resume
+'on':
+  workflow_dispatch: {}
+  push:
+    branches:
+    - main
+    paths:
+    - jobs/mols10-e078-run/launch.txt
+permissions:
+  contents: read
+  packages: read
+  actions: read
+concurrency:
+  group: mols10-e078-exact-resume
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Validate unchanged encoding, binary DRAT replay, and BCP branch selection
+      run: |
+        set -euo pipefail
+        mkdir -p out
+        kissat --version | tee out/kissat-version.txt
+        python3 jobs/mols10-e077-exact/queue_search.py validate --out out/validation
+        python3 jobs/mols10-e077-exact/queue_search.py manifest --n 10 --squares 3 --even-row-normalization --out out/coverage.json
+        cmp out/coverage.json jobs/mols10-e077-exact/coverage.json
+        python3 jobs/mols10-e077-exact/test_e078.py --out out/e078-validation --drat-trim drat-trim --lrat-check lrat-check --kissat kissat
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: preflight
+        path: out/
+        retention-days: 30
+  exact:
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        shard:
+        - 1
+        - 2
+        - 6
+        - 8
+        - 9
+        - 10
+    env:
+      E078_INITIAL_REPLAY_SECONDS: '1800'
+      E078_FINAL_REPLAY_SECONDS: '1800'
+      E078_ARTIFACT_RESERVE_SECONDS: '900'
+      E078_CERTIFICATE_SECONDS: '900'
+      E078_MAX_PROOF_BYTES: '17179869184'
+      E078_DISK_RESERVE_BYTES: '8589934592'
+      E078_PROOF_EXPANSION_FACTOR: '3.0'
+    steps:
+    - name: Establish the shared search/replay/upload deadline
+      run: |
+        set -euo pipefail
+        # Reserve five minutes outside this deadline within the 350-minute job limit.
+        echo "E078_JOB_DEADLINE=$(( $(date +%s) + 20700 ))" >> "$GITHUB_ENV"
+    - uses: actions/checkout@v4
+    - name: Download exactly the frozen E077 shard
+      uses: actions/download-artifact@v4
+      with:
+        name: exact-${{ matrix.shard }}
+        path: out/
+        run-id: ${{ env.E078_RESUME_RUN_ID }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Resume the guarded canonical shard
+      env:
+        SHARD: ${{ matrix.shard }}
+      run: |
+        set -euo pipefail
+        # Refuse to start a fresh root if the requested artifact is missing or differs.
+        python3 jobs/mols10-e078-run/resume_guard.py snapshot --state out/state --shard "$SHARD" --out out
+        python3 jobs/mols10-e077-exact/queue_search.py init --state out/state --n 10 --squares 3 --shard "$SHARD" --even-row-normalization
+        E078_INITIAL_REPLAY_BUDGET=$(( E078_JOB_DEADLINE - $(date +%s) - E078_FINAL_REPLAY_SECONDS - E078_ARTIFACT_RESERVE_SECONDS - 30 ))
+        if (( E078_INITIAL_REPLAY_BUDGET > E078_INITIAL_REPLAY_SECONDS )); then E078_INITIAL_REPLAY_BUDGET=$E078_INITIAL_REPLAY_SECONDS; fi
+        if (( E078_INITIAL_REPLAY_BUDGET < 0 )); then E078_INITIAL_REPLAY_BUDGET=0; fi
+        python3 jobs/mols10-e078-run/bounded_replay.py --state out/state --stage initial --seconds "$E078_INITIAL_REPLAY_BUDGET" --certificate-seconds "$E078_CERTIFICATE_SECONDS"
+        E078_SOLVE_BUDGET=$(( E078_JOB_DEADLINE - $(date +%s) - E078_FINAL_REPLAY_SECONDS - E078_ARTIFACT_RESERVE_SECONDS - 30 ))
+        if (( E078_SOLVE_BUDGET > 17970 )); then E078_SOLVE_BUDGET=17970; fi
+        if (( E078_SOLVE_BUDGET > 2 * E078_CERTIFICATE_SECONDS + 30 )); then
+          set +e
+          timeout --signal=INT --kill-after=30s "${E078_SOLVE_BUDGET}s" \
+            python3 jobs/mols10-e077-exact/queue_search.py run --state out/state \
+              --seconds "$E078_SOLVE_BUDGET" --slice-seconds 3600 --check-seconds "$E078_CERTIFICATE_SECONDS" \
+              --max-proof-bytes "$E078_MAX_PROOF_BYTES" --disk-reserve-bytes "$E078_DISK_RESERVE_BYTES" \
+              --proof-expansion-factor "$E078_PROOF_EXPANSION_FACTOR" | tee -a out/progress.jsonl
+          E078_SOLVE_RC=${PIPESTATUS[0]}
+          set -e
+          if (( E078_SOLVE_RC != 0 && E078_SOLVE_RC != 124 && E078_SOLVE_RC != 137 )); then exit "$E078_SOLVE_RC"; fi
+        else
+          echo 'Remaining job time is reserved for replay and artifact upload; the queue remains pending.'
+        fi
+    - name: Independently replay saved branch certificates
+      if: always()
+      run: |
+        set -euo pipefail
+        E078_REPLAY_BUDGET=$(( E078_JOB_DEADLINE - $(date +%s) - E078_ARTIFACT_RESERVE_SECONDS - 30 ))
+        if (( E078_REPLAY_BUDGET > E078_FINAL_REPLAY_SECONDS )); then E078_REPLAY_BUDGET=$E078_FINAL_REPLAY_SECONDS; fi
+        if (( E078_REPLAY_BUDGET < 0 )); then E078_REPLAY_BUDGET=0; fi
+        python3 jobs/mols10-e078-run/bounded_replay.py --state out/state --stage final --seconds "$E078_REPLAY_BUDGET" --certificate-seconds "$E078_CERTIFICATE_SECONDS"
+    - name: Confirm that all imported closed leaves and certificate bytes remain
+      if: always()
+      env:
+        SHARD: ${{ matrix.shard }}
+      run: |
+        python3 jobs/mols10-e078-run/resume_guard.py preserve --state out/state --shard "$SHARD" --out out
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: exact-${{ matrix.shard }}
+        path: out/
+        compression-level: 1
+        retention-days: 30
+  collect:
+    needs:
+    - preflight
+    - exact
+    if: ${{ always() && needs.preflight.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+      actions: read
+    env:
+      JOB: mols10-e078
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+        run-id: ${{ github.run_id }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Aggregate explicit remaining work and independently verify any witness
+      run: python3 jobs/mols10-e078-run/collect.py --artifacts artifacts --out summary
+    - uses: actions/upload-artifact@v4
+      with:
+        name: summary
+        path: summary/
+        retention-days: 30
+    - run: bash scripts/commit_results.sh
+      env:
+        GH_TOKEN: ${{ github.token }}
+env:
+  E078_RESUME_RUN_ID: '45301881745'
