@@ -1,0 +1,25 @@
+{
+  "problem": "ERDOS-307",
+  "level": 61,
+  "split": [
+    11,
+    50
+  ],
+  "first_side_even": true,
+  "placement": "same",
+  "same_placement_excluded": true,
+  "original_status": "OPEN",
+  "prefixes": 40804,
+  "counts": {
+    "candidates": 0,
+    "cores": 2719902378,
+    "done": 40804,
+    "fractions": 204269309,
+    "mass": 1133756576,
+    "nodes": 46548963861,
+    "reconstructions": 17174943590,
+    "supports": 0
+  },
+  "longest_shard_seconds": 117.143,
+  "candidate_details": []
+}
