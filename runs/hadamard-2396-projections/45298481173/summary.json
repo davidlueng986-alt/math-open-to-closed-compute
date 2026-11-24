@@ -1,0 +1,607 @@
+{
+  "job": "hadamard-2396-projections",
+  "run_id": "45298481173",
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45298481173",
+  "commit": "c36fcc7f2e9ac884b376e5608f65d4fcdcaa2896",
+  "shards_expected": 12,
+  "shards_with_result": 12,
+  "missing_shards": [],
+  "seconds_per_shard": {
+    "0": 47,
+    "1": 52,
+    "2": 47,
+    "3": 60,
+    "4": 51,
+    "5": 6,
+    "6": 50,
+    "7": 47,
+    "8": 47,
+    "9": 60,
+    "10": 81,
+    "11": 2
+  },
+  "complete": true,
+  "results": {
+    "0": {
+      "shard": 0,
+      "shards": 12,
+      "shapes": {
+        "0": {
+          "positive_checksum_control": true,
+          "rows_after_energy": [
+            4957929,
+            1892484
+          ],
+          "rows_after_dc": [
+            203370,
+            96336
+          ],
+          "hash_matches": 0,
+          "solutions": 0,
+          "first_witness": null
+        }
+      },
+      "lift": {
+        "multiplier": 1,
+        "rounds": [
+          {
+            "shifts": [
+              107,
+              399
+            ],
+            "status": "UNKNOWN"
+          }
+        ],
+        "latest": null,
+        "best": {
+          "negative_masks": [
+            "0x80d30d61195009e3e90b725d6fa0a2d4c909d3b2fcef300cb6e103c62fce44d83cb48f3cb349dd8a63186802ff2587719a9ef4cb0541de5c422034df5c5f91158844de5c8518a00485be93766b5360955f9b8b046da74e590d0b814c6beacbdae84d2005cd862702bdbffcca8fca0fddcaa38df7b6a2daaadf2e1a7f677436959daed8313f199b774bac97ef53d48d1ce750a1b3cb2",
+            "0x96bad1d8a74e08eda2d61737508894103df1ee1d86141f4d14b4e22e50644bc0288e285f318a842e488604b2c08c1c07b0aa374fb125dd44bb0f185a5bfff72666b9817c64456577165314a8f131fc25d9f9b15e9a6bdd69053e060319aa6d5d261be45b35fdb32e518a7a2b3ed8ff2721239232f69cef150e7d0f501b6761fdd673f3f37752e131c0e709be69dc017166fbe7b9ff"
+          ],
+          "raw_energy": 1157952,
+          "raw_exact_shift_pairs": 23,
+          "raw_peak_error": 132,
+          "raw_paf_at_one": 30,
+          "constant_triples": [
+            97,
+            102
+          ]
+        },
+        "solved": false
+      }
+    },
+    "1": {
+      "shard": 1,
+      "shards": 12,
+      "shapes": {
+        "1": {
+          "positive_checksum_control": true,
+          "rows_after_energy": [
+            4957929,
+            1892484
+          ],
+          "rows_after_dc": [
+            203370,
+            96336
+          ],
+          "hash_matches": 0,
+          "solutions": 0,
+          "first_witness": null
+        }
+      },
+      "lift": {
+        "multiplier": 1,
+        "rounds": [
+          {
+            "shifts": [
+              13,
+              399
+            ],
+            "status": "UNKNOWN"
+          }
+        ],
+        "latest": null,
+        "best": {
+          "negative_masks": [
+            "0x80d30d61195009e3e90b725d6fa0a2d4c909d3b2fcef300cb6e103c62fce44d83cb48f3cb349dd8a63186802ff2587719a9ef4cb0541de5c422034df5c5f91158844de5c8518a00485be93766b5360955f9b8b046da74e590d0b814c6beacbdae84d2005cd862702bdbffcca8fca0fddcaa38df7b6a2daaadf2e1a7f677436959daed8313f199b774bac97ef53d48d1ce750a1b3cb2",
+            "0x96bad1d8a74e08eda2d61737508894103df1ee1d86141f4d14b4e22e50644bc0288e285f318a842e488604b2c08c1c07b0aa374fb125dd44bb0f185a5bfff72666b9817c64456577165314a8f131fc25d9f9b15e9a6bdd69053e060319aa6d5d261be45b35fdb32e518a7a2b3ed8ff2721239232f69cef150e7d0f501b6761fdd673f3f37752e131c0e709be69dc017166fbe7b9ff"
+          ],
+          "raw_energy": 1157952,
+          "raw_exact_shift_pairs": 23,
+          "raw_peak_error": 132,
+          "raw_paf_at_one": 30,
+          "constant_triples": [
+            97,
+            102
+          ]
+        },
+        "solved": false
+      }
+    },
+    "2": {
+      "shard": 2,
+      "shards": 12,
+      "shapes": {
+        "2": {
+          "positive_checksum_control": true,
+          "rows_after_energy": [
+            1892484,
+            4957929
+          ],
+          "rows_after_dc": [
+            96336,
+            203370
+          ],
+          "hash_matches": 0,
+          "solutions": 0,
+          "first_witness": null
+        }
+      },
+      "lift": {
+        "multiplier": 1,
+        "rounds": [
+          {
+            "shifts": [
+              155,
+              399
+            ],
+            "status": "UNKNOWN"
+          }
+        ],
+        "latest": null,
+        "best": {
+          "negative_masks": [
+            "0x80d30d61195009e3e90b725d6fa0a2d4c909d3b2fcef300cb6e103c62fce44d83cb48f3cb349dd8a63186802ff2587719a9ef4cb0541de5c422034df5c5f91158844de5c8518a00485be93766b5360955f9b8b046da74e590d0b814c6beacbdae84d2005cd862702bdbffcca8fca0fddcaa38df7b6a2daaadf2e1a7f677436959daed8313f199b774bac97ef53d48d1ce750a1b3cb2",
+            "0x96bad1d8a74e08eda2d61737508894103df1ee1d86141f4d14b4e22e50644bc0288e285f318a842e488604b2c08c1c07b0aa374fb125dd44bb0f185a5bfff72666b9817c64456577165314a8f131fc25d9f9b15e9a6bdd69053e060319aa6d5d261be45b35fdb32e518a7a2b3ed8ff2721239232f69cef150e7d0f501b6761fdd673f3f37752e131c0e709be69dc017166fbe7b9ff"
+          ],
+          "raw_energy": 1157952,
+          "raw_exact_shift_pairs": 23,
+          "raw_peak_error": 132,
+          "raw_paf_at_one": 30,
+          "constant_triples": [
+            97,
+            102
+          ]
+        },
+        "solved": false
+      }
+    },
+    "3": {
+      "shard": 3,
+      "shards": 12,
+      "shapes": {
+        "3": {
+          "positive_checksum_control": true,
+          "rows_after_energy": [
+            1892484,
+            4957929
+          ],
+          "rows_after_dc": [
+            96336,
+            203370
+          ],
+          "hash_matches": 0,
+          "solutions": 0,
+          "first_witness": null
+        }
+      },
+      "lift": {
+        "multiplier": 1,
+        "rounds": [
+          {
+            "shifts": [
+              107,
+              399
+            ],
+            "status": "OPTIMAL"
+          },
+          {
+            "shifts": [
+              8,
+              107,
+              399
+            ],
+            "status": "UNKNOWN"
+          }
+        ],
+        "latest": {
+          "negative_masks": [
+            "0x121bb5cebfa3a69eaeeafa2ee1f71fb62c9051f9af076ecad3fd9abb6af89671a50f86435126fd592f49e288b4ffeb330b08b7ebf278a728c42706685f069f9370ffbde07d55812f68139b546fbbe52560913730de337ce409b4d81c6e8438bf248f44af951e0928ba59c348aa71843b72eaa5424a34a2869d0b41cea226532b8c0389f591ad10a8a50b45a7bd490a15cbf58908228e",
+            "0x179726c4c5f3e22c240a9d2b5ff90ef58aa7a3f80e95b1d9ed46f578bb6585bed43d2eb91c7ebc96367a5396957daabfe7e60675f7fba59e9c3c55376c6b8eb4a23eb8ebe374c8c63a8e30712814f3a9a88b5d71c4506d0d2651bf60601f964d6d608d270c563fe3608809e21e30dc3d1eca24b72603fcaad410c839205ce24a756ca906061655b171a2d700bcb99c00d1ca415cb699"
+          ],
+          "raw_energy": 1172032,
+          "raw_exact_shift_pairs": 24,
+          "raw_peak_error": 156,
+          "raw_paf_at_one": -46,
+          "constant_triples": [
+            99,
+            100
+          ]
+        },
+        "best": {
+          "negative_masks": [
+            "0x80d30d61195009e3e90b725d6fa0a2d4c909d3b2fcef300cb6e103c62fce44d83cb48f3cb349dd8a63186802ff2587719a9ef4cb0541de5c422034df5c5f91158844de5c8518a00485be93766b5360955f9b8b046da74e590d0b814c6beacbdae84d2005cd862702bdbffcca8fca0fddcaa38df7b6a2daaadf2e1a7f677436959daed8313f199b774bac97ef53d48d1ce750a1b3cb2",
+            "0x96bad1d8a74e08eda2d61737508894103df1ee1d86141f4d14b4e22e50644bc0288e285f318a842e488604b2c08c1c07b0aa374fb125dd44bb0f185a5bfff72666b9817c64456577165314a8f131fc25d9f9b15e9a6bdd69053e060319aa6d5d261be45b35fdb32e518a7a2b3ed8ff2721239232f69cef150e7d0f501b6761fdd673f3f37752e131c0e709be69dc017166fbe7b9ff"
+          ],
+          "raw_energy": 1157952,
+          "raw_exact_shift_pairs": 23,
+          "raw_peak_error": 132,
+          "raw_paf_at_one": 30,
+          "constant_triples": [
+            97,
+            102
+          ]
+        },
+        "solved": false
+      }
+    },
+    "4": {
+      "shard": 4,
+      "shards": 12,
+      "shapes": {
+        "4": {
+          "positive_checksum_control": true,
+          "rows_after_energy": [
+            16099236,
+            1312200
+          ],
+          "rows_after_dc": [
+            719220,
+            71928
+          ],
+          "hash_matches": 0,
+          "solutions": 0,
+          "first_witness": null
+        }
+      },
+      "lift": {
+        "multiplier": 1,
+        "rounds": [
+          {
+            "shifts": [
+              13,
+              399
+            ],
+            "status": "UNKNOWN"
+          }
+        ],
+        "latest": null,
+        "best": {
+          "negative_masks": [
+            "0x80d30d61195009e3e90b725d6fa0a2d4c909d3b2fcef300cb6e103c62fce44d83cb48f3cb349dd8a63186802ff2587719a9ef4cb0541de5c422034df5c5f91158844de5c8518a00485be93766b5360955f9b8b046da74e590d0b814c6beacbdae84d2005cd862702bdbffcca8fca0fddcaa38df7b6a2daaadf2e1a7f677436959daed8313f199b774bac97ef53d48d1ce750a1b3cb2",
+            "0x96bad1d8a74e08eda2d61737508894103df1ee1d86141f4d14b4e22e50644bc0288e285f318a842e488604b2c08c1c07b0aa374fb125dd44bb0f185a5bfff72666b9817c64456577165314a8f131fc25d9f9b15e9a6bdd69053e060319aa6d5d261be45b35fdb32e518a7a2b3ed8ff2721239232f69cef150e7d0f501b6761fdd673f3f37752e131c0e709be69dc017166fbe7b9ff"
+          ],
+          "raw_energy": 1157952,
+          "raw_exact_shift_pairs": 23,
+          "raw_peak_error": 132,
+          "raw_paf_at_one": 30,
+          "constant_triples": [
+            97,
+            102
+          ]
+        },
+        "solved": false
+      }
+    },
+    "5": {
+      "shard": 5,
+      "shards": 12,
+      "shapes": {
+        "5": {
+          "positive_checksum_control": true,
+          "rows_after_energy": [
+            16099236,
+            1312200
+          ],
+          "rows_after_dc": [
+            719220,
+            71928
+          ],
+          "hash_matches": 0,
+          "solutions": 0,
+          "first_witness": null
+        }
+      },
+      "lift": {
+        "multiplier": 463,
+        "rounds": [
+          {
+            "shifts": [
+              399
+            ],
+            "status": "INFEASIBLE"
+          }
+        ],
+        "latest": null,
+        "best": {
+          "negative_masks": [
+            "0x80d30d61195009e3e90b725d6fa0a2d4c909d3b2fcef300cb6e103c62fce44d83cb48f3cb349dd8a63186802ff2587719a9ef4cb0541de5c422034df5c5f91158844de5c8518a00485be93766b5360955f9b8b046da74e590d0b814c6beacbdae84d2005cd862702bdbffcca8fca0fddcaa38df7b6a2daaadf2e1a7f677436959daed8313f199b774bac97ef53d48d1ce750a1b3cb2",
+            "0x96bad1d8a74e08eda2d61737508894103df1ee1d86141f4d14b4e22e50644bc0288e285f318a842e488604b2c08c1c07b0aa374fb125dd44bb0f185a5bfff72666b9817c64456577165314a8f131fc25d9f9b15e9a6bdd69053e060319aa6d5d261be45b35fdb32e518a7a2b3ed8ff2721239232f69cef150e7d0f501b6761fdd673f3f37752e131c0e709be69dc017166fbe7b9ff"
+          ],
+          "raw_energy": 1157952,
+          "raw_exact_shift_pairs": 23,
+          "raw_peak_error": 132,
+          "raw_paf_at_one": 30,
+          "constant_triples": [
+            97,
+            102
+          ]
+        },
+        "solved": false
+      }
+    },
+    "6": {
+      "shard": 6,
+      "shards": 12,
+      "shapes": {
+        "6": {
+          "positive_checksum_control": true,
+          "rows_after_energy": [
+            1312200,
+            16099236
+          ],
+          "rows_after_dc": [
+            71928,
+            719220
+          ],
+          "hash_matches": 0,
+          "solutions": 0,
+          "first_witness": null
+        }
+      },
+      "lift": {
+        "multiplier": 1,
+        "rounds": [
+          {
+            "shifts": [
+              107,
+              399
+            ],
+            "status": "UNKNOWN"
+          }
+        ],
+        "latest": null,
+        "best": {
+          "negative_masks": [
+            "0x80d30d61195009e3e90b725d6fa0a2d4c909d3b2fcef300cb6e103c62fce44d83cb48f3cb349dd8a63186802ff2587719a9ef4cb0541de5c422034df5c5f91158844de5c8518a00485be93766b5360955f9b8b046da74e590d0b814c6beacbdae84d2005cd862702bdbffcca8fca0fddcaa38df7b6a2daaadf2e1a7f677436959daed8313f199b774bac97ef53d48d1ce750a1b3cb2",
+            "0x96bad1d8a74e08eda2d61737508894103df1ee1d86141f4d14b4e22e50644bc0288e285f318a842e488604b2c08c1c07b0aa374fb125dd44bb0f185a5bfff72666b9817c64456577165314a8f131fc25d9f9b15e9a6bdd69053e060319aa6d5d261be45b35fdb32e518a7a2b3ed8ff2721239232f69cef150e7d0f501b6761fdd673f3f37752e131c0e709be69dc017166fbe7b9ff"
+          ],
+          "raw_energy": 1157952,
+          "raw_exact_shift_pairs": 23,
+          "raw_peak_error": 132,
+          "raw_paf_at_one": 30,
+          "constant_triples": [
+            97,
+            102
+          ]
+        },
+        "solved": false
+      }
+    },
+    "7": {
+      "shard": 7,
+      "shards": 12,
+      "shapes": {
+        "7": {
+          "positive_checksum_control": true,
+          "rows_after_energy": [
+            1312200,
+            16099236
+          ],
+          "rows_after_dc": [
+            71928,
+            719220
+          ],
+          "hash_matches": 0,
+          "solutions": 0,
+          "first_witness": null
+        }
+      },
+      "lift": {
+        "multiplier": 1,
+        "rounds": [
+          {
+            "shifts": [
+              13,
+              399
+            ],
+            "status": "UNKNOWN"
+          }
+        ],
+        "latest": null,
+        "best": {
+          "negative_masks": [
+            "0x80d30d61195009e3e90b725d6fa0a2d4c909d3b2fcef300cb6e103c62fce44d83cb48f3cb349dd8a63186802ff2587719a9ef4cb0541de5c422034df5c5f91158844de5c8518a00485be93766b5360955f9b8b046da74e590d0b814c6beacbdae84d2005cd862702bdbffcca8fca0fddcaa38df7b6a2daaadf2e1a7f677436959daed8313f199b774bac97ef53d48d1ce750a1b3cb2",
+            "0x96bad1d8a74e08eda2d61737508894103df1ee1d86141f4d14b4e22e50644bc0288e285f318a842e488604b2c08c1c07b0aa374fb125dd44bb0f185a5bfff72666b9817c64456577165314a8f131fc25d9f9b15e9a6bdd69053e060319aa6d5d261be45b35fdb32e518a7a2b3ed8ff2721239232f69cef150e7d0f501b6761fdd673f3f37752e131c0e709be69dc017166fbe7b9ff"
+          ],
+          "raw_energy": 1157952,
+          "raw_exact_shift_pairs": 23,
+          "raw_peak_error": 132,
+          "raw_paf_at_one": 30,
+          "constant_triples": [
+            97,
+            102
+          ]
+        },
+        "solved": false
+      }
+    },
+    "8": {
+      "shard": 8,
+      "shards": 12,
+      "shapes": {},
+      "lift": {
+        "multiplier": 1,
+        "rounds": [
+          {
+            "shifts": [
+              149,
+              399
+            ],
+            "status": "UNKNOWN"
+          }
+        ],
+        "latest": null,
+        "best": {
+          "negative_masks": [
+            "0x80d30d61195009e3e90b725d6fa0a2d4c909d3b2fcef300cb6e103c62fce44d83cb48f3cb349dd8a63186802ff2587719a9ef4cb0541de5c422034df5c5f91158844de5c8518a00485be93766b5360955f9b8b046da74e590d0b814c6beacbdae84d2005cd862702bdbffcca8fca0fddcaa38df7b6a2daaadf2e1a7f677436959daed8313f199b774bac97ef53d48d1ce750a1b3cb2",
+            "0x96bad1d8a74e08eda2d61737508894103df1ee1d86141f4d14b4e22e50644bc0288e285f318a842e488604b2c08c1c07b0aa374fb125dd44bb0f185a5bfff72666b9817c64456577165314a8f131fc25d9f9b15e9a6bdd69053e060319aa6d5d261be45b35fdb32e518a7a2b3ed8ff2721239232f69cef150e7d0f501b6761fdd673f3f37752e131c0e709be69dc017166fbe7b9ff"
+          ],
+          "raw_energy": 1157952,
+          "raw_exact_shift_pairs": 23,
+          "raw_peak_error": 132,
+          "raw_paf_at_one": 30,
+          "constant_triples": [
+            97,
+            102
+          ]
+        },
+        "solved": false
+      }
+    },
+    "9": {
+      "shard": 9,
+      "shards": 12,
+      "shapes": {},
+      "lift": {
+        "multiplier": 1,
+        "rounds": [
+          {
+            "shifts": [
+              107,
+              399
+            ],
+            "status": "OPTIMAL"
+          },
+          {
+            "shifts": [
+              25,
+              107,
+              399
+            ],
+            "status": "UNKNOWN"
+          }
+        ],
+        "latest": {
+          "negative_masks": [
+            "0x5399b545a91d09c21f87e4e4fd58da54a9b0e67e55cb2ac879894dc763cdc51f4cc614e8f7ed8eb2fa7a9fe77bef6b609333f9812f635ed84627f510682a1ca5d734cb13f50f50e4235b89866bfbf166390d13f4663d252abf57837cd1331b606a7d91b80f891002291944c847c94fb5c60214253c266ab9c43a5afe4cfc322afc719e7d5f017b4a08fdb22bd184050a97c8a1c426a",
+            "0x75fb2dcd2f4e268c316a16fbac3c83b83a92eaae683995fed147122d2bf95de3d54a489f870088eb753923cc362b6b6c52705395c31359d833d45517e0fde34696e3a6bae473be86007d919e9ea96baa45b981d5fd7f3157d904d96e3051abb16ef9d2f14dde7333e8f2888150c5d573dc0065b52931eaa3008cacd1513e2c2e81f199b9913542371f0d7093c28d819539e91083d5b"
+          ],
+          "raw_energy": 1301344,
+          "raw_exact_shift_pairs": 25,
+          "raw_peak_error": 144,
+          "raw_paf_at_one": -26,
+          "constant_triples": [
+            84,
+            115
+          ]
+        },
+        "best": {
+          "negative_masks": [
+            "0x80d30d61195009e3e90b725d6fa0a2d4c909d3b2fcef300cb6e103c62fce44d83cb48f3cb349dd8a63186802ff2587719a9ef4cb0541de5c422034df5c5f91158844de5c8518a00485be93766b5360955f9b8b046da74e590d0b814c6beacbdae84d2005cd862702bdbffcca8fca0fddcaa38df7b6a2daaadf2e1a7f677436959daed8313f199b774bac97ef53d48d1ce750a1b3cb2",
+            "0x96bad1d8a74e08eda2d61737508894103df1ee1d86141f4d14b4e22e50644bc0288e285f318a842e488604b2c08c1c07b0aa374fb125dd44bb0f185a5bfff72666b9817c64456577165314a8f131fc25d9f9b15e9a6bdd69053e060319aa6d5d261be45b35fdb32e518a7a2b3ed8ff2721239232f69cef150e7d0f501b6761fdd673f3f37752e131c0e709be69dc017166fbe7b9ff"
+          ],
+          "raw_energy": 1157952,
+          "raw_exact_shift_pairs": 23,
+          "raw_peak_error": 132,
+          "raw_paf_at_one": 30,
+          "constant_triples": [
+            97,
+            102
+          ]
+        },
+        "solved": false
+      }
+    },
+    "10": {
+      "shard": 10,
+      "shards": 12,
+      "shapes": {},
+      "lift": {
+        "multiplier": 1,
+        "rounds": [
+          {
+            "shifts": [
+              13,
+              399
+            ],
+            "status": "OPTIMAL"
+          },
+          {
+            "shifts": [
+              13,
+              254,
+              399
+            ],
+            "status": "UNKNOWN"
+          }
+        ],
+        "latest": {
+          "negative_masks": [
+            "0x80d30d61195009e3e90b725d6fa0a2d4c909d3b2fcef300cb6e103c62fce44d83cb48f3cb349dd8a63186802ff2587719a9ef4cb0541de5c422034df5c5f91158844de5c8518a00485be93766b5360955f9b8b046da74e590d0b814c6beacbdae84d2005cd862702bdbffcca8fca0fddcaa38df7b6a2daaadf2e1a7f677436959daed8313f199b774bac97ef53d48d1ce750a1b3cb2",
+            "0x96bad1d8a74e08eda2d61737508894103df1ee1586141f4d14b4e23e50644bc0288e285f318a842e488604b2c08c1c07b0aa374fb125dd44bb0f185a5bfff72666b9817c64556577165314a8f111fc25d9f9b15e9a6bdd69053e060319aa6d5d261be45b35fdb32e518a7a2b3ed8ff2721239232f69cef150e7d0f501b6761fdd673f3f37752e131c0e709be69dc017166fbe7b9ff"
+          ],
+          "raw_energy": 1173664,
+          "raw_exact_shift_pairs": 20,
+          "raw_peak_error": 136,
+          "raw_paf_at_one": 26,
+          "constant_triples": [
+            97,
+            102
+          ]
+        },
+        "best": {
+          "negative_masks": [
+            "0x80d30d61195009e3e90b725d6fa0a2d4c909d3b2fcef300cb6e103c62fce44d83cb48f3cb349dd8a63186802ff2587719a9ef4cb0541de5c422034df5c5f91158844de5c8518a00485be93766b5360955f9b8b046da74e590d0b814c6beacbdae84d2005cd862702bdbffcca8fca0fddcaa38df7b6a2daaadf2e1a7f677436959daed8313f199b774bac97ef53d48d1ce750a1b3cb2",
+            "0x96bad1d8a74e08eda2d61737508894103df1ee1d86141f4d14b4e22e50644bc0288e285f318a842e488604b2c08c1c07b0aa374fb125dd44bb0f185a5bfff72666b9817c64456577165314a8f131fc25d9f9b15e9a6bdd69053e060319aa6d5d261be45b35fdb32e518a7a2b3ed8ff2721239232f69cef150e7d0f501b6761fdd673f3f37752e131c0e709be69dc017166fbe7b9ff"
+          ],
+          "raw_energy": 1157952,
+          "raw_exact_shift_pairs": 23,
+          "raw_peak_error": 132,
+          "raw_paf_at_one": 30,
+          "constant_triples": [
+            97,
+            102
+          ]
+        },
+        "solved": false
+      }
+    },
+    "11": {
+      "shard": 11,
+      "shards": 12,
+      "shapes": {},
+      "lift": {
+        "multiplier": 463,
+        "rounds": [
+          {
+            "shifts": [
+              399
+            ],
+            "status": "INFEASIBLE"
+          }
+        ],
+        "latest": null,
+        "best": {
+          "negative_masks": [
+            "0x80d30d61195009e3e90b725d6fa0a2d4c909d3b2fcef300cb6e103c62fce44d83cb48f3cb349dd8a63186802ff2587719a9ef4cb0541de5c422034df5c5f91158844de5c8518a00485be93766b5360955f9b8b046da74e590d0b814c6beacbdae84d2005cd862702bdbffcca8fca0fddcaa38df7b6a2daaadf2e1a7f677436959daed8313f199b774bac97ef53d48d1ce750a1b3cb2",
+            "0x96bad1d8a74e08eda2d61737508894103df1ee1d86141f4d14b4e22e50644bc0288e285f318a842e488604b2c08c1c07b0aa374fb125dd44bb0f185a5bfff72666b9817c64456577165314a8f131fc25d9f9b15e9a6bdd69053e060319aa6d5d261be45b35fdb32e518a7a2b3ed8ff2721239232f69cef150e7d0f501b6761fdd673f3f37752e131c0e709be69dc017166fbe7b9ff"
+          ],
+          "raw_energy": 1157952,
+          "raw_exact_shift_pairs": 23,
+          "raw_peak_error": 132,
+          "raw_paf_at_one": 30,
+          "constant_triples": [
+            97,
+            102
+          ]
+        },
+        "solved": false
+      }
+    }
+  },
+  "merge": {
+    "exit_code": 0,
+    "output": "8 shapes, 0 invariant lifts, best original energy 1157952, most exact shift pairs 25/598\n"
+  }
+}
