@@ -53,7 +53,8 @@ jobs:
             lean -j1 -M5500 -DwarningAsError=true -o "$LEAN_PATH/$f.olean" "$f.lean" | tee "$RUNNER_TEMP/$f.log"
             if grep -q 'sorryAx' "$RUNNER_TEMP/$f.log"; then exit 1; fi
           done
+          cd ../hadamard-2396-diagonal
           for f in Diagonal Extension; do
-            lean -j1 -M5500 -DwarningAsError=true -o "$LEAN_PATH/$f.olean" "../hadamard-2396-diagonal/$f.lean" | tee "$RUNNER_TEMP/$f.log"
+            lean -j1 -M5500 -DwarningAsError=true -o "$LEAN_PATH/$f.olean" "$f.lean" | tee "$RUNNER_TEMP/$f.log"
             if grep -q 'sorryAx' "$RUNNER_TEMP/$f.log"; then exit 1; fi
           done
