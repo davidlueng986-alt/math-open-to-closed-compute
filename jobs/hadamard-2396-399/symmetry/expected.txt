@@ -1,0 +1,5 @@
+q=3: 23/23 projected template pairs admit signs; 8679/8679 orientations pass, 8679 cumulative orientations in 3842 templates
+q=7: 241/242 projected template pairs admit signs; 8619/8679 orientations pass, 8619 cumulative orientations in 3812 templates
+q=9: 508/510 projected template pairs admit signs; 8581/8679 orientations pass, 8521 cumulative orientations in 3763 templates
+q=57: 89/89 projected template pairs admit signs; 8679/8679 orientations pass, 8521 cumulative orientations in 3763 templates
+Cumulative template sizes {4: 2773, 5: 957, 6: 13, 7: 20}

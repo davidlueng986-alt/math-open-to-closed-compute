@@ -1,0 +1,54 @@
+name: Verify Hadamard 2396 lifts and symmetry bounds
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  certificates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Recompute original and compressed correlations and rational ranks
+        run: python3 jobs/hadamard-2396-399/certificate.py
+      - name: Install Lean 4.36.0 and verify the release hash
+        run: |
+          set -euo pipefail
+          pkg=lean-4.36.0-linux.tar.zst
+          cd "$RUNNER_TEMP"
+          curl -fLsS --retry 3 -o "$pkg" "https://github.com/leanprover/lean4/releases/download/v4.36.0/$pkg"
+          echo "2b7ab1ed8b92d2e6abfaf41344823b510064dbc9c0260cac73eb496ab2dea6eb  $pkg" | sha256sum --check
+          tar --zstd -xf "$pkg" --wildcards 'lean-4.36.0-linux/bin/*' 'lean-4.36.0-linux/lib/*'
+          echo "$RUNNER_TEMP/lean-4.36.0-linux/bin" >> "$GITHUB_PATH"
+      - name: Kernel-check all 200 listed original shifts and the shear obstruction
+        run: |
+          set -euo pipefail
+          export LEAN_PATH="$RUNNER_TEMP/hadamard-olean"
+          mkdir -p "$LEAN_PATH"
+          for path in hadamard-2396-projections/Triples hadamard-2396-projections/Witness hadamard-2396-diagonal/Diagonal hadamard-2396-399/Quotient399 hadamard-2396-399/Obstructions; do
+            name=${path##*/}
+            (cd "jobs/${path%/*}" && lean -j1 -M5500 -DwarningAsError=true -o "$LEAN_PATH/$name.olean" "$name.lean") | tee "$RUNNER_TEMP/$name.log"
+            if grep -q 'sorryAx' "$RUNNER_TEMP/$name.log"; then exit 1; fi
+          done
+  templates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: jobs/hadamard-2396-399/symmetry
+    steps:
+      - uses: actions/checkout@v4
+      - name: Independently check the affine orbit counts and the sparse autocorrelations
+        run: |
+          set -euo pipefail
+          for f in templates quotients vertical; do
+            g++ -O3 -std=c++17 -mpopcnt -Wall -Wextra -Werror "$f.cpp" -o "$RUNNER_TEMP/$f"
+          done
+          "$RUNNER_TEMP/templates" > "$RUNNER_TEMP/templates.txt" 2> "$RUNNER_TEMP/templates.log"
+          python3 check_templates.py "$RUNNER_TEMP/templates.txt" "$RUNNER_TEMP/templates.log"
+      - name: Replay exact quotient feasibility tests
+        run: |
+          set -euo pipefail
+          python3 sieve.py "$RUNNER_TEMP/templates.txt" "$RUNNER_TEMP/quotients" 3 7 9 --vertical "$RUNNER_TEMP/vertical" | tee "$RUNNER_TEMP/sieve.log"
+          diff -u expected.txt "$RUNNER_TEMP/sieve.log"
