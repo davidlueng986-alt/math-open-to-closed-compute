@@ -20,7 +20,7 @@ theorem class_sums_vanish (s : Fin 5 → ZMod 5)
         intro i _
         exact (h i).symm
       _ = 0 := by
-        simp [Finset.sum_const, nsmul_eq_mul]
+        norm_num [Finset.sum_const, nsmul_eq_mul]
   intro i
   exact (h i).symm.trans hz
 
@@ -43,8 +43,8 @@ theorem adjacency_square {R : Type*} [Ring R] (T J : R)
     (h : T * T = 10 * T + 20 * J) :
     (T - 5) * (T - 5) = 25 + 20 * J := by
   calc
-    (T - 5) * (T - 5) = T * T - 10 * T + 25 := by noncomm_ring
-    _ = 25 + 20 * J := by rw [h]; noncomm_ring
+    (T - 5) * (T - 5) = T * T - 10 * T + 25 := by noncomm_ring <;> norm_num
+    _ = 25 + 20 * J := by rw [h]; noncomm_ring <;> norm_num
 
 /-- Exact rank identity when the kernel of the first map is contained
 in the range of the second map, and the two maps have equal rank. -/
