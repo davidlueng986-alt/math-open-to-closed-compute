@@ -1,0 +1,1626 @@
+{
+  "job": "hadamard-2396-399",
+  "run_id": "45462527536",
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45462527536",
+  "commit": "9b6793293c2c1fd702c05f27eae8c7b8df822164",
+  "shards_expected": 12,
+  "shards_with_result": 12,
+  "missing_shards": [],
+  "seconds_per_shard": {
+    "0": 99,
+    "1": 77,
+    "2": 120,
+    "3": 105,
+    "4": 84,
+    "5": 82,
+    "6": 115,
+    "7": 126,
+    "8": 122,
+    "9": 88,
+    "10": 127,
+    "11": 133
+  },
+  "complete": true,
+  "results": {
+    "0": {
+      "shard": 0,
+      "trials": [
+        {
+          "seed": 4200,
+          "minimum_quotient_energy": 85392,
+          "minimum_raw_energy": 144288,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4201,
+          "minimum_quotient_energy": 75360,
+          "minimum_raw_energy": 144288,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4202,
+          "minimum_quotient_energy": 85584,
+          "minimum_raw_energy": 134496,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4203,
+          "minimum_quotient_energy": 75360,
+          "minimum_raw_energy": 134496,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4204,
+          "minimum_quotient_energy": 85680,
+          "minimum_raw_energy": 116832,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4205,
+          "minimum_quotient_energy": 75360,
+          "minimum_raw_energy": 116832,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4206,
+          "minimum_quotient_energy": 81264,
+          "minimum_raw_energy": 154272,
+          "minimum_target_energy": 0
+        }
+      ],
+      "witnesses": {
+        "quotient": {
+          "negative_masks": [
+            "0x19f844a6b7f88928c85306f0aab97f534d16eaf6d63542b0545197bb106e03269c0868e5bcf82bc7539537e23563fbb8ff7c45696f42ad19b2afdb17a96a6041b0b7ce274fcbb1ccb91e97e4bb803e37867e14336b17a180658244e17b972401009b4ace358bdb4a972ee9e1231c6494aac64711a6cb0debb4984b18d8e37ca12a7ee69bc339e6656b9db77ae1b06eb6570506f0244c",
+            "0x1047ac675e13f80fcd7f3173f34ca26693d23886dfc0f9cdc9e0c044d86651fa1bc70e4cef0737c626d8557c1e54b46e16678efefb8bd4546c14e2cf35b3fc6f6374a7c30c8ebad3860d642c8002b9d056eb26a1d9b00bdffe77882680db8628a486a5379149d5db59eed58057398cf35e0a9d521c1d3750822c53678d62b499e64b3326c0035f4866acb5a31e8fb5c97043e2df5c42"
+          ],
+          "quotient_energy": 75360,
+          "quotient_zero_error": 96,
+          "quotient_paf_at_one": -18,
+          "quotient_exact_nonzero_pairs": 20,
+          "focus_score": 233,
+          "target_energy": 138768,
+          "target_exact_pairs": 9,
+          "previous_subgroup_exact_pairs": 9,
+          "raw_energy": 797088,
+          "raw_paf_at_one": 18,
+          "raw_paf_at_399": 46,
+          "raw_exact_pairs": 33,
+          "raw_peak_error": 120,
+          "seed": 4201,
+          "stage": "search"
+        },
+        "full": {
+          "negative_masks": [
+            "0x181c36b2f7ad58c5cdcb54cd0839cdd34f16cafa902440b45c055bf2192e87262c0dbcd9b6d53a07337dffeaad60cbac046743e57dd22b9532f8d4bf1cc66542f08ec20a05d89dcef41424853b135414161f3497fb5af7d041acc4c85b4b2117d61bfa092d93191e162e89e9300a16c628c04f77b4eb8cde54da5b4519ca7ca11c7c4edb0bb0e6ed33aaffbd62f24f38541ed7f62ee0",
+            "0x2e22cf4575a3383e5773550f3869643f3e08b8e7bc09859c22cc117d87a01fabd44ccd42be7278e0fde25740e54916b260694a69eaddcd6381c327d5036a72543dc1687588e3ad75f2d83640e32ebc6b6a3eb2207dc614a5e700a27868006af6486b122c9fdd4d6f8c7fd19253e8de75462dd414ebdbe44c30557b3242c23996679b766c9c55a285debffa13acfd5d9f4c073d95846"
+          ],
+          "quotient_energy": 85680,
+          "quotient_zero_error": 72,
+          "quotient_paf_at_one": -2,
+          "quotient_exact_nonzero_pairs": 13,
+          "focus_score": 127,
+          "target_energy": 18144,
+          "target_exact_pairs": 6,
+          "previous_subgroup_exact_pairs": 6,
+          "raw_energy": 116832,
+          "raw_paf_at_one": -18,
+          "raw_paf_at_399": 34,
+          "raw_exact_pairs": 93,
+          "raw_peak_error": 60,
+          "seed": 4204,
+          "stage": "raw"
+        },
+        "balanced": {
+          "negative_masks": [
+            "0x9fcbe9396b98b84c8532df901355ed34d64827511f4422054151fa2386c132ebb8dbcfdf4e033d7389922e2b5429a38216c63546ec00f9d30f1b09da0e35553b08c9a2f0d5b9d5cb114a545fb227656165f98316a3331da4158d6cfffc704015e1b4e841d99132d92ade1e5b95c94048d42cf75b46bedfbd49e1be9b87667e01a74e60e5bb864bc7fc9ef1ac3e84ad4f6bed2f760c2",
+            "0x1a752e67be63a20e413311b3f2fcb6d29f737886df01bbcbc1e0c71259a24bd65f11a2ec2b0f37a544d2cf500756d0eb52828c26e829dc727a82fabf64b3a62546fca79dc49673d7b78942b48102b9c4db9362480bb847e5dec14f76f2d43268112cac2f95cdf7517d6ae62a071ebff15e0a5d078e0c1d7c52005667888aa0bb647a25e6c1017b88779cbc6e3b5784f9384fcd8c3452"
+          ],
+          "quotient_energy": 158880,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -2,
+          "quotient_exact_nonzero_pairs": 14,
+          "focus_score": 451,
+          "target_energy": 24624,
+          "target_exact_pairs": 21,
+          "previous_subgroup_exact_pairs": 15,
+          "raw_energy": 150624,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 63,
+          "raw_peak_error": 48,
+          "seed": 4202,
+          "stage": "raw"
+        },
+        "extended": {
+          "negative_masks": [
+            "0x1af8e6e797ca99e548c3146c2eb9f8534d1682a6d08646821430df8078688b2e9a0979c3fdf4a7c63a353ea85160db1cb55ec3e52f604fd094b5d22fbd235540bc82d661cfc9bc4ea05097e6bbb6263e826f6811733ba1d245aed5696f866803cbfbdec4349fda0bb2a7e463311816cce0c6c7ffb66b8dcf3692f65df9527fc4387cccb112b8f02d6b0de71e45216fa6551042904454",
+            "0x97fbcd7ff3278c259773950732092f49b43e8445b88d9ab8b21425598ea497ebf1466d4e52e335c45fc13703ed4f7ea004288cebb9d5c757a140f6f247fbc272ed4bf881e0e5be7eea1e5bdcb06abf503f7a2290abc39c678410d1786828e3934fe8f2c99c9959d51dcfc3625188c67171ad55a8ce8564ed381323788a23699a250fd244a967b282c4bbfaab86dd1e969c0c80a5846"
+          ],
+          "quotient_energy": 409632,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -6,
+          "quotient_exact_nonzero_pairs": 25,
+          "focus_score": 0,
+          "target_energy": 0,
+          "target_exact_pairs": 67,
+          "previous_subgroup_exact_pairs": 58,
+          "raw_energy": 347520,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 109,
+          "raw_peak_error": 72,
+          "seed": 4205,
+          "stage": "phases"
+        }
+      }
+    },
+    "1": {
+      "shard": 1,
+      "trials": [
+        {
+          "seed": 4207,
+          "minimum_quotient_energy": 81024,
+          "minimum_raw_energy": 112800,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4208,
+          "minimum_quotient_energy": 81024,
+          "minimum_raw_energy": 112800,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4209,
+          "minimum_quotient_energy": 81936,
+          "minimum_raw_energy": 166272,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4210,
+          "minimum_quotient_energy": 81024,
+          "minimum_raw_energy": 112800,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4211,
+          "minimum_quotient_energy": 89760,
+          "minimum_raw_energy": 113856,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4212,
+          "minimum_quotient_energy": 81024,
+          "minimum_raw_energy": 112800,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4213,
+          "minimum_quotient_energy": 67104,
+          "minimum_raw_energy": 127776,
+          "minimum_target_energy": 0
+        }
+      ],
+      "witnesses": {
+        "quotient": {
+          "negative_masks": [
+            "0x3b836e3949bd8e0fc0bd4e38e30fe43c9964abf882f2ab14e575ce2696c2b059a08f9e934f9658753a3f6c069623a84762e49ecff668dd0b0ba881fcaa44700f58a4a1109c0bc8cf014d8057b82741e120774f73a631759658db5647b1d2c05085a6ae9618b9b22162eaac93958bcc4cdf35ffd24fbcdebc69d52911e767cc83ad56cfb13b8f47df3bea8f9c3704b96942377f50464",
+            "0x339c761e56b9abe9473571f394b657b342a1cf7fe0d3c9c1a8e11ed11270fb3dc404c86b1767042798c57c0b75244f1f869afedccbd4576416b2df1371b0e76b7097e6e78d3a53b32d666d0404b9f4cea8260051c07f9efe778826ce4407ace586a763c955d41be9e6bd38156ea9e15e2284411efd3d5a124467a20b0c2683e6e8336f41c75b50078cf7c03d8fa5d3f14263eb5052"
+          ],
+          "quotient_energy": 67104,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -10,
+          "quotient_exact_nonzero_pairs": 14,
+          "focus_score": 169,
+          "target_energy": 85200,
+          "target_exact_pairs": 7,
+          "previous_subgroup_exact_pairs": 7,
+          "raw_energy": 1033152,
+          "raw_paf_at_one": 58,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 34,
+          "raw_peak_error": 164,
+          "seed": 4213,
+          "stage": "search"
+        },
+        "full": {
+          "negative_masks": [
+            "0x2c10ce13ccf9aecdc1b5c7902d7cbd349e4dbbf1c2e0b625631dc35207811a38f89ddadace4aad612b236c23f425eaca46a45f1dff76b942220a4d5ca850341b0ee121b494234de486c8a8e3b00171e924ef4f57f67a11a444cb2adefcf41955a3bc6ea0119db63126d56f73958844cbcd59f31466c8df3d0d7cb5074b0f7c8b8dd2e1ad1bdf0745fe2ebb96b6047f774b200f55066",
+            "0x91324729e523c0a694f3d51f380a773d3c28acf7d0183cd80e8c20fd98223f2f95686f82b72ef1405d9d56c0e77646edb078ceefd8bfcf56084816f25788d6d2bec2a22c08966c5be39cabcd00eb1d5d2a92480fbcc677efe87bc62821ca66da58e0937d904d554786e9c3455eb08ed592f8d238e9ddc6c5624f727cf0a34c0f65937a5d8457b78371cafba9b4fa5e9584362895012"
+          ],
+          "quotient_energy": 81024,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -22,
+          "quotient_exact_nonzero_pairs": 22,
+          "focus_score": 156,
+          "target_energy": 5376,
+          "target_exact_pairs": 10,
+          "previous_subgroup_exact_pairs": 10,
+          "raw_energy": 112800,
+          "raw_paf_at_one": -18,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 70,
+          "raw_peak_error": 52,
+          "seed": 4207,
+          "stage": "raw"
+        },
+        "balanced": {
+          "negative_masks": [
+            "0x2c10ce13ccf9aecdc1b5c7902d7cbd349e4dbbf1c2e0b625631dc35207811a38f89ddadace4aad612b236c23f425eaca46a45f1dff76b942220a4d5ca850341b0ee121b494234de486c8a8e3b00171e924ef4f57f67a11a444cb2adefcf41955a3bc6ea0119db63126d56f73958844cbcd59f31466c8df3d0d7cb5074b0f7c8b8dd2e1ad1bdf0745fe2ebb96b6047f774b200f55066",
+            "0x91324729e523c0a694f3d51f380a773d3c28acf7d0183cd80e8c20fd98223f2f95686f82b72ef1405d9d56c0e77646edb078ceefd8bfcf56084816f25788d6d2bec2a22c08966c5be39cabcd00eb1d5d2a92480fbcc677efe87bc62821ca66da58e0937d904d554786e9c3455eb08ed592f8d238e9ddc6c5624f727cf0a34c0f65937a5d8457b78371cafba9b4fa5e9584362895012"
+          ],
+          "quotient_energy": 81024,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -22,
+          "quotient_exact_nonzero_pairs": 22,
+          "focus_score": 156,
+          "target_energy": 5376,
+          "target_exact_pairs": 10,
+          "previous_subgroup_exact_pairs": 10,
+          "raw_energy": 112800,
+          "raw_paf_at_one": -18,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 70,
+          "raw_peak_error": 52,
+          "seed": 4207,
+          "stage": "raw"
+        },
+        "extended": {
+          "negative_masks": [
+            "0x1b896bb16999b40de4b08608a35bdfa4532e3fa807e02b056551cbe14180b26b61cbdf1f5fc2896722934f0adabf6ac3e48ebec79c4ab5db0faa8eface25852b48eda9b8768f87fb014f8ddfac2563e160d32d3727b31c0659d736d6f5ea48d5713c28c2d9b9a069334b365a018f0648fd34d57344a69bf5e91538508477e60aa144ebb3a38c02d7bacefd1a3e14b24d70550f624d8",
+            "0x181336547f42ba8c45f7317cf39c8244d723eb0b5cc19b89c260621cd91e894a3c5106a42347276406d5d97c1f17e3bb4f02aceef98fdc567a17e2cf2436a4f567e4f6a6e48f7ed3679943b58202b1c497e9a60041d07fc67e914b20c6543aada1cea12fbdc5b4d279e61508a46e3be75a0add6e8e383378460b574f818a3ab97408b7e6c0937f7826f3beef3bef952900d561087852"
+          ],
+          "quotient_energy": 560928,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -6,
+          "quotient_exact_nonzero_pairs": 25,
+          "focus_score": 0,
+          "target_energy": 0,
+          "target_exact_pairs": 67,
+          "previous_subgroup_exact_pairs": 58,
+          "raw_energy": 430272,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 91,
+          "raw_peak_error": 80,
+          "seed": 4209,
+          "stage": "phases"
+        }
+      }
+    },
+    "2": {
+      "shard": 2,
+      "trials": [
+        {
+          "seed": 4214,
+          "minimum_quotient_energy": 74640,
+          "minimum_raw_energy": 139200,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4215,
+          "minimum_quotient_energy": 74640,
+          "minimum_raw_energy": 127200,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4216,
+          "minimum_quotient_energy": 79632,
+          "minimum_raw_energy": 163392,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4217,
+          "minimum_quotient_energy": 74640,
+          "minimum_raw_energy": 125760,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4218,
+          "minimum_quotient_energy": 77040,
+          "minimum_raw_energy": 144672,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4219,
+          "minimum_quotient_energy": 74640,
+          "minimum_raw_energy": 125760,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4220,
+          "minimum_quotient_energy": 74448,
+          "minimum_raw_energy": 133248,
+          "minimum_target_energy": 0
+        }
+      ],
+      "witnesses": {
+        "quotient": {
+          "negative_masks": [
+            "0x2d424abb7ad98a0d2f336e48b156e73650683fe022f4a921360dcb2387ed9029eccd9d5bcf8308762cf75b60fe89b3cf76e5bf55f76c9d11e392c0fe8e24f40359f93e38dcbb979b456cc06be001f0e061f56337873a3c0458d65a57f97e99c4d7b4ac5049fdb8e325fc5e3213884a02cd75758347b87cad6d94f1978f073b8284426b908b8e645581cee9865e85b8e1405e2f42054",
+            "0x10733c2a9f60bb836b073c7af9889763bb70a186fae0f96bc2a9e08ef89a0bfb990406c02f3f2e1465dd7758ae7d816e0b0696e6dd8ff2b464d048ed17368de56f54b2e6e4953b43f739866507069994d299a621599873c7de760f6c86c082a9ef26a923c15755d8f9cefc1e250e88e55e6a9d533ebdbf5c840377070938368844c8334bc0c54be905cae7801e0fbdc97cd863a854d2"
+          ],
+          "quotient_energy": 74448,
+          "quotient_zero_error": 72,
+          "quotient_paf_at_one": 6,
+          "quotient_exact_nonzero_pairs": 10,
+          "focus_score": 121,
+          "target_energy": 80640,
+          "target_exact_pairs": 12,
+          "previous_subgroup_exact_pairs": 12,
+          "raw_energy": 830496,
+          "raw_paf_at_one": 74,
+          "raw_paf_at_399": 34,
+          "raw_exact_pairs": 42,
+          "raw_peak_error": 124,
+          "seed": 4220,
+          "stage": "search"
+        },
+        "full": {
+          "negative_masks": [
+            "0x8c36d7e78b98615c6b10790a3309704546a37a106d06d01524ddb1b97c43a6b70eb83bbde83bc67a7eb0e017c2d93c6442e6e42b526dd17eb99eaf78e24f5bb98ed7530d68ac688c68a887fa646712364f9dd37d7f35ce453c74616d4ec0944c130bd62dbadb46137d0779e019140203d3cb75745eedb652be638928d67f7438685e78fa25d5457b70cf1127c14f6ec496f1376800",
+            "0x2be646fb72b981e937517370c03214d346fb4f78a0fdd983a8e500f8be4dead904c44e6967a70c0fde29408c54c9aa1516ace6b89c5c357a5c16af7072b6b56ecc972276073fc7860dc5e49227a0f054b388262bd869fddca18d20a4602efc2cc6a92ed1c1577ad18dad28bd4a5e2b52e25f6c0dad1554b10df393a8bfa7bd1278f7dcc6c3df18344db7b6128585e9cde643692aee"
+          ],
+          "quotient_energy": 110064,
+          "quotient_zero_error": 24,
+          "quotient_paf_at_one": -30,
+          "quotient_exact_nonzero_pairs": 15,
+          "focus_score": 248,
+          "target_energy": 15792,
+          "target_exact_pairs": 6,
+          "previous_subgroup_exact_pairs": 6,
+          "raw_energy": 125760,
+          "raw_paf_at_one": -18,
+          "raw_paf_at_399": 10,
+          "raw_exact_pairs": 84,
+          "raw_peak_error": 48,
+          "seed": 4217,
+          "stage": "raw"
+        },
+        "balanced": {
+          "negative_masks": [
+            "0x1b88489979d19694e4a3c4b8330df436d13c27dbe246290464cfd3a306c03269e08bcc9ddf02a9e32f532e00929b398ae6effccffc4a9d534b9902eb9e251dab1bada553fd8984c35d0e542bf125e36170e30db6a7b619b61abd4516f1f6d07485a5aec2599db6a922ea3c5f95e04c408c6cd59145388ce47ff1088505e7ec02a34ecbb9278e4bc7ba9ef99e7e9638ed53b7ab74440",
+            "0xa773c64be32a888697710f1f216b65897c3e08e7d01d7cbc0e8e2025d2609e3994008fe2f26372f0d92dd7e075680ab52828c66c929dcd26a06a32f6e3fa7a52fe69684b48e335373a9c6258024b195dfb2ea090dd87796de41cdb6d6941e2ca1e68e2fd545fd5d7d6eed3a152eafe15ea28d1bcefc9d6e5b086e26858836b766c92572c8c5df0007debf461bd784c160c7ed187052"
+          ],
+          "quotient_energy": 274752,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -6,
+          "quotient_exact_nonzero_pairs": 5,
+          "focus_score": 420,
+          "target_energy": 24864,
+          "target_exact_pairs": 14,
+          "previous_subgroup_exact_pairs": 11,
+          "raw_energy": 177696,
+          "raw_paf_at_one": -10,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 62,
+          "raw_peak_error": 56,
+          "seed": 4217,
+          "stage": "raw"
+        },
+        "extended": {
+          "negative_masks": [
+            "0x13b684a256bd5be8dc471c592a7c5b734522daff4e2f02c04e44dcec300a1386988cb979fcf138d63aab35e11de362a8ed4a4bfcfd662b9130a2e05fece05b43f9beda2187c9a1fca074e0e6ba365e3a165d5c316a4221d06589d269ed36e5072f1a726c2582db26923eb1753948208608d64d13357e8cead4d372855876fec02a542c9b5dbce27f7fb8aef9c3e04bb29533f0f60912",
+            "0x18353c577e72b842696b98fb7298b276b38f600b59c3bb9bc0e2e60dd902097bba200788292f37dd67f0c1781915dacf5d029ee6d8c95e166b1ccaef2e33aced6682b6a7f79d3f43af89c0a58410b2bc53f8a2a251fc1f85de55192ffe5c8e2e83e6b52fd94dde5379a63c26465c89f34e2a1f6b9c88395cd12247268da026d9728b3f02d0135b90cfd4bd821b65852871dbc0881852"
+          ],
+          "quotient_energy": 560928,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -6,
+          "quotient_exact_nonzero_pairs": 25,
+          "focus_score": 0,
+          "target_energy": 0,
+          "target_exact_pairs": 67,
+          "previous_subgroup_exact_pairs": 58,
+          "raw_energy": 440256,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 97,
+          "raw_peak_error": 84,
+          "seed": 4218,
+          "stage": "phases"
+        }
+      }
+    },
+    "3": {
+      "shard": 3,
+      "trials": [
+        {
+          "seed": 4221,
+          "minimum_quotient_energy": 78768,
+          "minimum_raw_energy": 158784,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4222,
+          "minimum_quotient_energy": 78768,
+          "minimum_raw_energy": 149568,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4223,
+          "minimum_quotient_energy": 70368,
+          "minimum_raw_energy": 114624,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4224,
+          "minimum_quotient_energy": 70368,
+          "minimum_raw_energy": 111744,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4225,
+          "minimum_quotient_energy": 68544,
+          "minimum_raw_energy": 152064,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4226,
+          "minimum_quotient_energy": 68544,
+          "minimum_raw_energy": 111456,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4227,
+          "minimum_quotient_energy": 97248,
+          "minimum_raw_energy": 136128,
+          "minimum_target_energy": 0
+        }
+      ],
+      "witnesses": {
+        "quotient": {
+          "negative_masks": [
+            "0x2fc34d037bb8b48ec4b1478aa06fed14d26037b57a702f64215ddba385a0dabac1c91b1bde0338c0abe3bf02483d938ff6be1606f768d91f22fb587eeca475135bec2bb1dc9f17c306c99f7fbb37c1f223dffd3ee5311c4458863222bcf64975cba50866dbbdb0692bf62f3a05822c489654713641ec9f95193532d70d27d802ab4ee8a4a2d737d73f5ed5d61414a244490b0640240",
+            "0x2333c741f1a298be9c73545f1149653bb42a98b7fc093c9c3e8e81ed912c9fa3d4416882f9727242f9cdf7c0ff5a16f0e869f6eddafdc56601422ef3133a4a46ff4a786a49c3af7332d42658526b9d4dea06e0113d8779efe7f8926c25416ace586e527d9557453f9d73d31146e8be15e2a8d511ebd3c5c52057722a10835a3465c372780c55bd80580ffa63bcfa441704f62c97052"
+          ],
+          "quotient_energy": 68544,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -10,
+          "quotient_exact_nonzero_pairs": 40,
+          "focus_score": 187,
+          "target_energy": 74640,
+          "target_exact_pairs": 5,
+          "previous_subgroup_exact_pairs": 5,
+          "raw_energy": 1195104,
+          "raw_paf_at_one": 26,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 26,
+          "raw_peak_error": 144,
+          "seed": 4225,
+          "stage": "search"
+        },
+        "full": {
+          "negative_masks": [
+            "0x2fc8eaf958d8809f25a646985339dd34d1283af973f42d25434bd9a20dd0b865e48fdedfecc3ac672163ee4d50bd328ef6842644fe2ebbc34ee9a0ff9a253c0b5bec67dafcbb04ab1640c86bb125c2e066d64df647321f247eaf57aeb8f61c75bbb9884679d5a0a3a27e7f3317c32c48877c595741689e910da5431685079c04c20448a123c647c5798e25c25aa6aa43f12f8f4c4f6",
+            "0x753044ebe32a987d31730f3fb50a6fefbc1fb07598a6d25a061c51fd591237b1d0507ee2d5267258edbc240273b74ee1e07b46ee8a9dc74f69492cd7a20aa352a86be4e068239c1bf9516ec95a4b1ac93b1e821b9846fcf7e240c62f6f096a97486092d939fffdafdeed428855e08e54a1add510f291b789e0467638eaaa2ade2a93761c4825931274cf732be1994e859c747c9f042"
+          ],
+          "quotient_energy": 70368,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": 30,
+          "quotient_exact_nonzero_pairs": 21,
+          "focus_score": 213,
+          "target_energy": 16464,
+          "target_exact_pairs": 14,
+          "previous_subgroup_exact_pairs": 14,
+          "raw_energy": 111456,
+          "raw_paf_at_one": -10,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 74,
+          "raw_peak_error": 48,
+          "seed": 4226,
+          "stage": "raw"
+        },
+        "balanced": {
+          "negative_masks": [
+            "0x2fc8eaf958d8809f25a646985339dd34d1283af973f42d25434bd9a20dd0b865e48fdedfecc3ac672163ee4d50bd328ef6842644fe2ebbc34ee9a0ff9a253c0b5bec67dafcbb04ab1640c86bb125c2e066d64df647321f247eaf57aeb8f61c75bbb9884679d5a0a3a27e7f3317c32c48877c595741689e910da5431685079c04c20448a123c647c5798e25c25aa6aa43f12f8f4c4f6",
+            "0x753044ebe32a987d31730f3fb50a6fefbc1fb07598a6d25a061c51fd591237b1d0507ee2d5267258edbc240273b74ee1e07b46ee8a9dc74f69492cd7a20aa352a86be4e068239c1bf9516ec95a4b1ac93b1e821b9846fcf7e240c62f6f096a97486092d939fffdafdeed428855e08e54a1add510f291b789e0467638eaaa2ade2a93761c4825931274cf732be1994e859c747c9f042"
+          ],
+          "quotient_energy": 70368,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": 30,
+          "quotient_exact_nonzero_pairs": 21,
+          "focus_score": 213,
+          "target_energy": 16464,
+          "target_exact_pairs": 14,
+          "previous_subgroup_exact_pairs": 14,
+          "raw_energy": 111456,
+          "raw_paf_at_one": -10,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 74,
+          "raw_peak_error": 48,
+          "seed": 4226,
+          "stage": "raw"
+        },
+        "extended": {
+          "negative_masks": [
+            "0x11f4b4bb26cd88485e431c68aefdfb5165169bb7d6af06f05645dcac381c13aeba8ebde3fcf03ab63bbb74f067ebda3c7e665b740dc6ab14b2abe05f6ca25642babe9a91c5d890f8a050f0a7beb44f1e160d3e73703333d0518dd0496f9779834f5352950d9bfa0252f6fbe5315920c400d24b9b34cf0dead4db620d18f0f6c428442c9b1130c4f55bbccf71c3e04ab44419d2360450",
+            "0x87334f65f62b94b693714797294b6479396618ffdc393d3c0e8e21658120dfb3c44038c2b1f27ac66ff451c0f34c9ef5406aee6dc0b5c124c1cabcf773fa6b566e4f6d774963d53f71940e58813b39d52b1264219d05bc4deb70923c6d432aee4a6b42ff855f553f9ee7602856e09e35aaa0f639c0d3958450257278d082eb174892f93c043dbd84f96fd823f43e5a9505f42883e42"
+          ],
+          "quotient_energy": 560928,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -6,
+          "quotient_exact_nonzero_pairs": 25,
+          "focus_score": 0,
+          "target_energy": 0,
+          "target_exact_pairs": 67,
+          "previous_subgroup_exact_pairs": 58,
+          "raw_energy": 440928,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 82,
+          "raw_peak_error": 80,
+          "seed": 4227,
+          "stage": "phases"
+        }
+      }
+    },
+    "4": {
+      "shard": 4,
+      "trials": [
+        {
+          "seed": 4228,
+          "minimum_quotient_energy": 90480,
+          "minimum_raw_energy": 117408,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4229,
+          "minimum_quotient_energy": 71040,
+          "minimum_raw_energy": 117408,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4230,
+          "minimum_quotient_energy": 89232,
+          "minimum_raw_energy": 171744,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4231,
+          "minimum_quotient_energy": 60192,
+          "minimum_raw_energy": 117408,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4232,
+          "minimum_quotient_energy": 59568,
+          "minimum_raw_energy": 111552,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4233,
+          "minimum_quotient_energy": 59568,
+          "minimum_raw_energy": 111552,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4234,
+          "minimum_quotient_energy": 80448,
+          "minimum_raw_energy": 163200,
+          "minimum_target_energy": 0
+        }
+      ],
+      "witnesses": {
+        "quotient": {
+          "negative_masks": [
+            "0x19bc96a3a3a94869c04b30198b3ff91e0917e8f59d270aa65eb15f78746c0b078e58b579d4b93fc4703636ffbda39badfa434f44fb86ed1736e0f93e5aca5243f4aecad50ec8c1fca1e4e0137b02362b415f36d9ff3a79c8c1ad15d3e10e600188396868218a9b64133aa673297e15c4cbc45315d40a48ed589f1aa159de78c828bc4c9bdb36e47f7f9c8eb8e56846929532c8e70582",
+            "0x731fc377c58b3096193b0b5e1e4b662d3e27a834f8099e9e2c7650f48aa8eeebb502ecce0e7a5a784c055542255b29b1bf204aee9ad9cf67297b2cf3436bde74eb07eb7e0176ad3ff29a07582077b844aabe26848b4135ef6608b77b65396290184a02ff9cc3770ede8b2993c7cad6f4e2ad4430c0c9d58a205f72f8ca2baab42612762c0154bb8efceb162983c814878ef5d9b7a12"
+          ],
+          "quotient_energy": 59568,
+          "quotient_zero_error": -24,
+          "quotient_paf_at_one": -50,
+          "quotient_exact_nonzero_pairs": 19,
+          "focus_score": 255,
+          "target_energy": 11424,
+          "target_exact_pairs": 12,
+          "previous_subgroup_exact_pairs": 12,
+          "raw_energy": 111552,
+          "raw_paf_at_one": -10,
+          "raw_paf_at_399": -14,
+          "raw_exact_pairs": 105,
+          "raw_peak_error": 40,
+          "seed": 4232,
+          "stage": "raw"
+        },
+        "full": {
+          "negative_masks": [
+            "0x19bc96a3a3a94869c04b30198b3ff91e0917e8f59d270aa65eb15f78746c0b078e58b579d4b93fc4703636ffbda39badfa434f44fb86ed1736e0f93e5aca5243f4aecad50ec8c1fca1e4e0137b02362b415f36d9ff3a79c8c1ad15d3e10e600188396868218a9b64133aa673297e15c4cbc45315d40a48ed589f1aa159de78c828bc4c9bdb36e47f7f9c8eb8e56846929532c8e70582",
+            "0x731fc377c58b3096193b0b5e1e4b662d3e27a834f8099e9e2c7650f48aa8eeebb502ecce0e7a5a784c055542255b29b1bf204aee9ad9cf67297b2cf3436bde74eb07eb7e0176ad3ff29a07582077b844aabe26848b4135ef6608b77b65396290184a02ff9cc3770ede8b2993c7cad6f4e2ad4430c0c9d58a205f72f8ca2baab42612762c0154bb8efceb162983c814878ef5d9b7a12"
+          ],
+          "quotient_energy": 59568,
+          "quotient_zero_error": -24,
+          "quotient_paf_at_one": -50,
+          "quotient_exact_nonzero_pairs": 19,
+          "focus_score": 255,
+          "target_energy": 11424,
+          "target_exact_pairs": 12,
+          "previous_subgroup_exact_pairs": 12,
+          "raw_energy": 111552,
+          "raw_paf_at_one": -10,
+          "raw_paf_at_399": -14,
+          "raw_exact_pairs": 105,
+          "raw_peak_error": 40,
+          "seed": 4232,
+          "stage": "raw"
+        },
+        "balanced": {
+          "negative_masks": [
+            "0x13f4168b3299886dda5331782b287f1a6d1ec277c52c4a8040447c27346c0b069a6fb8b5b4f5398e23a972a7846a9aacb4425b606b602dd1d3e0c0473ce641c374aeda07bfdab04ef954fd27ff807676240fd1317a3633d445adf1e72f9664014d12e25d24bb9b0e162e7961337d94940dd7571714cacdeadf9a4be558f67ee82a56aebf5830c5b77bc7ee10c1f84282959d94f625d0",
+            "0x5732c74ee73214a69573150f394b346d3ce62ca5c03dbd9e1c0e085d90249f339240bc42b52af8e8cb9dd720f74e8fa52068c2ef90bbc51771ba2ff2ff2a4e50ee6efc7749e3f512b1944e48034b1dc52992e2249dc4fdefe438da4c2d4062f24061b2fe9c5dd58fd6ef008160eaaff5e2adb622c4d145ec704ef0f04aa3c8976cb3f67c1035be0669c9dc49f5fac717049479d5842"
+          ],
+          "quotient_energy": 247680,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": 18,
+          "quotient_exact_nonzero_pairs": 8,
+          "focus_score": 218,
+          "target_energy": 17664,
+          "target_exact_pairs": 7,
+          "previous_subgroup_exact_pairs": 7,
+          "raw_energy": 171744,
+          "raw_paf_at_one": 6,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 70,
+          "raw_peak_error": 44,
+          "seed": 4230,
+          "stage": "raw"
+        },
+        "extended": {
+          "negative_masks": [
+            "0xbb696c2e2cf10cc9c175dd92ab01b294996e274d4ec4ac24080ffa1d54b018e980df81d7dedbed748bab3d999408c98a122e1807f622b01f671989748e25ab359aa8af3edd3b84ea844bc2f3bb416527445df752b1634dec518b4297945cb03e77af90813b3db0c13af23c7b108508e4a57db5da43e2cd8c8d6a3d9ede775c8a87d3e0e59a073e77be0ce9b87c1cf90849aa077cdfc",
+            "0x71fec665952b78b4d97b1775386e7a4a7e1819a3df02d59e58ae4b7c996c1fb95108a9e7b37be0e96d4cd5a8eb0e56b951690aeb823307a605ca2fd3222bce1c22c2fae72237e73bfa182dc945883f4d1a8f60a6ddc6f17fd70cab7a2408eaeb0ceb1258505d716f0fc1010108e8b6b440e9d68662f311c6308cf225d0a240db689732f6bc67740bee4bb9dfa4f8d786bc2ca3858c2"
+          ],
+          "quotient_energy": 254880,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -6,
+          "quotient_exact_nonzero_pairs": 28,
+          "focus_score": 0,
+          "target_energy": 0,
+          "target_exact_pairs": 67,
+          "previous_subgroup_exact_pairs": 58,
+          "raw_energy": 317760,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 115,
+          "raw_peak_error": 72,
+          "seed": 4233,
+          "stage": "phases"
+        }
+      }
+    },
+    "5": {
+      "shard": 5,
+      "trials": [
+        {
+          "seed": 4235,
+          "minimum_quotient_energy": 68544,
+          "minimum_raw_energy": 108768,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4236,
+          "minimum_quotient_energy": 68544,
+          "minimum_raw_energy": 108768,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4237,
+          "minimum_quotient_energy": 55440,
+          "minimum_raw_energy": 144192,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4238,
+          "minimum_quotient_energy": 55440,
+          "minimum_raw_energy": 108768,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4239,
+          "minimum_quotient_energy": 60528,
+          "minimum_raw_energy": 124800,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4240,
+          "minimum_quotient_energy": 54336,
+          "minimum_raw_energy": 108768,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4241,
+          "minimum_quotient_energy": 76752,
+          "minimum_raw_energy": 148224,
+          "minimum_target_energy": 0
+        }
+      ],
+      "witnesses": {
+        "quotient": {
+          "negative_masks": [
+            "0x13b8348315fd994cd8533c219bedfd534d46da3f0c2f0ab056155dbf28680b279f0dbbedb4f8a996732f62e02463bfacff6a43ecae76ad90b0aafc4feea24740b4aefa334fcba1d8b854984fbb82e63e121ff473787773d06d8cf1612f0765144c1142ad259a9b02922abae5315a24c880df5f1334ca8debd4d1d345587aeec8aae44e9b1238c05d7bdceb70e3684bc4558250f40000",
+            "0x7b3ce61b723709e98691576285968ebb6a298a7ff1b3d9d5eae01ffc92c9ea15340ac8ac132786369c47590e75612bcc421eadf81b4c3a711ea6ef1531e4e5cef4b78fe484fbd1b90d42f54d1e39d4c0b9260348ccdbdff4738b2686d606befd873723d1d5d553f1eef400148ee9e17f2ec5531e447c1e48047527c95b26012240770fc2435b4ae798fde23944e1617a4340f9515a"
+          ],
+          "quotient_energy": 54336,
+          "quotient_zero_error": -48,
+          "quotient_paf_at_one": -2,
+          "quotient_exact_nonzero_pairs": 22,
+          "focus_score": 81,
+          "target_energy": 79344,
+          "target_exact_pairs": 3,
+          "previous_subgroup_exact_pairs": 3,
+          "raw_energy": 925824,
+          "raw_paf_at_one": 6,
+          "raw_paf_at_399": -26,
+          "raw_exact_pairs": 18,
+          "raw_peak_error": 120,
+          "seed": 4240,
+          "stage": "search"
+        },
+        "full": {
+          "negative_masks": [
+            "0x1f134a37ad9896150437db82be4dfb5591093ffc22f0b024614dda638781b068a8cb9f1b8f1a8d732ab76e09c22b23ce56a6f785f56291126f1b555fcce4e57f49eca7f4dc9b85cf138e165fb005c4f204f35747a733bda65ad81643b87ac955c7860c7213bdb46922bf2f7b15c84ce8dd4954a340a41e9d497c38d78f4f9882a34ae9fc93fe875529bee98c5684a96841010374ce0",
+            "0xe77ece6bf5ab80e450f3670d395b65f9741a0ce37d1d35bf25c6307dda833fb99d146d060a7f6448794dc5e1f14b36a573620fa7dee987de28c3265037394f56bb5b6b667055253bb8396144a94dba483ea66ca41dc6f947a52ccd3ce9d062fa0a7bf01854d949f79c4faabb53e0e6dcb0a05008edd734f3a01ef720b8a32a062a83762485259602cbca785112cf5c07b45bb882046"
+          ],
+          "quotient_energy": 68544,
+          "quotient_zero_error": 48,
+          "quotient_paf_at_one": -38,
+          "quotient_exact_nonzero_pairs": 13,
+          "focus_score": 152,
+          "target_energy": 14976,
+          "target_exact_pairs": 7,
+          "previous_subgroup_exact_pairs": 7,
+          "raw_energy": 108768,
+          "raw_paf_at_one": -22,
+          "raw_paf_at_399": 22,
+          "raw_exact_pairs": 70,
+          "raw_peak_error": 60,
+          "seed": 4235,
+          "stage": "raw"
+        },
+        "balanced": {
+          "negative_masks": [
+            "0xbb4359f57a9d9614a431d630871db736d16f77b91262ea25e115f6578d82326ba0e3dcb24f57e9e3bbd52e125e85fa8a5267be46fe62b3530b092ef38e04c50f0869e331d49bd6ea830c0cdbf30165e361d7d516a6f33d144a9d06f6f45a0874e3bf0dd0dbb1b02933cbbf7b259c056ce865f7194890ddd159143a15a57f6cc99762e9f1034e0776b88e718c3a04326d802c2b40d48",
+            "0x5764b47f71280aed1710917684a7faf7da62c7ddc1d3d9c2a0c006dce20bdab92486cc1b67bf250fde7d584c14c1eb54129c66fb8f7c37738e23de6cfbae656caeb68ece962357370dc6a0cc36b2b5d2baae224b904384cf91496796c4b62ab58cb52fddc4fd5b398adc20054eafeb4f6a4d820e8e7058f801f72685aa368166193782c1016bd83cfcbccf1b47c4f81dcac0cc1c12"
+          ],
+          "quotient_energy": 215616,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": 14,
+          "quotient_exact_nonzero_pairs": 10,
+          "focus_score": 475,
+          "target_energy": 24240,
+          "target_exact_pairs": 7,
+          "previous_subgroup_exact_pairs": 7,
+          "raw_energy": 158400,
+          "raw_paf_at_one": -6,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 52,
+          "raw_peak_error": 72,
+          "seed": 4238,
+          "stage": "raw"
+        },
+        "extended": {
+          "negative_masks": [
+            "0x19fc96b31789cfc15c5a50792a79b9764d22f3fa6bbf4ad05c58dff831900baea60cbdbdf9f8388e7a2cb6f00de357bc7d62c364d9c0293d70bbd88f3cc1184bb59e8aa5956b286ca140acefb97a1c1e160d3a9672633dc445ac63666bdfe0874d1356ac1d9ada2f93b461e1489cb0448ed15d47b4760dbb51b250ad8814f408a8744c9b6af2c12d53b4efd3a3e14a24de33e0b60030",
+            "0x16133c75ef6ab90ee1a7177ef29aa3c3bb13a887dd43f3c9a1c0651dd982c9f2be1101a027b32f44a5d6cf581977e14b5a069aeefc29bc727a1652ff4032a6ad6ee1c79ce4947fc12f8fc4f50514b0cc57f162490dbc77ddfe518d32e2540a2bb1ce3923e9c59718f90e1b01554e6be75aa249795c8d3d7c42266663018b2891746835354101fbb025149fec3bc785b978594ac91c5a"
+          ],
+          "quotient_energy": 560928,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -6,
+          "quotient_exact_nonzero_pairs": 25,
+          "focus_score": 0,
+          "target_energy": 0,
+          "target_exact_pairs": 67,
+          "previous_subgroup_exact_pairs": 58,
+          "raw_energy": 425664,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 94,
+          "raw_peak_error": 88,
+          "seed": 4236,
+          "stage": "phases"
+        }
+      }
+    },
+    "6": {
+      "shard": 6,
+      "trials": [
+        {
+          "seed": 4242,
+          "minimum_quotient_energy": 94224,
+          "minimum_raw_energy": 153984,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4243,
+          "minimum_quotient_energy": 94224,
+          "minimum_raw_energy": 153984,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4244,
+          "minimum_quotient_energy": 79920,
+          "minimum_raw_energy": 148128,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4245,
+          "minimum_quotient_energy": 79920,
+          "minimum_raw_energy": 148128,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4246,
+          "minimum_quotient_energy": 76656,
+          "minimum_raw_energy": 156864,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4247,
+          "minimum_quotient_energy": 76656,
+          "minimum_raw_energy": 148128,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4248,
+          "minimum_quotient_energy": 85152,
+          "minimum_raw_energy": 159648,
+          "minimum_target_energy": 0
+        }
+      ],
+      "witnesses": {
+        "quotient": {
+          "negative_masks": [
+            "0x18bc34b3078dd848c843343b8b6f3dd34d161bbf85a736f45e55dffb387809aebe4cbd6bb9e838c6732d36e636031f3cff6fcae44fd6a994202bfc0fa5a14541b5acc23b0dedb4dcb854c90fbb40571a064f1452f76711d9458ff1a3a91761955c1106842d5bd20312e2abe93178248488470323f4df89eb54d74b2d4850fce4b838ceca723840755f9dcd7021e96f845417f3f52442",
+            "0x10133c771c52b92b49c716f7f29c8667f7c2a38b7fa2e3c9c4e8e006c919a9fb23040bc82b47e78f3798d4780f14906f07869ee6dd03d452601462ff3b13ace5ee77b6a7f4992e53b32b44658606b99c5ea9262859f87fdfde67c936d65486ace586a5679f1cdd5bf9cf9d10305e89e95e088d60148d111cc304f723af2837237689332ac14759d84488fb821bc7a553704f4ab9f012"
+          ],
+          "quotient_energy": 76656,
+          "quotient_zero_error": -24,
+          "quotient_paf_at_one": -22,
+          "quotient_exact_nonzero_pairs": 14,
+          "focus_score": 84,
+          "target_energy": 135312,
+          "target_exact_pairs": 13,
+          "previous_subgroup_exact_pairs": 13,
+          "raw_energy": 929088,
+          "raw_paf_at_one": 58,
+          "raw_paf_at_399": -14,
+          "raw_exact_pairs": 34,
+          "raw_peak_error": 168,
+          "seed": 4246,
+          "stage": "search"
+        },
+        "full": {
+          "negative_masks": [
+            "0x1bf426d910bb99a08a13bc620f787dbbe106fa771a3762f146277f320d4c03a7be58bbd590f9ba967312f894ed680aa8f5c253e5ff656b0994e8d9be6ae86ec2f89eaaf9af53e1cc3044bd52be865c3f1c1d525a622aa6d14508a0786bc6c401131a626d08829a2e9725ef6d39685a0c2a4f4f8594ee0dde5899f2017043f5832af4844b09b074bdf39dbbbceff843925728ddf61098",
+            "0xe776c253e5cb941458f1d65e2a49757d7c8c2cf73c09119a1c8e687d98ecb6f9b20a26829e73f94a7b2cd580e5692af86b682e63c2bbc73639ca3ed577ba6a46ddc278762043a533b01806402142be14aa1e68a19fc6f4ec6764977a0d9072ee08eb709955dd713bcedf8ad255ecb61540e8542bcd9357e724c6727e58b218362c93f6400526f507e68ff8f1875adc179c3ef89504a"
+          ],
+          "quotient_energy": 187152,
+          "quotient_zero_error": 120,
+          "quotient_paf_at_one": 10,
+          "quotient_exact_nonzero_pairs": 13,
+          "focus_score": 444,
+          "target_energy": 20208,
+          "target_exact_pairs": 5,
+          "previous_subgroup_exact_pairs": 5,
+          "raw_energy": 148128,
+          "raw_paf_at_one": 6,
+          "raw_paf_at_399": 58,
+          "raw_exact_pairs": 47,
+          "raw_peak_error": 60,
+          "seed": 4244,
+          "stage": "raw"
+        },
+        "balanced": {
+          "negative_masks": [
+            "0x19bc24da95ab99614e5b1ce90838d9574d1ee339882642920464feb0287c0b06bc2ebbedbcf1b9df332e72e39baa9b8ca4424bc4ff426d1031f8c08f78a346cafc8aea033dcabd68a040e546bb16771e165f34b378522bd845add5e57b5e68874c727c7d2d9b5b2b937ead67785984cc0ece4f79b48a09f8d1bebb8158767ce01804ce991232d47f7b29ea91e3e04b029437d0b725c0",
+            "0x11777c743e5ab887c93f157bf288925ff392aac6d8c1bdc9c2a0e0945d060dfb3c0102ae29d7370406d3fd1a0c76c26f46169ce6dd0fde534e1042ef7673a6ed6fc46ec6e0162ac3271d42a58405b2d4d68926a059987f57de7589ad82c80628a306a427b844d553798c7529570e8b715e4a9d432e3d3d7cfe2b6f4785a83cbd62cb2767c0935fc00d90bfa6bee58da9745ee3c87612"
+          ],
+          "quotient_energy": 200352,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -10,
+          "quotient_exact_nonzero_pairs": 7,
+          "focus_score": 551,
+          "target_energy": 31920,
+          "target_exact_pairs": 18,
+          "previous_subgroup_exact_pairs": 12,
+          "raw_energy": 159648,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 93,
+          "raw_peak_error": 84,
+          "seed": 4248,
+          "stage": "raw"
+        },
+        "extended": {
+          "negative_masks": [
+            "0x19f4d6b187bdab415c3b7478ab381b794d308abef02c4232464dfe39150c0b26be08bc055dea3a8678b5b6d9adc1b72cab16c36c5dd6a994b8facc8c34a259cbbf8c9ab7a7d389ec2950bc6bbba45432261d9fdf73f775ca71ac67506ddced15817248841daad208d2366363611e308408d7c15f941b8dd87cff6305c14876b0aa5c2e9a4070c4e753e08ff3a1e94684459dfa3765b0",
+            "0xa753c645e7a3182ed730ddb76809653d79762cad8c1b5ddc2e0a61e58060bfa1c54829e3bd7375d06db653e5c35d8ef4c81aca6dc2d5e135c9803ef647ba6fd468cf6c4f69e7f43379540f58000b2f55bd96202d9d853c7df5549e9b6d0062c8706a42df4cdd757f98e742dc43e49e34a6acfe28c2e305c552b4e0785092eb776092547c8805f801cb0bd833e478528755fc1c87c5a"
+          ],
+          "quotient_energy": 560928,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -6,
+          "quotient_exact_nonzero_pairs": 25,
+          "focus_score": 0,
+          "target_energy": 0,
+          "target_exact_pairs": 67,
+          "previous_subgroup_exact_pairs": 58,
+          "raw_energy": 431616,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 94,
+          "raw_peak_error": 68,
+          "seed": 4247,
+          "stage": "phases"
+        }
+      }
+    },
+    "7": {
+      "shard": 7,
+      "trials": [
+        {
+          "seed": 4249,
+          "minimum_quotient_energy": 80352,
+          "minimum_raw_energy": 141984,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4250,
+          "minimum_quotient_energy": 76320,
+          "minimum_raw_energy": 141984,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4251,
+          "minimum_quotient_energy": 74592,
+          "minimum_raw_energy": 100704,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4252,
+          "minimum_quotient_energy": 74592,
+          "minimum_raw_energy": 100704,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4253,
+          "minimum_quotient_energy": 94608,
+          "minimum_raw_energy": 125568,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4254,
+          "minimum_quotient_energy": 74592,
+          "minimum_raw_energy": 100704,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4255,
+          "minimum_quotient_energy": 78384,
+          "minimum_raw_energy": 135072,
+          "minimum_target_energy": 0
+        }
+      ],
+      "witnesses": {
+        "quotient": {
+          "negative_masks": [
+            "0x13f464a232859865d41b74611959bd1945949bbfb22e060256bc7dab1c7d1b22d8899d4f35643b863a31349b0f415e28bc1ec3f17ff76d9412a0d485bda045c2b49e9a972f42b0ceb974a88efa20ff2a600f7fd56247a1eacdaa71e16dcc69d4807bc2c416ab1a021665e672215c0440a9d7c71b344bcddb7cdd4bc5edc6f3e488750e9a107ce4577bacafbb89796ba6c5069677f560",
+            "0x8163c547332bd8961072d717b01840f93c220077c6194c992e8838edd261bc2b99402ca2f3737dc2f5dd9181a75111b4d008af6fd0f5c52529593cf303da46d6fe0b6a796157b477739c275902eb1e5d0fb2e016b805fc6de71196406500e28a5cfa527d8cfd593f96c9c1c47decf735e2acd59bebc3f584f29770b858b32c5667b176d50c77fd9631abc9e1a4f9dc9314be1a85858"
+          ],
+          "quotient_energy": 74592,
+          "quotient_zero_error": 48,
+          "quotient_paf_at_one": -22,
+          "quotient_exact_nonzero_pairs": 27,
+          "focus_score": 98,
+          "target_energy": 8448,
+          "target_exact_pairs": 15,
+          "previous_subgroup_exact_pairs": 12,
+          "raw_energy": 100704,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 22,
+          "raw_exact_pairs": 87,
+          "raw_peak_error": 44,
+          "seed": 4251,
+          "stage": "raw"
+        },
+        "full": {
+          "negative_masks": [
+            "0x13f464a232859865d41b74611959bd1945949bbfb22e060256bc7dab1c7d1b22d8899d4f35643b863a31349b0f415e28bc1ec3f17ff76d9412a0d485bda045c2b49e9a972f42b0ceb974a88efa20ff2a600f7fd56247a1eacdaa71e16dcc69d4807bc2c416ab1a021665e672215c0440a9d7c71b344bcddb7cdd4bc5edc6f3e488750e9a107ce4577bacafbb89796ba6c5069677f560",
+            "0x8163c547332bd8961072d717b01840f93c220077c6194c992e8838edd261bc2b99402ca2f3737dc2f5dd9181a75111b4d008af6fd0f5c52529593cf303da46d6fe0b6a796157b477739c275902eb1e5d0fb2e016b805fc6de71196406500e28a5cfa527d8cfd593f96c9c1c47decf735e2acd59bebc3f584f29770b858b32c5667b176d50c77fd9631abc9e1a4f9dc9314be1a85858"
+          ],
+          "quotient_energy": 74592,
+          "quotient_zero_error": 48,
+          "quotient_paf_at_one": -22,
+          "quotient_exact_nonzero_pairs": 27,
+          "focus_score": 98,
+          "target_energy": 8448,
+          "target_exact_pairs": 15,
+          "previous_subgroup_exact_pairs": 12,
+          "raw_energy": 100704,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 22,
+          "raw_exact_pairs": 87,
+          "raw_peak_error": 44,
+          "seed": 4251,
+          "stage": "raw"
+        },
+        "balanced": {
+          "negative_masks": [
+            "0xbfc368395899048e8421f602a31dd536516e277cfe746e850b5dfa628ce0bae9a48bd732cf939d6602651a5b1e2db8c612e5ba08fe06d3514e29967e8eb464255bb9a770f59a26db126eea5fe126e7bd64d70717b3a33c0c61d75636d85080b08537c2d448adb0d1fbdf7f5217c306483234f1db6156dedd09851a1387477e4687c4e0f1a3c46bf5b98ab50c7f44fa0d90cb6f62580",
+            "0x377e341e40b30a69df39f7d7b0b254b7e2218a35c1bbdb82a8c00cd9b289deb90466ec2b3737950ed8d5784f37c06b5f169ca6598fde76700c82ef2533e42d4fa4b6b7c48fb6472701c2c5c426b1d4d6a32ec20bd85fd5ded3cb2ed64c2aaca7eea505ddc5d553f9eeb726540e9de14f2a5daf0e1d797c7221773785483689741937a5c0426b48471cbc8a1bcfa5682842e2081056"
+          ],
+          "quotient_energy": 219648,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": 14,
+          "quotient_exact_nonzero_pairs": 5,
+          "focus_score": 109,
+          "target_energy": 7632,
+          "target_exact_pairs": 12,
+          "previous_subgroup_exact_pairs": 12,
+          "raw_energy": 165024,
+          "raw_paf_at_one": -10,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 54,
+          "raw_peak_error": 52,
+          "seed": 4254,
+          "stage": "raw"
+        },
+        "extended": {
+          "negative_masks": [
+            "0x13f404a015a98949d8431c788e7d5bc14d12dabfa63c42b0565ddcbc208c03069c4cb8711cf939d673af76f57de3d1a8ae2e4b657d76adb830b8ec4efca24341f8beca9b07c8b9fc2014c4c0bb067e32365d575b6b53e3d845a9d071699528155c5b628d25bbdb0e923ffbc5317a0084a8d64ddb34cb8deb449f7385705efde0285c2e9b5868e47f7b88eab8e3c04ea48f15da752540",
+            "0x19373e569f62b102ed7fb979f3d8b652f342720b7bc097c9c1ea469e58064dda3d00068e1746b75c05d449681b15c1cf1b069ca6f8cbdc167814c2ce0433a46d07d02f36539f3b43b72d40e10401bbf456f9a4c951d0534edfd50d33ea5c2a2ca0c68c2bd9c59651f9e63f34464e5bf95a2acd5fac9f3958512ec727890ba4b5640a2786c0455fd0afe4bc87bbcf8d6931dfeac9724a"
+          ],
+          "quotient_energy": 560928,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -6,
+          "quotient_exact_nonzero_pairs": 25,
+          "focus_score": 0,
+          "target_energy": 0,
+          "target_exact_pairs": 67,
+          "previous_subgroup_exact_pairs": 58,
+          "raw_energy": 380256,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 97,
+          "raw_peak_error": 68,
+          "seed": 4251,
+          "stage": "phases"
+        }
+      }
+    },
+    "8": {
+      "shard": 8,
+      "trials": [
+        {
+          "seed": 4256,
+          "minimum_quotient_energy": 73248,
+          "minimum_raw_energy": 129120,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4257,
+          "minimum_quotient_energy": 73248,
+          "minimum_raw_energy": 129120,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4258,
+          "minimum_quotient_energy": 80352,
+          "minimum_raw_energy": 114336,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4259,
+          "minimum_quotient_energy": 73248,
+          "minimum_raw_energy": 113472,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4260,
+          "minimum_quotient_energy": 100272,
+          "minimum_raw_energy": 145248,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4261,
+          "minimum_quotient_energy": 73248,
+          "minimum_raw_energy": 107136,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4262,
+          "minimum_quotient_energy": 84816,
+          "minimum_raw_energy": 149568,
+          "minimum_target_energy": 0
+        }
+      ],
+      "witnesses": {
+        "quotient": {
+          "negative_masks": [
+            "0x179835a707b99868c44b1c610e7dab594d169eb5862702a2763559b5bc6d1b269e8cbde994f828d6f3af16f07fe2db2cf46e43d41ff669d4b4a2ffeee9ae4700b4beced30d48b1fce8149081bb824f0f065776f13a3f71c0458e51654b4f24114c3b43c4279b9902167c9fe7215aa4448486439134cb8dffde9913014878f8e02b747ebb1238e47d5bbecff9a5f06ba640065674a440",
+            "0x273c571f5eb98ae1ff306763c5b4e6fb42330a6fc0bbc9d1ecc016d892c9db3f0406ec2bd7348c274c53790e36c16f15069ee2d9895876e814a2e72733ac2467f4a7bfd48f3a53972552e5c5925b84d6a1a2c019f85bddd6d78927825cafaef5c7b525d951d5d3d9eebf11140e89e15f2a1d4a1ebd7374434453278908b099668817a380c65b0a4eccfc823bcfb56938c3b2c91152"
+          ],
+          "quotient_energy": 73248,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": 2,
+          "quotient_exact_nonzero_pairs": 11,
+          "focus_score": 122,
+          "target_energy": 73728,
+          "target_exact_pairs": 5,
+          "previous_subgroup_exact_pairs": 5,
+          "raw_energy": 741120,
+          "raw_paf_at_one": 18,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 23,
+          "raw_peak_error": 104,
+          "seed": 4256,
+          "stage": "search"
+        },
+        "full": {
+          "negative_masks": [
+            "0x1abca5cf87c3d868e61b3c6087b87bfb4d0a4777167542c40aa47f6cfc5c0ba61a6ab085f64c3ed441b712c4574951bdfb6f4de42f77e99b71b3dfefede85fca34be86396fd3984aa0546e86bb024d27c24d54f1f82b01ccc31f75406b4fc091581ac9dc55999b481a6e3ee46179218440a741d3868faddcdcbd520dd87270c06d647c189228f5fc7334cd5b494a63a65308d2e71040",
+            "0x72347737733a817d67251173b09657db62aacb7a49d6c1c148a01ef98269c7bf16a6da2a6b676466dd97781bd5a11b4c000aee9d881cf76a150aff37f385a56fd83782e21c7de1b639c6358106a9f4b6f5a32001f87d5c7e338b24c6d41e2caddc2736d965f41f7950f138144b8961563a0d6a1e7cb45ed684770f8bb8369476c8376649c77b9814f8aeab33caa55919cb618d0052"
+          ],
+          "quotient_energy": 80352,
+          "quotient_zero_error": 48,
+          "quotient_paf_at_one": 2,
+          "quotient_exact_nonzero_pairs": 14,
+          "focus_score": 234,
+          "target_energy": 19584,
+          "target_exact_pairs": 8,
+          "previous_subgroup_exact_pairs": 8,
+          "raw_energy": 107136,
+          "raw_paf_at_one": 18,
+          "raw_paf_at_399": 22,
+          "raw_exact_pairs": 74,
+          "raw_peak_error": 48,
+          "seed": 4261,
+          "stage": "raw"
+        },
+        "balanced": {
+          "negative_masks": [
+            "0x1fc3c93b7c9c8684c62dc7102f17b5361129a7e84360aaa5a53ddf038ec2b26be18bd799cf479d620a470e8b162170cb1467b652fd42d7d3ee0943e28e1445935aada77cf49f6cba128c819be12263a064f105d716bb3d0454db5716d96081fc973dcc72999da051225e377f11c0424a0c7553934130ded52b951817bd6fff8b86c6e3b5b35c42cfbacef31e5e44e96ff07eab424f0",
+            "0x3f77c663e62a40949373573f384977f9bcd68865d00b90fc120e013dc824963953006ec29373f2c05d2575802764e8f2317ac24cdabee767b06a2bd7631eeb544a0efa67497e3d7bda1c1bd9118b3d617b16600bb8d5bdf4e65892b82c09a2ba2e6b5adb1c4f551396eed3a978e29f54a0adf0b0c891d3c7b0447a78dcc3c19e0dbb767c1165be00f89bd72baed84fcf84ac3895002"
+          ],
+          "quotient_energy": 214080,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": 26,
+          "quotient_exact_nonzero_pairs": 5,
+          "focus_score": 248,
+          "target_energy": 22176,
+          "target_exact_pairs": 12,
+          "previous_subgroup_exact_pairs": 12,
+          "raw_energy": 164352,
+          "raw_paf_at_one": 30,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 57,
+          "raw_peak_error": 48,
+          "seed": 4256,
+          "stage": "raw"
+        },
+        "extended": {
+          "negative_masks": [
+            "0x13fc26a114dd88484c43187988bd7b7a6d16c3bba4f64eb0567dfcb42c1c0b2e9e0eb1ebbce439d433ab76e1b942589cb64653657966ef18b0ebe0df4ca04ec9b4aa8a1365c8b05a201094843f90761e064dd45b7862a3d0451cd1796bf68d874e5bd219159b5b2a12aeff6578597084a8c6571f35cb2dfb5cfb438dd05774ec0a446e1a5760e4777becebdbe1c04a30d6b7daa425c8",
+            "0x1d133c341e41b90059e71c7cf2988657db126acbdb88d3cfa160661e5822cdeabc5406903377a71c86d84f7c0f35e0ae0e07aceefc89dc557c14c2ef04f3a4f567d4efd6761c7ac73721c5f50113bbb416ab2240dbd85bde7fc58927e254222fa4a6b429a9c5975ffdec173e946ece6d5e1acd428c1f115c5306d727010b2c916418a7e1c8064bb82e01bda4bfd785297159678d564a"
+          ],
+          "quotient_energy": 560928,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -6,
+          "quotient_exact_nonzero_pairs": 25,
+          "focus_score": 0,
+          "target_energy": 0,
+          "target_exact_pairs": 67,
+          "previous_subgroup_exact_pairs": 58,
+          "raw_energy": 425568,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 94,
+          "raw_peak_error": 72,
+          "seed": 4259,
+          "stage": "phases"
+        }
+      }
+    },
+    "9": {
+      "shard": 9,
+      "trials": [
+        {
+          "seed": 4263,
+          "minimum_quotient_energy": 77232,
+          "minimum_raw_energy": 138720,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4264,
+          "minimum_quotient_energy": 77232,
+          "minimum_raw_energy": 138720,
+          "minimum_target_energy": 288
+        },
+        {
+          "seed": 4265,
+          "minimum_quotient_energy": 77280,
+          "minimum_raw_energy": 110880,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4266,
+          "minimum_quotient_energy": 77232,
+          "minimum_raw_energy": 107424,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4267,
+          "minimum_quotient_energy": 80400,
+          "minimum_raw_energy": 137472,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4268,
+          "minimum_quotient_energy": 77232,
+          "minimum_raw_energy": 107424,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4269,
+          "minimum_quotient_energy": 85824,
+          "minimum_raw_energy": 151488,
+          "minimum_target_energy": 0
+        }
+      ],
+      "witnesses": {
+        "quotient": {
+          "negative_masks": [
+            "0x11bd3cc33d9f9928c05b1ce98a7d58730d16d0378ea703b25655593028680f2f9e0cb96d36b8b057730e72f13de2dbace72e4be49f568990b2bafc8feaa24f4ab4bedab20ddbb87ca004f0c5bb814c0a064e16f37b33339a45cdd1605d5da5114c3342ed259b998292beabe77158248c80c6c75114cb8ffbd0f7c38058f4fac02efc469b1238d0f71398ebd0e1e257a6f41bd2f74740",
+            "0x733c63ba72b802f9473d33f790b617f7c2238968caf3c983e8c006d91259fb8b9447c82d7e25dc678a9d70df34946f17829fd5dd8dcc56725608ff6713a6652ec433a1d08d7b43b025c43d8406b1dc5cfca22159f8dd17de57cd24c6d406ac6594cd24d5ddd57b7dcafd341c5aabe17e38cdd31c8c395cd38136168ca83683e28d3525c1465b18454cfdc61bdda55170e344c850d6"
+          ],
+          "quotient_energy": 77232,
+          "quotient_zero_error": 120,
+          "quotient_paf_at_one": -6,
+          "quotient_exact_nonzero_pairs": 17,
+          "focus_score": 194,
+          "target_energy": 68496,
+          "target_exact_pairs": 6,
+          "previous_subgroup_exact_pairs": 3,
+          "raw_energy": 823200,
+          "raw_paf_at_one": 14,
+          "raw_paf_at_399": 58,
+          "raw_exact_pairs": 30,
+          "raw_peak_error": 136,
+          "seed": 4263,
+          "stage": "search"
+        },
+        "full": {
+          "negative_masks": [
+            "0xbf0b6f092ab08a1780350111030ba146d02a3b710ff4ea244655aa1587a0b2eb80c3b7b75f9a6c65bdb37c13d62323c7426d96d1b7b4b1820a38cbf58a15643fd86ba138fc0b54c2c70ec077f34c63a045e7c55720ff9906d3df56d4dd5409347387ec04d19182f17a2effb3f5ab4dc67fb1535acfb6cfe5490e388004c76ec1856265b59b6f2764b9cefd889f14a9ec72777363170",
+            "0xe777c307e70b206e5173073eb94b65297e2898a78e0b3e5e2e9671ed9b208fbbd550a4c273a37a6e6d99d54ab35d04b1f1783a6f92fdcf2f244b8ef2a32a5ad0f8232a3e00775d5361592b580963180d6b366218bd8754fd6504b24e4d41eae25c65124ddcbbf1248ecf520463a8f734c2acc399e1db95cf625734384aa328176bf372b40404b4967acbfa73bcb85687843e2f958d2"
+          ],
+          "quotient_energy": 77280,
+          "quotient_zero_error": 48,
+          "quotient_paf_at_one": 2,
+          "quotient_exact_nonzero_pairs": 18,
+          "focus_score": 150,
+          "target_energy": 16704,
+          "target_exact_pairs": 6,
+          "previous_subgroup_exact_pairs": 6,
+          "raw_energy": 107424,
+          "raw_paf_at_one": -18,
+          "raw_paf_at_399": 22,
+          "raw_exact_pairs": 78,
+          "raw_peak_error": 36,
+          "seed": 4266,
+          "stage": "raw"
+        },
+        "balanced": {
+          "negative_masks": [
+            "0x1bf436801789a8c9585a357aa1793f474d16bb3fd6ae66b05435dfa618d81b0f988e3937bcfa3bc67bbd32e1bd62df3c36664b755f72e53030fbdc4f32a20443b434ca078dca38cc3150edafbb207e5a064d5cb37bd2b9db45adf161e98f6095451342142599530e13af7dc1315d3084aad3c755b4e30debc49641092020fde488fcaa9f58b2c0764f85eef081e84ea01c14d2b765d2",
+            "0xb736e25fe58b28bed4633737794964cd3f223cbd5c0f3cdc5f4e697dc1249db971406c8aff7278416984d604f34c06f045788a678a85e57720622ff1273a4a5cfa53f07e01c72573b27c4b40014f1d452a160019bfc4b4fdef50f2ee6f62eae67c6bd01d1d5d71b79ccf411044ebb63ceaacd9dad35391d6a0465a3848e2601669937b74586cb9065a8fcc7b34f8d70a04b72494c52"
+          ],
+          "quotient_energy": 264576,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": 26,
+          "quotient_exact_nonzero_pairs": 10,
+          "focus_score": 458,
+          "target_energy": 26496,
+          "target_exact_pairs": 13,
+          "previous_subgroup_exact_pairs": 7,
+          "raw_energy": 179616,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 52,
+          "raw_peak_error": 48,
+          "seed": 4263,
+          "stage": "raw"
+        },
+        "extended": {
+          "negative_masks": [
+            "0x3b436a81689db49de4b14698871ddf34d32dbbb96be42a05e11dcf638181b2e9c8ebdf9befd3ac6723b76e93fea56aca6666bf55de6ab9c30a288cf74a04f58f4bcca1b05c8b0ee3034c4cdbb121d1e164d74f17242b3c0452d53686b6f8087de13f21d259b520e92f6b3f1e05930c4a8d64d17354b8dfb94b353855174fce08c540e1b1c34c07f53a8e7f1e3a24b20d616c2f42540",
+            "0xd373cf79e62398b7137145bf6d0b6cdb303f8ce5d08b7cbe0e0c21edc2e09d23e4402ae2b1f374cc5da4d4c5f7740eb1b02bce6dc09de5368148aef7471a63566a4be2cd4873bc3b7a942e58e00b384d7f3202009e87bcddee10d2bc6742a2db7eead2fc945d551f96e3d12a72e0ff54aba0dcb8fac1c7ccb0e46270928a2b5644a35b3c487ff200f84beacbbc7c5a82057c0093052"
+          ],
+          "quotient_energy": 560928,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -6,
+          "quotient_exact_nonzero_pairs": 25,
+          "focus_score": 0,
+          "target_energy": 0,
+          "target_exact_pairs": 67,
+          "previous_subgroup_exact_pairs": 58,
+          "raw_energy": 414912,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 88,
+          "raw_peak_error": 64,
+          "seed": 4265,
+          "stage": "phases"
+        }
+      }
+    },
+    "10": {
+      "shard": 10,
+      "trials": [
+        {
+          "seed": 4270,
+          "minimum_quotient_energy": 74688,
+          "minimum_raw_energy": 119136,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4271,
+          "minimum_quotient_energy": 74688,
+          "minimum_raw_energy": 119136,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4272,
+          "minimum_quotient_energy": 88560,
+          "minimum_raw_energy": 121248,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4273,
+          "minimum_quotient_energy": 74688,
+          "minimum_raw_energy": 119136,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4274,
+          "minimum_quotient_energy": 97440,
+          "minimum_raw_energy": 117024,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4275,
+          "minimum_quotient_energy": 74688,
+          "minimum_raw_energy": 117024,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4276,
+          "minimum_quotient_energy": 99744,
+          "minimum_raw_energy": 168384,
+          "minimum_target_energy": 0
+        }
+      ],
+      "witnesses": {
+        "quotient": {
+          "negative_masks": [
+            "0x8d4a6b396b9c9c8d0523021a1552ec24d1ed3b3d6ae1ae259255b63187841abba2c93edf5f432cc2bb93ee1bde258bcb76ee3657b12c190b173b59fa2ac5552303cf32f1cefb97ff974b8e6bbe05c0f065e1c317226e192450cf42447c74c995479c80c3dd910a296b2cdd3b85eb6a42cdfd75d94a78ff8c5904108c86afae80af42a1b31ace076738eefde01d952305426d6e665c0",
+            "0x1b73bc56bb7ab78241ffb077d38cb316d36262033b80a1cbc15ee309d9aac9fb390486cc7bd32f4c079cd16b1a75a1df1e0288afd9aabc36fe13f20f273294e74f983f42f08a3f51aa097345829cf98490db64a05994df5f7f479fa206b80e2ae566392f8995d592f9eee82334ca2de1ea0acd6b8fbe1f4991046f2f09a832d076e8b70354c35b52938de5c0960fb5407843708b4150"
+          ],
+          "quotient_energy": 74688,
+          "quotient_zero_error": 48,
+          "quotient_paf_at_one": -6,
+          "quotient_exact_nonzero_pairs": 33,
+          "focus_score": 108,
+          "target_energy": 15648,
+          "target_exact_pairs": 3,
+          "previous_subgroup_exact_pairs": 3,
+          "raw_energy": 119136,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": 22,
+          "raw_exact_pairs": 75,
+          "raw_peak_error": 60,
+          "seed": 4270,
+          "stage": "raw"
+        },
+        "full": {
+          "negative_masks": [
+            "0x9f806b2d7ad4a68f5c33c9d0f217f730f26c1ff1c2e42a05831df6230fc8b26300cb9f99898aad762bd36e9fc22bfbd356e4f6c9f5263f3f0e19cbeace24941342eda310fc99548b074540afb82062e065f1470785a21c6610d474d3fc7c195ce194a6c6d9bdb5e122ae7fd2158958e85f2c7a7944bc8bfd6dad20d19707a00b824687bcb3ce57f5bacef99c1e842925d1243f449c0",
+            "0xab37c775e72120a412731817794f640977228ccf5519bd98028c786d92a1dd2f3c442d8b92d27cd4ed8c55c5f54826f7556a894382b4cdb781ebaef2c73a5344fa626a752952fd3b509c325c237a1e696f36e02197857745f55cb26f2460e6ee4c4b5079dd4df377d6ab500bf2eadf3470a5debae1ffc1c63003737990a2019726ab72408515bc8671dfce25bfd8dc8236a66081e06"
+          ],
+          "quotient_energy": 114816,
+          "quotient_zero_error": 96,
+          "quotient_paf_at_one": 14,
+          "quotient_exact_nonzero_pairs": 6,
+          "focus_score": 397,
+          "target_energy": 24336,
+          "target_exact_pairs": 2,
+          "previous_subgroup_exact_pairs": 2,
+          "raw_energy": 117024,
+          "raw_paf_at_one": 18,
+          "raw_paf_at_399": 46,
+          "raw_exact_pairs": 62,
+          "raw_peak_error": 48,
+          "seed": 4274,
+          "stage": "raw"
+        },
+        "balanced": {
+          "negative_masks": [
+            "0x9b4aed116cb194d385b1c5988b1fb47e512837f94ed4a8356b0dfac18fe132eaa8d385dfef83b967ab971e305a1f62cff6e5bf86f54ed2134b09c47b0c25443b1a49a73cfcbbc6c2050e4cefe223432460f38f173722ac0e5fd50e46d0f6094053340054d8b520e96b6b7c723589cd08df45575b41b68c9c49b5bc1506676e89c3e2e9b583ad61f639caf10c5f24fa0fd16a6b62550",
+            "0x12737f271f502982695fb1d3f7d894f6ff525ec6d381fbc180e2c40ed80209da9b0046ec1b77274506554f785f77a1fb4e169c6e58a9dcd7641743ee247bad6f6694a6ce448e38c3b731e6618502bbd5d6e962a849b81bd7ff41d937f2dc8628f08ea50dd555d75bf8cef530550cbbe14c2a9dc60e2f947cf620573f8920a4c967481725d0866b088c18fcee1fcb84c830434a8a5446"
+          ],
+          "quotient_energy": 225984,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": 14,
+          "quotient_exact_nonzero_pairs": 15,
+          "focus_score": 159,
+          "target_energy": 13008,
+          "target_exact_pairs": 19,
+          "previous_subgroup_exact_pairs": 16,
+          "raw_energy": 162912,
+          "raw_paf_at_one": 2,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 52,
+          "raw_peak_error": 40,
+          "seed": 4273,
+          "stage": "raw"
+        },
+        "extended": {
+          "negative_masks": [
+            "0x19bcd4b1748d986958431c780a7ddb714d16d3b6b4ee4ab0565ddebc00980b2eae08b1e17cf93bd472b136f13de3debc2c1e4be45d562db036a9ec7fbc825943f4ae8ad305d8847c2050e48fbb02761e064d365b7a3b31d8413dd155eb14c991405b62cc0d9adb0a16bfb365311880c68cd0573bb44badef74d7530d30c0f5e8b8546e1b5378e0ef5f88eb98e5f04bb64c1dde272d02",
+            "0x18777cb47e403887c17710d956d8b2d0d7123ac6b3c2d9cdc1e8c28dd80a4bfb78450fbc3f4637670eda453e5757c06b1c17ace648895e574e94c26f7e77e63d2696e7cec49ebac36f0544858a30bb8c52e12a01899c53fedf71c9ebd2901a6ab7c69505bc45fd5f79ee7420f72e09f34a8a9ddaac2f346c72264f6781c8a89964ca3732c8c0cb800e86bd221e47cda8605bc2595c52"
+          ],
+          "quotient_energy": 560928,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -6,
+          "quotient_exact_nonzero_pairs": 25,
+          "focus_score": 0,
+          "target_energy": 0,
+          "target_exact_pairs": 67,
+          "previous_subgroup_exact_pairs": 58,
+          "raw_energy": 360096,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 103,
+          "raw_peak_error": 76,
+          "seed": 4271,
+          "stage": "phases"
+        }
+      }
+    },
+    "11": {
+      "shard": 11,
+      "trials": [
+        {
+          "seed": 4277,
+          "minimum_quotient_energy": 55824,
+          "minimum_raw_energy": 130080,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4278,
+          "minimum_quotient_energy": 55824,
+          "minimum_raw_energy": 130080,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4279,
+          "minimum_quotient_energy": 76464,
+          "minimum_raw_energy": 147360,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4280,
+          "minimum_quotient_energy": 55824,
+          "minimum_raw_energy": 130080,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4281,
+          "minimum_quotient_energy": 88224,
+          "minimum_raw_energy": 116256,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4282,
+          "minimum_quotient_energy": 55824,
+          "minimum_raw_energy": 116256,
+          "minimum_target_energy": 0
+        },
+        {
+          "seed": 4283,
+          "minimum_quotient_energy": 68880,
+          "minimum_raw_energy": 167520,
+          "minimum_target_energy": 0
+        }
+      ],
+      "witnesses": {
+        "quotient": {
+          "negative_masks": [
+            "0x1abc34b307cd996dc85b55688afdfd534506d3bf16a706b250455fb23870002ebe4dbd67b0f83b06627f6cf62d62fbbcf76643ec1ef2ad947039fc8f78a2674230be82b24dcbb858b45ca1c7b8006e5a160e76f67973339e65acd0a1695f61950c3342cf1d8b9b2282aea3e3197806c400c6ca41b44b8dfad4d64b48d870e4e5286cce9f1231c1751b9d9f9663e04fae5435d2f76060",
+            "0x1727c365051b18b59473430758036b7b3c229837dfa9cebc169e016c95244fa2d040bc23b17278e27d895786ef4846f15369ea7ff0b5c5ae40483df319bacaf43a4bfebfc0d22e3b621736d8493b19d94a186201990ddde5f77882686d18eabf5e4b52489505553c9f8fdb2544a89276e189c891ebf3d58f32453230d2a36adc649b72bc1c64b7867cdf9a0becfa55872c562bf7a12"
+          ],
+          "quotient_energy": 55824,
+          "quotient_zero_error": -24,
+          "quotient_paf_at_one": -10,
+          "quotient_exact_nonzero_pairs": 20,
+          "focus_score": 25,
+          "target_energy": 65952,
+          "target_exact_pairs": 5,
+          "previous_subgroup_exact_pairs": 5,
+          "raw_energy": 793824,
+          "raw_paf_at_one": 10,
+          "raw_paf_at_399": -14,
+          "raw_exact_pairs": 29,
+          "raw_peak_error": 120,
+          "seed": 4277,
+          "stage": "search"
+        },
+        "full": {
+          "negative_masks": [
+            "0x3b626b006a9190cd8d7315cab615ff24d069ab2753e06a2160d5c3619ca8b06bc4fb577b0f53a44139bf7f73ce29a3c266e4de13bf6a9bc30b384e7eda34f0bf5ae9a9a8fcab9ee301ce264bb12447aa25557503a1aa7d8458fd1e62d47a013753bf6170dbb9b47963fbae37239b0942452434706db8cfe54b75b6d3042f7c42856268dd879626f3308cef8e17863001f10b6e70150",
+            "0x1da3cd437722a8e495f9dd37294264fbbe6004f7f41f8c1c17ee016ddae48d2b5010eec0923279f2697c3710d16997b7502be669c8b5cf7f217a26e6573a7b566f4afa7f68f39513311d4218f82e8f616b2868800d85f9f5ed38b36d2982e2d61c6252599ddd45b6c26d504b55eada5d40ade4b1c2cb82d4f0c576e84882429620177a6c2c25f7ac7dcfcc2bad1e0c139c75c997152"
+          ],
+          "quotient_energy": 88224,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -42,
+          "quotient_exact_nonzero_pairs": 14,
+          "focus_score": 139,
+          "target_energy": 17904,
+          "target_exact_pairs": 13,
+          "previous_subgroup_exact_pairs": 13,
+          "raw_energy": 116256,
+          "raw_paf_at_one": -18,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 58,
+          "raw_peak_error": 36,
+          "seed": 4281,
+          "stage": "raw"
+        },
+        "balanced": {
+          "negative_masks": [
+            "0x3b626b006a9190cd8d7315cab615ff24d069ab2753e06a2160d5c3619ca8b06bc4fb577b0f53a44139bf7f73ce29a3c266e4de13bf6a9bc30b384e7eda34f0bf5ae9a9a8fcab9ee301ce264bb12447aa25557503a1aa7d8458fd1e62d47a013753bf6170dbb9b47963fbae37239b0942452434706db8cfe54b75b6d3042f7c42856268dd879626f3308cef8e17863001f10b6e70150",
+            "0x1da3cd437722a8e495f9dd37294264fbbe6004f7f41f8c1c17ee016ddae48d2b5010eec0923279f2697c3710d16997b7502be669c8b5cf7f217a26e6573a7b566f4afa7f68f39513311d4218f82e8f616b2868800d85f9f5ed38b36d2982e2d61c6252599ddd45b6c26d504b55eada5d40ade4b1c2cb82d4f0c576e84882429620177a6c2c25f7ac7dcfcc2bad1e0c139c75c997152"
+          ],
+          "quotient_energy": 88224,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -42,
+          "quotient_exact_nonzero_pairs": 14,
+          "focus_score": 139,
+          "target_energy": 17904,
+          "target_exact_pairs": 13,
+          "previous_subgroup_exact_pairs": 13,
+          "raw_energy": 116256,
+          "raw_paf_at_one": -18,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 58,
+          "raw_peak_error": 36,
+          "seed": 4281,
+          "stage": "raw"
+        },
+        "extended": {
+          "negative_masks": [
+            "0x2f4a67b26aa386de24a135984713d52450272fd1527129252405d3238480906be4fbd89f3fb3b46627a3cbf5de816bdf66ac7c47bf6a79752391caff8607749752f92948fdcbd68b54e890eb212346e365c57f278ea019c45ace1aa6fdf6017cf3b725e5cf91b42131e63e3717d13840ae749e514528cded0b718e8c9f6f2819c64889fc039f1fe3195dc9e23e3038a951be0f10150",
+            "0x357fc25d8513dab4d471498e6852297bbc6e9c67df3dbdbd32cc501c95243da8b400d80483737cf2f92f77c5ef488ef57921ee4bfacc45f648c322e70d2b62d6a640febd80d32f32801c761c53e639cb8e0cb2a11bc7f0656750c77b2840eabb1e5b96d8165d65af9d14c2245aa892757409f891eac7c4cf32377a2252e35ab6269b32bc0c24b286df5baa1974485c3b6d4d8bc6852"
+          ],
+          "quotient_energy": 236736,
+          "quotient_zero_error": 0,
+          "quotient_paf_at_one": -6,
+          "quotient_exact_nonzero_pairs": 34,
+          "focus_score": 0,
+          "target_energy": 0,
+          "target_exact_pairs": 67,
+          "previous_subgroup_exact_pairs": 58,
+          "raw_energy": 303360,
+          "raw_paf_at_one": -2,
+          "raw_paf_at_399": -2,
+          "raw_exact_pairs": 94,
+          "raw_peak_error": 68,
+          "seed": 4280,
+          "stage": "phases"
+        }
+      }
+    }
+  },
+  "merge": {
+    "exit_code": 1,
+    "output": "Traceback (most recent call last):\n  File \"/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/jobs/hadamard-2396-399/merge.py\", line 8, in <module>\n    from shard import key\nImportError: cannot import name 'key' from 'shard' (/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/jobs/hadamard-2396-diagonal/shard.py)\n"
+  }
+}
