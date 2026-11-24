@@ -1,0 +1,14 @@
+{
+  "order": 5,
+  "pair_valid": true,
+  "packing_lower_bound": 5,
+  "triple_valid": true,
+  "common_transversals": 10,
+  "maximum_disjoint": 5,
+  "packing_nodes": 12,
+  "pair_extendible": true,
+  "checkpoint": "/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/out/positive_control.json",
+  "status": "YES_WITNESS",
+  "elite_verified": 0,
+  "global_nonexistence_claim": false
+}

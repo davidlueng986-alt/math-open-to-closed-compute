@@ -1,0 +1,14 @@
+{
+  "order": 10,
+  "pair_valid": true,
+  "packing_lower_bound": 7,
+  "triple_valid": false,
+  "common_transversals": 14,
+  "maximum_disjoint": 7,
+  "packing_nodes": 18,
+  "pair_extendible": false,
+  "checkpoint": "/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/out/checkpoint.json",
+  "status": "UNFINISHED_TASK",
+  "elite_verified": 32,
+  "global_nonexistence_claim": false
+}

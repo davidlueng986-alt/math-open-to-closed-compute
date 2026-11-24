@@ -1,0 +1,63 @@
+{
+  "solver": {
+    "command": [
+      "kissat",
+      "--time=900",
+      "out/state/attempts/root000_0000/instance.cnf",
+      "out/state/attempts/root000_0000/proof.drat"
+    ],
+    "returncode": 20,
+    "seconds": 0.2507842350005376,
+    "stop_reason": null
+  },
+  "solver_status": "UNSATISFIABLE",
+  "solver_stats": [
+    "c conflicts:                                0                0.00 per second",
+    "c decisions:                                0                0.00 per conflict",
+    "c maximum-resident-set-size:         42262528 bytes         40 MB",
+    "c process-time:                                              0.04 seconds"
+  ],
+  "cnf_sha256": "ee22a82b453a4392a6feb2dedcfc3d5571c259cfd2652452c840dfa590f19463",
+  "cube": [
+    -522,
+    -523,
+    -524
+  ],
+  "status": "UNSAT_VERIFIED",
+  "proof_check": {
+    "status": "UNSAT_VERIFIED",
+    "cnf": "instance.cnf",
+    "cnf_sha256": "ee22a82b453a4392a6feb2dedcfc3d5571c259cfd2652452c840dfa590f19463",
+    "drat": "proof.drat",
+    "drat_sha256": "a1bc140959d99108788b724b887ceadc27efc7f553645f4fc71a79812d9ff25f",
+    "checker_source": "https://github.com/marijnheule/drat-trim/tree/2e3b2dc0ecf938addbd779d42877b6ed69d9a985",
+    "drat_check": {
+      "command": [
+        "drat-trim",
+        "out/state/attempts/root000_0000/instance.cnf",
+        "out/state/attempts/root000_0000/proof.drat",
+        "-L",
+        "out/state/attempts/root000_0000/proof.lrat",
+        "-t",
+        "900"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "seconds": 0.11406581899973389,
+      "log": "proof.drat-check.log"
+    },
+    "lrat": "proof.lrat",
+    "lrat_sha256": "976acb31a8bdb11109c32ff033d10c2d8fd402acd09531c99d9942f6fb398460",
+    "lrat_check": {
+      "command": [
+        "lrat-check",
+        "out/state/attempts/root000_0000/instance.cnf",
+        "out/state/attempts/root000_0000/proof.lrat"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "seconds": 0.0639692720005769,
+      "log": "proof.lrat-check.log"
+    }
+  }
+}

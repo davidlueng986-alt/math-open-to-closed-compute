@@ -1,0 +1,32 @@
+{
+  "solver": {
+    "command": [
+      "kissat",
+      "--time=900",
+      "out/state/attempts/root001_0000/instance.cnf",
+      "out/state/attempts/root001_0000/proof.drat"
+    ],
+    "returncode": -15,
+    "seconds": 667.2499632739991,
+    "stop_reason": "PROOF_SIZE_LIMIT"
+  },
+  "solver_status": "UNKNOWN",
+  "solver_stats": [
+    "c conflicts:                          9372139            14047.49 per second",
+    "c decisions:                         53757361                5.74 per conflict",
+    "c restarts:                            291400               32    interval",
+    "c maximum-resident-set-size:         51417088 bytes         49 MB",
+    "c process-time:                         11m 7s             667.17 seconds"
+  ],
+  "cnf_sha256": "733f6fb5a57f61d120ffc8fb85608fdb05bd34c2415b9f9e5c8c2981f9fa3020",
+  "cube": [
+    -522,
+    -523,
+    524
+  ],
+  "status": "UNKNOWN",
+  "discarded_incomplete_drat": {
+    "bytes": 2148532224,
+    "sha256": "29be5aa96743d3a84b56fc9f0ff213d2fb05c2e13c19de63e73a68f2e4ade5c9"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "solver": {
+    "command": [
+      "kissat",
+      "--time=900",
+      "out/state/attempts/root00000_0000/instance.cnf",
+      "out/state/attempts/root00000_0000/proof.drat"
+    ],
+    "returncode": 20,
+    "seconds": 0.2509573809984431,
+    "stop_reason": null
+  },
+  "solver_status": "UNSATISFIABLE",
+  "solver_stats": [
+    "c conflicts:                                0                0.00 per second",
+    "c decisions:                                0                0.00 per conflict",
+    "c maximum-resident-set-size:         42156032 bytes         40 MB",
+    "c process-time:                                              0.03 seconds"
+  ],
+  "cnf_sha256": "77a590d0b47e1b293b3ef9fea0c71b58674329d8e181be9d24fd45989c174f3e",
+  "cube": [
+    -522,
+    -523,
+    -524,
+    -525,
+    -526
+  ],
+  "status": "UNSAT_VERIFIED",
+  "proof_check": {
+    "status": "UNSAT_VERIFIED",
+    "cnf": "instance.cnf",
+    "cnf_sha256": "77a590d0b47e1b293b3ef9fea0c71b58674329d8e181be9d24fd45989c174f3e",
+    "drat": "proof.drat",
+    "drat_sha256": "14e4af66d64ca4d0ff4c03ed9d58c96ef6f57c7151a62f639a9517f1390754a4",
+    "checker_source": "https://github.com/marijnheule/drat-trim/tree/2e3b2dc0ecf938addbd779d42877b6ed69d9a985",
+    "drat_check": {
+      "command": [
+        "drat-trim",
+        "out/state/attempts/root00000_0000/instance.cnf",
+        "out/state/attempts/root00000_0000/proof.drat",
+        "-L",
+        "out/state/attempts/root00000_0000/proof.lrat",
+        "-t",
+        "900"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "seconds": 0.16438926299997547,
+      "log": "proof.drat-check.log"
+    },
+    "lrat": "proof.lrat",
+    "lrat_sha256": "fa143d27254ea4e808271d2f50f072114c845e5101313f353e66277ca198c827",
+    "lrat_check": {
+      "command": [
+        "lrat-check",
+        "out/state/attempts/root00000_0000/instance.cnf",
+        "out/state/attempts/root00000_0000/proof.lrat"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "seconds": 0.06406996899931983,
+      "log": "proof.lrat-check.log"
+    }
+  }
+}

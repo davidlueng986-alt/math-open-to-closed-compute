@@ -1,0 +1,19 @@
+{
+  "shard": 2,
+  "parts": [
+    2,
+    2,
+    3,
+    3
+  ],
+  "task_status": "\u672a\u5b8c\u6210\u4efb\u52d9",
+  "nodes": 67,
+  "leaves": 34,
+  "leaf_status_counts": {
+    "UNSAT_VERIFIED": 2,
+    "PENDING": 32
+  },
+  "coverage": "all unresolved leaves retained; no percentage estimate",
+  "coverage_tree_verified": true,
+  "lrat_certificates_replayed": 2
+}

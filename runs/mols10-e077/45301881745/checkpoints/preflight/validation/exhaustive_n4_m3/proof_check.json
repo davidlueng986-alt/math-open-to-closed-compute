@@ -1,0 +1,36 @@
+{
+  "status": "UNSAT_VERIFIED",
+  "cnf": "exhausted.cnf",
+  "cnf_sha256": "6060fb883e2088fa1e08812ef94244ed329549360483b3c78378beb2154f1300",
+  "drat": "proof.drat",
+  "drat_sha256": "9fb4419fdeb0fd572e1569fcba650af784f2b56f51e93d9fb359fdc612c2739e",
+  "checker_source": "https://github.com/marijnheule/drat-trim/tree/2e3b2dc0ecf938addbd779d42877b6ed69d9a985",
+  "drat_check": {
+    "command": [
+      "drat-trim",
+      "out/validation/exhaustive_n4_m3/exhausted.cnf",
+      "out/validation/exhaustive_n4_m3/proof.drat",
+      "-L",
+      "out/validation/exhaustive_n4_m3/proof.lrat",
+      "-t",
+      "60"
+    ],
+    "returncode": 0,
+    "timed_out": false,
+    "seconds": 0.11465983700000493,
+    "log": "proof.drat-check.log"
+  },
+  "lrat": "proof.lrat",
+  "lrat_sha256": "d507f14d52d54985e65ad902dccbc59c79db6dbe1ade8be6fe95073f36c8f561",
+  "lrat_check": {
+    "command": [
+      "lrat-check",
+      "out/validation/exhaustive_n4_m3/exhausted.cnf",
+      "out/validation/exhaustive_n4_m3/proof.lrat"
+    ],
+    "returncode": 0,
+    "timed_out": false,
+    "seconds": 0.0324212120000027,
+    "log": "proof.lrat-check.log"
+  }
+}

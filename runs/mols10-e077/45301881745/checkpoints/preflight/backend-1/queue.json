@@ -1,0 +1,28 @@
+{
+  "version": "mols-cube-queue-v1",
+  "n": 4,
+  "squares": 3,
+  "shard": 1,
+  "parts": [
+    4
+  ],
+  "base_cnf_sha256": "ecde9cb8cd765b380b4633f9fc61f641267bd645ebbcab8f7bf316af00f4ad0e",
+  "even_row_normalization": false,
+  "mapping_sha256": "b00517e1bc5a71ab0e35b95041f1eaa72f443ee5abb55d238ab2ce50f759cf05",
+  "root": "root",
+  "created_unix": 1795482157.4708915,
+  "nodes": {
+    "root": {
+      "cube": [],
+      "parent": null,
+      "status": "UNSAT_VERIFIED",
+      "attempts": [
+        "attempts/root_0000"
+      ],
+      "evidence": "attempts/root_0000/result.json"
+    }
+  },
+  "task_status": "SHARD_EXHAUSTED_WITH_CERTIFICATES",
+  "coverage": "binary split tree; every child is parent plus a literal or its negation",
+  "updated_unix": 1795482157.925551
+}

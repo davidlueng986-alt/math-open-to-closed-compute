@@ -1,0 +1,214 @@
+{
+  "problem": "MOLS10-3",
+  "task_status": "未完成任務",
+  "exact": [
+    {
+      "shard": 1,
+      "present": true,
+      "verified_summary": {
+        "shard": 1,
+        "parts": [
+          2,
+          2,
+          2,
+          4
+        ],
+        "task_status": "未完成任務",
+        "nodes": 53,
+        "leaves": 27,
+        "leaf_status_counts": {
+          "UNSAT_VERIFIED": 4,
+          "PENDING": 23
+        },
+        "coverage": "all unresolved leaves retained; no percentage estimate",
+        "coverage_tree_verified": true,
+        "lrat_certificates_replayed": 4
+      },
+      "task_status": "未完成任務",
+      "base_cnf_sha256": "cccc7fb250b8a2c848b87da0f3f2f14668b07637a832db696f8566cdd3e450ee",
+      "leaf_status_counts": {
+        "UNSAT_VERIFIED": 4,
+        "PENDING": 23
+      }
+    },
+    {
+      "shard": 2,
+      "present": true,
+      "verified_summary": {
+        "shard": 2,
+        "parts": [
+          2,
+          2,
+          3,
+          3
+        ],
+        "task_status": "未完成任務",
+        "nodes": 67,
+        "leaves": 34,
+        "leaf_status_counts": {
+          "UNSAT_VERIFIED": 2,
+          "PENDING": 32
+        },
+        "coverage": "all unresolved leaves retained; no percentage estimate",
+        "coverage_tree_verified": true,
+        "lrat_certificates_replayed": 2
+      },
+      "task_status": "未完成任務",
+      "base_cnf_sha256": "0dc9f53481a43ce9dc339a07f725f456a8789dfbe751ad88f189d4142d763a7d",
+      "leaf_status_counts": {
+        "UNSAT_VERIFIED": 2,
+        "PENDING": 32
+      }
+    },
+    {
+      "shard": 6,
+      "present": true,
+      "verified_summary": {
+        "shard": 6,
+        "parts": [
+          2,
+          8
+        ],
+        "task_status": "未完成任務",
+        "nodes": 55,
+        "leaves": 28,
+        "leaf_status_counts": {
+          "UNSAT_VERIFIED": 1,
+          "PENDING": 27
+        },
+        "coverage": "all unresolved leaves retained; no percentage estimate",
+        "coverage_tree_verified": true,
+        "lrat_certificates_replayed": 1
+      },
+      "task_status": "未完成任務",
+      "base_cnf_sha256": "66a61f37e990df1c6161fb72986891c399e3c440dedb77caabb29f03586e7835",
+      "leaf_status_counts": {
+        "UNSAT_VERIFIED": 1,
+        "PENDING": 27
+      }
+    },
+    {
+      "shard": 8,
+      "present": true,
+      "verified_summary": {
+        "shard": 8,
+        "parts": [
+          3,
+          7
+        ],
+        "task_status": "未完成任務",
+        "nodes": 65,
+        "leaves": 33,
+        "leaf_status_counts": {
+          "UNSAT_VERIFIED": 1,
+          "PENDING": 32
+        },
+        "coverage": "all unresolved leaves retained; no percentage estimate",
+        "coverage_tree_verified": true,
+        "lrat_certificates_replayed": 1
+      },
+      "task_status": "未完成任務",
+      "base_cnf_sha256": "af2fad549535f80afc43131d607f3a35bc6e8fc2cff30b19570dbf5a0c466617",
+      "leaf_status_counts": {
+        "UNSAT_VERIFIED": 1,
+        "PENDING": 32
+      }
+    },
+    {
+      "shard": 9,
+      "present": true,
+      "verified_summary": {
+        "shard": 9,
+        "parts": [
+          4,
+          6
+        ],
+        "task_status": "未完成任務",
+        "nodes": 55,
+        "leaves": 28,
+        "leaf_status_counts": {
+          "UNSAT_VERIFIED": 1,
+          "PENDING": 27
+        },
+        "coverage": "all unresolved leaves retained; no percentage estimate",
+        "coverage_tree_verified": true,
+        "lrat_certificates_replayed": 1
+      },
+      "task_status": "未完成任務",
+      "base_cnf_sha256": "25acd3e1c216a865650ab1ca15037b63a07545f90c815625c0d8009b80cec1df",
+      "leaf_status_counts": {
+        "UNSAT_VERIFIED": 1,
+        "PENDING": 27
+      }
+    },
+    {
+      "shard": 10,
+      "present": true,
+      "verified_summary": {
+        "shard": 10,
+        "parts": [
+          5,
+          5
+        ],
+        "task_status": "未完成任務",
+        "nodes": 53,
+        "leaves": 27,
+        "leaf_status_counts": {
+          "UNSAT_VERIFIED": 1,
+          "PENDING": 26
+        },
+        "coverage": "all unresolved leaves retained; no percentage estimate",
+        "coverage_tree_verified": true,
+        "lrat_certificates_replayed": 1
+      },
+      "task_status": "未完成任務",
+      "base_cnf_sha256": "81de15aeed3fc19edc4220cc1b6b812f3aadfc3355d1ffc6dd09542c9ecabf0e",
+      "leaf_status_counts": {
+        "UNSAT_VERIFIED": 1,
+        "PENDING": 26
+      }
+    }
+  ],
+  "construction": [
+    {
+      "seed": 770101,
+      "present": true,
+      "status": "UNFINISHED_TASK",
+      "iterations": 707111,
+      "evaluated_pairs": 778869,
+      "best_packing": 7,
+      "common_transversals": 14
+    },
+    {
+      "seed": 770102,
+      "present": true,
+      "status": "UNFINISHED_TASK",
+      "iterations": 680938,
+      "evaluated_pairs": 772859,
+      "best_packing": 7,
+      "common_transversals": 14
+    },
+    {
+      "seed": 770103,
+      "present": true,
+      "status": "UNFINISHED_TASK",
+      "iterations": 496752,
+      "evaluated_pairs": 554372,
+      "best_packing": 7,
+      "common_transversals": 14
+    },
+    {
+      "seed": 770104,
+      "present": true,
+      "status": "UNFINISHED_TASK",
+      "iterations": 541537,
+      "evaluated_pairs": 602350,
+      "best_packing": 7,
+      "common_transversals": 14
+    }
+  ],
+  "witnesses": [],
+  "global_nonexistence_claim": false,
+  "coverage": "Six simultaneous-even canonical cycle shards; 31 centralizer first-pair representatives. Missing and unresolved leaves remain explicit.",
+  "resume": "Download the corresponding exact-N or construct-SEED artifact and resume its saved state. Solver learned clauses are not retained; construction resumes population/RNG."
+}

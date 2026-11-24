@@ -1,0 +1,44 @@
+{
+  "version": "mols-composition-cnf-v2",
+  "n": 2,
+  "squares": 1,
+  "parts": [
+    2
+  ],
+  "amo": "pairwise",
+  "pair_symmetry": true,
+  "channel_reverse": false,
+  "even_second_rows": false,
+  "parity_variables": 0,
+  "parity_clauses": 0,
+  "variables": [],
+  "fixed": {
+    "L0": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        1
+      ],
+      [
+        1,
+        0,
+        1
+      ],
+      [
+        1,
+        1,
+        0
+      ]
+    ]
+  },
+  "semantic_variables": 0,
+  "nvars": 0,
+  "clauses": 0,
+  "pair_orbits": null,
+  "cnf_sha256": "e160232d0ce8816f12ecdcdc7bb0e939b55fb5ca43414ae6077dfa3989655732"
+}

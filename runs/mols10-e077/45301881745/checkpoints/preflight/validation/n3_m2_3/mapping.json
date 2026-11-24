@@ -1,0 +1,276 @@
+{
+  "version": "mols-composition-cnf-v2",
+  "n": 3,
+  "squares": 2,
+  "parts": [
+    3
+  ],
+  "amo": "pairwise",
+  "pair_symmetry": true,
+  "channel_reverse": false,
+  "even_second_rows": false,
+  "parity_variables": 0,
+  "parity_clauses": 0,
+  "variables": [
+    {
+      "id": 1,
+      "square": "L0",
+      "r": 2,
+      "c": 1,
+      "value": 0
+    },
+    {
+      "id": 2,
+      "square": "L0",
+      "r": 2,
+      "c": 2,
+      "value": 1
+    },
+    {
+      "id": 3,
+      "square": "L1",
+      "r": 1,
+      "c": 0,
+      "value": 1
+    },
+    {
+      "id": 4,
+      "square": "L1",
+      "r": 1,
+      "c": 0,
+      "value": 2
+    },
+    {
+      "id": 5,
+      "square": "L1",
+      "r": 1,
+      "c": 1,
+      "value": 0
+    },
+    {
+      "id": 6,
+      "square": "L1",
+      "r": 1,
+      "c": 1,
+      "value": 2
+    },
+    {
+      "id": 7,
+      "square": "L1",
+      "r": 1,
+      "c": 2,
+      "value": 0
+    },
+    {
+      "id": 8,
+      "square": "L1",
+      "r": 1,
+      "c": 2,
+      "value": 1
+    },
+    {
+      "id": 9,
+      "square": "L1",
+      "r": 2,
+      "c": 0,
+      "value": 1
+    },
+    {
+      "id": 10,
+      "square": "L1",
+      "r": 2,
+      "c": 0,
+      "value": 2
+    },
+    {
+      "id": 11,
+      "square": "L1",
+      "r": 2,
+      "c": 1,
+      "value": 0
+    },
+    {
+      "id": 12,
+      "square": "L1",
+      "r": 2,
+      "c": 1,
+      "value": 2
+    },
+    {
+      "id": 13,
+      "square": "L1",
+      "r": 2,
+      "c": 2,
+      "value": 0
+    },
+    {
+      "id": 14,
+      "square": "L1",
+      "r": 2,
+      "c": 2,
+      "value": 1
+    },
+    {
+      "id": 15,
+      "square": "Z0_1",
+      "r": 1,
+      "c": 0,
+      "value": 1
+    },
+    {
+      "id": 16,
+      "square": "Z0_1",
+      "r": 1,
+      "c": 0,
+      "value": 2
+    },
+    {
+      "id": 17,
+      "square": "Z0_1",
+      "r": 1,
+      "c": 1,
+      "value": 0
+    },
+    {
+      "id": 18,
+      "square": "Z0_1",
+      "r": 1,
+      "c": 1,
+      "value": 2
+    },
+    {
+      "id": 19,
+      "square": "Z0_1",
+      "r": 1,
+      "c": 2,
+      "value": 0
+    },
+    {
+      "id": 20,
+      "square": "Z0_1",
+      "r": 1,
+      "c": 2,
+      "value": 1
+    },
+    {
+      "id": 21,
+      "square": "Z0_1",
+      "r": 2,
+      "c": 0,
+      "value": 1
+    },
+    {
+      "id": 22,
+      "square": "Z0_1",
+      "r": 2,
+      "c": 0,
+      "value": 2
+    },
+    {
+      "id": 23,
+      "square": "Z0_1",
+      "r": 2,
+      "c": 1,
+      "value": 0
+    },
+    {
+      "id": 24,
+      "square": "Z0_1",
+      "r": 2,
+      "c": 1,
+      "value": 2
+    },
+    {
+      "id": 25,
+      "square": "Z0_1",
+      "r": 2,
+      "c": 2,
+      "value": 0
+    },
+    {
+      "id": 26,
+      "square": "Z0_1",
+      "r": 2,
+      "c": 2,
+      "value": 1
+    }
+  ],
+  "fixed": {
+    "L0": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        1
+      ],
+      [
+        0,
+        2,
+        2
+      ],
+      [
+        1,
+        0,
+        1
+      ],
+      [
+        1,
+        1,
+        2
+      ],
+      [
+        1,
+        2,
+        0
+      ],
+      [
+        2,
+        0,
+        2
+      ]
+    ],
+    "L1": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        1
+      ],
+      [
+        0,
+        2,
+        2
+      ]
+    ],
+    "Z0_1": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        1
+      ],
+      [
+        0,
+        2,
+        2
+      ]
+    ]
+  },
+  "semantic_variables": 26,
+  "nvars": 26,
+  "clauses": 90,
+  "pair_orbits": null,
+  "cnf_sha256": "205d703b799d1a18ace7f3ba6b487b519ae5f64f160fc463479473e29294e29b"
+}

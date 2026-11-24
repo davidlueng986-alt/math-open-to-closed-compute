@@ -1,0 +1,15 @@
+{
+  "shard": 1,
+  "parts": [
+    4
+  ],
+  "task_status": "SHARD_EXHAUSTED_WITH_CERTIFICATES",
+  "nodes": 1,
+  "leaves": 1,
+  "leaf_status_counts": {
+    "UNSAT_VERIFIED": 1
+  },
+  "coverage": "all unresolved leaves retained; no percentage estimate",
+  "coverage_tree_verified": true,
+  "lrat_certificates_replayed": 1
+}

@@ -1,0 +1,59 @@
+{
+  "solver": {
+    "command": [
+      "kissat",
+      "--time=15",
+      "out/backend-1/attempts/root_0000/instance.cnf",
+      "out/backend-1/attempts/root_0000/proof.drat"
+    ],
+    "returncode": 20,
+    "seconds": 0.25091603199999923,
+    "stop_reason": null
+  },
+  "solver_status": "UNSATISFIABLE",
+  "solver_stats": [
+    "c conflicts:                                0                0.00 per second",
+    "c decisions:                                0                0.00 per conflict",
+    "c maximum-resident-set-size:         17928192 bytes         17 MB",
+    "c process-time:                                              0.00 seconds"
+  ],
+  "cnf_sha256": "ecde9cb8cd765b380b4633f9fc61f641267bd645ebbcab8f7bf316af00f4ad0e",
+  "cube": [],
+  "status": "UNSAT_VERIFIED",
+  "proof_check": {
+    "status": "UNSAT_VERIFIED",
+    "cnf": "instance.cnf",
+    "cnf_sha256": "ecde9cb8cd765b380b4633f9fc61f641267bd645ebbcab8f7bf316af00f4ad0e",
+    "drat": "proof.drat",
+    "drat_sha256": "ae38459a278bcd6dcf290158667f81b6054e1a6c96e45eb67bcbc85550fba175",
+    "checker_source": "https://github.com/marijnheule/drat-trim/tree/2e3b2dc0ecf938addbd779d42877b6ed69d9a985",
+    "drat_check": {
+      "command": [
+        "drat-trim",
+        "out/backend-1/attempts/root_0000/instance.cnf",
+        "out/backend-1/attempts/root_0000/proof.drat",
+        "-L",
+        "out/backend-1/attempts/root_0000/proof.lrat",
+        "-t",
+        "10"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "seconds": 0.11425897499999849,
+      "log": "proof.drat-check.log"
+    },
+    "lrat": "proof.lrat",
+    "lrat_sha256": "6847aef1ddcffc87cb367d644ce14fe7975d8b1276f9a0792d9ebba363cddcfe",
+    "lrat_check": {
+      "command": [
+        "lrat-check",
+        "out/backend-1/attempts/root_0000/instance.cnf",
+        "out/backend-1/attempts/root_0000/proof.lrat"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "seconds": 0.032021592999996074,
+      "log": "proof.lrat-check.log"
+    }
+  }
+}

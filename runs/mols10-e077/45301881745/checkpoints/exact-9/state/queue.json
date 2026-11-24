@@ -1,0 +1,816 @@
+{
+  "version": "mols-cube-queue-v1",
+  "n": 10,
+  "squares": 3,
+  "shard": 9,
+  "parts": [
+    4,
+    6
+  ],
+  "base_cnf_sha256": "25acd3e1c216a865650ab1ca15037b63a07545f90c815625c0d8009b80cec1df",
+  "even_row_normalization": true,
+  "mapping_sha256": "7efc5c7be7aea8abaaa42f85dcab93680cf51b9ff1dd83ae3abd5c54a3fe9001",
+  "root": "root",
+  "created_unix": 1795482192.5973222,
+  "nodes": {
+    "root": {
+      "cube": [],
+      "parent": null,
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root_0000"
+      ],
+      "split_literal": 522,
+      "children": [
+        "root0",
+        "root1"
+      ]
+    },
+    "root0": {
+      "cube": [
+        -522
+      ],
+      "parent": "root",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root0_0000"
+      ],
+      "split_literal": 523,
+      "children": [
+        "root00",
+        "root01"
+      ]
+    },
+    "root1": {
+      "cube": [
+        522
+      ],
+      "parent": "root",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root1_0000"
+      ],
+      "split_literal": 1333,
+      "children": [
+        "root10",
+        "root11"
+      ]
+    },
+    "root00": {
+      "cube": [
+        -522,
+        -523
+      ],
+      "parent": "root0",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root00_0000"
+      ],
+      "split_literal": 524,
+      "children": [
+        "root000",
+        "root001"
+      ]
+    },
+    "root01": {
+      "cube": [
+        -522,
+        523
+      ],
+      "parent": "root0",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root01_0000"
+      ],
+      "split_literal": 530,
+      "children": [
+        "root010",
+        "root011"
+      ]
+    },
+    "root10": {
+      "cube": [
+        522,
+        -1333
+      ],
+      "parent": "root1",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root10_0000"
+      ],
+      "split_literal": 530,
+      "children": [
+        "root100",
+        "root101"
+      ]
+    },
+    "root11": {
+      "cube": [
+        522,
+        1333
+      ],
+      "parent": "root1",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root11_0000"
+      ],
+      "split_literal": 530,
+      "children": [
+        "root110",
+        "root111"
+      ]
+    },
+    "root000": {
+      "cube": [
+        -522,
+        -523,
+        -524
+      ],
+      "parent": "root00",
+      "status": "UNSAT_VERIFIED",
+      "attempts": [
+        "attempts/root000_0000"
+      ],
+      "evidence": "attempts/root000_0000/result.json"
+    },
+    "root001": {
+      "cube": [
+        -522,
+        -523,
+        524
+      ],
+      "parent": "root00",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root001_0000"
+      ],
+      "split_literal": 1335,
+      "children": [
+        "root0010",
+        "root0011"
+      ]
+    },
+    "root010": {
+      "cube": [
+        -522,
+        523,
+        -530
+      ],
+      "parent": "root01",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root010_0000"
+      ],
+      "split_literal": 533,
+      "children": [
+        "root0100",
+        "root0101"
+      ]
+    },
+    "root011": {
+      "cube": [
+        -522,
+        523,
+        530
+      ],
+      "parent": "root01",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root011_0000"
+      ],
+      "split_literal": 1342,
+      "children": [
+        "root0110",
+        "root0111"
+      ]
+    },
+    "root100": {
+      "cube": [
+        522,
+        -1333,
+        -530
+      ],
+      "parent": "root10",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root100_0000"
+      ],
+      "split_literal": 532,
+      "children": [
+        "root1000",
+        "root1001"
+      ]
+    },
+    "root101": {
+      "cube": [
+        522,
+        -1333,
+        530
+      ],
+      "parent": "root10",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root101_0000"
+      ],
+      "split_literal": 1342,
+      "children": [
+        "root1010",
+        "root1011"
+      ]
+    },
+    "root110": {
+      "cube": [
+        522,
+        1333,
+        -530
+      ],
+      "parent": "root11",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root110_0000"
+      ],
+      "split_literal": 532,
+      "children": [
+        "root1100",
+        "root1101"
+      ]
+    },
+    "root111": {
+      "cube": [
+        522,
+        1333,
+        530
+      ],
+      "parent": "root11",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root111_0000"
+      ],
+      "split_literal": 1343,
+      "children": [
+        "root1110",
+        "root1111"
+      ]
+    },
+    "root0010": {
+      "cube": [
+        -522,
+        -523,
+        524,
+        -1335
+      ],
+      "parent": "root001",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root0010_0000"
+      ],
+      "split_literal": 1336,
+      "children": [
+        "root00100",
+        "root00101"
+      ]
+    },
+    "root0011": {
+      "cube": [
+        -522,
+        -523,
+        524,
+        1335
+      ],
+      "parent": "root001",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root0011_0000"
+      ],
+      "split_literal": 530,
+      "children": [
+        "root00110",
+        "root00111"
+      ]
+    },
+    "root0100": {
+      "cube": [
+        -522,
+        523,
+        -530,
+        -533
+      ],
+      "parent": "root010",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root0100_0000"
+      ],
+      "split_literal": 534,
+      "children": [
+        "root01000",
+        "root01001"
+      ]
+    },
+    "root0101": {
+      "cube": [
+        -522,
+        523,
+        -530,
+        533
+      ],
+      "parent": "root010",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root0101_0000"
+      ],
+      "split_literal": 1340,
+      "children": [
+        "root01010",
+        "root01011"
+      ]
+    },
+    "root0110": {
+      "cube": [
+        -522,
+        523,
+        530,
+        -1342
+      ],
+      "parent": "root011",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root0110_0000"
+      ],
+      "split_literal": 1344,
+      "children": [
+        "root01100",
+        "root01101"
+      ]
+    },
+    "root0111": {
+      "cube": [
+        -522,
+        523,
+        530,
+        1342
+      ],
+      "parent": "root011",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root0111_0000"
+      ],
+      "split_literal": 540,
+      "children": [
+        "root01110",
+        "root01111"
+      ]
+    },
+    "root1000": {
+      "cube": [
+        522,
+        -1333,
+        -530,
+        -532
+      ],
+      "parent": "root100",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root1000_0000"
+      ],
+      "split_literal": 533,
+      "children": [
+        "root10000",
+        "root10001"
+      ]
+    },
+    "root1001": {
+      "cube": [
+        522,
+        -1333,
+        -530,
+        532
+      ],
+      "parent": "root100",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root1001_0000"
+      ],
+      "split_literal": 1340,
+      "children": [
+        "root10010",
+        "root10011"
+      ]
+    },
+    "root1010": {
+      "cube": [
+        522,
+        -1333,
+        530,
+        -1342
+      ],
+      "parent": "root101",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root1010_0000"
+      ],
+      "split_literal": 1344,
+      "children": [
+        "root10100",
+        "root10101"
+      ]
+    },
+    "root1011": {
+      "cube": [
+        522,
+        -1333,
+        530,
+        1342
+      ],
+      "parent": "root101",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root1011_0000"
+      ],
+      "split_literal": 540,
+      "children": [
+        "root10110",
+        "root10111"
+      ]
+    },
+    "root1100": {
+      "cube": [
+        522,
+        1333,
+        -530,
+        -532
+      ],
+      "parent": "root110",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root1100_0000"
+      ],
+      "split_literal": 533,
+      "children": [
+        "root11000",
+        "root11001"
+      ]
+    },
+    "root1101": {
+      "cube": [
+        522,
+        1333,
+        -530,
+        532
+      ],
+      "parent": "root110",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root1101_0000"
+      ],
+      "split_literal": 1340,
+      "children": [
+        "root11010",
+        "root11011"
+      ]
+    },
+    "root1110": {
+      "cube": [
+        522,
+        1333,
+        530,
+        -1343
+      ],
+      "parent": "root111",
+      "status": "SPLIT",
+      "attempts": [
+        "attempts/root1110_0000"
+      ],
+      "split_literal": 1344,
+      "children": [
+        "root11100",
+        "root11101"
+      ]
+    },
+    "root1111": {
+      "cube": [
+        522,
+        1333,
+        530,
+        1343
+      ],
+      "parent": "root111",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root00100": {
+      "cube": [
+        -522,
+        -523,
+        524,
+        -1335,
+        -1336
+      ],
+      "parent": "root0010",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root00101": {
+      "cube": [
+        -522,
+        -523,
+        524,
+        -1335,
+        1336
+      ],
+      "parent": "root0010",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root00110": {
+      "cube": [
+        -522,
+        -523,
+        524,
+        1335,
+        -530
+      ],
+      "parent": "root0011",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root00111": {
+      "cube": [
+        -522,
+        -523,
+        524,
+        1335,
+        530
+      ],
+      "parent": "root0011",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root01000": {
+      "cube": [
+        -522,
+        523,
+        -530,
+        -533,
+        -534
+      ],
+      "parent": "root0100",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root01001": {
+      "cube": [
+        -522,
+        523,
+        -530,
+        -533,
+        534
+      ],
+      "parent": "root0100",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root01010": {
+      "cube": [
+        -522,
+        523,
+        -530,
+        533,
+        -1340
+      ],
+      "parent": "root0101",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root01011": {
+      "cube": [
+        -522,
+        523,
+        -530,
+        533,
+        1340
+      ],
+      "parent": "root0101",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root01100": {
+      "cube": [
+        -522,
+        523,
+        530,
+        -1342,
+        -1344
+      ],
+      "parent": "root0110",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root01101": {
+      "cube": [
+        -522,
+        523,
+        530,
+        -1342,
+        1344
+      ],
+      "parent": "root0110",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root01110": {
+      "cube": [
+        -522,
+        523,
+        530,
+        1342,
+        -540
+      ],
+      "parent": "root0111",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root01111": {
+      "cube": [
+        -522,
+        523,
+        530,
+        1342,
+        540
+      ],
+      "parent": "root0111",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root10000": {
+      "cube": [
+        522,
+        -1333,
+        -530,
+        -532,
+        -533
+      ],
+      "parent": "root1000",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root10001": {
+      "cube": [
+        522,
+        -1333,
+        -530,
+        -532,
+        533
+      ],
+      "parent": "root1000",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root10010": {
+      "cube": [
+        522,
+        -1333,
+        -530,
+        532,
+        -1340
+      ],
+      "parent": "root1001",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root10011": {
+      "cube": [
+        522,
+        -1333,
+        -530,
+        532,
+        1340
+      ],
+      "parent": "root1001",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root10100": {
+      "cube": [
+        522,
+        -1333,
+        530,
+        -1342,
+        -1344
+      ],
+      "parent": "root1010",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root10101": {
+      "cube": [
+        522,
+        -1333,
+        530,
+        -1342,
+        1344
+      ],
+      "parent": "root1010",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root10110": {
+      "cube": [
+        522,
+        -1333,
+        530,
+        1342,
+        -540
+      ],
+      "parent": "root1011",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root10111": {
+      "cube": [
+        522,
+        -1333,
+        530,
+        1342,
+        540
+      ],
+      "parent": "root1011",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root11000": {
+      "cube": [
+        522,
+        1333,
+        -530,
+        -532,
+        -533
+      ],
+      "parent": "root1100",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root11001": {
+      "cube": [
+        522,
+        1333,
+        -530,
+        -532,
+        533
+      ],
+      "parent": "root1100",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root11010": {
+      "cube": [
+        522,
+        1333,
+        -530,
+        532,
+        -1340
+      ],
+      "parent": "root1101",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root11011": {
+      "cube": [
+        522,
+        1333,
+        -530,
+        532,
+        1340
+      ],
+      "parent": "root1101",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root11100": {
+      "cube": [
+        522,
+        1333,
+        530,
+        -1343,
+        -1344
+      ],
+      "parent": "root1110",
+      "status": "PENDING",
+      "attempts": []
+    },
+    "root11101": {
+      "cube": [
+        522,
+        1333,
+        530,
+        -1343,
+        1344
+      ],
+      "parent": "root1110",
+      "status": "PENDING",
+      "attempts": []
+    }
+  },
+  "task_status": "\u672a\u5b8c\u6210\u4efb\u52d9",
+  "coverage": "binary split tree; every child is parent plus a literal or its negation",
+  "updated_unix": 1795499363.6027482
+}
