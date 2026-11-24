@@ -3,7 +3,7 @@
 Build math toolboxes builds and smoke-tests three images and publishes them to GHCR.
 It runs when container files change on main and can also be started manually.
 
-- math-compute-sat: pinned SMS/Glasgow, PySMS, PySAT, Z3, MiniSat, nauty, C++, GMP, NumPy and NetworkX.
+- math-compute-sat: pinned SMS/Glasgow, PySMS, PySAT (including CaDiCaL), Kissat, CryptoMiniSat, Z3, cvc5 Python, MiniSat, DRAT-trim, lrat-check, nauty, bliss, PARI/GP, C++, GMP, OR-Tools CP-SAT, SciPy, SymPy, python-flint, gmpy2, igraph, NumPy and NetworkX.
 - math-compute-sage: SageMath 10.6, GAP, PARI/GP and Singular, plus nauty, Z3 and MiniSat.
 - math-compute-lean: Lean 4.36.0 and mathlib fc4f59e577feb1a4956671bc04ac18aaaf8cd842 with compiled cache in /opt/mathlib4.
 
@@ -17,3 +17,15 @@ Other toolchain or mathlib versions require their matching dependencies and cach
 Each image has latest and sha-<commit> tags. Use the SHA tag for reproducibility.
 GHCR package visibility and permissions are managed through GitHub Packages.
 Images need an initial successful publish before use. Large images can take time to pull.
+
+SAT toolbox quick examples:
+- SAT: `kissat problem.cnf` or `cryptominisat5 problem.cnf`.
+- DRAT check: `drat-trim problem.cnf proof.drat`.
+- CP-SAT: `from ortools.sat.python import cp_model`.
+- SMT: `import z3` or `import cvc5`.
+- Exact arithmetic: `gp -fq`, `import sympy`, `import gmpy2`, or `from flint import fmpz`.
+- Graph algorithms: `nauty-geng`, `bliss`, `import networkx`, or `import igraph`.
+
+The SAT image includes `/opt/math-toolbox/python-requirements.txt` with installed Python versions.
+The external source revisions for Kissat and DRAT-trim are pinned in the Dockerfile.
+The solver and proof-checker functional checks are in `containers/test-math-tools.py`.
