@@ -1,0 +1,29 @@
+{
+  "trials": 72,
+  "shards": 12,
+  "target_orders": [
+    57,
+    63
+  ],
+  "best": {
+    "seed": 1242,
+    "negative_masks": [
+      "0x3f2a64ab5cf5b8042df734e25d1fad261241b7f5a872a7a5f055de5087cdb8a908cdf15f5f1a246129f50a9f1689f1c7462d5f0ebf60b1586fb94456ce25642f49bfb5ccdda8ecda952b86ef6825c4a024e74d77a574389418c27486d8f699df77b6aa5201c1bc6b6ae72e3215e34ec098b17ff246e4e8a54dfd61c19cafa089874249788b0f4fe3394e878c57d1b841018149701b4",
+      "0x2735c661c7e3906e93789c964c1b75a9780b9cd79a19141d17e000fa59850fad893c68c30bf2b7d6e92945b56f5b27e5db00edac9ab7c35ec158af56072a22c698c77e6d0175de3bb25d175c2a671d40af06e2011dc35346345c88296d117ede987a134e55d3452adf474bd755d48658baa04e11c1e5c5df9623f7a0d31beb35249b75f8154d9fa9795fb201c708590785f35e8315e"
+    ],
+    "coarse_score": 4,
+    "phase_score": 2,
+    "target_energy": 192,
+    "target_shift_pairs": 58,
+    "target_exact_shift_pairs": 46,
+    "raw_energy": 1021728,
+    "raw_exact_shift_pairs": 49,
+    "raw_peak_error": 120,
+    "raw_paf_at_one": -46,
+    "constant_triples": [
+      110,
+      89
+    ]
+  },
+  "shards_with_zero_target_error": 0
+}
