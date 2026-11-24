@@ -1,0 +1,28 @@
+{
+  "problem": "ERDOS-307",
+  "level": 61,
+  "split": [
+    11,
+    50
+  ],
+  "first_side_even": true,
+  "placement": "opposite",
+  "opposite_placement_excluded": true,
+  "original_status": "OPEN",
+  "prefixes": 41292,
+  "counts": {
+    "anchors": 4344003500,
+    "candidates": 0,
+    "done": 41292,
+    "factor_hits": 0,
+    "leaves": 28027656652,
+    "mass": 11394023079,
+    "odd": 2172068073,
+    "short_cases": 4344003500,
+    "supports": 21917690,
+    "windows": 21917690
+  },
+  "large_tail_supports": 49968,
+  "longest_shard_seconds": 240.299,
+  "candidate_details": []
+}
