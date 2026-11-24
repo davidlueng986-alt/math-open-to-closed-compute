@@ -95,10 +95,18 @@ def count63():
     first, second = ((sum(row[1]), sum(row[2])) for row in SEVEN)
     expected = tuple(tuple(zip(profile63(row[1]), profile63(row[2]))) for row in SEVEN)
     count, matches = 0, 0
+    class_at = (0, 3, 4, 1, 3, 4, 2, 3, 4)
     for x, y in complements(coarse(a, *first), coarse(b, *second)):
         for u, v in complements(fine(a[:3], *x[:2]), fine(b[:3], *y[:2])):
+            parameters = (u + x[2:], v + y[2:])
+            projected = []
+            for row, five in zip(SEVEN, parameters):
+                means, differences = zip(*(five[j] for j in class_at))
+                projected.append(expand(7, row[0], means, differences))
+            if [paf(projected, shift) for shift in range(63)] != [2358] + [-38]*62:
+                raise ValueError("spurious spectral match in the 63-point search")
             count += 1
-            matches += (u + x[2:], v + y[2:]) == expected
+            matches += parameters == expected
     if matches != 1:
         raise ValueError("the 7- and 9-point search did not regenerate the 63-point pair")
     return count

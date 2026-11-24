@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
+#include <limits>
+#include <map>
 #include <random>
 #include <stdexcept>
 #include <string>
@@ -190,19 +192,8 @@ struct ExactMoves {
         }
         return r;
     }
-    static vector<Entry> enumerate(Search &search, int word) {
-        vector<Entry> out;
-        Move identity;
-        identity.word = word;
-        out.push_back({identity, {}});
-        auto recordMove = [&](Move m) {
-            search.scoreMove(m);
-            Entry v;
-            v.move = m;
-            for (size_t i = 0; i < search.shifts.size(); i++)
-                v.delta[i] = search.delta[i];
-            out.push_back(v);
-        };
+    template <class Visit>
+    static void visitMoves(const Search &search, int word, Visit recordMove) {
         auto &row = search.rows[word];
         for (int k = 0; k < 19; k++)
             for (int l = k + 1; l < 19; l++) {
@@ -241,7 +232,124 @@ struct ExactMoves {
                         recordMove(m);
                     }
             }
+    }
+    static vector<Entry> enumerate(Search &search, int word) {
+        vector<Entry> out;
+        Move identity;
+        identity.word = word;
+        out.push_back({identity, {}});
+        auto recordMove = [&](Move m) {
+            search.scoreMove(m);
+            Entry v;
+            v.move = m;
+            for (size_t i = 0; i < search.shifts.size(); i++)
+                v.delta[i] = search.delta[i];
+            out.push_back(v);
+        };
+        visitMoves(search, word, recordMove);
         return out;
+    }
+    // Deterministic steepest descent on the full 598-shift objective.
+    static void descend(Search &search, int limit) {
+        for (int step = 0; step <= limit; ++step) {
+            long long minimum = search.energy;
+            Move choice;
+            int legal = 0, ties = 0;
+            auto scan = [&](const Move &move) {
+                const auto cost = search.scoreMove(move);
+                if (search.delta[search.shiftIndex[399]] != 0)
+                    return;
+                ++legal;
+                if (cost == search.energy)
+                    ++ties;
+                if (cost < minimum) {
+                    minimum = cost;
+                    choice = move;
+                }
+            };
+            for (int word = 0; word < 2; ++word)
+                visitMoves(search, word, scan);
+            if (minimum == search.energy || step == limit) {
+                cerr << "descents=" << step << " legal=" << legal << " equal=" << ties
+                     << " smallest_energy_including_current=" << minimum * 16 << '\n';
+                break;
+            }
+            const auto cost = search.scoreMove(choice);
+            search.accept(choice, cost);
+            if (search.defects(search.rows) != search.residuals)
+                throw runtime_error("wrong descent residual");
+        }
+    }
+    // One simultaneous trade on each row has additive correlation changes.
+    // Group by the shift-399 change and check every compatible product.
+    static void pairedDescent(Search &search, int limit) {
+        constexpr int shifts = 598;
+        struct Candidate {
+            Move move;
+            long long cost;
+            array<int16_t, shifts> delta;
+        };
+        using Groups = map<int, vector<Candidate>>;
+        auto makeSide = [&](int word) {
+            Groups groups;
+            auto record = [&](const Move &move) {
+                long long cost = search.scoreMove(move);
+                auto &items = groups[search.delta[search.shiftIndex[399]]];
+                Candidate candidate{move, cost, {}};
+                copy_n(search.delta.begin(), shifts, candidate.delta.begin());
+                items.push_back(candidate);
+            };
+            Move identity;
+            identity.word = word;
+            record(identity);
+            visitMoves(search, word, record);
+            return groups;
+        };
+        int step = 0;
+        for (; step < limit; ++step) {
+            auto left = makeSide(0), right = makeSide(1);
+            long long best = search.energy;
+            Move first, second;
+            long long neighbors = 0, equal = 0, smallest = numeric_limits<long long>::max();
+            for (auto &[change, group] : left) {
+                auto it = right.find(-change);
+                if (it == right.end())
+                    continue;
+                for (auto &a : group)
+                    for (auto &b : it->second) {
+                        if (a.move.count == 0 && b.move.count == 0)
+                            continue;
+                        ++neighbors;
+                        int dot = 0;
+                        for (int i = 0; i < shifts; ++i)
+                            dot += int(a.delta[i]) * int(b.delta[i]);
+                        const auto total = a.cost + b.cost - search.energy + 2 * dot;
+                        smallest = min(smallest, total);
+                        if (total == search.energy)
+                            ++equal;
+                        if (total < best) {
+                            best = total;
+                            first = a.move;
+                            second = b.move;
+                        }
+                    }
+            }
+            if (best == search.energy) {
+                cerr << "cross-word neighbors=" << neighbors << " equal=" << equal
+                     << " best neighbor=" << smallest * 16 << '\n';
+                break;
+            }
+            for (const Move *m : {&first, &second})
+                for (int z = 0; z < m->count; ++z)
+                    search.rows[m->word][m->index[z]] *= -1;
+            search.residuals = search.defects(search.rows);
+            search.energy = Search::squaredNorm(search.residuals);
+            if (search.energy != best || search.residuals[search.shiftIndex[399]] != 0)
+                throw runtime_error("wrong paired descent");
+            search.bestRows = search.rows;
+            search.bestEnergy = best;
+        }
+        cerr << "paired descents=" << step << " energy=" << search.energy * 16 << '\n';
     }
     // Exact two-switch changes on one row. Each interaction across the two supports
     // contributes x[p]*x[q] to the quarter-residual at their cyclic distance.
@@ -427,12 +535,14 @@ struct ExactMoves {
 
 int main(int argc, char **argv) {
     if (argc != 4) {
-        cerr << "usage: trades SEED axis|axis21|quad21|all PROPOSALS < signs.txt\n";
+        cerr << "usage: trades SEED axis|axis21|quad21|all|descent|paired|perturb STEPS < "
+                "signs.txt\n";
         return 2;
     }
     const string mode = argv[2];
     const int proposals = stoi(argv[3]);
-    if (proposals < 0 || (mode != "axis" && mode != "axis21" && mode != "quad21" && mode != "all"))
+    if (proposals < 0 || (mode != "axis" && mode != "axis21" && mode != "quad21" && mode != "all" &&
+                          mode != "descent" && mode != "paired" && mode != "perturb"))
         return 2;
     Search run(stoul(argv[1]));
     Pair initial;
@@ -442,16 +552,40 @@ int main(int argc, char **argv) {
                 return 3;
     vector<int> target;
     for (int shift = 1; shift <= 598; shift++)
-        if (mode == "all" || 9 * shift % length == 0 || 7 * shift % length == 0 ||
-            19 * shift % length == 0 ||
+        if (mode == "all" || mode == "descent" || mode == "paired" || mode == "perturb" ||
+            9 * shift % length == 0 || 7 * shift % length == 0 || 19 * shift % length == 0 ||
             ((mode == "axis21" || mode == "quad21") && 21 * shift % length == 0))
             target.push_back(shift);
     run.initialize(initial, target);
     if (run.residuals[run.shiftIndex[399]] != 0)
         throw runtime_error("starting signs must satisfy shift 399");
-    run.run(proposals, 0.7, mode == "all" ? 140 : 6);
-    if (mode != "all" && run.bestEnergy)
-        ExactMoves::repair(run, mode == "quad21");
+    if (mode == "perturb") {
+        for (int step = 0; step < proposals;) {
+            Move move;
+            if (!run.proposal(move))
+                continue;
+            const auto cost = run.scoreMove(move);
+            if (run.delta[run.shiftIndex[399]] != 0)
+                continue;
+            run.accept(move, cost);
+            ++step;
+        }
+        for (const Row &row : run.rows) {
+            for (int value : row)
+                cout << value << ' ';
+            cout << '\n';
+        }
+        return 0;
+    }
+    if (mode == "paired")
+        ExactMoves::pairedDescent(run, proposals);
+    else if (mode == "descent")
+        ExactMoves::descend(run, proposals);
+    else {
+        run.run(proposals, 0.7, mode == "all" ? 140 : 6);
+        if (mode != "all" && run.bestEnergy)
+            ExactMoves::repair(run, mode == "quad21");
+    }
     cout << "{\"score\":" << run.bestEnergy * 16 << ",\"shifts\":[";
     for (size_t i = 0; i < target.size(); i++)
         cout << (i ? "," : "") << target[i];
