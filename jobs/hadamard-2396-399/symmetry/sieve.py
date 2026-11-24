@@ -57,7 +57,7 @@ def vertical57(orientations, binary):
     return {label for label,k in assignment.items() if got[k]=="1"},got.count("1"),len(pairs)
 
 
-def main(templates, binary, quotients, vertical):
+def main(templates, binary, quotients, vertical, save=None):
     orientations = {}
     lines = templates.read_text().splitlines()
     for i,line in enumerate(lines):
@@ -96,6 +96,10 @@ def main(templates, binary, quotients, vertical):
         print(f"q=57: {count}/{total} projected template pairs admit signs; "
               f"{len(surviving)}/{len(orientations)} orientations pass, "
               f"{len(accepted)} cumulative orientations in {len({k[0] for k in accepted})} templates",flush=True)
+    if save:
+        signs = list(product((1,-1),repeat=2))
+        save.write_text("".join(format(sum(1<<j for j,(a,b) in enumerate(signs) if (i,a,b) in accepted),"x")
+                                for i in range(len(lines)))+"\n")
     print("Cumulative template sizes",dict(sorted(Counter(
         int(lines[i].split()[0]) for i in {k[0] for k in accepted}
     ).items())))
@@ -107,5 +111,6 @@ if __name__ == "__main__":
     p.add_argument("binary",type=Path)
     p.add_argument("quotients",type=int,nargs="+",choices=(3,7,9))
     p.add_argument("--vertical",type=Path,help="length-57 Fourier-signature binary")
+    p.add_argument("--write-orientations",type=Path,help="one 4-bit orientation mask per template")
     args=p.parse_args()
-    main(args.templates,args.binary,args.quotients,args.vertical)
+    main(args.templates,args.binary,args.quotients,args.vertical,args.write_orientations)

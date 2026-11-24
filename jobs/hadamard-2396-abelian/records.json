@@ -1,0 +1,66 @@
+{
+  "cyclic": {
+    "law": "cyclic",
+    "group": [
+      1,
+      64,
+      253,
+      442,
+      505,
+      568,
+      631,
+      757,
+      883
+    ],
+    "negative_masks": [
+      "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b8d619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a2ebc2500867add81461af96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+      "0x13578fe7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d3569253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f76df277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc6ad408e8e0773ccdceca32bd1683f3162edc53101fca80f4f560b33b59366d3f874"
+    ],
+    "seed": 141008,
+    "raw_energy": 33664,
+    "raw_exact_pairs": 235,
+    "raw_peak_error": 44,
+    "raw_paf_at_one": 2,
+    "raw_paf_at_399": 2,
+    "quotient_energies": {
+      "57": 93456,
+      "63": 231520,
+      "133": 49536,
+      "399": 35696
+    },
+    "lag_classes": 94,
+    "word_orbits": 189
+  },
+  "plane": {
+    "law": "plane",
+    "group": [
+      1,
+      64,
+      253,
+      442,
+      505,
+      568,
+      631,
+      757,
+      883
+    ],
+    "negative_masks": [
+      "0xa02e9a21ab9d9f819b682f25f457ed6abc5ded1a4ea5ec181e6372efa8d0ba83501088559c902c908a17d5cd608cc2148f4918f617748e24afc387c41c2d7a90f35c3a135aeb99758b22f995fc6519ddd3032b8323ffa0d9156a014bdd72e2eb9cff3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d91a8a882079bc537f73dcbc9bc663c05d8bed1cb",
+      "0x1caaeed020b536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df813fa6f107d451d9a1131f8e952500e2f40d09d86c938d1efd817103b5f33fb736b3bbb141d03a08b4cbec4718c2e77d3dfad20380dc78d14d39c29fad63e439fcd2e9e9375505c0a817b8e4abeed2298b3a68abe495703e9cb9620e7f48d6b05fab64c7eb1acbc3d342a4051aa4c6318db3856ced"
+    ],
+    "seed": 141404,
+    "raw_energy": 34432,
+    "raw_exact_pairs": 174,
+    "raw_peak_error": 44,
+    "raw_paf_at_one": 6,
+    "raw_paf_at_399": 22,
+    "quotient_energies": {
+      "57": 139328,
+      "63": 225808,
+      "133": 50912,
+      "399": 46176
+    },
+    "lag_classes": 94,
+    "word_orbits": 189
+  }
+}

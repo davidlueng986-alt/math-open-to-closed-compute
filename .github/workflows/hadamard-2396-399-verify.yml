@@ -46,9 +46,11 @@ jobs:
             g++ -O3 -std=c++17 -mpopcnt -Wall -Wextra -Werror "$f.cpp" -o "$RUNNER_TEMP/$f"
           done
           "$RUNNER_TEMP/templates" > "$RUNNER_TEMP/templates.txt" 2> "$RUNNER_TEMP/templates.log"
+          cmp "$RUNNER_TEMP/templates.txt" ../../hadamard-2396-squares/templates.txt
           python3 check_templates.py "$RUNNER_TEMP/templates.txt" "$RUNNER_TEMP/templates.log"
       - name: Replay exact quotient feasibility tests
         run: |
           set -euo pipefail
-          python3 sieve.py "$RUNNER_TEMP/templates.txt" "$RUNNER_TEMP/quotients" 3 7 9 --vertical "$RUNNER_TEMP/vertical" | tee "$RUNNER_TEMP/sieve.log"
+          python3 sieve.py "$RUNNER_TEMP/templates.txt" "$RUNNER_TEMP/quotients" 3 7 9 --vertical "$RUNNER_TEMP/vertical" --write-orientations "$RUNNER_TEMP/orientations.hex" | tee "$RUNNER_TEMP/sieve.log"
+          cmp "$RUNNER_TEMP/orientations.hex" ../../hadamard-2396-squares/orientations.hex
           diff -u expected.txt "$RUNNER_TEMP/sieve.log"

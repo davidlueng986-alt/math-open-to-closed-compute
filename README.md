@@ -4,6 +4,8 @@ Open, reproducible computations for the Math Open-to-Closed research project, ru
 
 **Everything here is public:** code, inputs, logs and results.
 
+[Hadamard conjecture research log](HADAMARD.md) tracks the order-2396 constructions, explicit sign certificates and remaining equations.
+
 ## Run a job
 
 1. **Actions** tab → **sharded-run** → **Run workflow**.
