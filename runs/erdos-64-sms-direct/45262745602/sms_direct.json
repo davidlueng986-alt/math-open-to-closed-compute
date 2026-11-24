@@ -1,0 +1,75 @@
+{
+  "problem": "ERDOS-64",
+  "original_status": "OPEN",
+  "type": "direct SAT counterexample search in exactly one-degree-four rest-cubic class",
+  "cases": [
+    {
+      "case": "target",
+      "caution": "SAT candidate needs independent exact graph proof; UNSAT requires independently checkable certificate; timeouts are not exclusions.",
+      "command": [
+        "/home/runner/.local/bin/smsg",
+        "--vertices",
+        "41",
+        "--connected",
+        "--cutoff",
+        "0",
+        "--forbidden-subgraph-file",
+        "/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/out/target.cycles",
+        "--dimacs",
+        "/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/out/target.cnf"
+      ],
+      "degrees": "3,4",
+      "edges": 62,
+      "elapsed_seconds": 18000.068,
+      "forbidden_simple_cycle_lengths": [
+        4,
+        8,
+        16,
+        32
+      ],
+      "n": 41,
+      "solver_exit_code": null,
+      "status": "UNKNOWN_TIMEOUT",
+      "stderr_log": "target.stderr.log",
+      "stdout_log": "target.stdout.log"
+    },
+    {
+      "case": "target",
+      "caution": "SAT candidate needs independent exact graph proof; UNSAT requires independently checkable certificate; timeouts are not exclusions.",
+      "command": [
+        "/home/runner/.local/bin/smsg",
+        "--vertices",
+        "43",
+        "--connected",
+        "--cutoff",
+        "0",
+        "--forbidden-subgraph-file",
+        "/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/out/target.cycles",
+        "--dimacs",
+        "/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/out/target.cnf"
+      ],
+      "degrees": "3,4",
+      "edges": 65,
+      "elapsed_seconds": 18000.048,
+      "forbidden_simple_cycle_lengths": [
+        4,
+        8,
+        16,
+        32
+      ],
+      "n": 43,
+      "solver_exit_code": null,
+      "status": "UNKNOWN_TIMEOUT",
+      "stderr_log": "target.stderr.log",
+      "stdout_log": "target.stdout.log"
+    }
+  ],
+  "positive_controls_passed": true,
+  "complete_execution": true,
+  "potential_witnesses_require_independent_verification": [],
+  "unknown_or_timeout": [
+    41,
+    43
+  ],
+  "caution": "These are solver reports, not certified UNSAT/Lean or a universal statement. Zero SAT models for n41/n43 cannot settle original."
+}

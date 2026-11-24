@@ -1,0 +1,150 @@
+{
+  "job": "erdos-64-sms-direct",
+  "run_id": "45262745602",
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45262745602",
+  "commit": "53f4fe4d68e11710c03d604fde4716cc2ec9dae7",
+  "shards_expected": 2,
+  "shards_with_result": 2,
+  "missing_shards": [],
+  "seconds_per_shard": {
+    "0": 18005,
+    "1": 18006
+  },
+  "complete": true,
+  "results": {
+    "0": {
+      "control": {
+        "case": "positive_control",
+        "caution": "SAT candidate needs independent exact graph proof; UNSAT requires independently checkable certificate; timeouts are not exclusions.",
+        "command": [
+          "/home/runner/.local/bin/smsg",
+          "--vertices",
+          "24",
+          "--connected",
+          "--cutoff",
+          "0",
+          "--forbidden-subgraph-file",
+          "/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/out/control.cycles",
+          "--dimacs",
+          "/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/out/control.cnf"
+        ],
+        "degrees": "3",
+        "edges": 36,
+        "elapsed_seconds": 4.324,
+        "forbidden_simple_cycle_lengths": [
+          4,
+          8
+        ],
+        "n": 24,
+        "solver_exit_code": 10,
+        "status": "SAT_UNVERIFIED",
+        "stderr_log": "positive_control.stderr.log",
+        "stdout_log": "positive_control.stdout.log"
+      },
+      "method": "SMS solver with Glasgow forbidden noninduced subgraphs",
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "shard": 0,
+      "shards": 2,
+      "target": {
+        "case": "target",
+        "caution": "SAT candidate needs independent exact graph proof; UNSAT requires independently checkable certificate; timeouts are not exclusions.",
+        "command": [
+          "/home/runner/.local/bin/smsg",
+          "--vertices",
+          "41",
+          "--connected",
+          "--cutoff",
+          "0",
+          "--forbidden-subgraph-file",
+          "/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/out/target.cycles",
+          "--dimacs",
+          "/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/out/target.cnf"
+        ],
+        "degrees": "3,4",
+        "edges": 62,
+        "elapsed_seconds": 18000.068,
+        "forbidden_simple_cycle_lengths": [
+          4,
+          8,
+          16,
+          32
+        ],
+        "n": 41,
+        "solver_exit_code": null,
+        "status": "UNKNOWN_TIMEOUT",
+        "stderr_log": "target.stderr.log",
+        "stdout_log": "target.stdout.log"
+      }
+    },
+    "1": {
+      "control": {
+        "case": "positive_control",
+        "caution": "SAT candidate needs independent exact graph proof; UNSAT requires independently checkable certificate; timeouts are not exclusions.",
+        "command": [
+          "/home/runner/.local/bin/smsg",
+          "--vertices",
+          "24",
+          "--connected",
+          "--cutoff",
+          "0",
+          "--forbidden-subgraph-file",
+          "/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/out/control.cycles",
+          "--dimacs",
+          "/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/out/control.cnf"
+        ],
+        "degrees": "3",
+        "edges": 36,
+        "elapsed_seconds": 4.627,
+        "forbidden_simple_cycle_lengths": [
+          4,
+          8
+        ],
+        "n": 24,
+        "solver_exit_code": 10,
+        "status": "SAT_UNVERIFIED",
+        "stderr_log": "positive_control.stderr.log",
+        "stdout_log": "positive_control.stdout.log"
+      },
+      "method": "SMS solver with Glasgow forbidden noninduced subgraphs",
+      "original_status": "OPEN",
+      "problem": "ERDOS-64",
+      "shard": 1,
+      "shards": 2,
+      "target": {
+        "case": "target",
+        "caution": "SAT candidate needs independent exact graph proof; UNSAT requires independently checkable certificate; timeouts are not exclusions.",
+        "command": [
+          "/home/runner/.local/bin/smsg",
+          "--vertices",
+          "43",
+          "--connected",
+          "--cutoff",
+          "0",
+          "--forbidden-subgraph-file",
+          "/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/out/target.cycles",
+          "--dimacs",
+          "/home/runner/work/math-open-to-closed-compute/math-open-to-closed-compute/out/target.cnf"
+        ],
+        "degrees": "3,4",
+        "edges": 65,
+        "elapsed_seconds": 18000.048,
+        "forbidden_simple_cycle_lengths": [
+          4,
+          8,
+          16,
+          32
+        ],
+        "n": 43,
+        "solver_exit_code": null,
+        "status": "UNKNOWN_TIMEOUT",
+        "stderr_log": "target.stderr.log",
+        "stdout_log": "target.stdout.log"
+      }
+    }
+  },
+  "merge": {
+    "exit_code": 0,
+    "output": "direct SAT n41/43 reports [(41, 'UNKNOWN_TIMEOUT'), (43, 'UNKNOWN_TIMEOUT')]\n"
+  }
+}
