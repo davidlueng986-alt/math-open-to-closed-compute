@@ -1,0 +1,39 @@
+{
+  "best": {
+    "negative_masks": [
+      "0x1225705f58f3ec9923b0f6aed5f31d425e748c283b943422d1c5917a4e90ae7c855a40c3b814d9a86f31d2b26dff56a60c31333d3758152c862f42545e84ffd95b5f5da52b55488913cb1d80e7bdfc0d90a3de384efe3e47a8f5fc1960a4a4b2050616095d7e6b23ced58dd8fe5842f9fcf123fc46e40ca6151f8887e1ffc66349d0714693e52d253daf4f32912d1d90657b8c7f022c",
+      "0x4142bd8ebaa4c6ee6b7654dfbf8c9b7dcbdf9bb4dc2b35f851054f4ee5695ea78390e685b50bdd0027a420a0c848ddaaf34ae75f9a9a0de85761d1c6ccf9c2481e7880d7e651d6d3921f99d62b5f0b7905980d1ca509b7e61c5fc16ae498efb5ce69f644e715f666ac281708e3a581ebfa268d262c1dda89014c64db01b73e86c915a53b37af3b6f2824629bc00c011315fc21d133b"
+    ],
+    "target_energy": 0,
+    "remaining": {},
+    "raw_energy": 1051296,
+    "raw_exact_shift_pairs": 49,
+    "raw_peak_error": 124,
+    "raw_paf_at_one": 10,
+    "constant_triples": [
+      97,
+      102
+    ],
+    "shard": 10
+  },
+  "subgroup_orders": [
+    7,
+    9,
+    19,
+    21
+  ],
+  "shard_target_energies": {
+    "0": 64,
+    "1": 64,
+    "10": 0,
+    "11": 64,
+    "2": 64,
+    "3": 0,
+    "4": 64,
+    "5": 64,
+    "6": 64,
+    "7": 64,
+    "8": 64,
+    "9": 64
+  }
+}
