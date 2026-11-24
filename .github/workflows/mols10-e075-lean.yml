@@ -29,9 +29,15 @@ jobs:
           set -euo pipefail
           mkdir -p "$GITHUB_WORKSPACE/out"
           cd /opt/mathlib4
-          lake env lean -DwarningAsError=true "$GITHUB_WORKSPACE/jobs/mols10-global-proof/Global.lean" 2>&1 | tee "$GITHUB_WORKSPACE/out/lean.log"
-          lake env lean -DwarningAsError=true "$GITHUB_WORKSPACE/jobs/mols10-global-proof/Pruning.lean" 2>&1 | tee "$GITHUB_WORKSPACE/out/pruning.log"
-          if grep -q 'sorryAx' "$GITHUB_WORKSPACE/out/lean.log" "$GITHUB_WORKSPACE/out/pruning.log"; then exit 1; fi
+          lake env lean --version
+          result=0
+          for source in Global Pruning; do
+            if ! lake env lean -DwarningAsError=true "$GITHUB_WORKSPACE/jobs/mols10-global-proof/$source.lean" 2>&1 | tee "$GITHUB_WORKSPACE/out/$source.log"; then
+              result=1
+            fi
+          done
+          if grep -q 'sorryAx' "$GITHUB_WORKSPACE/out/"*.log; then result=1; fi
+          exit "$result"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

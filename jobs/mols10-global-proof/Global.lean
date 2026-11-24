@@ -21,7 +21,7 @@ theorem class_sums_vanish (s : Fin 5 → ZMod 5)
         exact (h i).symm
       _ = 0 := by
         simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-        have h5 : (5 : ZMod 5) = 0 := by decide
+        have h5 : ((5 : ℕ) : ZMod 5) = 0 := by decide
         rw [h5, zero_mul]
   intro i
   exact (h i).symm.trans hz
@@ -45,7 +45,7 @@ theorem adjacency_square {R : Type*} [Ring R] (T J : R)
     (h : T * T = 10 * T + 20 * J) :
     (T - 5) * (T - 5) = 25 + 20 * J := by
   calc
-    (T - 5) * (T - 5) = T * T - 10 * T + 25 := by noncomm_ring <;> norm_num
+    (T - 5) * (T - 5) = T * T - 10 * T + 25 := by noncomm_ring; norm_num
     _ = 25 + 20 * J := by rw [h]; noncomm_ring
 
 /-- Exact rank identity when the kernel of the first map is contained
@@ -95,3 +95,4 @@ theorem rank_is_even (r s : ℕ) (h : s + 50 = 2 * r) :
 #print axioms rank_product_of_kernel_in_range
 #print axioms rank_is_even
 end MOLS10.E075
+

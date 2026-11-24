@@ -9,6 +9,30 @@ mathematical note, not encoded as a Lean OA structure in this file.
 open scoped BigOperators
 namespace MOLS10.E076
 
+/-- The off-diagonal symbol-pair cut used in the unrestricted OA solver. -/
+theorem normalized_row_off_diagonal {R S : Type*}
+    (f g : R → S → S) (r0 r : R) (c : S)
+    (hf : ∀ s, f r0 s = s) (hg : ∀ s, g r0 s = s)
+    (horth : Function.Injective (fun p : R × S => (f p.1 p.2, g p.1 p.2)))
+    (hr : r ≠ r0) : f r c ≠ g r c := by
+  intro heq
+  have hp : (r, c) = (r0, f r c) := by
+    apply horth
+    change (f r c, g r c) = (f r0 (f r c), g r0 (f r c))
+    rw [hf, hg]
+    exact Prod.ext rfl heq.symm
+  exact hr (congrArg Prod.fst hp)
+
+/-- The column cut used together with normalized_row_off_diagonal. -/
+theorem normalized_column_avoid {R S : Type*}
+    (f : R → S → S) (r0 r : R) (c : S)
+    (hf : ∀ s, f r0 s = s)
+    (hcol : ∀ s, Function.Injective (fun a => f a s))
+    (hr : r ≠ r0) : f r c ≠ c := by
+  intro heq
+  have hp : f r c = f r0 c := heq.trans (hf c).symm
+  exact hr (hcol c hp)
+
 section Matrices
 variable {K n m : Type*} [Field K] [Fintype n] [DecidableEq n]
 
@@ -127,6 +151,8 @@ theorem binary_relation_weight_four (w q n2 n4 : ℤ)
     (4 : ℤ) ∣ w := by omega
 
 #print axioms rank_left_of_inverse
+#print axioms normalized_row_off_diagonal
+#print axioms normalized_column_avoid
 #print axioms rank_right_of_inverse
 #print axioms rank_nilpotent_shear
 #print axioms rank_all_one_shift
@@ -137,3 +163,4 @@ theorem binary_relation_weight_four (w q n2 n4 : ℤ)
 #print axioms no_exact_cover_of_dual
 #print axioms binary_relation_weight_four
 end MOLS10.E076
+
