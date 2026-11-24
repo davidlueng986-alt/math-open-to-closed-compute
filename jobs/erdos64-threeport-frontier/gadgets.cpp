@@ -1,0 +1,7 @@
+#include <bits/stdc++.h>
+using namespace std;using U=uint64_t;
+int n; U adj[64];
+bool closecycle(int s,int v,U used,int left){if(!left)return (adj[v]>>s)&1;U opts=adj[v]&~used&(~U(0)<<(s+1));while(opts){int w=__builtin_ctzll(opts);opts&=opts-1;if(closecycle(s,w,used|(U(1)<<w),left-1))return true;}return false;}
+bool forbidden(){for(int p=4;p<=n;p*=2)for(int s=0;s+p<=n;s++)if(closecycle(s,s,U(1)<<s,p-1))return true;return false;}
+void lengths(int v,int b,U seen,int d,U &res){if(v==b){res|=U(1)<<d;return;} U opts=adj[v]&~seen;while(opts){int w=__builtin_ctzll(opts);opts&=opts-1;lengths(w,b,seen|(U(1)<<w),d+1,res);}}
+int main(){string s;long long total=0,keep=0;while(cin>>s){if(s.empty()||s[0]=='>')continue;n=s[0]-63;if(n<3||n>62||s.size()!=1+(n*(n-1)/2+5)/6){cerr<<"bad graph6\n";return 2;}fill(adj,adj+64,0);int k=0;for(int j=1;j<n;j++)for(int i=0;i<j;i++,k++)if(((s[1+k/6]-63)>>(5-k%6))&1){adj[i]|=U(1)<<j;adj[j]|=U(1)<<i;}vector<int> p;for(int i=0;i<n;i++){int deg=__builtin_popcountll(adj[i]);if(deg==2)p.push_back(i);else if(deg!=3)return 3;}if(p.size()!=3)return 4;total++;if(forbidden())continue;U x=0,y=0,z=0;lengths(p[0],p[1],U(1)<<p[0],0,x);lengths(p[0],p[2],U(1)<<p[0],0,y);lengths(p[1],p[2],U(1)<<p[1],0,z);cout<<"{\"g6\":"<<quoted(s)<<",\"n\":"<<n<<",\"ports\":["<<p[0]<<","<<p[1]<<","<<p[2]<<"],\"spectra\":["<<x<<","<<y<<","<<z<<"]}\n";keep++;}cerr<<"{\"total\":"<<total<<",\"kept\":"<<keep<<"}\n";}
