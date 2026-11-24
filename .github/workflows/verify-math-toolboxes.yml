@@ -39,6 +39,7 @@ jobs:
               bash jobs/erdos-64-sms-direct/setup.sh
               python3 -c 'from pysms.graph_builder import GraphEncodingBuilder; import pysat'
               command -v smsg
+              python3 /opt/math-toolbox/test-math-tools.py
               ;;
             sage)
               sage -c 'assert factor(360).value() == 360'
