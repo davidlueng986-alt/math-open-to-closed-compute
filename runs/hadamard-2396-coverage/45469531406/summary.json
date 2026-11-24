@@ -1,0 +1,2454 @@
+{
+  "job": "hadamard-2396-coverage",
+  "run_id": "45469531406",
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45469531406",
+  "commit": "592c6ba88e2e32fad1ff5ff3b8e3a19900d61254",
+  "shards_expected": 12,
+  "shards_with_result": 12,
+  "missing_shards": [],
+  "seconds_per_shard": {
+    "0": 18,
+    "1": 27,
+    "2": 27,
+    "3": 24,
+    "4": 26,
+    "5": 21,
+    "6": 25,
+    "7": 28,
+    "8": 18,
+    "9": 24,
+    "10": 18,
+    "11": 26
+  },
+  "complete": true,
+  "results": {
+    "0": {
+      "shard": 0,
+      "schedules": 24,
+      "witnesses": {
+        "cyclic": {
+          "energy": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee203a2b932ef308b0d619ddabeeb7a74b98f6dd8ef5b45b0d575ed74986f27ba8f70b85a7c8a22ffd2522902d2228099bc0c8930bf23b25faa7488edcf16d2966224570332f6b0b5a2ebc2540877acd81461af9edda98110b3f6c45b183f546c7d6039e786159e5cbc18df5439305a881467d3b2ffd1e52243f96323260f12719c94772a1873b",
+              "0x13578fe7b5e09397e31c467900f7ea4b0f9057c71a8977fe0b4d35038643599f205f2edfa45d8634220d3569253181fa1dac48e48f05da58e04d1aabad67e0d05a57a60eeca4f76df276e4c6ec528a4888b9a407551445073a458d687284593befefa9bc3365287a6c8ee5525007342d71ceff3fc6ad408e8e0773ccdceca32bd1683e3162edc53501fca80f4f560933b59366d3f875"
+            ],
+            "seed": 720285,
+            "raw_energy": 29568,
+            "raw_exact_pairs": 172,
+            "raw_peak_error": 64,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 26,
+            "quotient_energies": {
+              "57": 73296,
+              "63": 198624,
+              "133": 40944,
+              "399": 35728
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee203a2b932ef308b0d619ddabeeb7a70b98f6dd8ef5b47b0d575ed74986e27baaf70b85a7c8a22ffd2522902d2228099bc0c8930bf27b25faa7488edcd16d2966224570232f690b5a6ebc2540867acd81461ef9edda98110b3f6c45b183f546c6d603be786159e5cbc18df5439305a881467d3b2ffd1e52243f96b23260f12719c90772a9873b",
+              "0x13578be7b5e09397e31c467900f7ea4b0f9057c71a8977fe0b4d35038643599f205f2edfa45d8634220d3569253181fa1dac48e48f05da58e04d1aafad67e0d04a57a60eeca4f76df276e4c6ec528a4888b9a407551445073a458d687384593befeba9bcb365287a6e8ee552500f342c71cedf3fc6ad400e8e0773ccdcece32bd1683e3162cdc53501fca80f4f560933b5d366d3f875"
+            ],
+            "seed": 1100005,
+            "raw_energy": 47776,
+            "raw_exact_pairs": 291,
+            "raw_peak_error": 72,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 38,
+            "quotient_energies": {
+              "57": 58688,
+              "63": 185872,
+              "133": 74576,
+              "399": 54016
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee203a2b932ef308b0d619ddabeeb7a70b98f6dd8ef5b47b0d575ed74986f27baaf70b85a7c8a22ffd2522902d2228099bc0c8930bf23b25faa7488edcf16d2966224570232f6b0b5a2ebc2540867acd81461af9edda98110b3f6c45b183f546c6d603be786159e5cbc18df5439305a881467d3b2ffd1e52243f96b23260f12719c90772a9873b",
+              "0x13578fe7b5e09397e31c467900f7ea4b0f9057c71a8977fe0b4d35038643599f205f2edfa45d8634220d3569253181fa1dac48e48f05da58e04d1aabad67e0d04a57a60eeca4f76df276e4c6ec528a4888b9a407551445077a458d687384593befeba9bc3365287a6c8ee552500f342d71cedf3fc6ad400e8e0773ccdcece32bd1683e3162cdc53501fca80f4f560933b5d366d3f875"
+            ],
+            "seed": 1100001,
+            "raw_energy": 33408,
+            "raw_exact_pairs": 272,
+            "raw_peak_error": 72,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 22,
+            "quotient_energies": {
+              "57": 57536,
+              "63": 170064,
+              "133": 47024,
+              "399": 44608
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        },
+        "plane": {
+          "energy": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02eda21ab9d9e819b482f21f4576d6aac5ded1a4ee5ec181e6372efa8d0ba83509088559c922c908a17d5cd608cc2148f4918f617749e24afc387c41c2d7a91f35c3a135aeb99758b32f997fc6559ddd3032b8323ffa0d9156a014bdd72e0eb9cff3412fc3c4d0c0c650a17946cb78295794c9b43ef2a43f25a40279db8e7eb32d91a8a882079bc537f73ddbc9be663c45d8bed1ca",
+              "0x1caaeed0203536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df893fa6f107d451d9a1131f8e852502e2f44d09d86c938d1edd817503b5f33fa736b3bbb141d03a08b4cbec6718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4a3eed2298b3a68afe495f03e8cb9620e7f48d6b05faa64c7cb1acbc3d342a4051aa6c631cdb3856cec"
+            ],
+            "seed": 720045,
+            "raw_energy": 33312,
+            "raw_exact_pairs": 165,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 14,
+            "quotient_energies": {
+              "57": 151056,
+              "63": 269760,
+              "133": 43488,
+              "399": 44800
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02eda21ab9d9e819b482f21f4576d6aac5ded1a4ee5ec181e6372efa8d0ba83509088559c922c908a17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b32f997fc6559ddd3032b8323ffa0d9156a014bdd72e0eb9cff3412fc3c4d0c0c650a17946cb78295794c9b43ef2a43f25a40279db8e7eb32d91a8a8a2079fc537f73ddbc9bc663c45d8bed1ca",
+              "0x1caaeed0203536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df893fa6f107d451d9a1131f8e852502e2f44d09d86c938d1edd817503b5f33fa736b3bbb141d03a08b4cbec6718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e969374505c0a817f8e4a3eed2298b3a68afe495f03e8cb9620e7f48d6b85faa64c7cb1acbc3d342a4051aa6c631cdb3856cec"
+            ],
+            "seed": 1100106,
+            "raw_energy": 45760,
+            "raw_exact_pairs": 280,
+            "raw_peak_error": 48,
+            "raw_paf_at_one": 2,
+            "raw_paf_at_399": 26,
+            "quotient_energies": {
+              "57": 146240,
+              "63": 353056,
+              "133": 63344,
+              "399": 57584
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f21f4576d6aac5ded1a4ea5ec181e6372efa8d0ba83509088559c902c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d90a8a882079fc537773dcbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70a1df813fa6f107d451dda1131f8e852500e2f40d09d86c938d1efd817503b5f33fa736b3bbb141d03208b4cbec4718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4abeed2298b3a68afe495f03e9cb9600e7f48d6b85fab64c7cb1acbc3d342a4151aa6c631cdb38d6cec"
+            ],
+            "seed": 1100101,
+            "raw_energy": 34048,
+            "raw_exact_pairs": 265,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 30,
+            "quotient_energies": {
+              "57": 151488,
+              "63": 219952,
+              "133": 50624,
+              "399": 51680
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        }
+      }
+    },
+    "1": {
+      "shard": 1,
+      "schedules": 24,
+      "witnesses": {
+        "cyclic": {
+          "energy": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c54740b78535acaddee203a2b932ef308b0d619cdabecb7a74b98f6dd8ef5b47b0d575ed7c986f27ba8f70b85a7c8a22ffd252290292228099bc0c8930bf23b25faa7488edcf16d2966224570332f6b0b5a2ebc2d40877acd81461af9edda98110b3f6c45b183f546c6d603be786159e5cbc18df5439305a881467d3b2ffd1e52203f96323260f12719c94772a1873b",
+              "0x13578fe7b5e09397e31e467940f7ea4b0f9057c71a8977fe0b4d3503864359df205f2edfa45d8634220d3569253181fa1dac48e48f05db58e04d1aabad67e0d04a57a40eeca4f76df276e4c6ec528a4888b9a407551445073a458d687284593befeba9bc3365287a6c8ee5125007342c71ceff3fc6ad408e8e0773ccdceca32bd1683e3162edc53501fca80f4f560933b5d366d3f875"
+            ],
+            "seed": 1100532,
+            "raw_energy": 28480,
+            "raw_exact_pairs": 246,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": 2,
+            "raw_paf_at_399": 22,
+            "quotient_energies": {
+              "57": 65600,
+              "63": 177520,
+              "133": 37248,
+              "399": 37312
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c54740b78535acaddee203a2b932ef308b0d619ddabecb7a74b98f6dd8ff5b47b0d575ed74986f27ba8f70b85a7c8a22ffd252290292228099bc0c8930bf23b25faa7488edcf16d2966224570332f6b0b5a2ebc2540877acd81461af9edda98110b3f6c45b183f546c6d603be786159e5cbc18df5439305a881467d3b2ffd1e52203f96323260f12719c94772a1873b",
+              "0x13578fe7b5e09397e31e467940f7ea4b0f9057c71a8977fe0b4d3503864359df205f2edfa45d8634220d3569253181fa1dac48e48f05db58e04d1aabad6760d04a57a40eeca4f76df276e4c6ec528a4888b9a407551445073a458d687284593befeba9bc3365387a6c8ee5125007342c71ceff3fc6ad408e8e0773ccdceca32bd1683e3162edc53501fca80f4f560933b5d366d3f875"
+            ],
+            "seed": 1100506,
+            "raw_energy": 40992,
+            "raw_exact_pairs": 289,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": 2,
+            "raw_paf_at_399": 22,
+            "quotient_energies": {
+              "57": 65264,
+              "63": 197664,
+              "133": 29456,
+              "399": 39392
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b8d619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a2ebc2500867add81461af96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+              "0x13578be7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d35e9253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f76df277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc6ad408e8e0773ccdceca32bd1683f3162edc53101fca80f4f560b33b59366d3f874"
+            ],
+            "seed": 1100503,
+            "raw_energy": 38880,
+            "raw_exact_pairs": 262,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": 2,
+            "raw_paf_at_399": 6,
+            "quotient_energies": {
+              "57": 87968,
+              "63": 236160,
+              "133": 44240,
+              "399": 39584
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        },
+        "plane": {
+          "energy": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02eda21ab9d9e819b482f21f4576d6aac5ded1a4ee5ec181e6372efa8d0ba83509088559c922c908a17d5cd608cc2148f4918f617749e24afc387c41c2d7a91f35c3a135aeb99758b32f997fc6559ddd3032b8323ffa0d9156a014bdd72e0eb9cff3412fc3c4d0c0c650a17946cb78295794c9b43ef2a43f25a40279db8e7eb32d91a8a882079bc537f73ddbc9be663c45d8bed1ca",
+              "0x1caaeed0203536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df893fa6f107d451d9a1131f8e852502e2f44d09d86c938d1edd817503b5f33fa736b3bbb141d03a08b4cbec6718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4a3eed2298b3a68afe495f03e8cb9620e7f48d6b05faa64c7cb1acbc3d342a4051aa6c631cdb3856cec"
+            ],
+            "seed": 720045,
+            "raw_energy": 33312,
+            "raw_exact_pairs": 165,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 14,
+            "quotient_energies": {
+              "57": 151056,
+              "63": 269760,
+              "133": 43488,
+              "399": 44800
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02eda21ab9d9e819b682f21f4576d6aac5ded1a4ee5ec181e6372efa8d0ba83509088459c902c908a17ddcd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99f58b22f995fc6519ddd3032b8323dfa0dd156a014bdd72e2eb9cbf3412fc3d4d0c2c650e17946cb78295794c9b43ef2a43f25a40279db8e7ebb2d91a8a882079bc537f73ddbc9be663c05d8bed1ca",
+              "0x1caaeed0203536a134e484162a4ca004b065d319cfdbe365f4a63cbf2cae70a1df893fa6f107d451dda1131f8e952502e2f44d09d86c928d1efd817503b5f33fa736b3bbb141d03208b4cbec6718c6e77d3dfac20380dc78d14d39c29ead63e439f8d2e9e9374505c0a817f8e4abeed3298b3a68afe495f03e8cb9620e7f48d6b85faa64c7cb1acbc3d342a4051aa6c631cdb3856cec"
+            ],
+            "seed": 1100606,
+            "raw_energy": 53792,
+            "raw_exact_pairs": 291,
+            "raw_peak_error": 64,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 34,
+            "quotient_energies": {
+              "57": 169056,
+              "63": 290528,
+              "133": 80048,
+              "399": 69136
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f21f4576d6aac5ded1a4ea5ec181e6372efa8d0ba83509088559c902c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d90a8a882079fc537773dcbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70a1df813fa6f107d451dda1131f8e852500e2f40d09d86c938d1efd817503b5f33fa736b3bbb141d03208b4cbec4718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4abeed2298b3a68afe495f03e9cb9600e7f48d6b85fab64c7cb1acbc3d342a4151aa6c631cdb38d6cec"
+            ],
+            "seed": 1100601,
+            "raw_energy": 34048,
+            "raw_exact_pairs": 265,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 30,
+            "quotient_energies": {
+              "57": 151488,
+              "63": 219952,
+              "133": 50624,
+              "399": 51680
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        }
+      }
+    },
+    "2": {
+      "shard": 2,
+      "schedules": 24,
+      "witnesses": {
+        "cyclic": {
+          "energy": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee203a2b932ef308b0d619ddabeeb7a74b98f6dd8ef5b45b0d575ed74986f27ba8f70b85a7c8a22ffd2522902d2228099bc0c8930bf23b25faa7488edcf16d2966224570332f6b0b5a2ebc2540877acd81461af9edda98110b3f6c45b183f546c7d6039e786159e5cbc18df5439305a881467d3b2ffd1e52243f96323260f12719c94772a1873b",
+              "0x13578fe7b5e09397e31c467900f7ea4b0f9057c71a8977fe0b4d35038643599f205f2edfa45d8634220d3569253181fa1dac48e48f05da58e04d1aabad67e0d05a57a60eeca4f76df276e4c6ec528a4888b9a407551445073a458d687284593befefa9bc3365287a6c8ee5525007342d71ceff3fc6ad408e8e0773ccdceca32bd1683e3162edc53501fca80f4f560933b59366d3f875"
+            ],
+            "seed": 720285,
+            "raw_energy": 29568,
+            "raw_exact_pairs": 172,
+            "raw_peak_error": 64,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 26,
+            "quotient_energies": {
+              "57": 73296,
+              "63": 198624,
+              "133": 40944,
+              "399": 35728
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b85619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a6ebc2500867adda1461af96d5a98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+              "0x13578fe7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d35e9253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f765f277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc2ad408e8e0773ccdceca32bd9683f3162edc53101fca80f4f560b33b59366d3f874"
+            ],
+            "seed": 1101007,
+            "raw_energy": 57696,
+            "raw_exact_pairs": 299,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": -2,
+            "quotient_energies": {
+              "57": 154080,
+              "63": 259728,
+              "133": 46352,
+              "399": 57408
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b8d619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a2ebc2500867add81461af96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+              "0x13578be7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d35e9253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f76df277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc6ad408e8e0773ccdceca32bd1683f3162edc53101fca80f4f560b33b59366d3f874"
+            ],
+            "seed": 1101003,
+            "raw_energy": 38880,
+            "raw_exact_pairs": 262,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": 2,
+            "raw_paf_at_399": 6,
+            "quotient_energies": {
+              "57": 87968,
+              "63": 236160,
+              "133": 44240,
+              "399": 39584
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        },
+        "plane": {
+          "energy": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02eda21ab9d9e819b482f21f4576d6aac5ded1a4ee5ec181e6372efa8d0ba83509088559c922c908a17d5cd608cc2148f4918f617749e24afc387c41c2d7a91f35c3a135aeb99758b32f997fc6559ddd3032b8323ffa0d9156a014bdd72e0eb9cff3412fc3c4d0c0c650a17946cb78295794c9b43ef2a43f25a40279db8e7eb32d91a8a882079bc537f73ddbc9be663c45d8bed1ca",
+              "0x1caaeed0203536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df893fa6f107d451d9a1131f8e852502e2f44d09d86c938d1edd817503b5f33fa736b3bbb141d03a08b4cbec6718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4a3eed2298b3a68afe495f03e8cb9620e7f48d6b05faa64c7cb1acbc3d342a4051aa6c631cdb3856cec"
+            ],
+            "seed": 720045,
+            "raw_energy": 33312,
+            "raw_exact_pairs": 165,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 14,
+            "quotient_energies": {
+              "57": 151056,
+              "63": 269760,
+              "133": 43488,
+              "399": 44800
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f21f4576d6aac5ded1a4ea5ec181e6372efa8d0ba83509088559c902c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a90f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf341afc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d90a8a882079fc537773dcbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70e1df813fa6f107d451dda1131f8e852500e2f44d09d86c938d1efd817503b5733fa736b3bbb141d03208b4cbec4718c6e77d3dfac20380dc78d14d31c29fad63e439f8d2e9e9375505c0a817f8e4abeed2298b3a68afe495f03e9cb9600e7f48d6b85fab64c7cb1acbc3d342a4151aa6c631cdb38d6cec"
+            ],
+            "seed": 1101102,
+            "raw_energy": 56576,
+            "raw_exact_pairs": 293,
+            "raw_peak_error": 72,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 30,
+            "quotient_energies": {
+              "57": 219056,
+              "63": 238160,
+              "133": 53856,
+              "399": 63360
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f21f4576d6aac5ded1a4ea5ec181e6372efa8d0ba83509088559c902c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d90a8a882079fc537773dcbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70a1df813fa6f107d451dda1131f8e852500e2f40d09d86c938d1efd817503b5f33fa736b3bbb141d03208b4cbec4718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4abeed2298b3a68afe495f03e9cb9600e7f48d6b85fab64c7cb1acbc3d342a4151aa6c631cdb38d6cec"
+            ],
+            "seed": 1101101,
+            "raw_energy": 34048,
+            "raw_exact_pairs": 265,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 30,
+            "quotient_energies": {
+              "57": 151488,
+              "63": 219952,
+              "133": 50624,
+              "399": 51680
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        }
+      }
+    },
+    "3": {
+      "shard": 3,
+      "schedules": 24,
+      "witnesses": {
+        "cyclic": {
+          "energy": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee203a2b932ef308b0d619ddabeeb7a74b98f6dd8ef5b45b0d575ed74986f27ba8f70b85a7c8a22ffd2522902d2228099bc0c8930bf23b25faa7488edcf16d2966224570332f6b0b5a2ebc2540877acd81461af9edda98110b3f6c45b183f546c7d6039e786159e5cbc18df5439305a881467d3b2ffd1e52243f96323260f12719c94772a1873b",
+              "0x13578fe7b5e09397e31c467900f7ea4b0f9057c71a8977fe0b4d35038643599f205f2edfa45d8634220d3569253181fa1dac48e48f05da58e04d1aabad67e0d05a57a60eeca4f76df276e4c6ec528a4888b9a407551445073a458d687284593befefa9bc3365287a6c8ee5525007342d71ceff3fc6ad408e8e0773ccdceca32bd1683e3162edc53501fca80f4f560933b59366d3f875"
+            ],
+            "seed": 720285,
+            "raw_energy": 29568,
+            "raw_exact_pairs": 172,
+            "raw_peak_error": 64,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 26,
+            "quotient_energies": {
+              "57": 73296,
+              "63": 198624,
+              "133": 40944,
+              "399": 35728
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee203a2b932ef308b0d619ddabecb7a74b98f6dd8ef5b45b0d575ed74986f27baaf70bc5a7c8a22ffd252290292228099bc0c8930bf23b25faa7488edcf16d296622c570232f690b5a2ebc2540867acd81461af9edda98110b3f6c45b183f546c7d6039e786159e5cbc18df5439305e881467d3b2ffd3e52243f96323260f12719c94772a1873b",
+              "0x13578fe7b5609397e31c467940f7ea4b0f9057c71a8977fe0b4d35038643599f205f2edfa45d8634220d35e9253181fa1dac48e48f05da58e04d1aabad67e0d05a57a60eeca4f765f277e4c6ec528a4888b9a407551445073a458d687284593befefa9bc3365287a6c8ee5525007342d71ceff3fc6ad408e8e0773ccdceca32bd1683e3162edc53501fca80f4f560933b59366d3f874"
+            ],
+            "seed": 1101508,
+            "raw_energy": 48448,
+            "raw_exact_pairs": 288,
+            "raw_peak_error": 64,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 42,
+            "quotient_energies": {
+              "57": 69696,
+              "63": 223408,
+              "133": 39424,
+              "399": 49968
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee213a2b932ef308b0d619ddabeeb7a74b98f6dd8ef5b47b0d575ed74986f27ba8f70b85a7c8a22ffd252290292228099bc0c8930bf23b25faa7488edcf16d2966224570332f690b5a2ebc2d40877acd81461af9edda98110b3f6c45b183f546c6d6039e786159e5cbc18df5439305a881467d3b2ffd1e52243f96323260f12719c94772a1873b",
+              "0x13578fe7b5e09397e31c467900f7e24b0f9057c71a8977fe0b4d3503864359df205f2edfa45d8634220d35e9253181fa1dac48e48f05da58e04d1aabad67e0d04a57a60eeca4f765f276e4c6ec528a4888b9a417551445073a4585687284593befefa9bc3365287a6c8ee5525007342d71ceff3fc6ad408e8e0773ccdceca32bd1683e3162edc53501fca80f4f560933b59366dbf875"
+            ],
+            "seed": 1101501,
+            "raw_energy": 39424,
+            "raw_exact_pairs": 272,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 30,
+            "quotient_energies": {
+              "57": 92448,
+              "63": 245344,
+              "133": 49232,
+              "399": 40192
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        },
+        "plane": {
+          "energy": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02eda21ab9d9e819b482f21f4576d6aac5ded1a4ee5ec181e6372efa8d0ba83509088559c922c908a17d5cd608cc2148f4918f617749e24afc387c41c2d7a91f35c3a135aeb99758b32f997fc6559ddd3032b8323ffa0d9156a014bdd72e0eb9cff3412fc3c4d0c0c650a17946cb78295794c9b43ef2a43f25a40279db8e7eb32d91a8a882079bc537f73ddbc9be663c45d8bed1ca",
+              "0x1caaeed0203536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df893fa6f107d451d9a1131f8e852502e2f44d09d86c938d1edd817503b5f33fa736b3bbb141d03a08b4cbec6718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4a3eed2298b3a68afe495f03e8cb9620e7f48d6b05faa64c7cb1acbc3d342a4051aa6c631cdb3856cec"
+            ],
+            "seed": 720045,
+            "raw_energy": 33312,
+            "raw_exact_pairs": 165,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 14,
+            "quotient_energies": {
+              "57": 151056,
+              "63": 269760,
+              "133": 43488,
+              "399": 44800
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21a39d9e819b682f21f4576d6aac5ded1a4ea5ec101e6372efa8d0ba83509088559c922c90ca17d5cd608cc2148f4918f697749e24afc387841c2d7a90f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c0c650e17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d90a8a882079fc537773dcbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70a1df813fa6f107d451d9a1131f8e852500e2f40d09d86c938d1efd817503b5f33fb736b3bbb141d03208b4cbec6718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4abeed2298b3a68afe495f03e9cb9620e7f48d6b05fab64c7cb1acbc3d342a4151aa6c6318db38d6cec"
+            ],
+            "seed": 1101607,
+            "raw_energy": 66816,
+            "raw_exact_pairs": 303,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": 2,
+            "raw_paf_at_399": 18,
+            "quotient_energies": {
+              "57": 141344,
+              "63": 322560,
+              "133": 62880,
+              "399": 84304
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f21f4576d6aac5ded1a4ea5ec181e6372efa8d0ba83509088559c902c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d90a8a882079fc537773dcbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70a1df813fa6f107d451dda1131f8e852500e2f40d09d86c938d1efd817503b5f33fa736b3bbb141d03208b4cbec4718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4abeed2298b3a68afe495f03e9cb9600e7f48d6b85fab64c7cb1acbc3d342a4151aa6c631cdb38d6cec"
+            ],
+            "seed": 1101601,
+            "raw_energy": 34048,
+            "raw_exact_pairs": 265,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 30,
+            "quotient_energies": {
+              "57": 151488,
+              "63": 219952,
+              "133": 50624,
+              "399": 51680
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        }
+      }
+    },
+    "4": {
+      "shard": 4,
+      "schedules": 24,
+      "witnesses": {
+        "cyclic": {
+          "energy": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee203a2b932ef308b0d619ddabeeb7a74b98f6dd8ef5b45b0d575ed74986f27ba8f70b85a7c8a22ffd2522902d2228099bc0c8930bf23b25faa7488edcf16d2966224570332f6b0b5a2ebc2540877acd81461af9edda98110b3f6c45b183f546c7d6039e786159e5cbc18df5439305a881467d3b2ffd1e52243f96323260f12719c94772a1873b",
+              "0x13578fe7b5e09397e31c467900f7ea4b0f9057c71a8977fe0b4d35038643599f205f2edfa45d8634220d3569253181fa1dac48e48f05da58e04d1aabad67e0d05a57a60eeca4f76df276e4c6ec528a4888b9a407551445073a458d687284593befefa9bc3365287a6c8ee5525007342d71ceff3fc6ad408e8e0773ccdceca32bd1683e3162edc53501fca80f4f560933b59366d3f875"
+            ],
+            "seed": 720285,
+            "raw_energy": 29568,
+            "raw_exact_pairs": 172,
+            "raw_peak_error": 64,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 26,
+            "quotient_energies": {
+              "57": 73296,
+              "63": 198624,
+              "133": 40944,
+              "399": 35728
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b85619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a6ebc2500867adda1461af96d5a98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+              "0x13578fe7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d35e9253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f765f277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc2ad408e8e0773ccdceca32bd9683f3162edc53101fca80f4f560b33b59366d3f874"
+            ],
+            "seed": 1102004,
+            "raw_energy": 57696,
+            "raw_exact_pairs": 299,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": -2,
+            "quotient_energies": {
+              "57": 154080,
+              "63": 259728,
+              "133": 46352,
+              "399": 57408
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b8d619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a2ebc2500867add81461af96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+              "0x13578be7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d35e9253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f76df277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc6ad408e8e0773ccdceca32bd1683f3162edc53101fca80f4f560b33b59366d3f874"
+            ],
+            "seed": 1102003,
+            "raw_energy": 38880,
+            "raw_exact_pairs": 262,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": 2,
+            "raw_paf_at_399": 6,
+            "quotient_energies": {
+              "57": 87968,
+              "63": 236160,
+              "133": 44240,
+              "399": 39584
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        },
+        "plane": {
+          "energy": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02eda21ab9d9e819b482f21f4576d6aac5ded1a4ee5ec181e6372efa8d0ba83509088559c922c908a17d5cd608cc2148f4918f617749e24afc387c41c2d7a91f35c3a135aeb99758b32f997fc6559ddd3032b8323ffa0d9156a014bdd72e0eb9cff3412fc3c4d0c0c650a17946cb78295794c9b43ef2a43f25a40279db8e7eb32d91a8a882079bc537f73ddbc9be663c45d8bed1ca",
+              "0x1caaeed0203536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df893fa6f107d451d9a1131f8e852502e2f44d09d86c938d1edd817503b5f33fa736b3bbb141d03a08b4cbec6718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4a3eed2298b3a68afe495f03e8cb9620e7f48d6b05faa64c7cb1acbc3d342a4051aa6c631cdb3856cec"
+            ],
+            "seed": 720045,
+            "raw_energy": 33312,
+            "raw_exact_pairs": 165,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 14,
+            "quotient_energies": {
+              "57": 151056,
+              "63": 269760,
+              "133": 43488,
+              "399": 44800
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f21f4576d6aac5ded1a4ee5ec181e6372efa8d0be83501088559c902c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a90f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c0c650a17946cb79295794c9b43ef2a43f35a40279dbce7eb32d90a8a882079fc537773ddbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70a1df813fa6f107d451dda1131f8e852500e2f40d09d86c938d1efd817503b5f33fa736b3bbb141d03208b4cbec4718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4abeed2298b3a68afe495f03e9cb9600e7f48d6b85fab64c7cb1acbc3d342a4151aa6c631cdb3856ced"
+            ],
+            "seed": 1102107,
+            "raw_energy": 43584,
+            "raw_exact_pairs": 282,
+            "raw_peak_error": 64,
+            "raw_paf_at_one": 6,
+            "raw_paf_at_399": 34,
+            "quotient_energies": {
+              "57": 147344,
+              "63": 252816,
+              "133": 46224,
+              "399": 47568
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f21f4576d6aac5ded1a4ea5ec181e6372efa8d0ba83509088559c902c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d90a8a882079fc537773dcbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70a1df813fa6f107d451dda1131f8e852500e2f40d09d86c938d1efd817503b5f33fa736b3bbb141d03208b4cbec4718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4abeed2298b3a68afe495f03e9cb9600e7f48d6b85fab64c7cb1acbc3d342a4151aa6c631cdb38d6cec"
+            ],
+            "seed": 1102101,
+            "raw_energy": 34048,
+            "raw_exact_pairs": 265,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 30,
+            "quotient_energies": {
+              "57": 151488,
+              "63": 219952,
+              "133": 50624,
+              "399": 51680
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        }
+      }
+    },
+    "5": {
+      "shard": 5,
+      "schedules": 24,
+      "witnesses": {
+        "cyclic": {
+          "energy": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee203a2b932ef308b0d619ddabeeb7a70b98f6dd8ff5b45b0d575ed7c986f27ba8f70b85a7c8a22ffd2502902d2228099bc0c8930bf27b25faa7488edcd16d2966224570232f6b0b5a6ebc2540867acd81461af9ed5a98110b3f6c45f183f546c6d603be786159e54bc18df5439305e881467d3b2ffd3e52243f96323260f12719c94772a1873b",
+              "0x13578fe7b5e09397e31c467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edfa45d8634220d3569253181fa1dac48e48f05da58e04d1aabad6760d04a57a60eeca4f76df277e4c6ec528a4888b9a407551645073a458d687284593befeba9bc3365287a6c8ee5525007342c71cedf3fc6ad408e8e0773ccdceca32bd1683e3162edc53501fca80f4f560933b59366d3f875"
+            ],
+            "seed": 1102538,
+            "raw_energy": 27328,
+            "raw_exact_pairs": 228,
+            "raw_peak_error": 56,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 22,
+            "quotient_energies": {
+              "57": 67904,
+              "63": 142528,
+              "133": 36432,
+              "399": 35200
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee203a2b932ef308b0d619ddabeeb7a74b98f6dd8ef5b47b0d575ed74986e27baaf70b85a7c8a22ffd2522902d2228899bc0c8930bf23b25faa7488edcf16d2966224570232f6b0b5a2ebc2540867acd81461af9edda98110b3f6c45b183f546c7d6039e786159e5cbc18df5439305a881467d3b2ffd1e52243f96b23260f12719c90772a1873b",
+              "0x13578fe7b5e09397e31c467940f7ea4b0e9057e71a8977fe0b4d35038643599f205f2edfa45d8634220d35e9253181fa1dac48e48f05da58e04d1aabad67e0d05a57a40eeca4f76df277e4c6ec528a4888b9a407551445073a4585687284593befefa9bc3365287a6c8ee5525007342c71cedf3fc6ad408e8e0773ccdceca32bd9683e3162edc53501fca80f4f560933b59366d3f875"
+            ],
+            "seed": 1102506,
+            "raw_energy": 44544,
+            "raw_exact_pairs": 303,
+            "raw_peak_error": 76,
+            "raw_paf_at_one": -6,
+            "raw_paf_at_399": 18,
+            "quotient_energies": {
+              "57": 98192,
+              "63": 166512,
+              "133": 33936,
+              "399": 55632
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee203a2b932ef308b0d619ddabeeb7a74b98f6dd8ef5b45b0d575ed74986e27ba8f70b85a7c8a22ffd2522902d2228099bc0c8930bf27b25faa7488edcf16d2966224570332f690b5a2ebc2540877acd81461af9edda98110b3f6c45f183f546c6d603be786159e5cbc18df5439305a881467d3b2ffd1e52243f96323260f12719c94772a1873b",
+              "0x13578fe7b5e09397e31e467900f7ea4b0f9057c71a8d77fe0b4d3503844359df205f2edfa45d8634220d3569253181fa1dac48e48f05da58e04d1aabad67e0d05a57a60eeca4f76df276e4c6ec528a4888b9a407551445073a458d687284593befeba9bc3365287a6c8ee552500f342c71cedf3fc6ad408e8e0773ccdceca32bd1683e3162edc53501fca80f4f560933b59366d3f875"
+            ],
+            "seed": 1102501,
+            "raw_energy": 40000,
+            "raw_exact_pairs": 273,
+            "raw_peak_error": 68,
+            "raw_paf_at_one": -6,
+            "raw_paf_at_399": 22,
+            "quotient_energies": {
+              "57": 84032,
+              "63": 150592,
+              "133": 42768,
+              "399": 51232
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        },
+        "plane": {
+          "energy": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02eda21ab9d9e819b482f21f4576d6aac5ded1a4ee5ec181e6372efa8d0ba83509088559c922c908a17d5cd608cc2148f4918f617749e24afc387c41c2d7a91f35c3a135aeb99758b32f997fc6559ddd3032b8323ffa0d9156a014bdd72e0eb9cff3412fc3c4d0c0c650a17946cb78295794c9b43ef2a43f25a40279db8e7eb32d91a8a882079bc537f73ddbc9be663c45d8bed1ca",
+              "0x1caaeed0203536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df893fa6f107d451d9a1131f8e852502e2f44d09d86c938d1edd817503b5f33fa736b3bbb141d03a08b4cbec6718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4a3eed2298b3a68afe495f03e8cb9620e7f48d6b05faa64c7cb1acbc3d342a4051aa6c631cdb3856cec"
+            ],
+            "seed": 720045,
+            "raw_energy": 33312,
+            "raw_exact_pairs": 165,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 14,
+            "quotient_energies": {
+              "57": 151056,
+              "63": 269760,
+              "133": 43488,
+              "399": 44800
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f21f4576d6aac5ded1a4ea5ec101e6372efa8d0ba83509088559c922c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d90a8a882079fc537773dcbc9be663c45d8b6d1cb",
+              "0x1caaeed0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70a1df893fa6f107d451dda1131f8e852500e2f40d09d86c938d1edd817503b5733fa736b3bbb141d03208b4cbec4718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4abeed3298b3a68afe495f03e9cb9600e7f48d6b05fab64c7cb1acbc3d342a4151aa6c631cdb38d6cec"
+            ],
+            "seed": 1102602,
+            "raw_energy": 56800,
+            "raw_exact_pairs": 292,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -18,
+            "raw_paf_at_399": 18,
+            "quotient_energies": {
+              "57": 203456,
+              "63": 273376,
+              "133": 64928,
+              "399": 80080
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f21f4576d6aac5ded1a4ea5ec181e6372efa8d0ba83509088559c902c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d90a8a882079fc537773dcbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70a1df813fa6f107d451dda1131f8e852500e2f40d09d86c938d1efd817503b5f33fa736b3bbb141d03208b4cbec4718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4abeed2298b3a68afe495f03e9cb9600e7f48d6b85fab64c7cb1acbc3d342a4151aa6c631cdb38d6cec"
+            ],
+            "seed": 1102601,
+            "raw_energy": 34048,
+            "raw_exact_pairs": 265,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 30,
+            "quotient_energies": {
+              "57": 151488,
+              "63": 219952,
+              "133": 50624,
+              "399": 51680
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        }
+      }
+    },
+    "6": {
+      "shard": 6,
+      "schedules": 24,
+      "witnesses": {
+        "cyclic": {
+          "energy": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c54740b78535acaddee203a2bb32ef308b0d619ddabecb7a70b98f6dd8ff5b47b0d575ed7c986e27ba8f70bc5a7c8a22ffd250290292228099bc0c8930bf27b25faa7488edcd16d296622c570332f6b0b5a6ebc2540867acd81461af9ed5a98110b3d6c45b183fd46c7d603be786159e54bc18df5439305a8814e7d3b2ffd1e52203f96323260f12719c90772a1873b",
+              "0x13578fe7b5e09397e31e467940f7e24b0f9057c71a8977fe8b4d3503864359df20572edfa45d8634260d3569253181fa1dac48e48f05db58e04d1aabad6760d04a57a60eeca4f76df276e4c6cc528a4888b9a407551645073a4585687284593befeba9bcb365287a6c8ee5525007342d71ceff3fc2ad408e8e0773ccdcece32bd1683e3162edc53101fca80f4f560933b5d366d3f874"
+            ],
+            "seed": 1103032,
+            "raw_energy": 28224,
+            "raw_exact_pairs": 172,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 10,
+            "quotient_energies": {
+              "57": 65264,
+              "63": 162864,
+              "133": 30496,
+              "399": 34864
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b85619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a6ebc2500867adda1461af96d5a98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+              "0x13578fe7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d35e9253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f765f277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc2ad408e8e0773ccdceca32bd9683f3162edc53101fca80f4f560b33b59366d3f874"
+            ],
+            "seed": 1103004,
+            "raw_energy": 57696,
+            "raw_exact_pairs": 299,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": -2,
+            "quotient_energies": {
+              "57": 154080,
+              "63": 259728,
+              "133": 46352,
+              "399": 57408
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b8d619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a2ebc2500867add81461af96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+              "0x13578be7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d35e9253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f76df277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc6ad408e8e0773ccdceca32bd1683f3162edc53101fca80f4f560b33b59366d3f874"
+            ],
+            "seed": 1103003,
+            "raw_energy": 38880,
+            "raw_exact_pairs": 262,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": 2,
+            "raw_paf_at_399": 6,
+            "quotient_energies": {
+              "57": 87968,
+              "63": 236160,
+              "133": 44240,
+              "399": 39584
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        },
+        "plane": {
+          "energy": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02eda21ab9d9e819b482f21f4576d6aac5ded1a4ee5ec181e6372efa8d0ba83509088559c922c908a17d5cd608cc2148f4918f617749e24afc387c41c2d7a91f35c3a135aeb99758b32f997fc6559ddd3032b8323ffa0d9156a014bdd72e0eb9cff3412fc3c4d0c0c650a17946cb78295794c9b43ef2a43f25a40279db8e7eb32d91a8a882079bc537f73ddbc9be663c45d8bed1ca",
+              "0x1caaeed0203536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df893fa6f107d451d9a1131f8e852502e2f44d09d86c938d1edd817503b5f33fa736b3bbb141d03a08b4cbec6718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4a3eed2298b3a68afe495f03e8cb9620e7f48d6b05faa64c7cb1acbc3d342a4051aa6c631cdb3856cec"
+            ],
+            "seed": 720045,
+            "raw_energy": 33312,
+            "raw_exact_pairs": 165,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 14,
+            "quotient_energies": {
+              "57": 151056,
+              "63": 269760,
+              "133": 43488,
+              "399": 44800
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02eda21ab9d9e819b682f21f4576d6aac5ded1a4ea5ec101e6272efa8d0ba83509088559c902c90ca17d5cd608cc2348f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0dd156a014bdd72e2eb9cbf3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279db8e7eb32d90a8a882079fc537773ddbc9be663c05d8bed1ca",
+              "0x1caaead0203536b134e484162a4ca004b065d319cfdbe36574a63cbf2cae70a1df813fa7f107d451dda1131f8e852502e2f44d09d06c938d1efd817503b5733fa736b3bbb141d03208b4cbec6718c6e77d3dfac20380dc78d14d31c29fad63c439fcd2e9e9374505c0a817f8e4abeed2298b3a68afe495f03e9cb9600e7f48d6b85fab64c7cb1acbc3d3c2a4151aa6c631cdb38d6cec"
+            ],
+            "seed": 1103105,
+            "raw_energy": 62624,
+            "raw_exact_pairs": 309,
+            "raw_peak_error": 72,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 26,
+            "quotient_energies": {
+              "57": 168896,
+              "63": 351344,
+              "133": 67408,
+              "399": 70800
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f21f4576d6aac5ded1a4ea5ec181e6372efa8d0ba83509088559c902c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d90a8a882079fc537773dcbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70a1df813fa6f107d451dda1131f8e852500e2f40d09d86c938d1efd817503b5f33fa736b3bbb141d03208b4cbec4718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4abeed2298b3a68afe495f03e9cb9600e7f48d6b85fab64c7cb1acbc3d342a4151aa6c631cdb38d6cec"
+            ],
+            "seed": 1103101,
+            "raw_energy": 34048,
+            "raw_exact_pairs": 265,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 30,
+            "quotient_energies": {
+              "57": 151488,
+              "63": 219952,
+              "133": 50624,
+              "399": 51680
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        }
+      }
+    },
+    "7": {
+      "shard": 7,
+      "schedules": 24,
+      "witnesses": {
+        "cyclic": {
+          "energy": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee203a2b932ef308b0d619ddabeeb7a74b98f6dd8ef5b45b0d575ed74986f27ba8f70b85a7c8a22ffd2522902d2228099bc0c8930bf23b25faa7488edcf16d2966224570332f6b0b5a2ebc2540877acd81461af9edda98110b3f6c45b183f546c7d6039e786159e5cbc18df5439305a881467d3b2ffd1e52243f96323260f12719c94772a1873b",
+              "0x13578fe7b5e09397e31c467900f7ea4b0f9057c71a8977fe0b4d35038643599f205f2edfa45d8634220d3569253181fa1dac48e48f05da58e04d1aabad67e0d05a57a60eeca4f76df276e4c6ec528a4888b9a407551445073a458d687284593befefa9bc3365287a6c8ee5525007342d71ceff3fc6ad408e8e0773ccdceca32bd1683e3162edc53501fca80f4f560933b59366d3f875"
+            ],
+            "seed": 720285,
+            "raw_energy": 29568,
+            "raw_exact_pairs": 172,
+            "raw_peak_error": 64,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 26,
+            "quotient_energies": {
+              "57": 73296,
+              "63": 198624,
+              "133": 40944,
+              "399": 35728
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee203a2b932ef308b05619ddabecb7a74b98f6dd8ef5b45b0d575ed7c986f27ba8f70b85a7c8a22ffd2522902d2228099bc0c8930bf23b25faa7488edcf16d296622c570332f6b0b5a2ebc2d40877acd81461af9edda98110b3f6c45b183f546c7d6039e786159e5cbc18df5439305a881467d3b2ffd1e52243f96323260f12719c90772a1873b",
+              "0x13578fe7b5e09387e31e467900f7ea4b0f9057c71a8977fe0b4d35038643599f205f2edfa45da634220d3569253181fa1dac48e48f05da58e04d1aabad67e0d05a57a60eeca4f76df276e4c6ec528a488839a407551445073a458d687284593befeba9bc3365287a6c8ee5525007342d71ceff3fc6ad408e8e0773cedceca32bd1683e3162edc53501fca80f4f560933b59366d3f875"
+            ],
+            "seed": 1103507,
+            "raw_energy": 56064,
+            "raw_exact_pairs": 288,
+            "raw_peak_error": 64,
+            "raw_paf_at_one": 6,
+            "raw_paf_at_399": 34,
+            "quotient_energies": {
+              "57": 80864,
+              "63": 225696,
+              "133": 63920,
+              "399": 63408
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee203a2b932ef308b05619cdabeeb7a74b98f6dd8ef5b45b0d575ed7c986f27ba8f70b85a7c8a22ffd2522902d2228099bc0c8930bf23b25faa7488edcf16d296622c570332f6b0b5a2ebc2d40877acd81461af9edda98110b3f6c45b183f546c7d6039e786159e5cbc18df5439305a881467d3b2ffd1e52243f96323260f12719c90772a1873b",
+              "0x13578fe7b5e09397e31c467900f7ea4b0f9057c71a8977fe0b4d35038643599f205f2edfa45da634220d3569253181fa1dac48e48f05da58e04d1aabad67e0d04a57a60eeca4f76df276e4c6ec528a4888b9a407551445073a458d687284593befeba9bc3365287a6c8ee5525007342d71ceff3fc6ad408e8e0773cedceca32bd1683e3162edc53501fca80f4f560933b59366d3f875"
+            ],
+            "seed": 1103501,
+            "raw_energy": 39552,
+            "raw_exact_pairs": 274,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 26,
+            "quotient_energies": {
+              "57": 75968,
+              "63": 180384,
+              "133": 46640,
+              "399": 41296
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        },
+        "plane": {
+          "energy": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02eda21ab9d9e819b482f21f4576d6aac5ded1a4ee5ec181e6372efa8d0ba83509088559c922c908a17d5cd608cc2148f4918f617749e24afc387c41c2d7a91f35c3a135aeb99758b32f997fc6559ddd3032b8323ffa0d9156a014bdd72e0eb9cff3412fc3c4d0c0c650a17946cb78295794c9b43ef2a43f25a40279db8e7eb32d91a8a882079bc537f73ddbc9be663c45d8bed1ca",
+              "0x1caaeed0203536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df893fa6f107d451d9a1131f8e852502e2f44d09d86c938d1edd817503b5f33fa736b3bbb141d03a08b4cbec6718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4a3eed2298b3a68afe495f03e8cb9620e7f48d6b05faa64c7cb1acbc3d342a4051aa6c631cdb3856cec"
+            ],
+            "seed": 720045,
+            "raw_energy": 33312,
+            "raw_exact_pairs": 165,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 14,
+            "quotient_energies": {
+              "57": 151056,
+              "63": 269760,
+              "133": 43488,
+              "399": 44800
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f25f4576d6aac5ded1a4ea5ec181e6372efa8d0ba83509088559c902c908a17d5cd608cc2348f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d90a8a882079bc537773dcbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d339cfdbe365f4a62cbf2cae70e1df813fa6f107d451dda1139f8e852500e2f40d09d86c938d1efd817503b5f33fb736b3bbb141d03208b4cbec4718c2e77d3dfac20380dc78914d39c29fad63e439fcd2e9e9374505c0a817f8e4abeed2298b3a68afe495f03e9cb9600e7f48d6b85fab64c7cb1acbc3d342a4151aa6c6318db38d6cec"
+            ],
+            "seed": 1103604,
+            "raw_energy": 54400,
+            "raw_exact_pairs": 290,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 42,
+            "quotient_energies": {
+              "57": 164288,
+              "63": 260176,
+              "133": 73584,
+              "399": 65520
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f21f4576d6aac5ded1a4ea5ec181e6372efa8d0ba83509088559c902c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d90a8a882079fc537773dcbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70a1df813fa6f107d451dda1131f8e852500e2f40d09d86c938d1efd817503b5f33fa736b3bbb141d03208b4cbec4718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4abeed2298b3a68afe495f03e9cb9600e7f48d6b85fab64c7cb1acbc3d342a4151aa6c631cdb38d6cec"
+            ],
+            "seed": 1103601,
+            "raw_energy": 34048,
+            "raw_exact_pairs": 265,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 30,
+            "quotient_energies": {
+              "57": 151488,
+              "63": 219952,
+              "133": 50624,
+              "399": 51680
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        }
+      }
+    },
+    "8": {
+      "shard": 8,
+      "schedules": 24,
+      "witnesses": {
+        "cyclic": {
+          "energy": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee203a2b932ef308b0d619ddabeeb7a74b98f6dd8ef5b45b0d575ed74986f27ba8f70b85a7c8a22ffd2522902d2228099bc0c8930bf23b25faa7488edcf16d2966224570332f6b0b5a2ebc2540877acd81461af9edda98110b3f6c45b183f546c7d6039e786159e5cbc18df5439305a881467d3b2ffd1e52243f96323260f12719c94772a1873b",
+              "0x13578fe7b5e09397e31c467900f7ea4b0f9057c71a8977fe0b4d35038643599f205f2edfa45d8634220d3569253181fa1dac48e48f05da58e04d1aabad67e0d05a57a60eeca4f76df276e4c6ec528a4888b9a407551445073a458d687284593befefa9bc3365287a6c8ee5525007342d71ceff3fc6ad408e8e0773ccdceca32bd1683e3162edc53501fca80f4f560933b59366d3f875"
+            ],
+            "seed": 720285,
+            "raw_energy": 29568,
+            "raw_exact_pairs": 172,
+            "raw_peak_error": 64,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 26,
+            "quotient_energies": {
+              "57": 73296,
+              "63": 198624,
+              "133": 40944,
+              "399": 35728
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b85619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a6ebc2500867adda1461af96d5a98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+              "0x13578fe7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d35e9253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f765f277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc2ad408e8e0773ccdceca32bd9683f3162edc53101fca80f4f560b33b59366d3f874"
+            ],
+            "seed": 1104002,
+            "raw_energy": 57696,
+            "raw_exact_pairs": 299,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": -2,
+            "quotient_energies": {
+              "57": 154080,
+              "63": 259728,
+              "133": 46352,
+              "399": 57408
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b8d619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a2ebc2500867add81461af96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+              "0x13578be7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d35e9253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f76df277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc6ad408e8e0773ccdceca32bd1683f3162edc53101fca80f4f560b33b59366d3f874"
+            ],
+            "seed": 1104001,
+            "raw_energy": 38880,
+            "raw_exact_pairs": 262,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": 2,
+            "raw_paf_at_399": 6,
+            "quotient_energies": {
+              "57": 87968,
+              "63": 236160,
+              "133": 44240,
+              "399": 39584
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        },
+        "plane": {
+          "energy": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02eda21ab9d9e819b482f21f4576d6aac5ded1a4ee5ec181e6372efa8d0ba83509088559c922c908a17d5cd608cc2148f4918f617749e24afc387c41c2d7a91f35c3a135aeb99758b32f997fc6559ddd3032b8323ffa0d9156a014bdd72e0eb9cff3412fc3c4d0c0c650a17946cb78295794c9b43ef2a43f25a40279db8e7eb32d91a8a882079bc537f73ddbc9be663c45d8bed1ca",
+              "0x1caaeed0203536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df893fa6f107d451d9a1131f8e852502e2f44d09d86c938d1edd817503b5f33fa736b3bbb141d03a08b4cbec6718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4a3eed2298b3a68afe495f03e8cb9620e7f48d6b05faa64c7cb1acbc3d342a4051aa6c631cdb3856cec"
+            ],
+            "seed": 720045,
+            "raw_energy": 33312,
+            "raw_exact_pairs": 165,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 14,
+            "quotient_energies": {
+              "57": 151056,
+              "63": 269760,
+              "133": 43488,
+              "399": 44800
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f21f4576d6aac5ded1a4ea5ec181e6372efa8d0ba83509088559c902c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c0c650a17946cb79295794c9b43ef2a43f35a40279dbce7eb32d91a8a882079fc537773dcbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70a1df813fa6f107d451dda1131f8e852500e2f44d09d86c938d1efd817503b5f33fa736b3bbb141d03208b4cbec6718c6e77d3dfac20380dc78d14d39c29fad63e439f8d2e9e9375505c0a817f8e4abeed2298b3a68afe495f03e9cb9600e7f48d6b85fab64c7cb1acbc3d342a4151aa4c631cdb3856cec"
+            ],
+            "seed": 1104102,
+            "raw_energy": 48352,
+            "raw_exact_pairs": 290,
+            "raw_peak_error": 72,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 38,
+            "quotient_energies": {
+              "57": 146240,
+              "63": 210640,
+              "133": 57088,
+              "399": 49920
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f21f4576d6aac5ded1a4ea5ec181e6372efa8d0ba83509088559c902c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d90a8a882079fc537773dcbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70a1df813fa6f107d451dda1131f8e852500e2f40d09d86c938d1efd817503b5f33fa736b3bbb141d03208b4cbec4718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4abeed2298b3a68afe495f03e9cb9600e7f48d6b85fab64c7cb1acbc3d342a4151aa6c631cdb38d6cec"
+            ],
+            "seed": 1104101,
+            "raw_energy": 34048,
+            "raw_exact_pairs": 265,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 30,
+            "quotient_energies": {
+              "57": 151488,
+              "63": 219952,
+              "133": 50624,
+              "399": 51680
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        }
+      }
+    },
+    "9": {
+      "shard": 9,
+      "schedules": 24,
+      "witnesses": {
+        "cyclic": {
+          "energy": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee203a2b932ef308b0d619ddabeeb7a74b98f6dd8ef5b45b0d575ed74986f27ba8f70b85a7c8a22ffd2522902d2228099bc0c8930bf23b25faa7488edcf16d2966224570332f6b0b5a2ebc2540877acd81461af9edda98110b3f6c45b183f546c7d6039e786159e5cbc18df5439305a881467d3b2ffd1e52243f96323260f12719c94772a1873b",
+              "0x13578fe7b5e09397e31c467900f7ea4b0f9057c71a8977fe0b4d35038643599f205f2edfa45d8634220d3569253181fa1dac48e48f05da58e04d1aabad67e0d05a57a60eeca4f76df276e4c6ec528a4888b9a407551445073a458d687284593befefa9bc3365287a6c8ee5525007342d71ceff3fc6ad408e8e0773ccdceca32bd1683e3162edc53501fca80f4f560933b59366d3f875"
+            ],
+            "seed": 720285,
+            "raw_energy": 29568,
+            "raw_exact_pairs": 172,
+            "raw_peak_error": 64,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 26,
+            "quotient_energies": {
+              "57": 73296,
+              "63": 198624,
+              "133": 40944,
+              "399": 35728
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b85619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a6ebc2500867adda1461af96d5a98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+              "0x13578fe7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d35e9253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f765f277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc2ad408e8e0773ccdceca32bd9683f3162edc53101fca80f4f560b33b59366d3f874"
+            ],
+            "seed": 1104507,
+            "raw_energy": 57696,
+            "raw_exact_pairs": 299,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": -2,
+            "quotient_energies": {
+              "57": 154080,
+              "63": 259728,
+              "133": 46352,
+              "399": 57408
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b8d619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a2ebc2500867add81461af96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+              "0x13578be7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d35e9253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f76df277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc6ad408e8e0773ccdceca32bd1683f3162edc53101fca80f4f560b33b59366d3f874"
+            ],
+            "seed": 1104503,
+            "raw_energy": 38880,
+            "raw_exact_pairs": 262,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": 2,
+            "raw_paf_at_399": 6,
+            "quotient_energies": {
+              "57": 87968,
+              "63": 236160,
+              "133": 44240,
+              "399": 39584
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        },
+        "plane": {
+          "energy": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02eda21ab9d9e819b482f21f4576d6aac5ded1a4ee5ec181e6372efa8d0ba83509088559c922c908a17d5cd608cc2148f4918f617749e24afc387c41c2d7a91f35c3a135aeb99758b32f997fc6559ddd3032b8323ffa0d9156a014bdd72e0eb9cff3412fc3c4d0c0c650a17946cb78295794c9b43ef2a43f25a40279db8e7eb32d91a8a882079bc537f73ddbc9be663c45d8bed1ca",
+              "0x1caaeed0203536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df893fa6f107d451d9a1131f8e852502e2f44d09d86c938d1edd817503b5f33fa736b3bbb141d03a08b4cbec6718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4a3eed2298b3a68afe495f03e8cb9620e7f48d6b05faa64c7cb1acbc3d342a4051aa6c631cdb3856cec"
+            ],
+            "seed": 720045,
+            "raw_energy": 33312,
+            "raw_exact_pairs": 165,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 14,
+            "quotient_energies": {
+              "57": 151056,
+              "63": 269760,
+              "133": 43488,
+              "399": 44800
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02eda21ab9d9e819b482f21f457ed6aac5ded1a4ea5ec181e6372efa8d0ba83509088459c922c908a17ddcd608cc2148f4d18f617748e24afc387c41c2d7a91f35c3a135aeb99758b32f997fc6559ddd3032b8323ffa0d9156a014bdd72e0eb9cff3412fc3c4d0c0c650a17946cb78295794c9b43ef2a43f25a40279db8e7ebb2d91a8a882079bc537f73dcbc9be663c45d8bed1ca",
+              "0x1caaeed0203536b134e484166a4ca804b065d319cfdbe365f4a63cbf2cae70a1df893fa6f107d451dda1131f8e852500e2f40d09d86c938d1edd817503b5f33fa736b3bbb141d03a08b4cbec6718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4a3eed2298b3a68abe495f03e8cb9620e7f48d6b05faa64c7cb1acbc3d342a4151aa6c631cdb3856cec"
+            ],
+            "seed": 1104606,
+            "raw_energy": 51328,
+            "raw_exact_pairs": 282,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": 2,
+            "raw_paf_at_399": 30,
+            "quotient_energies": {
+              "57": 172352,
+              "63": 216640,
+              "133": 50432,
+              "399": 60768
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f21f4576d6aac5ded1a4ea5ec181e6372efa8d0ba83509088559c902c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d90a8a882079fc537773dcbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70a1df813fa6f107d451dda1131f8e852500e2f40d09d86c938d1efd817503b5f33fa736b3bbb141d03208b4cbec4718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4abeed2298b3a68afe495f03e9cb9600e7f48d6b85fab64c7cb1acbc3d342a4151aa6c631cdb38d6cec"
+            ],
+            "seed": 1104601,
+            "raw_energy": 34048,
+            "raw_exact_pairs": 265,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 30,
+            "quotient_energies": {
+              "57": 151488,
+              "63": 219952,
+              "133": 50624,
+              "399": 51680
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        }
+      }
+    },
+    "10": {
+      "shard": 10,
+      "schedules": 24,
+      "witnesses": {
+        "cyclic": {
+          "energy": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee203a2b932ef308b0d619ddabeeb7a74b98f6dd8ef5b45b0d575ed74986f27ba8f70b85a7c8a22ffd2522902d2228099bc0c8930bf23b25faa7488edcf16d2966224570332f6b0b5a2ebc2540877acd81461af9edda98110b3f6c45b183f546c7d6039e786159e5cbc18df5439305a881467d3b2ffd1e52243f96323260f12719c94772a1873b",
+              "0x13578fe7b5e09397e31c467900f7ea4b0f9057c71a8977fe0b4d35038643599f205f2edfa45d8634220d3569253181fa1dac48e48f05da58e04d1aabad67e0d05a57a60eeca4f76df276e4c6ec528a4888b9a407551445073a458d687284593befefa9bc3365287a6c8ee5525007342d71ceff3fc6ad408e8e0773ccdceca32bd1683e3162edc53501fca80f4f560933b59366d3f875"
+            ],
+            "seed": 720285,
+            "raw_energy": 29568,
+            "raw_exact_pairs": 172,
+            "raw_peak_error": 64,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 26,
+            "quotient_energies": {
+              "57": 73296,
+              "63": 198624,
+              "133": 40944,
+              "399": 35728
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b85619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a6ebc2500867adda1461af96d5a98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+              "0x13578fe7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d35e9253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f765f277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc2ad408e8e0773ccdceca32bd9683f3162edc53101fca80f4f560b33b59366d3f874"
+            ],
+            "seed": 1105007,
+            "raw_energy": 57696,
+            "raw_exact_pairs": 299,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": -2,
+            "quotient_energies": {
+              "57": 154080,
+              "63": 259728,
+              "133": 46352,
+              "399": 57408
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18fd14f2b07e0c46744b78534acaddee203a2b930ef708b8d619cdabaeb7a75b9af6dd8e75b45b2d575ed7c886e27be8f70bc5a5c8a22ffd350290292228099be0c89303f27b27faa7488eccd16d2966224570132f6b0b5a2ebc2500867add81461af96dda98310f3f6c44b183f546c7d6039c786559e5dbc18df1439305e8814e7d332ffd1e52603f96223270f52799c94752a1873a",
+              "0x13578be7b5609397e31e467940f7ea4b0f9057c71a8d77fe0b4d3503864359df205f2edea45d8634220d35e9253181fa1dac08e48f05da58e04d1aafad67e0d04a57a60eeca4f76df277e4c6cc528a4888b9a407551445073a4585687384593befefa9bc3365287a6c8ee5525007342d71cedf3fc6ad408e8e0773ccdceca32bd1683f3162edc53101fca80f4f560b33b59366d3f874"
+            ],
+            "seed": 1105003,
+            "raw_energy": 38880,
+            "raw_exact_pairs": 262,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": 2,
+            "raw_paf_at_399": 6,
+            "quotient_energies": {
+              "57": 87968,
+              "63": 236160,
+              "133": 44240,
+              "399": 39584
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        },
+        "plane": {
+          "energy": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02eda21ab9d9e819b482f21f4576d6aac5ded1a4ee5ec181e6372efa8d0ba83509088559c922c908a17d5cd608cc2148f4918f617749e24afc387c41c2d7a91f35c3a135aeb99758b32f997fc6559ddd3032b8323ffa0d9156a014bdd72e0eb9cff3412fc3c4d0c0c650a17946cb78295794c9b43ef2a43f25a40279db8e7eb32d91a8a882079bc537f73ddbc9be663c45d8bed1ca",
+              "0x1caaeed0203536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df893fa6f107d451d9a1131f8e852502e2f44d09d86c938d1edd817503b5f33fa736b3bbb141d03a08b4cbec6718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4a3eed2298b3a68afe495f03e8cb9620e7f48d6b05faa64c7cb1acbc3d342a4051aa6c631cdb3856cec"
+            ],
+            "seed": 720045,
+            "raw_energy": 33312,
+            "raw_exact_pairs": 165,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 14,
+            "quotient_energies": {
+              "57": 151056,
+              "63": 269760,
+              "133": 43488,
+              "399": 44800
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f21f4576d6aac5ded1a4ee5ec181e6372efa8d0ba83501088559c902c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99f58b32f997fc6519dddb032b8323dfa0d9156a014bcd72e2eb9cbf3412fc3d4d0c0c650e17946cb79295794c9b43ef2a43f35a40279dbce7eb32d90a8a882079fc537773dcbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70a1df813fa6f107d451dda1131f8e952500e2f40d09d86c938d1efd817503b5f33fb736b3bbb141d03208b4cbec4718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e969374505c0a817f8e4abeed2298b3a68afe495f03e8cb9600e7f48d6b05fab64c7cb1acfc3d342a4151aa6c631cdb38d6cec"
+            ],
+            "seed": 1105105,
+            "raw_energy": 54272,
+            "raw_exact_pairs": 284,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": 10,
+            "raw_paf_at_399": 42,
+            "quotient_energies": {
+              "57": 152528,
+              "63": 312896,
+              "133": 62112,
+              "399": 62000
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f21f4576d6aac5ded1a4ea5ec181e6372efa8d0ba83509088559c902c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d90a8a882079fc537773dcbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70a1df813fa6f107d451dda1131f8e852500e2f40d09d86c938d1efd817503b5f33fa736b3bbb141d03208b4cbec4718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4abeed2298b3a68afe495f03e9cb9600e7f48d6b85fab64c7cb1acbc3d342a4151aa6c631cdb38d6cec"
+            ],
+            "seed": 1105101,
+            "raw_energy": 34048,
+            "raw_exact_pairs": 265,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 30,
+            "quotient_energies": {
+              "57": 151488,
+              "63": 219952,
+              "133": 50624,
+              "399": 51680
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        }
+      }
+    },
+    "11": {
+      "shard": 11,
+      "schedules": 24,
+      "witnesses": {
+        "cyclic": {
+          "energy": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee203a2b932ef308b0d619ddabeeb7a74b98f6dd8ef5b45b0d575ed74986f27ba8f70b85a7c8a22ffd2522902d2228099bc0c8930bf23b25faa7488edcf16d2966224570332f6b0b5a2ebc2540877acd81461af9edda98110b3f6c45b183f546c7d6039e786159e5cbc18df5439305a881467d3b2ffd1e52243f96323260f12719c94772a1873b",
+              "0x13578fe7b5e09397e31c467900f7ea4b0f9057c71a8977fe0b4d35038643599f205f2edfa45d8634220d3569253181fa1dac48e48f05da58e04d1aabad67e0d05a57a60eeca4f76df276e4c6ec528a4888b9a407551445073a458d687284593befefa9bc3365287a6c8ee5525007342d71ceff3fc6ad408e8e0773ccdceca32bd1683e3162edc53501fca80f4f560933b59366d3f875"
+            ],
+            "seed": 720285,
+            "raw_energy": 29568,
+            "raw_exact_pairs": 172,
+            "raw_peak_error": 64,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 26,
+            "quotient_energies": {
+              "57": 73296,
+              "63": 198624,
+              "133": 40944,
+              "399": 35728
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee213a2b932ef308b0d619ddabeeb7a74b98f6dd8ef5b45b0d575ed74986f27ba8f70b85a7c8a22ffd2502902d2228899bc0c8930bf27b25faa7488edcf16d2966224570232f6b0b5a2ebc2540877acd81461af9edda98110b3f6c45b183f546c6d6039e786159e5cbc18df5439305e8814e7d3b2ffd3e52203f96323260f12519c90772a1873b",
+              "0x13578fe7b5e09397e31c467940f7ea4b0f9057c71a8977fe0b4d3503864359df205f2edfa45d8634220d3569253181fa1dac48e48f05da58e04d1aabad67e0d05a57a40eeca4f76df276e4c6ec528a4888b9a407551445073a458d687284593befefa9bc3365287a6c8ee552500f342d71cedf3fc6ad400e8e0773ccdceca32bd1683e3162cdc53501fca80f4f560b33b59366d3f875"
+            ],
+            "seed": 1105504,
+            "raw_energy": 42784,
+            "raw_exact_pairs": 310,
+            "raw_peak_error": 72,
+            "raw_paf_at_one": -6,
+            "raw_paf_at_399": 26,
+            "quotient_energies": {
+              "57": 68256,
+              "63": 202624,
+              "133": 36752,
+              "399": 41328
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "cyclic",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0x18dd10f2b8fe0c44740b78535acaddee213a2b932ef308b0d619ddabeeb7a74b98f6dd8ef5b45b0d575ed74986f27ba8f70b85a7c8a22ffd2502902d2228899bc0c8930bf27b25faa7488edcf16d2966224570232f6b0b5a2ebc2540877acd81461af9edda98110b3f6c45b183f546c6d6039e786159e5cbc18df5439305e8814e7d3b2ffd1e52203f96323260f12719c90772a1873b",
+              "0x13578fe7b5e09397e31c467940f7ea4b0f9057c71a8977fe0b4d3503864359df205f2edfa45d8634220d3569253181fa1dac48e48f05da58e04d1aabad67e0d05a57a60eeca4f76df276e4c6ec528a4888b9a407551445073a4585687284593befefa9bc3365287a6c8ee552500f342d71cedf3fc6ad400e8e0773ccdceca32bd1683e3162cdc53501fca80f4f560b33b59366d3f875"
+            ],
+            "seed": 1105500,
+            "raw_energy": 39424,
+            "raw_exact_pairs": 298,
+            "raw_peak_error": 68,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 38,
+            "quotient_energies": {
+              "57": 58688,
+              "63": 173344,
+              "133": 57632,
+              "399": 43424
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        },
+        "plane": {
+          "energy": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02eda21ab9d9e819b482f21f4576d6aac5ded1a4ee5ec181e6372efa8d0ba83509088559c922c908a17d5cd608cc2148f4918f617749e24afc387c41c2d7a91f35c3a135aeb99758b32f997fc6559ddd3032b8323ffa0d9156a014bdd72e0eb9cff3412fc3c4d0c0c650a17946cb78295794c9b43ef2a43f25a40279db8e7eb32d91a8a882079bc537f73ddbc9be663c45d8bed1ca",
+              "0x1caaeed0203536b134e484162a4ca804b065d319cfdbe365f4a63cbf2cae70a1df893fa6f107d451d9a1131f8e852502e2f44d09d86c938d1edd817503b5f33fa736b3bbb141d03a08b4cbec6718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4a3eed2298b3a68afe495f03e8cb9620e7f48d6b05faa64c7cb1acbc3d342a4051aa6c631cdb3856cec"
+            ],
+            "seed": 720045,
+            "raw_energy": 33312,
+            "raw_exact_pairs": 165,
+            "raw_peak_error": 52,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 14,
+            "quotient_energies": {
+              "57": 151056,
+              "63": 269760,
+              "133": 43488,
+              "399": 44800
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "coverage": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f21f4576d6abc5def1a4ea5ec181e6372ef88d0ba83509088559c902c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135eeb99758b32f995fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c2c650a17946cb792957b4c9b43ef2a43f25a40279db8e7eb32d90a8a882079fc537773dcbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d319cfdbe36574a62cbf2cae70a1df813fa6f107d451dda1131f8e852500e2f40d09d86c938d1efd817503b5f33fb736b3bbb101d03208b4cbec6718c6e77dbdfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4abeed2298b3a68afe495f03e8cb9600e7f48d6b85fab64c7cb1acfc3d342a4151aa6c631cdb38d6cec"
+            ],
+            "seed": 1105604,
+            "raw_energy": 53440,
+            "raw_exact_pairs": 292,
+            "raw_peak_error": 68,
+            "raw_paf_at_one": 2,
+            "raw_paf_at_399": 42,
+            "quotient_energies": {
+              "57": 171200,
+              "63": 282976,
+              "133": 59264,
+              "399": 63280
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          },
+          "at_most_40000": {
+            "law": "plane",
+            "group": [
+              1,
+              64,
+              253,
+              442,
+              505,
+              568,
+              631,
+              757,
+              883
+            ],
+            "negative_masks": [
+              "0xa02e9a21ab9d9e819b682f21f4576d6aac5ded1a4ea5ec181e6372efa8d0ba83509088559c902c90ca17d5cd608cc2148f4918f617749e24afc387841c2d7a91f35c3a135aeb99758b32f997fc6519dddb032b8323dfa0d9156a014bdd72e2eb9cbf3412fc3d4d0c0c650a17946cb792957b4c9b43ef2a43f35a40279dbce7eb32d90a8a882079fc537773dcbc9be663c05d8bed1cb",
+              "0x1caaead0203536b134e484162a4ca004b065d339cfdbe36574a63cbf2cae70a1df813fa6f107d451dda1131f8e852500e2f40d09d86c938d1efd817503b5f33fa736b3bbb141d03208b4cbec4718c6e77d3dfac20380dc78d14d39c29fad63e439fcd2e9e9374505c0a817f8e4abeed2298b3a68afe495f03e9cb9600e7f48d6b85fab64c7cb1acbc3d342a4151aa6c631cdb38d6cec"
+            ],
+            "seed": 1105601,
+            "raw_energy": 34048,
+            "raw_exact_pairs": 265,
+            "raw_peak_error": 60,
+            "raw_paf_at_one": -2,
+            "raw_paf_at_399": 30,
+            "quotient_energies": {
+              "57": 151488,
+              "63": 219952,
+              "133": 50624,
+              "399": 51680
+            },
+            "lag_classes": 94,
+            "word_orbits": 189
+          }
+        }
+      }
+    }
+  },
+  "merge": {
+    "exit_code": 0,
+    "output": "cyclic 27328 310\nplane 33312 309\n"
+  }
+}
