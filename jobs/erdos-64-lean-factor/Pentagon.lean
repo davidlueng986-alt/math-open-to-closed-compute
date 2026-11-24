@@ -27,7 +27,7 @@ theorem pentagon_lift_counts (a b k : ℕ) (h : a + b = 2 ^ k) :
     omega
   have h4 : (2 : ℕ)^(k+2) = 4*(a+b) := by
     rw [pow_add, ← h]
-    norm_num <;> omega
+    norm_num; omega
   by_cases hb : b = 0
   · refine ⟨0, 0, by omega, by omega, Or.inl ?_⟩
     omega
