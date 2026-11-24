@@ -1,0 +1,17 @@
+{
+  "pairs": 134,
+  "sources": [
+    {
+      "name": "2MOLS10_achieving_all_parities.txt",
+      "source": "https://users.monash.edu.au/~iwanless/data/MOLS/2MOLS10_achieving_all_parities.txt",
+      "sha256": "c1c5bd775a9632d7cdc4ea033d16c31c6b5007257b0003539f76b1b2b05f3a27",
+      "pairs_used": 32
+    },
+    {
+      "name": "MOLS10.txt",
+      "source": "https://users.monash.edu.au/~iwanless/data/MOLS/MOLS10.txt",
+      "sha256": "efc22cbdb1ffe0ea6173011a738fa6893304e787263913c218e0cb480144428d",
+      "pairs_used": 100
+    }
+  ]
+}

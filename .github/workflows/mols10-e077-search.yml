@@ -1,0 +1,152 @@
+name: MOLS10 E077 complete-cover and constructive search
+on:
+  workflow_dispatch:
+    inputs:
+      resume_run_id:
+        description: Optional earlier E077 run whose per-shard artifacts should be resumed
+        required: false
+        default: ''
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - 'jobs/mols10-e077-run/launch.txt'
+permissions:
+  contents: read
+  packages: read
+  actions: read
+concurrency:
+  group: mols10-e077-complete-search
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify encoding, parity, SAT witness, and the real proof backend
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          kissat --version | tee out/kissat-version.txt
+          python3 jobs/mols10-e077-exact/queue_search.py validate --out out/validation
+          python3 jobs/mols10-e077-exact/queue_search.py manifest --n 10 --squares 3 --even-row-normalization --out out/coverage.json
+          cmp out/coverage.json jobs/mols10-e077-exact/coverage.json
+          for shard in 0 1; do
+            python3 jobs/mols10-e077-exact/queue_search.py init --state "out/backend-$shard" --n 4 --squares 3 --shard "$shard"
+            python3 jobs/mols10-e077-exact/queue_search.py run --state "out/backend-$shard" --seconds 90 --slice-seconds 15 --check-seconds 10
+            python3 jobs/mols10-e077-exact/queue_search.py verify --state "out/backend-$shard" --check-seconds 10
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: preflight
+          path: out/
+          retention-days: 30
+  exact:
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        shard: [1,2,6,8,9,10]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.resume_run_id != '' }}
+        with:
+          name: exact-${{ matrix.shard }}
+          path: out/
+          run-id: ${{ inputs.resume_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run the complete canonical shard with a persistent cube tree
+        env:
+          SHARD: ${{ matrix.shard }}
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          python3 jobs/mols10-e077-exact/queue_search.py init --state out/state --n 10 --squares 3 --shard "$SHARD" --even-row-normalization
+          python3 jobs/mols10-e077-exact/queue_search.py verify --state out/state --check-seconds 60
+          python3 jobs/mols10-e077-exact/queue_search.py run --state out/state --seconds 19000 --slice-seconds 900 --check-seconds 900 | tee out/progress.jsonl
+      - name: Independently replay saved branch certificates
+        if: always()
+        run: timeout 1200s python3 jobs/mols10-e077-exact/queue_search.py verify --state out/state --check-seconds 120
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exact-${{ matrix.shard }}
+          path: out/
+          compression-level: 9
+          retention-days: 30
+  construct:
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        seed: [770101,770102,770103,770104]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.resume_run_id != '' }}
+        with:
+          name: construct-${{ matrix.seed }}
+          path: out/
+          run-id: ${{ inputs.resume_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Search actual orthogonal pairs and reconstruct a third square
+        env:
+          CONSTRUCTION_SEED: ${{ matrix.seed }}
+        run: bash jobs/mols10-e077-construction/run.sh "$CONSTRUCTION_SEED" 19000 "$GITHUB_WORKSPACE/out"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: construct-${{ matrix.seed }}
+          path: |
+            out/*.json
+            out/*.jsonl
+            out/*.txt
+            out/*.log
+          retention-days: 30
+  collect:
+    needs: [preflight,exact,construct]
+    if: ${{ always() && needs.preflight.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+      actions: read
+    env:
+      JOB: mols10-e077
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Aggregate explicit remaining work and independently verify any witness
+        run: python3 jobs/mols10-e077-run/collect.py --artifacts artifacts --out summary
+      - uses: actions/upload-artifact@v4
+        with:
+          name: summary
+          path: summary/
+          retention-days: 30
+      - run: bash scripts/commit_results.sh
+        env:
+          GH_TOKEN: ${{ github.token }}

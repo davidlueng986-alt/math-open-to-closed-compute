@@ -1,0 +1,39 @@
+[
+  {
+    "shard": 0,
+    "parts": [
+      2,
+      2
+    ],
+    "task_status": "VERIFIED_SAT_WITNESS",
+    "nodes": 1,
+    "leaves": 1,
+    "leaf_status_counts": {
+      "SAT_VERIFIED": 1
+    },
+    "coverage": "all unresolved leaves retained; no percentage estimate",
+    "coverage_tree_verified": true,
+    "lrat_certificates_replayed": 0
+  },
+  {
+    "shard": 1,
+    "parts": [
+      4
+    ],
+    "task_status": "SHARD_EXHAUSTED_WITH_CERTIFICATES",
+    "nodes": 3,
+    "leaves": 2,
+    "leaf_status_counts": {
+      "UNSAT_VERIFIED": 2
+    },
+    "coverage": "all unresolved leaves retained; no percentage estimate",
+    "coverage_tree_verified": true,
+    "lrat_certificates_replayed": 2
+  },
+  {
+    "duplicate_child_tamper_rejected": true
+  },
+  {
+    "proof_digest_tamper_rejected": true
+  }
+]

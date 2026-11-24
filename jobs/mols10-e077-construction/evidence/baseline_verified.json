@@ -1,0 +1,14 @@
+{
+  "order": 10,
+  "pair_valid": true,
+  "packing_lower_bound": 7,
+  "triple_valid": false,
+  "common_transversals": 14,
+  "maximum_disjoint": 7,
+  "packing_nodes": 18,
+  "pair_extendible": false,
+  "checkpoint": "/workspace/scratch/b8bce13d0c91/e077/construction/baseline_audit.json",
+  "status": "RESTRICTED_UNSAT",
+  "elite_verified": 0,
+  "global_nonexistence_claim": false
+}
