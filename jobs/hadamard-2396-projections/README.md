@@ -1,6 +1,8 @@
 # Hadamard order 2396
 
-A Legendre pair of length 1197 would give a Hadamard matrix of order 2396. The strongest subgroup certificate here is a pair of actual sign words whose autocorrelations satisfy every required equation on the subgroups of orders 7, 9, 19 and 21. It also realizes three exact Fourier projections. Its first original correlation is 10, with required value −2. The order-2396 construction remains open. [Sign certificates](original-search.json) · [12-shard search](https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45301240776)
+A Legendre pair of length 1197 would give a Hadamard matrix of order 2396. The mixed-subgroup certificate in this folder is a pair of actual sign words whose autocorrelations satisfy every required equation on the subgroups of orders 7, 9, 19 and 21. It also realizes three exact Fourier projections. Its first original correlation is 10, with required value −2. The order-2396 construction remains open. [Sign certificates](original-search.json) · [12-shard search](https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45301240776)
+
+The subsequent diagonal-multiplier witness extends these original equations to all 80 nonzero shifts in the subgroups of orders 63 and 19. [New signs and proofs](../hadamard-2396-diagonal/README.md)
 
 ## What the certificates satisfy
 
