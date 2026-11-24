@@ -1,0 +1,57 @@
+name: ERDOS-64 Lean pentagon factor arithmetic audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'jobs/erdos-64-lean-factor/Pentagon.lean'
+      - 'jobs/erdos-64-lean-factor/launch.txt'
+permissions:
+  contents: read
+concurrency:
+  group: erdos64-lean-factor-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin the Mathlib revision used by Formal Conjectures
+        uses: actions/checkout@v4
+        with:
+          repository: leanprover-community/mathlib4
+          ref: 0df444a360eaa60ab8c11dca51a86af692955474
+          path: mathlib4
+      - name: Install exact Lean toolchain
+        run: |
+          set -euo pipefail
+          curl -fsSL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          "$HOME/.elan/bin/elan" toolchain install "$(cat mathlib4/lean-toolchain)"
+          cat mathlib4/lean-toolchain
+      - name: Download precompiled Mathlib dependencies
+        working-directory: mathlib4
+        run: lake exe cache get
+      - name: Kernel-check the actual graph-theoretic lemmas
+        working-directory: mathlib4
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          lean --version | tee "$GITHUB_WORKSPACE/out/toolchain.txt"
+          git rev-parse HEAD >> "$GITHUB_WORKSPACE/out/toolchain.txt"
+          lake env lean -DwarningAsError=true "$GITHUB_WORKSPACE/jobs/erdos-64-lean-factor/Pentagon.lean" 2>&1 | tee "$GITHUB_WORKSPACE/out/lean.log"
+          if grep -q 'sorryAx' "$GITHUB_WORKSPACE/out/lean.log"; then
+            echo 'Unproved axiom found in proof dependency audit' >&2
+            exit 1
+          fi
+          printf '%s\n' 'Lean kernel verification succeeded for the submitted lemmas only; not a proof of the original conjecture.' > "$GITHUB_WORKSPACE/out/VERIFIED.txt"
+      - name: Preserve toolchain, proof and audit logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: erdos64-factor-kernel-audit
+          path: |
+            out/
+            jobs/erdos-64-lean-factor/Pentagon.lean
+          retention-days: 30
