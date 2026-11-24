@@ -112,8 +112,8 @@ theorem partial_rank_bound [Fintype m] (A : Matrix n n K) (e : m → n)
     (r : ℕ) (hr : A.rank ≤ r) : (A.submatrix e e).rank ≤ r :=
   (Matrix.rank_submatrix_le A e e).trans hr
 
-/-- Sound rejection of a partial matrix under a prescribed rank cap. -/
 omit [DecidableEq n] in
+/-- Sound rejection of a partial matrix under a prescribed rank cap. -/
 theorem no_completion_over_rank [Fintype m] (P : Matrix m m K)
     (e : m → n) (r : ℕ) (hP : r < P.rank) :
     ¬ ∃ A : Matrix n n K, A.rank ≤ r ∧ A.submatrix e e = P := by
