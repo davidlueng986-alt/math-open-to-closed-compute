@@ -193,36 +193,17 @@ struct Quotient {
     }
     vector<Trade> rectangles(int f) {
         vector<Trade> list;
-        for (int a = 0; a < 6; a++)
-            for (int b = a + 1; b < 6; b++)
-                for (int row = 0; row < 3; row++)
-                    for (int h = row + 1; h < 3; h++)
-                        for (int j = 0; j < 7; j++)
-                            for (int k = j + 1; k < 7; k++)
-                                for (int direction : {0, 1}) {
-                                    Move m;
-                                    m.f = f;
-                                    if (!signs.bitsForCell(f, a, b, signs.address[row][j],
-                                                           direction, m) ||
-                                        !signs.bitsForCell(f, a, b, signs.address[h][j], !direction,
-                                                           m) ||
-                                        !signs.bitsForCell(f, a, b, signs.address[h][k], direction,
-                                                           m) ||
-                                        !signs.bitsForCell(f, a, b, signs.address[row][k],
-                                                           !direction, m))
-                                        continue;
-                                    Trade t;
-                                    t.moves = m;
-                                    int n = 0;
-                                    for (int col : {a, b})
-                                        for (Bits bit = m.masks[col]; bit; bit &= bit - 1) {
-                                            int i = __builtin_ctzll(bit);
-                                            t.changes[n++] = {21 * col + i % 21,
-                                                              ((signs.s[f][col] >> i) & 1) ? 1
-                                                                                           : -1};
-                                        }
-                                    list.push_back(t);
-                                }
+        for (auto &m : signs.rectangleMoves(f)) {
+            Trade t;
+            t.moves = m;
+            int n = 0;
+            for (int col = 0; col < 6; col++)
+                for (Bits bit = m.masks[col]; bit; bit &= bit - 1) {
+                    int i = __builtin_ctzll(bit);
+                    t.changes[n++] = {21 * col + i % 21, ((signs.s[f][col] >> i) & 1) ? 1 : -1};
+                }
+            list.push_back(t);
+        }
         return list;
     }
     using Pair = array<int, 2>;

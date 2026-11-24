@@ -5,7 +5,7 @@ from pathlib import Path
 import subprocess
 import sys
 
-from audit import EXTENSION, audit, sign_input, unpack
+from audit import EXTENSION, audit, key, sign_input, unpack
 
 
 def run(binary, args, masks):
@@ -17,18 +17,6 @@ def run(binary, args, masks):
     if any(output[k] != stats[k] for k in output.keys() & stats.keys()):
         raise ValueError("incremental score disagrees with scalar quotient or packed original score")
     return {"negative_masks": m, **stats}
-
-
-def key(category, r):
-    if category == "quotient":
-        return (r["quotient_energy"], r["raw_energy"])
-    if category == "full":
-        return (r["raw_energy"], r["quotient_energy"])
-    if category == "balanced":
-        return (r["raw_paf_at_399"] != -2, r["raw_energy"])
-    if category == "extended":
-        return (r["target_energy"], r["raw_energy"])
-    raise KeyError(category)
 
 
 def main(bin_dir, shard, output):

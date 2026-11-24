@@ -57,6 +57,18 @@ def audit(masks, scalar=False):
     }
 
 
+def key(category, r):
+    if category == "quotient":
+        return (r["quotient_energy"], r["raw_energy"])
+    if category == "full":
+        return (r["raw_energy"], r["quotient_energy"])
+    if category == "balanced":
+        return (r["raw_paf_at_399"] != -2, r["raw_energy"])
+    if category == "extended":
+        return (r["target_energy"], r["raw_energy"])
+    raise KeyError(category)
+
+
 def validate(record, scalar=True):
     stats = audit(record["negative_masks"], scalar)
     if any(value != record.get(key) for key, value in stats.items()):

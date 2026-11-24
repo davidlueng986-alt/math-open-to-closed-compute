@@ -298,6 +298,52 @@ struct Engine {
         }
         return true;
     }
+    vector<Move> phaseMoves(int f) const {
+        vector<Move> moves;
+        for (int r = 0; r < 21; r++)
+            for (int h = 0; h < 3; h++)
+                for (int k = h + 1; k < 3; k++) {
+                    int i = r + 21 * h, j = r + 21 * k;
+                    Bits pair = (Bits(1) << i) | (Bits(1) << j);
+                    for (int a = 0; a < 6; a++) {
+                        if (pop(s[f][a] & pair) != 1)
+                            continue;
+                        Move m;
+                        m.f = f;
+                        m.masks[a] = pair;
+                        if (r % 3)
+                            moves.push_back(m);
+                        else
+                            for (int b = a + 1; b < 6; b++) {
+                                if (((s[f][a] ^ s[f][b]) & pair) != pair)
+                                    continue;
+                                m.masks[b] = pair;
+                                moves.push_back(m);
+                                m.masks[b] = 0;
+                            }
+                    }
+                }
+        return moves;
+    }
+    vector<Move> rectangleMoves(int f) {
+        vector<Move> out;
+        for (int a = 0; a < 6; a++)
+            for (int b = a + 1; b < 6; b++)
+                for (int r = 0; r < 3; r++)
+                    for (int h = r + 1; h < 3; h++)
+                        for (int j = 0; j < 7; j++)
+                            for (int k = j + 1; k < 7; k++)
+                                for (int direction : {0, 1}) {
+                                    Move m;
+                                    m.f = f;
+                                    if (bitsForCell(f, a, b, address[r][j], direction, m) &&
+                                        bitsForCell(f, a, b, address[h][j], !direction, m) &&
+                                        bitsForCell(f, a, b, address[h][k], direction, m) &&
+                                        bitsForCell(f, a, b, address[r][k], !direction, m))
+                                        out.push_back(m);
+                                }
+        return out;
+    }
     array<int, 19> axisDefects(const State &v) const {
         array<int, 19> d{};
         for (int t = 0; t < 10; t++) {

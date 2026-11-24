@@ -4,8 +4,7 @@ import json
 from pathlib import Path
 import sys
 
-from audit import validate
-from shard import key
+from audit import key, validate
 
 
 def main(shards, out):

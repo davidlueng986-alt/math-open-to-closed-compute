@@ -120,6 +120,87 @@ struct Raw {
         signs.s = best;
         rebuild();
     }
+    struct Neighbour {
+        Move move;
+        array<short, 206> delta{};
+        int gain = 0;
+    };
+    bool pairDescent(bool balanced) {
+        const auto current = energy(distance[0], distance[1]).first;
+        array<vector<Neighbour>, 2> neighbours;
+        for (int f = 0; f < 2; f++) {
+            vector<Move> list = signs.phaseMoves(f);
+            auto rectangles = signs.rectangleMoves(f);
+            list.insert(list.end(), rectangles.begin(), rectangles.end());
+            Move identity;
+            identity.f = f;
+            list.push_back(identity);
+            for (const auto &m : list) {
+                signs.flip(m);
+                auto next = measure(f);
+                signs.flip(m);
+                Neighbour n;
+                n.move = m;
+                n.gain = energy(next, distance[1 - f]).first - current;
+                for (int k = 0; k < 206; k++) {
+                    int d = (distance[f][k] - next[k]) / 2;
+                    n.delta[k] = f ? d : orbits[k].weight * d;
+                }
+                neighbours[f].push_back(n);
+            }
+        }
+        int best = 0;
+        array<Move, 2> chosen;
+        for (const auto &a : neighbours[0])
+            for (const auto &b : neighbours[1]) {
+                // Shift 399 has orbit weight one.
+                if (balanced && a.delta[orderThree] + b.delta[orderThree])
+                    continue;
+                int cross = 0;
+                for (int k = 0; k < 206; k++)
+                    cross += a.delta[k] * b.delta[k];
+                int gain = a.gain + b.gain + 2 * cross;
+                if (gain < best) {
+                    best = gain;
+                    chosen = {a.move, b.move};
+                }
+            }
+        if (!best)
+            return false;
+        signs.flip(chosen[0]);
+        signs.flip(chosen[1]);
+        rebuild();
+        if (energy(distance[0], distance[1]).first != current + best)
+            throw runtime_error("paired full-energy update mismatch");
+        return true;
+    }
+    void escapes(bool balanced, int restarts, int depth) {
+        if (balanced && distance[0][orderThree] + distance[1][orderThree] != 1198)
+            throw runtime_error("incorrect balanced entry");
+        while (pairDescent(balanced)) {
+        }
+        State best = signs.s;
+        int low = energy(distance[0], distance[1]).first;
+        for (int i = 0; i < restarts; i++) {
+            signs.s = best;
+            for (int j = 0; j < depth; j++) {
+                Move m;
+                while (!signs.phase(m))
+                    m = Move{};
+                signs.flip(m);
+            }
+            rebuild();
+            while (pairDescent(balanced)) {
+            }
+            int e = energy(distance[0], distance[1]).first;
+            if (e < low) {
+                low = e;
+                best = signs.s;
+            }
+        }
+        signs.s = best;
+        rebuild();
+    }
     void print() {
         auto [all, focus] = energy(distance[0], distance[1]);
         auto w = signs.expand(signs.s);
@@ -140,6 +221,10 @@ int main(int argc, char **argv) {
     Raw engine(stoul(argv[1]));
     for (int i = 2; i < argc; i += 3) {
         string mode = argv[i];
+        if (mode == "paired" || mode == "paired-balanced") {
+            engine.escapes(mode == "paired-balanced", stoi(argv[i + 1]), stoi(argv[i + 2]));
+            continue;
+        }
         if (mode != "fixed" && mode != "free" && mode != "balanced")
             return 2;
         engine.walk(mode, stoi(argv[i + 1]), stoi(argv[i + 2]));
