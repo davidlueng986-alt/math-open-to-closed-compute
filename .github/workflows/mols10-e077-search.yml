@@ -65,7 +65,86 @@ jobs:
       max-parallel: 6
       matrix:
         shard: [1,2,6,8,9,10]
+    env:
+      E077_INITIAL_REPLAY_SECONDS: '1800'
+      E077_FINAL_REPLAY_SECONDS: '1800'
+      E077_ARTIFACT_RESERVE_SECONDS: '900'
+      E077_CERTIFICATE_SECONDS: '900'
     steps:
+      - name: Establish one deadline and a bounded replay wrapper
+        run: |
+          set -euo pipefail
+          # Five minutes of the outer 350-minute limit remain as a setup guard.
+          # Replay/search also reserve 15 minutes explicitly for artifact upload.
+          echo "E077_JOB_DEADLINE=$(( $(date +%s) + 20700 ))" >> "$GITHUB_ENV"
+          cat > "$RUNNER_TEMP/e077_replay.py" <<'PY'
+          import argparse, json, os, pathlib, signal, subprocess, sys, time
+          sys.path.insert(0,str(pathlib.Path('jobs/mols10-e077-exact').resolve()))
+          from encode import sha256_file
+          from queue_search import atomic_json, queue_summary, save_state
+
+          p=argparse.ArgumentParser()
+          p.add_argument('--state',required=True)
+          p.add_argument('--stage',required=True)
+          p.add_argument('--seconds',type=int,required=True)
+          p.add_argument('--certificate-seconds',type=int,default=900)
+          a=p.parse_args()
+          d=pathlib.Path(a.state);d.mkdir(parents=True,exist_ok=True)
+          started=time.monotonic();timed_out=a.seconds<=0
+          qpath=d/'queue.json'
+          before=sha256_file(qpath) if qpath.is_file() else None
+          command=[sys.executable,'jobs/mols10-e077-exact/queue_search.py','verify',
+                   '--state',str(d),'--check-seconds',str(a.certificate_seconds)]
+          if timed_out:
+              code=124
+          else:
+              with (d/('replay-'+a.stage+'.log')).open('wb') as output:
+                  child=subprocess.Popen(command,stdout=output,stderr=subprocess.STDOUT,start_new_session=True)
+                  try:
+                      code=child.wait(timeout=a.seconds)
+                  except subprocess.TimeoutExpired:
+                      timed_out=True
+                      os.killpg(child.pid,signal.SIGTERM)
+                      try:child.wait(timeout=30)
+                      except subprocess.TimeoutExpired:
+                          os.killpg(child.pid,signal.SIGKILL);child.wait()
+                      code=124
+          record={'stage':a.stage,'verify_returncode':code,'timed_out':timed_out,
+                  'overall_budget_seconds':a.seconds,'per_certificate_seconds':a.certificate_seconds,
+                  'elapsed_seconds':time.monotonic()-started,'queue_sha256_before':before,
+                  'source':'A bounded fresh invocation of queue_search.py verify; no cached closure is accepted.'}
+          if code==0 and (d/'verification.json').is_file() and before==sha256_file(qpath):
+              q=json.loads(qpath.read_text())
+              verification=json.loads((d/'verification.json').read_text())
+              verification['record_binding']={
+                  'queue_sha256':sha256_file(qpath),'base_cnf_sha256':q['base_cnf_sha256'],
+                  'mapping_sha256':q['mapping_sha256'],'shard':q['shard'],'n':q['n'],
+                  'squares':q['squares'],'parts':q['parts'],
+                  'even_row_normalization':q['even_row_normalization'],
+                  'verify_returncode':0,'stage':a.stage,'verified_unix':time.time()}
+              atomic_json(d/'verification.json',verification)
+              record['status']='VERIFIED_CURRENT_STATE'
+          else:
+              if (d/'verification.json').is_file():
+                  (d/'verification.json').replace(d/'verification.previous.json')
+              record['status']='PENDING_VERIFICATION_TIMEOUT' if timed_out else 'FAILED_REPLAY_REQUIRES_REVIEW'
+              record['certified_leaves_deferred']=0
+              if qpath.is_file():
+                  q=json.loads(qpath.read_text())
+                  for node in q.get('nodes',{}).values():
+                      if node.get('status')=='UNSAT_VERIFIED':
+                          node['status']='UNSAT_AWAITING_VERIFICATION'
+                          node['verification_deferred_reason']=record['status']
+                          record['certified_leaves_deferred']+=1
+                  queue_summary(q);save_state(d,q)
+              if code==0:code=1
+          record['queue_sha256_after']=sha256_file(qpath) if qpath.is_file() else None
+          atomic_json(d/'replay_status.json',record)
+          print(json.dumps(record,ensure_ascii=False),flush=True)
+          # A replay timeout is unfinished verification, not a bad proof and
+          # not an exhausted branch. A real checker/identity error stops work.
+          raise SystemExit(0 if timed_out or code==0 else code)
+          PY
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.resume_run_id != '' }}
@@ -81,11 +160,30 @@ jobs:
           set -euo pipefail
           mkdir -p out
           python3 jobs/mols10-e077-exact/queue_search.py init --state out/state --n 10 --squares 3 --shard "$SHARD" --even-row-normalization
-          python3 jobs/mols10-e077-exact/queue_search.py verify --state out/state --check-seconds 60
-          python3 jobs/mols10-e077-exact/queue_search.py run --state out/state --seconds 19000 --slice-seconds 900 --check-seconds 900 | tee out/progress.jsonl
+          E077_INITIAL_REPLAY_BUDGET=$(( E077_JOB_DEADLINE - $(date +%s) - E077_FINAL_REPLAY_SECONDS - E077_ARTIFACT_RESERVE_SECONDS - 30 ))
+          if (( E077_INITIAL_REPLAY_BUDGET > E077_INITIAL_REPLAY_SECONDS )); then E077_INITIAL_REPLAY_BUDGET=$E077_INITIAL_REPLAY_SECONDS; fi
+          if (( E077_INITIAL_REPLAY_BUDGET < 0 )); then E077_INITIAL_REPLAY_BUDGET=0; fi
+          python3 "$RUNNER_TEMP/e077_replay.py" --state out/state --stage initial --seconds "$E077_INITIAL_REPLAY_BUDGET" --certificate-seconds "$E077_CERTIFICATE_SECONDS"
+          E077_SOLVE_BUDGET=$(( E077_JOB_DEADLINE - $(date +%s) - E077_FINAL_REPLAY_SECONDS - E077_ARTIFACT_RESERVE_SECONDS - 30 ))
+          if (( E077_SOLVE_BUDGET > 19000 )); then E077_SOLVE_BUDGET=19000; fi
+          if (( E077_SOLVE_BUDGET > 2 * E077_CERTIFICATE_SECONDS + 30 )); then
+            set +e
+            timeout --signal=INT --kill-after=30s "${E077_SOLVE_BUDGET}s" \
+              python3 jobs/mols10-e077-exact/queue_search.py run --state out/state --seconds "$E077_SOLVE_BUDGET" --slice-seconds 900 --check-seconds "$E077_CERTIFICATE_SECONDS" | tee -a out/progress.jsonl
+            E077_SOLVE_RC=${PIPESTATUS[0]}
+            set -e
+            if (( E077_SOLVE_RC != 0 && E077_SOLVE_RC != 124 && E077_SOLVE_RC != 137 )); then exit "$E077_SOLVE_RC"; fi
+          else
+            echo 'Remaining job time is reserved for replay and artifact upload; the saved queue remains pending.'
+          fi
       - name: Independently replay saved branch certificates
         if: always()
-        run: timeout 1200s python3 jobs/mols10-e077-exact/queue_search.py verify --state out/state --check-seconds 120
+        run: |
+          set -euo pipefail
+          E077_REPLAY_BUDGET=$(( E077_JOB_DEADLINE - $(date +%s) - E077_ARTIFACT_RESERVE_SECONDS - 30 ))
+          if (( E077_REPLAY_BUDGET > E077_FINAL_REPLAY_SECONDS )); then E077_REPLAY_BUDGET=$E077_FINAL_REPLAY_SECONDS; fi
+          if (( E077_REPLAY_BUDGET < 0 )); then E077_REPLAY_BUDGET=0; fi
+          python3 "$RUNNER_TEMP/e077_replay.py" --state out/state --stage final --seconds "$E077_REPLAY_BUDGET" --certificate-seconds "$E077_CERTIFICATE_SECONDS"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
