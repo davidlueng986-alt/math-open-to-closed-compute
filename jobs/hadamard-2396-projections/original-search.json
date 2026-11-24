@@ -1,0 +1,94 @@
+{
+  "primary": {
+    "negative_masks": [
+      "0x1104c08f50d3509d239eea0a557389ea5f90452929b4372099c3d17a7a16ac50851b46e31e36d9fa6d3152b421ff56070421172e7358176d942742647ec4ffd07a0f5de711550c99925f9d8866b5c400e0f354b092ff1ec9a015fc9dc0a4b4ba07a5332b7bbe4963aad499d8fad0d2f3fee332f642e24eaac51e8887c1ffc27779d2a55797f09d2fe4ae5fb398270991d7fb8add2a28",
+      "0x79526c9d9a6224b469e4447eb30c1908cb9f7a36c4037938d945174ead655cff0190c884c94bdc20e4b5200cc98addf07f42ff7f3e1edf684bd1b1c2edf2ef680aea161d27d1b6571aba00d09e53aa9804bb0f1db52abf57d05fe350e482acb0ce7cef54273ed722a839276af8edc57bf82689a7100d8e81a18443d902bf761e99b53f7b3b2d9befc8047c92ca08639295fe24930db"
+    ],
+    "raw_energy": 1079552,
+    "raw_exact_shift_pairs": 35,
+    "raw_peak_error": 172,
+    "raw_paf_at_one": 2,
+    "constant_triples": [
+      97,
+      102
+    ],
+    "subgroup_orders": [
+      7,
+      9,
+      19
+    ],
+    "search": {
+      "input": "seed",
+      "objective": "axis",
+      "seed": 545,
+      "proposals": 600000
+    }
+  },
+  "energy": {
+    "negative_masks": [
+      "0x1da43c5c0ba368b522b8aeec75ba8a1f18d08c7a2ddeba7ad8fed02d771cb870d4df4775ea18adeb6516439e177a5216c92946d8317599ed04244a636616ef105a03c5e57ed38308e61bda9326b52d4dd99ba2905d5a924ea8b0785e4aafc1a5918c7613581cc1382b535e6c2a3bc0af792b31977a72649abc43948fde7cc36acbd689960be109c375db613239274a01fd7c5daf3686",
+      "0x21f9250d88668284bae946d03908b9d4899b1366193935dcd54b4da3fd4a6cfd89ceffa7ce030c67fc8940784d58eadac3428b46e7ba5f105f903197ebb8ff5803738696fdc594de0161314e87114e4b5f9c9bbde5abb6519006f448100aefd592c5b751e77bf231f9d98229a2dd8df77a425d413943ceb1d5cff4ff09b6641e57855a2d3a0502071b807821c6cdc29a2ae79442fcf"
+    ],
+    "raw_energy": 196288,
+    "raw_exact_shift_pairs": 51,
+    "raw_peak_error": 64,
+    "raw_paf_at_one": -30,
+    "constant_triples": [
+      97,
+      102
+    ],
+    "subgroup_orders": [],
+    "search": {
+      "input": "seed",
+      "objective": "all",
+      "seed": 420,
+      "proposals": 330000
+    }
+  },
+  "hybrid": {
+    "negative_masks": [
+      "0x1da4345c8ba36cb532baaeac75ba891f18d08c7a2ddabb7ad0ded07d771cba6094df4775fe18abeb6516c29c177a5a16c92946c8213499ed84244a6b6c96ef905c03cde5fed78308e61bda9326b52d4dd9bba0905d48924ea8b078566aacc1a5818c7e13581ce0b82b524e6c2a33c4af782b31976a726490bc52b48ffefcc36acbd681970fe109ef75db701239250a01fd7c5daf2686",
+      "0x21f9250d88668280f8e946d02908b9dc899b1366393935dcd54b4da3fd4a6cfd99ceffa7de030c67fc894078d958ebdac3428b46e7ba5f105f903197efb8ff5803f386967dc594de0161316e87114f4b5d9e9bbde5abd4519002f748100a6fd59a85b051e77bf231f9d98220a2dd84f77a425c513943cea1d5cff4ff09b6643e57855e293a050a071b807829c6cdc2983ae780c2fcf"
+    ],
+    "raw_energy": 579680,
+    "raw_exact_shift_pairs": 39,
+    "raw_peak_error": 108,
+    "raw_paf_at_one": 6,
+    "constant_triples": [
+      97,
+      102
+    ],
+    "subgroup_orders": [
+      7,
+      9,
+      19
+    ],
+    "search": {
+      "input": "energy",
+      "objective": "axis",
+      "seed": 6,
+      "proposals": 1700
+    }
+  },
+  "near21": {
+    "negative_masks": [
+      "0x178ef0ff48f7549da29ce3097d179dc665d21531a1d52d18d8edd1757666b440b4d800605a259a5a6c3940a033fd62720407172e32688720902346ec7ed8ffd059593d611355d498c26f538ca29db420e0eb1ebecee668e52b54bf0de4adb0bbc5a53236519e7a22c6db8bc9bad1f0fb5fe6fcee4a670fa8d77a6883c366c26a494e836704e93d272cae57b7b9250bd197f8184d2f82",
+      "0x16b6e05cdea2643b478e3547cbf2818088e2fc7b8c003983cc0285781a54d087ea992dacddecb9e2cb0a12274cffaa3bc7b60d30f14183f884f9004d8e5befe0a26e8832935c5fe561bfbb09e0a478ecaceb3979ca12b36079154eb766086e1d4ba6ab45467fff662b9e0b32be2e495e112e28727ac6dceb12105c38d0736747af670397a5a359a6d87a5b483829d637194771f9bbd9"
+    ],
+    "raw_energy": 1071840,
+    "raw_exact_shift_pairs": 37,
+    "raw_peak_error": 148,
+    "raw_paf_at_one": 18,
+    "constant_triples": [
+      97,
+      102
+    ],
+    "subgroup_orders": [],
+    "search": {
+      "input": "primary",
+      "objective": "axis21",
+      "seed": 747,
+      "proposals": 320000
+    }
+  }
+}

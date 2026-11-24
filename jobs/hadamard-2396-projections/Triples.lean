@@ -79,6 +79,12 @@ theorem count_nonneg (d : Nat) (a : Nat → Bool) : 0 ≤ count d a := by
   intro i _
   simp only [mono]; split <;> decide
 
+theorem twice_count (d : Nat) (a b : Nat → Bool)
+    (h : paf (d+d+d) a d + paf (d+d+d) b d = -2) :
+    2 * (count d a + count d b) = (d : Int) - 1 := by
+  rw [paf_triples, paf_triples] at h
+  omega
+
 /-- Every pair meeting the genuine shift 399 has 199 constant triples in total. -/
 theorem count_1197 (a b : Nat → Bool) (h : paf 1197 a 399 + paf 1197 b 399 = -2) :
     count 399 a + count 399 b = 199 := by
@@ -88,46 +94,89 @@ theorem count_1197 (a b : Nat → Bool) (h : paf 1197 a 399 + paf 1197 b 399 = -
   change paf 1197 b 399 = 4 * count 399 b - 399 at h₂
   omega
 
-def fixedBy400 (a : Nat → Bool) : Prop := ∀ i, i < 1197 → a ((400*i)%1197) = a i
+def FixedPrincipal (d : Nat) (a : Nat → Bool) : Prop :=
+  ∀ i, i < 3*d → a (((1+d)*i)%(3*d)) = a i
 
-private theorem orbitTable : ∀ i : Fin 399, i.val % 3 ≠ 0 →
-    ((400*i.val)%1197 = 399+i.val ∧ (400*(399+i.val))%1197 = 798+i.val) ∨
-    ((400*i.val)%1197 = 798+i.val ∧ (400*(798+i.val))%1197 = 399+i.val) := by
-  decide +kernel
+private theorem principal_image (d i : Nat) :
+    ((1+d)*i)%(3*d) = (i+d*(i%3))%(3*d) := by
+  have hd : i%3 + 3*(i/3) = i := Nat.mod_add_div i 3
+  have hmul : d*(3*(i/3)) = (3*d)*(i/3) := by ac_rfl
+  have hprod : d*i = d*(i%3) + (3*d)*(i/3) := by
+    calc
+      d*i = d*(i%3 + 3*(i/3)) := congrArg (d * ·) hd.symm
+      _ = _ := by rw [Nat.mul_add,hmul]
+  rw [Nat.add_mul, Nat.one_mul, hprod, ← Nat.add_assoc, Nat.add_mul_mod_self_left]
 
-theorem fixed_count (a : Nat → Bool) (h : fixedBy400 a) : 266 ≤ count 399 a := by
-  have nh : sumAt 399 (fun i => if i % 3 = 0 then 0 else 1) = 266 := by decide +kernel
-  rw [← nh]
-  apply sumAt_le
-  intro i hi
-  by_cases he : i % 3 = 0
-  · simp only [he, ite_true, mono]; split <;> decide
-  · simp only [he, ite_false]
-    have h₁ := h i (by omega)
-    rcases orbitTable ⟨i, hi⟩ he with ⟨u,v⟩ | ⟨u,v⟩
-    · have h₂ := h (399+i) (by omega)
-      rw [u] at h₁
-      rw [v] at h₂
-      simp [mono, h₂, h₁]
-    · have h₂ := h (798+i) (by omega)
-      rw [u] at h₁
-      rw [v] at h₂
-      simp [mono, h₂, h₁]
+private def active (i : Nat) : Int := if i%3 = 0 then 0 else 1
 
-theorem cannot_fix_either_word (a b : Nat → Bool)
-    (h : paf 1197 a 399 + paf 1197 b 399 = -2) : ¬fixedBy400 a ∧ ¬fixedBy400 b := by
-  have ht := count_1197 a b h
-  have ha := count_nonneg 399 a
-  have hb := count_nonneg 399 b
+private theorem active_count (m : Nat) : sumAt (3*m) active = 2*(m : Int) := by
+  induction m with
+  | zero => rfl
+  | succ m ih =>
+    rw [Nat.mul_succ, sumAt_split, ih]
+    have h : sumAt 3 (fun i => active (3*m+i)) = 2 := by
+      change active (3*m+0) + (active (3*m+1) + (active (3*m+2) + 0)) = 2
+      simp [active, Nat.mul_add_mod_self_left]
+    rw [h, Int.natCast_succ]
+    omega
+
+private theorem active_mono (m : Nat) (a : Nat → Bool) (fixed : FixedPrincipal (3*m) a)
+    (i : Nat) (hi : i < 3*m) :
+    active i ≤ mono (a i) (a (3*m+i)) (a (3*m+3*m+i)) := by
+  let d := 3*m
+  change i < d at hi
+  change FixedPrincipal d a at fixed
+  change active i ≤ mono (a i) (a (d+i)) (a (d+d+i))
+  have hd : d%3 = 0 := Nat.mul_mod_right 3 m
+  have d2 : (d+d)%3 = 0 := by rw [Nat.add_mod,hd]
+  by_cases z : i%3 = 0
+  · simp only [active, z, ite_true, mono]; split <;> decide
+  · simp only [active, z, ite_false]
+    have f₁ := fixed i (by omega)
+    rw [principal_image] at f₁
+    rcases (show i%3 = 1 ∨ i%3 = 2 by omega) with h | h
+    · have f₂ := fixed (d+i) (by omega)
+      have r : (d+i)%3 = 1 := by rw [Nat.add_mod, hd, h]
+      rw [h, Nat.mul_one, Nat.mod_eq_of_lt (by omega), show i+d=d+i by omega] at f₁
+      rw [principal_image, r, Nat.mul_one, Nat.mod_eq_of_lt (by omega),
+          show d+i+d=d+d+i by omega] at f₂
+      simp [mono,f₂,f₁]
+    · have f₂ := fixed (d+d+i) (by omega)
+      have r : (d+d+i)%3 = 2 := by rw [Nat.add_mod, d2, h]
+      rw [h, Nat.mod_eq_of_lt (by omega), show i+d*2=d+d+i by omega] at f₁
+      rw [principal_image, r, show d+d+i+d*2 = (d+i)+3*d by omega,
+          Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)] at f₂
+      simp [mono,f₂,f₁]
+
+theorem fixed_principal_lower (m : Nat) (a : Nat → Bool) (h : FixedPrincipal (3*m) a) :
+    2*(m : Int) ≤ count (3*m) a := by
+  rw [← active_count]
+  exact sumAt_le (3*m) (active_mono m a h)
+
+/-- On every cyclic length 9m, even the one shift 3m rules out this multiplier on either word. -/
+theorem no_principal (m : Nat) (a b : Nat → Bool)
+    (h : paf (9*m) a (3*m) + paf (9*m) b (3*m) = -2) :
+    ¬FixedPrincipal (3*m) a ∧ ¬FixedPrincipal (3*m) b := by
+  rw [show 9*m = 3*m+3*m+3*m by omega] at h
+  have ht := twice_count (3*m) a b h
+  have ha := count_nonneg (3*m) a
+  have hb := count_nonneg (3*m) b
+  simp only [Int.natCast_mul] at ht
   constructor
   · intro fixed
-    have := fixed_count a fixed
+    have := fixed_principal_lower m a fixed
     omega
   · intro fixed
-    have := fixed_count b fixed
+    have := fixed_principal_lower m b fixed
     omega
 
+def fixedBy400 (a : Nat → Bool) : Prop := FixedPrincipal 399 a
+theorem cannot_fix_either_word (a b : Nat → Bool)
+    (h : paf 1197 a 399 + paf 1197 b 399 = -2) : ¬fixedBy400 a ∧ ¬fixedBy400 b :=
+  no_principal 133 a b h
+
 #print axioms paf_triples
+#print axioms no_principal
 #print axioms cannot_fix_either_word
 
 end Hadamard2396
