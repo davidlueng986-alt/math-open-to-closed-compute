@@ -41,3 +41,14 @@ The sign-realization problem is to satisfy these simultaneously. The 309-pair el
 
 
 A direct seven-variable check explains the sufficiency. After the 49 listed errors vanish, the only class representatives still in question are $1,3,4,5,10,27,30$. The equations at $(63,30),(171,5),(399,10),(399,27)$ respectively give $9e_{30}=0$, $e_5=0$, $e_{10}=0$, $e_{27}=0$. The two remaining quotient equations give $e_1+e_4=0$ and $e_3+e_4+e_{10}=0$. Every one of the seven classes has size nine in the half-range. The zero-sum identity therefore gives $9(e_1+e_3+e_4+e_5+e_{10}+e_{27}+e_{30})=0$. Substitution yields $e_4=0$ and hence all seven vanish. In the displayed column order, using normalization first and then the six quotients in the order of the displayed $(q,t)$ list, the integer coefficient matrix has determinant −81. The checker constructs its entries by counting actual shifts in each residue class.
+
+## Exact neighborhood of the 310-pair witness
+
+One equal-size orbit exchange removes one negative multiplier orbit and adds one positive orbit of the same size in a single word. Each row has 4,962 possible outcomes using zero or one exchange. Of the **24,621,444** pairs of row outcomes, only the original words preserve all 310 known zeros. Matching full integer change vectors across the two words gives this count directly.
+
+Allow up to two exchanges per word. The two row lists now have **7,987,059 distinct words each**, for **63,793,111,469,481 pairs**. Again, only the original pair preserves all 310 zeros. The code enumerates canonical sets of removed and added orbits in each size bucket. The change in each intersection number is quadratic in these orbit bits. A linear fingerprint of the 38 exact classes includes every cross interaction. Any valid pair has complementary fingerprints. There was one match, verified directly as the original pair. A second check plants two exchanges in each row and recovers the resulting target vector. A new pair retaining the 310 zeros must lie outside this radius, or use a different kind of move. [Full-vector enumeration and independent cardinalities](repair49.py) · [Two-exchange search](two_exchanges.cpp)
+
+~~~sh
+g++ -O3 -std=c++17 -mpopcnt -Wall -Wextra -Werror jobs/hadamard-2396-coverage/two_exchanges.cpp -o /tmp/hadamard-two-exchanges
+python3 jobs/hadamard-2396-coverage/repair49.py /tmp/hadamard-two-exchanges
+~~~

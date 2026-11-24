@@ -6,12 +6,16 @@ on:
         description: Check the new full-correlation records and exact local neighborhood
         type: boolean
         default: false
+      orbit_only:
+        description: Replay only the original orbit-exchange census
+        type: boolean
+        default: false
 permissions:
   contents: read
 
 jobs:
   certificates:
-    if: ${{ !inputs.records_only }}
+    if: ${{ !inputs.records_only && !inputs.orbit_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -33,7 +37,7 @@ jobs:
             if grep -q 'sorryAx' "$RUNNER_TEMP/$name.log"; then exit 1; fi
           done
   templates:
-    if: ${{ !inputs.records_only }}
+    if: ${{ !inputs.records_only && !inputs.orbit_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     defaults:
@@ -65,6 +69,7 @@ jobs:
           diff -u plane-expected.txt "$RUNNER_TEMP/plane-sieve.log"
 
   original-records:
+    if: ${{ !inputs.orbit_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -90,3 +95,16 @@ jobs:
             (cd "jobs/${path%/*}" && lean -j1 -M5500 -DwarningAsError=true -o "$LEAN_PATH/$name.olean" "$name.lean") | tee "$RUNNER_TEMP/$name.log"
             if grep -q 'sorryAx' "$RUNNER_TEMP/$name.log"; then exit 1; fi
           done
+
+  orbit-neighborhood:
+    if: ${{ !inputs.records_only }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the seven-variable determinant and both original exchange neighborhoods
+        run: |
+          set -euo pipefail
+          python3 jobs/hadamard-2396-coverage/remaining.py
+          g++ -O3 -std=c++17 -mpopcnt -Wall -Wextra -Werror jobs/hadamard-2396-coverage/two_exchanges.cpp -o "$RUNNER_TEMP/two-exchanges"
+          python3 jobs/hadamard-2396-coverage/repair49.py "$RUNNER_TEMP/two-exchanges"
