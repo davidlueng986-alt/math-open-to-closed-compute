@@ -34,9 +34,13 @@ The single equation at $d$ therefore rules out this multiplier on either word of
 
 To see the bound, split the coordinates into $d$ cycles $i+jd$, each of odd length $p$. Every binary cycle has an adjacent agreement, so contributes at least $2-p$ to the correlation at $d$. On a cycle, multiplication by $u$ sends $j$ to $j+i$ modulo $p$. When $p\nmid i$ this is a full cycle. Thus $(p-1)m$ cycles in the fixed word are constant and each contributes $p$. The other $m$ cycles in that word, and all $pm$ cycles in the second word, contribute at least $2-p$ each. Adding gives the displayed bound.
 
-For $n=1197$ this excludes multiplier 400 even if just one word is fixed. More specifically, for $n=3d$ and $c_A$ the number of constant triples, each triple contributes 3 or −1, so $P_A(d)=4c_A-d$. At $d=399$ the pair must have $c_A+c_B=199$. Invariance by 400 already forces at least 266 constant triples in a single word. Related work of Ramos, Hulak and de Queiroz studies multiplier obstructions at length 333. [Triple identity in Lean](Triples.lean) · [Related work](https://arxiv.org/abs/2607.20765v2)
+For $n=1197$ this excludes multiplier 400 even if just one word is fixed. More specifically, for $n=3d$ and $c_A$ the number of constant triples, each triple contributes 3 or −1, so $P_A(d)=4c_A-d$. At $d=399$ the pair must have $c_A+c_B=199$. Invariance by 400 already forces at least 266 constant triples in a single word. [Triple identity in Lean](Triples.lean)
 
 The coordinate conclusion also excludes this multiplier up to cyclic translation on normalized odd-length words. If $D$ is the set of negative entries, $k=|D|=(n-1)/2$ is a unit modulo $n$. From $uD=D+c$, summing elements gives $(u-1)\sum D=kc\pmod n$. Translating $D$ by $-k^{-1}\sum D$ makes it fixed by $u$ and preserves its cyclic correlations. This normalization argument is recorded here in ordinary mathematics.
+
+### Two cases in the published length-333 table
+
+Ramos, Hulak and de Queiroz, Theorem 3 and Appendix A, Table A1 (v2, 28 October 2026), leave nine fixed common-multiplier groups undecided at length 333. **ID 2** has generators $\langle112\rangle$ and **ID 7** has generators $\langle73,112\rangle$. Put $p=3$, $m=37$ and $d=111$. Both groups contain $112=1+d$. A single fixed word gives $P_A(111)+P_B(111)\ge74$, contradicting the required $-2$. Equivalently, the two words need 55 constant triples between them, while one fixed word already has at least 74. This excludes both cases listed as open in that table. Of its nine undecided entries the other seven IDs are 0, 1, 3, 4, 5, 9 and 10. The unrestricted length-333 Legendre-pair question remains distinct. [Table A1, p. 11](https://arxiv.org/pdf/2607.20765v2#page=11) · [Lean corollary](PrimeCycles.lean#L269)
 
 ## A finite exclusion at 399
 

@@ -247,6 +247,37 @@ theorem odd_prime_square (p m : Nat) (hp : 1<p) (odd : p%2=1)
     have bound := principal_bound p m odd positive units b a fixed
     omega
 
+/-- Fixed coordinate multiplication as used in Table A1 of Ramos–Hulak–de Queiroz (v2). -/
+def fixes333 (u : Nat) (a : Nat → Bool) : Prop :=
+  ∀ t, t<333 → a ((u*t)%333) = a t
+
+theorem bound_333 (a b : Nat → Bool) (fixed : fixes333 112 a) :
+    74 ≤ paf 333 a 111 + paf 333 b 111 := by
+  have units : UnitsMod 3 := by
+    intro i hi
+    rcases (show i%3=1 ∨ i%3=2 by omega) with h|h
+    · exact ⟨1,by simp [h]⟩
+    · refine ⟨2,?_⟩
+      rw [Nat.mul_mod,h]
+  exact principal_bound 3 37 (by decide) (by decide) units a b fixed
+
+def commonGenerators333 (generators : List Nat) (a b : Nat → Bool) : Prop :=
+  ∀ u ∈ generators, fixes333 u a ∧ fixes333 u b
+
+/-- In Table A1, ID 2 has generators [112], and ID 7 has generators [73,112].
+Both are impossible even under just the one original shift equation. -/
+theorem excludes_table_A1_rows_2_and_7 (a b : Nat → Bool)
+    (target : paf 333 a 111 + paf 333 b 111 = -2) :
+    ¬commonGenerators333 [112] a b ∧ ¬commonGenerators333 [73,112] a b := by
+  have excludes (fixed : fixes333 112 a) : False := by
+    have lower := bound_333 a b fixed
+    omega
+  exact ⟨fun both => excludes (both 112 (by decide)).1,
+         fun both => excludes (both 112 (by decide)).1⟩
+
+#print axioms bound_333
+#print axioms excludes_table_A1_rows_2_and_7
+
 #print axioms odd_prime_square
 
 #print axioms principal_bound
