@@ -9,6 +9,9 @@ on:
 permissions:
   contents: read
   packages: read
+defaults:
+  run:
+    shell: bash
 jobs:
   small_census:
     runs-on: ubuntu-latest
