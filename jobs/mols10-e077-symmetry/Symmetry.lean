@@ -93,9 +93,12 @@ theorem common_signature_rows (f : Fin 10 → (Fin 3 → Bool)) :
 
 theorem units_eq_of_positive_bit (a b : ℤˣ)
     (h : decide (a = 1) = decide (b = 1)) : a = b := by
-  rcases Int.units_eq_one_or a with ha | ha <;>
-    rcases Int.units_eq_one_or b with hb | hb <;>
-    norm_num [ha, hb] at h ⊢
+  rcases Int.units_eq_one_or a with rfl | rfl <;>
+    rcases Int.units_eq_one_or b with rfl | rfl
+  · rfl
+  · norm_num at h
+  · norm_num at h
+  · rfl
 
 /-- All three relative second rows can simultaneously be chosen even. -/
 theorem simultaneous_even_relative_rows
@@ -114,8 +117,8 @@ theorem simultaneous_even_relative_rows
 
 theorem conjugation_preserves_sign (s p : Equiv.Perm (Fin 10)) :
     Equiv.Perm.sign (s * p * s⁻¹) = Equiv.Perm.sign p := by
-  rw [map_mul, map_mul, map_inv]
-  simp [mul_comm, mul_left_comm]
+  rw [Equiv.Perm.sign_mul, Equiv.Perm.sign_mul, Equiv.Perm.sign_inv]
+  rcases Int.units_eq_one_or (Equiv.Perm.sign s) with h | h <;> simp [h]
 
 #print axioms common_signature_rows
 #print axioms units_eq_of_positive_bit
