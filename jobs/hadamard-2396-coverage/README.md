@@ -38,3 +38,6 @@ Under the same symmetry, normalization, 310 original zeros and six quotient equa
 ~~~
 
 The sign-realization problem is to satisfy these simultaneously. The 309-pair elementary-3 record also leaves 49 coordinates under its own exact equations. Both coordinate lists and the independent quotient equations for all six records are printed by the checker. [Rank computation](remaining.py)
+
+
+A direct seven-variable check explains the sufficiency. After the 49 listed errors vanish, the only class representatives still in question are $1,3,4,5,10,27,30$. The equations at $(63,30),(171,5),(399,10),(399,27)$ respectively give $9e_{30}=0$, $e_5=0$, $e_{10}=0$, $e_{27}=0$. The two remaining quotient equations give $e_1+e_4=0$ and $e_3+e_4+e_{10}=0$. Every one of the seven classes has size nine in the half-range. The zero-sum identity therefore gives $9(e_1+e_3+e_4+e_5+e_{10}+e_{27}+e_{30})=0$. Substitution yields $e_4=0$ and hence all seven vanish. In the displayed column order, using normalization first and then the six quotients in the order of the displayed $(q,t)$ list, the integer coefficient matrix has determinant −81. The checker constructs its entries by counting actual shifts in each residue class.

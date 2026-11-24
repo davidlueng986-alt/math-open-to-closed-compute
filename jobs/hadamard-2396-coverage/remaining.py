@@ -3,6 +3,13 @@
 from collections import Counter
 import json
 import sys
+
+
+def determinant(rows):
+    if not rows:
+        return 1
+    return sum((-1)**i*v*determinant([r[:i]+r[i+1:] for r in rows[1:]])
+               for i,v in enumerate(rows[0]) if v)
 from coverage import GROUP, HERE
 from audit_group import N, all_paf, minus
 
@@ -44,7 +51,15 @@ def reduction(record,law):
     free=[s for i,s in enumerate(labels) if i not in basis]
     if len(labels)!=94 or sum(periods.values())!=598 or sum(periods[s] for s in exact)!=record["raw_exact_pairs"]:
         raise ValueError("raw correlations and orbit classes disagree")
-    return {"lag_classes":len(labels),"exact_classes":len(exact),
+    complement=sorted(set(labels)-set(exact)-set(free))
+    matrix=[[periods[s] for s in complement]]
+    for q,t in independent:
+        counts=Counter(label(s) for s in range(t,N,q) if s)
+        matrix.append([counts[s] for s in complement])
+    if len(matrix)!=len(complement) or determinant(matrix)==0:
+        raise ValueError("complementary integer determinant is singular")
+    return {"final_pivots":complement,"pivot_coefficients":matrix,"pivot_determinant":determinant(matrix),
+            "lag_classes":len(labels),"exact_classes":len(exact),
             "exact_class_sizes":dict(sorted(Counter(periods[s] for s in exact).items())),
             "shifts_sufficient_with_known_pairs_and_normalization":normalized_free,
             "additional_quotient_ranks":ranks,"independent_quotient_equations":independent,"shifts_sufficient_with_all_listed_quotient_zeros":free}
@@ -54,6 +69,6 @@ if __name__=="__main__":
     data=json.loads((HERE/"results.json").read_text())["witnesses"]
     report={law:{k:reduction(r,law) for k,r in records.items()} for law,records in data.items()}
     best=report["cyclic"]["coverage"]
-    if best["exact_classes"]!=38 or len(best["shifts_sufficient_with_all_listed_quotient_zeros"])!=49:
+    if best["pivot_determinant"]!=-81 or best["exact_classes"]!=38 or len(best["shifts_sufficient_with_all_listed_quotient_zeros"])!=49:
         raise ValueError("the 310-pair sufficiency certificate changed")
     print(json.dumps(report,indent=2))
