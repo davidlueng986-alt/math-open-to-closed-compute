@@ -1,0 +1,25 @@
+{
+  "negative_masks": [
+    "0x12f4662232859865d41b74611959bf1945949bbfb20e060256bc7dbb9c7d1b22cc899d4f35643b863ab1349b0f415e28bc1ec3f17ff76d9412a0d485bd8045c2b49e92972f42b0c6b974a88ef220ff2a600f7fd56247a1eacdaa71e16dcc69d4807bc3c416ab1a021665e672215c1440a9d5c71f344bcddb7cdd4bc5edc6f3e488753e92107ce4577bacafbb29792ba6c5069657f561",
+    "0x8163c547332bd8961072d737b01840f93c260077c61b4c992a8838edd261bc0b99402ca2f3737dc2f5dd9181a7511934d008af6fd0f5c52529593cf303da46d6fe0b6b596157b077739c275902eb1e5d0fb2e416b805fc7de71196406400e28a5cfa52fd8cfd593f96c9e1c47decf735e2acd59bebc3f584f29760b858b32c5667b156d50c77fd9631abc9e1a4f9dc9314ae1a85858"
+  ],
+  "law": "cyclic",
+  "group": [
+    1,
+    106,
+    463
+  ],
+  "raw_energy": 75296,
+  "raw_exact_pairs": 94,
+  "raw_peak_error": 36,
+  "raw_paf_at_one": 2,
+  "raw_paf_at_399": -6,
+  "quotient_energies": {
+    "57": 79152,
+    "63": 133136,
+    "133": 60272,
+    "399": 68816
+  },
+  "lag_classes": 206,
+  "word_orbits": 413
+}
