@@ -1,0 +1,7 @@
+q=3(1,0): 23/23 projected pairs pass; 4099/4099 orientations pass, 4099 cumulative in 1814 templates
+q=3(0,1): 23/23 projected pairs pass; 4099/4099 orientations pass, 4099 cumulative in 1814 templates
+q=3(1,1): 23/23 projected pairs pass; 4099/4099 orientations pass, 4099 cumulative in 1814 templates
+q=3(1,2): 23/23 projected pairs pass; 4099/4099 orientations pass, 4099 cumulative in 1814 templates
+q=7: 203/204 projected pairs pass; 4065/4099 orientations pass, 4065 cumulative in 1797 templates
+q=3x3: 309/314 projected pairs pass; 3973/4099 orientations pass, 3939 cumulative in 1748 templates
+Cumulative template sizes {4: 1075, 5: 657, 6: 10, 7: 6}

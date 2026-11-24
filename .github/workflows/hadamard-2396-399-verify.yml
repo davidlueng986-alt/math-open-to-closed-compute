@@ -11,7 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Recompute original and compressed correlations and rational ranks
-        run: python3 jobs/hadamard-2396-399/certificate.py
+        run: |
+          python3 jobs/hadamard-2396-399/certificate.py
+          python3 jobs/hadamard-2396-squares/verify.py
       - name: Install Lean 4.36.0 and verify the release hash
         run: |
           set -euo pipefail
@@ -54,3 +56,10 @@ jobs:
           python3 sieve.py "$RUNNER_TEMP/templates.txt" "$RUNNER_TEMP/quotients" 3 7 9 --vertical "$RUNNER_TEMP/vertical" --write-orientations "$RUNNER_TEMP/orientations.hex" | tee "$RUNNER_TEMP/sieve.log"
           cmp "$RUNNER_TEMP/orientations.hex" ../../hadamard-2396-squares/orientations.hex
           diff -u expected.txt "$RUNNER_TEMP/sieve.log"
+      - name: Reproduce templates and quotient cuts on the elementary-3 group
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/templates" plane > "$RUNNER_TEMP/plane.txt" 2> "$RUNNER_TEMP/plane.log"
+          python3 check_templates.py "$RUNNER_TEMP/plane.txt" "$RUNNER_TEMP/plane.log" --plane
+          python3 plane_sieve.py "$RUNNER_TEMP/plane.txt" "$RUNNER_TEMP/quotients" | tee "$RUNNER_TEMP/plane-sieve.log"
+          diff -u plane-expected.txt "$RUNNER_TEMP/plane-sieve.log"

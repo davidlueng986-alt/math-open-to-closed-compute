@@ -24,6 +24,7 @@ struct Move {
 using Row = array<vector<int>, 2>;
 struct Search {
     bool plane;
+    int failurePenalty = 0;
     mt19937_64 rng;
     vector<int> group, representatives, weight, cell;
     array<vector<int>, 10> buckets;
@@ -224,6 +225,10 @@ struct Search {
         int e = 0;
         for (size_t k = 0; k < v.size(); k++)
             e += weight[k] * v[k] * v[k];
+        if (failurePenalty)
+            for (size_t k = 0; k < v.size(); k++)
+                if (v[k])
+                    e += failurePenalty * weight[k];
         return e;
     }
     void walk(int steps, double scale, int period) {
@@ -296,7 +301,8 @@ struct Search {
                                 v.gain = gain;
                                 v.change.resize(dim);
                                 for (int k = 0; k < dim; k++)
-                                    v.change[k] = (next[k] - residual[k]) * (f ? 1 : weight[k]);
+                                    v.change[k] = (next[k] - residual[k]) *
+                                                  (f || failurePenalty ? 1 : weight[k]);
                                 pool[f].push_back(move(v));
                                 push_heap(pool[f].begin(), pool[f].end(), cheaper);
                             }
@@ -309,10 +315,17 @@ struct Search {
         array<Move, 2> fix{};
         for (auto &a : pool[0])
             for (auto &b : pool[1]) {
-                int mix = 0;
-                for (int k = 0; k < dim; k++)
-                    mix += a.change[k] * b.change[k];
-                int total = a.gain + b.gain + 2 * mix;
+                int total;
+                if (failurePenalty) {
+                    for (int k = 0; k < dim; k++)
+                        next[k] = residual[k] + a.change[k] + b.change[k];
+                    total = energy(next) - initial;
+                } else {
+                    int mix = 0;
+                    for (int k = 0; k < dim; k++)
+                        mix += a.change[k] * b.change[k];
+                    total = a.gain + b.gain + 2 * mix;
+                }
                 if (total < gain) {
                     gain = total;
                     fix = {a.move, b.move};
@@ -377,9 +390,14 @@ int main(int argc, char **argv) {
         return 2;
     Search s(law == "plane", stoul(argv[2]));
     for (int i = 3; i < argc; i += 3)
-        if (stoi(argv[i]) < 0)
+        if (string(argv[i]) == "faults") {
+            s.failurePenalty = stoi(argv[i + 1]);
+            if (s.failurePenalty < 0 || s.failurePenalty > 10000)
+                return 2;
+        } else if (stoi(argv[i]) < 0)
             s.kicks(-stoi(argv[i]), stoi(argv[i + 1]), stoi(argv[i + 2]));
         else
             s.walk(stoi(argv[i]), stod(argv[i + 1]), stoi(argv[i + 2]));
+    s.failurePenalty = 0;
     s.print();
 }

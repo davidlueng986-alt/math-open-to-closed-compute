@@ -44,3 +44,9 @@ A nontrivial character of $C_{19}$ of quadratic sign $\chi$ evaluates a vertical
 4. $\sum_i F_i(D_{i+1}-D_{i-1})$.
 
 These scalars give all 57-point correlations because each real even function on $C_3$ is determined by its value at zero and its total, and its odd part has one independent entry. Each singleton bin sums 21 signs and each $D_i$ sums the light positions in that bin. Reversing the sign of $D$ reverses the fourth scalar while preserving the other three. The implementation matches absolute fourth scalars and complementary totals. All 89 projected template pairs pass. This records a boundary of this particular quotient test. [Exact 57-point computation](vertical.cpp)
+
+## Seven entries on the second abelian group
+
+The arguments through $W=7$, $J=-1$ and $H(t)\in\{0,-1\}$ use translation and reflection on an odd group of order 63, so they also hold on $C_3^2\times C_7$. For this group the larger support is reduced by all 288 linear automorphisms and by 63 translations. At weights 4, 5, 6 and 7 there are respectively 79, 556, 4,426 and 32,716 larger-support orbits. The resulting signed cover has 1,095, 677, 12 and 30 entries, totalling **1,814 templates**. Burnside's lemma and direct integer correlations independently check these counts.
+
+The length-19 norm leaves 4,099 orientations. All four one-dimensional quotients of the $C_3^2$ factor pass their three-point test. Modulo 7, 4,065 of the 4,099 orientations pass. On the actual $C_3^2$ quotient, 3,973 pass. Their intersection has **3,939 orientations in 1,748 templates**. The possible weights split as 1,075, 657, 10 and 6. [Quotient maps and enumeration](plane_sieve.py) · [Exact counts](plane-expected.txt)

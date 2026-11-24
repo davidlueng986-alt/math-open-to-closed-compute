@@ -25,3 +25,5 @@ bash jobs/hadamard-2396-squares/run.sh 0 16 /tmp/hadamard-squares/shard-0
 mkdir -p /tmp/hadamard-squares-summary
 python3 jobs/hadamard-2396-squares/merge.py /tmp/hadamard-squares /tmp/hadamard-squares-summary
 ~~~
+
+All 8,521 oriented cyclic templates received a search. The best full-energy lift within these fixed supports has $E=41,088$, with 210 exact original pairs. The best 63-point objective is 7,424 across all quotient shifts, or 3,712 when counted using one representative per reflected pair and the zero shift. Its quotient zero-shift error is zero. Separate polishing of the earlier full-energy endpoints attained 29,568 on the cyclic group and 33,312 on the elementary-3 group. The cyclic minimum solves original shift 1 and fails shift 399 with value 26. [Full masks](lifts.json) · [All 16 shards](https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45468476344) · [Archived results](https://github.com/davidlueng986-alt/math-open-to-closed-compute/blob/e1a4210e952a4474057b8841967276cb21c1a07d/runs/hadamard-2396-squares/45468476344/results.json)

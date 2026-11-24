@@ -10,6 +10,7 @@
 using namespace std;
 using Key = uint64_t;
 constexpr int offset = 2600;
+vector<vector<int>> shifted;
 struct Profiles {
     int q, d, limit;
     vector<int> spike, word, minNorm, minSum, maxSum;
@@ -32,11 +33,11 @@ struct Profiles {
             return;
         if (j == q) {
             Key key = 0;
-            for (int t = 1; t <= q / 2; t++) {
+            for (int t = 0; t < q / 2; t++) {
                 int h = 0;
                 for (int i = 0; i < q; i++)
-                    h += word[i] * word[(i + t) % q];
-                key |= Key(h + offset) << (13 * (t - 1));
+                    h += word[i] * word[shifted[t][i]];
+                key |= Key(h + offset) << (13 * t);
             }
             keys.push_back(key);
             return;
@@ -56,6 +57,18 @@ struct Profiles {
 int main() {
     int q, n, p;
     cin >> q >> n >> p;
+    bool plane = q == -9;
+    if (plane)
+        q = 9;
+    for (int t = 1; t < q; t++) {
+        int opposite = plane ? (3 * ((3 - t / 3) % 3) + (3 - t % 3) % 3) : q - t;
+        if (t >= opposite)
+            continue;
+        vector<int> perm(q);
+        for (int i = 0; i < q; i++)
+            perm[i] = plane ? 3 * ((i / 3 + t / 3) % 3) + (i % 3 + t % 3) % 3 : (i + t) % q;
+        shifted.push_back(perm);
+    }
     if (q != 3 && q != 7 && q != 9)
         return 2;
     vector<vector<Key>> signatures(n);
