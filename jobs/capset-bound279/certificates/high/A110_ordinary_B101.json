@@ -1,0 +1,117 @@
+{
+  "target_total": 280,
+  "anchor": 110,
+  "anchor_kind": "ordinary",
+  "B": 101,
+  "C": 69,
+  "centered_layer": "B",
+  "hprofiles": [
+    [
+      20,
+      45,
+      45
+    ],
+    [
+      21,
+      44,
+      45
+    ],
+    [
+      22,
+      43,
+      45
+    ],
+    [
+      22,
+      44,
+      44
+    ],
+    [
+      38,
+      36,
+      36
+    ],
+    [
+      39,
+      35,
+      36
+    ],
+    [
+      40,
+      34,
+      36
+    ],
+    [
+      40,
+      35,
+      35
+    ]
+  ],
+  "hprofile_multiplicities": [
+    2,
+    18,
+    18,
+    18,
+    38,
+    144,
+    63,
+    63
+  ],
+  "raw_labelled_grids": 2662800,
+  "valid_labelled_grids": 338446,
+  "distinct_columns": 249951,
+  "target_moments": [
+    2,
+    18,
+    18,
+    18,
+    38,
+    144,
+    63,
+    63,
+    1258864,
+    43699064,
+    592848,
+    14302872,
+    92757390
+  ],
+  "status": "EXACT_FARKAS_EXCLUSION",
+  "shapes_tested": 12,
+  "best_unnormalized_nonnegative_score": 1960932,
+  "dual_numerical_status": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+  "exact_verified": true,
+  "integer_dual": [
+    -16702437,
+    -16721537,
+    -16737163,
+    -16758503,
+    -16973037,
+    -16973037,
+    -16973037,
+    -16973037,
+    -10000,
+    114,
+    -1589,
+    30,
+    154
+  ],
+  "minimum_slack": 0,
+  "target_dot_dual": -267880,
+  "column_coefficient_order": [
+    "hclass_0",
+    "hclass_1",
+    "hclass_2",
+    "hclass_3",
+    "hclass_4",
+    "hclass_5",
+    "hclass_6",
+    "hclass_7",
+    "S2_B",
+    "S3_B",
+    "S2_C",
+    "S3_C",
+    "cross_T"
+  ],
+  "certificate_discovery": "Rounded LP slopes; exact full-column class minima",
+  "elapsed_seconds": 2.52317455299999
+}

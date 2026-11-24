@@ -1,0 +1,110 @@
+{
+  "generic_pending43_A109_B109.json": {
+    "raw_fully_labelled": 20591325,
+    "valid_fully_labelled": 3711741,
+    "minimum_slack": 0,
+    "target_dot_dual": -4181154
+  },
+  "centroid_fullrank_A109_B108_rank0.json": {
+    "raw_fully_labelled": 67216465,
+    "valid_fully_labelled": 11550196,
+    "minimum_slack": 0,
+    "target_dot_dual": -39319506
+  },
+  "centroid_fullrank_A109_B108_rank1_kernel0.json": {
+    "raw_fully_labelled": 67216465,
+    "valid_fully_labelled": 11550196,
+    "minimum_slack": 0,
+    "target_dot_dual": -1105175
+  },
+  "centroid_fullrank_A109_B108_rank1_kernel1.json": {
+    "raw_fully_labelled": 67216465,
+    "valid_fully_labelled": 11550196,
+    "minimum_slack": 0,
+    "target_dot_dual": -14145822
+  },
+  "centroid_fullrank_A109_B108_rank1_kernel2.json": {
+    "raw_fully_labelled": 67216465,
+    "valid_fully_labelled": 11550196,
+    "minimum_slack": 0,
+    "target_dot_dual": -1174752
+  },
+  "centroid_fullrank_A109_B108_rank1_kernel3.json": {
+    "raw_fully_labelled": 67216465,
+    "valid_fully_labelled": 11550196,
+    "minimum_slack": 0,
+    "target_dot_dual": -16574159
+  },
+  "centroid_fullrank_A109_B108_rank2.json": {
+    "raw_fully_labelled": 67216465,
+    "valid_fully_labelled": 11550196,
+    "minimum_slack": 0,
+    "target_dot_dual": -9065286
+  },
+  "centroid_afterP1_A108_B108_rank0.json": {
+    "raw_fully_labelled": 73042725,
+    "valid_fully_labelled": 11962618,
+    "minimum_slack": 0,
+    "target_dot_dual": -11696040
+  },
+  "centroid_afterP1_A108_B108_rank1_kernel0.json": {
+    "raw_fully_labelled": 73042725,
+    "valid_fully_labelled": 11962618,
+    "minimum_slack": 0,
+    "target_dot_dual": -3481752
+  },
+  "centroid_afterP1_A108_B108_rank1_kernel1.json": {
+    "raw_fully_labelled": 73042725,
+    "valid_fully_labelled": 11962618,
+    "minimum_slack": 0,
+    "target_dot_dual": -1672218
+  },
+  "centroid_afterP1_A108_B108_rank1_kernel2.json": {
+    "raw_fully_labelled": 73042725,
+    "valid_fully_labelled": 11962618,
+    "minimum_slack": 0,
+    "target_dot_dual": -2871735
+  },
+  "centroid_afterP1_A108_B108_rank1_kernel3.json": {
+    "raw_fully_labelled": 73042725,
+    "valid_fully_labelled": 11962618,
+    "minimum_slack": 0,
+    "target_dot_dual": -3843798
+  },
+  "centroid_afterP1_A108_B108_rank2.json": {
+    "raw_fully_labelled": 73042725,
+    "valid_fully_labelled": 11962618,
+    "minimum_slack": 0,
+    "target_dot_dual": -1174380
+  },
+  "centroid_afterP1_A109_B106_unsplit.json": {
+    "raw_fully_labelled": 28181325,
+    "valid_fully_labelled": 4169565,
+    "minimum_slack": 0,
+    "target_dot_dual": -2787462
+  },
+  "centroid_afterP1_A109_B107_unsplit.json": {
+    "raw_fully_labelled": 26263125,
+    "valid_fully_labelled": 4049810,
+    "minimum_slack": 0,
+    "target_dot_dual": -5911578
+  },
+  "centroid_afterP4_A107_B107_unsplit.json": {
+    "raw_fully_labelled": 28886625,
+    "valid_fully_labelled": 4229713,
+    "minimum_slack": 0,
+    "target_dot_dual": -10835124
+  },
+  "centroid_afterP4_A108_B106_unsplit.json": {
+    "raw_fully_labelled": 91636775,
+    "valid_fully_labelled": 12769166,
+    "minimum_slack": 0,
+    "target_dot_dual": -16301150
+  },
+  "centroid_afterP4_A108_B107_unsplit.json": {
+    "raw_fully_labelled": 28502795,
+    "valid_fully_labelled": 4138882,
+    "minimum_slack": 0,
+    "target_dot_dual": -15824
+  }
+}

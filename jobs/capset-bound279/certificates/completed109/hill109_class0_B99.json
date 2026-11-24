@@ -1,0 +1,146 @@
+{
+  "target_total": 280,
+  "anchor": 109,
+  "anchor_kind": "triple0",
+  "histogram_class": 0,
+  "anchor_normalization": "remaining_cap_centroid_zero",
+  "B": 99,
+  "C": 72,
+  "centered_layer": "none",
+  "hprofiles": [
+    [
+      21,
+      44,
+      44
+    ],
+    [
+      22,
+      42,
+      45
+    ],
+    [
+      34,
+      36,
+      39
+    ],
+    [
+      35,
+      34,
+      40
+    ],
+    [
+      36,
+      35,
+      38
+    ],
+    [
+      37,
+      36,
+      36
+    ],
+    [
+      39,
+      35,
+      35
+    ],
+    [
+      40,
+      33,
+      36
+    ],
+    [
+      43,
+      21,
+      45
+    ],
+    [
+      44,
+      22,
+      43
+    ],
+    [
+      45,
+      20,
+      44
+    ]
+  ],
+  "hprofile_multiplicities": [
+    6,
+    5,
+    66,
+    57,
+    75,
+    13,
+    75,
+    22,
+    15,
+    24,
+    6
+  ],
+  "raw_labelled_grids": 12117611,
+  "valid_labelled_grids": 1403051,
+  "distinct_columns": 380816,
+  "target_moments": [
+    6,
+    5,
+    66,
+    57,
+    75,
+    13,
+    75,
+    22,
+    15,
+    24,
+    6,
+    1209978,
+    41201622,
+    644760,
+    16195464,
+    94011192
+  ],
+  "conditional_maximum_slice": 109,
+  "scope": "H_MINUS_THREE_ANCHORED_GRID",
+  "column_coefficient_order": [
+    "hclass_0",
+    "hclass_1",
+    "hclass_2",
+    "hclass_3",
+    "hclass_4",
+    "hclass_5",
+    "hclass_6",
+    "hclass_7",
+    "hclass_8",
+    "hclass_9",
+    "hclass_10",
+    "S2_B",
+    "S3_B",
+    "S2_C",
+    "S3_C",
+    "cross_T"
+  ],
+  "status": "EXACT_FARKAS_EXCLUSION",
+  "exact_verified": true,
+  "integer_dual": [
+    -4430532,
+    -4430871,
+    -4466340,
+    -4466340,
+    -4466340,
+    -4466340,
+    -4466340,
+    -4466340,
+    -4429468,
+    -4431044,
+    -4422751,
+    -1000,
+    12,
+    -560,
+    10,
+    27
+  ],
+  "minimum_slack": 0,
+  "target_dot_dual": -61161,
+  "shapes_tested": 3,
+  "certificate_discovery": "Inherited moment slopes; exact intercept minima on all new columns",
+  "elapsed_seconds": 2.20097880000003
+}

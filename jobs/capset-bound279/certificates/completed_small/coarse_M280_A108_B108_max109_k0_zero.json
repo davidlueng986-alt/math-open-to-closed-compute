@@ -1,0 +1,197 @@
+{
+  "A": 108,
+  "B": 108,
+  "C": 64,
+  "target_total": 280,
+  "conditional_maximum_slice": 109,
+  "completion_center_zero": true,
+  "centered_outer_row": "C",
+  "deleted_antipodal_pairs": 0,
+  "anchor_profiles": [
+    [
+      0,
+      18,
+      45,
+      45
+    ],
+    [
+      0,
+      19,
+      44,
+      45
+    ],
+    [
+      0,
+      20,
+      43,
+      45
+    ],
+    [
+      0,
+      20,
+      44,
+      44
+    ],
+    [
+      0,
+      21,
+      42,
+      45
+    ],
+    [
+      0,
+      21,
+      43,
+      44
+    ],
+    [
+      0,
+      22,
+      41,
+      45
+    ],
+    [
+      0,
+      22,
+      42,
+      44
+    ],
+    [
+      0,
+      22,
+      43,
+      43
+    ],
+    [
+      1,
+      36,
+      36,
+      36
+    ],
+    [
+      1,
+      37,
+      35,
+      36
+    ],
+    [
+      1,
+      38,
+      34,
+      36
+    ],
+    [
+      1,
+      38,
+      35,
+      35
+    ],
+    [
+      1,
+      39,
+      33,
+      36
+    ],
+    [
+      1,
+      39,
+      34,
+      35
+    ],
+    [
+      1,
+      40,
+      32,
+      36
+    ],
+    [
+      1,
+      40,
+      33,
+      35
+    ],
+    [
+      1,
+      40,
+      34,
+      34
+    ]
+  ],
+  "raw_labelled_grids": 3836700,
+  "valid_labelled_grids": 585754,
+  "distinct_columns": 441345,
+  "centroid_of_A": "zero",
+  "target": [
+    56,
+    308,
+    1188,
+    11880,
+    25236,
+    458496,
+    18242172,
+    1437588,
+    53231580,
+    1437588,
+    53231580,
+    511168,
+    11486272,
+    90326016,
+    364
+  ],
+  "coefficient_order": [
+    "negative_count",
+    "positive_count",
+    "negative_h0",
+    "positive_h0",
+    "negative_h0_squared",
+    "positive_h0_squared",
+    "h0_cubed",
+    "S2_A",
+    "S3_A",
+    "S2_B",
+    "S3_B",
+    "S2_C",
+    "S3_C",
+    "cross_T",
+    "A_centroid_orthogonal"
+  ],
+  "scope": "COMPLETABLE107_108_HILL_CENTER_MOMENT_RELAXATION",
+  "global_bound_claim": false,
+  "new_cap_claim": false,
+  "CAP066_dependencies": [
+    "same_target_no_completed109",
+    "CAP066_44_43_completion"
+  ],
+  "previously_excluded_global_profiles": [
+    [
+      109,
+      109,
+      62
+    ]
+  ],
+  "uses_43_43_completion_extension": true,
+  "dual_numerical_status": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+  "status": "EXACT_FARKAS_EXCLUSION",
+  "integer_dual": [
+    -103814601,
+    -105698350,
+    0,
+    0,
+    -2293,
+    0,
+    0,
+    0,
+    0,
+    0,
+    5,
+    0,
+    46,
+    417,
+    -100000
+  ],
+  "minimum_slack": 0,
+  "target_dot_dual": -2500520,
+  "safe_int64_used": true,
+  "elapsed_seconds": 12.218009248999806,
+  "source_sha256": "25b10e38ec2ac6aad8ddfa5479577735c33b32f86cd8829eb4accf5006af4b91"
+}

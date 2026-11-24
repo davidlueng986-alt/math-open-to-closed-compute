@@ -1,0 +1,1065 @@
+{
+  "status": "PASS",
+  "all_deleted_triples": 227920,
+  "directions_per_triple": 364,
+  "triple_direction_checks": 82962880,
+  "completion_center_zero": {
+    "number_of_histogram_classes": 4,
+    "all_candidate_profiles": [
+      [
+        19,
+        45,
+        45
+      ],
+      [
+        20,
+        44,
+        45
+      ],
+      [
+        21,
+        43,
+        45
+      ],
+      [
+        21,
+        44,
+        44
+      ],
+      [
+        22,
+        42,
+        45
+      ],
+      [
+        22,
+        43,
+        44
+      ],
+      [
+        37,
+        36,
+        36
+      ],
+      [
+        38,
+        35,
+        36
+      ],
+      [
+        39,
+        34,
+        36
+      ],
+      [
+        39,
+        35,
+        35
+      ],
+      [
+        40,
+        33,
+        36
+      ],
+      [
+        40,
+        34,
+        35
+      ]
+    ],
+    "histogram_classes": [
+      {
+        "id": 0,
+        "triple_count": 110880,
+        "hprofiles": [
+          [
+            20,
+            44,
+            45
+          ],
+          [
+            21,
+            43,
+            45
+          ],
+          [
+            21,
+            44,
+            44
+          ],
+          [
+            22,
+            42,
+            45
+          ],
+          [
+            22,
+            43,
+            44
+          ],
+          [
+            37,
+            36,
+            36
+          ],
+          [
+            38,
+            35,
+            36
+          ],
+          [
+            39,
+            34,
+            36
+          ],
+          [
+            39,
+            35,
+            35
+          ],
+          [
+            40,
+            33,
+            36
+          ],
+          [
+            40,
+            34,
+            35
+          ]
+        ],
+        "multiplicities": [
+          6,
+          9,
+          12,
+          8,
+          21,
+          13,
+          75,
+          72,
+          69,
+          19,
+          60
+        ],
+        "representative_deleted_indices": [
+          0,
+          1,
+          2
+        ],
+        "representative_deleted_points": [
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            2
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            1,
+            0
+          ]
+        ],
+        "representative_centroid_translation": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "triples_containing_antipodal_pair": 0,
+        "triples_with_sum_in_H": 0
+      },
+      {
+        "id": 1,
+        "triple_count": 36960,
+        "hprofiles": [
+          [
+            20,
+            44,
+            45
+          ],
+          [
+            21,
+            43,
+            45
+          ],
+          [
+            21,
+            44,
+            44
+          ],
+          [
+            22,
+            42,
+            45
+          ],
+          [
+            22,
+            43,
+            44
+          ],
+          [
+            37,
+            36,
+            36
+          ],
+          [
+            38,
+            35,
+            36
+          ],
+          [
+            39,
+            34,
+            36
+          ],
+          [
+            39,
+            35,
+            35
+          ],
+          [
+            40,
+            33,
+            36
+          ],
+          [
+            40,
+            34,
+            35
+          ]
+        ],
+        "multiplicities": [
+          6,
+          15,
+          6,
+          5,
+          24,
+          13,
+          75,
+          66,
+          75,
+          22,
+          57
+        ],
+        "representative_deleted_indices": [
+          0,
+          1,
+          14
+        ],
+        "representative_deleted_points": [
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            2
+          ],
+          [
+            0,
+            0,
+            2,
+            2,
+            1,
+            0
+          ]
+        ],
+        "representative_centroid_translation": [
+          0,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "triples_containing_antipodal_pair": 0,
+        "triples_with_sum_in_H": 36960
+      },
+      {
+        "id": 2,
+        "triple_count": 73920,
+        "hprofiles": [
+          [
+            19,
+            45,
+            45
+          ],
+          [
+            20,
+            44,
+            45
+          ],
+          [
+            21,
+            43,
+            45
+          ],
+          [
+            21,
+            44,
+            44
+          ],
+          [
+            22,
+            42,
+            45
+          ],
+          [
+            22,
+            43,
+            44
+          ],
+          [
+            37,
+            36,
+            36
+          ],
+          [
+            38,
+            35,
+            36
+          ],
+          [
+            39,
+            34,
+            36
+          ],
+          [
+            39,
+            35,
+            35
+          ],
+          [
+            40,
+            33,
+            36
+          ],
+          [
+            40,
+            34,
+            35
+          ]
+        ],
+        "multiplicities": [
+          1,
+          3,
+          12,
+          12,
+          7,
+          21,
+          12,
+          78,
+          69,
+          69,
+          20,
+          60
+        ],
+        "representative_deleted_indices": [
+          0,
+          1,
+          6
+        ],
+        "representative_deleted_points": [
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            2
+          ],
+          [
+            0,
+            0,
+            1,
+            2,
+            1,
+            0
+          ]
+        ],
+        "representative_centroid_translation": [
+          0,
+          0,
+          0,
+          1,
+          1,
+          0
+        ],
+        "triples_containing_antipodal_pair": 0,
+        "triples_with_sum_in_H": 0
+      },
+      {
+        "id": 3,
+        "triple_count": 6160,
+        "hprofiles": [
+          [
+            19,
+            45,
+            45
+          ],
+          [
+            20,
+            44,
+            45
+          ],
+          [
+            21,
+            44,
+            44
+          ],
+          [
+            22,
+            43,
+            44
+          ],
+          [
+            37,
+            36,
+            36
+          ],
+          [
+            38,
+            35,
+            36
+          ],
+          [
+            39,
+            35,
+            35
+          ],
+          [
+            40,
+            34,
+            35
+          ]
+        ],
+        "multiplicities": [
+          2,
+          9,
+          9,
+          36,
+          38,
+          72,
+          72,
+          126
+        ],
+        "representative_deleted_indices": [
+          0,
+          1,
+          12
+        ],
+        "representative_deleted_points": [
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            2
+          ],
+          [
+            0,
+            0,
+            2,
+            2,
+            0,
+            1
+          ]
+        ],
+        "representative_centroid_translation": [
+          0,
+          0,
+          1,
+          1,
+          0,
+          1
+        ],
+        "triples_containing_antipodal_pair": 6160,
+        "triples_with_sum_in_H": 6160
+      }
+    ],
+    "all_histogram_matrix_sha256": "a77316054a61de421d4a19cf91de67de2eee38cfb134687f166928113519ad92"
+  },
+  "remaining_cap_centroid_zero": {
+    "number_of_histogram_classes": 4,
+    "all_candidate_profiles": [
+      [
+        19,
+        45,
+        45
+      ],
+      [
+        21,
+        44,
+        44
+      ],
+      [
+        22,
+        42,
+        45
+      ],
+      [
+        34,
+        36,
+        39
+      ],
+      [
+        35,
+        34,
+        40
+      ],
+      [
+        36,
+        35,
+        38
+      ],
+      [
+        37,
+        36,
+        36
+      ],
+      [
+        39,
+        35,
+        35
+      ],
+      [
+        40,
+        33,
+        36
+      ],
+      [
+        43,
+        21,
+        45
+      ],
+      [
+        44,
+        22,
+        43
+      ],
+      [
+        45,
+        20,
+        44
+      ]
+    ],
+    "histogram_classes": [
+      {
+        "id": 0,
+        "triple_count": 36960,
+        "hprofiles": [
+          [
+            21,
+            44,
+            44
+          ],
+          [
+            22,
+            42,
+            45
+          ],
+          [
+            34,
+            36,
+            39
+          ],
+          [
+            35,
+            34,
+            40
+          ],
+          [
+            36,
+            35,
+            38
+          ],
+          [
+            37,
+            36,
+            36
+          ],
+          [
+            39,
+            35,
+            35
+          ],
+          [
+            40,
+            33,
+            36
+          ],
+          [
+            43,
+            21,
+            45
+          ],
+          [
+            44,
+            22,
+            43
+          ],
+          [
+            45,
+            20,
+            44
+          ]
+        ],
+        "multiplicities": [
+          6,
+          5,
+          66,
+          57,
+          75,
+          13,
+          75,
+          22,
+          15,
+          24,
+          6
+        ],
+        "representative_deleted_indices": [
+          0,
+          1,
+          14
+        ],
+        "representative_deleted_points": [
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            2
+          ],
+          [
+            0,
+            0,
+            2,
+            2,
+            1,
+            0
+          ]
+        ],
+        "representative_centroid_translation": [
+          0,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "triples_containing_antipodal_pair": 0,
+        "triples_with_sum_in_H": 36960
+      },
+      {
+        "id": 1,
+        "triple_count": 110880,
+        "hprofiles": [
+          [
+            21,
+            44,
+            44
+          ],
+          [
+            22,
+            42,
+            45
+          ],
+          [
+            34,
+            36,
+            39
+          ],
+          [
+            35,
+            34,
+            40
+          ],
+          [
+            36,
+            35,
+            38
+          ],
+          [
+            37,
+            36,
+            36
+          ],
+          [
+            39,
+            35,
+            35
+          ],
+          [
+            40,
+            33,
+            36
+          ],
+          [
+            43,
+            21,
+            45
+          ],
+          [
+            44,
+            22,
+            43
+          ],
+          [
+            45,
+            20,
+            44
+          ]
+        ],
+        "multiplicities": [
+          12,
+          8,
+          72,
+          60,
+          75,
+          13,
+          69,
+          19,
+          9,
+          21,
+          6
+        ],
+        "representative_deleted_indices": [
+          0,
+          1,
+          2
+        ],
+        "representative_deleted_points": [
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            2
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            1,
+            0
+          ]
+        ],
+        "representative_centroid_translation": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "triples_containing_antipodal_pair": 0,
+        "triples_with_sum_in_H": 0
+      },
+      {
+        "id": 2,
+        "triple_count": 73920,
+        "hprofiles": [
+          [
+            19,
+            45,
+            45
+          ],
+          [
+            21,
+            44,
+            44
+          ],
+          [
+            22,
+            42,
+            45
+          ],
+          [
+            34,
+            36,
+            39
+          ],
+          [
+            35,
+            34,
+            40
+          ],
+          [
+            36,
+            35,
+            38
+          ],
+          [
+            37,
+            36,
+            36
+          ],
+          [
+            39,
+            35,
+            35
+          ],
+          [
+            40,
+            33,
+            36
+          ],
+          [
+            43,
+            21,
+            45
+          ],
+          [
+            44,
+            22,
+            43
+          ],
+          [
+            45,
+            20,
+            44
+          ]
+        ],
+        "multiplicities": [
+          1,
+          12,
+          7,
+          69,
+          60,
+          78,
+          12,
+          69,
+          20,
+          12,
+          21,
+          3
+        ],
+        "representative_deleted_indices": [
+          0,
+          1,
+          6
+        ],
+        "representative_deleted_points": [
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            2
+          ],
+          [
+            0,
+            0,
+            1,
+            2,
+            1,
+            0
+          ]
+        ],
+        "representative_centroid_translation": [
+          0,
+          0,
+          0,
+          1,
+          1,
+          0
+        ],
+        "triples_containing_antipodal_pair": 0,
+        "triples_with_sum_in_H": 0
+      },
+      {
+        "id": 3,
+        "triple_count": 6160,
+        "hprofiles": [
+          [
+            19,
+            45,
+            45
+          ],
+          [
+            21,
+            44,
+            44
+          ],
+          [
+            35,
+            34,
+            40
+          ],
+          [
+            36,
+            35,
+            38
+          ],
+          [
+            37,
+            36,
+            36
+          ],
+          [
+            39,
+            35,
+            35
+          ],
+          [
+            44,
+            22,
+            43
+          ],
+          [
+            45,
+            20,
+            44
+          ]
+        ],
+        "multiplicities": [
+          2,
+          9,
+          126,
+          72,
+          38,
+          72,
+          36,
+          9
+        ],
+        "representative_deleted_indices": [
+          0,
+          1,
+          12
+        ],
+        "representative_deleted_points": [
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            2
+          ],
+          [
+            0,
+            0,
+            2,
+            2,
+            0,
+            1
+          ]
+        ],
+        "representative_centroid_translation": [
+          0,
+          0,
+          1,
+          1,
+          0,
+          1
+        ],
+        "triples_containing_antipodal_pair": 6160,
+        "triples_with_sum_in_H": 6160
+      }
+    ],
+    "all_histogram_matrix_sha256": "4ed87ade8d4f1f5ba138e91c8cee91fc8685de927461ab25cc015a797e944aff"
+  },
+  "centering_convention": "A=H minus {p,q,r}, sum(A)=-(p+q+r), |A|=109=1 mod3; translate A by +(p+q+r). Each row is cyclically shifted by u dot(p+q+r), then only levels1/2 may swap.",
+  "joint_histogram_class_counts": [
+    {
+      "completion_class": 0,
+      "cap_centroid_class": 1,
+      "count": 110880
+    },
+    {
+      "completion_class": 1,
+      "cap_centroid_class": 0,
+      "count": 36960
+    },
+    {
+      "completion_class": 2,
+      "cap_centroid_class": 2,
+      "count": 73920
+    },
+    {
+      "completion_class": 3,
+      "cap_centroid_class": 3,
+      "count": 6160
+    }
+  ],
+  "not_an_affine_orbit_classification": true,
+  "implementation": "Exhaustive numpy directional evaluations; no proof-generator imports",
+  "source_sha256": "0541285c83979aa5bd7033ec5e3a3358eed92cc3f6d7f0ad5b7ac6b89242374a",
+  "elapsed_seconds": 6.893727864000539
+}

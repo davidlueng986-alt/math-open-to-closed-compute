@@ -1,0 +1,101 @@
+{
+  "target_total": 280,
+  "A": 109,
+  "B": 109,
+  "C": 62,
+  "conditional_maximum_slice": 109,
+  "centered_rows": [
+    "A",
+    "B"
+  ],
+  "first_row_fully_sorted_by_legal_shifts": false,
+  "layers_without_completion_profile": [
+    "A",
+    "B"
+  ],
+  "forbidden_sorted_profiles": [
+    [
+      19,
+      45,
+      45
+    ],
+    [
+      20,
+      44,
+      45
+    ],
+    [
+      21,
+      43,
+      45
+    ],
+    [
+      21,
+      44,
+      44
+    ],
+    [
+      22,
+      42,
+      45
+    ],
+    [
+      22,
+      43,
+      44
+    ],
+    [
+      23,
+      43,
+      43
+    ]
+  ],
+  "previously_excluded_global_profiles": [],
+  "globally_excluded_completed_sizes": [
+    109
+  ],
+  "completed_slice_contexts": {},
+  "uses_43_43_completion_extension": true,
+  "raw_labelled_or_quotiented_grids": 11280465,
+  "valid_labelled_or_quotiented_grids": 2078641,
+  "target": [
+    364,
+    1464088,
+    54697072,
+    1464088,
+    54697072,
+    480190,
+    10472234,
+    89131262
+  ],
+  "coefficient_order": [
+    "count",
+    "S2_A",
+    "S3_A",
+    "S2_B",
+    "S3_B",
+    "S2_C",
+    "S3_C",
+    "cross_T"
+  ],
+  "scope": "CAP066_FRONTIER_GENERIC_NECESSARY_GRID",
+  "global_bound_claim": false,
+  "status": "EXACT_FARKAS_EXCLUSION",
+  "integer_dual": [
+    43927692802,
+    -10000000,
+    98494,
+    -10000000,
+    98494,
+    274744,
+    -3935,
+    27226
+  ],
+  "minimum_slack": 0,
+  "target_dot_dual": -4181154,
+  "safe_int64_used": true,
+  "elapsed_seconds": 21.879510866000146,
+  "cut_rounds": 5,
+  "cuts": 2213,
+  "source_sha256": "ab32fa635af3be3473b4534b5a73edbe3b41089311c4871350386e1e4983ec02"
+}

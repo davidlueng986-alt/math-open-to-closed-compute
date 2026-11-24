@@ -1,0 +1,81 @@
+{
+  "target_total": 280,
+  "anchor": 110,
+  "anchor_kind": "antipodal",
+  "B": 96,
+  "C": 74,
+  "centered_layer": "C",
+  "hprofiles": [
+    [
+      20,
+      45,
+      45
+    ],
+    [
+      22,
+      44,
+      44
+    ],
+    [
+      38,
+      36,
+      36
+    ],
+    [
+      40,
+      35,
+      35
+    ]
+  ],
+  "hprofile_multiplicities": [
+    11,
+    45,
+    110,
+    198
+  ],
+  "raw_labelled_grids": 1689200,
+  "valid_labelled_grids": 182617,
+  "distinct_columns": 91591,
+  "target_moments": [
+    11,
+    45,
+    110,
+    198,
+    1138464,
+    37636704,
+    680578,
+    17545622,
+    94554240
+  ],
+  "status": "EXACT_FARKAS_EXCLUSION",
+  "shapes_tested": 12,
+  "best_unnormalized_nonnegative_score": 19896875,
+  "dual_numerical_status": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+  "exact_verified": true,
+  "integer_dual": [
+    -43467041,
+    -43611784,
+    -43974744,
+    -43974744,
+    -10000,
+    123,
+    -6952,
+    116,
+    269
+  ],
+  "minimum_slack": 0,
+  "target_dot_dual": -1209835,
+  "column_coefficient_order": [
+    "hclass_0",
+    "hclass_1",
+    "hclass_2",
+    "hclass_3",
+    "S2_B",
+    "S3_B",
+    "S2_C",
+    "S3_C",
+    "cross_T"
+  ],
+  "certificate_discovery": "Rounded LP slopes; exact full-column class minima",
+  "elapsed_seconds": 0.8292114839998703
+}

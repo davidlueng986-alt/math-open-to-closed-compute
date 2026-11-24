@@ -1,0 +1,119 @@
+{
+  "target_total": 280,
+  "anchor": 109,
+  "anchor_kind": "triple3",
+  "histogram_class": 3,
+  "anchor_normalization": "remaining_cap_centroid_zero",
+  "B": 102,
+  "C": 69,
+  "centered_layer": "none",
+  "hprofiles": [
+    [
+      19,
+      45,
+      45
+    ],
+    [
+      21,
+      44,
+      44
+    ],
+    [
+      35,
+      34,
+      40
+    ],
+    [
+      36,
+      35,
+      38
+    ],
+    [
+      37,
+      36,
+      36
+    ],
+    [
+      39,
+      35,
+      35
+    ],
+    [
+      44,
+      22,
+      43
+    ],
+    [
+      45,
+      20,
+      44
+    ]
+  ],
+  "hprofile_multiplicities": [
+    2,
+    9,
+    126,
+    72,
+    38,
+    72,
+    36,
+    9
+  ],
+  "raw_labelled_grids": 7544600,
+  "valid_labelled_grids": 922901,
+  "distinct_columns": 224449,
+  "target_moments": [
+    2,
+    9,
+    126,
+    72,
+    38,
+    72,
+    36,
+    9,
+    1283670,
+    44984754,
+    592848,
+    14302872,
+    92824182
+  ],
+  "conditional_maximum_slice": 109,
+  "scope": "H_MINUS_THREE_ANCHORED_GRID",
+  "column_coefficient_order": [
+    "hclass_0",
+    "hclass_1",
+    "hclass_2",
+    "hclass_3",
+    "hclass_4",
+    "hclass_5",
+    "hclass_6",
+    "hclass_7",
+    "S2_B",
+    "S3_B",
+    "S2_C",
+    "S3_C",
+    "cross_T"
+  ],
+  "status": "EXACT_FARKAS_EXCLUSION",
+  "exact_verified": true,
+  "integer_dual": [
+    -91755420,
+    -91905904,
+    -92844492,
+    -92844492,
+    -92844492,
+    -92844492,
+    -91959642,
+    -91829224,
+    0,
+    5,
+    -10000,
+    188,
+    396
+  ],
+  "minimum_slack": 0,
+  "target_dot_dual": -17862,
+  "shapes_tested": 9,
+  "certificate_discovery": "Inherited moment slopes; exact intercept minima on all new columns",
+  "elapsed_seconds": 1.5540831579999121
+}

@@ -1,0 +1,157 @@
+{
+  "target_total": 280,
+  "A": 108,
+  "B": 108,
+  "C": 64,
+  "conditional_maximum_slice": 109,
+  "centered_rows": [
+    "C"
+  ],
+  "first_row_fully_sorted_by_legal_shifts": true,
+  "B_minimum_first_by_legal_opposite_cyclic_shifts": false,
+  "layers_without_completion_profile": [
+    "A",
+    "B"
+  ],
+  "forbidden_sorted_profiles": [
+    [
+      18,
+      45,
+      45
+    ],
+    [
+      19,
+      44,
+      45
+    ],
+    [
+      20,
+      43,
+      45
+    ],
+    [
+      20,
+      44,
+      44
+    ],
+    [
+      21,
+      42,
+      45
+    ],
+    [
+      21,
+      43,
+      44
+    ],
+    [
+      22,
+      43,
+      43
+    ]
+  ],
+  "previously_excluded_global_profiles": [
+    [
+      109,
+      109,
+      62
+    ],
+    [
+      109,
+      108,
+      63
+    ]
+  ],
+  "globally_excluded_completed_sizes": [
+    109
+  ],
+  "completed_slice_contexts": {
+    "108": [
+      [
+        63,
+        108,
+        109
+      ],
+      [
+        64,
+        108,
+        108
+      ],
+      [
+        65,
+        107,
+        108
+      ],
+      [
+        66,
+        106,
+        108
+      ]
+    ],
+    "107": [
+      [
+        66,
+        107,
+        107
+      ]
+    ]
+  },
+  "uses_43_43_completion_extension": true,
+  "raw_labelled_or_quotiented_grids": 13316100,
+  "valid_labelled_or_quotiented_grids": 2244188,
+  "distinct_columns_within_first_row": 1934789,
+  "residual_centroid_rows": [
+    "A",
+    "B"
+  ],
+  "centroid_features": "J0,J1,Jplus,Jminus",
+  "target": [
+    364,
+    1437588,
+    53231580,
+    1437588,
+    53231580,
+    511168,
+    11486272,
+    90326016,
+    121,
+    121,
+    364,
+    121
+  ],
+  "coefficient_order": [
+    "count",
+    "S2_A",
+    "S3_A",
+    "S2_B",
+    "S3_B",
+    "S2_C",
+    "S3_C",
+    "cross_T"
+  ],
+  "scope": "CAP066_FRONTIER_GENERIC_NECESSARY_GRID",
+  "global_bound_claim": false,
+  "centroid_relation": "rank1_kernel2",
+  "status": "EXACT_FARKAS_EXCLUSION",
+  "integer_dual": [
+    301128972,
+    -100000,
+    1015,
+    -100000,
+    1015,
+    4384,
+    -36,
+    753,
+    12793,
+    12793,
+    -10473,
+    11955
+  ],
+  "minimum_slack": 0,
+  "target_dot_dual": -2871735,
+  "safe_int64_used": true,
+  "elapsed_seconds": 24.983391309000126,
+  "cut_rounds": 5,
+  "cuts": 2630,
+  "source_sha256": "400d973b50dfff1e3d9ccf886968d932f2a59c3c93e17daba2b82885be38ce42"
+}

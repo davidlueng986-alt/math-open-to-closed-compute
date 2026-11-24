@@ -1,0 +1,155 @@
+{
+  "target_total": 280,
+  "anchor": 109,
+  "anchor_kind": "triple2",
+  "histogram_class": 2,
+  "anchor_normalization": "remaining_cap_centroid_zero",
+  "B": 109,
+  "C": 62,
+  "centered_layer": "B",
+  "hprofiles": [
+    [
+      19,
+      45,
+      45
+    ],
+    [
+      21,
+      44,
+      44
+    ],
+    [
+      22,
+      42,
+      45
+    ],
+    [
+      34,
+      36,
+      39
+    ],
+    [
+      35,
+      34,
+      40
+    ],
+    [
+      36,
+      35,
+      38
+    ],
+    [
+      37,
+      36,
+      36
+    ],
+    [
+      39,
+      35,
+      35
+    ],
+    [
+      40,
+      33,
+      36
+    ],
+    [
+      43,
+      21,
+      45
+    ],
+    [
+      44,
+      22,
+      43
+    ],
+    [
+      45,
+      20,
+      44
+    ]
+  ],
+  "hprofile_multiplicities": [
+    1,
+    12,
+    7,
+    69,
+    60,
+    78,
+    12,
+    69,
+    20,
+    12,
+    21,
+    3
+  ],
+  "raw_labelled_grids": 2354184,
+  "valid_labelled_grids": 386501,
+  "distinct_columns": 315546,
+  "target_moments": [
+    1,
+    12,
+    7,
+    69,
+    60,
+    78,
+    12,
+    69,
+    20,
+    12,
+    21,
+    3,
+    1464088,
+    54697072,
+    480190,
+    10472234,
+    89131262
+  ],
+  "conditional_maximum_slice": 109,
+  "scope": "H_MINUS_THREE_ANCHORED_GRID",
+  "column_coefficient_order": [
+    "hclass_0",
+    "hclass_1",
+    "hclass_2",
+    "hclass_3",
+    "hclass_4",
+    "hclass_5",
+    "hclass_6",
+    "hclass_7",
+    "hclass_8",
+    "hclass_9",
+    "hclass_10",
+    "hclass_11",
+    "S2_B",
+    "S3_B",
+    "S2_C",
+    "S3_C",
+    "cross_T"
+  ],
+  "status": "EXACT_FARKAS_EXCLUSION",
+  "exact_verified": true,
+  "integer_dual": [
+    -5976774199,
+    -5984297557,
+    -5982923629,
+    -6044423911,
+    -6040237573,
+    -6044448169,
+    -6044472427,
+    -6044423911,
+    -6036343291,
+    -5981656615,
+    -5985736243,
+    -5980266445,
+    0,
+    311,
+    0,
+    1636,
+    24258
+  ],
+  "minimum_slack": 0,
+  "target_dot_dual": -72678516,
+  "shapes_tested": 1,
+  "certificate_discovery": "Inherited moment slopes; exact intercept minima on all new columns",
+  "elapsed_seconds": 0.5528209589999733
+}

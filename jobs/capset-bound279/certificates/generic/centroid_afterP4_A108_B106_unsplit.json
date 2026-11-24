@@ -1,0 +1,163 @@
+{
+  "target_total": 280,
+  "A": 108,
+  "B": 106,
+  "C": 66,
+  "conditional_maximum_slice": 109,
+  "centered_rows": [
+    "B"
+  ],
+  "first_row_fully_sorted_by_legal_shifts": true,
+  "B_minimum_first_by_legal_opposite_cyclic_shifts": false,
+  "layers_without_completion_profile": [
+    "A"
+  ],
+  "forbidden_sorted_profiles": [
+    [
+      18,
+      45,
+      45
+    ],
+    [
+      19,
+      44,
+      45
+    ],
+    [
+      20,
+      43,
+      45
+    ],
+    [
+      20,
+      44,
+      44
+    ],
+    [
+      21,
+      42,
+      45
+    ],
+    [
+      21,
+      43,
+      44
+    ],
+    [
+      22,
+      43,
+      43
+    ]
+  ],
+  "previously_excluded_global_profiles": [
+    [
+      109,
+      109,
+      62
+    ],
+    [
+      109,
+      108,
+      63
+    ],
+    [
+      109,
+      107,
+      64
+    ],
+    [
+      109,
+      106,
+      65
+    ],
+    [
+      108,
+      108,
+      64
+    ]
+  ],
+  "globally_excluded_completed_sizes": [
+    109
+  ],
+  "completed_slice_contexts": {
+    "108": [
+      [
+        63,
+        108,
+        109
+      ],
+      [
+        64,
+        108,
+        108
+      ],
+      [
+        65,
+        107,
+        108
+      ],
+      [
+        66,
+        106,
+        108
+      ]
+    ],
+    "107": [
+      [
+        66,
+        107,
+        107
+      ]
+    ]
+  },
+  "uses_43_43_completion_extension": true,
+  "raw_labelled_or_quotiented_grids": 16705900,
+  "valid_labelled_or_quotiented_grids": 2399756,
+  "distinct_columns_within_first_row": 2075481,
+  "residual_centroid_rows": [
+    "A",
+    "C"
+  ],
+  "centroid_features": "J0,J1,Jplus,Jminus",
+  "target": [
+    364,
+    1437588,
+    53231580,
+    1385314,
+    50379574,
+    543114,
+    12563694,
+    91423728
+  ],
+  "coefficient_order": [
+    "count",
+    "S2_A",
+    "S3_A",
+    "S2_B",
+    "S3_B",
+    "S2_C",
+    "S3_C",
+    "cross_T"
+  ],
+  "scope": "CAP066_FRONTIER_GENERIC_NECESSARY_GRID",
+  "global_bound_claim": false,
+  "centroid_relation": "unsplit",
+  "status": "EXACT_FARKAS_EXCLUSION",
+  "integer_dual": [
+    939684853,
+    -500000,
+    5037,
+    -164614,
+    1732,
+    -51908,
+    1013,
+    2897
+  ],
+  "minimum_slack": 0,
+  "target_dot_dual": -16301150,
+  "safe_int64_used": true,
+  "elapsed_seconds": 27.678636586000266,
+  "cut_rounds": 3,
+  "cuts": 1807,
+  "source_sha256": "400d973b50dfff1e3d9ccf886968d932f2a59c3c93e17daba2b82885be38ce42"
+}

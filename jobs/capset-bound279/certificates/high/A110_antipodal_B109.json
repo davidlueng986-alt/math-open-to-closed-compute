@@ -1,0 +1,79 @@
+{
+  "target_total": 280,
+  "anchor": 110,
+  "anchor_kind": "antipodal",
+  "B": 109,
+  "C": 61,
+  "centered_layer": "B",
+  "hprofiles": [
+    [
+      20,
+      45,
+      45
+    ],
+    [
+      22,
+      44,
+      44
+    ],
+    [
+      38,
+      36,
+      36
+    ],
+    [
+      40,
+      35,
+      35
+    ]
+  ],
+  "hprofile_multiplicities": [
+    11,
+    45,
+    110,
+    198
+  ],
+  "raw_labelled_grids": 778680,
+  "valid_labelled_grids": 137570,
+  "distinct_columns": 68864,
+  "target_moments": [
+    11,
+    45,
+    110,
+    198,
+    1464088,
+    54697072,
+    465064,
+    9988384,
+    88498190
+  ],
+  "status": "EXACT_FARKAS_EXCLUSION",
+  "exact_verified": true,
+  "integer_dual": [
+    -5932076151,
+    -5936909091,
+    -6000103479,
+    -5998804275,
+    0,
+    311,
+    0,
+    1636,
+    24258
+  ],
+  "minimum_slack": 0,
+  "target_dot_dual": -47497260,
+  "column_coefficient_order": [
+    "hclass_0",
+    "hclass_1",
+    "hclass_2",
+    "hclass_3",
+    "S2_B",
+    "S3_B",
+    "S2_C",
+    "S3_C",
+    "cross_T"
+  ],
+  "shapes_tested": 1,
+  "certificate_discovery": "Inherited moment slopes; exact intercept minima on all new columns",
+  "elapsed_seconds": 0.3888976030000322
+}

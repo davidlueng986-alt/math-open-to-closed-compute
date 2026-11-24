@@ -1,0 +1,148 @@
+{
+  "target_total": 280,
+  "anchor": 109,
+  "anchor_kind": "triple1",
+  "histogram_class": 1,
+  "anchor_normalization": "remaining_cap_centroid_zero",
+  "B": 95,
+  "C": 76,
+  "centered_layer": "B",
+  "hprofiles": [
+    [
+      21,
+      44,
+      44
+    ],
+    [
+      22,
+      42,
+      45
+    ],
+    [
+      34,
+      36,
+      39
+    ],
+    [
+      35,
+      34,
+      40
+    ],
+    [
+      36,
+      35,
+      38
+    ],
+    [
+      37,
+      36,
+      36
+    ],
+    [
+      39,
+      35,
+      35
+    ],
+    [
+      40,
+      33,
+      36
+    ],
+    [
+      43,
+      21,
+      45
+    ],
+    [
+      44,
+      22,
+      43
+    ],
+    [
+      45,
+      20,
+      44
+    ]
+  ],
+  "hprofile_multiplicities": [
+    12,
+    8,
+    72,
+    60,
+    75,
+    13,
+    69,
+    19,
+    9,
+    21,
+    6
+  ],
+  "raw_labelled_grids": 4782855,
+  "valid_labelled_grids": 480633,
+  "distinct_columns": 394690,
+  "target_moments": [
+    12,
+    8,
+    72,
+    60,
+    75,
+    13,
+    69,
+    19,
+    9,
+    21,
+    6,
+    1115110,
+    36495770,
+    717364,
+    18968764,
+    95224580
+  ],
+  "conditional_maximum_slice": 109,
+  "scope": "H_MINUS_THREE_ANCHORED_GRID",
+  "column_coefficient_order": [
+    "hclass_0",
+    "hclass_1",
+    "hclass_2",
+    "hclass_3",
+    "hclass_4",
+    "hclass_5",
+    "hclass_6",
+    "hclass_7",
+    "hclass_8",
+    "hclass_9",
+    "hclass_10",
+    "S2_B",
+    "S3_B",
+    "S2_C",
+    "S3_C",
+    "cross_T"
+  ],
+  "status": "EXACT_FARKAS_EXCLUSION",
+  "shapes_tested": 12,
+  "best_unnormalized_nonnegative_score": 859352,
+  "dual_numerical_status": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+  "exact_verified": true,
+  "integer_dual": [
+    -58340654,
+    -58400974,
+    -58895252,
+    -58866110,
+    -58895570,
+    -58895888,
+    -58895252,
+    -58891694,
+    -58325318,
+    -58429556,
+    -58235786,
+    -7261,
+    91,
+    -10000,
+    162,
+    318
+  ],
+  "minimum_slack": 0,
+  "target_dot_dual": -1594938,
+  "certificate_discovery": "Rounded slopes and exact all-column class intercepts",
+  "elapsed_seconds": 3.4002674060000118
+}

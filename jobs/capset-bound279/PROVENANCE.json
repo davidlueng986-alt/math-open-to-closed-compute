@@ -1,0 +1,1322 @@
+{
+  "inherited_commit": "70312fce018c64d5fe5812bde88df4ebf3046ba7",
+  "inherited_archive_sha256": "bc40294cb12e61e8d86d174756fb584bb5101b77dddc218b507deb06d4b67ca5",
+  "note": "source_path identifies research archive provenance; no external directory is required at runtime. Original certificate and C++ bytes are retained.",
+  "copied_files": [
+    {
+      "path": "certificates/double/double_A110_antipodal_B110.json",
+      "source_path": "cap066/root/frontier279/M280/cases/double_A110_antipodal_B110.json",
+      "sha256": "10bac6b071f1fecd358b81b5ee9e5b7e920fc1c7642fc66973ee206fc0c82d5e"
+    },
+    {
+      "path": "certificates/double/double_A110_ordinary_B110.json",
+      "source_path": "cap066/root/frontier279/M280/cases/double_A110_ordinary_B110.json",
+      "sha256": "f05b962ee0bacde9247063fcdd997da534e1256956fb512d3ae41aa54fe67d17"
+    },
+    {
+      "path": "certificates/double/double_A111_single_B110.json",
+      "source_path": "cap066/root/frontier279/M280/cases/double_A111_single_B110.json",
+      "sha256": "68edb8add27b8887f43ca85c750caab50141ff6f9bd6d2090e97d42735943ae9"
+    },
+    {
+      "path": "certificates/double/double_A111_single_B111.json",
+      "source_path": "cap066/root/frontier279/M280/cases/double_A111_single_B111.json",
+      "sha256": "59df7e3a5f251bf8403eaa4d9dafa16edc95d424de0caacb52cc61029fb18811"
+    },
+    {
+      "path": "certificates/double/double_A112_single_B110.json",
+      "source_path": "cap066/root/frontier279/M280/cases/double_A112_single_B110.json",
+      "sha256": "6efc8faef1dc163ce6f8c53282ae99bfbd3c56a0bb3c3e9c987b4acfd0e0e9e7"
+    },
+    {
+      "path": "certificates/double/double_A112_single_B111.json",
+      "source_path": "cap066/root/frontier279/M280/cases/double_A112_single_B111.json",
+      "sha256": "e5a5afbeea4bb359d16aa03cb1ff5ef8115010782bbfec2ab03ec8481b683d07"
+    },
+    {
+      "path": "certificates/double/double_A112_single_B112.json",
+      "source_path": "cap066/root/frontier279/M280/cases/double_A112_single_B112.json",
+      "sha256": "92365a3b707864a21917e9d4ec6f28375ea14548c6b55133eec0c4d110530143"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B100.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B100.json",
+      "sha256": "b320d253927b14da1709a74c7f4965cffc28f2f08190b1895faf1cff28dc46fb"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B101.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B101.json",
+      "sha256": "2bc118151cdd89d6b64726d9b4000aabed4fed953bb20485992e20b89ae22829"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B102.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B102.json",
+      "sha256": "fe793a14e849824f646165b69f0bd2c738c6977e8e085e3e0e08888ae88eb2ac"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B103.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B103.json",
+      "sha256": "2d80a0ee55a47dd50b033c819f5ffe8de9e7ad014f2abd757b18f0493a64f673"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B104.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B104.json",
+      "sha256": "350e3aef5db92d0834cd077cb5099a11bd56b42e4896a42193f1ff788bd03e33"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B105.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B105.json",
+      "sha256": "69f05096d8844b39ebbd26afcf23d3e7e7b9aec247c9d9d35e9980f5138791ea"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B106.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B106.json",
+      "sha256": "449c2c62b251c021f5bd38ca924b42aa35ea173efd54127e21e30c5ea94e84e2"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B107.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B107.json",
+      "sha256": "1f3caff57ad3ef6ecc08697b2b18177fcef477c4d5ed181c22577d492a81d73f"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B108.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B108.json",
+      "sha256": "a452b81ea97c1df2c04ce33bc55a7a6fc65195eefa2aee13c078c8e09c816b4f"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B109.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B109.json",
+      "sha256": "b10a975b115095a82725beebe7b025a56ace9751ed31304536825e639f2b3373"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B85.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B85.json",
+      "sha256": "474771686a1ee18953316c9b07ab66a408e7a53da468fd42c9b27be85929d74b"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B86.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B86.json",
+      "sha256": "ffc7d93d6e8d385c51d35088cb02494cbaf30d56e206728b88d4d47e550356da"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B87.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B87.json",
+      "sha256": "cb082b0f53d3ddbe06114a7256ef9229e002eef344ef49aa6133e39de2aad8cd"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B88.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B88.json",
+      "sha256": "3a7217fcbab63790e74b558159d0821d11ca58e8215b794f0418c6ae5129e497"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B89.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B89.json",
+      "sha256": "b108765408f04bc8273b03256c0cda0b2bc2d000b4560f66eb38e3151726100b"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B90.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B90.json",
+      "sha256": "2bcbe8763651d099e3cb8b7f596308f7a5de66c0a98a628c3caa8be499ff4407"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B91.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B91.json",
+      "sha256": "df52c7baacbde07df19d536621353e35e10741957446dd982b64ad8f58248b43"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B92.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B92.json",
+      "sha256": "8cf71918fcb4522bc09ecd564c5007cb940463025b24f243063362f9d10f9be3"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B93.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B93.json",
+      "sha256": "33ec5b7109d692bf3f36b5a072d4d5d7e1458dc417bf7b39e3ed6925fae37269"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B94.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B94.json",
+      "sha256": "5a5d6519ac997ecccd1c0ebbafb7042f5cea3d8cab2fae2c0514abfc9be1f533"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B95.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B95.json",
+      "sha256": "26593eb15004f0fab1c16d5c35b0f27739532e717660382138eabba3e484c48b"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B96.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B96.json",
+      "sha256": "42dd4bcedb4ed40e44612f18d971bff55ec23c2765a60cdb58000ab3274af455"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B97.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B97.json",
+      "sha256": "0179710016ecbe3bd28d922d5bca1c11d649288d4a593dcf08ed8bd5bc11fa33"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B98.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B98.json",
+      "sha256": "4c8c46e4befe2f461fc410ad95f4d39e130261882605dc49c388c2479947aa45"
+    },
+    {
+      "path": "certificates/high/A110_antipodal_B99.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_antipodal_B99.json",
+      "sha256": "e66b419a354f3059d54658f851999ff8e7c2b6047f39a5031fc4910471398d3a"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B100.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B100.json",
+      "sha256": "a68a8d14737773f55c8463187659fadb110a52258ea6c2fc6e1fa34522c36c23"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B101.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B101.json",
+      "sha256": "1a1ef5507afaed68a2dd104a5f3d370b5f347451bd1c3cada41a2eac47579235"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B102.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B102.json",
+      "sha256": "b23e56490aae2113c04e481d9157d4e3413d5bdbf9564ee2436901d768631300"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B103.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B103.json",
+      "sha256": "eaf1ae1fcb61c87342497a6e1cd6f7be1d4551d271ab7e01995a80322e5c5952"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B104.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B104.json",
+      "sha256": "fd40a629fb61fbf340ba0e937acc83e75bd995df9e17149b724cbe5f6dfd21fc"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B105.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B105.json",
+      "sha256": "fce809e903f60daa89d50b6a8ee3d92bc4c31709eba54107cadf211a266436de"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B106.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B106.json",
+      "sha256": "f1b89b623b6889ffe7145821c572433bc2215034fb519705ac3f332cc45475da"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B107.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B107.json",
+      "sha256": "85029002e455eeebce565256e8c7533d9069640e6dddd9bd99eea87a116a9f94"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B108.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B108.json",
+      "sha256": "d70370c1ebd1c2ad99e86d6030a52cc0f3e47af699d60f9d2a18840a5c36ccf5"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B109.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B109.json",
+      "sha256": "47a9eba9bb635d2515b2d179ea30b2bb8f90b278b966f6719c7c55f7828522e0"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B85.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B85.json",
+      "sha256": "3844659c18e7e8cd95aecf2874519f834f83827e4cd8cf99d5c638bb7b669394"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B86.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B86.json",
+      "sha256": "5e83869b76376b825f13fa1013ff502d35b7a9fc9ed0bded93efa5a0378c8f3b"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B87.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B87.json",
+      "sha256": "59d6fd442ac7ce92f0bf953389d2c3543bf1a05ad1ae64d8afd7c9ce4aa81ed9"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B88.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B88.json",
+      "sha256": "5aa15445c4680bba3260f503fa417cd62e669612cd53e6c6953ecdfa3fec8672"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B89.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B89.json",
+      "sha256": "d070f6e22ac612f407521377eb3d33ce97aab53c7af066d99820ff6af144d8fc"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B90.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B90.json",
+      "sha256": "b85aa54f8cc2438b557af2a0685cae9c4523245a3afd24f4eda05c6302f85431"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B91.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B91.json",
+      "sha256": "ee1d5328ebdf8234fdab92488c66ebc1985816f30c298a635bf15ba4738c2203"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B92.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B92.json",
+      "sha256": "9e1c53ee7f428951ceec8a6101e0cef200d19b094a165847adf77ccd8d413bc1"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B93.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B93.json",
+      "sha256": "afd34e574e480db204d9d7e4863419487054680d8dd9d70fee02dba087a10e00"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B94.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B94.json",
+      "sha256": "ca71a3a63df0f255761d74d7e80fe7d1276c39b75cf12f5a25fa601fba55080a"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B95.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B95.json",
+      "sha256": "ac10c62f3f8e87811f2808d1b5dd73fd915a49e4170ae682fb17713a327c5f57"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B96.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B96.json",
+      "sha256": "e7f7cdb7da39c1618b1019ebd6001c242d21a37299a539d526ff1882f36ee917"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B97.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B97.json",
+      "sha256": "156b62c881213fd518251364a899b9108a3d63ce15ba0d9a5d3f57b3dd2c3b97"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B98.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B98.json",
+      "sha256": "ba590ba8e247dca8459e7d1e5065b431e3fa834157201d5681da1e488968e5c5"
+    },
+    {
+      "path": "certificates/high/A110_ordinary_B99.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A110_ordinary_B99.json",
+      "sha256": "d4b9b3161622560d6d56715b2e3af4f591d748f3fa9daa19db6bcb2e8ea60e3e"
+    },
+    {
+      "path": "certificates/high/A111_single_B100.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B100.json",
+      "sha256": "23f60d6e62071ac902df9643d4d282aca389b1a696cda8965704a208bc1c6088"
+    },
+    {
+      "path": "certificates/high/A111_single_B101.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B101.json",
+      "sha256": "1acb448e57e3f1a37365c556b3fefe1b72c77d87e8f00479746980800c647165"
+    },
+    {
+      "path": "certificates/high/A111_single_B102.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B102.json",
+      "sha256": "f8f376bec6e24dd78a4b36deaac98da74c7737ada31d45254d29d1759d899112"
+    },
+    {
+      "path": "certificates/high/A111_single_B103.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B103.json",
+      "sha256": "97ed141863aa612dad0d00fcdc62882e11bad651a69a989e624f22240e06ee06"
+    },
+    {
+      "path": "certificates/high/A111_single_B104.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B104.json",
+      "sha256": "c72192ec5f93e469cc283de55aac5391ad650be7aad847168cc52817c96d9d9c"
+    },
+    {
+      "path": "certificates/high/A111_single_B105.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B105.json",
+      "sha256": "4ac470e6f02f7ce5285cd432bcc00f7f2dbf79c6605c9a3f3420b186dfe41ef8"
+    },
+    {
+      "path": "certificates/high/A111_single_B106.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B106.json",
+      "sha256": "9e78f8597ad850c0e61ec51d8403d106bfea5f74f9ad05d49a70e2857d49ae0d"
+    },
+    {
+      "path": "certificates/high/A111_single_B107.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B107.json",
+      "sha256": "bc7be82fae3190d87af97ac681e1c30a48be0d65cb478f82d327798b9663e407"
+    },
+    {
+      "path": "certificates/high/A111_single_B108.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B108.json",
+      "sha256": "f3ffcac91de523849775c18550cc6acee6880e3daf6d778bcb4d4f3a3168fba5"
+    },
+    {
+      "path": "certificates/high/A111_single_B109.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B109.json",
+      "sha256": "6cbf6e410c1edd2e3396c4d52cc4b96f4a39b5f62b9e7e647b0949a95e44dece"
+    },
+    {
+      "path": "certificates/high/A111_single_B85.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B85.json",
+      "sha256": "eb8512efa636f8373158b6fe233877f89b709ef48abf275543428c41fd5db3c5"
+    },
+    {
+      "path": "certificates/high/A111_single_B86.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B86.json",
+      "sha256": "5d3257a555a6fdfa64b785447373c94b35e056c6433f8b053199418d3f007404"
+    },
+    {
+      "path": "certificates/high/A111_single_B87.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B87.json",
+      "sha256": "6cd721d97876ab4d9f2b3613efeac614ff90fdd7172487ab31c56d05ecdd8001"
+    },
+    {
+      "path": "certificates/high/A111_single_B88.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B88.json",
+      "sha256": "c4f3569af1425e5c1d02bad27ab29fef6508fda8cac408f0f11e6f55b5d8c40a"
+    },
+    {
+      "path": "certificates/high/A111_single_B89.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B89.json",
+      "sha256": "d41f1c623c1da19d47c0747c6b07301c4af763b009c171b9eaaba88ab10f0f8c"
+    },
+    {
+      "path": "certificates/high/A111_single_B90.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B90.json",
+      "sha256": "0aaea63809787f7e85ab46a74be6773053294ea497fbb15ce8158828c4b732e9"
+    },
+    {
+      "path": "certificates/high/A111_single_B91.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B91.json",
+      "sha256": "4cf9d71a72ec1b76b876bc5357680787658544985cc87f57153faf85589d5a18"
+    },
+    {
+      "path": "certificates/high/A111_single_B92.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B92.json",
+      "sha256": "26c3b0d510565e3f7d0ae6f9a510d9647c0b6b0f7146726f390a1ffb1ddce09b"
+    },
+    {
+      "path": "certificates/high/A111_single_B93.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B93.json",
+      "sha256": "17c0953957a3f9db351435b53091dd0ea64b01551c8f677b22268a5ec548a03b"
+    },
+    {
+      "path": "certificates/high/A111_single_B94.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B94.json",
+      "sha256": "091b504bcb41773801f6014e4e9b703b0ecabdb92b2248d05265b217ea84015e"
+    },
+    {
+      "path": "certificates/high/A111_single_B95.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B95.json",
+      "sha256": "98803ecd893af7f3253317711f8591056f6148d47f40bb008dbacffce5d74d08"
+    },
+    {
+      "path": "certificates/high/A111_single_B96.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B96.json",
+      "sha256": "56c873fb19d58a2a7156ee84b42ab1758618a374c11b975785af40c0c46ac879"
+    },
+    {
+      "path": "certificates/high/A111_single_B97.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B97.json",
+      "sha256": "615a982e18210960e8ae9739f23e0a71f39db9c29b52e7c3ff8cadd15ac4c848"
+    },
+    {
+      "path": "certificates/high/A111_single_B98.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B98.json",
+      "sha256": "ab936b45f1da6ea7a301069fa33da03daad8f61dec0241c41ee5be9de6a00d71"
+    },
+    {
+      "path": "certificates/high/A111_single_B99.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A111_single_B99.json",
+      "sha256": "482fe52b21c22a6bf099e7960d95039bfb342dd76093c6a36c360a69297ad987"
+    },
+    {
+      "path": "certificates/high/A112_single_B100.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B100.json",
+      "sha256": "c10cf37fc9151402eec5c61a108559c01850c3f031c9f58162a3d07abf66e256"
+    },
+    {
+      "path": "certificates/high/A112_single_B101.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B101.json",
+      "sha256": "72affa5a751cc1f46a98fa0d4c523223bd82b678c808539f09be498901aeada1"
+    },
+    {
+      "path": "certificates/high/A112_single_B102.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B102.json",
+      "sha256": "6103065de2b48b247b1a42ab689f7b1e609cea4918046140fb183c11126c2255"
+    },
+    {
+      "path": "certificates/high/A112_single_B103.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B103.json",
+      "sha256": "a0bf883c03e3170f8540a972b0c41dc60c74e728e397ee0c08fea303db33fba2"
+    },
+    {
+      "path": "certificates/high/A112_single_B104.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B104.json",
+      "sha256": "b37216b876208af8a8c38eb7c828a2bdef5b63f6ad6dd49af66437927a5557ef"
+    },
+    {
+      "path": "certificates/high/A112_single_B105.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B105.json",
+      "sha256": "0c59f4777eedbe62b49005118550ea535070a0e96b37afc29f7d8ee85427c3d0"
+    },
+    {
+      "path": "certificates/high/A112_single_B106.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B106.json",
+      "sha256": "bb06a639934439367fc879bbf99438ef9a904d846c062c3b83ccd2cb430e72eb"
+    },
+    {
+      "path": "certificates/high/A112_single_B107.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B107.json",
+      "sha256": "d73030786021f46d3b6ee3f123e2e9638dd395e61bdca344f6a226dfff7b626d"
+    },
+    {
+      "path": "certificates/high/A112_single_B108.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B108.json",
+      "sha256": "b1a20755f81e70dbaf768af8a2197e3f7c87220cc591e63624a86d5dbc2e7b14"
+    },
+    {
+      "path": "certificates/high/A112_single_B109.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B109.json",
+      "sha256": "8d57493107d268bfb2f67aecb6f0ade496ee8c36c0389b8adfdf942338fb3c4d"
+    },
+    {
+      "path": "certificates/high/A112_single_B84.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B84.json",
+      "sha256": "ec2c955b8215ddaed047528c30f97259c4f8ba453d035c02c5e18ab09626c1ac"
+    },
+    {
+      "path": "certificates/high/A112_single_B85.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B85.json",
+      "sha256": "18929c3ba488f87134ec5fe26eeb331550b8c3e8cc2de49f071c4ae6763bcd72"
+    },
+    {
+      "path": "certificates/high/A112_single_B86.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B86.json",
+      "sha256": "3b57ca7549f1524d61887e12e2aa5008b66964d58c4eff30adf86e88c4876954"
+    },
+    {
+      "path": "certificates/high/A112_single_B87.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B87.json",
+      "sha256": "c3018215abc71b659a8886e33890f0ea9512a811a84ed46cbcae77ac3004168c"
+    },
+    {
+      "path": "certificates/high/A112_single_B88.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B88.json",
+      "sha256": "e8aaf787fb8c8f33e4fa9fd920fdca06bc49c79f97b8dc2404fc9e123ec3cfc6"
+    },
+    {
+      "path": "certificates/high/A112_single_B89.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B89.json",
+      "sha256": "5348afb12b31ede303456cfc86ff19edce257c72a0ab72ebb4393df36bad8d6e"
+    },
+    {
+      "path": "certificates/high/A112_single_B90.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B90.json",
+      "sha256": "fe970654925e71dee94b2eef26d3f7822e45c1ee6891345b6aaab3f1d174b0b5"
+    },
+    {
+      "path": "certificates/high/A112_single_B91.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B91.json",
+      "sha256": "67fc0ed1522b0c4902e33b11928e528432a9441bfce8b54f00add22841fb55bc"
+    },
+    {
+      "path": "certificates/high/A112_single_B92.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B92.json",
+      "sha256": "5cae7f86da3438dae821af942cc5f48c86d2c922bf527f1f969568cae1308682"
+    },
+    {
+      "path": "certificates/high/A112_single_B93.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B93.json",
+      "sha256": "0bb7577be5a5ffa3efb7f05fe42b18ba3db8dc441aae0d6728f51b0b23f2a866"
+    },
+    {
+      "path": "certificates/high/A112_single_B94.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B94.json",
+      "sha256": "339ee591ed5f806b8ad6ca82ab642bdd31ba30c0bdf5be0377ea899ee51e0d04"
+    },
+    {
+      "path": "certificates/high/A112_single_B95.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B95.json",
+      "sha256": "5fc229b844af9433238279cac707c041deed6d98ce055e59a9a1b781cf446f0d"
+    },
+    {
+      "path": "certificates/high/A112_single_B96.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B96.json",
+      "sha256": "f61f2c868dd5d346a164fac3ba9c82caf41b5fc56b3117eb0fb782208121e0f7"
+    },
+    {
+      "path": "certificates/high/A112_single_B97.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B97.json",
+      "sha256": "58b08f3735c7a43c7d9f6dc9b544bdea6811df6fe979a23aa6399743b198862c"
+    },
+    {
+      "path": "certificates/high/A112_single_B98.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B98.json",
+      "sha256": "c416cc9a127388684a12656f59fa0847e444df713e441887b6ac39bd3280caf0"
+    },
+    {
+      "path": "certificates/high/A112_single_B99.json",
+      "source_path": "cap066/root/frontier279/M280/cases/A112_single_B99.json",
+      "sha256": "677636e441ff66a4b41ac78322d373696aa16e04a176d609d39f9b2b6ec6e8da"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B100.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B100.json",
+      "sha256": "db8415e023e153f53a961010ef6ea905401165968f3605403137599aca2baf9c"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B101.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B101.json",
+      "sha256": "da2d51e68cb50db8379cd5bc5505b44da899271f483302992e9e1a07759e1ce0"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B102.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B102.json",
+      "sha256": "af6fbd6ed2444c9b6b83cfa492c3e046ca1897375444f37b37ef16aab380dad0"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B103.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B103.json",
+      "sha256": "c3a1291d34c32303f421daf5b86c619e4b5809443efc67eea6938e0172087868"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B104.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B104.json",
+      "sha256": "e9124f3d1471aa108c6aa25ccf6d666cca9c61af780ec67cf35865f45f17175f"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B105.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B105.json",
+      "sha256": "6f63707f5a938f2021d1fd89706cf267ef96834d00b33b9fca7e51d479ff8ecd"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B106.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B106.json",
+      "sha256": "3d080043662c729aee258adeffc3a4dfb61b0010130f6e217920a1c4d932eb41"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B107.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B107.json",
+      "sha256": "84f00d2997be6cdec0a751d72ed50f548b4a1d2f0b773b55d76c2b7c5e9dd8e7"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B108.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B108.json",
+      "sha256": "4107fdf7199bbccfab6d877b93a8b5cba50bfcc0386238a750d73ba3112a1ad3"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B109.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B109.json",
+      "sha256": "ec3c9ba0f1d2efcace06076106dcafb1265e4119cedffd5720d3f68ec307c5bb"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B86.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B86.json",
+      "sha256": "166fc4869b60af43ed0c880864951ad78f3d740b2b8203e23cea2288868fb7e7"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B87.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B87.json",
+      "sha256": "e3d03d9051c4b761470146f35f994b3d94f64a9b5923370b81db43b35c5e4220"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B88.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B88.json",
+      "sha256": "f2bf5da606c933acf9da34292db9c851f7c41e60e0c51137980ff5c4efa5c323"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B89.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B89.json",
+      "sha256": "a55b16ffabdae18ba3bc6d68e24b60cb3d1f16e8b5905bd3d6dc20aa173e8462"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B90.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B90.json",
+      "sha256": "fc4bf766c2fb6fc5219eb7daa215e37d078a4d8612d7774386baccc8bb1f3317"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B91.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B91.json",
+      "sha256": "9402a1bfede2cf37466f390f74f13064e2eb043ea7361840adb44b11b0b4b303"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B92.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B92.json",
+      "sha256": "b673099e9e1179f9d8c87dccd675a9dde21f65d46e641f1f4869dfd90dc5ad16"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B93.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B93.json",
+      "sha256": "0d16103f39127585024e0795a1d6d8052faa2db3ed7cd25c6f7ca91fec0b90f5"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B94.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B94.json",
+      "sha256": "d32cd48a8e07d8299a3fd41aa0ad914d155754d349196ede0efb5bf9e84b683d"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B95.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B95.json",
+      "sha256": "99af72749e3c4448ee59f98421797c2cf26a733ba7441ad31aa632e3bfb689ca"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B96.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B96.json",
+      "sha256": "98e3cf204dfc21da4b8387a511d1b032299ad8875c1b83a61846a16b55145406"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B97.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B97.json",
+      "sha256": "485a1e94d6110b894bbaf6342242a35b7eb027a0c1ee00d1f9d6f96abed64195"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B98.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B98.json",
+      "sha256": "e1d6c1a7ef1430d60025dfddd0b185670127051bda53504f9fa7f2f4ccd250a3"
+    },
+    {
+      "path": "certificates/completed109/hill109_class0_B99.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class0_B99.json",
+      "sha256": "d477a91808f7ddee4f17dbda4509bc31f6d7c1febd89c4f80ad80a8d60724f18"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B100.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B100.json",
+      "sha256": "49dcb6b63c8d802e19773def7abf797857c5486ff333387a1bf0026932a202ce"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B101.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B101.json",
+      "sha256": "a4720411a24cc5ee3461e29ac2df42928518d90ea07629bf5017550827d6f9b7"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B102.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B102.json",
+      "sha256": "8725f213d3b283b5c2613f606ff16c290564e5614a95627def55bd279e0bf3cd"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B103.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B103.json",
+      "sha256": "3dadc54a08ea051fe007527dab824b842a760120bdd5ae4b6e4d0a1214c1a713"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B104.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B104.json",
+      "sha256": "35480772641fbe66bb9b90c29eeba9a1f1f1400967c7535bb92f798fceb26989"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B105.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B105.json",
+      "sha256": "6a7e3863a7db14896a00cee04c8cf63032fd1829d271c70847c7bd9116b58f25"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B106.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B106.json",
+      "sha256": "83826f3ac7b1f113b6a3458fa01445b9ba512163fd42df4eba7c3f3b340081b2"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B107.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B107.json",
+      "sha256": "026cf3e1b70e3926f928d9f46525563af76358f08a8b2d01a58f4f2a9bbf0175"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B108.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B108.json",
+      "sha256": "83a3f48ff65035ab858791d4d26ef1e203e22fb29fa69cb739740ac998ace071"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B109.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B109.json",
+      "sha256": "69130ec257aaab0038dedeefd701268f187e39f609d34090c70e26c4faa17e82"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B86.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B86.json",
+      "sha256": "2616b58195667542ac3d77a553f0a4a094ae08ec5fe4c543b46a8b821325e024"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B87.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B87.json",
+      "sha256": "9999c09bef5f0f1b3c6c6cc3e8b1eb4e962faff9d0ab1b51981d042117e63ba1"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B88.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B88.json",
+      "sha256": "577e8fff3df35cad2f1820a4137bbc9a17912feade6cd0e64a6222bf8a17d384"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B89.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B89.json",
+      "sha256": "30974c6ba0e1bccec4276d08f5ab19758e6637586a4b75a888c799f0b85671c4"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B90.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B90.json",
+      "sha256": "715cdebb26221a09ba6ad9ea30cb1eb354ebbb15ce4101cea815bf887eff6526"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B91.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B91.json",
+      "sha256": "be545b5b3322d39f2cc9a1482fe96ef424033984fd8568f55b84c0aa1a7769ad"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B92.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B92.json",
+      "sha256": "28f0a2fd1fb81b5070b513362050f8c344441a061a941b06415ec9042dcecbd5"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B93.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B93.json",
+      "sha256": "96e18e3c4f04c084080df756a4cf6bf9b7a6b044f6459f62fd095e6572b1afef"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B94.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B94.json",
+      "sha256": "eaecaca6269f11bf3115b5a820e696dd2720801bf51c7363365926eb8de85923"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B95.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B95.json",
+      "sha256": "5362195cac037fe861f4fabbfb60dd4bf2b0c9b2d11871c8fe78b116e3e7ed52"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B96.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B96.json",
+      "sha256": "3b0b5c9ece8e96fe893858bb8ca1f7f940c84705a58ac9b7708b9f431322676a"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B97.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B97.json",
+      "sha256": "ec1fe3f1690b0c86c11e986820d500c7bf199464e6ce7c9bb4cefafbb1a926f3"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B98.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B98.json",
+      "sha256": "9640bdef7e1a9b06ca9fee399ac13e4b3606d12f7944ba3aa9d10f24ca152dfe"
+    },
+    {
+      "path": "certificates/completed109/hill109_class1_B99.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class1_B99.json",
+      "sha256": "a332fcaae5c04adac48400f58ecb900899ef174650db84bc86999662e5e225ba"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B100.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B100.json",
+      "sha256": "624ac52ce706c58b0740647450da1436c2c2eaad5d6e6bb3892c642dca25368b"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B101.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B101.json",
+      "sha256": "e9f9b7c04e9ed04f96c74aee48875c49290d7d077fc604c5736b9c1f51b547cd"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B102.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B102.json",
+      "sha256": "381a0f65c6ea19a57c265931df295ef29a9e766b54c62e6117d984ab7a4907ce"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B103.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B103.json",
+      "sha256": "aa48f7b6994bcba5d1e9b4b4884f68899eecfb8acb455af1938a5475b54181a2"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B104.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B104.json",
+      "sha256": "dbc267a821633f91c882a2c4201c8871c8e86257a2c6d941a0f9aa9f083da312"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B105.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B105.json",
+      "sha256": "c73e131f0c9199e2f887467af3ac5769bd3d323f38515fdeae1457a7131062db"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B106.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B106.json",
+      "sha256": "ea7f701ebf1cf12418d3e054c750e9c491f6982c435040fb26f2d41169295b76"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B107.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B107.json",
+      "sha256": "8b2e778d8bcd9d95903c4034b76b518a77e4436c02804fc89ece964101fc840e"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B108.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B108.json",
+      "sha256": "c38cffb35b6c5dec2c5c0f2735818ccf7d148c9f79ac031ee3da73921dbf0ff6"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B109.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B109.json",
+      "sha256": "f8f3370e39eb987571e7aacd1993cb041079ee2262a6044ee4aa95b582b38745"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B86.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B86.json",
+      "sha256": "7ca2822d6ee6d317551f08e2e69d49f843a275220543aa2afcc4433cd533ce83"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B87.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B87.json",
+      "sha256": "8dd574053cc39e99f2f7a891ec08e6b4e9de41141445a6a56005cab2d8f2d79a"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B88.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B88.json",
+      "sha256": "24f8d8766a60809c1e9aea42b9854f5f01421176605dbf68679b769e081b1384"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B89.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B89.json",
+      "sha256": "16f541ce0b91d1fa6b73bb1934497690cd5584505cbed3419ad466fd61a17e1b"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B90.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B90.json",
+      "sha256": "a5bc12ccb3095dfaa42a5f99d6e32a5e1c0810ce747756127a4e21b07414ff19"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B91.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B91.json",
+      "sha256": "b5ebca879238664e8891977236d63f39f850d1feaa67f8e29076e301ad6d18d0"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B92.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B92.json",
+      "sha256": "c066198cc6bb876f73b4b16b2db4d05c42f0e0c9ace58fa0b983532917e23374"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B93.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B93.json",
+      "sha256": "9da25f667e547f2ae41bdd8dec01bbfe50530fe756ac244702038656cf7da428"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B94.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B94.json",
+      "sha256": "cb8a6ce03fc5e6ca9175a2e02f8873b7bc90ea7f22ea8f29666597177da3ec9e"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B95.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B95.json",
+      "sha256": "18719972a7e1a741647fc5ef7825408a698a6da7bdce40f6c4e98d1b355d29a1"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B96.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B96.json",
+      "sha256": "17f9a68ec1d46b64c0569435585d0b98f39792b228d5eb874dfe15529b688812"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B97.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B97.json",
+      "sha256": "63af55bd592ff6bb4d0386bcb132020e9e5dcbdbd00be20c463a216e8d99d2fa"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B98.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B98.json",
+      "sha256": "ec088ab1930a7a04dc281f87a092bc310f8f68b9b8be363db3987111c1ac5c55"
+    },
+    {
+      "path": "certificates/completed109/hill109_class2_B99.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class2_B99.json",
+      "sha256": "52d011130810a73d2848f5b5ed1de60bfbb555454eb0bc62be04d76000b89fcf"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B100.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B100.json",
+      "sha256": "9df6a7c198b92b948771ae8e4f475e3d8cbcc1eba90f54c65a03fd4e2206fdf9"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B101.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B101.json",
+      "sha256": "29dbf979303d339a50a379872d334de5c9016799ce87ea75424206d137f8013f"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B102.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B102.json",
+      "sha256": "8c686fdb40d63ebaddcaaa851d701a6feb34e0783e6567b0e01e49f249463826"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B103.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B103.json",
+      "sha256": "4e6edaeafc265b08c105cb9bf3efce210c522b4ad735691294a4e63bbb3ffe67"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B104.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B104.json",
+      "sha256": "47bb0d30d697e9554356bfba20003502b95a571a98de132012c4e6a85fd36d0c"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B105.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B105.json",
+      "sha256": "6abd0e40a30f22ab9dcbbfa17157f3054716f96e0bccc61204150a64d1ac1126"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B106.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B106.json",
+      "sha256": "c9904626f421100ed4d6e9f1a305567f45e969186455eed92b80d4a62efa1344"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B107.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B107.json",
+      "sha256": "29aa92e117d2e82798a0d9c2f6e9dbdcdf1d84ca58d9423065a85402e1244e9d"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B108.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B108.json",
+      "sha256": "c520d44c03fe77aa9c4a4ae3e105c1b1c716eab1eb1bd1fef78a84025084f373"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B109.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B109.json",
+      "sha256": "e21ec171180ed79c6f858c1aac21feedeb3fa383adaa2a581cb234b30eaa0c59"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B86.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B86.json",
+      "sha256": "5f17dd775848ee00709e429b685bdabbb5427958312dd04309af006bd3849245"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B87.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B87.json",
+      "sha256": "bb228f1a5dee9643e59c45ad935618a744d770a7f1dd2fc26330ddd01739003f"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B88.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B88.json",
+      "sha256": "7cb275028f5f3c43c30100e2b1447442912e7dd56f8681a60b5ee31f827f58a1"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B89.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B89.json",
+      "sha256": "eb10e3b7f1be5dd0abf0f17cce50f712ec87d8a648d55ae8b659ce2583737713"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B90.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B90.json",
+      "sha256": "f4173a01dd7970e2c87c5464971b66c9d5ebb54427715f17f1a1322c1d139678"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B91.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B91.json",
+      "sha256": "21c67167183a47274fae3819daba6db865da05226ce2576d985670465def8e75"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B92.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B92.json",
+      "sha256": "4df5218299181c39d47d5598d19bc978cea2634844d8d6adbec2b175033adc32"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B93.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B93.json",
+      "sha256": "e1bd21c8141b52a4901289e51678472bba858f9e9c40e06a2285526eddb3d398"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B94.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B94.json",
+      "sha256": "580e239f7eb3712c712984fce2e939b2e5ea14d68626b79a9941360bbd82117b"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B95.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B95.json",
+      "sha256": "db66f8939919ca00a2e1f7b3110d9cd6d3f2851be28199e4822560dcf4557d74"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B96.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B96.json",
+      "sha256": "ecb9e1a53b9e2a4231aaa80206d482c1c620186889a659ca48a2807f5b256110"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B97.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B97.json",
+      "sha256": "3a81222e610d9e1207b03e7613844e8e67b2e3eea26e050c1057a2bc0b309001"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B98.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B98.json",
+      "sha256": "d00b2d0faf14a2c1d8bb3612367bd9beb04d69398b50b047126c75226669e06d"
+    },
+    {
+      "path": "certificates/completed109/hill109_class3_B99.json",
+      "source_path": "cap066/root/frontier279/M280/hill109_class3_B99.json",
+      "sha256": "59f63c2531888f1faca19569f2099a25b9b94ef465a922742b97dbcc1f4a192e"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A108_B106_max109_k0_nonzero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A108_B106_max109_k0_nonzero.json",
+      "sha256": "effd9f478c1a7813fcc717c985daab33879fc57ba2c256e29d16f24d3dc75377"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A108_B106_max109_k0_zero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A108_B106_max109_k0_zero.json",
+      "sha256": "5d6912cd12d0b5e1c60b2ba563c0dca89b05c1ef4a4879c69a3ab11ae1ee3682"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A108_B106_max109_k1_nonzero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A108_B106_max109_k1_nonzero.json",
+      "sha256": "390c5816f3ee0eacd04b8378f23d4902fb525a8a1025d2f6228a54446ca69fb2"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A108_B106_max109_k2_zero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A108_B106_max109_k2_zero.json",
+      "sha256": "d85621d15f51ca25f985805699dc2fc8a3a9c260e0baa7b8a711eb32451381d6"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A108_B107_max109_k0_nonzero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A108_B107_max109_k0_nonzero.json",
+      "sha256": "8d8b5024eccb4e0fee5bbc0533fd74a70a49d655190a77b0f9a566f665541ec1"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A108_B107_max109_k0_zero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A108_B107_max109_k0_zero.json",
+      "sha256": "6343f4f39abb561e6990899e8047ce4a155ee88ad8d81c0fa87c2269a142a260"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A108_B107_max109_k1_nonzero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A108_B107_max109_k1_nonzero.json",
+      "sha256": "fd2fa67e13b35f2d23805b3e013fb8275f988038186d4265dbc9ffbbc9f085fe"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A108_B107_max109_k2_zero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A108_B107_max109_k2_zero.json",
+      "sha256": "86b801d754895b3ba38ab0f4db5052afe7d86e7a34f5bd104136d400e3794e5a"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A108_B108_max109_k0_nonzero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A108_B108_max109_k0_nonzero.json",
+      "sha256": "47a8affc9702be8fce4c8bfe00c25dd796979a035577c08d8dde81932d367e26"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A108_B108_max109_k0_zero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A108_B108_max109_k0_zero.json",
+      "sha256": "6c44f3f23d2bb6d90e24cd7d5039a99cb9e0994f7d0ffd2cbe54315ad19cefdc"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A108_B108_max109_k1_nonzero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A108_B108_max109_k1_nonzero.json",
+      "sha256": "494e50bca37583b5b558be1afb420ba2e8a3205d9ed4db03ef41a58762eb5dbc"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A108_B108_max109_k2_zero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A108_B108_max109_k2_zero.json",
+      "sha256": "e5771def5cb7088c878e3648c7fccf799388ea8366a633dddfca323991d2eec8"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A108_B109_max109_k0_nonzero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A108_B109_max109_k0_nonzero.json",
+      "sha256": "de8c5935c08c3a7392cd3eb01e96e6bb68e34f1eb870704cde6c6adc3b95bf31"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A108_B109_max109_k0_zero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A108_B109_max109_k0_zero.json",
+      "sha256": "6f6b03de176b63c08f42849e1706fba591ff0e511a6e8bc44bcf3fb66ba3380d"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A108_B109_max109_k1_nonzero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A108_B109_max109_k1_nonzero.json",
+      "sha256": "74cb2d62944bb187a29b282c0e9496bb126a324803f63ceb9dafdeb216ac109e"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A108_B109_max109_k2_zero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A108_B109_max109_k2_zero.json",
+      "sha256": "65ad77b8015e599660325df1424048e95566215a973d0c67bdf1e3d63ef4e5f1"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A107_B107_max109_k0_nonzero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A107_B107_max109_k0_nonzero.json",
+      "sha256": "40ba754f5226824f1119ba3a5788c02d5712b46e2d15176f6e435ddd2b4b7422"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A107_B107_max109_k0_zero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A107_B107_max109_k0_zero.json",
+      "sha256": "ced56ca477342bf8b8af2c16f93f3e0ba6e3adeb5cf6f6e983d477d1b77c259b"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A107_B107_max109_k1_nonzero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A107_B107_max109_k1_nonzero.json",
+      "sha256": "412aee662deddc4bdd6a7c5c30a70d2f8cd29d2a5e69c99d0ba8471d219b320b"
+    },
+    {
+      "path": "certificates/completed_small/coarse_M280_A107_B107_max109_k2_nonzero.json",
+      "source_path": "cap066/root/frontier279/M280/coarse_M280_A107_B107_max109_k2_nonzero.json",
+      "sha256": "473fc4c41aac19c6dd1b060ae9e99a4c28dccd744ab3702876319aa400d937d1"
+    },
+    {
+      "path": "certificates/generic/generic_pending43_A109_B109.json",
+      "source_path": "cap066/root/frontier279/M280/generic_pending43_A109_B109.json",
+      "sha256": "e64496b52639045a81cab6f6bd541b6633cb354f9bc5be8e7b61063d7ad932a5"
+    },
+    {
+      "path": "certificates/generic/centroid_fullrank_A109_B108_rank0.json",
+      "source_path": "cap066/root/frontier279/M280/centroid_fullrank_A109_B108_rank0.json",
+      "sha256": "7fcfa4b26cc073a813b0c1f250a00b6d17d1d7523bf985fd3cccdc24a6df2284"
+    },
+    {
+      "path": "certificates/generic/centroid_fullrank_A109_B108_rank1_kernel0.json",
+      "source_path": "cap066/root/frontier279/M280/centroid_fullrank_A109_B108_rank1_kernel0.json",
+      "sha256": "68150440cfbc6643f46a444f8ec4cab58390b40853a40c82dde9474192159f54"
+    },
+    {
+      "path": "certificates/generic/centroid_fullrank_A109_B108_rank1_kernel1.json",
+      "source_path": "cap066/root/frontier279/M280/centroid_fullrank_A109_B108_rank1_kernel1.json",
+      "sha256": "a3fbae98b690f087f7c4332e68f3f21f305501871ffbb253f3f752e4f1f1c4ff"
+    },
+    {
+      "path": "certificates/generic/centroid_fullrank_A109_B108_rank1_kernel2.json",
+      "source_path": "cap066/root/frontier279/M280/centroid_fullrank_A109_B108_rank1_kernel2.json",
+      "sha256": "5b0876ea541634a1778c9333d5ae1004de84d14b31589547b1940656b8aab34c"
+    },
+    {
+      "path": "certificates/generic/centroid_fullrank_A109_B108_rank1_kernel3.json",
+      "source_path": "cap066/root/frontier279/M280/centroid_fullrank_A109_B108_rank1_kernel3.json",
+      "sha256": "fc963290e585667715237369ce81d843d177e4399eede803fd1f1b450f9df0aa"
+    },
+    {
+      "path": "certificates/generic/centroid_fullrank_A109_B108_rank2.json",
+      "source_path": "cap066/root/frontier279/M280/centroid_fullrank_A109_B108_rank2.json",
+      "sha256": "e0fa37c4808f79589291c16d0441192b19f59919c2a490f32c5558f96de777c7"
+    },
+    {
+      "path": "certificates/generic/centroid_afterP1_A108_B108_rank0.json",
+      "source_path": "cap066/root/frontier279/M280/centroid_afterP1_A108_B108_rank0.json",
+      "sha256": "c4d36ae5769920640541e81783ed5788df3a5ed2018004847d495202932037af"
+    },
+    {
+      "path": "certificates/generic/centroid_afterP1_A108_B108_rank1_kernel0.json",
+      "source_path": "cap066/root/frontier279/M280/centroid_afterP1_A108_B108_rank1_kernel0.json",
+      "sha256": "7c8382cc3a6da3405207e019a61dd4f70c0acb2a232f17e0160a16ffe56d6ca6"
+    },
+    {
+      "path": "certificates/generic/centroid_afterP1_A108_B108_rank1_kernel1.json",
+      "source_path": "cap066/root/frontier279/M280/centroid_afterP1_A108_B108_rank1_kernel1.json",
+      "sha256": "d16074588ac302732aa6b0388922f2bb0c1454f851d3c4fd810b802f217f03c7"
+    },
+    {
+      "path": "certificates/generic/centroid_afterP1_A108_B108_rank1_kernel2.json",
+      "source_path": "cap066/root/frontier279/M280/centroid_afterP1_A108_B108_rank1_kernel2.json",
+      "sha256": "a1d25eede6716aecf39f421d409b4470485269a42dafc61a9d0f416b8dac2718"
+    },
+    {
+      "path": "certificates/generic/centroid_afterP1_A108_B108_rank1_kernel3.json",
+      "source_path": "cap066/root/frontier279/M280/centroid_afterP1_A108_B108_rank1_kernel3.json",
+      "sha256": "077537e18b7c46330dc50d8c7214794a495a2454890e020a33e986bd47adfcea"
+    },
+    {
+      "path": "certificates/generic/centroid_afterP1_A108_B108_rank2.json",
+      "source_path": "cap066/root/frontier279/M280/centroid_afterP1_A108_B108_rank2.json",
+      "sha256": "4d3e3b571b8f207905bf446081ebb6514100fefea10a2e08d0e4405889cc1d05"
+    },
+    {
+      "path": "certificates/generic/centroid_afterP1_A109_B107_unsplit.json",
+      "source_path": "cap066/root/frontier279/M280/centroid_afterP1_A109_B107_unsplit.json",
+      "sha256": "7f2de20e58d28c81a18163f5204fe947572389224ad1929f1f70b886b251c4ca"
+    },
+    {
+      "path": "certificates/generic/centroid_afterP1_A109_B106_unsplit.json",
+      "source_path": "cap066/root/frontier279/M280/centroid_afterP1_A109_B106_unsplit.json",
+      "sha256": "d9d07c0afbd8a7982f14e42f4167742d845696da8eb041adacb5c386c346e121"
+    },
+    {
+      "path": "certificates/generic/centroid_afterP4_A108_B107_unsplit.json",
+      "source_path": "cap066/root/frontier279/M280/centroid_afterP4_A108_B107_unsplit.json",
+      "sha256": "a93cf65bd9dff6326d6e60e717fc35c79fbb3b7429dbb064dfe0962536e5e652"
+    },
+    {
+      "path": "certificates/generic/centroid_afterP4_A108_B106_unsplit.json",
+      "source_path": "cap066/root/frontier279/M280/centroid_afterP4_A108_B106_unsplit.json",
+      "sha256": "ca2f44f0ef8438df5e3e52e2ac7f6059cc1936fc367a74d9a0352f1cf3ec7fae"
+    },
+    {
+      "path": "certificates/generic/centroid_afterP4_A107_B107_unsplit.json",
+      "source_path": "cap066/root/frontier279/M280/centroid_afterP4_A107_B107_unsplit.json",
+      "sha256": "3b75e346b74a7ec9c546127432497585e642e8147fd24dab00a7e09d8e1bc626"
+    },
+    {
+      "path": "cpp/double.cpp",
+      "source_path": "cap066/integer_geometry/nexttarget/verify_double_M280.cpp",
+      "sha256": "8d4b0c8acf7718ad2bda8bcf07c1b27f82f8d2f00ce40d48ec58a87f6a4aa5d9"
+    },
+    {
+      "path": "cpp/high.cpp",
+      "source_path": "cap066/integer_geometry/nexttarget/verify_high_M280.cpp",
+      "sha256": "9b33e96f6c3c604cff5a1dfbb511626accbabee7d8df76c8f00423ad03cd7460"
+    },
+    {
+      "path": "cpp/completed109.cpp",
+      "source_path": "cap066/integer_geometry/nexttarget/verify_completed109_M280.cpp",
+      "sha256": "9cc26be9533781f80538297cea5f5d346df6171443438dffd789958cade3057a"
+    },
+    {
+      "path": "cpp/completed_small.cpp",
+      "source_path": "cap066/root/verify_frontier_completed.cpp",
+      "sha256": "99626b784e8991bf1cc620e3631b7d33b70f29574bf28bf0ff030f2c27b53114"
+    },
+    {
+      "path": "cpp/generic.cpp",
+      "source_path": "cap066/root/verify_frontier_generic.cpp",
+      "sha256": "91bbec0260ddb21692efbd6aa0ea62a5fcd5f2e4fc028e4b714b5f3eba4cf971"
+    },
+    {
+      "path": "cpp/centroids.cpp",
+      "source_path": "cap066/root/verify_frontier_centroids.cpp",
+      "sha256": "d12e75736722ccbdfdf333d8a1d93d41dc6dc4f50b201b2ed35def2f40646ae2"
+    },
+    {
+      "path": "cpp/five_holes.cpp",
+      "source_path": "cap066/completion/verify_three_deletion.cpp",
+      "sha256": "8ec63621918a62231fa9fba5e40638ae60ee8ab2135c0220e17999421385af0c"
+    },
+    {
+      "path": "cpp/cross_section.cpp",
+      "source_path": "cap066/completion/verify_cross_section_capacity.cpp",
+      "sha256": "3cf44da39bef942f9aba6d84ce4f5d927741ab3932c38c5c97b36c63235f5c22"
+    },
+    {
+      "path": "inputs/cap18_A2_normalized_codes.txt",
+      "source_path": "cap066/completion/cap18_A2_normalized_codes.txt",
+      "sha256": "c550e28e56e8c85b5d6a8d607a15a5295d6c212ae560b3920a1461c801e1ec6d"
+    },
+    {
+      "path": "inputs/cap236.txt",
+      "source_path": "prior_cap065/cap065/literature/independent236.txt",
+      "sha256": "74b53dcfb12314f360e3e1414ad321539ed47751264e63fc4942e783eca3a435"
+    },
+    {
+      "path": "inputs/hill112.txt",
+      "source_path": "cap066/release280/inputs/hill112.txt",
+      "sha256": "22ed97a2b832b1d6aefb160191ef2717caa199b3019a31e903524688177da0b9"
+    },
+    {
+      "path": "inputs/cap45.json",
+      "source_path": "cap066/release280/inputs/cap45.json",
+      "sha256": "e02c82b7783eb7bef30b9fa5ddcb596f4aecf16d4da365318fd7013d6af78a95"
+    },
+    {
+      "path": "inputs/cap45_codes.txt",
+      "source_path": "cap066/release280/inputs/cap45_codes.txt",
+      "sha256": "dfc696bc26056f29bf7b953044a6e9fa5e900cd04db281ccadab05240a3e5e18"
+    },
+    {
+      "path": "inputs/deleted_triple_histograms.json",
+      "source_path": "cap066/release280/inputs/deleted_triple_histograms.json",
+      "sha256": "cf9eaab8c715693b03dd4669050f62fb6dd9766fe2a9ca2af03e182815542449"
+    },
+    {
+      "path": "checks/profile_data.py",
+      "source_path": "cap066/release280/checks/profile_data.py",
+      "sha256": "0c907203cee810eb5588976b8921af08e45bbd244bfe1cb681d57a02f4ea40f3"
+    },
+    {
+      "path": "checks/verify_triple_histograms_analytic.py",
+      "source_path": "cap066/release280/checks/verify_triple_histograms_analytic.py",
+      "sha256": "b7b91d8e846d1007c128515c8fe4525a765e778414c16578c9aee9c0bbf09d59"
+    },
+    {
+      "path": "checks/verify_reflection_completion.py",
+      "source_path": "cap066/release280/checks/verify_reflection_completion.py",
+      "sha256": "c23761727464bd8541a9f4fd760e4d1d88c169102fed6e1fe88dfddb94fe4918"
+    },
+    {
+      "path": "docs/HILL_MINUS3_CLASSIFICATION.md",
+      "source_path": "cap066/release280/docs/HILL_MINUS3_CLASSIFICATION.md",
+      "sha256": "6d1f3c03a5d1a70b6b0a7ab4402ba4cf77ad332a0b475bc6d94e6c324eaace40"
+    },
+    {
+      "path": "docs/FIVE_HOLE_COMPLETION.md",
+      "source_path": "cap066/completion/CAP066_44_43_COMPLETION_THEOREM.md",
+      "sha256": "83a66474481ccfdbe7ba0f89538b90009d6d27a05c2d31c0b2b2cb2f0a70a5b1"
+    },
+    {
+      "path": "docs/CROSS_SECTION_COMPLETION.md",
+      "source_path": "cap066/completion/CAP066_43_43_COMPLETION_THEOREM.md",
+      "sha256": "8f5e4b172379d3a813cd856e84728edc62e39e22e0a4021ea5917744bde20896"
+    },
+    {
+      "path": "docs/CENTROID_RANK_REFINEMENT.md",
+      "source_path": "cap066/root/CENTROID_RANK_REFINEMENT.md",
+      "sha256": "e63c48b19e35d384d14eafebb4ad49ce21d8f58c678d488b5a497b6f619b38db"
+    }
+  ]
+}

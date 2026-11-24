@@ -1,0 +1,31 @@
+name: Cap set upper 279 exact replay
+
+on:
+  push:
+    branches:
+      - capset/cap066-upper279
+    paths:
+      - jobs/capset-bound279/**
+      - .github/workflows/capset-upper279-exact.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out the proof and certificates
+        uses: actions/checkout@v4
+      - name: Replay all 242 exact branches
+        run: python3 jobs/capset-bound279/run_verify.py --workers 2
+      - name: Preserve the exact verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cap066-upper279-exact-verification
+          path: jobs/capset-bound279/VERIFICATION_RESULT.json
+          if-no-files-found: warn
+          retention-days: 30

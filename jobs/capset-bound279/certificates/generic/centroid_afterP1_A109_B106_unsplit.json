@@ -1,0 +1,148 @@
+{
+  "target_total": 280,
+  "A": 109,
+  "B": 106,
+  "C": 65,
+  "conditional_maximum_slice": 109,
+  "centered_rows": [
+    "A",
+    "B"
+  ],
+  "first_row_fully_sorted_by_legal_shifts": false,
+  "B_minimum_first_by_legal_opposite_cyclic_shifts": false,
+  "layers_without_completion_profile": [
+    "A"
+  ],
+  "forbidden_sorted_profiles": [
+    [
+      19,
+      45,
+      45
+    ],
+    [
+      20,
+      44,
+      45
+    ],
+    [
+      21,
+      43,
+      45
+    ],
+    [
+      21,
+      44,
+      44
+    ],
+    [
+      22,
+      42,
+      45
+    ],
+    [
+      22,
+      43,
+      44
+    ],
+    [
+      23,
+      43,
+      43
+    ]
+  ],
+  "previously_excluded_global_profiles": [
+    [
+      109,
+      109,
+      62
+    ],
+    [
+      109,
+      108,
+      63
+    ]
+  ],
+  "globally_excluded_completed_sizes": [
+    109
+  ],
+  "completed_slice_contexts": {
+    "108": [
+      [
+        63,
+        108,
+        109
+      ],
+      [
+        64,
+        108,
+        108
+      ],
+      [
+        65,
+        107,
+        108
+      ],
+      [
+        66,
+        106,
+        108
+      ]
+    ],
+    "107": [
+      [
+        66,
+        107,
+        107
+      ]
+    ]
+  },
+  "uses_43_43_completion_extension": true,
+  "raw_labelled_or_quotiented_grids": 15438465,
+  "valid_labelled_or_quotiented_grids": 2338262,
+  "distinct_columns_within_first_row": 2055471,
+  "residual_centroid_rows": [
+    "C"
+  ],
+  "centroid_features": "J0",
+  "target": [
+    364,
+    1464088,
+    54697072,
+    1385314,
+    50379574,
+    527020,
+    12016940,
+    90872210
+  ],
+  "coefficient_order": [
+    "count",
+    "S2_A",
+    "S3_A",
+    "S2_B",
+    "S3_B",
+    "S2_C",
+    "S3_C",
+    "cross_T"
+  ],
+  "scope": "CAP066_FRONTIER_GENERIC_NECESSARY_GRID",
+  "global_bound_claim": false,
+  "centroid_relation": "unsplit",
+  "status": "EXACT_FARKAS_EXCLUSION",
+  "integer_dual": [
+    1982041205,
+    -1000000,
+    9958,
+    -241345,
+    2548,
+    -62312,
+    1303,
+    4634
+  ],
+  "minimum_slack": 0,
+  "target_dot_dual": -2787462,
+  "safe_int64_used": true,
+  "elapsed_seconds": 22.81376610899997,
+  "cut_rounds": 6,
+  "cuts": 2237,
+  "source_sha256": "400d973b50dfff1e3d9ccf886968d932f2a59c3c93e17daba2b82885be38ce42"
+}
