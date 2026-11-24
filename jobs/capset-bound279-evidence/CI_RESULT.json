@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "repository": "davidlueng986-alt/math-open-to-closed-compute",
+  "branch": "capset/cap066-upper279",
+  "verified_commit": "7b6ff22ef6c00d442f65b47bc5051d1b7942c964",
+  "run_id": 45327769821,
+  "job_id": 138221369947,
+  "run_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45327769821",
+  "job_conclusion": "success",
+  "replay_seconds": 50.476059551000006,
+  "branches": 242,
+  "raw_labelled_grids": 1974032142,
+  "admissible_labelled_grids": 273592522,
+  "artifact_id": 14890771223,
+  "artifact_sha256": "df97fa5cf8b67b8e536b0b25f940db8480fde31f5a53b1bb2186b792fe6ae72b",
+  "report_sha256": "24e0f337bfe362b54eadfa3756236aad5c0a68ab4bcab7aeade001a112280f0b",
+  "report": "VERIFICATION_RESULT.json",
+  "note": "Downloaded actual Actions artifact and checked its archive hash; not reconstructed from local results."
+}
