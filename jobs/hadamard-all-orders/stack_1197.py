@@ -48,21 +48,16 @@ def source_matrices():
     return normalize(upper), normalize(lower)
 
 
-def construct():
-    upper, lower = source_matrices()
+def assemble(upper, lower, top_word, bottom_word, omitted):
+    """Pair source columns by equal absolute projections, then append the new column."""
     top_size, bottom_size = len(upper), len(lower)
-    top_word = flipped_column(top_size, UPPER_FLIPS)
-    bottom_word = flipped_column(bottom_size, LOWER_FLIPS)
     top_dots = correlations(upper, top_word)
     bottom_dots = correlations(lower, bottom_word)
-
-    assert top_dots[0] == bottom_dots[0] == 1132
-    assert [abs(bottom_dots[j]) for j in LOWER_OMITTED] == [8, 36, 60, 68]
-    assert sum(bottom_dots[j] ** 2 for j in LOWER_OMITTED) == bottom_size**2 - top_size**2
+    assert sum(bottom_dots[j] ** 2 for j in omitted) == bottom_size**2 - top_size**2
 
     available = defaultdict(list)
     for j, dot in enumerate(bottom_dots):
-        if j not in LOWER_OMITTED:
+        if j not in omitted:
             available[abs(dot)].append(j)
 
     columns = []
@@ -80,6 +75,17 @@ def construct():
     assert all(not matches for matches in available.values())
     columns.append(top_word | (bottom_word << top_size))
     return columns
+
+
+def construct():
+    upper, lower = source_matrices()
+    top_word = flipped_column(len(upper), UPPER_FLIPS)
+    bottom_word = flipped_column(len(lower), LOWER_FLIPS)
+    top_dots = correlations(upper, top_word)
+    bottom_dots = correlations(lower, bottom_word)
+    assert top_dots[0] == bottom_dots[0] == 1132
+    assert [abs(bottom_dots[j]) for j in LOWER_OMITTED] == [8, 36, 60, 68]
+    return assemble(upper, lower, top_word, bottom_word, LOWER_OMITTED)
 
 
 def check_extension_sieve():

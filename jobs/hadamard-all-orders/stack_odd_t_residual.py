@@ -6,14 +6,21 @@ from math import isqrt
 from verify import paley, rows_from_columns, verify_orthogonal
 
 
-def paley_type_two(prime):
+def conference_positive_columns(prime):
+    """Pack the positive entries of the symmetric Paley conference matrix."""
     assert prime % 4 == 1 and all(prime % d for d in range(2, isqrt(prime) + 1))
     squares = {i * i % prime for i in range(1, prime)}
     size = prime + 1
     universe = (1 << size) - 1
-    conference_positive = [universe ^ 1] + [
+    return [universe ^ 1] + [
         1 + sum(1 << (i + 1) for i in range(prime) if (i - j) % prime in squares)
         for j in range(prime)]
+
+
+def paley_type_two(prime):
+    conference_positive = conference_positive_columns(prime)
+    size = len(conference_positive)
+    universe = (1 << size) - 1
     plus = [word | 1 << j for j, word in enumerate(conference_positive)]
     minus = conference_positive
     return [a | (b << size) for a, b in zip(plus, minus, strict=True)] + [

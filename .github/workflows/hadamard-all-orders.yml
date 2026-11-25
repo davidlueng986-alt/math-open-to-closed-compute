@@ -20,11 +20,15 @@ jobs:
         run: |
           python3 -B jobs/hadamard-all-orders/verify.py
           python3 -B jobs/hadamard-all-orders/stack_1197.py
+          python3 -B jobs/hadamard-all-orders/stack_1197_four_channels.py
+          python3 -B jobs/hadamard-all-orders/stack_1197_four_channel_gap.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_four_channels.py
           python3 -B jobs/hadamard-all-orders/stack_1198_joint.py
           python3 -B jobs/hadamard-all-orders/stack_1198_transport.py
           python3 -B jobs/hadamard-all-orders/stack_1198_auxiliary.py
           python3 -B jobs/hadamard-all-orders/stack_1198_energy.py
           python3 -B jobs/hadamard-all-orders/stack_1198_channels.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_reciprocal.py
           python3 -B jobs/hadamard-all-orders/stack_1198_mod5.py
           python3 -B jobs/hadamard-all-orders/stack_odd_t_auxiliary.py
           python3 -B jobs/hadamard-all-orders/stack_odd_t_residual.py
@@ -41,6 +45,8 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_split.py
           python3 -B jobs/hadamard-all-orders/border4_2396_exact_negative.py
           python3 -B jobs/hadamard-all-orders/border4_2396_nested.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_transfer.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_fixed_first.py
           python3 -B jobs/hadamard-all-orders/border4_2396_tensor_weighing.py
           python3 -B jobs/hadamard-all-orders/r_intersections.py
           python3 -B jobs/hadamard-all-orders/r_near_complement.py
@@ -117,6 +123,8 @@ jobs:
         run: python3 -B jobs/hadamard-all-orders/exterior_fold_coordinates.py
       - name: Check exact Sylvester anchor pairs and their reindexed modulo-eight matching
         run: python3 -B jobs/hadamard-all-orders/exterior_reindexed_anchors.py
+      - name: Check the index-18 fold capacity and exact reindexed witness
+        run: python3 -B jobs/hadamard-all-orders/exterior_reindexed_pivot.py
 
   stack-replacement-neighborhood:
     runs-on: ubuntu-latest

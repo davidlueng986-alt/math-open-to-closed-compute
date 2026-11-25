@@ -28,12 +28,12 @@ def half_dot(size, left, right):
     return size // 2 - (left ^ right).bit_count()
 
 
-def projection_targets(upper, lower, reference):
+def projection_targets(upper, lower, reference, omitted=LOWER_OMITTED):
     """Enumerate omitted half-dots and the required lower mutual inner product."""
     size = len(lower)
     square_norm = (size**2 - len(upper)**2) // 4
     scale = (size + len(upper)) // 4
-    first = tuple(half_dot(size, reference, lower[index]) for index in LOWER_OMITTED)
+    first = tuple(half_dot(size, reference, lower[index]) for index in omitted)
     targets = set()
     limit = isqrt(square_norm)
     for a in range(limit + 1):
@@ -59,9 +59,9 @@ def projection_targets(upper, lower, reference):
     return sorted(targets)
 
 
-def export_search(path, upper, lower, u, v, targets):
+def export_search(path, upper, lower, u, v, targets, omitted=LOWER_OMITTED):
     with path.open("wb") as stream:
-        stream.write(struct.pack("<7i", len(upper), len(lower), *LOWER_OMITTED, len(targets)))
+        stream.write(struct.pack("<7i", len(upper), len(lower), *omitted, len(targets)))
         for projection, mutual in targets:
             stream.write(struct.pack("<5i", *projection, mutual))
         for word in (u, v, *upper, *lower):
