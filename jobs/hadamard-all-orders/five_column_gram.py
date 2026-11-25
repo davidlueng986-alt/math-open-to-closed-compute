@@ -1,6 +1,6 @@
 """Replay a five-column stack with exact row margins and omitted Gram equality."""
 
-from collections import Counter
+from collections import Counter, defaultdict
 
 from five_column_constraints import (
     BOTTOM,
@@ -64,6 +64,43 @@ LOWER_COUNTS = (
 )
 
 
+# Alternate physical placements of the same grouped counts, one base-32 mask per row.
+MOD8_UPPER_ROWS = (
+    "0kka4kkhsssss4h4hgkhss8hss8kh8khgkhgcs8csgkcc2kkkkkkkc4cs86gcmss4kkc2cgkkkcs8cga"
+    "8k64kkkkkcgc2kh9css855h9csgc8cs8hcs8hcgc86s4csgc2h964hcsss4hc4c45asg968c4hag6s46"
+    "s4956sg96sss8646ss49h9h68h6s8asss26s4c8has45hh6ss86ssgh6ga2asss46s46s2ag68h96sga"
+    "4assg56s46s2h964asg6g9hha496g59agam4h6g6g5assg9asg6sgh6s8hassa98sigs65hgsss6gsss"
+    "s68sagsss6hgsssahhh8ss6gss646hgsag6hhhhga8s6h264ss62a5g6hhh4sssa2ss6h4a5h5gsssa5"
+    "9hh4ah8ssah9hh52ah9865555h8sa8sahhgah8sssssa4ss6546h8sagsa4sssma4a8sssss6g6586gs"
+    "scgsa95462ss6gs68sahh864s69hgs6h5g6h4sss6hhga92a94ah86h8a4ss6g68s6h9hgah54ssah4d"
+    "ahhg64agssssc86hh54s6g6954ags6h592ah8s5h8ss6h95hga4a5h4sa54ssa8sah9g64s698sa8sah"
+    "5gs65864akgs6hhga86gagss6g6ga864ss64a46gs6g6hhgsssssssa58ss6h2sssa8a2ssss698sma2"
+    "mma2mmdmah2sa2a2a5586995552mmsm62m692a26hh262ahh2a92a4m626262a52a2a2sa9g65955h2d"
+    "68dda4dah2a552a9hh52dda5262d62652ddddda2dd62dddddddd6552a2a2agdah2c5h26268da26h4"
+    "dd65h2d692dda4dd6a4ddd62ah2dd6hgd6262a952652da99hh59hh2ddd6862dddddddd68dah2a92d"
+    "ah2d62626h2ah2da526h2dda2651dda51dd61dddddd6h916hhhh5h1a91a51mdd61dda9h1dda161a5"
+    "h516161a9161da9h5hh51da95h1dd6h51dddddah591d6h955h1a16h951dd65hh5hh1dda91dahh169"
+    "161dd6h1d6951dsdd616h559h1ddddah1a1a916h1d61da1a1da1dah1ah991ddd61d6951d3h1d"
+)
+MOD8_LOWER_ROWS = (
+    "vrebgkigv9iiomiqv851ommvvj0qmo7rmbmjqrrgj51qmsnm81iijiqjkonks6m7l9jh6ohvjidmj5i0"
+    "obqiqpjpmfflhvfvp0m6rmmjggvldfqncuo9hmlro88dvq6uvroruvon8gdn8rgiqvhvlgv9gr0gqnmu"
+    "c5bgi8vnp7nmovsrluvmr0julvv8vjdco98nbbqrnb62ki1rvjoovipqrfbdlmbmuvrqjgdrcmf05qnv"
+    "l8unih8i5mfi6rrp0juvunpvbpr9lmogu5rrrvvmdnsnog3hv8ghvfolrrqurbr3ulqv1giulvomnuvm"
+    "io2b88oprluvuf0mcvvr9jjgdvvlnp7rlqvnrsrjrvii3qvnjubgrvvqrihu530r7ripvv61qmrmuvcq"
+    "vb1grvrirjpfrli28gi2fsbii1imi2ln5qvmvr7rrvciv8orv7or2oj3pnmvjh919sslmrunp7bufqju"
+    "753v5obbeml7rl9jdvnbvcrjvvrl0oqbi0idb2vnm9rfsnm9bn5mor8uvr0m2jgumbqoo7vvrfr9rgib"
+    "srvnvbhrblpvo2nrsl3gqn7oovmvvmbnv9jnvvrvcomjv5fl73f5r7fvgbcbfbvjqbnmbnviv8vbvi6v"
+    "8cbldb0vjb5r85m8nn0nbrvvq38frfnj1rm78c5nr87f7sbsdhh8f2hg7nvro7vbll78miv93nn3fd8r"
+    "rjbmglrng6rinbn0lvmujrj5lgfb8v73v6nvv0vu3cjlrb70sv0bf7boqrjdon8nqqgv2bb3r3vu8jvo"
+    "986virb671rngr7vrijbqd7bn2iv1vbr3vin6vubqjn05fjr6vi56oo7n2nqu0sq7sonq7flnio3rqj7"
+    "bub0fl6fjjlfqhn8oivu3766n8v2bl5nqgfvuu27ffv8bbf7ognjuinv37g6n12vbq2q0qvr8lbuov31"
+    "og556l2u1n7vo1gli5fui6nrvirqqjrbv7rduq3v11blrqi5r1qirgfvjvfvhb7f5bfbfvqui77773vr"
+    "313f7jrr1vnivnb670vqbf3bnbbgb6n07v8novbnvi67ifv77v87r8nbbju8735b7q98nfl7rnrb7vju"
+    "d3rhbud3v9ibrrjnbonbvbln7elnnv1133inivrvbrjub7fiv87gfvurb16vl9vrnj77j7vtb3v911rq"
+)
+
+
 def expand_profile(omitted_patterns, counts):
     groups = {pattern: [] for pattern in omitted_patterns}
     for omitted, negative, count in counts:
@@ -90,6 +127,45 @@ def gram_fixture():
         for mask, omitted in zip(lower_rows[1:], omitted_lower[1:], strict=True)),
         "lower row margins")
     return top, lower, top_rows, lower_rows
+
+
+def mod8_fixture(top, lower, top_rows, lower_rows):
+    alternate_top = [int(symbol, 32) for symbol in MOD8_UPPER_ROWS]
+    alternate_lower = [int(symbol, 32) for symbol in MOD8_LOWER_ROWS]
+    require(alternate_top[0] == 0 and alternate_lower[0] == 31, "specified border signs")
+    omitted_top = rows_from_columns(TOP, top[:3])
+    omitted_lower = rows_from_columns(BOTTOM, [lower[j] for j in LOWER_OMISSIONS])
+    require(Counter(zip(omitted_top, alternate_top, strict=True))
+            == Counter(zip(omitted_top, top_rows, strict=True)), "upper joint counts preserved")
+    require(Counter(zip(omitted_lower, alternate_lower, strict=True))
+            == Counter(zip(omitted_lower, lower_rows, strict=True)), "lower joint counts preserved")
+    return positive_columns(alternate_top), positive_columns(alternate_lower)
+
+
+def match_by_residues(upper_dots, negative_lower_dots):
+    """Pair within exact fibers, then merge fibers at successively smaller moduli."""
+    pending_upper = list(range(len(upper_dots)))
+    pending_lower = list(range(len(negative_lower_dots)))
+    pairs = []
+    for modulus, expected in ((4096, 8), (64, 20), (32, 281), (16, 887), (8, 1193)):
+        buckets = defaultdict(list)
+        for index in pending_lower:
+            buckets[tuple(value % modulus for value in negative_lower_dots[index])].append(index)
+        unmatched_upper = []
+        used_lower = set()
+        for index in pending_upper:
+            bucket = buckets[tuple(value % modulus for value in upper_dots[index])]
+            if bucket:
+                lower_index = bucket.pop()
+                pairs.append((index, lower_index))
+                used_lower.add(lower_index)
+            else:
+                unmatched_upper.append(index)
+        require(len(pairs) == expected, f"paired vectors modulo {modulus}")
+        pending_upper = unmatched_upper
+        pending_lower = [index for index in pending_lower if index not in used_lower]
+    require(not pending_upper and not pending_lower, "all retained columns paired")
+    return pairs
 
 
 def main():
@@ -123,6 +199,18 @@ def main():
     require(mixed == 247, "indexed pairing mixed cancellation count")
     print("  five-column fixture: row and column balance, new/new orthogonality, omitted Gram equality")
     print(f"  indexed pairing cancels {mixed}/{len(rho) * WIDTH} mixed inner products")
+
+    alt_top, alt_lower = mod8_fixture(top, lower, top_rows, lower_rows)
+    upper_dots = correlations(top[3:], alt_top, TOP)
+    negative_lower_dots = [[-value for value in row]
+                           for row in correlations(retained_lower, alt_lower, BOTTOM)]
+    pairs = match_by_residues(upper_dots, negative_lower_dots)
+    mixed_dots = [x - y for i, j in pairs
+                  for x, y in zip(upper_dots[i], negative_lower_dots[j], strict=True)]
+    require(all(value % 8 == 0 for value in mixed_dots), "all mixed dots vanish modulo 8")
+    require(mixed_dots.count(0) == 1101, "exact mixed zero count with modular pairing")
+    print("  same grouped profile: all 1193 vectors paired modulo 8, including 887 modulo 16 and 281 modulo 32")
+    print(f"  modular pairing cancels {mixed_dots.count(0)}/{len(mixed_dots)} mixed inner products exactly")
 
 
 if __name__ == "__main__":

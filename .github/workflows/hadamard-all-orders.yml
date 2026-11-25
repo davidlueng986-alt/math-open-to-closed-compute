@@ -31,6 +31,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/defect12_mod8.py
           python3 -B jobs/hadamard-all-orders/defect12_exact.py
           python3 -B jobs/hadamard-all-orders/defect12_mod16.py
+          python3 -B jobs/hadamard-all-orders/defect12_mod16_family.py
           c++ -O3 -std=c++20 -Wall -Wextra -Werror jobs/hadamard-all-orders/paley_omissions.cpp -o "$RUNNER_TEMP/paley_omissions"
           "$RUNNER_TEMP/paley_omissions"
       - name: Install pinned Lean 4.36.0

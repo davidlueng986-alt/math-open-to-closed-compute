@@ -53,6 +53,8 @@ For the row Gram, the original error is \(32E=HH^{\mathsf T}-2396I\) with \(E\) 
 \]
 The [standalone verifier](defect12_mod16.py) reconstructs these matrices using the Python standard library. It checks the exact frame identities and minor, both Gram congruences, and the row product condition directly. Its integral \(U\) basis is the usual \(D_{12}\) root basis with \(e_0-e_1\) replaced by \(\tfrac12\mathbf1\). This replacement halves the covolume from 2 to 1.
 
+The same tetrad pattern, with a parity-dependent affine minor certificate, gives a model for every multiplier \(t=4r+3\), \(r\ge1\). At orders 28, 44, and 60 it gives exact maximal partial Hadamards. [Parametric construction and certificates](MOD16_DEFECT12_FAMILY.md)
+
 ## A general reduction for the row checks
 
 Let \(n=4t\) with \(t\) odd. Let \(P\) be an integral \(n\times n\) matrix with first column \(\mathbf1_n\), and with entries in each column of constant parity. Let \(D=\operatorname{diag}(1,D_1)\), where \(D_1\) is integral symmetric unimodular. Write \(r=P_{0,1:}\) for the row after its first entry, and assume \(rD_1^{-1}r^{\mathsf T}=n-1\). Put \(v=n-1\), \(\mathbf1=\mathbf1_v\), and
