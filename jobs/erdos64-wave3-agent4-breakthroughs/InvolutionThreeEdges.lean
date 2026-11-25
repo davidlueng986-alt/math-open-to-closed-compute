@@ -30,7 +30,7 @@ def walkDropAddedEdge {α : Type u} {H₀ : SimpleGraph α} {q₁ q₂ : α} :
         apply hno
         rw [Walk.edges_cons, List.mem_cons]
         left
-        rcases hedge.1 with ⟨h1, h2⟩ | ⟨h1, h2⟩
+        rcases (SimpleGraph.edge_adj.mp hedge).1 with ⟨h1, h2⟩ | ⟨h1, h2⟩
         · rw [h1, h2]
         · rw [h1, h2, Sym2.eq_swap]
     .cons hab0 (walkDropAddedEdge rest (fun hm => hno (by rw [Walk.edges_cons]; exact List.mem_cons_of_mem _ hm)))
@@ -164,7 +164,7 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
                       exact hnod.1 hy_in_w'
                 have hrest'_path : rest'.IsPath := Walk.IsPath.mk' hrest'_nodup
                 obtain ⟨_, w', hw'⟩ := hlast rest' hrest'_path q₂ hmem_r'
-                have hc'_first : c'.getVert 1 = b := by rw [hce]; simp [Walk.getVert_cons]
+                have hc'_first : c'.getVert 1 = b := by rw [hce]; simp
                 have hcr_rev : cr.reverse = c' := Walk.reverse_reverse c'
                 rw [hcre, Walk.reverse_cons, hw'] at hcr_rev
                 have hc'_first2 : c'.getVert 1 = q₂ := by rw [← hcr_rev]; simp
@@ -201,7 +201,9 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
     have hσ_inj : Function.Injective σ := Function.LeftInverse.injective hinv
     let p₂ : G.Walk (σ v₂) (σ u₁) := (p₁.map f).reverse
     have hp₂len : p₂.length + 1 = 2 ^ k := by
-      dsimp only [p₂]; rw [Walk.length_reverse, Walk.length_map]; exact hp₁len
+      have h1 : (p₁.map f).reverse.length = p₁.length :=
+        (Walk.length_reverse _).trans (Walk.length_map _ _)
+      exact (congrArg (· + 1) h1).trans hp₁len
     have hp₂supp : p₂.support = (p₁.support.map σ).reverse := by
       simp [p₂, Walk.support_reverse, Walk.support_map, f, mapWalkAut]
     have hp₂nodup : p₂.support.Nodup := by

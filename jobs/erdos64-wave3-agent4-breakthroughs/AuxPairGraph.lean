@@ -192,7 +192,6 @@ lemma c4_free_card4_deg_sum_le [DecidableEq α] (F : SimpleGraph α) [DecidableR
     | omega
     | exact hc4 a b c d hab hac had hbc hbd hcd h1 h4 h6 h3.symm
     | exact hc4 a b d c hab had hac hbd hbc hcd.symm h1 h5 h6.symm h2.symm
-    | exact hc4 a c d b hac had hab hcd hbc.symm hbd.symm h2 h6 h5.symm h1.symm
     | exact hc4 a c b d hac hab had hbc.symm hcd hbd h2 h4.symm h5 h3.symm
 
 /-- For every `C4Free` and `NearFree` simple graph, `∑_{v ∈ S} deg_{F[S]}(v) ≤ 4 * |S| - 8`
@@ -483,6 +482,7 @@ lemma liftSubdivWalk_nodup {G : SimpleGraph V} {F : SimpleGraph α}
     have hq_split : q.support = v :: q.support.tail := (q.cons_tail_support).symm
     have hsn' : v ∉ q.support.tail ∧ q.support.tail.Nodup :=
       List.nodup_cons.mp (hq_split ▸ hsn)
+    have hnot_uv : s(u, v) ∉ q.edges := (List.nodup_cons.mp hen).1
     have hqe : q.edges.Nodup := (List.nodup_cons.mp hen).2
     have hne_uv : ∀ e ∈ q.edges, e ∈ F.edgeSet := fun e he => q.edges_subset_edgeSet he
     simp only [liftSubdivWalk, Walk.support_cons, List.tail_cons]
@@ -495,7 +495,7 @@ lemma liftSubdivWalk_nodup {G : SimpleGraph V} {F : SimpleGraph α}
         rcases hm2 with ⟨x, _, hx⟩ | ⟨e, he, heq⟩
         · exact hmid_disj u v huv x hx.symm
         · have heq' : e = s(u, v) := hmid_inj e s(u, v) (hne_uv e he) huv heq
-          exact (List.nodup_cons.mp hen).1 (heq' ▸ he)
+          exact hnot_uv (heq' ▸ he)
     · intro hm'
       rw [liftSubdivWalk_mem_tail] at hm'
       rcases hm' with ⟨x, hx, hxi⟩ | ⟨e, he, heq⟩
@@ -647,13 +647,13 @@ lemma cubic_at_most_two_high_neighbors [Fintype V] [DecidableEq V]
     `wt(M 1_S) + ∑_{x ∈ S} deg_{F_S}(x) = ∑_{x ∈ S} deg_G(x)`. -/
 lemma class_h_syndrome_plus_pair_deg [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
-    (z : {v : V // 4 ≤ G.degree v} → ZMod 2) :
+    (z : {v : V // 4 ≤ G.degree v} → ZMod 2)
+    [DecidableRel (highPairGraph G (Finset.univ.filter (fun x => z x = 1))).Adj] :
     let V₄ := {v : V // 4 ≤ G.degree v}
     let V₃ := {v : V // G.degree v = 3}
     let R : V₄ → V₃ → Prop := fun a y => G.Adj a.1 y.1
     let S : Finset V₄ := Finset.univ.filter (fun x => z x = 1)
     let F := highPairGraph G S
-    letI : DecidableRel F.Adj := fun _ _ => Classical.dec _
     Fintype.card {y : V₃ // syndrome R z y = 1} + (∑ x : S, F.degree x) =
       ∑ x : S, G.degree x.1.1 := by
   classical
@@ -745,9 +745,13 @@ lemma class_h_syndrome_plus_pair_deg [Fintype V] [DecidableEq V]
             if t then ⟨p.1.1, p.2.2.1⟩ else ⟨p.1.2, p.2.2.2⟩
           have hf : Function.Injective f := by
             intro t1 t2 ht
-            cases t1 <;> cases t2 <;> simp_all [f, p.2.1, p.2.1.symm]
+            cases t1 <;> cases t2
+            · rfl
+            · exfalso; exact p.2.1 (congrArg Subtype.val ht).symm
+            · exfalso; exact p.2.1 (congrArg Subtype.val ht)
+            · rfl
           have hc := Fintype.card_le_of_injective f hf
-          simp at hc; exact hc
+          rwa [Fintype.card_bool] at hc
         omega
     let f_all : (Σ y : V₃, P y) → (Σ x : S, F.neighborSet x) := fun p =>
       ⟨p.2.1.1, ⟨p.2.1.2, ⟨p.2.2.1, ⟨p.1.1, p.1.2, p.2.2.2.1, p.2.2.2.2⟩⟩⟩⟩
@@ -811,9 +815,14 @@ lemma highPairGraph_c4_near_free [Fintype V] [DecidableEq V]
       obtain ⟨w, hw3, hxw, hyw⟩ := hxy.2
       exact ⟨w, hw3, fun z hz => by rcases Sym2.mem_iff.mp hz with rfl | rfl; exact hxw; exact hyw⟩
     have hsp := Classical.choose_spec hex
-    dsimp only [mid]
-    rw [dif_pos hex]
-    exact ⟨hsp.1, hsp.2 x (Sym2.mem_mk_left x y), hsp.2 y (Sym2.mem_mk_right x y)⟩
+    have hmeq : mid s(x, y) = Classical.choose hex := by
+      dsimp only [mid]
+      exact dite_eq_left.mpr (fun h => absurd hex h)
+    have hgoal : ∀ w : V, w = Classical.choose hex →
+        G.degree w = 3 ∧ G.Adj x.1.1 w ∧ G.Adj y.1.1 w := by
+      rintro _ rfl
+      exact ⟨hsp.1, hsp.2 x (Sym2.mem_mk_left x y), hsp.2 y (Sym2.mem_mk_right x y)⟩
+    exact hgoal (mid s(x, y)) hmeq
   have hmid_disj : ∀ x y : S, F.Adj x y → ∀ z : S, mid s(x, y) ≠ ι z := by
     intro x y hxy z heq
     have h3 := (hmid_spec x y hxy).1
