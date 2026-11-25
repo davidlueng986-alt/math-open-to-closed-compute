@@ -140,7 +140,8 @@ theorem eval_eq (p l : Fin 13 → Bool) :
     simp only [witness, Circuit.eval, Circuit.wires, List.foldl_cons, List.foldl_nil,
       List.map_cons, List.map_nil, List.cons_append, List.nil_append,
       List.getD_cons_zero, List.getD_cons_succ, gateAnd, gateOr]
-  rw [hv, factor] <;> rfl
+  rw [hv, factor]
+  rfl
 
 private theorem foldl_or (xs : List Bool) (a : Bool) :
     xs.foldl (fun x y => x || y) a = (a || xs.any id) := by
