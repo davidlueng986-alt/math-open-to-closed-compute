@@ -34,7 +34,7 @@ theorem indep_neighborhood_expansion {V : Type u} [Fintype V] [DecidableEq V]
   let X := {x : V // x ∈ I}
   let Y := {y : V // y ∈ nbh G I}
   let R : X → Y → Prop := fun x y => G.Adj x.1 y.1
-  let _ : DecidableRel R := fun x y => Classical.propDecidable (R x y)
+  let _ : DecidableRel R := fun x y => inferInstanceAs (Decidable (G.Adj x.1 y.1))
   have hsep : ∀ (x : X) (y : Y), x.1 ≠ y.1 := by
     intro x y heq
     have hy : ∃ a ∈ I, G.Adj a y.1 := (Finset.mem_filter.mp y.2).2
@@ -68,7 +68,7 @@ theorem indep_neighborhood_expansion {V : Type u} [Fintype V] [DecidableEq V]
       intro a b hab
       apply Subtype.ext
       apply Subtype.ext
-      exact congrArg Subtype.val hab
+      exact congrArg (fun t : G.neighborSet y.1 => t.1) hab
     have hc := Fintype.card_le_of_injective f hf
     rw [SimpleGraph.card_neighborSet_eq_degree] at hc
     exact hc.trans (hdegN y.1 y.2)
@@ -93,7 +93,7 @@ theorem indep_syndrome_no_kernel {V : Type u} [Fintype V] [DecidableEq V]
   let X := {x : V // x ∈ I}
   let Y := {y : V // y ∈ nbh G I}
   let R : X → Y → Prop := fun x y => G.Adj x.1 y.1
-  let _ : DecidableRel R := fun x y => Classical.propDecidable (R x y)
+  let _ : DecidableRel R := fun x y => inferInstanceAs (Decidable (G.Adj x.1 y.1))
   obtain ⟨w⟩ := support_nonempty z hz
   have hpos0 : 0 < G.degree w.1.1 := by rw [hdegI w.1.1 w.1.2]; decide
   obtain ⟨y0, hxy0⟩ := (G.degree_pos_iff_exists_adj w.1.1).mp hpos0
@@ -120,21 +120,20 @@ theorem indep_syndrome_no_kernel {V : Type u} [Fintype V] [DecidableEq V]
     let f : {x : X // R x y} → G.neighborSet y.1 := fun x => ⟨x.1.1, x.2.symm⟩
     have hf : Function.Injective f := by
       intro a b hab
-      apply Subtype.ext; apply Subtype.ext; exact congrArg Subtype.val hab
+      apply Subtype.ext; apply Subtype.ext
+      exact congrArg (fun t : G.neighborSet y.1 => t.1) hab
     have hc := Fintype.card_le_of_injective f hf
     rw [SimpleGraph.card_neighborSet_eq_degree] at hc
     exact hc.trans (hdegN y.1 y.2)
   let S := Support z
   let R0 : S → Y → Prop := fun x y => R x.1 y
-  let _ : DecidableRel R0 := fun x y => Classical.propDecidable (R0 x y)
+  let _ : DecidableRel R0 := fun x y => inferInstanceAs (Decidable (G.Adj x.1.1 y.1))
   let f0 : S → V := fun x => x.1.1
   have hf0 : Function.Injective f0 := fun _ _ h => Subtype.ext (Subtype.ext h)
   have hsize0 : Fintype.card S < Fintype.card V := (Fintype.card_subtype_le _).trans_lt hsize
   have hrow (y : Y) : Fintype.card {x // R0 x y} = 0 ∨ Fintype.card {x // R0 x y} = 2 := by
     have hm' := support_row_mod R z y
-    have hzy : syndrome R z y = 0 := by
-      have h0 := congrFun hzero y
-      simpa [R] using h0
+    have hzy : syndrome R z y = 0 := congrFun hzero y
     rw [hzy] at hm'
     simp only [ZMod.val_zero] at hm'
     have hb := (support_row_le R z y).trans (hmid y)
@@ -165,7 +164,9 @@ theorem dual_kernel_non_j3_ge_two {V : Type u} [Fintype V] [DecidableEq V]
   classical
   by_contra hlt
   let B := S.filter (fun y => (G.neighborFinset y ∩ I).card ≠ 3)
-  have hBcard : B.card ≤ 1 := by omega
+  have hBcard : B.card ≤ 1 := by
+    change (S.filter (fun y => (G.neighborFinset y ∩ I).card ≠ 3)).card ≤ 1
+    omega
   obtain ⟨a0, ha0S, ha0deg⟩ := ha_ex
   have hI_nonempty : I.Nonempty := by
     have hpos : 0 < (G.neighborFinset a0 ∩ I).card := by omega
@@ -175,7 +176,7 @@ theorem dual_kernel_non_j3_ge_two {V : Type u} [Fintype V] [DecidableEq V]
   let X := {y : V // y ∈ S}
   let Y := {x : V // x ∈ I}
   let R : X → Y → Prop := fun y x => G.Adj y.1 x.1
-  let _ : DecidableRel R := fun y x => Classical.propDecidable (R y x)
+  let _ : DecidableRel R := fun y x => inferInstanceAs (Decidable (G.Adj y.1 x.1))
   have hsep : ∀ (y : X) (x : Y), y.1 ≠ x.1 := by
     intro y x heq
     exact Finset.disjoint_left.mp hdisj y.2 (heq ▸ x.2)
@@ -214,32 +215,33 @@ theorem dual_kernel_non_j3_ge_two {V : Type u} [Fintype V] [DecidableEq V]
       by_contra hne3
       exact hy (Finset.mem_filter.mpr ⟨y.2, hne3⟩)
     omega
+  have ha0_ge3 : 3 ≤ Fintype.card {x : Y // R ⟨a0, ha0S⟩ x} := by
+    rw [hdeg_eq]
+    exact ha0deg.ge
   have hdegrees : ∃ a w : X,
       3 ≤ Fintype.card {x : Y // R a x} ∧
       ∀ y : X, y ≠ w → 3 ≤ Fintype.card {x : Y // R y x} := by
     by_cases hBempty : B = ∅
-    · refine ⟨⟨a0, ha0S⟩, ⟨a0, ha0S⟩, ?_, ?_⟩
-      · rw [hdeg_eq]; omega
-      · intro y _
-        apply hdeg_of_not_B y
-        simp [hBempty]
+    · refine ⟨⟨a0, ha0S⟩, ⟨a0, ha0S⟩, ha0_ge3, ?_⟩
+      intro y _
+      apply hdeg_of_not_B y
+      simp [hBempty]
     · obtain ⟨w0, hw0B⟩ := Finset.nonempty_iff_ne_empty.mpr hBempty
       have hw0S : w0 ∈ S := (Finset.mem_filter.mp hw0B).1
-      refine ⟨⟨a0, ha0S⟩, ⟨w0, hw0S⟩, ?_, ?_⟩
-      · rw [hdeg_eq]; omega
-      · intro y hyw
-        apply hdeg_of_not_B y
-        intro hyB
-        have hsub : ({w0, y.1} : Finset V) ⊆ B := by
-          intro t ht
-          simp only [Finset.mem_insert, Finset.mem_singleton] at ht
-          rcases ht with rfl | rfl
-          · exact hw0B
-          · exact hyB
-        have hne : w0 ≠ y.1 := fun h => hyw (Subtype.ext h.symm)
-        have h2 : ({w0, y.1} : Finset V).card = 2 := by simp [hne]
-        have hle := Finset.card_le_card hsub
-        omega
+      refine ⟨⟨a0, ha0S⟩, ⟨w0, hw0S⟩, ha0_ge3, ?_⟩
+      intro y hyw
+      apply hdeg_of_not_B y
+      intro hyB
+      have hsub : ({w0, y.1} : Finset V) ⊆ B := by
+        intro t ht
+        simp only [Finset.mem_insert, Finset.mem_singleton] at ht
+        rcases ht with rfl | rfl
+        · exact hw0B
+        · exact hyB
+      have hne : w0 ≠ y.1 := fun h => hyw (Subtype.ext h.symm)
+      have h2 : ({w0, y.1} : Finset V).card = 2 := by simp [hne]
+      have hle := Finset.card_le_card hsub
+      omega
   have hs := safe_step_of_paired_incidence G
       (fun y : X => y.1) (fun x : Y => x.1)
       Subtype.val_injective Subtype.val_injective hsep R

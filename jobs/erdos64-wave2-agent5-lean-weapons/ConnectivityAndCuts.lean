@@ -20,7 +20,7 @@ theorem minimal_bad_no_cut_vertex {V : Type u} [Fintype V] [DecidableEq V]
     ∃ a ∈ A.erase v, ∃ b ∈ B.erase v, G.Adj a b := by
   classical
   by_contra hno
-  push_neg at hno
+  push Not at hno
   obtain ⟨_, w, hw⟩ := hm.1
   have kill_side : ∀ (S T : Finset V),
       S ∪ T = Finset.univ → S ∩ T = {v} → 2 ≤ S.card → 2 ≤ T.card →
@@ -92,13 +92,16 @@ theorem minimal_bad_two_edge_connected {V : Type u} [Fintype V] [DecidableEq V]
   classical
   by_contra hlt
   let E := Finset.univ.filter (fun e : V × V => e.1 ∈ S ∧ e.2 ∉ S ∧ G.Adj e.1 e.2)
-  have hE1 : E.card ≤ 1 := by omega
+  have hE1 : E.card ≤ 1 := by
+    change (Finset.univ.filter (fun e : V × V => e.1 ∈ S ∧ e.2 ∉ S ∧ G.Adj e.1 e.2)).card ≤ 1
+    omega
   obtain ⟨_, w, hw⟩ := hm.1
   have kill_side : ∀ (T : Finset V), T.Nonempty → Tᶜ.Nonempty → w ∉ T →
       (Finset.univ.filter (fun e : V × V => e.1 ∈ T ∧ e.2 ∉ T ∧ G.Adj e.1 e.2)).card ≤ 1 →
       False := by
     intro T hT hTc hwT hcut1
     let ET := Finset.univ.filter (fun e : V × V => e.1 ∈ T ∧ e.2 ∉ T ∧ G.Adj e.1 e.2)
+    have hET1 : ET.card ≤ 1 := hcut1
     by_cases hT1 : T.card = 1
     · obtain ⟨x, hxT⟩ := Finset.card_eq_one.mp hT1
       have hdeg_le : G.degree x ≤ 1 := by
@@ -113,7 +116,7 @@ theorem minimal_bad_two_edge_connected {V : Type u} [Fintype V] [DecidableEq V]
           exact congrArg (fun p => p.1.2) hab
         have hc := Fintype.card_le_of_injective f hf
         rw [SimpleGraph.card_neighborSet_eq_degree, Fintype.card_coe] at hc
-        exact hc.trans hcut1
+        exact hc.trans hET1
       have h2 := no_small_defect G hm x
       omega
     · have hT2 : 2 ≤ T.card := by
