@@ -54,6 +54,37 @@ REFINED_LAST_WORDS = (
     ),
 )
 
+POSITIVE_MOD8 = (
+    (
+        "..+...-.-.--+....----+-.-+......--+..+-.-++---.--.++....-.+."
+        "+..-+----..+.+..--.-....-.------..-..-.+..++.....++++++-++.."
+        "...+.+..++..++-++--.++-.....-+.-..-+-++--.++-..++..+...+.+-+"
+        "----..-.-.-..--......++-+-++.-....+.-+.-+...++++--..++......"
+        "+.-..-++++-++-.-..--...+..+.+.-++-+-..+-.-..-++.....+--++-+"
+    ),
+    (
+        "......+.+..++..-+-++-+-.--......+.-+.+-+---++-.-..++......-."
+        "+-++-+-++..-.+..++...+..+--+-++-.....-.-..-++..++++----++..."
+        "...+.+.--++-+-+-+--..+-......+--.--+-+-++.+.+..+-....-.--+--"
+        "+---....+.+..++.+..-+---++-+......-.+..++.-++++---..-+......"
+        "-.-..+--+-+---.-..-+.....--.+--+-+++...-.-..--..+..+---+-++"
+    ),
+    (
+        ".++.......++.......+-.......--.......--.......-+......+++---"
+        "+--.-...-+...++.......+...--...-...++...-...++..++++-+--++-+"
+        "-+--+-.-...+-...-...++...-+.......-+......-+-----++---++-+--"
+        ".++.......++.......+-.......-...-+...--......--++-+-++.+...-"
+        "+...-...++...-...++...-...-+...-...--...-...--..+--++++-+++"
+    ),
+    (
+        "..+-...+...-+...+...+-...+...+-...+...-+...+...--...+.-+++-+"
+        "+--......++...+-...-.......++.......+-.......-+.-++---++-++-"
+        "++-+++......+-.......--...-+...-...-+...-.+++--+-+--+--+---+"
+        "..-+...-...-+...+...++...+.......-+...++...-.++--+--+-......"
+        "--.......+-.......--.......--.......++.......--.+-+-+--+---"
+    ),
+)
+
 
 def word(text):
     return tuple({"+": 1, "-": -1, ".": 0}[symbol] for symbol in text)
@@ -92,16 +123,20 @@ def negative_words():
     return final
 
 
-def verify_positive(positive, negative, inverse_pairs):
+def verify_positive(positive, negative, inverse_pairs, modulus, exact_quotient):
     assert all(len(row) == 299 for row in positive)
     assert all(s * s + t * t == 1 for a, b in zip(positive, negative, strict=True)
                for s, t in zip(a, b, strict=True))
     assert tuple(map(sum, positive)) == (0, 1, 0, 0)
     corr = periodic(positive)
     assert corr[0] == 597
-    assert all(value % 4 == 2 for value in corr[1:])
+    assert all((value + 2) % modulus == 0 for value in corr[1:])
     assert sum(value == -2 for value in corr[1:150]) == inverse_pairs
     compressed = tuple(tuple(sum(row[r::13]) for r in range(13)) for row in positive)
+    if not exact_quotient:
+        quotient_corr = periodic(compressed)
+        assert max(abs(a - b) for a, b in zip(quotient_corr, [553] + [-46] * 12, strict=True)) == 168
+        return
     assert periodic(compressed) == [553] + [-46] * 12
     buckets = [
         [lag for lag in range(1, 150) if min(lag % 13, (-lag) % 13) == residue]
@@ -138,20 +173,21 @@ def support_rank(supports):
     return len(pivots)
 
 
-def verify_full_source(positive, negative, exact_lags, maximum, squared):
+def verify_full_source(positive, negative, exact_lags, maximum, squared, modulus, exact_quotient):
     binary = tuple(tuple(a[i % 299] + (-1)**i * b[i % 299] for i in range(598))
                    for a, b in zip(positive, negative, strict=True))
     assert all(set(row) <= {-1, 1} for row in binary)
     assert tuple(map(sum, binary)) == (0, 2, 0, 0)
     corr = periodic(binary)
     assert corr[0] == 2392
-    assert all(value % 8 == 4 for value in corr[1:])
+    assert all((value + 4) % modulus == 0 for value in corr[1:])
     residuals = [value + 4 for value in corr[1:]]
     assert residuals.count(0) == exact_lags
     assert max(map(abs, residuals)) == maximum
     assert sum(value**2 for value in residuals) == squared
-    compressed = tuple(tuple(sum(row[r::26]) for r in range(26)) for row in binary)
-    assert periodic(compressed) == [2304] + [-92] * 25
+    if exact_quotient:
+        compressed = tuple(tuple(sum(row[r::26]) for r in range(26)) for row in binary)
+        assert periodic(compressed) == [2304] + [-92] * 25
 
 
 def verify_fixed_pair_obstruction(positive):
@@ -190,10 +226,15 @@ def main():
     assert support_rank(positive_supports) == 152
     initial = tuple(map(word, POSITIVE_MOD4_C13))
     refined = initial[:2] + tuple(map(word, REFINED_LAST_WORDS))
-    verify_positive(initial, negative, 22)
-    verify_positive(refined, negative, 45)
-    verify_full_source(initial, negative, 89, 80, 414720)
-    verify_full_source(refined, negative, 181, 64, 289792)
+    mod16 = tuple(map(word, POSITIVE_MOD8))
+    verify_positive(initial, negative, 22, 4, exact_quotient=True)
+    verify_positive(refined, negative, 45, 4, exact_quotient=True)
+    verify_positive(mod16, negative, 30, 8, exact_quotient=False)
+    verify_full_source(initial, negative, 89, 80, 414720, 8, exact_quotient=True)
+    verify_full_source(refined, negative, 181, 64, 289792, 8, exact_quotient=True)
+    verify_full_source(mod16, negative, 121, 112, 833536, 16, exact_quotient=False)
+    assert all(initial[2][j] * initial[3][(287 - j) % 299]
+               == mod16[2][j] * mod16[3][(287 - j) % 299] for j in range(299))
     verify_reflected_trade(initial, refined)
     verify_fixed_pair_obstruction(refined)
     if "--words" in argv:
@@ -204,6 +245,7 @@ def main():
         print("Both positive fixtures have exact C13 and modulo four, with 22 and 45 exact inverse pairs.")
         print("Refined full C598 source: 181 exact nonzero lags, maximum residual 64, squared residual sum 289792.")
         print("Keeping its first two positive words fixed prevents exact completion by a Rayleigh quotient.")
+        print("Separate full C598 source: all lags modulo 16 and 121 exact, with the same exact negative half.")
 
 
 if __name__ == "__main__":
