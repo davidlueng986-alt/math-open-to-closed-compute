@@ -723,7 +723,7 @@ private theorem high_code_midpoint_bridge {V : Type u} [Fintype V] [DecidableEq 
       obtain ⟨_, y, ha, hb⟩ := he
       have hex' : ∃ y : V₃, ∀ x ∈ s(a, b), R' x y := ⟨y, Sym2.ball.mpr ⟨ha, hb⟩⟩
       unfold midY
-      rw [dif_pos hex']
+      simp only [hex', dite_true]
       exact Sym2.ball.mp (Classical.choose_spec hex')
     have hinjMid : ∀ e ∈ H.edgeSet, ∀ e' ∈ H.edgeSet, midY e = midY e' → e = e' := by
       intro e he e' he' hmeq
@@ -832,9 +832,10 @@ private theorem high_code_midpoint_bridge {V : Type u} [Fintype V] [DecidableEq 
     have hc := Fintype.card_congr e_split
     rw [hall, Fintype.card_sum] at hc
     exact hc.symm
-  change (∑ x : S, H.degree x) + Fintype.card O = ∑ x : S, G.degree x.1.1
-  rw [← hsum_del, ← Finset.sum_add_distrib]
-  exact Finset.sum_congr rfl (fun x _ => hdeg_eq x)
+  have hsum_all : (∑ x : S, H.degree x) + Fintype.card O = ∑ x : S, G.degree x.1.1 := by
+    rw [← hsum_del, ← Finset.sum_add_distrib]
+    exact Finset.sum_congr rfl (fun x _ => hdeg_eq x)
+  convert hsum_all
 
 /-- Arithmetic helper: `∑_{x : S} deg(x) = 4 * |S| + ∑_{x : S} (deg(x) - 4)`. -/
 private theorem sum_deg_eq_four_add_excess {V : Type u} [Fintype V] [DecidableEq V]
@@ -860,6 +861,8 @@ theorem high_code_weight_ge_six {V : Type u} [Fintype V] [DecidableEq V]
       Fintype.card {y : V₃ // syndrome R z y = 1} := by
   classical
   intro V₄ V₃ R
+  suffices h : 6 + (∑ x : Support z, (G.degree x.1.1 - 4)) ≤
+      Fintype.card {y : V₃ // syndrome R z y = 1} by convert h
   obtain ⟨H, _, h2, hbridge⟩ := high_code_midpoint_bridge G hm hH z
   have hsum : (∑ x : Support z, H.degree x) + Fintype.card {y : V₃ // syndrome R z y = 1} =
       ∑ x : Support z, G.degree x.1.1 := by convert hbridge
@@ -880,6 +883,8 @@ theorem high_code_weight_ge_eight {V : Type u} [Fintype V] [DecidableEq V]
       Fintype.card {y : V₃ // syndrome R z y = 1} := by
   classical
   intro V₄ V₃ R
+  suffices h : 8 + (∑ x : Support z, (G.degree x.1.1 - 4)) ≤
+      Fintype.card {y : V₃ // syndrome R z y = 1} by convert h
   obtain ⟨H, hc4, h2, hbridge⟩ := high_code_midpoint_bridge G hm hH z
   have hsum : (∑ x : Support z, H.degree x) + Fintype.card {y : V₃ // syndrome R z y = 1} =
       ∑ x : Support z, G.degree x.1.1 := by convert hbridge
@@ -900,6 +905,8 @@ theorem high_code_weight_ge_ten {V : Type u} [Fintype V] [DecidableEq V]
       Fintype.card {y : V₃ // syndrome R z y = 1} := by
   classical
   intro V₄ V₃ R
+  suffices h : 10 + (∑ x : Support z, (G.degree x.1.1 - 4)) ≤
+      Fintype.card {y : V₃ // syndrome R z y = 1} by convert h
   obtain ⟨H, hc4, h2, hbridge⟩ := high_code_midpoint_bridge G hm hH z
   have hsum : (∑ x : Support z, H.degree x) + Fintype.card {y : V₃ // syndrome R z y = 1} =
       ∑ x : Support z, G.degree x.1.1 := by convert hbridge

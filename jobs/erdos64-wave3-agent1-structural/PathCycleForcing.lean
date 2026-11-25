@@ -37,9 +37,9 @@ private def liftAvoidEdge {G : SimpleGraph V} {S : Set V}
       · exact h
       · exfalso
         have hsym : s(x, y) = s(a, b) := by
-          rcases h.1 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-          · rfl
-          · exact Sym2.eq_swap
+          rcases h.1 with ⟨hx, hy⟩ | ⟨hx, hy⟩
+          · rw [hx, hy]
+          · rw [hx, hy]; exact Sym2.eq_swap
         exact hne_edge hsym
     .cons hG (liftAvoidEdge q (fun hm => havoid (by rw [Walk.edges_cons, List.mem_cons]; exact Or.inr hm)))
 
@@ -82,7 +82,7 @@ private theorem extract_path_of_cycle_edge {W : Type u} [DecidableEq W]
   | nil => exact False.elim (hc₁.ne_nil hce)
   | @cons _ u _ hau rest =>
     by_cases hub : u = b
-    · subst hub
+    · subst u
       have hrest_path : rest.IsPath := by
         apply Walk.IsPath.mk'
         have hn := hc₁.support_nodup
@@ -104,9 +104,9 @@ private theorem extract_path_of_cycle_edge {W : Type u} [DecidableEq W]
             rw [Walk.edges_reverse, List.mem_reverse]; exact hmem₁
           rw [hre, Walk.edges_cons, List.mem_cons] at hmem_rev
           rcases hmem_rev with hfirst | hin
-          · rcases Sym2.eq_iff.mp hfirst with ⟨_, rfl⟩ | ⟨h1, _⟩
-            · rfl
-            · exact False.elim (hab h1)
+          · rcases Sym2.eq_iff.mp hfirst with ⟨_, hbw⟩ | ⟨_, hba⟩
+            · exact hbw.symm
+            · exact False.elim (hab hba.symm)
           · exfalso
             have hrest'_path : rest'.IsPath := by
               apply Walk.IsPath.mk'
@@ -118,7 +118,7 @@ private theorem extract_path_of_cycle_edge {W : Type u} [DecidableEq W]
             cases hrr : rest'.reverse with
             | nil =>
               have := congrArg Walk.edges hrr
-              rw [Walk.edges_reverse, List.reverse_eq_nil_iff] at this
+              rw [Walk.edges_reverse, Walk.edges_nil, List.reverse_eq_nil_iff] at this
               rw [this] at hin; simp at hin
             | @cons _ u' _ hau' rest'' =>
               have hu' : u' = u := by
@@ -129,13 +129,13 @@ private theorem extract_path_of_cycle_edge {W : Type u} [DecidableEq W]
                 rw [Walk.edges_reverse, List.mem_reverse]; exact hin
               rw [hrr, Walk.edges_cons, List.mem_cons] at hin_rr
               rcases hin_rr with h1 | h2
-              · rcases Sym2.eq_iff.mp h1 with ⟨_, rfl⟩ | ⟨h1, _⟩
-                · exact hub rfl
-                · exact hab h1
+              · rcases Sym2.eq_iff.mp h1 with ⟨_, hbu⟩ | ⟨_, hba⟩
+                · exact hub hbu.symm
+                · exact hab hba.symm
               · have ha_in : a ∈ rest''.support := Walk.fst_mem_support_of_mem_edges rest'' h2
                 have hnd := hrest'_path.reverse.support_nodup
                 rw [hrr, Walk.support_cons, List.nodup_cons] at hnd; exact hnd.1 ha_in
-        subst hwb
+        subst w
         have hrest'_path : rest'.IsPath := by
           apply Walk.IsPath.mk'
           have hn := hrev_cyc.support_nodup
@@ -305,6 +305,7 @@ theorem cubic_p3_fermat_cycle [Fintype V] [DecidableEq V]
       convert degree_sup_edge (G.induce S) hAB hnadj u
     have h2 : (G.induce S).degree u + (if G.Adj v u.1 then 1 else 0) = G.degree u.1 := by
       convert degree_delete_one G v u
+    have hle1 : (if G.Adj v u.1 then 1 else 0) ≤ 1 := by split_ifs <;> omega
     have h3 := hC u.1
     by_cases huA : u = A
     · simp only [huA, true_or, ite_true] at h1; omega
@@ -355,6 +356,7 @@ theorem defect_p3_fermat_cycle [Fintype V] [DecidableEq V]
       convert degree_sup_edge (G.induce S) hB12 hnadj u
     have h2 : (G.induce S).degree u + (if G.Adj w u.1 then 1 else 0) = G.degree u.1 := by
       convert degree_delete_one G w u
+    have hle1 : (if G.Adj w u.1 then 1 else 0) ≤ 1 := by split_ifs <;> omega
     have h3 : 3 ≤ G.degree u.1 := hw₀ u.1 (hww₀ ▸ u.2)
     by_cases hu1 : u = B₁
     · simp only [hu1, true_or, ite_true] at h1; omega
@@ -452,6 +454,7 @@ theorem defect_neighbor_p3_fermat_cycle [Fintype V] [DecidableEq V]
     have h1 : H.degree u = (G.induce S).degree u + (if u = A ∨ u = B then 1 else 0) := by
       convert degree_sup_edge (G.induce S) hAB hnadj u
     have h2 := hdeg_ind u
+    have hle1 : (if G.Adj b₁ u.1 then 1 else 0) ≤ 1 := by split_ifs <;> omega
     have h3 : 3 ≤ G.degree u.1 := hw₀ u.1 (hww₀ ▸ u.2.1)
     have hnotw : ¬ G.Adj w u.1 := by
       intro hadj

@@ -168,9 +168,11 @@ theorem hasPower_of_general_invQuot {G : SimpleGraph V} {σ : V → V}
       have hp₂tail : p₂.support.tail = p₁.support.tail.map σ := by
         rw [hp₂supp, ← List.map_tail]
       have hp_tail : p.support.tail = p₁.support.tail ++ p₂.support.tail := by
-        calc p.support.tail = (p₁.support ++ p₂.support.tail).tail := by rw [Walk.support_append]
-          _ = (u₀ :: p₁.support.tail ++ p₂.support.tail).tail := by rw [← p₁.cons_tail_support]
-          _ = p₁.support.tail ++ p₂.support.tail := rfl
+        change (p₁.append p₂).support.tail = p₁.support.tail ++ p₂.support.tail
+        rw [Walk.support_append]
+        cases hps : p₁.support with
+        | nil => exact False.elim (p₁.support_ne_nil hps)
+        | cons _ _ => rfl
       have hdisj : p₁.support.tail.Disjoint p₂.support.tail := by
         intro x hx1 hx2
         rw [hp₂tail] at hx2
@@ -277,9 +279,9 @@ private def dropAddedEdge {W : Type u} {H : SimpleGraph W} {a b u w : W}
       · exact h
       · exfalso
         have hsym : s(x, y) = s(a, b) := by
-          rcases h.1 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-          · rfl
-          · exact Sym2.eq_swap
+          rcases h.1 with ⟨hx, hy⟩ | ⟨hx, hy⟩
+          · rw [hx, hy]
+          · rw [hx, hy]; exact Sym2.eq_swap
         exact hne hsym
     .cons hH (dropAddedEdge q (fun hm => havoid (by rw [Walk.edges_cons, List.mem_cons]; exact Or.inr hm)))
 
@@ -318,7 +320,7 @@ private theorem extract_path_in_base {W : Type u} [DecidableEq W]
   | nil => exact False.elim (hc₁.ne_nil hce)
   | @cons _ u _ hau rest =>
     by_cases hub : u = b
-    · subst hub
+    · subst u
       have hrest_path : rest.IsPath := by
         apply Walk.IsPath.mk'
         have hn := hc₁.support_nodup
@@ -340,9 +342,9 @@ private theorem extract_path_in_base {W : Type u} [DecidableEq W]
             rw [Walk.edges_reverse, List.mem_reverse]; exact hmem₁
           rw [hre, Walk.edges_cons, List.mem_cons] at hmem_rev
           rcases hmem_rev with hfirst | hin
-          · rcases Sym2.eq_iff.mp hfirst with ⟨_, rfl⟩ | ⟨h1, _⟩
-            · rfl
-            · exact False.elim (hab h1)
+          · rcases Sym2.eq_iff.mp hfirst with ⟨_, hbw⟩ | ⟨_, hba⟩
+            · exact hbw.symm
+            · exact False.elim (hab hba.symm)
           · exfalso
             have hrest'_path : rest'.IsPath := by
               apply Walk.IsPath.mk'
@@ -354,7 +356,7 @@ private theorem extract_path_in_base {W : Type u} [DecidableEq W]
             cases hrr : rest'.reverse with
             | nil =>
               have := congrArg Walk.edges hrr
-              rw [Walk.edges_reverse, List.reverse_eq_nil_iff] at this
+              rw [Walk.edges_reverse, Walk.edges_nil, List.reverse_eq_nil_iff] at this
               rw [this] at hin; simp at hin
             | @cons _ u' _ hau' rest'' =>
               have hu' : u' = u := by
@@ -365,13 +367,13 @@ private theorem extract_path_in_base {W : Type u} [DecidableEq W]
                 rw [Walk.edges_reverse, List.mem_reverse]; exact hin
               rw [hrr, Walk.edges_cons, List.mem_cons] at hin_rr
               rcases hin_rr with h1 | h2
-              · rcases Sym2.eq_iff.mp h1 with ⟨_, rfl⟩ | ⟨h1, _⟩
-                · exact hub rfl
-                · exact hab h1
+              · rcases Sym2.eq_iff.mp h1 with ⟨_, hbu⟩ | ⟨_, hba⟩
+                · exact hub hbu.symm
+                · exact hab hba.symm
               · have ha_in : a ∈ rest''.support := Walk.fst_mem_support_of_mem_edges rest'' h2
                 have hnd := hrest'_path.reverse.support_nodup
                 rw [hrr, Walk.support_cons, List.nodup_cons] at hnd; exact hnd.1 ha_in
-        subst hwb
+        subst w
         have hrest'_path : rest'.IsPath := by
           apply Walk.IsPath.mk'
           have hn := hrev_cyc.support_nodup
@@ -419,7 +421,7 @@ private theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
     let p₂ : G.Walk (σ w₁) (σ u₂) := (p₁.map f).reverse
     let cyc : G.Walk u₂ u₂ := p₁.append (.cons hw₁_inv (p₂.append (.cons h2.symm .nil)))
     have hp₂len : p₂.length = 2 ^ k - 1 := by
-      rw [Walk.length_reverse, Walk.length_map, hp₁len]
+      simp only [p₂, Walk.length_reverse, Walk.length_map, hp₁len]
     have hcyclen : cyc.length = 2 ^ (k + 1) := by
       change (p₁.append (.cons hw₁_inv (p₂.append (.cons h2.symm .nil)))).length = 2 ^ (k + 1)
       rw [Walk.length_append, Walk.length_cons, Walk.length_append, Walk.length_cons,
@@ -444,10 +446,10 @@ private theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
     have hcyc_supp : cyc.support = p₁.support ++ (p₂.support ++ [u₂]) := by
       simp only [cyc, Walk.support_append, Walk.support_cons, Walk.support_nil, List.tail_cons]
     have hcyc_tail : cyc.support.tail = p₁.support.tail ++ p₂.support ++ [u₂] := by
-      calc cyc.support.tail = (p₁.support ++ (p₂.support ++ [u₂])).tail := by rw [hcyc_supp]
-        _ = (u₂ :: p₁.support.tail ++ (p₂.support ++ [u₂])).tail := by rw [← p₁.cons_tail_support]
-        _ = p₁.support.tail ++ (p₂.support ++ [u₂]) := rfl
-        _ = p₁.support.tail ++ p₂.support ++ [u₂] := (List.append_assoc _ _ _).symm
+      rw [hcyc_supp]
+      cases hps : p₁.support with
+      | nil => exact False.elim (p₁.support_ne_nil hps)
+      | cons _ _ => exact (List.append_assoc _ _ _).symm
     have hcyc_tail_nodup : cyc.support.tail.Nodup := by
       rw [hcyc_tail]
       have hp₁s : p₁.support = u₂ :: p₁.support.tail := (p₁.cons_tail_support).symm
@@ -635,6 +637,7 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
         convert degree_sup_nonedge H hne12 hnadj ⟦v⟧
       have h2 : H.degree ⟦v⟧ + (if G.Adj v (σ v) then 1 else 0) = G.degree v := by
         convert fpf_quot_degree G hm σ hinv hfpf haut v
+      have hle1 : (if G.Adj v (σ v) then 1 else 0) ≤ 1 := by split_ifs <;> omega
       have h3 := hall3 v
       by_cases hv1 : (⟦v⟧ : Q) = ⟦u₁⟧
       · simp only [hv1, true_or, ite_true] at h1; omega
