@@ -289,7 +289,7 @@ theorem identify_degree_other_of_not_common [Fintype V] [DecidableEq V]
       · exact False.elim (hu hux)⟩
   let g : G.neighborSet v.1 → H.neighborSet v := fun u =>
     if hu : u.1 = y then
-      ⟨X, ⟨fun h => hvx (congrArg Subtype.val h), Or.inr (Or.inr ⟨rfl, hu ▸ u.2⟩)⟩⟩
+      ⟨X, ⟨fun h => hvx (congrArg Subtype.val h), Or.inr (Or.inr ⟨rfl, by have hu2 : G.Adj v.1 u.1 := u.2; rw [hu] at hu2; exact hu2⟩)⟩⟩
     else
       ⟨⟨u.1, hu⟩, ⟨fun h => (G.ne_of_adj u.2) (congrArg Subtype.val h), Or.inl u.2⟩⟩
   have e : H.neighborSet v ≃ G.neighborSet v.1 :=
@@ -312,7 +312,7 @@ theorem identify_degree_other_of_not_common [Fintype V] [DecidableEq V]
           simp [f, g, huy, hnvx, X]
         · by_cases hux : u.1 = x
           · have hvxa : G.Adj v.1 x := hux ▸ u.2
-            simp [f, g, huy, hux, hvxa]
+            simp [f, g, hux, hvxa, hxy]
           · simp [f, g, huy, hux] }
   have hc := Fintype.card_congr e
   rwa [SimpleGraph.card_neighborSet_eq_degree, SimpleGraph.card_neighborSet_eq_degree] at hc
