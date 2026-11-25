@@ -35,10 +35,10 @@ theorem exterior_unique (G : SimpleGraph V) [DecidableRel G.Adj]
     intro v hv
     simp only [Finset.mem_insert,Finset.mem_singleton] at hv
     rcases hv with rfl | rfl | rfl | rfl
-    · exact (G.mem_neighborFinset a b).mpr hab
-    · exact (G.mem_neighborFinset a c).mpr hac
-    · exact (G.mem_neighborFinset a x).mpr hax
-    · exact (G.mem_neighborFinset a y).mpr hay
+    · exact (G.mem_neighborFinset a _).mpr hab
+    · exact (G.mem_neighborFinset a _).mpr hac
+    · exact (G.mem_neighborFinset a _).mpr hax
+    · exact (G.mem_neighborFinset a _).mpr hay
   have hc := Finset.card_le_card hs
   have h4 : ({b,c,x,y}:Finset V).card = 4 := by
     simp [hbc,Ne.symm hxb,Ne.symm hyb,Ne.symm hxc,Ne.symm hyc,hxy]
@@ -118,6 +118,31 @@ theorem triangle_forces_cut (G : SimpleGraph V) [DecidableRel G.Adj]
   change Nat.card B≤3
   omega
 
+/-- Both full subcubic triangle/core leaves are eliminated by this result.
+    The designated w may itself have degree three (cubic case). -/
+theorem near_subcubic_triangle_cut (G : SimpleGraph V) [DecidableRel G.Adj]
+    (w : V) (hmax : ∀ v, G.degree v≤3)
+    (hdeg : ∀ v, v≠w → G.degree v=3)
+    (htri : ∃ a b c, G.Adj a b ∧ G.Adj b c ∧ G.Adj c a)
+    (hfree : ¬HasPower G) :
+    ∃ S : Set V, 2 ≤ Nat.card S ∧ 2 ≤ Nat.card (Sᶜ : Set V) ∧
+      Nat.card {e : V × V // e.1 ∈ S ∧ e.2 ∉ S ∧ G.Adj e.1 e.2} ≤ 3 := by
+  classical
+  obtain ⟨a,b,c,hab,hbc,hca⟩ := htri
+  by_cases ha : a=w
+  · subst w
+    exact triangle_forces_cut G hbc hca hab
+      (hdeg b (G.ne_of_adj hab).symm)
+      (hdeg c (G.ne_of_adj hca)) (hmax a) hfree
+  · by_cases hb : b=w
+    · subst w
+      exact triangle_forces_cut G hca hab hbc
+        (hdeg c (G.ne_of_adj hbc).symm)
+        (hdeg a (G.ne_of_adj hab)) (hmax b) hfree
+    · exact triangle_forces_cut G hab hbc hca
+        (hdeg a ha) (hdeg b hb) (hmax c) hfree
+
+#print axioms near_subcubic_triangle_cut
 #print axioms third_neighbor
 #print axioms exterior_unique
 #print axioms triangle_forces_cut
