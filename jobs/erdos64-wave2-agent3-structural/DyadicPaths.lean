@@ -47,8 +47,8 @@ theorem minimal_bad_no_c4 {V : Type u} [Fintype V]
   let w : G.Walk a a := Walk.cons hab (Walk.cons hbc (Walk.cons hcd (Walk.cons hda Walk.nil)))
   have htrail : w.IsTrail := by
     rw [Walk.isTrail_def]
-    simp [w, Sym2.eq_iff, hab_ne, hbc_ne, hcd_ne, hda_ne, hac, hbd,
-      hab_ne.symm, hbc_ne.symm, hda_ne.symm, hac.symm]
+    simp [w, hab_ne, hbc_ne, hcd_ne, hda_ne, hac, hbd,
+      hab_ne.symm, hda_ne.symm, hac.symm]
   have hcyc : w.IsCycle := by
     refine ⟨⟨htrail, by simp [w]⟩, ?_⟩
     simp [w, hbc_ne, hcd_ne, hda_ne, hbd, hab_ne.symm, hac.symm]
@@ -467,7 +467,10 @@ theorem ident_degree_non_common {x y : V} (hxy : x ≠ y)
             · exact False.elim (hvx h2)
             · exact False.elim (hvy h3)⟩
         invFun := fun w =>
-          ⟨⟨w.1, fun h => hvy (by rw [← h]; exact w.2)⟩,
+          ⟨⟨w.1, fun h => by
+            have hw2 : G.Adj v.1 w.1 := w.2
+            rw [h] at hw2
+            exact hvy hw2⟩,
            ⟨fun h => G.ne_of_adj w.2 (congrArg Subtype.val h), Or.inl w.2⟩⟩
         left_inv := by intro ⟨⟨w, hwy⟩, _⟩; rfl
         right_inv := by intro ⟨w, _⟩; rfl }
@@ -532,9 +535,13 @@ theorem ident_degree_merged_ge_add {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x 
         · simp [h]
       right_inv := by
         rintro (⟨w, hw⟩ | ⟨w, hw⟩)
-        · exact dif_pos hw
+        · split_ifs with h
+          · rfl
+          · exact False.elim (h hw)
         · have hnx : ¬G.Adj x w := fun h => hdisj w ⟨h, hw⟩
-          exact dif_neg hnx }
+          split_ifs with h
+          · exact False.elim (hnx h)
+          · rfl }
   have hc := Fintype.card_congr e
   rw [SimpleGraph.card_neighborSet_eq_degree, Fintype.card_sum,
     SimpleGraph.card_neighborSet_eq_degree, SimpleGraph.card_neighborSet_eq_degree] at hc
