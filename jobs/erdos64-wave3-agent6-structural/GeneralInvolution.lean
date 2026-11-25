@@ -100,7 +100,7 @@ theorem hasPower_of_any_invQuot {G : SimpleGraph V} {σ : V → V}
   by_cases hfix : ∃ v : V, σ v = v ∧ (⟦v⟧ : Quotient (invSetoid σ hinv)) ∈ c.support
   · obtain ⟨v₀, hv₀fix, hv₀mem⟩ := hfix
     let c' := c.rotate (⟦v₀⟧ : Quotient (invSetoid σ hinv)) hv₀mem
-    have hc' : c'.IsCycle := hc.rotate (⟦v₀⟧ : Quotient (invSetoid σ hinv)) hv₀mem
+    have hc' : c'.IsCycle := hc.rotate hv₀mem
     have hlen' : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
     let lifted := liftWalk haut c' v₀ rfl
     let v₁ := lifted.1.1
@@ -160,7 +160,7 @@ theorem hasPower_of_any_invQuot {G : SimpleGraph V} {σ : V → V}
       let p₂ : G.Walk u₁ u₀ := p₂_raw.copy hflip.symm hσu₁
       let p : G.Walk u₀ u₀ := p₁.append p₂
       have hp₂len : p₂.length = 2 ^ k := by
-        show (p₂_raw.copy hflip.symm hσu₁).length = 2 ^ k
+        show ((p₁.map f).copy hflip.symm hσu₁).length = 2 ^ k
         rw [Walk.length_copy, Walk.length_map, hp₁len]
       have hplen : p.length = 2 ^ (k + 1) := by
         simp only [p, Walk.length_append, hp₁len, hp₂len, pow_succ]
@@ -280,7 +280,8 @@ theorem invQuot_degree_nonfixed [Fintype V] [DecidableEq V]
     ⟨⟦v.1⟧, ⟨fun heq => by
       rcases Quotient.exact heq with h1 | h2
       · exact (G.ne_of_adj v.2) h1
-      · exact hno (h2 ▸ (v.2 : G.Adj u v.1)),
+      · have hv_eq : v.1 = σ u := by rw [h2, hinv v.1]
+        exact hno (hv_eq ▸ (v.2 : G.Adj u v.1)),
       u, v.1, rfl, rfl, v.2⟩⟩
   have hfinj : Function.Injective f := by
     intro a b heq

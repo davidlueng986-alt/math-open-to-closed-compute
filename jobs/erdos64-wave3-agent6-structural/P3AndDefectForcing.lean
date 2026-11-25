@@ -38,7 +38,7 @@ theorem mersenne_path_of_add_edge {G : SimpleGraph V} {v : V}
   by_cases hmem : s(a, b) ∈ c.edges
   · have hmemA : a ∈ c.support := Walk.fst_mem_support_of_mem_edges c hmem
     let c' := c.rotate a hmemA
-    have hc' : c'.IsCycle := hc.rotate a hmemA
+    have hc' : c'.IsCycle := hc.rotate hmemA
     have hlen' : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
     have hmem' : s(a, b) ∈ c'.edges := by
       have hspec : ((c.takeUntil a hmemA).append (c.dropUntil a hmemA)).edges = c.edges :=

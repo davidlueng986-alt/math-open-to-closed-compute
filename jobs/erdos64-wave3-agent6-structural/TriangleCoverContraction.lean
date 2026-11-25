@@ -106,12 +106,12 @@ theorem unique_ext_neighbor (F : TriangleFamily G I) (i : I) (a : Fin 3) :
       rw [hi] at hd
       have hda : d = a ∨ d = b ∨ d = c := by fin_cases a <;> fin_cases d <;> decide
       rcases hda with rfl | rfl | rfl
-      · exact G.ne_of_adj hay hd.symm
+      · exact G.ne_of_adj hay hd
       · exact hyb hd.symm
       · exact hyc hd.symm
     · unfold proj at hp
       simp only [h, ↓reduceDIte] at hp
-      exact Sum.noConfusion hp
+      cases hp
   refine ⟨y, ⟨hay, hy_out⟩, fun z ⟨haz, hz_out⟩ => ?_⟩
   by_contra hzy
   have hzb : z ≠ F.v i b := fun h => hz_out (by rw [h, F.proj_tri])
@@ -149,7 +149,7 @@ theorem eq_v_of_proj_inl (F : TriangleFamily G I) {x : V} {i : I}
     exact ⟨a, (Sum.inl.inj hx) ▸ ha⟩
   · unfold proj at hx
     simp only [h, ↓reduceDIte] at hx
-    exact False.elim (Sum.noConfusion hx)
+    cases hx
 
 /-- Helper: if `F.proj x = Sum.inr r`, then `x = r.1`. -/
 theorem eq_val_of_proj_inr (F : TriangleFamily G I) {x : V} {r : F.Res}
@@ -158,7 +158,7 @@ theorem eq_val_of_proj_inr (F : TriangleFamily G I) {x : V} {r : F.Res}
   by_cases h : F.inTri x
   · unfold proj at hx
     simp only [h, ↓reduceDIte] at hx
-    exact False.elim (Sum.noConfusion hx)
+    cases hx
   · unfold proj at hx
     simp only [h, ↓reduceDIte] at hx
     exact congrArg Subtype.val (Sum.inr.inj hx)
@@ -229,7 +229,7 @@ theorem contr_degree_res (F : TriangleFamily G I) (hfree : ¬ HasPower G)
   classical
   let f : G.neighborSet r.1 → F.contrGraph.neighborSet (Sum.inr r) := fun u =>
     ⟨F.proj u.1, ⟨fun heq => by
-      exact (G.ne_of_adj u.2) (F.eq_val_of_proj_inr heq).symm,
+      exact (G.ne_of_adj u.2) (F.eq_val_of_proj_inr heq.symm).symm,
       r.1, u.1, F.proj_res r, rfl, u.2⟩⟩
   have hfinj : Function.Injective f := by
     intro u₁ u₂ heq
@@ -241,7 +241,7 @@ theorem contr_degree_res (F : TriangleFamily G I) (hfree : ¬ HasPower G)
       obtain ⟨a₁, ha₁⟩ := F.eq_v_of_proj_inl hp1
       obtain ⟨a₂, ha₂⟩ := F.eq_v_of_proj_inl (hp.symm.trans hp1)
       have ha12 : a₁ ≠ a₂ := fun h => hne (ha₁.symm.trans (h ▸ ha₂))
-      have hro : F.proj r.1 ≠ Sum.inl j := by rw [F.proj_res r]; exact Sum.noConfusion
+      have hro : F.proj r.1 ≠ Sum.inl j := by rw [F.proj_res r]; intro h; cases h
       exact F.no_parallel_from_tri hfree j ha12
         (ha₁ ▸ u₁.2.symm) (ha₂ ▸ u₂.2.symm) hro hro rfl
     | inr r' =>
@@ -284,24 +284,33 @@ theorem card_contr_lt (F : TriangleFamily G I) [Fintype F.ContrV] (hI : Nonempty
   have hc := Fintype.card_congr e
   rw [Fintype.card_sum, Fintype.card_prod, Fintype.card_fin] at hc
   have hsum : Fintype.card F.ContrV = Fintype.card I + Fintype.card F.Res := by
-    convert Fintype.card_sum I F.Res
+    convert @Fintype.card_sum I F.Res _ _
   have hpos : 0 < Fintype.card I := Fintype.card_pos_iff.mpr hI
   omega
 
-/-- Helper list lemma: `filterMap` of `Sum.inl` has the same length as `filter isLeft`. -/
+/-- Extract the left component of a sum as an `Option`. -/
+def getInl {α β : Type*} : α ⊕ β → Option α
+  | Sum.inl i => some i
+  | Sum.inr _ => none
+
+/-- Vertex-weight function for cycle doubling. -/
+def triWt {α β : Type*} [DecidableEq α] (S_list : List α) : α ⊕ β → ℕ
+  | Sum.inr _ => 0
+  | Sum.inl i => if i ∈ S_list then 2 else 1
+
+/-- Helper list lemma: `filterMap getInl` has the same length as `filter Sum.isLeft`. -/
 theorem filterMap_inl_length {α β : Type*} (l : List (α ⊕ β)) :
-    (l.filterMap (fun q => match q with | Sum.inl i => some i | Sum.inr _ => none)).length =
-      (l.filter (fun q => q.isLeft)).length := by
+    (l.filterMap getInl).length = (l.filter Sum.isLeft).length := by
   induction l with
   | nil => rfl
   | cons x xs ih =>
     cases x with
-    | inl _ => simp only [List.filterMap_cons, List.filter_cons, Sum.isLeft_inl, ↓reduceIte, List.length_cons, ih]
-    | inr _ => simp only [List.filterMap_cons, List.filter_cons, Sum.isLeft_inr, Bool.false_eq_true, ↓reduceIte, ih]
+    | inl _ => simp only [List.filterMap_cons, getInl, List.filter_cons, Sum.isLeft_inl, ↓reduceIte, List.length_cons, ih]
+    | inr _ => simp only [List.filterMap_cons, getInl, List.filter_cons, Sum.isLeft_inr, Bool.false_eq_true, ↓reduceIte, ih]
 
-/-- Helper list lemma: `filter isRight` + `filter isLeft` = total length. -/
+/-- Helper list lemma: `filter Sum.isRight` + `filter Sum.isLeft` = total length. -/
 theorem filter_right_add_left {α β : Type*} (l : List (α ⊕ β)) :
-    (l.filter (fun q => q.isRight)).length + (l.filter (fun q => q.isLeft)).length = l.length := by
+    (l.filter Sum.isRight).length + (l.filter Sum.isLeft).length = l.length := by
   induction l with
   | nil => rfl
   | cons x xs ih =>
@@ -311,9 +320,9 @@ theorem filter_right_add_left {α β : Type*} (l : List (α ⊕ β)) :
     | inr _ => simp only [List.filter_cons, Sum.isRight_inr, Sum.isLeft_inr, Bool.false_eq_true,
         ↓reduceIte, List.length_cons]; omega
 
-/-- Helper list lemma: `filterMap` of `Sum.inl` preserves `Nodup`. -/
+/-- Helper list lemma: `filterMap getInl` preserves `Nodup`. -/
 theorem filterMap_inl_nodup {α β : Type*} {l : List (α ⊕ β)} (hnd : l.Nodup) :
-    (l.filterMap (fun q => match q with | Sum.inl i => some i | Sum.inr _ => none)).Nodup := by
+    (l.filterMap getInl).Nodup := by
   induction l with
   | nil => exact List.nodup_nil
   | cons x xs ih =>
@@ -321,30 +330,29 @@ theorem filterMap_inl_nodup {α β : Type*} {l : List (α ⊕ β)} (hnd : l.Nodu
     cases x with
     | inr _ => exact ih hnd.2
     | inl i =>
-      simp only [List.filterMap_cons]
+      simp only [List.filterMap_cons, getInl]
       rw [List.nodup_cons]
       refine ⟨?_, ih hnd.2⟩
       intro hm
       obtain ⟨y, hy, hyi⟩ := List.mem_filterMap.mp hm
       cases y with
-      | inr _ => simp at hyi
-      | inl j => simp at hyi; subst hyi; exact hnd.1 hy
+      | inr _ => simp [getInl] at hyi
+      | inl j => simp [getInl] at hyi; subst hyi; exact hnd.1 hy
 
 /-- Helper list lemma: sum of weights along a list of `α ⊕ β`. -/
 theorem sum_wt_split {α β : Type*} [DecidableEq α] (S_list : List α) (l : List (α ⊕ β)) :
-    (l.map (fun q => match q with | Sum.inr _ => 0 | Sum.inl i => if i ∈ S_list then 2 else 1)).sum =
-      (l.filterMap (fun q => match q with | Sum.inl i => some i | Sum.inr _ => none)).length +
-      ((l.filterMap (fun q => match q with | Sum.inl i => some i | Sum.inr _ => none)).filter
-        (fun i => decide (i ∈ S_list))).length := by
+    (l.map (triWt S_list)).sum =
+      (l.filterMap getInl).length +
+      ((l.filterMap getInl).filter (fun i => decide (i ∈ S_list))).length := by
   induction l with
   | nil => simp
   | cons x xs ih =>
     cases x with
-    | inr _ => simp [ih]
+    | inr _ => simp [triWt, getInl, ih]
     | inl i =>
       by_cases hi : i ∈ S_list
-      · simp [hi, ih]; omega
-      · simp [hi, ih]; omega
+      · simp [triWt, getInl, hi, ih]; omega
+      · simp [triWt, getInl, hi, ih]; omega
 
 /-- Unique bridge edge in `G` lifting an edge `u - v` of `contrGraph` when `G` is power-free. -/
 theorem bridge_edge_exists (F : TriangleFamily G I) {u v : F.ContrV}
@@ -356,8 +364,8 @@ theorem bridge_edge_exists (F : TriangleFamily G I) {u v : F.ContrV}
 theorem lift_cycle_double (F : TriangleFamily G I)
     {k : ℕ} (hk : 2 ≤ k) {q₀ : F.ContrV} (c : F.contrGraph.Walk q₀ q₀)
     (hc : c.IsCycle) (hlen : c.length = 2 ^ k)
-    (hcount : (c.support.tail.filter (fun q => q.isRight)).length ≤
-              (c.support.tail.filter (fun q => q.isLeft)).length) : HasPower G := by
+    (hcount : (c.support.tail.filter Sum.isRight).length ≤
+              (c.support.tail.filter Sum.isLeft).length) : HasPower G := by
   classical
   have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
   let outV : (u v : F.ContrV) → F.contrGraph.Adj u v → V :=
@@ -367,10 +375,10 @@ theorem lift_cycle_double (F : TriangleFamily G I)
   have hbridge : ∀ {u v : F.ContrV} (h : F.contrGraph.Adj u v),
       F.proj (outV u v h) = u ∧ F.proj (inV u v h) = v ∧ G.Adj (outV u v h) (inV u v h) :=
     fun h => Classical.choose_spec (Classical.choose_spec h.2)
-  let L_tri : List I := c.support.tail.filterMap (fun q => match q with | Sum.inl i => some i | Sum.inr _ => none)
-  have hL_len : L_tri.length = (c.support.tail.filter (fun q => q.isLeft)).length :=
+  let L_tri : List I := c.support.tail.filterMap getInl
+  have hL_len : L_tri.length = (c.support.tail.filter Sum.isLeft).length :=
     filterMap_inl_length c.support.tail
-  let r := (c.support.tail.filter (fun q => q.isRight)).length
+  let r := (c.support.tail.filter Sum.isRight).length
   let S_list : List I := L_tri.take r
   have hS_len : S_list.length = r := by
     rw [List.length_take, hL_len]
@@ -392,7 +400,7 @@ theorem lift_cycle_double (F : TriangleFamily G I)
       have hcy : F.v i c3 ≠ y := G.ne_of_adj hadj2
       refine ⟨p, Walk.IsPath.mk' (by simp [p, hxc, hxy, hcy]), by simp [p, hS], ?_⟩
       intro z hz
-      simp only [p, Walk.support_cons, Walk.support_nil, List.mem_cons, List.notMem_nil, or_false] at hz
+      simp [p] at hz
       rcases hz with rfl | rfl | rfl
       · rw [← ha, F.proj_tri]
       · exact F.proj_tri i c3
@@ -401,7 +409,7 @@ theorem lift_cycle_double (F : TriangleFamily G I)
       let p : G.Walk x y := .cons hadj .nil
       refine ⟨p, Walk.IsPath.mk' (by simp [p, hxy]), by simp [p, hS], ?_⟩
       intro z hz
-      simp only [p, Walk.support_cons, Walk.support_nil, List.mem_cons, List.notMem_nil, or_false] at hz
+      simp [p] at hz
       rcases hz with rfl | rfl
       · rw [← ha, F.proj_tri]
       · rw [← hb, F.proj_tri]
@@ -421,10 +429,7 @@ theorem lift_cycle_double (F : TriangleFamily G I)
     have ho2 : F.proj (inV (Sum.inl i) q₂ h2) ≠ Sum.inl i := by rw [hb2.2.1]; exact h2.1.symm
     have heqy := (F.unique_ext_neighbor i a).unique ⟨h1', ho1⟩ ⟨h2', ho2⟩
     exact hne (hb1.1.symm.trans ((congrArg F.proj heqy).trans hb2.2.1))
-  let wt : F.ContrV → ℕ := fun q =>
-    match q with
-    | Sum.inr _ => 0
-    | Sum.inl i => if i ∈ S_list then 2 else 1
+  let wt : F.ContrV → ℕ := triWt S_list
   cases hce : c with
   | nil =>
     rw [hce] at hlen; simp at hlen; omega
@@ -456,11 +461,11 @@ theorem lift_cycle_double (F : TriangleFamily G I)
         | inr u =>
           have heq := hres_eq u x_in x_out hx_in hx_out
           subst heq
-          exact ⟨.nil, Walk.IsPath.nil, by simp [wt], by intro z hz; simp at hz; simp [hz, hx_in]⟩
+          exact ⟨.nil, Walk.IsPath.nil, by simp [wt, triWt], by intro z hz; simp at hz; simp [hz, hx_in]⟩
         | inl i =>
           have hne := hport_nil Walk.Nil.nil rfl
           obtain ⟨seg, hsegP, hsegL, hsegS⟩ := htri_path i x_in x_out hx_in hx_out hne
-          exact ⟨seg, hsegP, by simp [wt, hsegL], fun z hz => by simp [hsegS z hz]⟩
+          exact ⟨seg, hsegP, by simp [wt, triWt, hsegL], fun z hz => by simp [hsegS z hz]⟩
       | @cons a c' b hac r ih =>
         intro hp x_in hx_in hport x_out hx_out hport_end _
         have hrp : r.IsPath := by
@@ -479,11 +484,11 @@ theorem lift_cycle_double (F : TriangleFamily G I)
           | inr u =>
             have heq := hres_eq u x_in (outV (Sum.inr u) c' hac) hx_in hbr.1
             subst heq
-            exact ⟨.nil, Walk.IsPath.nil, by simp [wt], by intro z hz; simp at hz; simp [hz, hx_in]⟩
+            exact ⟨.nil, Walk.IsPath.nil, by simp [wt, triWt], by intro z hz; simp at hz; simp [hz, hx_in]⟩
           | inl i =>
             have hne := hport hac r rfl rfl
             obtain ⟨seg, hsegP, hsegL, hsegS⟩ := htri_path i x_in (outV (Sum.inl i) c' hac) hx_in hbr.1 hne
-            exact ⟨seg, hsegP, by simp [wt, hsegL], hsegS⟩
+            exact ⟨seg, hsegP, by simp [wt, triWt, hsegL], hsegS⟩
         obtain ⟨seg1, hseg1P, hseg1L, hseg1S⟩ := hseg1
         have hport_r : ∀ {d : F.ContrV} (h : F.contrGraph.Adj c' d) (r' : F.contrGraph.Walk d b),
             r = .cons h r' → c'.isLeft → inV a c' hac ≠ outV c' d h := by
@@ -516,7 +521,7 @@ theorem lift_cycle_double (F : TriangleFamily G I)
           intro z hz
           rw [Walk.support_append] at hz
           rcases List.mem_append.mp hz with hz1 | hz2
-          · rw [Walk.support_cons]; exact List.mem_cons_of_mem _ (by simp [hseg1S z hz1]) |> fun _ => by simp [hseg1S z hz1]
+          · rw [Walk.support_cons, hseg1S z hz1]; exact List.mem_cons_self
           · have hz2' : z ∈ W2.support := by
               have : (Walk.cons hbr.2.2 W2).support.tail = W2.support := by simp [Walk.support_cons]
               rwa [this] at hz2
@@ -617,7 +622,7 @@ theorem lift_cycle_double (F : TriangleFamily G I)
             rw [← c.cons_tail_support]; simp
           omega
         rw [hsum_split, hfilt_eq, hL_len]
-        change (c.support.tail.filter (fun q => q.isLeft)).length + r = 2 ^ k
+        change (c.support.tail.filter Sum.isLeft).length + (c.support.tail.filter Sum.isRight).length = 2 ^ k
         omega
       simp only [cyc, Walk.length_cons, hWL, hqs, hsum_wt, pow_succ]
       omega
@@ -663,8 +668,8 @@ theorem no_triangle_cover_le_one_edge {V I : Type u} [Fintype V] [DecidableEq V]
   have hpow : HasPower H := hm.2.2.1 F.ContrV H (F.card_contr_lt hI') hnear
   obtain ⟨k, q₀, c, hk, hc, hlen⟩ := hpow
   obtain ⟨r₁, r₂, hR_edge⟩ := hR1
-  have hcount : (c.support.tail.filter (fun q => q.isRight)).length ≤
-                (c.support.tail.filter (fun q => q.isLeft)).length := by
+  have hcount : (c.support.tail.filter Sum.isRight).length ≤
+                (c.support.tail.filter Sum.isLeft).length := by
     have hRR_edge_uniq : ∀ {e₁ e₂ : Sym2 F.ContrV},
         e₁ ∈ H.edgeSet → e₂ ∈ H.edgeSet →
         (∀ q ∈ e₁, q.isRight) → (∀ q ∈ e₂, q.isRight) → e₁ = e₂ := by
@@ -697,8 +702,8 @@ theorem no_triangle_cover_le_one_edge {V I : Type u} [Fintype V] [DecidableEq V]
         rw [ha, hb]
         exact Quot.sound (Sym2.Rel.swap _ _)
     have hwalk_ineq : ∀ {u v : F.ContrV} (p : H.Walk u v),
-        (p.support.tail.filter (fun q => q.isRight)).length + (if u.isRight then 1 else 0) ≤
-        (p.support.tail.filter (fun q => q.isLeft)).length +
+        (p.support.tail.filter Sum.isRight).length + (if u.isRight then 1 else 0) ≤
+        (p.support.tail.filter Sum.isLeft).length +
         (p.edges.filter (fun e => decide (∀ q ∈ e, q.isRight))).length +
         (if v.isRight then 1 else 0) := by
       intro u v p
@@ -727,8 +732,8 @@ theorem no_triangle_cover_le_one_edge {V I : Type u} [Fintype V] [DecidableEq V]
             (of_decide_eq_true h1.2) (of_decide_eq_true h2.2)
           rw [List.nodup_cons] at hnd
           exact False.elim (hnd.1 (by simp [heq]))
-    have htot : (c.support.tail.filter (fun q => q.isRight)).length +
-        (c.support.tail.filter (fun q => q.isLeft)).length = 2 ^ k := by
+    have htot : (c.support.tail.filter Sum.isRight).length +
+        (c.support.tail.filter Sum.isLeft).length = 2 ^ k := by
       have hsum := TriangleFamily.filter_right_add_left c.support.tail
       have h1 : c.support.length = c.support.tail.length + 1 := by
         rw [← c.cons_tail_support]; simp
