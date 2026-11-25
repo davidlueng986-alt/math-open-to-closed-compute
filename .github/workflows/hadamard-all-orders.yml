@@ -30,8 +30,10 @@ jobs:
           python3 -B jobs/hadamard-all-orders/stack_1198_channels.py
           python3 -B jobs/hadamard-all-orders/stack_1198_reciprocal.py
           python3 -B jobs/hadamard-all-orders/stack_1198_reciprocal_mod5.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_marginals.py
           python3 -B jobs/hadamard-all-orders/stack_1198_mod5.py
           python3 -B jobs/hadamard-all-orders/stack_odd_t_auxiliary.py
+          python3 -B jobs/hadamard-all-orders/stack_odd_t_code_components.py
           python3 -B jobs/hadamard-all-orders/stack_odd_t_residual.py
           python3 -B jobs/hadamard-all-orders/triple_product.py
           python3 -B jobs/hadamard-all-orders/paley_progression.py
@@ -49,6 +51,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_transfer.py
           python3 -B jobs/hadamard-all-orders/border4_2396_fixed_first.py
           python3 -B jobs/hadamard-all-orders/border4_2396_two_fibers.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_primitive_lifts.py
           python3 -B jobs/hadamard-all-orders/border4_2396_tensor_weighing.py
           python3 -B jobs/hadamard-all-orders/r_intersections.py
           python3 -B jobs/hadamard-all-orders/r_near_complement.py
@@ -80,6 +83,7 @@ jobs:
       - name: Check the next-column neighborhood and the lower-channel candidate
         run: |
           python3 -B jobs/hadamard-all-orders/stack_1198.py --export "$RUNNER_TEMP/stack-1198.bin"
+          python3 -B jobs/hadamard-all-orders/stack_1198_two_adic.py
           c++ -O3 -std=c++17 -mpopcnt -Wall -Wextra -Werror jobs/hadamard-all-orders/stack_1198_radii.cpp -o "$RUNNER_TEMP/stack-1198-radii"
           "$RUNNER_TEMP/stack-1198-radii" "$RUNNER_TEMP/stack-1198.bin"
       - name: Check the universal reductions and their axioms
@@ -127,6 +131,8 @@ jobs:
         run: python3 -B jobs/hadamard-all-orders/exterior_reindexed_anchors.py
       - name: Check the index-18 fold capacity and exact reindexed witness
         run: python3 -B jobs/hadamard-all-orders/exterior_reindexed_pivot.py
+      - name: Check the second-fold orientation census and released anchor witnesses
+        run: python3 -B jobs/hadamard-all-orders/exterior_orientation.py
 
   stack-replacement-neighborhood:
     runs-on: ubuntu-latest
