@@ -142,12 +142,13 @@ def mod8_fixture(top, lower, top_rows, lower_rows):
     return positive_columns(alternate_top), positive_columns(alternate_lower)
 
 
-def match_by_residues(upper_dots, negative_lower_dots):
+def match_by_residues(upper_dots, negative_lower_dots,
+                      levels=((4096, 8), (64, 20), (32, 281), (16, 887), (8, 1193))):
     """Pair within exact fibers, then merge fibers at successively smaller moduli."""
     pending_upper = list(range(len(upper_dots)))
     pending_lower = list(range(len(negative_lower_dots)))
     pairs = []
-    for modulus, expected in ((4096, 8), (64, 20), (32, 281), (16, 887), (8, 1193)):
+    for modulus, expected in levels:
         buckets = defaultdict(list)
         for index in pending_lower:
             buckets[tuple(value % modulus for value in negative_lower_dots[index])].append(index)

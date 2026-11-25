@@ -23,15 +23,21 @@ jobs:
           python3 -B jobs/hadamard-all-orders/t599.py
           python3 -B jobs/hadamard-all-orders/r_intersections.py
           python3 -B jobs/hadamard-all-orders/r_near_complement.py
+          python3 -B jobs/hadamard-all-orders/r_two_point.py
+          python3 -B jobs/hadamard-all-orders/r_embedding.py
           python3 -B jobs/hadamard-all-orders/five_column_constraints.py
           python3 -B jobs/hadamard-all-orders/five_column_radius.py
           python3 -B jobs/hadamard-all-orders/five_column_gram.py
+          python3 -B jobs/hadamard-all-orders/exterior_lift.py
+          python3 -B jobs/hadamard-all-orders/exterior_lower_fiber.py
           python3 -B jobs/hadamard-all-orders/five_column_contrasts.py
           python3 -B jobs/hadamard-all-orders/exterior_mod8.py
           python3 -B jobs/hadamard-all-orders/defect12_mod8.py
           python3 -B jobs/hadamard-all-orders/defect12_exact.py
           python3 -B jobs/hadamard-all-orders/defect12_mod16.py
           python3 -B jobs/hadamard-all-orders/defect12_mod16_family.py
+          python3 -B jobs/hadamard-all-orders/defect12_mod32.py
+          python3 -B jobs/hadamard-all-orders/defect12_mod32_construction.py
           c++ -O3 -std=c++20 -Wall -Wextra -Werror jobs/hadamard-all-orders/paley_omissions.cpp -o "$RUNNER_TEMP/paley_omissions"
           "$RUNNER_TEMP/paley_omissions"
       - name: Install pinned Lean 4.36.0
