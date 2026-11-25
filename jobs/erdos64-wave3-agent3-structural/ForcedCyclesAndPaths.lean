@@ -6,17 +6,9 @@ import ClosedDefectCore
 /-!
 Erdos 64 (Wave 3, Agent #3): Forced Cycles & Paths Beyond Wave 2.
 Proves three brand-new unconditional all-order theorems (standard axioms only):
-1. `cubic_forbidden_edge_dyadic_path`: In any cubic MinimalBad(G), for every pair x ≠ y
-   at distance ≥ 3 and every neighbor u of x, G \ edge x u contains a simple x-y path of
-   length 2^k (k ≥ 2).
-2. `cubic_two_distinct_exit_dyadic_paths`: Every pair x, y at distance ≥ 3 in cubic MinimalBad(G)
-   has two simple dyadic x-y paths leaving x along different edges.
-3. `cubic_non_triangle_two_path_fermat_cycle`: In any cubic MinimalBad(G) (hence EVERY 2-path in
-   C-N-R, C-N-2, C-N-3), every 2-path a - x - y where xy is not in a triangle lies on a simple
-   (2^k + 1)-cycle (k ≥ 2) containing both s(a, x) and s(x, y).
-4. `defect_three_path_dyadic_plus_two_cycle`: In any MinimalBad(G) with degree-2 defect w whose
-   neighbors a, b are non-adjacent (all of S-N-2, S-N-3, H-N-2, H-N-3, S-T-3, H-T-3), every
-   3-path a₁ - a - w - b (a₁ ≠ w) lies on a simple (2^k + 2)-cycle (k ≥ 2).
+1. `cubic_forbidden_edge_dyadic_path` & `cubic_two_distinct_exit_dyadic_paths`
+2. `cubic_non_triangle_two_path_fermat_cycle`
+3. `defect_three_path_dyadic_plus_two_cycle`
 -/
 
 namespace E64Wave3Forced
@@ -42,7 +34,7 @@ def liftAvoid {G : SimpleGraph V} {x y : V}
     (havoid : ∀ v ∈ p.support, v.1 ≠ x) : G.Walk a.1 b.1 :=
   match p with
   | .nil => .nil
-  | @Walk.cons _ _ _ u v _ huv q =>
+  | @Walk.cons _ _ u v _ huv q =>
     have hu : u.1 ≠ x := havoid u (by simp)
     have hv : v.1 ≠ x := havoid v (by simp)
     have hedge : G.Adj u.1 v.1 := by
@@ -81,7 +73,7 @@ theorem cycle_of_path_and_apex {G : SimpleGraph V} {u a b : V}
     (hu : u ∉ midG.support) (hua : G.Adj u a) (hbu : G.Adj b u) :
     ∃ c : G.Walk u u, c.IsCycle ∧ c.length = midG.length + 2 := by
   let c : G.Walk u u := .cons hua (midG.append (.cons hbu .nil))
-  have hlen : c.length = midG.length + 2 := by simp [c, Walk.length_append]; omega
+  have hlen : c.length = midG.length + 2 := by simp [c, Walk.length_append]
   have hsupp : c.support = u :: (midG.support ++ [u]) := by
     simp [c, Walk.support_cons, Walk.support_append]
   have htail : c.support.tail = midG.support ++ [u] := by rw [hsupp, List.tail_cons]
@@ -113,7 +105,7 @@ theorem dyadic_path_of_identify_erase {G : SimpleGraph V} {x y u : V}
   let H := identify G x y \ SimpleGraph.edge X U
   obtain ⟨k, v₀, c, hk, hc, hlen⟩ := hpow
   have hle : H ≤ identify G x y := sdiff_le
-  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
+  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
   by_cases hmem : X ∈ c.support
   · let c' := c.rotate hmem
     have hc' : c'.IsCycle := hc.rotate hmem
@@ -255,8 +247,8 @@ theorem dyadic_path_of_identify_erase {G : SimpleGraph V} {x y u : V}
       rwa [Walk.support_tail_of_not_nil _ hdnil]
     exact False.elim (hfree ⟨k, v₀.1, d, hk, hdc, hdlen⟩)
 
-theorem card_sub_lt [Fintype V] (y : V) : Fintype.card {v : V // v ≠ y} < Fintype.card V := by
-  classical
+theorem card_sub_lt [Fintype V] [DecidableEq V] (y : V) :
+    Fintype.card {v : V // v ≠ y} < Fintype.card V := by
   have h : Fintype.card {v : V // v ≠ y} + 1 = Fintype.card V := by
     rw [Fintype.card_subtype,
       show (Finset.univ.filter (fun v : V => v ≠ y)) = Finset.univ.erase y by ext z; simp]
@@ -265,13 +257,12 @@ theorem card_sub_lt [Fintype V] (y : V) : Fintype.card {v : V // v ≠ y} < Fint
 
 theorem identify_degree_other_of_not_common [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {x y : V} (hxy : x ≠ y)
+    [DecidableRel (identify G x y).Adj]
     (v : {z : V // z ≠ y}) (hvx : v.1 ≠ x)
     (hnc : ¬ (G.Adj x v.1 ∧ G.Adj y v.1)) :
-    let H := identify G x y
-    letI : DecidableRel H.Adj := fun a b => Classical.dec _
-    H.degree v = G.degree v.1 := by
+    (identify G x y).degree v = G.degree v.1 := by
   classical
-  intro H _
+  let H := identify G x y
   let X : {z : V // z ≠ y} := ⟨x, hxy⟩
   let f : H.neighborSet v → G.neighborSet v.1 := fun u =>
     if hu : u.1.1 = x then
@@ -314,13 +305,13 @@ theorem identify_degree_other_of_not_common [Fintype V] [DecidableEq V]
   rwa [SimpleGraph.card_neighborSet_eq_degree, SimpleGraph.card_neighborSet_eq_degree] at hc
 
 theorem identify_degree_merged [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] {x y : V} (hxy : x ≠ y) :
-    let H := identify G x y
-    letI : DecidableRel H.Adj := fun a b => Classical.dec _
-    let X : {z : V // z ≠ y} := ⟨x, hxy⟩
-    H.degree X = ((G.neighborFinset x ∪ G.neighborFinset y).erase x |>.erase y).card := by
+    (G : SimpleGraph V) [DecidableRel G.Adj] {x y : V} (hxy : x ≠ y)
+    [DecidableRel (identify G x y).Adj] :
+    (identify G x y).degree ⟨x, hxy⟩ =
+      ((G.neighborFinset x ∪ G.neighborFinset y).erase x |>.erase y).card := by
   classical
-  intro H _ X
+  let H := identify G x y
+  let X : {z : V // z ≠ y} := ⟨x, hxy⟩
   rw [← H.card_neighborFinset_eq_degree]
   let f : H.neighborFinset X → ((G.neighborFinset x ∪ G.neighborFinset y).erase x |>.erase y) :=
     fun v => ⟨v.1.1, by
@@ -361,9 +352,7 @@ theorem cubic_forbidden_edge_dyadic_path [Fintype V] [DecidableEq V]
   let X : {v : V // v ≠ y} := ⟨x, hxy⟩
   let U : {v : V // v ≠ y} := ⟨u, huy⟩
   let I := identify G x y
-  letI : DecidableRel I.Adj := fun a b => Classical.dec _
   let H := I \ SimpleGraph.edge X U
-  letI : DecidableRel H.Adj := fun a b => Classical.dec _
   have hXU : I.Adj X U := ⟨fun h => (G.ne_of_adj hxu) (congrArg Subtype.val h), Or.inl hxu⟩
   have hIX : I.degree X = 6 := by
     rw [identify_degree_merged G hxy]
@@ -372,25 +361,30 @@ theorem cubic_forbidden_edge_dyadic_path [Fintype V] [DecidableEq V]
       intro z hzx hzy
       exact hnocom z ⟨(G.mem_neighborFinset x z).mp hzx, (G.mem_neighborFinset y z).mp hzy⟩
     have hxnot : x ∉ G.neighborFinset x ∪ G.neighborFinset y := by
-      simp [SimpleGraph.mem_neighborFinset, G.loopless, hnadj]
-      intro h; exact hnadj h.symm
+      intro h
+      rcases Finset.mem_union.mp h with h1 | h2
+      · exact G.loopless x ((G.mem_neighborFinset x x).mp h1)
+      · exact hnadj ((G.mem_neighborFinset y x).mp h2).symm
     have hynot : y ∉ (G.neighborFinset x ∪ G.neighborFinset y).erase x := by
-      simp [SimpleGraph.mem_neighborFinset, G.loopless, hnadj]
+      intro h
+      rcases Finset.mem_union.mp (Finset.mem_erase.mp h).2 with h1 | h2
+      · exact hnadj ((G.mem_neighborFinset x y).mp h1)
+      · exact G.loopless y ((G.mem_neighborFinset y y).mp h2)
     rw [Finset.erase_eq_of_notMem hynot, Finset.erase_eq_of_notMem hxnot,
       Finset.card_union_of_disjoint hdisj,
       G.card_neighborFinset_eq_degree, G.card_neighborFinset_eq_degree, hC x, hC y]
   have hHX : H.degree X = 5 := by
     have hd := erase_edge_degree I X U hXU X
-    change H.degree X + (if X = X ∨ X = U then 1 else 0) = I.degree X at hd
-    simp only [true_or, if_true] at hd
+    simp only [true_or, ite_true] at hd
+    change H.degree X + 1 = I.degree X at hd
     omega
   have hnear : Near H := by
     refine ⟨⟨X, by omega⟩, ⟨U, fun v hv => ?_⟩⟩
     by_cases hvX : v = X
     · rw [hvX]; omega
     · have hd := erase_edge_degree I X U hXU v
-      change H.degree v + (if v = X ∨ v = U then 1 else 0) = I.degree v at hd
-      simp only [hvX, hv, or_self, if_false, add_zero] at hd
+      simp only [hvX, hv, or_self, ite_false, add_zero] at hd
+      change H.degree v = I.degree v at hd
       rw [hd, identify_degree_other_of_not_common G hxy v (fun h => hvX (Subtype.ext h)) (hnocom v.1), hC]
   have hpow : HasPower H := hm.2.2.1 _ H (card_sub_lt y) hnear
   exact dyadic_path_of_identify_erase hxy huy hm.2.1 hpow
@@ -442,9 +436,7 @@ theorem cubic_non_triangle_two_path_fermat_cycle [Fintype V] [DecidableEq V]
   let X : {v : V // v ≠ y} := ⟨x, hne⟩
   let U : {v : V // v ≠ y} := ⟨u, huy⟩
   let I := identify G x y
-  letI : DecidableRel I.Adj := fun p q => Classical.dec _
   let H := I \ SimpleGraph.edge X U
-  letI : DecidableRel H.Adj := fun p q => Classical.dec _
   have hXU : I.Adj X U := ⟨fun h => (G.ne_of_adj hxu) (congrArg Subtype.val h), Or.inl hxu⟩
   have hIX : I.degree X = 4 := by
     rw [identify_degree_merged G hne]
@@ -463,16 +455,16 @@ theorem cubic_non_triangle_two_path_fermat_cycle [Fintype V] [DecidableEq V]
     omega
   have hHX : H.degree X = 3 := by
     have hd := erase_edge_degree I X U hXU X
-    change H.degree X + (if X = X ∨ X = U then 1 else 0) = I.degree X at hd
-    simp only [true_or, if_true] at hd
+    simp only [true_or, ite_true] at hd
+    change H.degree X + 1 = I.degree X at hd
     omega
   have hnear : Near H := by
     refine ⟨⟨X, by omega⟩, ⟨U, fun v hv => ?_⟩⟩
     by_cases hvX : v = X
     · rw [hvX]; omega
     · have hd := erase_edge_degree I X U hXU v
-      change H.degree v + (if v = X ∨ v = U then 1 else 0) = I.degree v at hd
-      simp only [hvX, hv, or_self, if_false, add_zero] at hd
+      simp only [hvX, hv, or_self, ite_false, add_zero] at hd
+      change H.degree v = I.degree v at hd
       rw [hd, identify_degree_other_of_not_common G hne v (fun h => hvX (Subtype.ext h)) (hntri v.1), hC]
   have hpow : HasPower H := hm.2.2.1 _ H (card_sub_lt y) hnear
   obtain ⟨k, a', hxa', p, hk, ha'u, hp, hplen, hmem_xa', _⟩ :=
@@ -483,7 +475,7 @@ theorem cubic_non_triangle_two_path_fermat_cycle [Fintype V] [DecidableEq V]
     cases hp_eq : p with
     | nil => exact hne rfl
     | @cons _ z _ hxz q =>
-      have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
+      have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
       have hqlen : q.length + 1 = 2 ^ k := by
         have := congrArg Walk.length hp_eq; simp only [Walk.length_cons] at this; omega
       have hmem' : s(x, y) ∈ (Walk.cons hxz q).edges := hp_eq ▸ hmem_xa'
@@ -523,20 +515,21 @@ theorem cubic_non_triangle_two_path_fermat_cycle [Fintype V] [DecidableEq V]
         Finset.card_insert_of_notMem, Finset.card_singleton]
       · simp [ha'u.symm]
       · simp [huy.symm, ha'y.symm]
-      · simp [hay, hua.symm, hne_a.symm]
+      · simp [hay, hua.symm, Ne.symm hne_a]
     have hc := Finset.card_le_card hsub
     rw [hcard4, G.card_neighborFinset_eq_degree, hC x] at hc
     omega
-  subst ha'_eq_a
+  subst a'
   let c : G.Walk x x := p.append (.cons hxy.symm .nil)
   have hclen : c.length = 2 ^ k + 1 := by simp [c, Walk.length_append, hplen]
-  have hge4 : 4 ≤ p.length := by rw [hplen]; exact Nat.pow_le_pow_right (by decide) hk
+  have hge4 : 4 ≤ p.length := by rw [hplen]; exact Nat.pow_le_pow_right (by decide : 0 < 2) hk
   have hsupp : c.support = p.support ++ [x] := by simp [c, Walk.support_append]
   have htail_nodup : c.support.tail.Nodup := by
-    have hpnil : ¬ p.Nil := by intro h; have := Walk.length_eq_zero_iff.mpr h; omega
     have hps : p.support = x :: p.support.tail := (p.cons_tail_support).symm
     have htail : c.support.tail = p.support.tail ++ [x] := by
-      rw [hsupp, hps, List.cons_append, List.tail_cons]
+      calc c.support.tail = (p.support ++ [x]).tail := by rw [hsupp]
+        _ = (x :: p.support.tail ++ [x]).tail := by rw [hps]
+        _ = p.support.tail ++ [x] := rfl
     have hpn := hp.support_nodup
     rw [hps, List.nodup_cons] at hpn
     rw [htail]
@@ -571,7 +564,6 @@ theorem defect_three_path_dyadic_plus_two_cycle [Fintype V] [DecidableEq V]
   have hdb : G.degree b = 3 := defect_neighbor_cubic G hm hw hwb
   have haw : a ≠ w := (G.ne_of_adj hwa).symm
   have hbw : b ≠ w := (G.ne_of_adj hwb).symm
-  have ha₁b : a₁ ≠ b := fun h => hnab (h ▸ haa₁)
   have hex_a₂ : ∃ a₂ : V, G.Adj a a₂ ∧ a₂ ≠ w ∧ a₂ ≠ a₁ := by
     by_contra h
     push Not at h
@@ -589,7 +581,6 @@ theorem defect_three_path_dyadic_plus_two_cycle [Fintype V] [DecidableEq V]
   have ha₂b : a₂ ≠ b := fun h => hnab (h ▸ haa₂)
   let V₁ := {v : V // v ≠ w}
   let G₁ : SimpleGraph V₁ := G.induce {v | v ≠ w}
-  letI : DecidableRel G₁.Adj := fun p q => Classical.dec _
   let A : V₁ := ⟨a, haw⟩
   let B : V₁ := ⟨b, hbw⟩
   let A₁ : V₁ := ⟨a₁, ha₁w⟩
@@ -599,8 +590,10 @@ theorem defect_three_path_dyadic_plus_two_cycle [Fintype V] [DecidableEq V]
   have hG₁_free : ¬ HasPower G₁ := fun hp => hm.2.1 (power_induce G {v | v ≠ w} hp)
   have hnocom₁ : ∀ z : V₁, ¬ (G₁.Adj A z ∧ G₁.Adj B z) := by
     rintro z ⟨haz, hbz⟩
-    exact hm.2.1 (rectangle_power G (G.ne_of_adj hwa) (G.ne_of_adj hwb) z.2.symm
-      hab_ne (G.ne_of_adj haz) (G.ne_of_adj hbz) hwa haz hbz.symm hwb.symm)
+    have hazG : G.Adj a z.1 := haz
+    have hbzG : G.Adj b z.1 := hbz
+    exact hm.2.1 (rectangle_power G (G.ne_of_adj hwa) z.2.symm (G.ne_of_adj hwb)
+      (G.ne_of_adj hazG) hab_ne (G.ne_of_adj hbzG).symm hwa hazG hbzG.symm hwb.symm)
   have hdegG₁ : ∀ v : V₁, G₁.degree v + (if G.Adj v.1 w then 1 else 0) = G.degree v.1 :=
     fun v => induce_delete_degree G w v
   have hG₁_A : G₁.degree A = 2 := by
@@ -619,15 +612,17 @@ theorem defect_three_path_dyadic_plus_two_cycle [Fintype V] [DecidableEq V]
         · exact hwa
         · exact hwb
         · exact hvw.symm
+      have hbv_ne : b ≠ v.1 := fun h => hvB (Subtype.ext h.symm)
+      have hav_ne : a ≠ v.1 := fun h => hvA (Subtype.ext h.symm)
       have h3 : ({a, b, v.1} : Finset V).card = 3 := by
         rw [Finset.card_insert_of_notMem, Finset.card_insert_of_notMem, Finset.card_singleton]
-        · simp [fun h => hvB (Subtype.ext h.symm)]
-        · simp [hab_ne, fun h => hvA (Subtype.ext h.symm)]
+        · simp [hbv_ne]
+        · simp [hab_ne, hav_ne]
       have hc := Finset.card_le_card hsub
       rw [h3, G.card_neighborFinset_eq_degree, hw] at hc
       omega
     have hd := hdegG₁ v
-    simp only [hna, if_false, add_zero] at hd
+    simp only [hna, ite_false, add_zero] at hd
     obtain ⟨_, r, hr⟩ := hm.1
     have hrw : r = w := by by_contra h; have := hr w (Ne.symm h); omega
     rw [hd]
@@ -635,9 +630,7 @@ theorem defect_three_path_dyadic_plus_two_cycle [Fintype V] [DecidableEq V]
   let X : {v : V₁ // v ≠ B} := ⟨A, hAB⟩
   let U : {v : V₁ // v ≠ B} := ⟨A₂, hA₂B⟩
   let I := identify G₁ A B
-  letI : DecidableRel I.Adj := fun p q => Classical.dec _
   let H := I \ SimpleGraph.edge X U
-  letI : DecidableRel H.Adj := fun p q => Classical.dec _
   have hXU : I.Adj X U := ⟨fun h => (G.ne_of_adj haa₂) (congrArg (fun z => z.1.1) h), Or.inl haa₂⟩
   have hIX : I.degree X = 4 := by
     rw [identify_degree_merged G₁ hAB]
@@ -646,25 +639,30 @@ theorem defect_three_path_dyadic_plus_two_cycle [Fintype V] [DecidableEq V]
       intro z hzA hzB
       exact hnocom₁ z ⟨(G₁.mem_neighborFinset A z).mp hzA, (G₁.mem_neighborFinset B z).mp hzB⟩
     have hAnot : A ∉ G₁.neighborFinset A ∪ G₁.neighborFinset B := by
-      simp [SimpleGraph.mem_neighborFinset, G₁.loopless, G₁, hnab]
-      intro h; exact hnab h.symm
+      intro h
+      rcases Finset.mem_union.mp h with h1 | h2
+      · exact G₁.loopless A ((G₁.mem_neighborFinset A A).mp h1)
+      · exact hnab ((G₁.mem_neighborFinset B A).mp h2).symm
     have hBnot : B ∉ (G₁.neighborFinset A ∪ G₁.neighborFinset B).erase A := by
-      simp [SimpleGraph.mem_neighborFinset, G₁.loopless, G₁, hnab]
+      intro h
+      rcases Finset.mem_union.mp (Finset.mem_erase.mp h).2 with h1 | h2
+      · exact hnab ((G₁.mem_neighborFinset A B).mp h1)
+      · exact G₁.loopless B ((G₁.mem_neighborFinset B B).mp h2)
     rw [Finset.erase_eq_of_notMem hBnot, Finset.erase_eq_of_notMem hAnot,
       Finset.card_union_of_disjoint hdisj,
       G₁.card_neighborFinset_eq_degree, G₁.card_neighborFinset_eq_degree, hG₁_A, hG₁_B]
   have hHX : H.degree X = 3 := by
     have hd := erase_edge_degree I X U hXU X
-    change H.degree X + (if X = X ∨ X = U then 1 else 0) = I.degree X at hd
-    simp only [true_or, if_true] at hd
+    simp only [true_or, ite_true] at hd
+    change H.degree X + 1 = I.degree X at hd
     omega
   have hnear : Near H := by
     refine ⟨⟨X, by omega⟩, ⟨U, fun v hv => ?_⟩⟩
     by_cases hvX : v = X
     · rw [hvX]; omega
     · have hd := erase_edge_degree I X U hXU v
-      change H.degree v + (if v = X ∨ v = U then 1 else 0) = I.degree v at hd
-      simp only [hvX, hv, or_self, if_false, add_zero] at hd
+      simp only [hvX, hv, or_self, ite_false, add_zero] at hd
+      change H.degree v = I.degree v at hd
       rw [hd, identify_degree_other_of_not_common G₁ hAB v (fun h => hvX (Subtype.ext h)) (hnocom₁ v.1)]
       exact hG₁_other v.1 (fun h => hvX (Subtype.ext h)) v.2
   have hcard_lt : Fintype.card {v : V₁ // v ≠ B} < Fintype.card V :=
@@ -683,16 +681,18 @@ theorem defect_three_path_dyadic_plus_two_cycle [Fintype V] [DecidableEq V]
       · exact haa₁
       · exact haa₂
       · exact hAZ
+    have ha₂Z : a₂ ≠ Z.1 := fun h => hZU (Subtype.ext h.symm)
+    have ha₁Z : a₁ ≠ Z.1 := fun h => hne_A₁ (Subtype.ext h.symm)
     have h4 : ({w, a₁, a₂, Z.1} : Finset V).card = 4 := by
       rw [Finset.card_insert_of_notMem, Finset.card_insert_of_notMem,
         Finset.card_insert_of_notMem, Finset.card_singleton]
-      · simp [fun h => hZU (Subtype.ext h.symm)]
-      · simp [ha₂a₁.symm, fun h => hne_A₁ (Subtype.ext h.symm)]
+      · simp [ha₂Z]
+      · simp [ha₂a₁.symm, ha₁Z]
       · simp [ha₁w.symm, ha₂w.symm, Z.2.symm]
     have hc := Finset.card_le_card hsub
     rw [h4, G.card_neighborFinset_eq_degree, hda] at hc
     omega
-  subst hZ_eq
+  subst Z
   let f : G₁ →g G := ⟨Subtype.val, fun h => h⟩
   let pG : G.Walk a b := p₁.map f
   have hpG_path : pG.IsPath := (Walk.isPath_map_iff_of_injective Subtype.val_injective).mpr hp₁
@@ -702,13 +702,14 @@ theorem defect_three_path_dyadic_plus_two_cycle [Fintype V] [DecidableEq V]
     intro hm; obtain ⟨v, _, hvw⟩ := List.mem_map.mp hm; exact v.2 hvw
   let c : G.Walk a a := pG.append (.cons hwb.symm (.cons hwa .nil))
   have hclen : c.length = 2 ^ k + 2 := by simp [c, Walk.length_append, hpG_len]
-  have hge4 : 4 ≤ pG.length := by rw [hpG_len]; exact Nat.pow_le_pow_right (by decide) hk
+  have hge4 : 4 ≤ pG.length := by rw [hpG_len]; exact Nat.pow_le_pow_right (by decide : 0 < 2) hk
   have hsupp : c.support = pG.support ++ [w, a] := by simp [c, Walk.support_append]
   have htail_nodup : c.support.tail.Nodup := by
-    have hpnil : ¬ pG.Nil := by intro h; have := Walk.length_eq_zero_iff.mpr h; omega
     have hps : pG.support = a :: pG.support.tail := (pG.cons_tail_support).symm
     have htail : c.support.tail = pG.support.tail ++ [w, a] := by
-      rw [hsupp, hps, List.cons_append, List.tail_cons]
+      calc c.support.tail = (pG.support ++ [w, a]).tail := by rw [hsupp]
+        _ = (a :: pG.support.tail ++ [w, a]).tail := by rw [hps]
+        _ = pG.support.tail ++ [w, a] := rfl
     have hpn := hpG_path.support_nodup
     rw [hps, List.nodup_cons] at hpn
     rw [htail]

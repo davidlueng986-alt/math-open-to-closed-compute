@@ -6,22 +6,6 @@ import ClosedDefectCore
 /-!
 Erdos 64 (Wave 3, Agent #3): Class H Auxiliary Graph 2-Degeneracy & Sharp C4-Free Edge Bound.
 Covers ALL 4 open Class H leaves (`H-T-2`, `H-T-3`, `H-N-2`, `H-N-3`, with or without triangles).
-
-For any subset S ⊆ V_{≥4} in a Class H MinimalBad(G) graph, let
-  M(S) = {y ∈ V₃ : |N_G(y) ∩ S| ≥ 2} = N₂(S) ∪ N₃(S).
-Each y ∈ M(S) has at least two neighbors in S; choosing one pair {u(y), v(y)} ⊆ N_G(y) ∩ S
-defines a simple auxiliary graph H*(S) on S with |E(H*(S))| = |M(S)| (distinct y give distinct
-pairs because G is C4-free). Every L-cycle in H*(S) lifts to a simple 2L-cycle in G, so H*(S) is
-power-free (in particular C4-free) and has no Near induced subgraph (since |S| < |V(G)|).
-
-Main unconditional all-order theorems (standard axioms only):
-1. `no_near_two_degenerate_edges_induce`: Any finite simple graph H with no Near induced
-   subgraph satisfies |E(H[T])| ≤ 2|T| - 3 for every T with |T| ≥ 2.
-2. `no_near_c4free_edges_induce`: If H is additionally C4-free and |T| ≥ 4, then |E(H[T])| ≤ 2|T| - 4.
-3. `class_h_n2_n3_le_two_sub_three`: For every S ⊆ V_{≥4} with |S| ≥ 2 in Class H MinimalBad(G),
-   |N₂(S) ∪ N₃(S)| ≤ 2|S| - 3.
-4. `class_h_n2_n3_le_two_sub_four`: For every S ⊆ V_{≥4} with |S| ≥ 4 in Class H MinimalBad(G),
-   |N₂(S) ∪ N₃(S)| ≤ 2|S| - 4.
 -/
 
 namespace E64Wave3ClassH
@@ -63,7 +47,7 @@ theorem card_edgeFinset_induce_erase {W : Type u} [DecidableEq W]
   let E_rem : Finset (Sym2 {x : W // x ∈ T}) := HT.edgeFinset.filter (fun e => vT ∉ e)
   have hsplit : HT.edgeFinset.card = E_rem.card + E_inc.card := by
     rw [add_comm]
-    exact (Finset.filter_card_add_filter_neg_card_eq_card (s := HT.edgeFinset) (p := fun e => vT ∈ e)).symm
+    exact (Finset.card_filter_add_card_filter_not (s := HT.edgeFinset) (p := fun e => vT ∈ e)).symm
   have hinc : E_inc.card = HT.degree vT := by
     let φ : HT.neighborFinset vT → E_inc := fun u =>
       ⟨s(vT, u.1), Finset.mem_filter.mpr ⟨(HT.mem_edgeFinset).mpr ((HT.mem_neighborFinset vT u.1).mp u.2),
@@ -71,9 +55,9 @@ theorem card_edgeFinset_induce_erase {W : Type u} [DecidableEq W]
     have hφinj : Function.Injective φ := by
       intro a b hab
       have heq : s(vT, a.1) = s(vT, b.1) := congrArg Subtype.val hab
-      rcases Sym2.eq_iff.mp heq with ⟨_, h2⟩ | ⟨h1, _⟩
+      rcases Sym2.eq_iff.mp heq with ⟨_, h2⟩ | ⟨_, h2⟩
       · exact Subtype.ext h2
-      · exact False.elim (HT.ne_of_adj ((HT.mem_neighborFinset vT a.1).mp a.2) h1)
+      · exact False.elim (HT.ne_of_adj ((HT.mem_neighborFinset vT a.1).mp a.2) h2.symm)
     have hφsurj : Function.Surjective φ := by
       rintro ⟨e, he⟩
       obtain ⟨heE, hvmem⟩ := Finset.mem_filter.mp he
@@ -81,22 +65,24 @@ theorem card_edgeFinset_induce_erase {W : Type u} [DecidableEq W]
       | _ x y =>
         have hadj : HT.Adj x y := HT.mem_edgeFinset.mp heE
         rcases Sym2.mem_iff.mp hvmem with rfl | rfl
-        · exact ⟨⟨y, (HT.mem_neighborFinset x y).mpr hadj⟩, Subtype.ext rfl⟩
-        · exact ⟨⟨x, (HT.mem_neighborFinset y x).mpr hadj.symm⟩, Subtype.ext Sym2.eq_swap⟩
+        · exact ⟨⟨y, (HT.mem_neighborFinset vT y).mpr hadj⟩, Subtype.ext rfl⟩
+        · exact ⟨⟨x, (HT.mem_neighborFinset vT x).mpr hadj.symm⟩, Subtype.ext Sym2.eq_swap⟩
     have hc := Fintype.card_congr (Equiv.ofBijective φ ⟨hφinj, hφsurj⟩)
     rw [Fintype.card_coe, Fintype.card_coe, HT.card_neighborFinset_eq_degree] at hc
     exact hc.symm
   have hrem : E_rem.card = HT'.edgeFinset.card := by
     let liftV : {x : W // x ∈ T.erase v} → {x : W // x ∈ T} :=
       fun x => ⟨x.1, Finset.mem_of_mem_erase x.2⟩
-    have hlift_inj : Function.Injective liftV := fun a b h =>
-      Subtype.ext (congrArg Subtype.val h)
+    have hlift_inj : Function.Injective liftV := by
+      intro a b h
+      exact Subtype.ext (congrArg Subtype.val h)
     let ψ : HT'.edgeFinset → E_rem := fun e =>
       ⟨e.1.map liftV, by
+        rcases e with ⟨e, he⟩
         refine Finset.mem_filter.mpr ⟨?_, ?_⟩
-        · induction e.1 using Sym2.ind with
+        · induction e using Sym2.ind with
           | _ x y =>
-            have hadj : HT'.Adj x y := HT'.mem_edgeFinset.mp e.2
+            have hadj : HT'.Adj x y := HT'.mem_edgeFinset.mp he
             exact HT.mem_edgeFinset.mpr hadj
         · intro hmem
           obtain ⟨z, _, hz⟩ := Sym2.mem_map.mp hmem
@@ -164,7 +150,7 @@ theorem card_edgeFinset_le_four_of_card_four_c4free {W : Type u} [Fintype W] [De
     have hle : ∑ v ∈ Finset.univ.erase a, H.degree v ≤ ∑ _v ∈ Finset.univ.erase a, 2 :=
       Finset.sum_le_sum (fun v hv => hle2 v (Finset.mem_erase.mp hv).1)
     have hsum_split : ∑ v : W, H.degree v = H.degree a + ∑ v ∈ Finset.univ.erase a, H.degree v :=
-      (Finset.add_sum_erase Finset.univ H.degree (Finset.mem_univ a)).symm
+      (Finset.add_sum_erase Finset.univ (fun v => H.degree v) (Finset.mem_univ a)).symm
     have hce : (Finset.univ.erase a).card = 3 := by
       rw [Finset.card_erase_of_mem (Finset.mem_univ a), Finset.card_univ, h4]
     simp only [Finset.sum_const, hce, smul_eq_mul] at hle
@@ -198,7 +184,7 @@ theorem card_edgeFinset_le_four_of_card_four_c4free {W : Type u} [Fintype W] [De
   have had : H.Adj a d := hall_adj a d ha hda
   have hbc : H.Adj b c := hall_adj b c hb hcb
   have hbd : H.Adj b d := hall_adj b d hb hdb
-  exact hfree (rectangle_power H hca.symm hba.symm hda.symm hcb hcd hdb hac hbc.symm hbd had.symm)
+  exact hfree (rectangle_power H hca.symm hba.symm hda.symm hcb hcd hdb.symm hac hbc.symm hbd had.symm)
 
 /-- General 2-degeneracy edge bound: any finite simple graph H with no Near induced subgraph
     satisfies |E(H[T])| ≤ 2|T| - 3 for every T with |T| ≥ 2. -/
@@ -281,32 +267,59 @@ theorem class_h_aux_edges_eq_and_no_near [Fintype V] [DecidableEq V]
       ((G.mem_neighborFinset y.1 u).mp huN).symm,
       ((G.mem_neighborFinset y.1 v).mp hvN).symm⟩
   choose p1 p2 hp_ne hp_adj1 hp_adj2 using hex_pair
-  let R : {x : V // x ∈ S} → {z : V // z ∈ M} → Prop := fun x y => x = p1 y ∨ x = p2 y
-  let Haux : SimpleGraph {x : V // x ∈ S} := pairedGraph R
-  letI : DecidableRel Haux.Adj := fun a b => Classical.dec _
-  have hpaired : Paired R := by
-    intro y
-    refine Or.inr ⟨p1 y, p2 y, hp_ne y, fun x => Iff.rfl⟩
-  have hdisj : ∀ (x : {x : V // x ∈ S}) (y : {z : V // z ∈ M}), x.1 ≠ y.1 := by
-    intro x y h
-    have hx4 := hS4 x.1 x.2
-    have hy3 := (Finset.mem_filter.mp y.2).2.1
-    omega
-  have hR_adj : ∀ (x : {x : V // x ∈ S}) (y : {z : V // z ∈ M}), R x y → G.Adj x.1 y.1 := by
-    intro x y h
-    rcases h with rfl | rfl
-    · exact hp_adj1 y
-    · exact hp_adj2 y
+  let Haux : SimpleGraph {x : V // x ∈ S} :=
+    { Adj := fun a b => a ≠ b ∧ ∃ y : {z : V // z ∈ M}, (a = p1 y ∧ b = p2 y) ∨ (a = p2 y ∧ b = p1 y)
+      symm := ⟨by
+        rintro a b ⟨hne, y, ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩⟩
+        · exact ⟨hne.symm, y, Or.inr ⟨rfl, rfl⟩⟩
+        · exact ⟨hne.symm, y, Or.inl ⟨rfl, rfl⟩⟩⟩
+      loopless := ⟨fun _ h => h.1 rfl⟩ }
+  -- Power-freeness of Haux via Erdos64Shadow.power_cycle_expand
   have hHaux_free : ¬ HasPower Haux := by
     intro hpow
-    have hrect : ∀ x₁ x₂ y₁ y₂, x₁ ≠ x₂ → y₁ ≠ y₂ →
-        R x₁ y₁ → R x₁ y₂ → R x₂ y₁ → R x₂ y₂ → False := by
-      intro x₁ x₂ y₁ y₂ hx hy h11 h12 h21 h22
-      have heq := unique_common_neighbor_h hm.2.1 (fun h => hx (Subtype.ext h))
-        (hR_adj x₁ y₁ h11) (hR_adj x₂ y₁ h21) (hR_adj x₁ y₂ h12) (hR_adj x₂ y₂ h22)
-      exact hy (Subtype.ext heq)
-    exact hm.2.1 (paired_power_lift G Subtype.val Subtype.val
-      Subtype.val_injective Subtype.val_injective hdisj R hR_adj hpaired hrect hpow)
+    let mid : Sym2 {x : V // x ∈ S} → V := fun e =>
+      if h : ∃ y : {z : V // z ∈ M}, s(p1 y, p2 y) = e then (Classical.choose h).1 else
+        -- dummy fallback (never reached on edges of Haux)
+        (Classical.choose (show ∃ v : V, True from ⟨(hm.1.1).choose, trivial⟩))
+    have hmid_spec : ∀ {a b : {x : V // x ∈ S}}, Haux.Adj a b →
+        ∃ y : {z : V // z ∈ M}, mid s(a, b) = y.1 ∧ s(p1 y, p2 y) = s(a, b) := by
+      intro a b hab
+      obtain ⟨_, y0, ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩⟩ := hab
+      · have hex : ∃ y : {z : V // z ∈ M}, s(p1 y, p2 y) = s(p1 y0, p2 y0) := ⟨y0, rfl⟩
+        exact ⟨Classical.choose hex, by simp [mid, hex], Classical.choose_spec hex⟩
+      · have hex : ∃ y : {z : V // z ∈ M}, s(p1 y, p2 y) = s(p2 y0, p1 y0) := ⟨y0, Sym2.eq_swap⟩
+        exact ⟨Classical.choose hex, by simp [mid, hex], Classical.choose_spec hex⟩
+    have hmid_adj : ∀ {a b : {x : V // x ∈ S}}, Haux.Adj a b →
+        G.Adj a.1 (mid s(a, b)) ∧ G.Adj (mid s(a, b)) b.1 := by
+      intro a b hab
+      obtain ⟨y, hmy, hsy⟩ := hmid_spec hab
+      rw [hmy]
+      rcases Sym2.eq_iff.mp hsy with ⟨h1, h2⟩ | ⟨h1, h2⟩
+      · exact ⟨h1 ▸ hp_adj1 y, (h2 ▸ hp_adj2 y).symm⟩
+      · exact ⟨h1 ▸ hp_adj2 y, (h2 ▸ hp_adj1 y).symm⟩
+    have hmid_disj : ∀ {a b c : {x : V // x ∈ S}}, Haux.Adj a b → mid s(a, b) ≠ c.1 := by
+      intro a b c hab hEq
+      obtain ⟨y, hmy, _⟩ := hmid_spec hab
+      rw [hmy] at hEq
+      have hc4 := hS4 c.1 c.2
+      have hy3 := (Finset.mem_filter.mp y.2).2.1
+      rw [← hEq] at hc4
+      omega
+    have hmid_inj : ∀ {e₁ e₂ : Sym2 {x : V // x ∈ S}},
+        e₁ ∈ Haux.edgeSet → e₂ ∈ Haux.edgeSet → mid e₁ = mid e₂ → e₁ = e₂ := by
+      intro e₁ e₂ he₁ he₂ hmeq
+      induction e₁ using Sym2.ind with
+      | _ a₁ b₁ =>
+        induction e₂ using Sym2.ind with
+        | _ a₂ b₂ =>
+          obtain ⟨y₁, hm₁, hs₁⟩ := hmid_spec he₁
+          obtain ⟨y₂, hm₂, hs₂⟩ := hmid_spec he₂
+          have hy : y₁ = y₂ := Subtype.ext (hm₁.symm.trans (hmeq.trans hm₂))
+          rw [← hs₁, ← hs₂, hy]
+    obtain ⟨k, v₀, c, hk, hc, hlen⟩ := hpow
+    exact hm.2.1 (Erdos64Shadow.power_cycle_expand Subtype.val Subtype.val_injective
+      mid (fun h => (hmid_adj h).1) (fun h => (hmid_adj h).2)
+      (fun h c' => hmid_disj h) hmid_inj ⟨k, v₀, c, hk, hc, hlen⟩)
   obtain ⟨w₀, hw₀, _, _⟩ := hH
   have hScard_lt : Fintype.card {x : V // x ∈ S} < Fintype.card V := by
     apply Fintype.card_lt_of_injective_not_surjective Subtype.val Subtype.val_injective
@@ -326,7 +339,7 @@ theorem class_h_aux_edges_eq_and_no_near [Fintype V] [DecidableEq V]
     exact hHaux_free (power_induce Haux (T : Set {x : V // x ∈ S}) hpow)
   have hedge_eq : Haux.edgeFinset.card = M.card := by
     let φ : {z : V // z ∈ M} → Haux.edgeFinset := fun y =>
-      ⟨s(p1 y, p2 y), Haux.mem_edgeFinset.mpr ⟨hp_ne y, y, Or.inl rfl, Or.inr rfl⟩⟩
+      ⟨s(p1 y, p2 y), Haux.mem_edgeFinset.mpr ⟨hp_ne y, y, Or.inl ⟨rfl, rfl⟩⟩⟩
     have hφinj : Function.Injective φ := by
       intro y₁ y₂ heq
       have hs : s(p1 y₁, p2 y₁) = s(p1 y₂, p2 y₂) := congrArg Subtype.val heq
@@ -340,13 +353,9 @@ theorem class_h_aux_edges_eq_and_no_near [Fintype V] [DecidableEq V]
       rintro ⟨e, he⟩
       induction e using Sym2.ind with
       | _ a b =>
-        obtain ⟨hab, y, ha, hb⟩ := Haux.mem_edgeFinset.mp he
-        refine ⟨y, Subtype.ext ?_⟩
-        rcases ha with rfl | rfl <;> rcases hb with rfl | rfl
-        · exact False.elim (hab rfl)
-        · rfl
-        · exact Sym2.eq_swap
-        · exact False.elim (hab rfl)
+        obtain ⟨_, y, ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩⟩ := Haux.mem_edgeFinset.mp he
+        · exact ⟨y, Subtype.ext rfl⟩
+        · exact ⟨y, Subtype.ext Sym2.eq_swap⟩
     have hc := Fintype.card_congr (Equiv.ofBijective φ ⟨hφinj, hφsurj⟩)
     rw [Fintype.card_coe, Fintype.card_coe] at hc
     exact hc.symm
@@ -360,18 +369,20 @@ theorem card_edgeFinset_induce_univ {W : Type u} [Fintype W] [DecidableEq W]
   let HU := H.induce ((Finset.univ : Finset W) : Set W)
   let e : HU.edgeFinset ≃ H.edgeFinset :=
     { toFun := fun x => ⟨x.1.map Subtype.val, by
-        induction x.1 using Sym2.ind with
-        | _ a b => exact H.mem_edgeFinset.mpr (HU.mem_edgeFinset.mp x.2)⟩
+        rcases x with ⟨e, he⟩
+        induction e using Sym2.ind with
+        | _ a b => exact H.mem_edgeFinset.mpr (HU.mem_edgeFinset.mp he)⟩
       invFun := fun x => ⟨x.1.map (fun v => ⟨v, Finset.mem_univ v⟩), by
-        induction x.1 using Sym2.ind with
-        | _ a b => exact HU.mem_edgeFinset.mpr (H.mem_edgeFinset.mp x.2)⟩
+        rcases x with ⟨e, he⟩
+        induction e using Sym2.ind with
+        | _ a b => exact HU.mem_edgeFinset.mpr (H.mem_edgeFinset.mp he)⟩
       left_inv := by
-        intro x; apply Subtype.ext
-        induction x.1 using Sym2.ind with
+        rintro ⟨e, he⟩; apply Subtype.ext
+        induction e using Sym2.ind with
         | _ a b => rfl
       right_inv := by
-        intro x; apply Subtype.ext
-        induction x.1 using Sym2.ind with
+        rintro ⟨e, he⟩; apply Subtype.ext
+        induction e using Sym2.ind with
         | _ a b => rfl }
   have hc := Fintype.card_congr e
   simpa only [Fintype.card_coe] using hc

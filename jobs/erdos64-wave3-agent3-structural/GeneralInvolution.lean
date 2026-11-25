@@ -7,20 +7,6 @@ Erdos 64 (Wave 3, Agent #3): General Involution Quotient Theorem (Arbitrary Fixe
 Strictly generalizes Wave 2's fixed-point-free involution exclusion (`no_fpf_involution_le_one_edge`)
 to ALL nontrivial order-2 automorphisms σ ∈ Aut(G) — with OR without fixed points — across all 13
 open MinimalBad leaves (cubic C, subcubic 1-defect S, and high-degree 1-defect H).
-
-Main unconditional all-order theorems (standard axioms only):
-1. `hasPower_of_invQuot_general`: Every 2^k-cycle (k ≥ 2) in G / ⟨σ⟩ lifts to a 2^k-cycle or
-   2^(k+1)-cycle in G, with NO fixed-point-free assumption.
-2. `invQuot_degree_nonfixed`: Every non-fixed vertex u with ¬G.Adj u (σ u) keeps its exact degree
-   in G / ⟨σ⟩.
-3. `invQuot_degree_fixed_double_ge`: Every fixed vertex f satisfies G.degree f ≤ 2 * (G/⟨σ⟩).degree ⟦f⟧.
-4. `invQuot_degree_fixed_all_fixed`: Every fixed vertex f with all neighbors fixed keeps its exact degree.
-5. `general_involution_two_low_orbits`: Every nontrivial involution σ of ANY MinimalBad(G) produces
-   at least two distinct orbits of degree ≤ 2 in G / ⟨σ⟩.
-6. `no_defect_fixing_involution_no_other_low`: Excludes every nontrivial involution fixing the unique
-   degree-2 defect w in S/H with 0 flipped edges and no other low-quotient-degree fixed vertex.
-7. `cubic_involution_two_seam_orbits`: Every nontrivial involution of a cubic MinimalBad(G) has at
-   least two distinct seam orbits (each a flipped edge or a boundary fixed vertex).
 -/
 
 namespace E64Wave3Involution
@@ -89,7 +75,7 @@ theorem lift_edge_exists {G : SimpleGraph V} {σ : V → V} {hinv : ∀ v, σ (�
   · exact ⟨b, hb, hab⟩
   · refine ⟨σ b, ?_, ?_⟩
     · rw [← hb]
-      exact Quotient.sound (Or.inr (hinv b).symm)
+      exact Quotient.sound (Or.inr rfl)
     · have := (haut (σ u) b).mp hab
       rwa [hinv u] at this
 
@@ -102,7 +88,7 @@ noncomputable def liftWalk {G : SimpleGraph V} {σ : V → V} {hinv : ∀ v, σ 
       res.2.support.map (Quotient.mk (invSetoid σ hinv)) = p.support} :=
   match p with
   | .nil => ⟨⟨u, .nil⟩, hu, rfl, by simp [hu]⟩
-  | @Walk.cons _ _ _ _ _ _ hab q =>
+  | @Walk.cons _ _ _ _ _ hab q =>
     let hex := lift_edge_exists haut (hu.symm ▸ hab)
     let v := Classical.choose hex
     let hv := Classical.choose_spec hex
@@ -126,7 +112,7 @@ theorem hasPower_of_invQuot_general {G : SimpleGraph V} {σ : V → V}
     (hpow : HasPower (invQuotGraph G σ hinv)) : HasPower G := by
   classical
   obtain ⟨k, q₀, c, hk, hc, hlen⟩ := hpow
-  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
+  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
   by_cases hfix : ∃ f : V, σ f = f ∧ (⟦f⟧ : Quotient (invSetoid σ hinv)) ∈ c.support
   · obtain ⟨f, hff, hfmem⟩ := hfix
     let c' := c.rotate hfmem
@@ -201,7 +187,7 @@ theorem hasPower_of_invQuot_general {G : SimpleGraph V} {σ : V → V}
         obtain ⟨y, hy1, hxy⟩ := List.mem_map.mp hx2
         have hqeq : (⟦x⟧ : Quotient (invSetoid σ hinv)) = ⟦y⟧ := by
           rw [← hxy]
-          exact Quotient.sound (Or.inr (hinv y).symm)
+          exact Quotient.sound (Or.inr rfl)
         have hinj_on := (List.nodup_map_iff_inj_on hp₁tail_nodup).mp
           (hp₁tail_map.symm ▸ hc.support_nodup)
         have heq : x = y := hinj_on x hx1 y hy1 hqeq
@@ -232,13 +218,13 @@ theorem invQuot_degree_nonfixed [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hfree : ¬ HasPower G)
     (σ : V → V) (hinv : ∀ v, σ (σ v) = v)
     (haut : ∀ a b, G.Adj a b ↔ G.Adj (σ a) (σ b))
+    [Fintype (Quotient (invSetoid σ hinv))]
+    [DecidableRel (invQuotGraph G σ hinv).Adj]
     {u : V} (hu : σ u ≠ u) (hno : ¬ G.Adj u (σ u)) :
-    let H := invQuotGraph G σ hinv
-    letI : DecidableRel H.Adj := fun a b => Classical.dec _
-    H.degree ⟦u⟧ = G.degree u := by
+    (invQuotGraph G σ hinv).degree ⟦u⟧ = G.degree u := by
   classical
-  intro H _
   let Q := Quotient (invSetoid σ hinv)
+  let H := invQuotGraph G σ hinv
   let f : G.neighborSet u → H.neighborSet (⟦u⟧ : Q) := fun v =>
     ⟨⟦v.1⟧, ⟨fun heq => by
       rcases Quotient.exact heq with h1 | h2
@@ -266,13 +252,13 @@ theorem invQuot_degree_fixed_double_ge [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (σ : V → V) (hinv : ∀ v, σ (σ v) = v)
     (haut : ∀ a b, G.Adj a b ↔ G.Adj (σ a) (σ b))
+    [Fintype (Quotient (invSetoid σ hinv))]
+    [DecidableRel (invQuotGraph G σ hinv).Adj]
     {f : V} (hf : σ f = f) :
-    let H := invQuotGraph G σ hinv
-    letI : DecidableRel H.Adj := fun a b => Classical.dec _
-    G.degree f ≤ 2 * H.degree ⟦f⟧ := by
+    G.degree f ≤ 2 * (invQuotGraph G σ hinv).degree ⟦f⟧ := by
   classical
-  intro H _
   let Q := Quotient (invSetoid σ hinv)
+  let H := invQuotGraph G σ hinv
   let rep : H.neighborSet (⟦f⟧ : Q) → V := fun q =>
     Classical.choose (lift_edge_exists haut q.2)
   have hrep_q : ∀ q, (⟦rep q⟧ : Q) = q.1 := fun q =>
@@ -306,13 +292,13 @@ theorem invQuot_degree_fixed_all_fixed [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (σ : V → V) (hinv : ∀ v, σ (σ v) = v)
     (haut : ∀ a b, G.Adj a b ↔ G.Adj (σ a) (σ b))
+    [Fintype (Quotient (invSetoid σ hinv))]
+    [DecidableRel (invQuotGraph G σ hinv).Adj]
     {f : V} (hf : σ f = f) (hall : ∀ v, G.Adj f v → σ v = v) :
-    let H := invQuotGraph G σ hinv
-    letI : DecidableRel H.Adj := fun a b => Classical.dec _
-    H.degree ⟦f⟧ = G.degree f := by
+    (invQuotGraph G σ hinv).degree ⟦f⟧ = G.degree f := by
   classical
-  intro H _
   let Q := Quotient (invSetoid σ hinv)
+  let H := invQuotGraph G σ hinv
   let φ : G.neighborSet f → H.neighborSet (⟦f⟧ : Q) := fun v =>
     ⟨⟦v.1⟧, ⟨fun heq => by
       rcases Quotient.exact heq with h1 | h2
@@ -340,13 +326,14 @@ theorem invQuot_degree_fixed_all_fixed [Fintype V] [DecidableEq V]
 theorem general_involution_two_low_orbits [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (σ : V → V) (hinv : ∀ v, σ (σ v) = v) (hnontriv : ∃ x : V, σ x ≠ x)
-    (haut : ∀ a b, G.Adj a b ↔ G.Adj (σ a) (σ b)) :
-    let H := invQuotGraph G σ hinv
-    letI : DecidableRel H.Adj := fun a b => Classical.dec _
-    ∃ q₁ q₂ : Quotient (invSetoid σ hinv), q₁ ≠ q₂ ∧ H.degree q₁ ≤ 2 ∧ H.degree q₂ ≤ 2 := by
+    (haut : ∀ a b, G.Adj a b ↔ G.Adj (σ a) (σ b))
+    [Fintype (Quotient (invSetoid σ hinv))]
+    [DecidableRel (invQuotGraph G σ hinv).Adj] :
+    ∃ q₁ q₂ : Quotient (invSetoid σ hinv), q₁ ≠ q₂ ∧
+      (invQuotGraph G σ hinv).degree q₁ ≤ 2 ∧ (invQuotGraph G σ hinv).degree q₂ ≤ 2 := by
   classical
-  intro H _
   let Q := Quotient (invSetoid σ hinv)
+  let H := invQuotGraph G σ hinv
   obtain ⟨x₀, hx₀⟩ := hnontriv
   have hcard_lt : Fintype.card Q < Fintype.card V := by
     let pickRep : Q → V := fun q => Classical.choose (Quotient.exists_rep q)
@@ -415,15 +402,14 @@ theorem no_defect_fixing_involution_no_other_low [Fintype V] [DecidableEq V]
     (w : V) (hw : ∀ v, v ≠ w → 3 ≤ G.degree v)
     (σ : V → V) (hinv : ∀ v, σ (σ v) = v) (hnontriv : ∃ x : V, σ x ≠ x)
     (haut : ∀ a b, G.Adj a b ↔ G.Adj (σ a) (σ b))
+    [Fintype (Quotient (invSetoid σ hinv))]
+    [DecidableRel (invQuotGraph G σ hinv).Adj]
     (hfixw : σ w = w)
     (hnoflip : ∀ v : V, σ v ≠ v → ¬ G.Adj v (σ v))
-    (hno_other_fix : ∀ f : V, σ f = f → f ≠ w →
-      let H := invQuotGraph G σ hinv
-      letI : DecidableRel H.Adj := fun a b => Classical.dec _
-      3 ≤ H.degree ⟦f⟧) : False := by
+    (hno_other_fix : ∀ f : V, σ f = f → f ≠ w → 3 ≤ (invQuotGraph G σ hinv).degree ⟦f⟧) :
+    False := by
   classical
   let H := invQuotGraph G σ hinv
-  letI : DecidableRel H.Adj := fun a b => Classical.dec _
   obtain ⟨q₁, q₂, hne, h1, h2⟩ := general_involution_two_low_orbits G hm σ hinv hnontriv haut
   have hbad_eq_w : ∀ q : Quotient (invSetoid σ hinv), H.degree q ≤ 2 → q = ⟦w⟧ := by
     intro q hq
@@ -454,7 +440,6 @@ theorem cubic_involution_two_seam_orbits [Fintype V] [DecidableEq V]
   classical
   intro Q IsSeam
   let H := invQuotGraph G σ hinv
-  letI : DecidableRel H.Adj := fun a b => Classical.dec _
   obtain ⟨q₁, q₂, hne, h1, h2⟩ := general_involution_two_low_orbits G hm σ hinv hnontriv haut
   have hseam : ∀ q : Q, H.degree q ≤ 2 → IsSeam q := by
     intro q hq
