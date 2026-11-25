@@ -30,7 +30,8 @@ def walkDropAddedEdge {α : Type u} {H₀ : SimpleGraph α} {q₁ q₂ : α} :
         apply hno
         rw [Walk.edges_cons, List.mem_cons]
         left
-        rcases (SimpleGraph.edge_adj.mp hedge).1 with ⟨h1, h2⟩ | ⟨h1, h2⟩
+        simp only [SimpleGraph.edge_adj] at hedge
+        rcases hedge.1 with ⟨h1, h2⟩ | ⟨h1, h2⟩
         · rw [h1, h2]
         · rw [h1, h2, Sym2.eq_swap]
     .cons hab0 (walkDropAddedEdge rest (fun hm => hno (by rw [Walk.edges_cons]; exact List.mem_cons_of_mem _ hm)))

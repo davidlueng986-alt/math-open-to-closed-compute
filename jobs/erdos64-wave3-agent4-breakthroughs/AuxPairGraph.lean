@@ -816,8 +816,7 @@ lemma highPairGraph_c4_near_free [Fintype V] [DecidableEq V]
       exact ⟨w, hw3, fun z hz => by rcases Sym2.mem_iff.mp hz with rfl | rfl; exact hxw; exact hyw⟩
     have hsp := Classical.choose_spec hex
     have hmeq : mid s(x, y) = Classical.choose hex := by
-      dsimp only [mid]
-      exact dite_eq_left.mpr (fun h => absurd hex h)
+      simp only [mid, hex, ↓reduceDIte]
     have hgoal : ∀ w : V, w = Classical.choose hex →
         G.degree w = 3 ∧ G.Adj x.1.1 w ∧ G.Adj y.1.1 w := by
       rintro _ rfl
@@ -908,8 +907,9 @@ theorem class_h_code_weight_ge_six [Fintype V] [DecidableEq V]
   have hid : Fintype.card {y : V₃ // syndrome R z y = 1} + (∑ x : S, F.degree x) =
       ∑ x : S, G.degree x.1.1 := class_h_syndrome_plus_pair_deg G hm z
   have ⟨_, hnf⟩ := highPairGraph_c4_near_free G hm hH S
-  have hbound := near_free_deg_sum_le F hnf S.card Finset.univ (by simp) (by omega)
-  have hdeg_eq := deg_sum_eq_induce_univ F
+  have hbound : (∑ x : S, F.degree x) ≤ 4 * S.card - 6 := by
+    rw [deg_sum_eq_induce_univ F]
+    exact near_free_deg_sum_le F hnf S.card Finset.univ (by simp) (by omega)
   have hsum4 : 4 * S.card ≤ ∑ x : S, G.degree x.1.1 := by
     calc 4 * S.card = ∑ _x : S, 4 := by simp [mul_comm]
       _ ≤ ∑ x : S, G.degree x.1.1 := Finset.sum_le_sum (fun x _ => x.1.2)
@@ -932,8 +932,9 @@ theorem class_h_code_weight_ge_eight [Fintype V] [DecidableEq V]
   have hid : Fintype.card {y : V₃ // syndrome R z y = 1} + (∑ x : S, F.degree x) =
       ∑ x : S, G.degree x.1.1 := class_h_syndrome_plus_pair_deg G hm z
   have ⟨hc4, hnf⟩ := highPairGraph_c4_near_free G hm hH S
-  have hbound := c4_near_free_deg_sum_le_four F hc4 hnf S.card Finset.univ (by simp) (by omega)
-  have hdeg_eq := deg_sum_eq_induce_univ F
+  have hbound : (∑ x : S, F.degree x) ≤ 4 * S.card - 8 := by
+    rw [deg_sum_eq_induce_univ F]
+    exact c4_near_free_deg_sum_le_four F hc4 hnf S.card Finset.univ (by simp) (by omega)
   have hsum4 : 4 * S.card ≤ ∑ x : S, G.degree x.1.1 := by
     calc 4 * S.card = ∑ _x : S, 4 := by simp [mul_comm]
       _ ≤ ∑ x : S, G.degree x.1.1 := Finset.sum_le_sum (fun x _ => x.1.2)
@@ -956,8 +957,9 @@ theorem class_h_code_weight_ge_ten [Fintype V] [DecidableEq V]
   have hid : Fintype.card {y : V₃ // syndrome R z y = 1} + (∑ x : S, F.degree x) =
       ∑ x : S, G.degree x.1.1 := class_h_syndrome_plus_pair_deg G hm z
   have ⟨hc4, hnf⟩ := highPairGraph_c4_near_free G hm hH S
-  have hbound := c4_near_free_deg_sum_le_six F hc4 hnf S.card Finset.univ (by simp) (by omega)
-  have hdeg_eq := deg_sum_eq_induce_univ F
+  have hbound : (∑ x : S, F.degree x) ≤ 4 * S.card - 10 := by
+    rw [deg_sum_eq_induce_univ F]
+    exact c4_near_free_deg_sum_le_six F hc4 hnf S.card Finset.univ (by simp) (by omega)
   have hsum4 : 4 * S.card ≤ ∑ x : S, G.degree x.1.1 := by
     calc 4 * S.card = ∑ _x : S, 4 := by simp [mul_comm]
       _ ≤ ∑ x : S, G.degree x.1.1 := Finset.sum_le_sum (fun x _ => x.1.2)
