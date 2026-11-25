@@ -19,6 +19,7 @@ jobs:
       - name: Check the exact matrices, defect repair and T-sequence congruences
         run: |
           python3 -B jobs/hadamard-all-orders/verify.py
+          python3 -B jobs/hadamard-all-orders/stack_1197.py
           python3 -B jobs/hadamard-all-orders/triple_product.py
           python3 -B jobs/hadamard-all-orders/t599.py
           python3 -B jobs/hadamard-all-orders/r_intersections.py
