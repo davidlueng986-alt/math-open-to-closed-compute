@@ -28,24 +28,25 @@ universe u
     has a vertex of degree at most 2. -/
 def TwoDegenerate {W : Type u} [Fintype W] (H : SimpleGraph W) : Prop :=
   ∀ (U : Finset W), U.Nonempty →
-    ∃ v ∈ U, (U.filter (fun u => H.Adj v u)).card ≤ 2
+    ∃ v ∈ U, ∀ [DecidablePred (H.Adj v)], (U.filter (fun u => H.Adj v u)).card ≤ 2
 
 /-- A simple graph is C4-free if no four pairwise distinct vertices form a 4-cycle. -/
 def C4Free {W : Type u} (H : SimpleGraph W) : Prop :=
   ∀ a b c d : W, a ≠ b → a ≠ c → a ≠ d → b ≠ c → b ≠ d → c ≠ d →
     H.Adj a b → H.Adj b c → H.Adj c d → H.Adj d a → False
 
-/-- Induced subgraph on `{u : W // u ≠ v}` inherits `TwoDegenerate`. -/
+/-- Induced subgraph on `{u : W | u ≠ v}` inherits `TwoDegenerate`. -/
 private theorem two_deg_erase {W : Type u} [Fintype W] [DecidableEq W]
     (H : SimpleGraph W) (h2 : TwoDegenerate H) (v : W) :
     TwoDegenerate (H.induce {u : W | u ≠ v}) := by
   classical
   intro U hU
   let U' : Finset W := U.map ⟨Subtype.val, Subtype.val_injective⟩
-  have hU' : U'.Nonempty := hU.map _
+  have hU' : U'.Nonempty := Finset.Nonempty.map hU
   obtain ⟨x, hxU', hdeg⟩ := h2 U' hU'
   obtain ⟨⟨x', hx'ne⟩, hxU, rfl⟩ := Finset.mem_map.mp hxU'
   refine ⟨⟨x', hx'ne⟩, hxU, ?_⟩
+  intro _
   have hcard : (U.filter (fun u => (H.induce {w : W | w ≠ v}).Adj ⟨x', hx'ne⟩ u)).card =
       (U'.filter (fun u => H.Adj x' u)).card := by
     apply Finset.card_bij (fun a _ => a.1)
@@ -59,7 +60,7 @@ private theorem two_deg_erase {W : Type u} [Fintype W] [DecidableEq W]
       exact ⟨a, Finset.mem_filter.mpr ⟨haU, hb.2⟩, rfl⟩
   rw [hcard]; exact hdeg
 
-/-- Induced subgraph on `{u : W // u ≠ v}` inherits `C4Free`. -/
+/-- Induced subgraph on `{u : W | u ≠ v}` inherits `C4Free`. -/
 private theorem c4_free_erase {W : Type u} (H : SimpleGraph W) (hc4 : C4Free H) (v : W) :
     C4Free (H.induce {u : W | u ≠ v}) := by
   intro a b c d hab hac had hbc hbd hcd h1 h2 h3 h4
@@ -91,9 +92,9 @@ private theorem sum_deg_erase {W : Type u} [Fintype W] [DecidableEq W]
         exact ⟨⟨b, hb.1⟩, (H'.mem_neighborFinset u ⟨b, hb.1⟩).mpr hb.2, rfl⟩
     rw [hbij]
     by_cases hadj : H.Adj v u.1
-    · rw [if_pos hadj]
+    · simp only [hadj, ite_true]
       exact Finset.card_erase_add_one ((H.mem_neighborFinset u.1 v).mpr hadj.symm)
-    · rw [if_neg hadj, add_zero]
+    · simp only [hadj, ite_false, add_zero]
       have hnot : v ∉ H.neighborFinset u.1 := fun hm => hadj ((H.mem_neighborFinset u.1 v).mp hm).symm
       rw [Finset.erase_eq_of_notMem hnot]
   have hsum_adj : (∑ u : {w : W // w ≠ v}, if H.Adj v u.1 then 1 else 0) = H.degree v := by
@@ -124,6 +125,7 @@ private theorem sum_deg_erase {W : Type u} [Fintype W] [DecidableEq W]
     rw [← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl (fun u _ => hdeg_other u)
   rw [hsum_adj] at hsum_eq
+  change (∑ u : {w : W // w ≠ v}, H'.degree u) + 2 * H.degree v = ∑ u : W, H.degree u
   omega
 
 /-- Cardinality of `{u : W // u ≠ v}` plus 1 equals `Fintype.card W`. -/
@@ -163,11 +165,12 @@ theorem two_deg_sum_deg_le : ∀ (n : ℕ) {W : Type u} [Fintype W] [DecidableEq
           ext u; simp [SimpleGraph.mem_neighborFinset]
         rw [heq]; exact hvdeg
       let H' := H.induce {u : W | u ≠ v}
-      letI : DecidableRel H'.Adj := fun a b => Classical.dec _
+      let _ : DecidableRel H'.Adj := fun a b => Classical.dec _
       have hcard' : Fintype.card {u : W // u ≠ v} = m := by
         have := card_erase_sub v; omega
       have hsub := ih H' hcard' hmge2 (two_deg_erase H h2 v)
       have hsplit := sum_deg_erase H v
+      change (∑ u : {u : W // u ≠ v}, H'.degree u) + 2 * H.degree v = ∑ u : W, H.degree u at hsplit
       omega
 
 /-- Base case `k = 4`: a C4-free simple graph on 4 vertices has degree sum `≤ 8`. -/
@@ -197,14 +200,15 @@ private theorem c4_free_four_sum_deg_le {W : Type u} [Fintype W] [DecidableEq W]
     · obtain ⟨a, c, hac, hnac⟩ := hna
       refine ⟨a, c, hac, fun x y hxy h1 h2 => ?_⟩
       by_contra hnxy
-      have hdef : ∀ u : W, (Finset.univ.filter (fun z => z ≠ u ∧ ¬ H.Adj u z)).card = 3 - H.degree u := by
+      have hdef : ∀ u : W, Fintype.card {z : W // z ≠ u ∧ ¬ H.Adj u z} = 3 - H.degree u := by
         intro u
+        rw [Fintype.card_subtype]
         have hpart : (Finset.univ.filter (fun z => z ≠ u ∧ ¬ H.Adj u z)).card +
             (H.neighborFinset u).card = (Finset.univ.erase u).card := by
           rw [← Finset.card_union_of_disjoint]
           · congr 1; ext z
             simp only [Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and,
-              SimpleGraph.mem_neighborFinset, Finset.mem_erase]
+              SimpleGraph.mem_neighborFinset, Finset.mem_erase, and_true]
             constructor
             · rintro (⟨hne, _⟩ | hadj)
               · exact hne
@@ -222,23 +226,15 @@ private theorem c4_free_four_sum_deg_le {W : Type u} [Fintype W] [DecidableEq W]
         omega
       let P : Finset (W × W) := Finset.univ.filter (fun p => p.1 ≠ p.2 ∧ ¬ H.Adj p.1 p.2)
       have hPcard : P.card = ∑ u : W, (3 - H.degree u) := by
-        have h1 : P.card = ∑ u : W, (Finset.univ.filter (fun z => z ≠ u ∧ ¬ H.Adj u z)).card := by
-          trans (Finset.univ.biUnion (fun u : W =>
-              (Finset.univ.filter (fun z => z ≠ u ∧ ¬ H.Adj u z)).map
-                ⟨fun z => (u, z), fun _ _ h => (Prod.mk.inj h).2⟩)).card
-          · congr 1; ext ⟨u, z⟩
-            simp [P, ne_comm]
-          · rw [Finset.card_biUnion]
-            · apply Finset.sum_congr rfl; intro u _; exact Finset.card_map _
-            · intro u _ v _ huv
-              rw [Finset.disjoint_left]
-              intro p hp1 hp2
-              simp only [Finset.mem_map, Function.Embedding.coeFn_mk] at hp1 hp2
-              obtain ⟨_, _, rfl⟩ := hp1
-              obtain ⟨_, _, heq⟩ := hp2
-              exact huv (Prod.mk.inj heq).1.symm
-        rw [h1]
-        exact Finset.sum_congr rfl (fun u _ => hdef u)
+        have e : (Σ u : W, {z : W // z ≠ u ∧ ¬ H.Adj u z}) ≃ {p : W × W // p.1 ≠ p.2 ∧ ¬ H.Adj p.1 p.2} :=
+          { toFun := fun q => ⟨(q.1, q.2.1), ⟨q.2.2.1.symm, q.2.2.2⟩⟩
+            invFun := fun p => ⟨p.1.1, ⟨p.1.2, ⟨p.2.1.symm, p.2.2⟩⟩⟩
+            left_inv := fun _ => rfl
+            right_inv := fun _ => rfl }
+        have hc := Fintype.card_congr e
+        rw [Fintype.card_sigma, Fintype.card_subtype] at hc
+        rw [← hc]
+        exact Finset.sum_congr rfl (fun u _ => (hdef u).symm)
       have hsub : ({(a, c), (c, a), (x, y), (y, x)} : Finset (W × W)) ⊆ P := by
         intro p hp
         simp only [Finset.mem_insert, Finset.mem_singleton] at hp
@@ -251,13 +247,25 @@ private theorem c4_free_four_sum_deg_le {W : Type u} [Fintype W] [DecidableEq W]
       have h4 : ({(a, c), (c, a), (x, y), (y, x)} : Finset (W × W)).card = 4 := by
         have hne1 : (a, c) ≠ (c, a) := fun h => hac (Prod.mk.inj h).1
         have hne2 : (a, c) ≠ (x, y) := fun h => by
-          have := Prod.mk.inj h; rcases h1 with h1 | h1 <;> exact h1 this.1.symm <|> exact h1 this.2.symm
+          have hp := Prod.mk.inj h
+          rcases h1 with h1' | h1'
+          · exact h1' hp.1.symm
+          · exact h1' hp.2.symm
         have hne3 : (a, c) ≠ (y, x) := fun h => by
-          have := Prod.mk.inj h; rcases h2 with h2 | h2 <;> exact h2 this.2.symm <|> exact h2 this.1.symm
+          have hp := Prod.mk.inj h
+          rcases h2 with h2' | h2'
+          · exact h2' hp.2.symm
+          · exact h2' hp.1.symm
         have hne4 : (c, a) ≠ (x, y) := fun h => by
-          have := Prod.mk.inj h; rcases h2 with h2 | h2 <;> exact h2 this.1.symm <|> exact h2 this.2.symm
+          have hp := Prod.mk.inj h
+          rcases h2 with h2' | h2'
+          · exact h2' hp.1.symm
+          · exact h2' hp.2.symm
         have hne5 : (c, a) ≠ (y, x) := fun h => by
-          have := Prod.mk.inj h; rcases h1 with h1 | h1 <;> exact h1 this.2.symm <|> exact h1 this.1.symm
+          have hp := Prod.mk.inj h
+          rcases h1 with h1' | h1'
+          · exact h1' hp.2.symm
+          · exact h1' hp.1.symm
         have hne6 : (x, y) ≠ (y, x) := fun h => hxy (Prod.mk.inj h).1
         simp [Finset.card_insert_of_notMem, hne1, hne2, hne3, hne4, hne5, hne6]
       have hle := Finset.card_le_card hsub
@@ -314,11 +322,12 @@ theorem c4_free_two_deg_sum_deg_le_eight : ∀ (n : ℕ) {W : Type u} [Fintype W
           ext u; simp [SimpleGraph.mem_neighborFinset]
         rw [heq]; exact hvdeg
       let H' := H.induce {u : W | u ≠ v}
-      letI : DecidableRel H'.Adj := fun a b => Classical.dec _
+      let _ : DecidableRel H'.Adj := fun a b => Classical.dec _
       have hcard' : Fintype.card {u : W // u ≠ v} = m := by
         have := card_erase_sub v; omega
       have hsub := ih H' hcard' hmge4 (two_deg_erase H h2 v) (c4_free_erase H hc4 v)
       have hsplit := sum_deg_erase H v
+      change (∑ u : {u : W // u ≠ v}, H'.degree u) + 2 * H.degree v = ∑ u : W, H.degree u at hsplit
       omega
 
 /-- 3. Five-vertex C4-free common-neighbor lemma:
@@ -387,7 +396,7 @@ theorem c4_free_five_common_neighbor {W : Type u} [Fintype W] [DecidableEq W]
     rw [Finset.sum_insert (by simp [h23])]
     rw [Finset.sum_singleton]
     simp only [hdeg_f]
-    have hloop : ∀ u, b u u = 0 := fun u => by simp [b, H.loopless]
+    have hloop : ∀ u, b u u = 0 := fun u => by simp [b]
     rw [hloop x, hloop y, hloop z₁, hloop z₂, hloop z₃,
         hb_sym y x, hb_sym z₁ x, hb_sym z₂ x, hb_sym z₃ x,
         hb_sym z₁ y, hb_sym z₂ y, hb_sym z₃ y,
@@ -457,7 +466,7 @@ theorem c4_free_two_deg_sum_deg_le_ten : ∀ (n : ℕ) {W : Type u} [Fintype W] 
           ext u; simp [SimpleGraph.mem_neighborFinset]
         rw [heq]; exact hvdeg
       let H' := H.induce {u : W | u ≠ v}
-      letI : DecidableRel H'.Adj := fun a b => Classical.dec _
+      let _ : DecidableRel H'.Adj := fun a b => Classical.dec _
       have hcard' : Fintype.card {u : W // u ≠ v} = 5 := by
         have := card_erase_sub v; omega
       have hle12 : ∑ u : {u : W // u ≠ v}, H'.degree u ≤ 12 := by
@@ -465,6 +474,7 @@ theorem c4_free_two_deg_sum_deg_le_ten : ∀ (n : ℕ) {W : Type u} [Fintype W] 
           (two_deg_erase H h2 v) (c4_free_erase H hc4 v)
         omega
       have hsplit := sum_deg_erase H v
+      change (∑ u : {u : W // u ≠ v}, H'.degree u) + 2 * H.degree v = ∑ u : W, H.degree u at hsplit
       have hsum12 : 12 ≤ ∑ u : {u : W // u ≠ v}, H'.degree u := by omega
       have hdv2 : H.degree v = 2 := by omega
       rw [← H.card_neighborFinset_eq_degree] at hdv2
@@ -487,11 +497,12 @@ theorem c4_free_two_deg_sum_deg_le_ten : ∀ (n : ℕ) {W : Type u} [Fintype W] 
           ext u; simp [SimpleGraph.mem_neighborFinset]
         rw [heq]; exact hvdeg
       let H' := H.induce {u : W | u ≠ v}
-      letI : DecidableRel H'.Adj := fun a b => Classical.dec _
+      let _ : DecidableRel H'.Adj := fun a b => Classical.dec _
       have hcard' : Fintype.card {u : W // u ≠ v} = m := by
         have := card_erase_sub v; omega
       have hsub := ih H' hcard' hmge6 (two_deg_erase H h2 v) (c4_free_erase H hc4 v)
       have hsplit := sum_deg_erase H v
+      change (∑ u : {u : W // u ≠ v}, H'.degree u) + 2 * H.degree v = ∑ u : W, H.degree u at hsplit
       omega
 
 /-- Any power-free graph `H` on fewer vertices than a `MinimalBad` graph `G` is both
@@ -510,10 +521,10 @@ private theorem c4_free_and_two_deg_of_power_free {V W : Type u}
     by_contra hall
     push Not at hall
     let HU := H.induce (U : Set W)
-    letI : DecidableRel HU.Adj := fun a b => Classical.dec _
+    let _ : DecidableRel HU.Adj := fun a b => Classical.dec _
     have hdeg_ge3 : ∀ x : U, 3 ≤ HU.degree x := by
       intro x
-      have hgt := hall x.1 x.2
+      obtain ⟨_, hgt⟩ := hall x.1 x.2
       rw [← HU.card_neighborFinset_eq_degree]
       have hbij : (HU.neighborFinset x).card = (U.filter (fun u => H.Adj x.1 u)).card := by
         apply Finset.card_bij (fun a _ => a.1)
@@ -524,7 +535,9 @@ private theorem c4_free_and_two_deg_of_power_free {V W : Type u}
         · intro b hb
           simp only [Finset.mem_filter] at hb
           exact ⟨⟨b, hb.1⟩, (HU.mem_neighborFinset x ⟨b, hb.1⟩).mpr hb.2, rfl⟩
-      rw [hbij]; omega
+      rw [hbij]
+      have : 2 < (U.filter (fun u => H.Adj x.1 u)).card := by convert hgt
+      omega
     obtain ⟨u₀, hu₀⟩ := hU
     have hnear : Near HU := ⟨⟨⟨u₀, hu₀⟩, hdeg_ge3 ⟨u₀, hu₀⟩⟩, ⟨⟨u₀, hu₀⟩, fun x _ => hdeg_ge3 x⟩⟩
     have hcardU : Fintype.card U < Fintype.card V := by
@@ -540,16 +553,13 @@ private theorem c4_free_and_two_deg_of_power_free {V W : Type u}
     have hcH_tail : cH.support.tail.Nodup := by
       rw [hcH_supp, ← List.map_tail]
       exact (List.nodup_map_iff Subtype.val_injective).mpr hc.support_nodup
+    have h4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
     have hcH_nil : ¬ cH.Nil := by
-      intro h; have := Walk.length_eq_zero_iff.mpr h
-      have h4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
-      omega
+      intro h; have := Walk.length_eq_zero_iff.mpr h; omega
     have hcH_cyc : cH.IsCycle := by
       apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
-      refine ⟨Walk.IsPath.mk' ?_, ?_⟩
-      · rwa [Walk.support_tail_of_not_nil _ hcH_nil]
-      · have h4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
-        omega
+      refine ⟨Walk.IsPath.mk' ?_, by omega⟩
+      rwa [Walk.support_tail_of_not_nil _ hcH_nil]
     exact hfree ⟨k, v₀.1, cH, hk, hcH_cyc, hcH_len⟩
 
 /-- 5. Global proper-subgraph degree-sum bound for any `MinimalBad(G)` of order `n ≥ 7`:
@@ -561,8 +571,9 @@ theorem minimal_bad_proper_sum_deg_le {V : Type u} [Fintype V] [DecidableEq V]
     ∑ u : {u : V // u ≠ v}, (G.induce {w : V | w ≠ v}).degree u ≤ 4 * Fintype.card V - 14 := by
   classical
   let G' := G.induce {w : V | w ≠ v}
-  have hcard' : Fintype.card {u : V // u ≠ v} = Fintype.card V - 1 := by
+  have hcard' : Fintype.card {w : V // w ≠ v} = Fintype.card V - 1 := by
     have := card_erase_sub v; omega
+  have hcard_lt : Fintype.card {w : V // w ≠ v} < Fintype.card V := by omega
   have hfree' : ¬ HasPower G' := by
     rintro ⟨k, v₀, c, hk, hc, hlen⟩
     let emb : G' →g G := ⟨Subtype.val, fun h => h⟩
@@ -571,7 +582,7 @@ theorem minimal_bad_proper_sum_deg_le {V : Type u} [Fintype V] [DecidableEq V]
     have hcG_tail : cG.support.tail.Nodup := by
       rw [Walk.support_map, ← List.map_tail]
       exact (List.nodup_map_iff Subtype.val_injective).mpr hc.support_nodup
-    have h4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
+    have h4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
     have hcG_nil : ¬ cG.Nil := by
       intro h; have := Walk.length_eq_zero_iff.mpr h; omega
     have hcG_cyc : cG.IsCycle := by
@@ -579,8 +590,9 @@ theorem minimal_bad_proper_sum_deg_le {V : Type u} [Fintype V] [DecidableEq V]
       refine ⟨Walk.IsPath.mk' ?_, by omega⟩
       rwa [Walk.support_tail_of_not_nil _ hcG_nil]
     exact hm.2.1 ⟨k, v₀.1, cG, hk, hcG_cyc, hcG_len⟩
-  obtain ⟨hc4, h2⟩ := c4_free_and_two_deg_of_power_free G hm G' (by omega) hfree'
+  obtain ⟨hc4, h2⟩ := c4_free_and_two_deg_of_power_free G hm G' hcard_lt hfree'
   have h := c4_free_two_deg_sum_deg_le_ten (Fintype.card V - 1) G' hcard' (by omega) h2 hc4
+  change ∑ u : {w : V // w ≠ v}, G'.degree u ≤ 4 * Fintype.card V - 14
   omega
 
 /-- Local helper: V_{>=4} is independent in MinimalBad(G). -/
@@ -592,7 +604,7 @@ private theorem high_indep {V : Type u} [Fintype V] [DecidableEq V]
   obtain ⟨_, w, hw⟩ := hm.1
   have hcard : 2 ≤ Fintype.card V := by have := G.degree_lt_card_verts a; omega
   let H := G \ SimpleGraph.edge a b
-  letI : DecidableRel H.Adj := inferInstanceAs (DecidableRel (G \ SimpleGraph.edge a b).Adj)
+  let _ : DecidableRel H.Adj := inferInstanceAs (DecidableRel (G \ SimpleGraph.edge a b).Adj)
   have hnear : Near H := by
     apply near_of_except H w hcard
     intro v hv
@@ -621,9 +633,7 @@ private theorem high_nbr_cubic {V : Type u} [Fintype V] [DecidableEq V]
   have hy_not4 : ¬ 4 ≤ G.degree y := fun hy4 => high_indep G hm ha hy4 hay
   omega
 
-/-- Master midpoint-graph bridge for Class H F2-code weights:
-    constructs the power-free simple midpoint graph `H` on `S = Support z` with
-    `∑ x : S, H.degree x + |O| = ∑ x : S, G.degree x.1.1`. -/
+/-- Master midpoint-graph bridge for Class H F2-code weights. -/
 private theorem high_code_midpoint_bridge {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (hH : HighDefect G)
@@ -638,7 +648,7 @@ private theorem high_code_midpoint_bridge {V : Type u} [Fintype V] [DecidableEq 
         (∑ x : Support z, H.degree x) + Fintype.card {y : V₃ // syndrome R z y = 1} =
           ∑ x : Support z, G.degree x.1.1 := by
   classical
-  intro V₄ V₃ R _
+  intro V₄ V₃ R
   let S := Support z
   let O := {y : V₃ // syndrome R z y = 1}
   have hex : ∀ y : O, ∃ x : S, R x.1 y.1 := by
@@ -653,7 +663,7 @@ private theorem high_code_midpoint_bridge {V : Type u} [Fintype V] [DecidableEq 
     exact ⟨x, hx⟩
   choose pick hpick using hex
   let R' : S → V₃ → Prop := fun x y => R x.1 y ∧ ∀ hy : syndrome R z y = 1, pick ⟨y, hy⟩ ≠ x
-  letI : DecidableRel R' := fun x y => Classical.dec _
+  let _ : DecidableRel R' := fun x y => Classical.dec _
   have hrow : ∀ y : V₃, Fintype.card {x : S // R' x y} = 0 ∨ Fintype.card {x : S // R' x y} = 2 := by
     intro y
     have hle3 : Fintype.card {x : S // R x.1 y} ≤ 3 := by
@@ -691,7 +701,7 @@ private theorem high_code_midpoint_bridge {V : Type u} [Fintype V] [DecidableEq 
   have hpaired : Paired R' :=
     paired_of_two_rows R' (fun y => by simpa only [Fintype.card_subtype] using hrow y)
   let H : SimpleGraph S := midpointGraph R'
-  letI : DecidableRel H.Adj := fun a b => Classical.dec _
+  let _ : DecidableRel H.Adj := fun a b => Classical.dec _
   have hdisj : ∀ x : S, ∀ y : V₃, x.1.1 ≠ y.1 := fun x y heq => by
     have h1 := x.1.2; have h2 := y.2; rw [heq] at h1; omega
   have hfreeH : ¬ HasPower H := by
@@ -767,8 +777,7 @@ private theorem sum_deg_eq_four_add_excess {V : Type u} [Fintype V] [DecidableEq
     Finset.sum_congr rfl (fun x _ => by have := x.1.2; omega)
   rw [h, Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, smul_eq_mul, mul_comm]
 
-/-- 6. NEW (Wave 3, Agent #1): Class H Sharp Code Weight (`|S| ≥ 2`):
-    `6 + ∑_{x ∈ S} (deg(x) - 4) ≤ wt(M z)`. -/
+/-- 6. NEW (Wave 3, Agent #1): Class H Sharp Code Weight (`|S| ≥ 2`). -/
 theorem high_code_weight_ge_six {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G) (hH : HighDefect G)
     (z : {v : V // 4 ≤ G.degree v} → ZMod 2)
@@ -780,16 +789,15 @@ theorem high_code_weight_ge_six {V : Type u} [Fintype V] [DecidableEq V]
     6 + (∑ x : Support z, (G.degree x.1.1 - 4)) ≤
       Fintype.card {y : V₃ // syndrome R z y = 1} := by
   classical
-  intro V₄ V₃ R _
+  intro V₄ V₃ R
   obtain ⟨H, _, h2, hbridge⟩ := high_code_midpoint_bridge G hm hH z
-  letI : DecidableRel H.Adj := fun a b => Classical.dec _
+  let _ : DecidableRel H.Adj := fun a b => Classical.dec _
   have hsum := hbridge
   have hle := two_deg_sum_deg_le (Fintype.card (Support z)) H rfl hS2 h2
   have hex := sum_deg_eq_four_add_excess G z
   omega
 
-/-- 7. NEW (Wave 3, Agent #1): Class H Sharp Code Weight (`|S| ≥ 4`):
-    `8 + ∑_{x ∈ S} (deg(x) - 4) ≤ wt(M z)`. -/
+/-- 7. NEW (Wave 3, Agent #1): Class H Sharp Code Weight (`|S| ≥ 4`). -/
 theorem high_code_weight_ge_eight {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G) (hH : HighDefect G)
     (z : {v : V // 4 ≤ G.degree v} → ZMod 2)
@@ -801,16 +809,15 @@ theorem high_code_weight_ge_eight {V : Type u} [Fintype V] [DecidableEq V]
     8 + (∑ x : Support z, (G.degree x.1.1 - 4)) ≤
       Fintype.card {y : V₃ // syndrome R z y = 1} := by
   classical
-  intro V₄ V₃ R _
+  intro V₄ V₃ R
   obtain ⟨H, hc4, h2, hbridge⟩ := high_code_midpoint_bridge G hm hH z
-  letI : DecidableRel H.Adj := fun a b => Classical.dec _
+  let _ : DecidableRel H.Adj := fun a b => Classical.dec _
   have hsum := hbridge
   have hle := c4_free_two_deg_sum_deg_le_eight (Fintype.card (Support z)) H rfl hS4 h2 hc4
   have hex := sum_deg_eq_four_add_excess G z
   omega
 
-/-- 8. NEW (Wave 3, Agent #1): Class H Sharp Code Weight (`|S| ≥ 6`):
-    `10 + ∑_{x ∈ S} (deg(x) - 4) ≤ wt(M z)`. -/
+/-- 8. NEW (Wave 3, Agent #1): Class H Sharp Code Weight (`|S| ≥ 6`). -/
 theorem high_code_weight_ge_ten {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G) (hH : HighDefect G)
     (z : {v : V // 4 ≤ G.degree v} → ZMod 2)
@@ -822,9 +829,9 @@ theorem high_code_weight_ge_ten {V : Type u} [Fintype V] [DecidableEq V]
     10 + (∑ x : Support z, (G.degree x.1.1 - 4)) ≤
       Fintype.card {y : V₃ // syndrome R z y = 1} := by
   classical
-  intro V₄ V₃ R _
+  intro V₄ V₃ R
   obtain ⟨H, hc4, h2, hbridge⟩ := high_code_midpoint_bridge G hm hH z
-  letI : DecidableRel H.Adj := fun a b => Classical.dec _
+  let _ : DecidableRel H.Adj := fun a b => Classical.dec _
   have hsum := hbridge
   have hle := c4_free_two_deg_sum_deg_le_ten (Fintype.card (Support z)) H rfl hS6 h2 hc4
   have hex := sum_deg_eq_four_add_excess G z

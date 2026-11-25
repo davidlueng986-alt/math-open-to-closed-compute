@@ -39,6 +39,10 @@ def invSetoid (σ : V → V) (hinv : ∀ v, σ (σ v) = v) : Setoid V where
         · exact Or.inr rfl
         · exact Or.inl (hinv _) }
 
+instance instDecidableRelInvSetoid [DecidableEq V] (σ : V → V) (hinv : ∀ v, σ (σ v) = v) :
+    DecidableRel (invSetoid σ hinv).r :=
+  fun a b => inferInstanceAs (Decidable (a = b ∨ a = σ b))
+
 /-- Simple quotient graph G / ⟨σ⟩ on orbits of σ. -/
 def invQuotGraph (G : SimpleGraph V) (σ : V → V) (hinv : ∀ v, σ (σ v) = v) :
     SimpleGraph (Quotient (invSetoid σ hinv)) where
@@ -58,7 +62,7 @@ private theorem lift_edge_exists {G : SimpleGraph V} {σ : V → V} {hinv : ∀ 
   rcases Quotient.exact ha with rfl | rfl
   · exact ⟨b, hb, hab⟩
   · refine ⟨σ b, ?_, ?_⟩
-    · rw [← hb]; exact Quotient.sound (Or.inr (hinv b).symm)
+    · rw [← hb]; exact Quotient.sound (Or.inr rfl)
     · have := (haut (σ u) b).mp hab; rwa [hinv u] at this
 
 /-- Lift an arbitrary walk in `G / ⟨σ⟩` starting at `u ∈ q₁`. -/
@@ -70,7 +74,7 @@ private noncomputable def liftWalk {G : SimpleGraph V} {σ : V → V} {hinv : �
       res.2.support.map (Quotient.mk (invSetoid σ hinv)) = p.support} :=
   match p with
   | .nil => ⟨⟨u, .nil⟩, hu, rfl, by simp [hu]⟩
-  | @Walk.cons _ _ _ qa qb qc hab q =>
+  | .cons hab q =>
     let hex := lift_edge_exists haut (hu.symm ▸ hab)
     let v := Classical.choose hex
     let hv := Classical.choose_spec hex
@@ -93,11 +97,11 @@ theorem hasPower_of_general_invQuot {G : SimpleGraph V} {σ : V → V}
     (hpow : HasPower (invQuotGraph G σ hinv)) : HasPower G := by
   classical
   obtain ⟨k, q₀, c, hk, hc, hlen⟩ := hpow
-  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
+  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
   by_cases hfix : ∃ q ∈ c.support, ∃ u : V, ⟦u⟧ = q ∧ σ u = u
   · obtain ⟨q, hqmem, u₀, hu₀, hσu₀⟩ := hfix
-    let c' := c.rotate hqmem
-    have hc' : c'.IsCycle := hc.rotate hqmem
+    let c' := c.rotate q hqmem
+    have hc' : c'.IsCycle := SimpleGraph.Walk.IsCycle.rotate hc hqmem
     have hlen' : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
     let lifted := liftWalk haut c' u₀ hu₀
     let u₁ := lifted.1.1
@@ -106,7 +110,7 @@ theorem hasPower_of_general_invQuot {G : SimpleGraph V} {σ : V → V}
     have hp₁len : p₁.length = 2 ^ k := lifted.2.2.1.trans hlen'
     have hp₁supp : p₁.support.map (Quotient.mk (invSetoid σ hinv)) = c'.support := lifted.2.2.2
     have hp₁tail_map : p₁.support.tail.map (Quotient.mk (invSetoid σ hinv)) = c'.support.tail := by
-      rw [← List.map_tail, hp₁supp]
+      rw [List.map_tail, hp₁supp]
     have hp₁tail_nodup : p₁.support.tail.Nodup :=
       List.Nodup.of_map _ (hp₁tail_map.symm ▸ hc'.support_nodup)
     have hrel : u₁ = u₀ ∨ u₁ = σ u₀ := Quotient.exact (hu₁q.trans hu₀.symm)
@@ -127,7 +131,7 @@ theorem hasPower_of_general_invQuot {G : SimpleGraph V} {σ : V → V}
     have hp₁len : p₁.length = 2 ^ k := lifted.2.2.1.trans hlen
     have hp₁supp : p₁.support.map (Quotient.mk (invSetoid σ hinv)) = c.support := lifted.2.2.2
     have hp₁tail_map : p₁.support.tail.map (Quotient.mk (invSetoid σ hinv)) = c.support.tail := by
-      rw [← List.map_tail, hp₁supp]
+      rw [List.map_tail, hp₁supp]
     have hp₁tail_nodup : p₁.support.tail.Nodup :=
       List.Nodup.of_map _ (hp₁tail_map.symm ▸ hc.support_nodup)
     have hfpf_on : ∀ y ∈ p₁.support.tail, σ y ≠ y := by
@@ -168,7 +172,7 @@ theorem hasPower_of_general_invQuot {G : SimpleGraph V} {σ : V → V}
         rw [hp₂tail] at hx2
         obtain ⟨y, hy1, hxy⟩ := List.mem_map.mp hx2
         have hqeq : (⟦x⟧ : Quotient (invSetoid σ hinv)) = ⟦y⟧ := by
-          rw [← hxy]; exact Quotient.sound (Or.inr (hinv y).symm)
+          rw [← hxy]; exact Quotient.sound (Or.inr rfl)
         have hinj_on := (List.nodup_map_iff_inj_on hp₁tail_nodup).mp
           (hp₁tail_map.symm ▸ hc.support_nodup)
         have heq : x = y := hinj_on x hx1 y hy1 hqeq
@@ -207,7 +211,7 @@ private theorem card_invQuot_lt [Fintype V] [DecidableEq V]
       rw [← hrep q₁, ← hrep q₂, hq₁, hq₂]
       exact Quotient.sound (Or.inr (hinv v₀).symm)
     rw [hqeq, hq₂] at hq₁
-    exact hv₀ hq₁.symm
+    exact hv₀ hq₁
   exact Fintype.card_lt_of_injective_not_surjective pickRep hinj hnsurj
 
 /-- 2. NEW (Wave 3, Agent #1): No `MinimalBad(G)` admits ANY nontrivial involution `σ`
@@ -245,30 +249,30 @@ private theorem inv_edges_nonadj {G : SimpleGraph V} (hfree : ¬ HasPower G)
   have hv_inv : G.Adj v (σ v) := by
     rcases Quotient.exact hvq with rfl | rfl
     · exact h2
-    · have := (haut u₂ (σ u₂)).mp h2; rwa [hinv u₂] at this
+    · exact (haut u₂ (σ u₂)).mp h2
   have h3 : G.Adj (σ u₁) (σ v) := (haut u₁ v).mp hu₁v
   have hne_orbits : (⟦u₁⟧ : Quotient (invSetoid σ hinv)) ≠ ⟦v⟧ := by
     rw [hvq]; exact hadj.1
-  have hu₁sv : u₁ ≠ σ v := fun h => hne_orbits (by rw [h]; exact Quotient.sound (Or.inr (hinv v).symm))
-  have hvsu₁ : v ≠ σ u₁ := fun h => hne_orbits (by rw [h]; exact Quotient.sound (Or.inr rfl))
+  have hu₁sv : u₁ ≠ σ v := fun h => hne_orbits (by rw [h]; exact Quotient.sound (Or.inr rfl))
+  have hvsu₁ : v ≠ σ u₁ := fun h => hne_orbits (by rw [h]; exact Quotient.sound (Or.inr (hinv u₁).symm))
   have hsu₁sv : σ u₁ ≠ σ v := fun h => by
     have := congrArg σ h; rw [hinv u₁, hinv v] at this; exact G.ne_of_adj hu₁v this
   exact hfree (rectangle_power G (G.ne_of_adj hu₁v) hu₁sv (hfpf u₁).symm
-    (hfpf v).symm hvsu₁ hsu₁sv hu₁v hv_inv h3.symm h1.symm)
+    (hfpf v).symm hvsu₁ hsu₁sv.symm hu₁v hv_inv h3.symm h1.symm)
 
 /-- Helper: transfer a walk in `H ⊔ edge a b` avoiding `s(a, b)` into `H`. -/
 private def dropAddedEdge {W : Type u} {H : SimpleGraph W} {a b u w : W}
     (p : (H ⊔ SimpleGraph.edge a b).Walk u w) (havoid : s(a, b) ∉ p.edges) : H.Walk u w :=
   match p with
   | .nil => .nil
-  | @Walk.cons _ _ _ x y z hxy q =>
-    have hne : s(x, y) ≠ s(a, b) := fun heq =>
+  | .cons hxy q =>
+    have hne : s(_, _) ≠ s(a, b) := fun heq =>
       havoid (by rw [Walk.edges_cons, List.mem_cons]; exact Or.inl heq.symm)
-    have hH : H.Adj x y := by
+    have hH : H.Adj _ _ := by
       rcases hxy with h | h
       · exact h
       · exfalso
-        have hsym : s(x, y) = s(a, b) := by
+        have hsym : s(_, _) = s(a, b) := by
           rcases h.1 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
           · rfl
           · exact Sym2.eq_swap
@@ -297,10 +301,15 @@ private theorem extract_path_in_base {W : Type u} [DecidableEq W]
     ∃ p : H.Walk b a, p.IsPath ∧ p.length + 1 = c.length := by
   classical
   have ha : a ∈ c.support := Walk.fst_mem_support_of_mem_edges c hmem
-  let c₁ := c.rotate ha
-  have hc₁ : c₁.IsCycle := hc.rotate ha
-  have hlen₁ : c₁.length = c.length := Walk.length_rotate c ha
-  have hmem₁ : s(a, b) ∈ c₁.edges := (Walk.edges_rotate c ha).mem_iff.mpr hmem
+  let c₁ := c.rotate a ha
+  have hc₁ : c₁.IsCycle := SimpleGraph.Walk.IsCycle.rotate hc ha
+  have hlen₁ : c₁.length = c.length := Walk.length_rotate c a ha
+  have hmem₁ : s(a, b) ∈ c₁.edges := by
+    have hspec := Walk.take_spec c ha
+    rw [← hspec, Walk.edges_append, List.mem_append] at hmem
+    change s(a, b) ∈ ((c.dropUntil a ha).append (c.takeUntil a ha)).edges
+    rw [Walk.edges_append, List.mem_append]
+    exact hmem.symm
   cases hce : c₁ with
   | nil => exact False.elim (hc₁.ne_nil hce)
   | @cons _ u _ hau rest =>
@@ -385,7 +394,7 @@ private theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
   let q₁ : Quotient (invSetoid σ hinv) := ⟦u₁⟧
   let q₂ : Quotient (invSetoid σ hinv) := ⟦u₂⟧
   obtain ⟨k, q₀, c, hk, hc, hlen⟩ := hpow
-  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
+  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
   by_cases huses : s(q₁, q₂) ∈ c.edges
   · obtain ⟨p, hp, hplen⟩ := extract_path_in_base hne c hc huses
     let lifted := liftWalk haut p u₂ rfl
@@ -398,7 +407,7 @@ private theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
     have hw₁_inv : G.Adj w₁ (σ w₁) := by
       rcases Quotient.exact hw₁q with rfl | rfl
       · exact h1
-      · have := (haut u₁ (σ u₁)).mp h1; rwa [hinv u₁] at this
+      · exact (haut u₁ (σ u₁)).mp h1
     let f : G →g G := mapWalkAut σ haut
     have hσ_inj : Function.Injective σ := Function.LeftInverse.injective hinv
     let p₂ : G.Walk (σ w₁) (σ u₂) := (p₁.map f).reverse
@@ -418,7 +427,7 @@ private theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
       rw [hp₂_supp, List.mem_reverse] at hx2
       obtain ⟨y, hy1, hxy⟩ := List.mem_map.mp hx2
       have hqeq : (⟦x⟧ : Quotient (invSetoid σ hinv)) = ⟦y⟧ := by
-        rw [← hxy]; exact Quotient.sound (Or.inr (hinv y).symm)
+        rw [← hxy]; exact Quotient.sound (Or.inr rfl)
       have hinj_on := (List.nodup_map_iff_inj_on hp₁_nodup).mp (hp₁supp.symm ▸ hp.support_nodup)
       have heq : x = y := hinj_on x hx1 y hy1 hqeq
       rw [heq] at hxy
@@ -464,7 +473,7 @@ private theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
       rwa [Walk.support_tail_of_not_nil _ hcH_nil]
     exact hasPower_of_general_invQuot hinv haut ⟨k, q₀, cH, hk, hcH_cyc, hcH_len⟩
 
-/-- Helper: exact degree of every vertex in `invQuotGraph` for an FPF involution of cubic `MinimalBad`. -/
+/-- Helper: exact degree of every vertex in `invQuotGraph` for an FPF involution. -/
 private theorem fpf_quot_degree [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (σ : V → V) (hinv : ∀ v, σ (σ v) = v) (hfpf : ∀ v, σ v ≠ v)
@@ -478,18 +487,20 @@ private theorem fpf_quot_degree [Fintype V] [DecidableEq V]
     ⟨⟦v.1⟧, ⟨fun heq => by
       rcases Quotient.exact heq with h1 | h2
       · exact (G.ne_of_adj v.2.1) h1
-      · exact v.2.2 h2.symm,
+      · exact v.2.2 (by have := congrArg σ h2; rwa [hinv v.1] at this).symm,
       u, v.1, rfl, rfl, v.2.1⟩⟩
   have hfinj : Function.Injective f := by
     intro a b heq
     apply Subtype.ext
     rcases Quotient.exact (congrArg Subtype.val heq) with h1 | h2
     · exact h1
-    · exact False.elim (no_parallel_fpf hm.2.1 σ hinv hfpf haut b.2.1 (h2 ▸ a.2.1))
+    · have ha2 : G.Adj u a.1 := a.2.1
+      rw [h2] at ha2
+      exact False.elim (no_parallel_fpf hm.2.1 σ hinv hfpf haut b.2.1 ha2)
   have hfsurj : Function.Surjective f := by
     rintro ⟨q, hq⟩
     obtain ⟨v, hvq, huv⟩ := lift_edge_exists haut hq
-    have hvne : v ≠ σ u := fun h => hq.1 (by rw [← hvq, h]; exact Quotient.sound (Or.inr rfl))
+    have hvne : v ≠ σ u := fun h => hq.1 (by rw [← hvq, h]; exact Quotient.sound (Or.inr (hinv u).symm))
     exact ⟨⟨v, huv, hvne⟩, Subtype.ext hvq⟩
   have hc := Fintype.card_congr (Equiv.ofBijective f ⟨hfinj, hfsurj⟩)
   rw [SimpleGraph.card_neighborSet_eq_degree, Fintype.card_subtype] at hc
@@ -499,9 +510,9 @@ private theorem fpf_quot_degree [Fintype V] [DecidableEq V]
   rw [hfil] at hc
   rw [← hc, ← G.card_neighborFinset_eq_degree]
   by_cases h : G.Adj u (σ u)
-  · rw [if_pos h]
+  · simp only [h, ite_true]
     exact Finset.card_erase_add_one ((G.mem_neighborFinset u (σ u)).mpr h)
-  · rw [if_neg h, add_zero]
+  · simp only [h, ite_false, add_zero]
     exact congrArg Finset.card (Finset.erase_eq_of_notMem (by simp [SimpleGraph.mem_neighborFinset, h]))
 
 /-- Helper: adding a non-edge increases degrees of its two endpoints by 1. -/
@@ -513,34 +524,34 @@ private theorem degree_sup_nonedge {W : Type u} [Fintype W] [DecidableEq W]
   let H' := H ⊔ SimpleGraph.edge a b
   rw [← H'.card_neighborFinset_eq_degree, ← H.card_neighborFinset_eq_degree]
   by_cases hua : u = a
-  · subst hua; rw [if_pos (Or.inl rfl)]
+  · subst hua; simp only [true_or, ite_true]
     have heq : H'.neighborFinset u = insert b (H.neighborFinset u) := by
       ext z; simp only [H', SimpleGraph.mem_neighborFinset, Finset.mem_insert,
         SimpleGraph.sup_adj, SimpleGraph.edge_adj]
       constructor
-      · rintro (h | ⟨⟨rfl, rfl⟩ | ⟨h1, _⟩, _⟩)
+      · rintro (h | ⟨⟨_, rfl⟩ | ⟨h1, _⟩, _⟩)
         · exact Or.inr h
         · exact Or.inl rfl
         · exact False.elim (hab h1)
       · rintro (rfl | h)
-        · exact Or.inr ⟨Or.inl ⟨rfl, rfl⟩, hab⟩
+        · exact Or.inr ⟨Or.inl ⟨trivial, rfl⟩, hab⟩
         · exact Or.inl h
     rw [heq, Finset.card_insert_of_notMem (by simp [SimpleGraph.mem_neighborFinset, hnadj])]
   · by_cases hub : u = b
-    · subst hub; rw [if_pos (Or.inr rfl)]
+    · subst hub; simp only [or_true, ite_true]
       have heq : H'.neighborFinset u = insert a (H.neighborFinset u) := by
         ext z; simp only [H', SimpleGraph.mem_neighborFinset, Finset.mem_insert,
           SimpleGraph.sup_adj, SimpleGraph.edge_adj]
         constructor
-        · rintro (h | ⟨⟨h1, _⟩ | ⟨rfl, rfl⟩, _⟩)
+        · rintro (h | ⟨⟨h1, _⟩ | ⟨_, rfl⟩, _⟩)
           · exact Or.inr h
           · exact False.elim (hab h1.symm)
           · exact Or.inl rfl
         · rintro (rfl | h)
-          · exact Or.inr ⟨Or.inr ⟨rfl, rfl⟩, hab.symm⟩
+          · exact Or.inr ⟨Or.inr ⟨trivial, rfl⟩, hab.symm⟩
           · exact Or.inl h
       rw [heq, Finset.card_insert_of_notMem (by simp [SimpleGraph.mem_neighborFinset]; exact fun h => hnadj h.symm)]
-    · rw [if_neg (by push Not; exact ⟨hua, hub⟩), add_zero]
+    · simp only [hua, hub, or_self, ite_false, add_zero]
       congr 1; ext z
       simp only [H', SimpleGraph.mem_neighborFinset, SimpleGraph.sup_adj, SimpleGraph.edge_adj]
       constructor
@@ -579,14 +590,12 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
     · exact hw v hvw
   let Q := Quotient (invSetoid σ hinv)
   let H := invQuotGraph G σ hinv
-  letI : DecidableRel H.Adj := fun a b => Classical.dec _
+  let _ : DecidableRel H.Adj := fun a b => Classical.dec _
   obtain ⟨w₁, w₂, w₃, hw⟩ := h3edges
   have hlt : Fintype.card Q < Fintype.card V := card_invQuot_lt σ hinv ⟨w₁, hfpf w₁⟩
-  -- Check if there exist two distinct orbits with invariant edges!
   by_cases hpair : ∃ u₁ u₂ : V, G.Adj u₁ (σ u₁) ∧ G.Adj u₂ (σ u₂) ∧
       (⟦u₁⟧ : Q) ≠ ⟦u₂⟧
   · obtain ⟨u₁, u₂, hu₁, hu₂, hne12⟩ := hpair
-    -- Every invariant orbit must be one of {⟦w₁⟧, ⟦w₂⟧, ⟦w₃⟧}, so at most one other orbit q₃ exists!
     have hthird : ∃ q₃ : Q, ∀ v : V, (⟦v⟧ : Q) ≠ ⟦u₁⟧ → (⟦v⟧ : Q) ≠ ⟦u₂⟧ → (⟦v⟧ : Q) ≠ q₃ →
         ¬ G.Adj v (σ v) := by
       have hu1_in : (⟦u₁⟧ : Q) = ⟦w₁⟧ ∨ (⟦u₁⟧ : Q) = ⟦w₂⟧ ∨ (⟦u₁⟧ : Q) = ⟦w₃⟧ := by
@@ -606,7 +615,7 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
     obtain ⟨q₃, hq₃⟩ := hthird
     have hnadj : ¬ H.Adj ⟦u₁⟧ ⟦u₂⟧ := inv_edges_nonadj hm.2.1 σ hinv hfpf haut hu₁ hu₂
     let H' := H ⊔ SimpleGraph.edge (⟦u₁⟧ : Q) ⟦u₂⟧
-    letI : DecidableRel H'.Adj := fun a b => Classical.dec _
+    let _ : DecidableRel H'.Adj := fun a b => Classical.dec _
     have hdegH' : ∀ q : Q, q ≠ q₃ → 3 ≤ H'.degree q := by
       intro q hqq₃
       obtain ⟨v, rfl⟩ := Quotient.exists_rep q
@@ -614,11 +623,11 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
       have h2 := fpf_quot_degree G hm σ hinv hfpf haut v
       have h3 := hall3 v
       by_cases hv1 : (⟦v⟧ : Q) = ⟦u₁⟧
-      · rw [if_pos (Or.inl hv1)] at h1; omega
+      · simp only [hv1, true_or, ite_true] at h1; omega
       · by_cases hv2 : (⟦v⟧ : Q) = ⟦u₂⟧
-        · rw [if_pos (Or.inr hv2)] at h1; omega
+        · simp only [hv2, or_true, ite_true] at h1; omega
         · have hno : ¬ G.Adj v (σ v) := hq₃ v hv1 hv2 hqq₃
-          rw [if_neg hno] at h2; omega
+          simp only [hno, ite_false, add_zero] at h2; omega
     have hex_good : ∃ q : Q, q ≠ q₃ := by
       by_cases h13 : (⟦u₁⟧ : Q) = q₃
       · exact ⟨⟦u₂⟧, fun h => hne12 (h13.trans h.symm)⟩
@@ -627,8 +636,7 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
     have hnear : Near H' := ⟨⟨q₀, hdegH' q₀ hq₀⟩, ⟨q₃, hdegH'⟩⟩
     have hpow : HasPower H' := hm.2.2.1 Q H' hlt hnear
     exact hm.2.1 (hasPower_of_invQuot_add_edge hinv hfpf haut hu₁ hu₂ hne12 hpow)
-  · -- At most 1 invariant orbit! So H itself is Near!
-    push Not at hpair
+  · push Not at hpair
     have hone : ∃ q₀ : Q, ∀ v : V, (⟦v⟧ : Q) ≠ q₀ → ¬ G.Adj v (σ v) := by
       by_cases hex : ∃ u : V, G.Adj u (σ u)
       · obtain ⟨u, hu⟩ := hex
@@ -653,7 +661,7 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
       obtain ⟨v, rfl⟩ := Quotient.exists_rep q
       have h2 := fpf_quot_degree G hm σ hinv hfpf haut v
       have h3 := hall3 v
-      rw [if_neg (hq₀ v hqq)] at h2; omega
+      simp only [hq₀ v hqq, ite_false, add_zero] at h2; omega
     have hnear : Near H := ⟨⟨q₁, hdegH q₁ hq₁⟩, ⟨q₀, hdegH⟩⟩
     exact no_involution_le_one_quot_defect G hm σ hinv ⟨w₁, hfpf w₁⟩ haut hnear
 
@@ -678,7 +686,8 @@ theorem cayley_no_disjoint_involution_class {Γ : Type u} [Group Γ] [Fintype Γ
   let G := cayleyGraph Γ S hsym h1
   let σ : Γ → Γ := fun x => g * x
   have hinv : ∀ x : Γ, σ (σ x) = x := fun x => by simp [σ, ← mul_assoc, hg2]
-  have hfpf : ∀ x : Γ, σ x ≠ x := fun x h => hg1 (mul_right_cancel (by simpa [σ] using h))
+  have hfpf : ∀ x : Γ, σ x ≠ x := fun x h =>
+    hg1 (mul_right_cancel (b := x) (by simpa [σ] using h))
   have haut : ∀ a b : Γ, G.Adj a b ↔ G.Adj (σ a) (σ b) := fun a b => by
     change a⁻¹ * b ∈ S ↔ (g * a)⁻¹ * (g * b) ∈ S
     have heq : (g * a)⁻¹ * (g * b) = a⁻¹ * b := by
