@@ -1,4 +1,4 @@
-"""Exact support sieve and central sign equations for the T299 × Golay2 splice."""
+"""Exact exclusions for a one-spike splice of the T299 × Golay2 product."""
 
 from itertools import combinations_with_replacement, product
 from math import isqrt
@@ -68,6 +68,19 @@ def verify_lag_formula():
                     direct = sum(value == words[(i + lag) % len(words)]
                                  for i, value in enumerate(words)) & 1
                     assert direct == (((row & group).bit_count() ^ (row >> length)) & 1)
+
+
+def verify_adjacent_twins():
+    """Check the adjacent-twin support obstruction directly at small sizes."""
+    for length in range(2, 8):
+        for group in range(1, (1 << length) - 1):
+            labels = [(group >> i) & 1 for i in range(length)]
+            old = [2 * block + label for label in labels for block in (0, 1)]
+            for cut, spike in product(range(2 * length + 1), range(4)):
+                words = old[:cut] + [spike] + old[cut:]
+                assert any(sum(value == words[(i + lag) % len(words)]
+                               for i, value in enumerate(words)) & 1
+                           for lag in range(1, length + 1))
 
 
 def verify_totals():
@@ -149,19 +162,55 @@ def central_sign_equations(half_length):
     return norm_rows + splice_rows, variables
 
 
-def verify_central_mod4():
-    rows, variables = central_sign_equations(75)
+def verify_norm_rows(rows, variables, half_length):
+    """Check the affine rows against raw signed aperiodic coefficients."""
+    from random import Random
+
+    rng = Random(599)
+    length = 4 * half_length - 1
+    for _ in range(8):
+        assignment = rng.getrandbits(variables)
+        signs = [1 - 2 * ((assignment >> i) & 1) for i in range(variables)]
+        split, skew, last = signs[:length], signs[length:length + half_length], signs[length + half_length:]
+        intact = skew + [-value for value in reversed(skew)]
+        words = split[::2], split[1::2], intact, last
+        for lag, row in enumerate(rows, 1):
+            coefficient = sum(a * b for word in words
+                              for a, b in zip(word, word[lag:]))
+            assert coefficient % 2 == 0
+            actual = ((row >> variables) ^ (row & assignment).bit_count()) & 1
+            assert actual == (coefficient // 2) % 2
+
+
+def verify_central_obstruction():
+    half_length = 75
+    rows, variables = central_sign_equations(half_length)
     assert variables == 523 and len(rows) == 298
     rank, signs = solve_binary(rows, variables)
     assert rank == 298 and signs is not None and satisfies(rows, variables, signs)
-    print("Golay2 central splice and norm equations modulo 4: rank 298 on 523 sign bits, consistent")
+    norm_rows = rows[:2 * half_length - 1]
+    verify_norm_rows(norm_rows, variables, half_length)
+    rhs = 1 << variables
+    for index in range(half_length):
+        mirror = 2 * half_length - 1 - index
+        # The system forces equal endpoints and opposite interior signs.
+        opposite_claim = (1 << (2 * index)) | (1 << (2 * mirror))
+        if index == 0:
+            opposite_claim |= rhs
+        _, counterexample = solve_binary(norm_rows + [opposite_claim], variables)
+        assert counterexample is None
+    remainder = 598 - 2**2
+    assert remainder % 11 == 0 and remainder % 121 != 0
+    assert all((a*a + b*b) % 11 != 0 for a, b in product(range(11), repeat=2) if a or b)
+    print("Golay2 central cuts: split-even sum forced to ±2; remaining two squares cannot sum to 594")
 
 
 def verify():
     verify_lag_formula()
+    verify_adjacent_twins()
     verify_totals()
     verify_support_sieve()
-    verify_central_mod4()
+    verify_central_obstruction()
 
 
 if __name__ == "__main__":
