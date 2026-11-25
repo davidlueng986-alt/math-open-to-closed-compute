@@ -24,6 +24,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/stack_1198_transport.py
           python3 -B jobs/hadamard-all-orders/stack_1198_auxiliary.py
           python3 -B jobs/hadamard-all-orders/stack_1198_energy.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_channels.py
           python3 -B jobs/hadamard-all-orders/stack_odd_t_auxiliary.py
           python3 -B jobs/hadamard-all-orders/triple_product.py
           python3 -B jobs/hadamard-all-orders/paley_progression.py
@@ -37,6 +38,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_both.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_split.py
           python3 -B jobs/hadamard-all-orders/border4_2396_exact_negative.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_nested.py
           python3 -B jobs/hadamard-all-orders/border4_2396_tensor_weighing.py
           python3 -B jobs/hadamard-all-orders/r_intersections.py
           python3 -B jobs/hadamard-all-orders/r_near_complement.py
@@ -111,6 +113,16 @@ jobs:
         run: python3 -B jobs/hadamard-all-orders/exterior_fold_hall.py
       - name: Check prescribed fold-coordinate changes and the new physical fold
         run: python3 -B jobs/hadamard-all-orders/exterior_fold_coordinates.py
+
+  structured-second-fold:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check periodic second-fold families and shortened code cosets
+        run: |
+          c++ -O3 -march=native -std=c++20 -Wall -Wextra -Werror jobs/hadamard-all-orders/exterior_second_fold.cpp -o "$RUNNER_TEMP/exterior_second_fold"
+          python3 -B jobs/hadamard-all-orders/exterior_second_fold.py "$RUNNER_TEMP/exterior_second_fold"
 
   exact-source-columns:
     runs-on: ubuntu-latest
