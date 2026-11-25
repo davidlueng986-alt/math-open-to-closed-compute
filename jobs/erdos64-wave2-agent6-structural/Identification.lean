@@ -300,29 +300,27 @@ theorem identify_degree_other_of_not_common [Fintype V] [DecidableEq V]
         apply Subtype.ext
         by_cases hux : u.1.1 = x
         · by_cases hvxa : G.Adj v.1 x
-          · simp only [f, g, dif_pos hux, dif_pos hvxa, dif_neg hxy]
-            exact Subtype.ext hux.symm
-          · simp only [f, g, dif_pos hux, dif_neg hvxa, dif_pos rfl]
-            exact Subtype.ext hux.symm
+          · apply Subtype.ext; simp [f, g, hux, hvxa, hxy]
+          · apply Subtype.ext; simp [f, g, hux, hvxa, X]
         · have huy : u.1.1 ≠ y := u.1.2
-          simp only [f, g, dif_neg hux, dif_neg huy]
+          simp [f, g, hux, huy]
       right_inv := by
         intro u
         apply Subtype.ext
         by_cases huy : u.1 = y
         · have hnvx : ¬ G.Adj v.1 x := fun h => hnc ⟨h.symm, (huy ▸ u.2).symm⟩
-          simp only [f, g, dif_pos huy, dif_pos rfl, dif_neg hnvx, huy]
+          simp [f, g, huy, hnvx, X]
         · by_cases hux : u.1 = x
           · have hvxa : G.Adj v.1 x := hux ▸ u.2
-            simp only [f, g, dif_neg huy, dif_pos hux, dif_pos hvxa, hux]
-          · simp only [f, g, dif_neg huy, dif_neg hux] }
+            simp [f, g, huy, hux, hvxa]
+          · simp [f, g, huy, hux] }
   have hc := Fintype.card_congr e
   rwa [SimpleGraph.card_neighborSet_eq_degree, SimpleGraph.card_neighborSet_eq_degree] at hc
 
 /-- Exact degree formula for a common neighbor `u` of `x` and `y` in `identify G x y`:
     its degree drops by 1. -/
 theorem identify_degree_common [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] {x y : V} (hxy : x ≠ y)
+    (G : SimpleGraph V) [DecidableRel G.Adj] {x y : V} (_hxy : x ≠ y)
     [DecidableRel (identify G x y).Adj]
     (u : {z : V // z ≠ y}) (hux : G.Adj x u.1) (huy : G.Adj y u.1) :
     (identify G x y).degree u + 1 = G.degree u.1 := by
@@ -381,7 +379,8 @@ theorem identify_degree_merged_ge [Fintype V] [DecidableEq V]
   have e : H.neighborFinset X ≃
       ((G.neighborFinset x ∪ G.neighborFinset y).erase x |>.erase y) :=
     { toFun := f, invFun := g, left_inv := fun _ => rfl, right_inv := fun _ => rfl }
-  simpa using Fintype.card_congr e
+  have hc := Fintype.card_congr e
+  simpa only [Fintype.card_coe] using hc
 
 /-- Wave 1 Universal Dyadic Path Theorem (dist >= 3):
     In any MinimalBad graph, every pair of non-adjacent vertices with no common neighbor

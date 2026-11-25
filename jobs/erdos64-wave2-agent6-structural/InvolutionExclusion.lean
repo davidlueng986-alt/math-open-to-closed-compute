@@ -155,13 +155,14 @@ theorem hasPower_of_invQuot {G : SimpleGraph V} {σ : V → V}
     let p₂ : G.Walk u₁ u₀ := p₂_raw.copy hflip.symm hσu₁
     let p : G.Walk u₀ u₀ := p₁.append p₂
     have hp₂len : p₂.length = 2 ^ k := by
-      rw [copy_length_eq, Walk.length_map, hp₁len]
+      rw [copy_length_eq]
+      exact (Walk.length_map f p₁).trans hp₁len
     have hplen : p.length = 2 ^ (k + 1) := by
       simp only [p, Walk.length_append, hp₁len, hp₂len, pow_succ]
       omega
     have hp₂supp : p₂.support = p₁.support.map σ := by
-      rw [copy_support_eq, Walk.support_map]
-      rfl
+      rw [copy_support_eq]
+      exact Walk.support_map f p₁
     have hp₂tail : p₂.support.tail = p₁.support.tail.map σ := by
       rw [hp₂supp, ← List.map_tail]
     have hp_tail : p.support.tail = p₁.support.tail ++ p₂.support.tail := by

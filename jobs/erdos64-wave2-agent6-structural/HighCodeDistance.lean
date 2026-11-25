@@ -100,6 +100,7 @@ theorem high_code_weight_ge_two_sub_four [Fintype V] [DecidableEq V]
     rw [y.2] at hmod
     have hval : (1 : ZMod 2).val = 1 := rfl
     rw [hval] at hmod
+    change Fintype.card {x : S // R x.1 y.1} % 2 = 1 at hmod
     have hpos : 0 < Fintype.card {x : S // R x.1 y.1} := by omega
     obtain ⟨⟨x, hx⟩⟩ := Fintype.card_pos_iff.mp hpos
     exact ⟨x, hx⟩
@@ -125,6 +126,7 @@ theorem high_code_weight_ge_two_sub_four [Fintype V] [DecidableEq V]
       rw [h0] at hmod
       have hval : (0 : ZMod 2).val = 0 := rfl
       rw [hval] at hmod
+      change Fintype.card {x : S // R x.1 y} % 2 = 0 at hmod
       omega
     · have heq : Fintype.card {x : S // R' x y} = Fintype.card {x : S // R x.1 y ∧ x ≠ pick ⟨y, h1⟩} := by
         apply Fintype.card_congr
@@ -137,6 +139,7 @@ theorem high_code_weight_ge_two_sub_four [Fintype V] [DecidableEq V]
       rw [h1] at hmod
       have hval : (1 : ZMod 2).val = 1 := rfl
       rw [hval] at hmod
+      change Fintype.card {x : S // R x.1 y} % 2 = 1 at hmod
       omega
   let del : S → ℕ := fun x => Fintype.card {y : O // pick y = x}
   have hsum_del : ∑ x : S, del x = Fintype.card O := by
