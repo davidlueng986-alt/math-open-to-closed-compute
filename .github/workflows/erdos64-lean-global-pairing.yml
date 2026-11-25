@@ -1,0 +1,54 @@
+name: E64 unbounded parity descent proof
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'jobs/erdos64-lean-global-pairing/**'
+      - '.github/workflows/erdos64-lean-global-pairing.yml'
+permissions:
+  contents: read
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        file: [BinarySyndrome, PairedShadow]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: leanprover-community/mathlib4
+          ref: 0df444a360eaa60ab8c11dca51a86af692955474
+          path: mathlib4
+      - name: Install pinned Lean
+        run: |
+          set -euo pipefail
+          curl -fsSL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          "$HOME/.elan/bin/elan" toolchain install "$(cat mathlib4/lean-toolchain)"
+      - name: Fetch Mathlib
+        working-directory: mathlib4
+        run: lake exe cache get
+      - name: Strict kernel audit
+        working-directory: mathlib4
+        env:
+          MODULE: ${{ matrix.file }}
+        run: |
+          set -euo pipefail
+          src="$GITHUB_WORKSPACE/jobs/erdos64-lean-global-pairing"
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          export LEAN_PATH="$src"
+          if [ "$MODULE" = PairedShadow ]; then
+            cp "$GITHUB_WORKSPACE/jobs/erdos-64-lean-shadow/Shadow.lean" "$src/Shadow.lean"
+            lake env lean --root="$src" -DwarningAsError=true -o "$src/Shadow.olean" "$src/Shadow.lean" 2>&1 | tee "$GITHUB_WORKSPACE/out/import.log"
+          fi
+          lake env lean --root="$src" -DwarningAsError=true "$src/$MODULE.lean" 2>&1 | tee "$GITHUB_WORKSPACE/out/lean.log"
+          ! grep -E 'sorryAx|native_decide' "$GITHUB_WORKSPACE/out/"*.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lean-${{ matrix.file }}
+          path: out/
