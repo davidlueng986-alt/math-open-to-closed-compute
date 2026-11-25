@@ -33,14 +33,14 @@ theorem minimal_bad_exists
     obtain ⟨V,f,G,d,h⟩ := bad
     exact ⟨@Fintype.card V f,V,f,G,d,rfl,h⟩
   obtain ⟨V,f,G,d,hcard,hn,hfree⟩ := Nat.find_spec hex
-  letI : Fintype V := f
-  letI : DecidableRel G.Adj := d
+  let _ : Fintype V := f
+  let _ : DecidableRel G.Adj := d
   let Q : ℕ → Prop := fun m =>
     ∃ (H : SimpleGraph V) (dH : DecidableRel H.Adj),
       H ≤ G ∧ @Near V H f dH ∧ @Finset.card (Sym2 V) H.edgeFinset = m
   have hQ : ∃ m, Q m := ⟨G.edgeFinset.card,G,d,le_rfl,hn,rfl⟩
   obtain ⟨H,dH,hHG,hnH,hcount⟩ := Nat.find_spec hQ
-  letI : DecidableRel H.Adj := dH
+  let _ : DecidableRel H.Adj := dH
   refine ⟨V,f,H,dH,hnH,fun h => hfree (power_mono hHG h),?_,?_⟩
   · intro W J fW dJ hlt hnJ
     by_contra hJ
@@ -60,8 +60,8 @@ theorem minimal_bad_exists
 theorem no_safe_step {V : Type u} [Fintype V] (G : SimpleGraph V)
     [DecidableRel G.Adj] (h : MinimalBad G) : ¬SafeStep G := by
   rintro ⟨W,H,fw,dh,hlt,hn,ht⟩
-  letI : Fintype W := fw
-  letI : DecidableRel H.Adj := dh
+  let _ : Fintype W := fw
+  let _ : DecidableRel H.Adj := dh
   exact h.2.1 (ht (h.2.2.1 W H hlt hn))
 
 /-- If all except one vertex have large degree, and there are at
@@ -97,8 +97,9 @@ theorem erase_edge_degree {V : Type u} [Fintype V] [DecidableEq V]
   · subst x
     have hs : H.neighborFinset a = (G.neighborFinset a).erase b := by
       ext y
-      simp [H, SimpleGraph.sdiff_adj, SimpleGraph.edge_adj, hne, Ne.symm hne,
-        and_comm]
+      simp only [SimpleGraph.mem_neighborFinset, Finset.mem_erase, H,
+        SimpleGraph.sdiff_adj, SimpleGraph.edge_adj]
+      aesop
     rw [← SimpleGraph.card_neighborFinset_eq_degree,hs]
     simp only [true_or, if_true]
     rw [Finset.card_erase_add_one (G.mem_neighborFinset a b |>.mpr hab),
@@ -107,15 +108,16 @@ theorem erase_edge_degree {V : Type u} [Fintype V] [DecidableEq V]
     · subst x
       have hs : H.neighborFinset b = (G.neighborFinset b).erase a := by
         ext y
-        simp [H, SimpleGraph.sdiff_adj, SimpleGraph.edge_adj, hne, Ne.symm hne,
-          and_comm]
+        simp only [SimpleGraph.mem_neighborFinset, Finset.mem_erase, H,
+          SimpleGraph.sdiff_adj, SimpleGraph.edge_adj]
+        aesop
       rw [← SimpleGraph.card_neighborFinset_eq_degree,hs]
       simp only [or_true, if_true]
       rw [Finset.card_erase_add_one (G.mem_neighborFinset b a |>.mpr hab.symm),
         SimpleGraph.card_neighborFinset_eq_degree]
     · have hs : H.neighborFinset x = G.neighborFinset x := by
         ext y
-        simp [H,SimpleGraph.sdiff_adj,SimpleGraph.edge_adj,ha,hb]
+        simp [H,SimpleGraph.edge_adj,ha,hb]
       rw [← SimpleGraph.card_neighborFinset_eq_degree,hs,
         SimpleGraph.card_neighborFinset_eq_degree]
       simp [ha,hb]
@@ -130,7 +132,7 @@ theorem no_high_when_no_defect {V : Type u} [Fintype V]
   have hpos : 0 < G.degree a := by omega
   obtain ⟨b,hab⟩ := (G.degree_pos_iff_exists_adj a).mp hpos
   let H := G \ SimpleGraph.edge a b
-  let _ : DecidableRel H.Adj := Classical.decRel _
+  let _ : DecidableRel H.Adj := inferInstanceAs (DecidableRel (G \\ SimpleGraph.edge a b).Adj)
   have hcard : 2 ≤ Fintype.card V := by
     have := G.degree_lt_card_verts a
     omega
@@ -156,7 +158,7 @@ theorem no_high_when_no_defect {V : Type u} [Fintype V]
 
 /-- All vertices other than the designated removed vertex retain
 every neighbor except possibly that vertex. -/
-theorem induce_delete_degree {V : Type u} [Fintype V]
+theorem induce_delete_degree {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (w : V)
     (v : {x : V // x ≠ w}) :
     (G.induce {x | x ≠ w}).degree v + (if G.Adj v.1 w then 1 else 0)
@@ -203,9 +205,9 @@ theorem no_small_defect {V : Type u} [Fintype V]
     have := hr w (Ne.symm h)
     omega
   subst r
-  let W := {x : V // x ≠ w}
+  let W := ↑({x : V | x ≠ w} : Set V)
   let H := G.induce {x | x ≠ w}
-  let _ : DecidableRel H.Adj := Classical.decRel _
+  let _ : DecidableRel H.Adj := inferInstanceAs (DecidableRel (G.induce {x | x ≠ w}).Adj)
   have haW : a≠w := by
     intro h
     subst a
@@ -214,9 +216,12 @@ theorem no_small_defect {V : Type u} [Fintype V]
   have hW : Fintype.card W + 1 = Fintype.card V := by
     rw [Fintype.card_subtype, show (Finset.univ.filter (fun x : V => x ≠ w)) = Finset.univ.erase w by ext x; simp]
     exact Finset.card_erase_add_one (Finset.mem_univ w)
+  have hW2 : 2 ≤ Fintype.card ↑({x : V | x ≠ w} : Set V) := by
+    change 2 ≤ Fintype.card W
+    omega
   have hnear : Near H := by
     by_cases hz : G.degree w=0
-    · apply near_of_except H (⟨a,haW⟩ : W) (by omega)
+    · apply near_of_except H (⟨a,haW⟩ : W) hW2
       intro v _
       have hv := hr v.val v.property
       have hna : ¬G.Adj v.val w := by
@@ -228,9 +233,9 @@ theorem no_small_defect {V : Type u} [Fintype V]
       simp [hna] at hd
       omega
     · have h1 : G.degree w=1 := by omega
-      obtain ⟨b,hwb,huniq⟩ := (G.degree_eq_one_iff_existsUnique_adj w).mp h1
+      obtain ⟨b,hwb,huniq⟩ := (G.degree_eq_one_iff_existsUnique_adj (v := w)).mp h1
       have hb : b≠w := (G.ne_of_adj hwb).symm
-      apply near_of_except H (⟨b,hb⟩ : W) (by omega)
+      apply near_of_except H (⟨b,hb⟩ : W) hW2
       intro v hv
       have hnv : v.val ≠ b := fun h => hv (Subtype.ext h)
       have hna : ¬G.Adj v.val w := fun h => hnv (huniq v.val h.symm)
@@ -258,7 +263,7 @@ theorem degree_partition {V : Type u} [Fintype V] (G : SimpleGraph V)
     obtain ⟨_,r,hr⟩ := hm.1
     have hrw : r=w := by
       by_contra hne
-      have := hr w hne.symm
+      have := hr w (Ne.symm hne)
       omega
     subst r
     by_cases hh : ∃ a, 4≤G.degree a
