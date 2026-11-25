@@ -23,8 +23,11 @@ jobs:
           python3 -B jobs/hadamard-all-orders/stack_1198_joint.py
           python3 -B jobs/hadamard-all-orders/stack_1198_transport.py
           python3 -B jobs/hadamard-all-orders/stack_1198_auxiliary.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_energy.py
+          python3 -B jobs/hadamard-all-orders/stack_odd_t_auxiliary.py
           python3 -B jobs/hadamard-all-orders/triple_product.py
           python3 -B jobs/hadamard-all-orders/paley_progression.py
+          python3 -B jobs/hadamard-all-orders/t_product_parity.py
           python3 -B jobs/hadamard-all-orders/conference_plus_two.py
           python3 -B jobs/hadamard-all-orders/t599.py
           python3 -B jobs/hadamard-all-orders/t599_length_change.py
@@ -106,6 +109,8 @@ jobs:
         run: python3 -B jobs/hadamard-all-orders/exterior_fold_trade.py
       - name: Check the exact Hall obstruction at the fixed physical fold
         run: python3 -B jobs/hadamard-all-orders/exterior_fold_hall.py
+      - name: Check prescribed fold-coordinate changes and the new physical fold
+        run: python3 -B jobs/hadamard-all-orders/exterior_fold_coordinates.py
 
   exact-source-columns:
     runs-on: ubuntu-latest

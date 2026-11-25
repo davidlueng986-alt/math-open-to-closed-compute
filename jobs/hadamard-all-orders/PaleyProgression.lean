@@ -45,4 +45,42 @@ theorem paley_thirteen_not_scarpis {q : Nat} (hq : q % 7644840 = 712051) (a : Na
 #print axioms paley_thirteen_parameters
 #print axioms paley_thirteen_not_scarpis
 
+def paleyNineteenMultiplier (q : Nat) := 19 * ((q + 1) / 4)
+
+set_option exponentiation.threshold 2868 in
+set_option maxRecDepth 16384 in
+theorem paley_nineteen_residue (k : Nat) : 1355443 ^ (2868 * k + 1) % 57537480 = 1355443 := by
+  induction k with
+  | zero => decide
+  | succ k ih =>
+    have period : 1355443 ^ 2868 % 57537480 = 1 := by decide
+    rw [show 2868 * (k + 1) + 1 = 2868 * k + 1 + 2868 by omega, Nat.pow_add, Nat.mul_mod, ih, period]
+
+theorem paley_nineteen_parameters {q : Nat} (hq : q % 57537480 = 1355443) :
+    q % 8 = 3 ∧ 4 * paleyNineteenMultiplier q = 19 * (q + 1) ∧
+    paleyNineteenMultiplier q % 100590 = 599 ∧
+    paleyNineteenMultiplier q % 13 = 5 ∧
+    (16 * paleyNineteenMultiplier q + 1) % 11 = 10 := by
+  have quotient : q = 1355443 + 57537480 * (q / 57537480) := by
+    simpa only [hq] using (Nat.mod_add_div q 57537480).symm
+  unfold paleyNineteenMultiplier
+  omega
+
+theorem paley_nineteen_not_scarpis {q : Nat} (hq : q % 57537480 = 1355443) (a : Nat) :
+    a * (a + 1) ≠ 4 * paleyNineteenMultiplier q := by
+  intro h
+  have identity : (2 * a + 1) * (2 * a + 1) = 4 * (a * (a + 1)) + 1 := by
+    simp [Nat.mul_add, Nat.add_mul, Nat.mul_assoc, Nat.mul_left_comm, Nat.mul_comm]
+    omega
+  rw [h, show 4 * (4 * paleyNineteenMultiplier q) = 16 * paleyNineteenMultiplier q by omega] at identity
+  obtain ⟨_, _, _, _, residue⟩ := paley_nineteen_parameters hq
+  have squares : ∀ x : Fin 11, x.val * x.val % 11 ≠ 10 := by decide
+  have contradiction := identity ▸ residue
+  rw [Nat.mul_mod] at contradiction
+  exact squares ⟨(2 * a + 1) % 11, Nat.mod_lt _ (by decide)⟩ contradiction
+
+#print axioms paley_nineteen_residue
+#print axioms paley_nineteen_parameters
+#print axioms paley_nineteen_not_scarpis
+
 end HadamardAllOrders
