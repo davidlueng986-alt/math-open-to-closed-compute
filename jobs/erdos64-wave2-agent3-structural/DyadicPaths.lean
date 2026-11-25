@@ -48,11 +48,10 @@ theorem minimal_bad_no_c4 {V : Type u} [Fintype V]
   have htrail : w.IsTrail := by
     rw [Walk.isTrail_def]
     simp [w, Sym2.eq_iff, hab_ne, hbc_ne, hcd_ne, hda_ne, hac, hbd,
-      hab_ne.symm, hbc_ne.symm, hcd_ne.symm, hda_ne.symm, hac.symm]
+      hab_ne.symm, hbc_ne.symm, hda_ne.symm, hac.symm]
   have hcyc : w.IsCycle := by
     refine ⟨⟨htrail, by simp [w]⟩, ?_⟩
-    simp [w, hab_ne, hbc_ne, hcd_ne, hda_ne, hac, hbd,
-      hab_ne.symm, hbc_ne.symm, hcd_ne.symm, hda_ne.symm, hac.symm]
+    simp [w, hbc_ne, hcd_ne, hda_ne, hbd, hab_ne.symm, hac.symm]
   exact hm.2.1 ⟨2, a, w, le_rfl, hcyc, rfl⟩
 
 /-- Non-adjacent distinct vertices in `MinimalBad G` have at most one common neighbor. -/
@@ -231,7 +230,7 @@ theorem ident_cycle_lifts {x y : V} (hxy : x ≠ y)
         _ ≤ 2 ^ k := Nat.pow_le_pow_right (by norm_num) hk
     have hcG_cyc : cG.IsCycle := isCycle_of_support_tail_nodup G cG (by omega) hcG_tail
     exact hfree ⟨k, a.1, cG, hk, hcG_cyc, hcG_len⟩
-  let c' : H.Walk u u := c.rotate hu_mem
+  let c' : H.Walk u u := c.rotate u hu_mem
   have hc' : c'.IsCycle := hc.rotate hu_mem
   have hc'_len : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
   have h4 : 4 ≤ 2 ^ k := by
@@ -339,6 +338,8 @@ theorem ident_cycle_lifts {x y : V} (hxy : x ≠ y)
         let q₁ := q.takeUntil ⟨z, hz⟩ hz_in_q
         let q₂ := q.dropUntil ⟨z, hz⟩ hz_in_q
         have hspec : q₁.append q₂ = q := Walk.take_spec q hz_in_q
+        have hq_sup_split : q.support = q₁.support ++ q₂.support.tail := by
+          rw [← hspec, Walk.support_append]
         cases hq₂e : q₂ with
         | nil => exact False.elim (hza₂ rfl)
         | @cons _ w₂ _ hzw₂ q₂' =>
@@ -349,27 +350,18 @@ theorem ident_cycle_lifts {x y : V} (hxy : x ≠ y)
               have : w₁ ∈ q₁.reverse.support := by
                 rw [hq₁e, Walk.support_cons]; exact List.mem_cons_of_mem _ (Walk.start_mem_support _)
               simpa [Walk.support_reverse] using this
-            have hw₂_mem : w₂ ∈ q₂.support := by
-              rw [hq₂e, Walk.support_cons]; exact List.mem_cons_of_mem _ (Walk.start_mem_support _)
+            have hw₂_mem_tail : w₂ ∈ q₂.support.tail := by
+              rw [hq₂e, Walk.support_cons, List.tail_cons]
+              exact Walk.start_mem_support q₂'
             have hw₁_ne_u : w₁ ≠ u := by
               intro h; subst h
-              exact hu_not_q (by rw [← hspec]; exact Walk.support_append_subset_left q₁ q₂ hw₁_mem)
+              exact hu_not_q (by rw [hq_sup_split]; exact List.mem_append_left _ hw₁_mem)
             have hw₂_ne_u : w₂ ≠ u := by
               intro h; subst h
-              exact hu_not_q (by rw [← hspec]; exact Walk.support_append_subset_right q₁ q₂ hw₂_mem)
+              exact hu_not_q (by rw [hq_sup_split]; exact List.mem_append_right _ hw₂_mem_tail)
             have hw_eq : w₁ = w₂ := hdeg2 w₁ w₂ hzw₁ hzw₂ hw₁_ne_u hw₂_ne_u
-            have hq_sup_split : q.support = q₁.support.dropLast ++ q₂.support := by
-              rw [← hspec, Walk.support_append]
-            have hw₁_ne_z : w₁ ≠ ⟨z, hz⟩ := (H.ne_of_adj hzw₁).symm
-            have hw₁_in_dl : w₁ ∈ q₁.support.dropLast := by
-              have hq₁_sup : q₁.support = q₁.support.dropLast ++ [⟨z, hz⟩] := by
-                have hne_s : q₁.support ≠ [] := Walk.support_ne_nil q₁
-                have hlast : q₁.support.getLast hne_s = ⟨z, hz⟩ := Walk.getLast_support q₁
-                rw [← hlast]; exact (List.dropLast_append_getLast hne_s).symm
-              rw [hq₁_sup, List.mem_append, List.mem_singleton] at hw₁_mem
-              exact hw₁_mem.resolve_right hw₁_ne_z
             rw [hq_sup_split, List.nodup_append] at hq_nodup
-            exact hq_nodup.2.2 w₁ hw₁_in_dl w₁ (hw_eq ▸ hw₂_mem) rfl
+            exact hq_nodup.2.2 w₁ hw₁_mem w₁ (hw_eq ▸ hw₂_mem_tail) rfl
       rcases h₁_disj with h1x | h1y
       · rcases h₂_disj with h2x | h2y
         · exact False.elim (no_both_x ⟨h1x, h2x⟩)
@@ -475,14 +467,14 @@ theorem ident_degree_non_common {x y : V} (hxy : x ≠ y)
             · exact False.elim (hvx h2)
             · exact False.elim (hvy h3)⟩
         invFun := fun w =>
-          ⟨⟨w.1, fun h => hvy (h ▸ w.2)⟩,
+          ⟨⟨w.1, fun h => hvy (by rw [← h]; exact w.2)⟩,
            ⟨fun h => G.ne_of_adj w.2 (congrArg Subtype.val h), Or.inl w.2⟩⟩
         left_inv := by intro ⟨⟨w, hwy⟩, _⟩; rfl
         right_inv := by intro ⟨w, _⟩; rfl }
     exact Fintype.card_congr e
 
 /-- For a common neighbor `z` of `x` and `y`, `identGraph` drops its degree by exactly 1. -/
-theorem ident_degree_common {x y z : V} (hxy : x ≠ y)
+theorem ident_degree_common {x y z : V} (_hxy : x ≠ y)
     (hxz : G.Adj x z) (hyz : G.Adj y z)
     [DecidableRel (identGraph G x y).Adj] :
     (identGraph G x y).degree ⟨z, (G.ne_of_adj hyz).symm⟩ + 1 = G.degree z := by
@@ -526,10 +518,12 @@ theorem ident_degree_merged_ge_add {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x 
           · exact h2
           · exact False.elim (w.2.1 (Subtype.ext h3.symm))⟩
       invFun := Sum.elim
-        (fun w => ⟨⟨w.1, fun h => hnadj (h ▸ w.2)⟩,
+        (fun w => ⟨⟨w.1, fun h => hnadj (by rw [← h]; exact w.2)⟩,
           ⟨fun h => G.ne_of_adj w.2 (congrArg Subtype.val h), Or.inl w.2⟩⟩)
         (fun w => ⟨⟨w.1, (G.ne_of_adj w.2).symm⟩,
-          ⟨fun h => hnadj (by rw [← congrArg Subtype.val h]; exact w.2.symm),
+          ⟨fun h => hnadj (by
+            have hxw : x = w.1 := congrArg Subtype.val h
+            rw [hxw]; exact w.2.symm),
            Or.inr (Or.inl ⟨rfl, w.2⟩)⟩⟩)
       left_inv := by
         intro ⟨⟨w, hwy⟩, hw⟩
@@ -538,9 +532,9 @@ theorem ident_degree_merged_ge_add {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x 
         · simp [h]
       right_inv := by
         rintro (⟨w, hw⟩ | ⟨w, hw⟩)
-        · simp [hw]
+        · exact dif_pos hw
         · have hnx : ¬G.Adj x w := fun h => hdisj w ⟨h, hw⟩
-          simp [hnx] }
+          exact dif_neg hnx }
   have hc := Fintype.card_congr e
   rw [SimpleGraph.card_neighborSet_eq_degree, Fintype.card_sum,
     SimpleGraph.card_neighborSet_eq_degree, SimpleGraph.card_neighborSet_eq_degree] at hc
@@ -555,7 +549,7 @@ theorem ident_degree_merged_ge_left {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x
   change G.degree x ≤ H.degree u
   rw [← SimpleGraph.card_neighborSet_eq_degree, ← SimpleGraph.card_neighborSet_eq_degree]
   let f : G.neighborSet x → H.neighborSet u := fun w =>
-    ⟨⟨w.1, fun h => hnadj (h ▸ w.2)⟩,
+    ⟨⟨w.1, fun h => hnadj (by rw [← h]; exact w.2)⟩,
      ⟨fun h => G.ne_of_adj w.2 (congrArg Subtype.val h), Or.inl w.2⟩⟩
   have hinj : Function.Injective f := by
     intro a b h
@@ -803,7 +797,9 @@ theorem defect_dist2_dyadic_path {V : Type u} [Fintype V]
       rw [← SimpleGraph.card_neighborSet_eq_degree, ← SimpleGraph.card_neighborSet_eq_degree]
       let f : G.neighborSet v → H.neighborSet ⟨w, hvw.symm⟩ := fun z =>
         ⟨⟨z.1, (G.ne_of_adj z.2).symm⟩,
-         ⟨fun h => hnwv (by rw [congrArg Subtype.val h]; exact z.2.symm),
+         ⟨fun h => hnwv (by
+            have hwz : w = z.1 := congrArg Subtype.val h
+            rw [hwz]; exact z.2.symm),
           Or.inr (Or.inl ⟨rfl, z.2⟩)⟩⟩
       have hinj : Function.Injective f := fun a b h =>
         Subtype.ext (congrArg (fun t => t.1.1) h)
@@ -863,8 +859,10 @@ theorem defect_dist2_dyadic_path {V : Type u} [Fintype V]
       have hn_in : next ∈ ({b₁, b₂} : Finset V) := heq ▸ (G.mem_neighborFinset w next).mpr hwn
       simp only [Finset.mem_insert, Finset.mem_singleton] at hn_in
       rcases hn_in with hn1 | hn2
-      · rw [hn1] at hpe
-        exact False.elim (hb₁_not_p (by rw [hpe, Walk.support_cons]; exact List.mem_cons_of_mem _ (Walk.start_mem_support _)))
+      · have hmem : next ∈ p.support := by
+          rw [hpe, Walk.support_cons]
+          exact List.mem_cons_of_mem _ (Walk.start_mem_support rest)
+        exact False.elim (hb₁_not_p (hn1 ▸ hmem))
       · exact hn2
     subst hnext
     have hnodup : (w :: rest.support).Nodup := by
