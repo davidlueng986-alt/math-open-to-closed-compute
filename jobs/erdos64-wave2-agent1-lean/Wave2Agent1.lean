@@ -157,9 +157,13 @@ theorem defect_neighbor_at_most_one_high_neighbor {V : Type u} [Fintype V]
       · exact hx1
       · exact hx2
     · rw [SimpleGraph.card_neighborFinset_eq_degree, hb3]
-      have hnot1 : x1 ∉ ({x2} : Finset V) := by simp [h12]
+      have hnot1 : x1 ∉ ({x2} : Finset V) := by
+        intro h; exact h12 (Finset.mem_singleton.mp h)
       have hnot2 : w ∉ ({x1, x2} : Finset V) := by
-        simp [Ne.symm h1w, Ne.symm h2w]
+        intro h
+        rcases Finset.mem_insert.mp h with h1 | h2
+        · exact h1w h1.symm
+        · exact h2w (Finset.mem_singleton.mp h2).symm
       rw [Finset.card_insert_of_notMem hnot2, Finset.card_insert_of_notMem hnot1, Finset.card_singleton]
   let S : Set V := {z | z ≠ w ∧ z ≠ b}
   let W := {z : V // z ≠ w ∧ z ≠ b}
@@ -239,35 +243,29 @@ theorem cons_path_isCycle {V : Type u} {G : SimpleGraph V} {a u : V}
     (Walk.cons h1 p).IsCycle := by
   rw [Walk.isCycle_def]
   refine ⟨?_, ?_, ?_⟩
-  · -- IsTrail: edges = s(a, u) :: p.edges is Nodup
-    rw [Walk.isTrail_def, Walk.edges_cons, List.nodup_cons]
+  · rw [Walk.isTrail_def, Walk.edges_cons, List.nodup_cons]
     refine ⟨?_, hp.isTrail.edges_nodup⟩
-    -- Show s(a, u) ∉ p.edges
     cases hp_eq : p with
     | nil => rw [hp_eq] at hlen; simp at hlen
     | @cons _ b _ h2 rest =>
       rw [Walk.edges_cons, List.mem_cons]
       rintro (heq | hmem)
-      · -- s(a, u) = s(u, b) implies a = b (since u ≠ a)
-        have hba : b = a := by
+      · have hba : b = a := by
           rw [Sym2.eq_iff] at heq
-          rcases heq with ⟨h_au, _⟩ | ⟨_, h_ab⟩
+          rcases heq with ⟨h_au, _⟩ | ⟨h_ab, _⟩
           · exact absurd h_au (G.ne_of_adj h1)
           · exact h_ab.symm
-        subst hba
-        -- Now rest : G.Walk a a with a ∉ rest.support.tail and rest.support.Nodup -> rest = nil
+        subst b
         have hnod := hp.support_nodup
         rw [hp_eq, Walk.support_cons, List.nodup_cons] at hnod
         cases hrest_eq : rest with
         | nil => rw [hp_eq, hrest_eq] at hlen; simp at hlen
         | @cons _ c _ hc rest2 =>
-          -- rest.support starts with a and ends with a, contradicting rest.support.Nodup!
           have hmem_end : a ∈ rest2.support := Walk.end_mem_support rest2
           have hnod_r := hnod.2
           rw [hrest_eq, Walk.support_cons, List.nodup_cons] at hnod_r
           exact hnod_r.1 hmem_end
-      · -- s(a, u) ∈ rest.edges implies u ∈ rest.support, contradicting p.support.Nodup!
-        have hu_mem : u ∈ rest.support := Walk.fst_mem_support_of_mem_edges rest (by simpa [Sym2.eq_swap] using hmem)
+      · have hu_mem : u ∈ rest.support := Walk.snd_mem_support_of_mem_edges rest hmem
         have hnod := hp.support_nodup
         rw [hp_eq, Walk.support_cons, List.nodup_cons] at hnod
         exact hnod.1 hu_mem
@@ -287,9 +285,7 @@ theorem no_c4_of_power_free {V : Type u} (G : SimpleGraph V) (hf : ¬HasPower G)
     Walk.cons hy1.symm (Walk.cons hy2 (Walk.cons hx2.symm Walk.nil))
   have hp : p.IsPath := by
     rw [Walk.isPath_def]
-    simp only [p, Walk.support_cons, Walk.support_nil, List.nodup_cons, List.mem_cons,
-      List.not_mem_nil, or_false, List.nodup_nil, and_true, not_or]
-    exact ⟨⟨hyc1.symm, hc12, hxc1.symm⟩, ⟨hyc2, hxy.symm⟩, hxc2.symm⟩
+    simp [p, hyc1.symm, hc12, hxc1.symm, hyc2, hxy.symm, hxc2.symm]
   have hcyc : (Walk.cons hx1 p).IsCycle := cons_path_isCycle hx1 p hp (by simp [p])
   exact hf ⟨2, x, Walk.cons hx1 p, le_rfl, hcyc, rfl⟩
 
@@ -302,14 +298,12 @@ def mergeGraph {V : Type u} (G : SimpleGraph V) (x y : V) (hxy : x ≠ y) :
       ((u.val = x ∧ (G.Adj x v.val ∨ G.Adj y v.val)) ∨
        (v.val = x ∧ (G.Adj x u.val ∨ G.Adj y u.val)) ∨
        (u.val ≠ x ∧ v.val ≠ x ∧ G.Adj u.val v.val))
-  symm := by
-    intro u v ⟨hne, hadj⟩
-    refine ⟨hne.symm, ?_⟩
-    rcases hadj with h1 | h2 | ⟨hux, hvx, huv⟩
-    · exact Or.inr (Or.inl h1)
-    · exact Or.inl h2
-    · exact Or.inr (Or.inr ⟨hvx, hux, huv.symm⟩)
-  loopless := fun _ h => h.1 rfl
+  symm := ⟨fun _ _ ⟨hne, hadj⟩ =>
+    ⟨hne.symm, match hadj with
+      | Or.inl h1 => Or.inr (Or.inl h1)
+      | Or.inr (Or.inl h2) => Or.inl h2
+      | Or.inr (Or.inr ⟨hux, hvx, huv⟩) => Or.inr (Or.inr ⟨hvx, hux, huv.symm⟩)⟩⟩
+  loopless := ⟨fun _ h => h.1 rfl⟩
 
 /-- Lift a walk in `mergeGraph G x y hxy` whose support avoids `⟨x, hxy⟩`
     directly to a walk in `G \ edge x y` with identical support values, edges, and length. -/
@@ -322,7 +316,7 @@ def liftAvoidWalk {V : Type u} {G : SimpleGraph V} {x y : V} {hxy : x ≠ y}
           q.support = p.support.map Subtype.val ∧
           q.edges = p.edges.map (Sym2.map Subtype.val) }
   | Walk.nil, _ => ⟨Walk.nil, rfl, rfl, rfl⟩
-  | @Walk.cons _ _ _ a b _ hab rest, hnot =>
+  | Walk.cons (u := a) (v := b) hab rest, hnot =>
     let ha : a.val ≠ x := fun h => hnot (by
       rw [Walk.support_cons]
       exact List.mem_cons_self _ _ ▸ Subtype.ext h)
@@ -391,7 +385,7 @@ theorem cycle_from_mid_and_vertex {V : Type u} {G : SimpleGraph V}
     subst heq
     exact ha hz1
   have hplen : p.length = mid.length + 1 := by simp [p, Walk.length_concat]
-  exact ⟨Walk.cons h1 p, cons_path_isCycle h1 p hp (by omega), by simp [hplen]; omega⟩
+  exact ⟨Walk.cons h1 p, cons_path_isCycle h1 p hp (by omega), by simp [hplen]⟩
 
 /-- Master Vertex-Identification Dyadic Path Theorem:
     In any `MinimalBad G`, if identifying distinct `x ≠ y` preserves `Near`,
@@ -808,29 +802,26 @@ theorem cubic_all_pairs_dyadic_path {V : Type u} [Fintype V]
     exact no_c4_of_power_free G hm.2.1 hxy hne h1.1 h1.2 h2.1 h2.2
   have hdz : 3 ≤ H.degree ⟨x, hxy⟩ := by
     rw [mergeGraph_degree_z G x y hxy]
-    let A := (G.neighborFinset x).erase y
-    let B := (G.neighborFinset y).erase x
-    change 3 ≤ (A ∪ B).card
-    have hAB_inter : (A ∩ B).card ≤ 1 := by
+    have hAB_inter : (((G.neighborFinset x).erase y) ∩ ((G.neighborFinset y).erase x)).card ≤ 1 := by
       rw [Finset.card_le_one]
       intro c1 hc1 c2 hc2
-      simp only [Finset.mem_inter, A, B, Finset.mem_erase, G.mem_neighborFinset] at hc1 hc2
+      simp only [Finset.mem_inter, Finset.mem_erase, G.mem_neighborFinset] at hc1 hc2
       exact huniq c1 c2 ⟨hc1.1.2, hc1.2.2⟩ ⟨hc2.1.2, hc2.2.2⟩
-    have hA : 2 ≤ A.card := by
+    have hA : 2 ≤ ((G.neighborFinset x).erase y).card := by
       by_cases h : G.Adj x y
       · have hc := Finset.card_erase_add_one ((G.mem_neighborFinset x y).mpr h)
         rw [SimpleGraph.card_neighborFinset_eq_degree, hcubic x] at hc; omega
-      · rw [show A = G.neighborFinset x from
-          Finset.erase_eq_of_notMem (fun hm => h ((G.mem_neighborFinset x y).mp hm)),
-          SimpleGraph.card_neighborFinset_eq_degree, hcubic x]; omega
-    have hB : 2 ≤ B.card := by
+      · have heq : (G.neighborFinset x).erase y = G.neighborFinset x :=
+          Finset.erase_eq_of_notMem (fun hm => h ((G.mem_neighborFinset x y).mp hm))
+        rw [heq, SimpleGraph.card_neighborFinset_eq_degree, hcubic x]; omega
+    have hB : 2 ≤ ((G.neighborFinset y).erase x).card := by
       by_cases h : G.Adj y x
       · have hc := Finset.card_erase_add_one ((G.mem_neighborFinset y x).mpr h)
         rw [SimpleGraph.card_neighborFinset_eq_degree, hcubic y] at hc; omega
-      · rw [show B = G.neighborFinset y from
-          Finset.erase_eq_of_notMem (fun hm => h ((G.mem_neighborFinset y x).mp hm)),
-          SimpleGraph.card_neighborFinset_eq_degree, hcubic y]; omega
-    have hu := Finset.card_union_add_card_inter A B
+      · have heq : (G.neighborFinset y).erase x = G.neighborFinset y :=
+          Finset.erase_eq_of_notMem (fun hm => h ((G.mem_neighborFinset y x).mp hm))
+        rw [heq, SimpleGraph.card_neighborFinset_eq_degree, hcubic y]; omega
+    have hu := Finset.card_union_add_card_inter ((G.neighborFinset x).erase y) ((G.neighborFinset y).erase x)
     omega
   have hnear : Near H := by
     by_cases hcomm : ∃ c : V, G.Adj x c ∧ G.Adj y c
