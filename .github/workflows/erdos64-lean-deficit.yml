@@ -1,0 +1,41 @@
+name: E64 low-deficit global arithmetic
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['jobs/erdos64-lean-deficit/**','.github/workflows/erdos64-lean-deficit.yml']
+permissions:
+  contents: read
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: leanprover-community/mathlib4
+          ref: 0df444a360eaa60ab8c11dca51a86af692955474
+          path: mathlib4
+      - name: Install pinned Lean
+        run: |
+          set -euo pipefail
+          curl -fsSL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          "$HOME/.elan/bin/elan" toolchain install "$(cat mathlib4/lean-toolchain)"
+      - name: Fetch Mathlib
+        working-directory: mathlib4
+        run: lake exe cache get
+      - name: Strict proof check
+        working-directory: mathlib4
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          lake env lean -DwarningAsError=true "$GITHUB_WORKSPACE/jobs/erdos64-lean-deficit/LowDeficit.lean" 2>&1 | tee "$GITHUB_WORKSPACE/out/lean.log"
+          test "$(grep -c 'depends on axioms' "$GITHUB_WORKSPACE/out/lean.log")" = 5
+          ! grep -E 'sorryAx|native_decide' "$GITHUB_WORKSPACE/out/lean.log"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: global-deficit-proof
+          path: out/
