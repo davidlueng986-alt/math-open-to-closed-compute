@@ -148,7 +148,7 @@ theorem defect_neighbor_at_most_one_high_neighbor {V : Type u} [Fintype V]
   obtain ⟨b', hb'b, hwb', hw_all⟩ := hex_b'
   have hb'w : b' ≠ w := (G.ne_of_adj hwb').symm
   have hNb : G.neighborFinset b = {w, x1, x2} := by
-    apply Finset.eq_of_subset_of_card_le
+    apply (Finset.eq_of_subset_of_card_le (s := ({w, x1, x2} : Finset V)) (t := G.neighborFinset b) ?_ ?_).symm
     · intro z hz
       simp only [Finset.mem_insert, Finset.mem_singleton] at hz
       rw [G.mem_neighborFinset]
@@ -291,7 +291,7 @@ theorem no_c4_of_power_free {V : Type u} (G : SimpleGraph V) (hf : ¬HasPower G)
 
 /-- Merged graph G/(x=y) realized directly on the subtype W = {v : V // v ≠ y},
     where z = ⟨x, hxy⟩ represents the identified pair {x, y}. -/
-def mergeGraph {V : Type u} (G : SimpleGraph V) (x y : V) (hxy : x ≠ y) :
+def mergeGraph {V : Type u} (G : SimpleGraph V) (x y : V) (_hxy : x ≠ y) :
     SimpleGraph {v : V // v ≠ y} where
   Adj u v :=
     u ≠ v ∧
@@ -318,11 +318,13 @@ def liftAvoidWalk {V : Type u} {G : SimpleGraph V} {x y : V} {hxy : x ≠ y}
   | Walk.nil, _ => ⟨Walk.nil, rfl, rfl, rfl⟩
   | Walk.cons (u := a) (v := b) hab rest, hnot =>
     let ha : a.val ≠ x := fun h => hnot (by
-      rw [Walk.support_cons]
-      exact List.mem_cons_self _ _ ▸ Subtype.ext h)
+      have ha_eq : a = ⟨x, hxy⟩ := Subtype.ext h
+      rw [Walk.support_cons, ha_eq]
+      exact List.mem_cons_self)
     let hb : b.val ≠ x := fun h => hnot (by
-      rw [Walk.support_cons]
-      exact List.mem_cons_of_mem _ (Subtype.ext h ▸ Walk.start_mem_support rest))
+      have hb_eq : b = ⟨x, hxy⟩ := Subtype.ext h
+      rw [Walk.support_cons, ← hb_eq]
+      exact List.mem_cons_of_mem _ (Walk.start_mem_support rest))
     let hrest : (⟨x, hxy⟩ : {w : V // w ≠ y}) ∉ rest.support := fun hm =>
       hnot (by rw [Walk.support_cons]; exact List.mem_cons_of_mem _ hm)
     let hadjG : G.Adj a.val b.val := by
