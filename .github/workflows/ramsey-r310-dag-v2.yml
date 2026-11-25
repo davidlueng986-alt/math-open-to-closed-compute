@@ -1,0 +1,96 @@
+name: Ramsey R(3,10) executable closure DAG v2
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - jobs/ramsey-r310-dag-v2/launch.txt
+permissions:
+  contents: read
+  packages: read
+concurrency:
+  group: ramsey-r310-dag-v2
+  cancel-in-progress: false
+jobs:
+  profile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          mkdir -p out
+          python3 jobs/ramsey-r310-dag-v2/profiles.py > out/profiles.json
+          python3 -c 'import json; d=json.load(open("out/profiles.json")); print({k:v for k,v in d.items() if k!="survivors"})'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: profiles
+          path: out/
+          retention-days: 30
+  core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exact C35 extension attempt
+        run: |
+          set -euo pipefail
+          python3 jobs/ramsey-r310-dag-v2/solve.py --core --seconds 600 --replay-seconds 300 --out out
+          if [ -f out/witness.txt ]; then python3 jobs/ramsey-r310-wave1/verify.py out/witness.txt | tee out/witness-check.json; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: core-c35
+          path: out/
+          retention-days: 30
+  leaf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        include:
+          - {d: 5, q: 5}
+          - {d: 5, q: 6}
+          - {d: 5, q: 7}
+          - {d: 5, q: 8}
+          - {d: 5, q: 9}
+          - {d: 6, q: 5}
+          - {d: 6, q: 6}
+          - {d: 6, q: 7}
+          - {d: 6, q: 8}
+          - {d: 6, q: 9}
+          - {d: 7, q: 5}
+          - {d: 7, q: 6}
+          - {d: 7, q: 7}
+          - {d: 7, q: 8}
+          - {d: 7, q: 9}
+          - {d: 8, q: 5}
+          - {d: 8, q: 6}
+          - {d: 8, q: 7}
+          - {d: 8, q: 8}
+          - {d: 8, q: 9}
+          - {d: 9, q: 9}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bounded relaxation and DRAT replay
+        run: |
+          set -euo pipefail
+          python3 jobs/ramsey-r310-dag-v2/solve.py --d ${{ matrix.d }} --q ${{ matrix.q }} --seconds 1200 --replay-seconds 420 --out out
+          if [ -f out/witness.txt ]; then python3 jobs/ramsey-r310-wave1/verify.py out/witness.txt | tee out/witness-check.json; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: D${{ matrix.d }}-N${{ matrix.q }}
+          path: out/
+          retention-days: 30
