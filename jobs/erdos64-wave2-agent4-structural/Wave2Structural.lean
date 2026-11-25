@@ -325,10 +325,7 @@ theorem dyadic_path_of_identify_power {V : Type u} {G : SimpleGraph V}
       refine ⟨Walk.IsPath.mk' ?_, hclen⟩
       rwa [Walk.support_tail_of_not_nil _ hnil]
     exact hfree ⟨k, v0.1, cG, hk, hcG, by rw [liftAvoidWalk_length, hlen]⟩
-  let c' := c.rotate hmem
-  -- Note: `Walk.rotate` in Mathlib 4.36 takes `{u} (c : G.Walk u u) {v} (h : v ∈ c.support)`
-  -- Wait: if `c.rotate` takes explicit `v`, use `@Walk.rotate _ _ _ _ c x' hmem`!
-  let c_rot := @Walk.rotate _ _ _ _ c x' hmem
+  let c_rot := c.rotate x' hmem
   have hc' : c_rot.IsCycle := hc.rotate hmem
   have hlen' : c_rot.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
   have h3 : 3 ≤ c_rot.length := hc'.three_le_length
@@ -901,7 +898,7 @@ theorem cubic_triangle_free_two_path_mersenne {V : Type u} [Fintype V]
       2 ≤ k ∧ p.IsPath ∧ p.length = 2 ^ k - 1 := by
   classical
   have hn12 : ¬G.Adj u1 u2 := fun h => hN ⟨v, u1, u2, hv1, h, hv2.symm⟩
-  obtain ⟨u3, hv3, h31, h32, hN_eq⟩ := cubic_three_neighbors G hC hv1 hv2 h12
+  obtain ⟨u3, hv3, _, _, hN_eq⟩ := cubic_three_neighbors G hC hv1 hv2 h12
   let W := {x : V // x ≠ v}
   let K : SimpleGraph W := G.induce {x | x ≠ v}
   let _ : DecidableRel K.Adj := fun x y => Classical.propDecidable (K.Adj x y)
@@ -959,7 +956,7 @@ theorem cubic_triangle_free_two_path_mersenne {V : Type u} [Fintype V]
         exact False.elim (hno ((Set.mem_singleton_iff.mp hed) ▸ he))
     exact hKfree ⟨k, a, c.transfer K htr, hk, hc.transfer htr, by simpa using hlen⟩
   have hU1mem : U1 ∈ c.support := mem_support_of_mem_edge c hedge (by simp)
-  let c' := @Walk.rotate _ _ _ _ c U1 hU1mem
+  let c' := c.rotate U1 hU1mem
   have hc' : c'.IsCycle := hc.rotate hU1mem
   have hlen' : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
   have hedge' : s(U1, U2) ∈ c'.edges := by
