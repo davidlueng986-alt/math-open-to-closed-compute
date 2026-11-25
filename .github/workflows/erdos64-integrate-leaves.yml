@@ -1,0 +1,59 @@
+name: E64 integrate completed mandatory leaves
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['jobs/erdos64-closure-leaves/Closed*.lean','.github/workflows/erdos64-integrate-leaves.yml']
+permissions:
+  contents: read
+jobs:
+  leaf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        module: [ClosedBipartite, ClosedTriangle]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: leanprover-community/mathlib4
+          ref: 0df444a360eaa60ab8c11dca51a86af692955474
+          path: mathlib4
+      - name: Install pinned Lean
+        run: |
+          set -euo pipefail
+          curl -fsSL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          "$HOME/.elan/bin/elan" toolchain install "$(cat mathlib4/lean-toolchain)"
+      - name: Fetch Mathlib
+        working-directory: mathlib4
+        run: lake exe cache get
+      - name: Check mandatory leaf theorems
+        working-directory: mathlib4
+        env:
+          MODULE: ${{ matrix.module }}
+        run: |
+          set -euo pipefail
+          src="$GITHUB_WORKSPACE/jobs/erdos64-closure-leaves"
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          export LEAN_PATH="$src"
+          cp "$GITHUB_WORKSPACE/jobs/erdos-64-lean-shadow/Shadow.lean" "$src/"
+          cp "$GITHUB_WORKSPACE/jobs/erdos64-closure-core/"{Core,Leaves}.lean "$src/"
+          cp "$GITHUB_WORKSPACE/jobs/erdos64-lean-global-pairing/"{BinarySyndrome,PairedShadow,Incidence}.lean "$src/"
+          if [ "$MODULE" = ClosedBipartite ]; then
+            mods="Shadow Core Leaves BinarySyndrome PairedShadow Incidence BipartiteDegree ClosedBipartite"
+          else
+            mods="Shadow Core Leaves PairedShadow TriangleCut ClosedTriangle"
+          fi
+          for mod in $mods; do
+            lake env lean --root="$src" -DwarningAsError=true -o "$src/$mod.olean" "$src/$mod.lean" 2>&1 | tee "$GITHUB_WORKSPACE/out/$mod.log"
+          done
+          test "$(grep -c 'depends on axioms' "$GITHUB_WORKSPACE/out/$MODULE.log")" -eq 2
+          ! grep -E 'sorryAx|native_decide' "$GITHUB_WORKSPACE/out/"*.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mandatory-${{ matrix.module }}
+          path: out/
