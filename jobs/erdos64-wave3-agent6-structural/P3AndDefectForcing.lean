@@ -122,7 +122,7 @@ theorem mersenne_path_of_add_edge {G : SimpleGraph V} {v : V}
                   rw [hqrv, Walk.edges_cons] at hqrev_hd hmem_qrev
                   simp only [List.head?_cons, Option.some.injEq] at hqrev_hd
                   rcases List.mem_cons.mp hmem_qrev with heq1 | hmem_rest
-                  · rw [← hqrev_hd] at heq1
+                  · rw [hqrev_hd] at heq1
                     rcases Sym2.eq_iff.mp heq1 with ⟨_, hby⟩ | ⟨_, h2⟩
                     · exact hby.symm
                     · exact False.elim (hab h2.symm)
