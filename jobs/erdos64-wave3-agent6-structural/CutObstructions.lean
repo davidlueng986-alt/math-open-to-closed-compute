@@ -28,12 +28,12 @@ def cutCount [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj
 
 /-- Exact degree split: internal degree in `G.induce S` plus external neighbors equals `G.degree`. -/
 theorem induce_finset_degree_add_ext [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) (v : {x : V // x ∈ (S : Set V)}) :
-    let H := G.induce (S : Set V)
-    letI : DecidableRel H.Adj := inferInstanceAs (DecidableRel (G.induce (S : Set V)).Adj)
-    H.degree v + ((G.neighborFinset v.1) \ S).card = G.degree v.1 := by
+    (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V)
+    [DecidableRel (G.induce (S : Set V)).Adj]
+    (v : {x : V // x ∈ (S : Set V)}) :
+    (G.induce (S : Set V)).degree v + ((G.neighborFinset v.1) \ S).card = G.degree v.1 := by
   classical
-  intro H _
+  let H := G.induce (S : Set V)
   let e : H.neighborSet v ≃ {x : V // x ∈ G.neighborFinset v.1 ∩ S} :=
     { toFun := fun u => ⟨u.1.1, Finset.mem_inter.mpr ⟨(G.mem_neighborFinset v.1 u.1.1).mpr u.2, u.1.2⟩⟩
       invFun := fun u => ⟨⟨u.1, (Finset.mem_inter.mp u.2).2⟩, (G.mem_neighborFinset v.1 u.1).mp (Finset.mem_inter.mp u.2).1⟩
@@ -58,7 +58,7 @@ theorem cutCount_erase [Fintype V] [DecidableEq V]
   have hstep : ∀ v ∈ S.erase a,
       ((G.neighborFinset v) \ (S.erase a)).card =
         ((G.neighborFinset v) \ S).card + (if G.Adj a v then 1 else 0) := by
-    intro v hv
+    intro v _
     by_cases hadj : G.Adj a v
     · have hmem : a ∈ G.neighborFinset v := (G.mem_neighborFinset v a).mpr hadj.symm
       have hnot : a ∉ (G.neighborFinset v) \ S := by simp [ha]
@@ -68,7 +68,8 @@ theorem cutCount_erase [Fintype V] [DecidableEq V]
         by_cases hxa : x = a
         · subst hxa; simp [hmem, ha]
         · simp [hxa]
-      rw [heq, Finset.card_insert_of_notMem hnot, if_pos hadj]
+      rw [heq, Finset.card_insert_of_notMem hnot]
+      simp [hadj]
     · have hnot : a ∉ G.neighborFinset v := fun hm => hadj ((G.mem_neighborFinset v a).mp hm).symm
       have heq : (G.neighborFinset v) \ (S.erase a) = (G.neighborFinset v) \ S := by
         ext x
@@ -76,7 +77,8 @@ theorem cutCount_erase [Fintype V] [DecidableEq V]
         by_cases hxa : x = a
         · subst hxa; simp [hnot]
         · simp [hxa]
-      rw [heq, if_neg hadj, add_zero]
+      rw [heq]
+      simp [hadj]
   rw [Finset.sum_congr rfl hstep, Finset.sum_add_distrib]
   have hcount : (∑ v ∈ S.erase a, if G.Adj a v then (1 : ℕ) else 0) =
       ((G.neighborFinset a) ∩ S).card := by
@@ -142,12 +144,11 @@ theorem no_bipartite_small_cut_side [Fintype V] [DecidableEq V]
   induction m using Nat.strong_induction_on with
   | ind m ih =>
     intro T hTm hT2 hTlt hTdeg hTcut col hcol
-    let W := {x : V // x ∈ (T : Set V)}
     let H := G.induce (T : Set V)
-    letI : DecidableRel H.Adj := inferInstanceAs (DecidableRel (G.induce (T : Set V)).Adj)
-    have hcardW : Fintype.card W = T.card := Fintype.card_coe T
+    let _ : DecidableRel H.Adj := inferInstanceAs (DecidableRel (G.induce (T : Set V)).Adj)
+    have hcardT : Fintype.card {x : V // x ∈ (T : Set V)} = T.card := Fintype.card_coe T
     have hHfree : ¬ HasPower H := fun hp => hm.2.1 (power_induce G (T : Set V) hp)
-    by_cases hlow : ∃ a : W, H.degree a ≤ 1
+    by_cases hlow : ∃ a : {x : V // x ∈ (T : Set V)}, H.degree a ≤ 1
     · obtain ⟨a, ha1⟩ := hlow
       have haT : a.1 ∈ T := a.2
       have hsplit := induce_finset_degree_add_ext G T a
@@ -162,13 +163,15 @@ theorem no_bipartite_small_cut_side [Fintype V] [DecidableEq V]
       have hT'card : T'.card + 1 = T.card := Finset.card_erase_add_one haT
       have hT'cut : cutCount G T' ≤ 3 := by
         have hce := cutCount_erase G T haT
+        change cutCount G (T.erase a.1) ≤ 3
         omega
       have hT'2 : 2 ≤ T'.card := by
         by_contra hlt2
         have h1 : T'.card = 1 := by omega
         obtain ⟨b, hb⟩ := Finset.card_eq_one.mp h1
-        have hbT : b ∈ T := Finset.mem_of_mem_erase (by rw [hb]; simp)
-        have hba : b ≠ a.1 := (Finset.mem_erase.mp (by rw [hb]; simp)).1
+        have hbT' : b ∈ T.erase a.1 := by change b ∈ T'; rw [hb]; simp
+        have hbT : b ∈ T := Finset.mem_of_mem_erase hbT'
+        have hba : b ≠ a.1 := (Finset.mem_erase.mp hbT').1
         have hTeq : T = {a.1, b} := by
           ext x
           by_cases hxa : x = a.1
@@ -199,8 +202,8 @@ theorem no_bipartite_small_cut_side [Fintype V] [DecidableEq V]
         (fun x y hxy => hcol ⟨x.1, Finset.mem_of_mem_erase x.2⟩
           ⟨y.1, Finset.mem_of_mem_erase y.2⟩ hxy)
     · push Not at hlow
-      have hge2 : ∀ v : W, 2 ≤ H.degree v := fun v => by have := hlow v; omega
-      let D : Finset W := Finset.univ.filter (fun v : W => H.degree v = 2)
+      have hge2 : ∀ v : {x : V // x ∈ (T : Set V)}, 2 ≤ H.degree v := fun v => by have := hlow v; omega
+      let D : Finset {x : V // x ∈ (T : Set V)} := Finset.univ.filter (fun v => H.degree v = 2)
       have hD_le3 : D.card ≤ 3 := by
         have hsum_ge : D.card ≤ ∑ v ∈ D, ((G.neighborFinset v.1) \ T).card := by
           have : D.card = ∑ _v ∈ D, (1 : ℕ) := by simp
@@ -214,17 +217,18 @@ theorem no_bipartite_small_cut_side [Fintype V] [DecidableEq V]
           omega
         have hsum_le : ∑ v ∈ D, ((G.neighborFinset v.1) \ T).card ≤ cutCount G T := by
           have hle1 : ∑ v ∈ D, ((G.neighborFinset v.1) \ T).card ≤
-              ∑ v : W, ((G.neighborFinset v.1) \ T).card :=
+              ∑ v : {x : V // x ∈ (T : Set V)}, ((G.neighborFinset v.1) \ T).card :=
             Finset.sum_le_sum_of_subset (Finset.subset_univ D)
-          have heq : ∑ v : W, ((G.neighborFinset v.1) \ T).card = cutCount G T := by
+          have heq : ∑ v : {x : V // x ∈ (T : Set V)}, ((G.neighborFinset v.1) \ T).card = cutCount G T := by
             unfold cutCount
             exact Finset.sum_coe_sort T (fun x => ((G.neighborFinset x) \ T).card)
           omega
         omega
+      have hcard_coe_eq : Fintype.card ↑(T : Set V) = T.card := hcardT
       by_cases hD1 : D.card ≤ 1
       · have hnear : Near H := by
           by_cases hD0 : D = ∅
-          · obtain ⟨w₀⟩ := Fintype.card_pos_iff.mp (by omega : 0 < Fintype.card W)
+          · obtain ⟨w₀⟩ := Fintype.card_pos_iff.mp (by omega : 0 < Fintype.card ↑(T : Set V))
             apply near_of_except H w₀ (by omega)
             intro v _
             have hvnot : v ∉ D := by simp [hD0]
@@ -235,7 +239,7 @@ theorem no_bipartite_small_cut_side [Fintype V] [DecidableEq V]
             intro v hvw
             have hvnot : v ∉ D := by
               intro hvD
-              have h2 : ({v, w₀} : Finset W).card ≤ D.card := by
+              have h2 : ({v, w₀} : Finset {x : V // x ∈ (T : Set V)}).card ≤ D.card := by
                 apply Finset.card_le_card
                 intro z hz
                 simp only [Finset.mem_insert, Finset.mem_singleton] at hz
@@ -244,28 +248,28 @@ theorem no_bipartite_small_cut_side [Fintype V] [DecidableEq V]
               omega
             have : H.degree v ≠ 2 := by simpa [D] using hvnot
             have := hge2 v; omega
-        exact hHfree (hm.2.2.1 W H (by omega) hnear)
+        exact hHfree (hm.2.2.1 ↑(T : Set V) H (by omega) hnear)
       · by_cases hsame : ∃ a ∈ D, ∃ b ∈ D, a ≠ b ∧ col a = col b
         · obtain ⟨a, haD, b, hbD, hab, hcol_ab⟩ := hsame
-          have hw_ex : ∃ w : W, ∀ x : W, x ≠ a → x ≠ b → x ≠ w → 3 ≤ H.degree x := by
+          have hw_ex : ∃ w : ↑(T : Set V), ∀ x : ↑(T : Set V), x ≠ a → x ≠ b → x ≠ w → 3 ≤ H.degree x := by
             by_cases hrem : ∃ w ∈ D, w ≠ a ∧ w ≠ b
             · obtain ⟨w, hwD, hwa, hwb⟩ := hrem
               refine ⟨w, fun x hxa hxb hxw => ?_⟩
               have hxnot : x ∉ D := by
                 intro hxD
-                have h4 : ({a, b, w, x} : Finset W).card ≤ D.card := by
+                have h4 : ({a, b, w, x} : Finset ↑(T : Set V)).card ≤ D.card := by
                   apply Finset.card_le_card
                   intro z hz
                   simp only [Finset.mem_insert, Finset.mem_singleton] at hz
                   rcases hz with rfl | rfl | rfl | rfl <;> assumption
-                have hcard4 : ({a, b, w, x} : Finset W).card = 4 := by
+                have hcard4 : ({a, b, w, x} : Finset ↑(T : Set V)).card = 4 := by
                   simp [hab, hwa.symm, hwb.symm, hxa.symm, hxb.symm, hxw.symm]
                 omega
               have : H.degree x ≠ 2 := by simpa [D] using hxnot
               have := hge2 x; omega
             · push Not at hrem
               refine ⟨a, fun x hxa hxb _ => ?_⟩
-              have hxnot : x ∉ D := fun hxD => hrem x hxD hxa hxb
+              have hxnot : x ∉ D := fun hxD => hxb (hrem x hxD hxa)
               have : H.degree x ≠ 2 := by simpa [D] using hxnot
               have := hge2 x; omega
           obtain ⟨w, hwrest⟩ := hw_ex
@@ -274,14 +278,14 @@ theorem no_bipartite_small_cut_side [Fintype V] [DecidableEq V]
           obtain ⟨hpf, hdeg_rep⟩ := Erdos64Descent.repair_two_same_color_ports
             H col hcol a b w hab hcol_ab ha2 hb2 hwrest (powerFree_of_not_hasPower hHfree)
           let H' := H ⊔ SimpleGraph.edge a b
-          letI : DecidableRel H'.Adj := inferInstanceAs (DecidableRel (H ⊔ SimpleGraph.edge a b).Adj)
+          let _ : DecidableRel H'.Adj := inferInstanceAs (DecidableRel (H ⊔ SimpleGraph.edge a b).Adj)
           have hnear' : Near H' := near_of_except H' w (by omega) hdeg_rep
-          obtain ⟨k, v₀, c, hk, hc, hlen⟩ := hm.2.2.1 W H' (by omega) hnear'
+          obtain ⟨k, v₀, c, hk, hc, hlen⟩ := hm.2.2.1 ↑(T : Set V) H' (by omega) hnear'
           exact hpf k v₀ c hk hc hlen
         · push Not at hsame
           have hD2 : D.card = 2 := by
             have hle2 : D.card ≤ 2 := by
-              have hinj : Set.InjOn col (D : Set W) := by
+              have hinj : Set.InjOn col (D : Set ↑(T : Set V)) := by
                 intro x hx y hy hxy
                 by_contra hne
                 exact hsame x hx y hy hne hxy
@@ -293,9 +297,9 @@ theorem no_bipartite_small_cut_side [Fintype V] [DecidableEq V]
           have hbD : b ∈ D := by rw [hDeq]; simp
           have hcol_ne : col a ≠ col b := hsame a haD b hbD hab
           let H' := identify H a b
-          letI : DecidableRel H'.Adj := fun _ _ => Classical.dec _
-          let X : {z : W // z ≠ b} := ⟨a, hab⟩
-          have hnocom : ∀ u : W, ¬ (H.Adj a u ∧ H.Adj b u) := by
+          let _ : DecidableRel H'.Adj := fun _ _ => Classical.dec _
+          let X : {v : ↑(T : Set V) // v ≠ b} := ⟨a, hab⟩
+          have hnocom : ∀ u : ↑(T : Set V), ¬ (H.Adj a u ∧ H.Adj b u) := by
             rintro u ⟨hau, hbu⟩
             have h1 := hcol a u hau
             have h2 := hcol b u hbu
@@ -303,11 +307,11 @@ theorem no_bipartite_small_cut_side [Fintype V] [DecidableEq V]
             have h1' : (col a).val ≠ (col u).val := fun e => h1 (Fin.ext e)
             have h2' : (col b).val ≠ (col u).val := fun e => h2 (Fin.ext e)
             exact hcol_ne (Fin.ext (by omega))
-          have hcardH' : Fintype.card {z : W // z ≠ b} + 1 = Fintype.card W := by
+          have hcardH' : Fintype.card {v : ↑(T : Set V) // v ≠ b} + 1 = Fintype.card ↑(T : Set V) := by
             rw [Fintype.card_subtype,
-              show (Finset.univ.filter (fun z : W => z ≠ b)) = Finset.univ.erase b by ext z; simp]
+              show (Finset.univ.filter (fun z : ↑(T : Set V) => z ≠ b)) = Finset.univ.erase b by ext z; simp]
             exact Finset.card_erase_add_one (Finset.mem_univ b)
-          have hW3 : 3 ≤ Fintype.card W := by
+          have hW3 : 3 ≤ Fintype.card ↑(T : Set V) := by
             have ha2 : H.degree a = 2 := (Finset.mem_filter.mp haD).2
             have := H.degree_lt_card_verts a
             omega
@@ -322,7 +326,7 @@ theorem no_bipartite_small_cut_side [Fintype V] [DecidableEq V]
               have := hge2 v.1; omega
             rw [identify_degree_other_of_not_common H hab v hva (hnocom v.1)]
             exact hv3
-          have hpow' : HasPower H' := hm.2.2.1 _ H' (by omega) hnear'
+          have hpow' : HasPower H' := hm.2.2.1 {v : ↑(T : Set V) // v ≠ b} H' (by omega) hnear'
           obtain ⟨k, p, hk, _, hplen⟩ := dyadic_path_of_identify hab hHfree hpow'
           have heven : p.length % 2 = 0 := by
             rw [hplen]
@@ -355,7 +359,7 @@ theorem cubic_odd_cycle_transversal_ge_two [Fintype V] [DecidableEq V]
           constructor
           · rintro ⟨_, hy⟩; by_contra hne; exact hy hne
           · rintro rfl; exact ⟨h.symm, fun hn => hn rfl⟩
-        rw [heq, Finset.card_singleton, if_pos h]
+        rw [heq, Finset.card_singleton]; simp [h]
       · have heq : (G.neighborFinset x) \ S = ∅ := by
           ext y
           simp only [Finset.mem_sdiff, SimpleGraph.mem_neighborFinset, Finset.mem_erase,
@@ -363,7 +367,7 @@ theorem cubic_odd_cycle_transversal_ge_two [Fintype V] [DecidableEq V]
           rintro ⟨hxy, hy⟩
           have hyv : y = v := by by_contra hne; exact hy hne
           exact h (hyv ▸ hxy.symm)
-        rw [heq, Finset.card_empty, if_neg h]
+        rw [heq, Finset.card_empty]; simp [h]
     rw [Finset.sum_congr rfl hstep, ← Finset.sum_filter]
     simp only [Finset.sum_const, smul_eq_mul, mul_one]
     have hsub : S.filter (fun x => G.Adj v x) ⊆ G.neighborFinset v := by

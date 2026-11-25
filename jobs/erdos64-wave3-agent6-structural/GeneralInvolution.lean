@@ -59,7 +59,7 @@ theorem lift_edge_exists {G : SimpleGraph V} {σ : V → V} {hinv : ∀ v, σ (�
   · exact ⟨b, hb, hab⟩
   · refine ⟨σ b, ?_, ?_⟩
     · rw [← hb]
-      exact Quotient.sound (Or.inr (hinv b).symm)
+      exact Quotient.sound (Or.inr rfl)
     · have := (haut (σ u) b).mp hab
       rwa [hinv u] at this
 
@@ -72,7 +72,7 @@ noncomputable def liftWalk {G : SimpleGraph V} {σ : V → V} {hinv : ∀ v, σ 
       res.2.support.map (Quotient.mk (invSetoid σ hinv)) = p.support} :=
   match p with
   | .nil => ⟨⟨u, .nil⟩, hu, rfl, by simp [hu]⟩
-  | @Walk.cons _ _ _ _ _ _ hab q =>
+  | .cons hab q =>
     let hex := lift_edge_exists haut (hu.symm ▸ hab)
     let v := Classical.choose hex
     let hv := Classical.choose_spec hex
@@ -96,7 +96,7 @@ theorem hasPower_of_any_invQuot {G : SimpleGraph V} {σ : V → V}
     (hpow : HasPower (invQuotGraph G σ hinv)) : HasPower G := by
   classical
   obtain ⟨k, q₀, c, hk, hc, hlen⟩ := hpow
-  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
+  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
   by_cases hfix : ∃ v : V, σ v = v ∧ (⟦v⟧ : Quotient (invSetoid σ hinv)) ∈ c.support
   · obtain ⟨v₀, hv₀fix, hv₀mem⟩ := hfix
     let c' := c.rotate hv₀mem
@@ -172,7 +172,7 @@ theorem hasPower_of_any_invQuot {G : SimpleGraph V} {σ : V → V}
         obtain ⟨y, hy1, hxy⟩ := List.mem_map.mp hx2
         have hqeq : (⟦x⟧ : Quotient (invSetoid σ hinv)) = ⟦y⟧ := by
           rw [← hxy]
-          exact Quotient.sound (Or.inr (hinv y).symm)
+          exact Quotient.sound (Or.inr rfl)
         have hinj_on := (List.nodup_map_iff_inj_on hp₁tail_nodup).mp
           (hp₁tail_map.symm ▸ hc.support_nodup)
         have heq : x = y := hinj_on x hx1 y hy1 hqeq
@@ -200,11 +200,10 @@ theorem hasPower_of_any_invQuot {G : SimpleGraph V} {σ : V → V}
 
 /-- Strict cardinality drop for any nontrivial involution σ (∃ u₀, σ u₀ ≠ u₀). -/
 theorem card_invQuot_lt [Fintype V] (σ : V → V) (hinv : ∀ v, σ (σ v) = v)
+    [Fintype (Quotient (invSetoid σ hinv))]
     (hnontriv : ∃ u₀ : V, σ u₀ ≠ u₀) :
-    letI : Fintype (Quotient (invSetoid σ hinv)) := Quotient.fintype (invSetoid σ hinv)
     Fintype.card (Quotient (invSetoid σ hinv)) < Fintype.card V := by
   classical
-  intro _
   obtain ⟨u₀, hu₀⟩ := hnontriv
   let Q := Quotient (invSetoid σ hinv)
   let pickRep : Q → V := fun q => Classical.choose (Quotient.exists_rep q)
@@ -226,13 +225,9 @@ theorem no_nontrivial_involution_near_quot [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (σ : V → V) (hinv : ∀ v, σ (σ v) = v) (hnontriv : ∃ u₀ : V, σ u₀ ≠ u₀)
     (haut : ∀ a b, G.Adj a b ↔ G.Adj (σ a) (σ b))
-    (hnear :
-      letI : Fintype (Quotient (invSetoid σ hinv)) := Quotient.fintype (invSetoid σ hinv)
-      letI : DecidableRel (invQuotGraph G σ hinv).Adj := fun _ _ => Classical.dec _
-      Near (invQuotGraph G σ hinv)) : False := by
-  classical
-  letI : Fintype (Quotient (invSetoid σ hinv)) := Quotient.fintype (invSetoid σ hinv)
-  letI : DecidableRel (invQuotGraph G σ hinv).Adj := fun _ _ => Classical.dec _
+    [Fintype (Quotient (invSetoid σ hinv))]
+    [DecidableRel (invQuotGraph G σ hinv).Adj]
+    (hnear : Near (invQuotGraph G σ hinv)) : False := by
   have hlt := card_invQuot_lt σ hinv hnontriv
   have hpow : HasPower (invQuotGraph G σ hinv) :=
     hm.2.2.1 (Quotient (invSetoid σ hinv)) (invQuotGraph G σ hinv) hlt hnear
@@ -267,12 +262,11 @@ theorem invQuot_degree_nonfixed [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hfree : ¬ HasPower G)
     (σ : V → V) (hinv : ∀ v, σ (σ v) = v)
     (haut : ∀ a b, G.Adj a b ↔ G.Adj (σ a) (σ b))
+    [Fintype (Quotient (invSetoid σ hinv))]
+    [DecidableRel (invQuotGraph G σ hinv).Adj]
     {u : V} (hu : σ u ≠ u) (hno : ¬ G.Adj u (σ u)) :
-    letI : Fintype (Quotient (invSetoid σ hinv)) := Quotient.fintype (invSetoid σ hinv)
-    letI : DecidableRel (invQuotGraph G σ hinv).Adj := fun _ _ => Classical.dec _
     (invQuotGraph G σ hinv).degree (⟦u⟧ : Quotient (invSetoid σ hinv)) = G.degree u := by
   classical
-  intro _ _
   let Q := Quotient (invSetoid σ hinv)
   let H := invQuotGraph G σ hinv
   let f : G.neighborSet u → H.neighborSet (⟦u⟧ : Q) := fun v =>
@@ -303,12 +297,11 @@ theorem invQuot_degree_fixed_interior [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (σ : V → V) (hinv : ∀ v, σ (σ v) = v)
     (haut : ∀ a b, G.Adj a b ↔ G.Adj (σ a) (σ b))
+    [Fintype (Quotient (invSetoid σ hinv))]
+    [DecidableRel (invQuotGraph G σ hinv).Adj]
     {u : V} (_hufix : σ u = u) (hallfix : ∀ v, G.Adj u v → σ v = v) :
-    letI : Fintype (Quotient (invSetoid σ hinv)) := Quotient.fintype (invSetoid σ hinv)
-    letI : DecidableRel (invQuotGraph G σ hinv).Adj := fun _ _ => Classical.dec _
     (invQuotGraph G σ hinv).degree (⟦u⟧ : Quotient (invSetoid σ hinv)) = G.degree u := by
   classical
-  intro _ _
   let Q := Quotient (invSetoid σ hinv)
   let H := invQuotGraph G σ hinv
   let f : G.neighborSet u → H.neighborSet (⟦u⟧ : Q) := fun v =>
@@ -344,8 +337,8 @@ theorem no_involution_le_one_boundary [Fintype V] [DecidableEq V]
       3 ≤ G.degree u ∧ ((σ u ≠ u ∧ ¬ G.Adj u (σ u)) ∨ (σ u = u ∧ ∀ v, G.Adj u v → σ v = v)))
     (hex : ∃ u₁ : V, (⟦u₁⟧ : Quotient (invSetoid σ hinv)) ≠ q₀) : False := by
   classical
-  letI : Fintype (Quotient (invSetoid σ hinv)) := Quotient.fintype (invSetoid σ hinv)
-  letI : DecidableRel (invQuotGraph G σ hinv).Adj := fun _ _ => Classical.dec _
+  let _ : Fintype (Quotient (invSetoid σ hinv)) := Quotient.fintype (invSetoid σ hinv)
+  let _ : DecidableRel (invQuotGraph G σ hinv).Adj := fun _ _ => Classical.dec _
   have hdeg3 : ∀ q : Quotient (invSetoid σ hinv), q ≠ q₀ →
       3 ≤ (invQuotGraph G σ hinv).degree q := by
     intro q hq

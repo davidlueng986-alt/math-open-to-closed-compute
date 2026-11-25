@@ -29,7 +29,7 @@ expected = {
         'E64TriangleCover.TriangleFamily.contr_degree_tri',
         'E64TriangleCover.TriangleFamily.contr_degree_res',
         'E64TriangleCover.TriangleFamily.lift_cycle_double',
-        'E64TriangleCover.TriangleFamily.no_triangle_cover_le_one_edge',
+        'E64TriangleCover.no_triangle_cover_le_one_edge',
     ],
 }
 audits = {}

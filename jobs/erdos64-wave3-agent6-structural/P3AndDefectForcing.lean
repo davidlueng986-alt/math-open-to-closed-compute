@@ -1,5 +1,6 @@
 import Core
 import Leaves
+import Descent
 import PairedShadow
 
 /-!
@@ -31,7 +32,7 @@ theorem mersenne_path_of_add_edge {G : SimpleGraph V} {v : V}
       2 ≤ k ∧ p.IsPath ∧ p.length + 1 = 2 ^ k := by
   classical
   obtain ⟨k, u₀, c, hk, hc, hlen⟩ := hpow
-  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
+  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
   by_cases hmem : s(a, b) ∈ c.edges
   · have hmemA : a ∈ c.support := Walk.fst_mem_support_of_mem_edges c hmem
     let c' := c.rotate hmemA
@@ -164,14 +165,17 @@ theorem fermat_cycle_of_p3_and_mersenne {G : SimpleGraph V} {v : V}
       s(v, a.1) ∈ c.edges ∧ s(v, b.1) ∈ c.edges := by
   let f : G.induce {x | x ≠ v} →g G := ⟨Subtype.val, fun h => h⟩
   let pG : G.Walk a.1 b.1 := p.map f
-  have hpG : pG.IsPath := hp.map_injective Subtype.val_injective
+  have hpG : pG.IsPath := by
+    apply Walk.IsPath.mk'
+    rw [Walk.support_map]
+    exact (List.nodup_map_iff Subtype.val_injective).mpr hp.support_nodup
   have hpGlen : pG.length = p.length := Walk.length_map f p
   have hvnot : v ∉ pG.support := by
     rw [Walk.support_map]
     intro hm
     obtain ⟨x, _, hxv⟩ := List.mem_map.mp hm
     exact x.2 hxv
-  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
+  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
   let c : G.Walk v v := .cons hav.symm (pG.append (.cons hvb.symm .nil))
   have hclen : c.length = 2 ^ k + 1 := by
     simp [c, Walk.length_append, hpGlen]; omega
@@ -213,9 +217,9 @@ theorem cubic_p3_fermat_cycle [Fintype V] [DecidableEq V]
   let b : W := ⟨u₂, hu₂⟩
   have hab : a ≠ b := fun h => h12 (congrArg Subtype.val h)
   let Gv := G.induce {x | x ≠ v}
-  letI : DecidableRel Gv.Adj := inferInstanceAs (DecidableRel (G.induce {x | x ≠ v}).Adj)
+  let _ : DecidableRel Gv.Adj := inferInstanceAs (DecidableRel (G.induce {x | x ≠ v}).Adj)
   let H := Gv ⊔ SimpleGraph.edge a b
-  letI : DecidableRel H.Adj := inferInstanceAs (DecidableRel (Gv ⊔ SimpleGraph.edge a b).Adj)
+  let _ : DecidableRel H.Adj := inferInstanceAs (DecidableRel (Gv ⊔ SimpleGraph.edge a b).Adj)
   have hex3 : ∃ u₃ : V, G.Adj v u₃ ∧ u₃ ≠ u₁ ∧ u₃ ≠ u₂ := by
     by_contra h
     push Not at h
@@ -248,12 +252,10 @@ theorem cubic_p3_fermat_cycle [Fintype V] [DecidableEq V]
       simp [h12, h31.symm, h32.symm, Ne.symm hnot.1, Ne.symm hnot.2.1, Ne.symm hnot.2.2]
     rw [h4, G.card_neighborFinset_eq_degree, hC v] at hc
     omega
-  have hcardW : Fintype.card W < Fintype.card V := by
-    have h : Fintype.card W + 1 = Fintype.card V := by
-      rw [Fintype.card_subtype,
-        show (Finset.univ.filter (fun x : V => x ≠ v)) = Finset.univ.erase v by ext z; simp]
-      exact Finset.card_erase_add_one (Finset.mem_univ v)
-    omega
+  have hcardW_eq : Fintype.card W + 1 = Fintype.card V := by
+    rw [Fintype.card_subtype,
+      show (Finset.univ.filter (fun x : V => x ≠ v)) = Finset.univ.erase v by ext z; simp]
+    exact Finset.card_erase_add_one (Finset.mem_univ v)
   have hV4 : 4 ≤ Fintype.card V := by
     have := G.degree_lt_card_verts v; rw [hC v] at this; omega
   have hW2 : 2 ≤ Fintype.card W := by omega
@@ -266,7 +268,7 @@ theorem cubic_p3_fermat_cycle [Fintype V] [DecidableEq V]
       have hd1 := Erdos64Descent.degree_add_new_edge_left Gv a b hab hna_Gv
       have hd2 := induce_delete_degree G v a
       change Gv.degree a + (if G.Adj u₁ v then 1 else 0) = G.degree u₁ at hd2
-      rw [if_pos h1, hC u₁] at hd2
+      simp [h1, hC u₁] at hd2
       change H.degree a = Gv.degree a + 1 at hd1
       omega
     · by_cases hxb : x = b
@@ -274,7 +276,7 @@ theorem cubic_p3_fermat_cycle [Fintype V] [DecidableEq V]
         have hd1 := Erdos64Descent.degree_add_new_edge_right Gv a b hab hna_Gv
         have hd2 := induce_delete_degree G v b
         change Gv.degree b + (if G.Adj u₂ v then 1 else 0) = G.degree u₂ at hd2
-        rw [if_pos h2.symm, hC u₂] at hd2
+        simp [h2.symm, hC u₂] at hd2
         change H.degree b = Gv.degree b + 1 at hd1
         omega
       · have hnotv : ¬ G.Adj x.1 v := by
@@ -285,11 +287,11 @@ theorem cubic_p3_fermat_cycle [Fintype V] [DecidableEq V]
           · exact hxc3 (Subtype.ext h)
         have hd2 := induce_delete_degree G v x
         change Gv.degree x + (if G.Adj x.1 v then 1 else 0) = G.degree x.1 at hd2
-        rw [if_neg hnotv, add_zero, hC x.1] at hd2
+        simp [hnotv, hC x.1] at hd2
         have hle : Gv.degree x ≤ H.degree x :=
           Gv.degree_le_of_le (v := x) (H := H) le_sup_left
         omega
-  have hpow : HasPower H := hm.2.2.1 W H hcardW hnear
+  have hpow : HasPower H := hm.2.2.1 W H (by omega) hnear
   obtain ⟨k, p, hk, hp, hplen⟩ := mersenne_path_of_add_edge hab le_rfl hm.2.1 hpow
   have hle_ind : H \ SimpleGraph.edge a b ≤ Gv := by
     intro x y hxy
@@ -298,8 +300,9 @@ theorem cubic_p3_fermat_cycle [Fintype V] [DecidableEq V]
     · exact hg
     · exact False.elim (h2' he)
   let pInd := p.mapLe hle_ind
-  exact fermat_cycle_of_p3_and_mersenne h1 h2 hk pInd
+  obtain ⟨c, hc, hclen, hm1, hm2⟩ := fermat_cycle_of_p3_and_mersenne h1 h2 hk pInd
     ((Walk.isPath_mapLe hle_ind).mpr hp) (by simpa [pInd] using hplen)
+  exact ⟨k, c, hk, hc, hclen, hm1, hm2⟩
 
 /-- NEW (Wave 3, Agent #6): Class S / H High-Degree Edge-Deletion Mersenne Path Theorem.
     In ANY MinimalBad(G) with defect w (deg w = 2, N(w) = {b1, b2}, ¬G.Adj b1 b2) and
@@ -324,14 +327,14 @@ theorem defect_edge_del_mersenne_path [Fintype V] [DecidableEq V]
   let yW : W := ⟨y, hyw⟩
   have hab : a ≠ b := fun h => hb12 (congrArg Subtype.val h)
   let Gv := G.induce {z | z ≠ w}
-  letI : DecidableRel Gv.Adj := inferInstanceAs (DecidableRel (G.induce {z | z ≠ w}).Adj)
-  letI : DecidableRel G0.Adj := inferInstanceAs (DecidableRel (Gv \ SimpleGraph.edge xW yW).Adj)
+  let _ : DecidableRel Gv.Adj := inferInstanceAs (DecidableRel (G.induce {z | z ≠ w}).Adj)
+  let _ : DecidableRel G0.Adj := inferInstanceAs (DecidableRel (Gv \ SimpleGraph.edge xW yW).Adj)
   let H := G0 ⊔ SimpleGraph.edge a b
-  letI : DecidableRel H.Adj := inferInstanceAs (DecidableRel (G0 ⊔ SimpleGraph.edge a b).Adj)
+  let _ : DecidableRel H.Adj := inferInstanceAs (DecidableRel (G0 ⊔ SimpleGraph.edge a b).Adj)
   obtain ⟨_, r, hr⟩ := hm.1
   have hrw : r = w := by
     by_contra hne; have := hr w (Ne.symm hne); omega
-  subst hrw
+  subst r
   have huniq_w : ∀ z : V, G.Adj w z → z = b₁ ∨ z = b₂ := by
     intro z hwz
     by_contra hnot
@@ -348,12 +351,10 @@ theorem defect_edge_del_mersenne_path [Fintype V] [DecidableEq V]
       simp [hb12, Ne.symm hnot.1, Ne.symm hnot.2]
     rw [h3, G.card_neighborFinset_eq_degree, hw] at hc
     omega
-  have hcardW : Fintype.card W < Fintype.card V := by
-    have h : Fintype.card W + 1 = Fintype.card V := by
-      rw [Fintype.card_subtype,
-        show (Finset.univ.filter (fun z : V => z ≠ w)) = Finset.univ.erase w by ext z; simp]
-      exact Finset.card_erase_add_one (Finset.mem_univ w)
-    omega
+  have hcardW_eq : Fintype.card W + 1 = Fintype.card V := by
+    rw [Fintype.card_subtype,
+      show (Finset.univ.filter (fun z : V => z ≠ w)) = Finset.univ.erase w by ext z; simp]
+    exact Finset.card_erase_add_one (Finset.mem_univ w)
   have hV4 : 4 ≤ Fintype.card V := by
     have := G.degree_lt_card_verts x; omega
   have hW2 : 2 ≤ Fintype.card W := by omega
@@ -389,7 +390,7 @@ theorem defect_edge_del_mersenne_path [Fintype V] [DecidableEq V]
           rcases huniq_w z.1 hzw.symm with h | h
           · exact hza (Subtype.ext h)
           · exact hzb (Subtype.ext h)
-        rw [if_neg hnotw, add_zero] at hdeg_ind
+        simp [hnotw] at hdeg_ind
         have hle : G0.degree z ≤ H.degree z :=
           G0.degree_le_of_le (v := z) (H := H) le_sup_left
         by_cases hzx : z = xW
@@ -398,7 +399,7 @@ theorem defect_edge_del_mersenne_path [Fintype V] [DecidableEq V]
         · simp [hzx, hzy] at hdeg_sdiff
           have hdz3 := hr z.1 z.2
           omega
-  have hpow : HasPower H := hm.2.2.1 W H hcardW hnear
+  have hpow : HasPower H := hm.2.2.1 W H (by omega) hnear
   have hsub : H ≤ Gv ⊔ SimpleGraph.edge a b := sup_le_sup_right sdiff_le _
   obtain ⟨k, p, hk, hp, hplen⟩ := mersenne_path_of_add_edge hab hsub hm.2.1 hpow
   have hle_G0 : H \ SimpleGraph.edge a b ≤ G0 := by
