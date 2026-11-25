@@ -61,8 +61,20 @@ def main():
         require(all(tuple((upper & col).bit_count() % 2 for col in top_negative[3:]) == syndrome
                     for upper in candidates), "all recovered upper syndromes")
 
+    # A full integer lift keeping these upper signs would force two negative
+    # squared norms for the contrast of each of the paired new columns.
+    upper_positive = [top_mask ^ (col & top_mask) for col in new]
+    contrasts = []
+    for i, j in ((1, 2), (3, 4)):
+        left, right = upper_positive[i], upper_positive[j]
+        gaps = [(omit ^ right).bit_count() - (omit ^ left).bit_count() for omit in top[1:3]]
+        distance = (left ^ right).bit_count()
+        contrasts.append(ORDER * (2 * BOTTOM - 4 * distance) + 4 * sum(gap * gap for gap in gaps))
+    require(contrasts == [-3339776, -3350912], "exact lift requires changing the upper signs")
+
     print("n=2396: exact margins and all 5965 mixed / 10 new dots zero modulo eight")
     print(f"n=2396: {mixed.count(0)} exact mixed zeros; {gram.count(0)} exact new/new zeros; new/new dots {gram}")
+    print(f"n=2396: fixed upper witness fails the required real Gram contrasts {contrasts}")
 
 
 if __name__ == "__main__":
