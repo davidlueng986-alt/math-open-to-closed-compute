@@ -1,0 +1,77 @@
+name: P vs NP one leased Lean proof attempt
+on:
+  workflow_dispatch:
+    inputs:
+      hard:
+        description: Request a hard research gap instead of a normal gap
+        type: boolean
+        default: false
+  push:
+    branches: [main]
+    paths: ['jobs/pequalnp/launch.txt']
+permissions:
+  contents: read
+concurrency:
+  group: pequalnp-single-agent
+  cancel-in-progress: false
+jobs:
+  prove:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: open-goat/pequalnp-proofs
+          path: upstream
+          persist-credentials: false
+      - name: Install upstream-pinned Lean
+        run: |
+          set -euo pipefail
+          curl --proto '=https' -fsSL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          "$HOME/.elan/bin/elan" toolchain install "$(cat upstream/lean/lean-toolchain)"
+      - name: Fetch exact upstream Mathlib cache
+        working-directory: upstream/lean
+        run: |
+          set -euo pipefail
+          lake exe cache get
+          git rev-parse HEAD
+          lean --version
+      - name: Claim exactly one gap
+        env:
+          HARD: ${{ inputs.hard }}
+        run: python3 jobs/pequalnp/attempt.py claim
+      - name: Publish sanitized assignment to results branch
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if test -f "$RUNNER_TEMP/pnp-public/assignment.json"; then
+            bash jobs/pequalnp/publish.sh assignment.json
+          fi
+      - name: Try proof tactics under a live lease; audit kernel axioms
+        run: python3 jobs/pequalnp/attempt.py prove
+      - name: Publish sanitized result and any checked proof
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for f in result.json proof.lean; do
+            if test -f "$RUNNER_TEMP/pnp-public/$f"; then bash jobs/pequalnp/publish.sh "$f"; fi
+          done
+      - name: Release the lease, or wait briefly for an independently submitted PR
+        if: always()
+        run: python3 jobs/pequalnp/attempt.py finish
+      - name: Archive public evidence only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pequalnp-proof-attempt
+          path: ${{ runner.temp }}/pnp-public/
+          if-no-files-found: ignore
+          retention-days: 7
