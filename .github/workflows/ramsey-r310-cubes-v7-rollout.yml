@@ -1,0 +1,220 @@
+name: Ramsey R310 v7 all unresolved D678 migration
+on:
+  push:
+    branches: [main]
+    paths: [jobs/ramsey-r310-cubes-v7/rollout-launch.txt]
+  workflow_dispatch:
+    inputs:
+      resume_run:
+        type: string
+        description: Previous v7 rollout run ID (same exact plan); optional
+        default: ''
+permissions:
+  contents: read
+  packages: read
+  actions: read
+defaults:
+  run:
+    shell: bash
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45701170354'
+          name: D678-v6-profile
+          path: evidence/
+      - id: matrix
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          cp evidence/profile_cert.json out/
+          python3 jobs/ramsey-r310-cubes-v7/rollout.py --cert evidence/profile_cert.json --prior evidence/branch_plan.json --out out/plan.json
+          python3 - <<'PY'
+          import json,os
+          p=json.load(open('out/plan.json'))
+          assert len(p['tasks'])==247 and p['band_count']==43
+          a=[{'id':t['id'],'parent':f"D{t['d']}-N{t['q']}-B{t['band']}",'root':f"D{t['d']}-N{t['q']}"} for t in p['tasks']]
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f: f.write('matrix='+json.dumps({'include':a},separators=(',',':'))+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v7-rollout-exact-plan
+          path: out/
+          retention-days: 90
+  resume-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      matrix:
+        task: [D6-N9-B3-P000-T00, D6-N9-B3-P000-T04]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45713450151'
+          name: v7-exact-plan
+          path: evidence/
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45713450151'
+          name: checkpoint-${{ matrix.task }}
+          path: resume/
+      - name: Restore and independently replay old DRAT without solving again
+        env:
+          TASK: ${{ matrix.task }}
+        run: |
+          python3 jobs/ramsey-r310-cubes-v7/worker.py --plan evidence/plan.json --cert evidence/profile_cert.json --task "$TASK" --out out --resume resume --seconds 180 --proof-seconds 120
+          python3 jobs/ramsey-r310-cubes-v7/resume_gate.py resume out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: resume-gate-${{ matrix.task }}
+          path: out/
+          retention-days: 90
+  retire-legacy:
+    needs: [plan, resume-gate]
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    permissions:
+      contents: read
+      actions: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TARGET_REPO: davidlueng986-alt/math-open-to-closed-compute
+    steps:
+      - name: Cancel only superseded v3 v5 v6 runs, preserving completed artifacts
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "$TARGET_REPO"
+          mkdir -p out
+          while read -r id sha; do
+            meta="$(gh api "repos/$TARGET_REPO/actions/runs/$id")"
+            test "$(jq -r '.head_sha' <<< "$meta")" = "$sha"
+            gh api "repos/$TARGET_REPO/actions/runs/$id/artifacts?per_page=100" > "out/legacy-$id-artifacts.json"
+            gh api "repos/$TARGET_REPO/actions/runs/$id/jobs?per_page=100" > "out/legacy-$id-jobs.json"
+            status="$(jq -r '.status' <<< "$meta")"
+            if [[ "$status" != completed ]]; then
+              if ! gh api --method POST "repos/$TARGET_REPO/actions/runs/$id/cancel"; then
+                # The earlier user-authorized v3 cancellation may race us.
+                now="$(gh api "repos/$TARGET_REPO/actions/runs/$id" --jq '.status')"
+                test "$now" = completed
+              fi
+            fi
+            echo "Retirement request handled for $id (prior status $status)."
+          done <<'TARGETS'
+          45681429646 004e8b52efd9cfcc7079416354f7ec88af91ffa3
+          45697407494 b0d43ce41e914f06d40a4b0eaffa7dadf380112b
+          45701170354 6cef263aeeb658fad57e53ae06e7fbd241c8cdb2
+          TARGETS
+          # Do not allocate the new matrix until the legacy runs actually stop.
+          for i in {1..18}; do
+            pending=0
+            for id in 45681429646 45697407494 45701170354; do
+              status="$(gh api "repos/$TARGET_REPO/actions/runs/$id" --jq '.status')"
+              echo "$id $status"
+              if [[ "$status" != completed ]]; then pending=$((pending+1)); fi
+            done
+            if [[ "$pending" = 0 ]]; then echo LEGACY_RUNS_RETIRED; exit 0; fi
+            sleep 10
+          done
+          echo 'Legacy cancellation not yet confirmed; stop rather than oversubscribe.' >&2
+          exit 1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: legacy-evidence-index
+          path: out/
+          retention-days: 90
+  cube:
+    needs: [plan, retire-legacy]
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 15
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: v7-rollout-exact-plan
+          path: evidence/
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45697407494'
+          name: ${{ matrix.parent }}-v5
+          path: old-v5/
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45701170354'
+          name: ${{ matrix.parent }}-v6
+          path: old-v6/
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45681429646'
+          name: ${{ matrix.root }}-v3
+          path: old-v3/
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45675361761'
+          name: ${{ matrix.root }}
+          path: old-v2/
+      - uses: actions/download-artifact@v4
+        if: ${{ inputs.resume_run != '' && inputs.resume_run != null }}
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ inputs.resume_run }}
+          name: checkpoint-${{ matrix.id }}
+          path: resume/
+      - name: Reuse valid cuts, solve, certify and recursively split
+        env:
+          TASK: ${{ matrix.id }}
+        run: |
+          set -euo pipefail
+          # Preserve full same-band evidence. If no such cut stream exists,
+          # reuse one full old rooted-leaf stream (all cuts are universal).
+          args=()
+          for dir in old-v5 old-v6; do
+            if [ -f "$dir/cuts.jsonl" ]; then args+=(--reuse "$dir/cuts.jsonl"); fi
+          done
+          if [ "${#args[@]}" -eq 0 ]; then
+            for dir in old-v3 old-v2; do
+              if [ -f "$dir/cuts.jsonl" ]; then args+=(--reuse "$dir/cuts.jsonl"); break; fi
+            done
+          fi
+          python3 jobs/ramsey-r310-cubes-v7/worker.py --plan evidence/plan.json --cert evidence/profile_cert.json --task "$TASK" --out out --resume resume "${args[@]}" --seconds 3000 --cube-seconds 180 --proof-seconds 240 --max-depth 7
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: checkpoint-${{ matrix.id }}
+          path: out/
+          retention-days: 90

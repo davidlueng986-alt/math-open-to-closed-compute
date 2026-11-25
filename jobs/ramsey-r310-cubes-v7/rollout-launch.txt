@@ -1,0 +1,1 @@
+User authorized v7 full migration; gate on real resume and exact coverage, then retire v3/v5/v6.
