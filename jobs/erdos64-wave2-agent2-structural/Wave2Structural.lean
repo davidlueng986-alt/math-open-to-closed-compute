@@ -421,27 +421,30 @@ theorem identify_degree_other {V : Type u} [Fintype V] [DecidableEq V]
     let f : G.neighborSet v.1 → (identifyGraph G x y).neighborSet v := fun u =>
       if huy : u.1 = y then
         ⟨X, ⟨fun heq => hv (congrArg Subtype.val heq),
-          Or.inr (Or.inr ⟨rfl, by have hadj : G.Adj v.1 u.1 := u.2; exact huy ▸ hadj⟩)⟩⟩
+          Or.inr (Or.inr ⟨rfl, by have hadj : G.Adj v.1 u.1 := u.2; rw [huy] at hadj; exact hadj⟩)⟩⟩
       else
         ⟨⟨u.1, huy⟩, ⟨fun heq => G.ne_of_adj u.2 (congrArg Subtype.val heq), Or.inl u.2⟩⟩
     have hf : Function.Injective f := by
       intro p q heq
+      have h1 : (f p).1.1 = (f q).1.1 := congrArg (fun t => t.1.1) heq
       by_cases hp : p.1 = y <;> by_cases hq : q.1 = y
       · exact Subtype.ext (hp.trans hq.symm)
       · exfalso
-        simp [f, hp, hq] at heq
-        have hqx : q.1 = x := (congrArg (fun t : {z : V // z ≠ y} => t.1) heq).symm
+        simp [f, X, hp, hq] at h1
         have hp_adj : G.Adj v.1 p.1 := p.2
         have hq_adj : G.Adj v.1 q.1 := q.2
-        exact hboth ⟨(hqx ▸ hq_adj).symm, (hp ▸ hp_adj).symm⟩
+        rw [hp] at hp_adj
+        rw [← h1] at hq_adj
+        exact hboth ⟨hq_adj.symm, hp_adj.symm⟩
       · exfalso
-        simp [f, hp, hq] at heq
-        have hpx : p.1 = x := congrArg (fun t : {z : V // z ≠ y} => t.1) heq
+        simp [f, X, hp, hq] at h1
         have hp_adj : G.Adj v.1 p.1 := p.2
         have hq_adj : G.Adj v.1 q.1 := q.2
-        exact hboth ⟨(hpx ▸ hp_adj).symm, (hq ▸ hq_adj).symm⟩
-      · simp [f, hp, hq] at heq
-        exact Subtype.ext (congrArg (fun t : {z : V // z ≠ y} => t.1) heq)
+        rw [hq] at hq_adj
+        rw [h1] at hp_adj
+        exact hboth ⟨hp_adj.symm, hq_adj.symm⟩
+      · simp [f, hp, hq] at h1
+        exact Subtype.ext h1
     have hc := Fintype.card_le_of_injective f hf
     rwa [SimpleGraph.card_neighborSet_eq_degree, SimpleGraph.card_neighborSet_eq_degree] at hc
 
@@ -460,7 +463,7 @@ theorem identify_degree_common_le_two {V : Type u} [Fintype V] [DecidableEq V]
       rcases v.2.2 with h | ⟨h1, _⟩ | ⟨h1, _⟩
       · exact h
       · exact False.elim (huv_x h1)
-      · exact h1 ▸ hux.symm⟩
+      · rw [h1]; exact hux.symm⟩
   have hf : Function.Injective f := by
     intro p q heq
     have hval : p.1.1 = q.1.1 :=
