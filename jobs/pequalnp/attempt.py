@@ -27,13 +27,31 @@ def write(name, data):
 
 def request(endpoint, params, method="GET"):
     url = DESK + endpoint + "?" + urllib.parse.urlencode(params)
+    # Use the official documented curl client. Keep the response in memory;
+    # lease IDs, headers and raw error bodies are never written to public logs.
     try:
-        with urllib.request.urlopen(urllib.request.Request(url, method=method), timeout=25) as r:
-            return r.status, json.load(r)
-    except urllib.error.HTTPError as e:
-        return e.code, {}
-    except (OSError, ValueError):
+        p = subprocess.run(
+            ["curl","--proto","=https","-sS","--max-time","25",
+             "-X",method,"-w","\\n%{http_code}",url],
+            capture_output=True, text=True, timeout=30)
+        if p.returncode:
+            return 0, {}
+        body, code = p.stdout.rsplit("\n",1)
+        status = int(code)
+        try:
+            data = json.loads(body)
+            if isinstance(data,dict):
+                if status != 200:
+                    # Do not publish arbitrary server text or credentials.
+                    print("Desk response: HTTP %d (JSON)" % status, flush=True)
+                return status, data
+        except ValueError:
+            pass
+        print("Desk response: HTTP %d (non-JSON)" % status, flush=True)
+        return status, {}
+    except (OSError, ValueError, subprocess.TimeoutExpired):
         return 0, {}
+
 
 def state():
     p = PRIVATE / "assignment.json"

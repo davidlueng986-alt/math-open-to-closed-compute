@@ -1,1 +1,1 @@
-Initial one-shot leased Lean verification run, 2026-11-25
+Second one-shot attempt: documented curl protocol after HTTP 403, 2026-11-25
