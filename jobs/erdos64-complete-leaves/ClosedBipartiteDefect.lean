@@ -38,9 +38,11 @@ theorem exclude_bipartite_defect {V : Type u} [Fintype V]
   let A : W := ⟨a,haw⟩
   let B : W := ⟨b,hbw⟩
   have hAB : A ≠ B := fun h => hab (congrArg Subtype.val h)
-  let _ : DecidableRel K.Adj := fun x y => Classical.propDecidable (K.Adj x y)
+  let _ : DecidableRel K.Adj :=
+    inferInstanceAs (DecidableRel (G.induce {x | x ≠ w}).Adj)
   let H : SimpleGraph W := K ⊔ SimpleGraph.edge A B
-  let _ : DecidableRel H.Adj := fun x y => Classical.propDecidable (H.Adj x y)
+  let _ : DecidableRel H.Adj :=
+    inferInstanceAs (DecidableRel (K ⊔ SimpleGraph.edge A B).Adj)
   have hKnot : ¬K.Adj A B := by
     intro h
     exact hproper a b h hcol

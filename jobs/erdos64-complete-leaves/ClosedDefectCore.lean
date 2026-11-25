@@ -109,7 +109,9 @@ theorem adjacent_two_three_cut {V : Type u} [Fintype V]
     · have hfirst : e.1.1=b := by
         have hs : e.1.1=w ∨ e.1.1=b := by simpa [S] using e.2.1
         exact hs.resolve_left he
-      apply Prod.ext <;> simp [f,r,he,hfirst]
+      simp only [f,dite_eq_right he]
+      change (b,e.1.2)=e.1
+      exact Prod.ext hfirst.symm rfl
   have hinj : Function.Injective f := by
     intro p q he
     apply Subtype.ext
