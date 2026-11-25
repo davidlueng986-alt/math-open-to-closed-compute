@@ -25,7 +25,7 @@ open scoped BigOperators
 universe u
 
 /-- A finite simple graph is 2-degenerate if every nonempty induced subgraph
-    has a vertex of degree at most 2. -/\
+    has a vertex of degree at most 2. -/
 def TwoDegenerate {W : Type u} [Fintype W] (H : SimpleGraph W) : Prop :=
   ∀ (U : Finset W), U.Nonempty →
     ∃ v ∈ U, (U.filter (fun u => H.Adj v u)).card ≤ 2
@@ -183,8 +183,6 @@ private theorem c4_free_four_sum_deg_le {W : Type u} [Fintype W] [DecidableEq W]
     exact ⟨H.edgeFinset.card, by ring⟩
   obtain ⟨t, ht⟩ := heven
   have hge10 : 10 ≤ ∑ v : W, H.degree v := by omega
-  -- Total non-adjacent ordered pairs: ∑ (3 - deg v) = 12 - ∑ deg v ≤ 2,
-  -- so there is at most one non-adjacent unordered pair.
   have hnonadj_sum : ∑ v : W, (3 - H.degree v) ≤ 2 := by
     have hle3 : ∀ v : W, H.degree v ≤ 3 := fun v => by
       have := H.degree_lt_card_verts v; omega
@@ -193,14 +191,12 @@ private theorem c4_free_four_sum_deg_le {W : Type u} [Fintype W] [DecidableEq W]
       exact Finset.sum_congr rfl (fun v _ => by have := hle3 v; omega)
     simp [hcard] at hadd
     omega
-  -- Pick two distinct vertices a, c (preferring a non-adjacent pair if one exists).
   have hex_ac : ∃ a c : W, a ≠ c ∧
       ∀ x y : W, x ≠ y → (x ≠ a ∨ y ≠ c) → (x ≠ c ∨ y ≠ a) → H.Adj x y := by
     by_cases hna : ∃ a c : W, a ≠ c ∧ ¬ H.Adj a c
     · obtain ⟨a, c, hac, hnac⟩ := hna
       refine ⟨a, c, hac, fun x y hxy h1 h2 => ?_⟩
       by_contra hnxy
-      -- Both {a,c} and {x,y} are distinct non-adjacent pairs, giving ∑ (3 - deg) ≥ 4.
       have hdef : ∀ u : W, (Finset.univ.filter (fun z => z ≠ u ∧ ¬ H.Adj u z)).card = 3 - H.degree u := by
         intro u
         have hpart : (Finset.univ.filter (fun z => z ≠ u ∧ ¬ H.Adj u z)).card +
@@ -224,7 +220,6 @@ private theorem c4_free_four_sum_deg_le {W : Type u} [Fintype W] [DecidableEq W]
         rw [H.card_neighborFinset_eq_degree, Finset.card_erase_of_mem (Finset.mem_univ u),
           Finset.card_univ, hcard] at hpart
         omega
-      -- Count ordered non-adjacent pairs: at least 4 ({(a,c),(c,a),(x,y),(y,x)}).
       let P : Finset (W × W) := Finset.univ.filter (fun p => p.1 ≠ p.2 ∧ ¬ H.Adj p.1 p.2)
       have hPcard : P.card = ∑ u : W, (3 - H.degree u) := by
         have h1 : P.card = ∑ u : W, (Finset.univ.filter (fun z => z ≠ u ∧ ¬ H.Adj u z)).card := by
@@ -337,7 +332,6 @@ theorem c4_free_five_common_neighbor {W : Type u} [Fintype W] [DecidableEq W]
   classical
   by_contra hno
   push Not at hno
-  -- Let Z = {z₁, z₂, z₃} be the 3 vertices other than x and y.
   let Z : Finset W := (Finset.univ.erase x).erase y
   have hZcard : Z.card = 3 := by
     rw [Finset.card_erase_of_mem (Finset.mem_erase.mpr ⟨hxy.symm, Finset.mem_univ y⟩),
@@ -350,7 +344,6 @@ theorem c4_free_five_common_neighbor {W : Type u} [Fintype W] [DecidableEq W]
   have hne_all :
       x ≠ z₁ ∧ x ≠ z₂ ∧ x ≠ z₃ ∧ y ≠ z₁ ∧ y ≠ z₂ ∧ y ≠ z₃ :=
     ⟨hz1.2.symm, hz2.2.symm, hz3.2.symm, hz1.1.symm, hz2.1.symm, hz3.1.symm⟩
-  -- Express ∑ deg in terms of the 10 pairs among {x, y, z₁, z₂, z₃}.
   let b (u v : W) : ℕ := if H.Adj u v then 1 else 0
   have hb_sym : ∀ u v, b u v = b v u := fun u v => by
     simp only [b]; by_cases h : H.Adj u v
@@ -400,17 +393,14 @@ theorem c4_free_five_common_neighbor {W : Type u} [Fintype W] [DecidableEq W]
         hb_sym z₁ y, hb_sym z₂ y, hb_sym z₃ y,
         hb_sym z₂ z₁, hb_sym z₃ z₁, hb_sym z₃ z₂]
     omega
-  -- Now finish by pure Boolean case split on the 10 edges (≤ 2^10, pruned by no-common-neighbor)!
   have hnc1 : ¬ (H.Adj x z₁ ∧ H.Adj y z₁) := fun h => hno z₁ h.1 h.2
   have hnc2 : ¬ (H.Adj x z₂ ∧ H.Adj y z₂) := fun h => hno z₂ h.1 h.2
   have hnc3 : ¬ (H.Adj x z₃ ∧ H.Adj y z₃) := fun h => hno z₃ h.1 h.2
-  -- Helper: if u has two neighbors in a triangle {a,b,c}, C4 arises.
   have htri_c4 : ∀ (u a b c : W),
       u ≠ a → u ≠ b → u ≠ c → a ≠ b → a ≠ c → b ≠ c →
       H.Adj u a → H.Adj u b → H.Adj a c → H.Adj b c → False :=
     fun u a b c hua hub huc hab hac hbc h1 h2 h3 h4 =>
       hc4 u a c b hua huc hub hac hab hbc.symm h1 h3 h4.symm h2.symm
-  -- Helper: if x-y, x-a, y-b, a-b with distinct x,y,a,b, C4 arises.
   have hxy_c4 : ∀ (a b : W),
       x ≠ a → x ≠ b → y ≠ a → y ≠ b → a ≠ b →
       H.Adj x y → H.Adj x a → H.Adj y b → H.Adj a b → False :=
