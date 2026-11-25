@@ -133,7 +133,7 @@ theorem dyadic_path_of_identify {G : SimpleGraph V} {x y : V} (hxy : x ≠ y)
   let X : {v : V // v ≠ y} := ⟨x, hxy⟩
   by_cases hmem : X ∈ c.support
   · let c' := c.rotate X hmem
-    have hc' : c'.IsCycle := SimpleGraph.Walk.IsCycle.rotate hc hmem
+    have hc' : c'.IsCycle := SimpleGraph.Walk.IsCycle.rotate hmem hc
     have hlen' : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
     have hge4 : 4 ≤ c'.length := by
       rw [hlen']
@@ -268,29 +268,28 @@ theorem card_sub_lt [Fintype V] [DecidableEq V] (y : V) :
     of `x` and `y`: its degree is unchanged. -/
 theorem identify_degree_other_of_not_common [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {x y : V} (hxy : x ≠ y)
+    [DecidableRel (identify G x y).Adj]
     (v : {z : V // z ≠ y}) (hvx : v.1 ≠ x)
     (hnc : ¬ (G.Adj x v.1 ∧ G.Adj y v.1)) :
-    let H := identify G x y
-    let _ : DecidableRel H.Adj := fun a b => Classical.dec _
-    H.degree v = G.degree v.1 := by
+    (identify G x y).degree v = G.degree v.1 := by
   classical
-  intro H
+  let H := identify G x y
   let X : {z : V // z ≠ y} := ⟨x, hxy⟩
   let f : H.neighborSet v → G.neighborSet v.1 := fun u =>
     if hu : u.1.1 = x then
       if h : G.Adj v.1 x then ⟨x, h⟩ else ⟨y, by
-        rcases u.2.2 with h1 | ⟨hux, hyv⟩ | ⟨hvx', huy⟩
+        rcases u.2.2 with h1 | ⟨hvx', _⟩ | ⟨_, hvy⟩
         · exact False.elim (h (hu ▸ h1))
-        · exact hyv.symm
-        · exact False.elim (hvx hvx')⟩
+        · exact False.elim (hvx hvx')
+        · exact hvy⟩
     else ⟨u.1.1, by
-      rcases u.2.2 with h1 | ⟨hux, _⟩ | ⟨hvx', _⟩
+      rcases u.2.2 with h1 | ⟨hvx', _⟩ | ⟨hux, _⟩
       · exact h1
-      · exact False.elim (hu hux)
-      · exact False.elim (hvx hvx')⟩
+      · exact False.elim (hvx hvx')
+      · exact False.elim (hu hux)⟩
   let g : G.neighborSet v.1 → H.neighborSet v := fun u =>
     if hu : u.1 = y then
-      ⟨X, ⟨fun h => hvx (congrArg Subtype.val h), Or.inr (Or.inl ⟨rfl, hu ▸ u.2.symm⟩)⟩⟩
+      ⟨X, ⟨fun h => hvx (congrArg Subtype.val h), Or.inr (Or.inr ⟨rfl, hu ▸ u.2⟩)⟩⟩
     else
       ⟨⟨u.1, hu⟩, ⟨fun h => (G.ne_of_adj u.2) (congrArg Subtype.val h), Or.inl u.2⟩⟩
   have e : H.neighborSet v ≃ G.neighborSet v.1 :=
@@ -324,19 +323,18 @@ theorem identify_degree_other_of_not_common [Fintype V] [DecidableEq V]
     its degree drops by 1. -/
 theorem identify_degree_common [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {x y : V} (hxy : x ≠ y)
+    [DecidableRel (identify G x y).Adj]
     (u : {z : V // z ≠ y}) (hux : G.Adj x u.1) (huy : G.Adj y u.1) :
-    let H := identify G x y
-    let _ : DecidableRel H.Adj := fun a b => Classical.dec _
-    H.degree u + 1 = G.degree u.1 := by
+    (identify G x y).degree u + 1 = G.degree u.1 := by
   classical
-  intro H
+  let H := identify G x y
   have hunx : u.1 ≠ x := (G.ne_of_adj hux).symm
   let e : H.neighborSet u ≃ {z : V // G.Adj u.1 z ∧ z ≠ y} :=
     { toFun := fun v => ⟨v.1.1, by
-        rcases v.2.2 with h1 | ⟨hvx, _⟩ | ⟨hux', _⟩
+        rcases v.2.2 with h1 | ⟨hux', _⟩ | ⟨hvx, _⟩
         · exact ⟨h1, v.1.2⟩
-        · exact ⟨hvx ▸ hux.symm, v.1.2⟩
-        · exact False.elim (hunx hux')⟩
+        · exact False.elim (hunx hux')
+        · exact ⟨hvx.symm ▸ hux.symm, v.1.2⟩⟩
       invFun := fun z => ⟨⟨z.1, z.2.2⟩, ⟨fun h => (G.ne_of_adj z.2.1) (congrArg Subtype.val h),
         Or.inl z.2.1⟩⟩
       left_inv := by intro v; rfl
@@ -347,18 +345,20 @@ theorem identify_degree_common [Fintype V] [DecidableEq V]
       (G.neighborFinset u.1).erase y := by
     ext z; simp [and_comm]
   rw [hs] at hc
+  change H.degree u + 1 = G.degree u.1
   rw [hc, ← G.card_neighborFinset_eq_degree]
   exact Finset.card_erase_add_one ((G.mem_neighborFinset u.1 y).mpr huy.symm)
 
-/-- Lower bound on the degree of the merged vertex `X = ⟨x, hxy⟩` in `identify G x y`. -/
+/-- Exact degree formula for the merged vertex `X = ⟨x, hxy⟩` in `identify G x y`. -/
 theorem identify_degree_merged_ge [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] {x y : V} (hxy : x ≠ y) :
-    let H := identify G x y
-    let _ : DecidableRel H.Adj := fun a b => Classical.dec _
-    let X : {z : V // z ≠ y} := ⟨x, hxy⟩
-    H.degree X = ((G.neighborFinset x ∪ G.neighborFinset y).erase x |>.erase y).card := by
+    (G : SimpleGraph V) [DecidableRel G.Adj] {x y : V} (hxy : x ≠ y)
+    [DecidableRel (identify G x y).Adj] :
+    (identify G x y).degree ⟨x, hxy⟩ =
+      ((G.neighborFinset x ∪ G.neighborFinset y).erase x |>.erase y).card := by
   classical
-  intro H X
+  let H := identify G x y
+  let X : {z : V // z ≠ y} := ⟨x, hxy⟩
+  change H.degree X = _
   rw [← H.card_neighborFinset_eq_degree]
   let f : H.neighborFinset X → ((G.neighborFinset x ∪ G.neighborFinset y).erase x |>.erase y) :=
     fun v => ⟨v.1.1, by
@@ -403,11 +403,11 @@ theorem dyadic_path_of_dist_ge_three [Fintype V] [DecidableEq V]
       exact hnocom u ⟨(G.mem_neighborFinset x u).mp hux, (G.mem_neighborFinset y u).mp huy⟩
     have hxnot : x ∉ G.neighborFinset x ∪ G.neighborFinset y := by
       simp only [Finset.mem_union, SimpleGraph.mem_neighborFinset, not_or]
-      exact ⟨G.loopless x, fun h => hnadj h.symm⟩
+      exact ⟨G.loopless.irrefl x, fun h => hnadj h.symm⟩
     have hynot : y ∉ (G.neighborFinset x ∪ G.neighborFinset y).erase x := by
       simp only [Finset.mem_erase, Finset.mem_union, SimpleGraph.mem_neighborFinset, not_and, not_or]
       intro _
-      exact ⟨hnadj, G.loopless y⟩
+      exact ⟨hnadj, G.loopless.irrefl y⟩
     rw [Finset.erase_eq_of_notMem hynot, Finset.erase_eq_of_notMem hxnot,
       Finset.card_union_of_disjoint hdisj,
       G.card_neighborFinset_eq_degree, G.card_neighborFinset_eq_degree]
@@ -530,11 +530,11 @@ theorem dyadic_path_of_dist_two [Fintype V] [DecidableEq V]
     rw [identify_degree_merged_ge G hxy]
     have hxnot : x ∉ G.neighborFinset x ∪ G.neighborFinset y := by
       simp only [Finset.mem_union, SimpleGraph.mem_neighborFinset, not_or]
-      exact ⟨G.loopless x, fun h => hnadj h.symm⟩
+      exact ⟨G.loopless.irrefl x, fun h => hnadj h.symm⟩
     have hynot : y ∉ (G.neighborFinset x ∪ G.neighborFinset y).erase x := by
       simp only [Finset.mem_erase, Finset.mem_union, SimpleGraph.mem_neighborFinset, not_and, not_or]
       intro _
-      exact ⟨hnadj, G.loopless y⟩
+      exact ⟨hnadj, G.loopless.irrefl y⟩
     rw [Finset.erase_eq_of_notMem hynot, Finset.erase_eq_of_notMem hxnot]
     have hinter : G.neighborFinset x ∩ G.neighborFinset y = {u} := by
       ext z

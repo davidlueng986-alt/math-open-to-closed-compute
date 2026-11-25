@@ -17,6 +17,18 @@ universe u
 
 variable {V : Type u}
 
+/-- Helper: `Walk.copy` preserves length. -/
+theorem copy_length_eq {G : SimpleGraph V} {a b a' b' : V}
+    (p : G.Walk a b) (ha : a = a') (hb : b = b') :
+    (p.copy ha hb).length = p.length := by
+  subst ha; subst hb; rfl
+
+/-- Helper: `Walk.copy` preserves support. -/
+theorem copy_support_eq {G : SimpleGraph V} {a b a' b' : V}
+    (p : G.Walk a b) (ha : a = a') (hb : b = b') :
+    (p.copy ha hb).support = p.support := by
+  subst ha; subst hb; rfl
+
 /-- Equivalence relation induced by an involution σ : V → V. -/
 def invSetoid (σ : V → V) (hinv : ∀ v, σ (σ v) = v) : Setoid V where
   r a b := a = b ∨ a = σ b
@@ -125,14 +137,17 @@ theorem hasPower_of_invQuot {G : SimpleGraph V} {σ : V → V}
   have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
   have hrel : u₁ = u₀ ∨ u₁ = σ u₀ := Quotient.exact (hu₁q.trans hu₀.symm)
   rcases hrel with hsame | hflip
-  · subst hsame
-    have hnil : ¬ p₁.Nil := by
+  · let p₁' : G.Walk u₀ u₀ := p₁.copy rfl hsame
+    have hp₁'len : p₁'.length = 2 ^ k := (copy_length_eq p₁ rfl hsame).trans hp₁len
+    have hp₁'supp : p₁'.support = p₁.support := copy_support_eq p₁ rfl hsame
+    have hnil : ¬ p₁'.Nil := by
       intro h; have := Walk.length_eq_zero_iff.mpr h; omega
-    have hcyc : p₁.IsCycle := by
+    have hcyc : p₁'.IsCycle := by
       apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
       refine ⟨Walk.IsPath.mk' ?_, by omega⟩
-      rwa [Walk.support_tail_of_not_nil _ hnil]
-    exact ⟨k, u₀, p₁, hk, hcyc, hp₁len⟩
+      rw [Walk.support_tail_of_not_nil _ hnil, hp₁'supp]
+      exact hp₁tail_nodup
+    exact ⟨k, u₀, p₁', hk, hcyc, hp₁'len⟩
   · let f : G →g G := mapWalkAut σ haut
     have hσ_inj : Function.Injective σ := Function.LeftInverse.injective hinv
     let p₂_raw : G.Walk (σ u₀) (σ u₁) := p₁.map f
@@ -140,18 +155,21 @@ theorem hasPower_of_invQuot {G : SimpleGraph V} {σ : V → V}
     let p₂ : G.Walk u₁ u₀ := p₂_raw.copy hflip.symm hσu₁
     let p : G.Walk u₀ u₀ := p₁.append p₂
     have hp₂len : p₂.length = 2 ^ k := by
-      simp [p₂, p₂_raw, Walk.length_copy, Walk.length_map, hp₁len]
+      rw [copy_length_eq, Walk.length_map, hp₁len]
     have hplen : p.length = 2 ^ (k + 1) := by
       simp only [p, Walk.length_append, hp₁len, hp₂len, pow_succ]
       omega
     have hp₂supp : p₂.support = p₁.support.map σ := by
-      simp [p₂, p₂_raw, Walk.support_copy, Walk.support_map, f, mapWalkAut]
+      rw [copy_support_eq, Walk.support_map]
+      rfl
     have hp₂tail : p₂.support.tail = p₁.support.tail.map σ := by
       rw [hp₂supp, ← List.map_tail]
     have hp_tail : p.support.tail = p₁.support.tail ++ p₂.support.tail := by
       have hps : p.support = p₁.support ++ p₂.support.tail := Walk.support_append p₁ p₂
       have hp₁s : p₁.support = u₀ :: p₁.support.tail := (p₁.cons_tail_support).symm
-      rw [hps, hp₁s, List.cons_append, List.tail_cons]
+      calc p.support.tail = (p₁.support ++ p₂.support.tail).tail := by rw [hps]
+        _ = (u₀ :: p₁.support.tail ++ p₂.support.tail).tail := by rw [← hp₁s]
+        _ = p₁.support.tail ++ p₂.support.tail := rfl
     have hdisj : p₁.support.tail.Disjoint p₂.support.tail := by
       intro x hx1 hx2
       rw [hp₂tail] at hx2
@@ -231,8 +249,11 @@ theorem no_fpf_involution_le_one_edge [Fintype V] [DecidableEq V]
     let f : G.neighborSet u → H.neighborSet (⟦u⟧ : Q) := fun v =>
       ⟨⟦v.1⟧, ⟨fun heq => by
         rcases Quotient.exact heq with h1 | h2
-        · exact (G.ne_of_adj v.2) h1.symm
-        · have hv2 : G.Adj u v.1 := v.2; rw [h2] at hv2; exact hno hv2,
+        · exact (G.ne_of_adj v.2) h1
+        · have hv2 : G.Adj u v.1 := v.2
+          have h3 : G.Adj (σ u) (σ v.1) := (haut u v.1).mp hv2
+          rw [← h2] at h3
+          exact hno h3.symm,
         u, v.1, rfl, rfl, v.2⟩⟩
     have hfinj : Function.Injective f := by
       intro a b heq

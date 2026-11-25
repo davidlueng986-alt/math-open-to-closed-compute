@@ -21,6 +21,15 @@ universe u
 
 variable {V : Type u}
 
+/-- Canonical decidable incidence relation between `V_{≥4}` and `V_3`. -/
+def highRel [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    (a : {v : V // 4 ≤ G.degree v}) (y : {v : V // G.degree v = 3}) : Prop :=
+  G.Adj a.1 y.1
+
+instance instDecidableHighRel [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj] :
+    DecidableRel (highRel G) :=
+  fun a y => inferInstanceAs (Decidable (G.Adj a.1 y.1))
+
 /-- In any MinimalBad(G), no two vertices of degree >= 4 are adjacent. -/
 theorem high_independent [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
@@ -64,7 +73,7 @@ theorem high_neighbor_cubic [Fintype V] [DecidableEq V]
   omega
 
 /-- Weighted F2 Code-Distance Theorem for Class H:
-    Let V₄ = {v // 4 ≤ deg v}, V₃ = {v // deg v = 3}, and M be the F2 incidence matrix.
+    Let V₄ = {v // 4 ≤ deg v}, V₃ = {v // deg v = 3}, and M = syndrome (highRel G).
     For any z : V₄ → ZMod 2 whose support S has |S| ≥ 2 and ∀ x ∈ S, d ≤ deg x (d ≥ 4),
     the Hamming weight of M z is at least 2d - 4. -/
 theorem high_code_weight_ge_two_sub_four [Fintype V] [DecidableEq V]
@@ -73,24 +82,25 @@ theorem high_code_weight_ge_two_sub_four [Fintype V] [DecidableEq V]
     (z : {v : V // 4 ≤ G.degree v} → ZMod 2)
     (hS2 : 2 ≤ Fintype.card (Support z))
     (hdegS : ∀ x : Support z, d ≤ G.degree x.1.1) :
-    let V₄ := {v : V // 4 ≤ G.degree v}
-    let V₃ := {v : V // G.degree v = 3}
-    let R : V₄ → V₃ → Prop := fun a y => G.Adj a.1 y.1
-    letI : DecidableRel R := fun a y => Classical.dec _
-    2 * d - 4 ≤ Fintype.card {y : V₃ // syndrome R z y = 1} := by
+    2 * d - 4 ≤ Fintype.card {y : {v : V // G.degree v = 3} // syndrome (highRel G) z y = 1} := by
   classical
-  intro V₄ V₃ R
-  by_contra hlt
-  have hOlt : Fintype.card {y : V₃ // syndrome R z y = 1} < 2 * d - 4 := by omega
+  let V₄ := {v : V // 4 ≤ G.degree v}
+  let V₃ := {v : V // G.degree v = 3}
+  let R := highRel G
   let S := Support z
   let O := {y : V₃ // syndrome R z y = 1}
+  by_contra hlt
+  have hOlt : Fintype.card O < 2 * d - 4 := by
+    change ¬ 2 * d - 4 ≤ Fintype.card O at hlt
+    omega
+  have hS2' : 2 ≤ Fintype.card S := hS2
   have hex : ∀ y : O, ∃ x : S, R x.1 y.1 := by
     intro y
     have hmod := support_row_mod R z y.1
     rw [y.2] at hmod
-    have hpos : 0 < Fintype.card {x : S // R x.1 y.1} := by
-      have : (1 : ZMod 2).val = 1 := rfl
-      omega
+    have hval : (1 : ZMod 2).val = 1 := rfl
+    rw [hval] at hmod
+    have hpos : 0 < Fintype.card {x : S // R x.1 y.1} := by omega
     obtain ⟨⟨x, hx⟩⟩ := Fintype.card_pos_iff.mp hpos
     exact ⟨x, hx⟩
   choose pick hpick using hex
@@ -103,7 +113,7 @@ theorem high_code_weight_ge_two_sub_four [Fintype V] [DecidableEq V]
       have hinj : Function.Injective emb := by
         intro a b h
         apply Subtype.ext; apply Subtype.ext; apply Subtype.ext
-        exact congrArg Subtype.val h
+        exact congrArg (fun t : G.neighborSet y.1 => t.1) h
       have hc := Fintype.card_le_of_injective emb hinj
       rw [SimpleGraph.card_neighborSet_eq_degree, y.2] at hc
       exact hc
@@ -113,7 +123,8 @@ theorem high_code_weight_ge_two_sub_four [Fintype V] [DecidableEq V]
         apply Fintype.card_congr
         exact Equiv.subtypeEquivRight (fun x => by simp [R', h0])
       rw [h0] at hmod
-      have : (0 : ZMod 2).val = 0 := rfl
+      have hval : (0 : ZMod 2).val = 0 := rfl
+      rw [hval] at hmod
       omega
     · have heq : Fintype.card {x : S // R' x y} = Fintype.card {x : S // R x.1 y ∧ x ≠ pick ⟨y, h1⟩} := by
         apply Fintype.card_congr
@@ -124,7 +135,8 @@ theorem high_code_weight_ge_two_sub_four [Fintype V] [DecidableEq V]
       rw [heq]
       have hrem := card_remove_one (fun x : S => R x.1 y) (pick ⟨y, h1⟩) (hpick ⟨y, h1⟩)
       rw [h1] at hmod
-      have : (1 : ZMod 2).val = 1 := rfl
+      have hval : (1 : ZMod 2).val = 1 := rfl
+      rw [hval] at hmod
       omega
   let del : S → ℕ := fun x => Fintype.card {y : O // pick y = x}
   have hsum_del : ∑ x : S, del x = Fintype.card O := by
@@ -167,7 +179,7 @@ theorem high_code_weight_ge_two_sub_four [Fintype V] [DecidableEq V]
             Sum.inl ⟨y.1, ⟨y.2, fun hy heq => h ⟨hy, heq⟩⟩⟩
         invFun := Sum.elim
           (fun y => ⟨y.1, y.2.1⟩)
-          (fun y => ⟨y.1.1, y.2 ▸ hpick y.1⟩)
+          (fun y => ⟨y.1.1, by have hp := hpick y.1; rw [y.2] at hp; exact hp⟩)
         left_inv := by
           intro y
           by_cases h : ∃ hy : syndrome R z y.1 = 1, pick ⟨y.1, hy⟩ = x
@@ -178,8 +190,7 @@ theorem high_code_weight_ge_two_sub_four [Fintype V] [DecidableEq V]
           · have hnot : ¬ ∃ hy : syndrome R z y.1 = 1, pick ⟨y.1, hy⟩ = x :=
               fun ⟨hy, heq⟩ => y.2.2 hy heq
             simp [hnot]
-          · have hex' : ∃ hy : syndrome R z y.1.1 = 1, pick ⟨y.1.1, hy⟩ = x := ⟨y.1.2, y.2⟩
-            simp [hex'] }
+          · simp [y.1.2, y.2] }
     have hc := Fintype.card_congr e_split
     rw [hall, Fintype.card_sum] at hc
     exact hc.symm
@@ -203,6 +214,7 @@ theorem high_code_weight_ge_two_sub_four [Fintype V] [DecidableEq V]
       (fun p q h => Subtype.ext (Subtype.ext h))
     intro hsurj
     obtain ⟨x, hx⟩ := hsurj w₀
+    dsimp at hx
     have := x.1.2
     rw [hx, hw₀] at this
     omega
@@ -225,13 +237,11 @@ theorem high_code_dist_ge_four [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (hH : HighDefect G)
     (z : {v : V // 4 ≤ G.degree v} → ZMod 2) (hz : z ≠ 0) :
-    let V₄ := {v : V // 4 ≤ G.degree v}
-    let V₃ := {v : V // G.degree v = 3}
-    let R : V₄ → V₃ → Prop := fun a y => G.Adj a.1 y.1
-    letI : DecidableRel R := fun a y => Classical.dec _
-    4 ≤ Fintype.card {y : V₃ // syndrome R z y = 1} := by
+    4 ≤ Fintype.card {y : {v : V // G.degree v = 3} // syndrome (highRel G) z y = 1} := by
   classical
-  intro V₄ V₃ R
+  let V₄ := {v : V // 4 ≤ G.degree v}
+  let V₃ := {v : V // G.degree v = 3}
+  let R := highRel G
   by_cases hS2 : 2 ≤ Fintype.card (Support z)
   · have h := high_code_weight_ge_two_sub_four G hm hH 4 le_rfl z hS2 (fun x => x.1.2)
     simpa using h
@@ -250,22 +260,32 @@ theorem high_code_dist_ge_four [Fintype V] [DecidableEq V]
       ext a
       by_cases ha : a = x₀.1
       · subst a; simp [Erdos64Binary.unit, x₀.2]
-      · simp only [Erdos64Binary.unit, if_neg ha]
+      · simp only [Erdos64Binary.unit, ha, ↓reduceIte]
         rcases field_cases (z a) with h0 | h1
         · exact h0
         · exact False.elim (ha (congrArg Subtype.val (huniq ⟨a, h1⟩)))
     let e : {y : V₃ // syndrome R z y = 1} ≃ G.neighborSet x₀.1.1 :=
       { toFun := fun y => ⟨y.1.1, by
-          have hy := y.2
-          rw [hz_eq, syndrome_unit] at hy
+          have hy : syndrome R (Erdos64Binary.unit x₀.1) y.1 = 1 :=
+            (congrArg (fun f => syndrome R f y.1) hz_eq).symm.trans y.2
+          rw [syndrome_unit] at hy
           by_contra hna
-          simp [R, hna] at hy⟩
-        invFun := fun u => ⟨⟨u.1, high_neighbor_cubic G hm x₀.1.2 u.2⟩, by
-          rw [hz_eq, syndrome_unit]
-          simp [R, u.2]⟩
+          have hnr : ¬ R x₀.1 y.1 := hna
+          simp [hnr] at hy⟩
+        invFun := fun u => ⟨⟨u.1, high_neighbor_cubic G hm x₀.1.2 ((G.mem_neighborSet _ _).mp u.2)⟩, by
+          have hu : R x₀.1 ⟨u.1, high_neighbor_cubic G hm x₀.1.2 ((G.mem_neighborSet _ _).mp u.2)⟩ :=
+            (G.mem_neighborSet _ _).mp u.2
+          have hval : syndrome R z ⟨u.1, high_neighbor_cubic G hm x₀.1.2 ((G.mem_neighborSet _ _).mp u.2)⟩ =
+              syndrome R (Erdos64Binary.unit x₀.1) ⟨u.1, high_neighbor_cubic G hm x₀.1.2 ((G.mem_neighborSet _ _).mp u.2)⟩ :=
+            congrArg (fun f => syndrome R f _) hz_eq
+          rw [hval, syndrome_unit]
+          simp [hu]⟩
         left_inv := fun _ => rfl
         right_inv := fun _ => rfl }
-    rw [Fintype.card_congr e, SimpleGraph.card_neighborSet_eq_degree]
+    have hc : Fintype.card {y : V₃ // syndrome R z y = 1} = G.degree x₀.1.1 := by
+      rw [Fintype.card_congr e, SimpleGraph.card_neighborSet_eq_degree]
+    change 4 ≤ Fintype.card {y : V₃ // syndrome R z y = 1}
+    rw [hc]
     exact x₀.1.2
 
 #print axioms high_independent
