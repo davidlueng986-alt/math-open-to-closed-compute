@@ -1,0 +1,53 @@
+name: E64 Wave2 Agent2 Exact CUT Lower Bounds
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cut-bounds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: 2port-general-n24
+            ports: 2
+            n: 24
+            tri_free: 0
+            stop_u: 7
+          - name: 2port-trifree-n26
+            ports: 2
+            n: 26
+            tri_free: 1
+            stop_u: 7
+          - name: 3port-trifree-n23
+            ports: 3
+            n: 23
+            tri_free: 1
+            stop_u: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile OpenMP C++20 enumerator
+        run: |
+          mkdir -p out
+          g++ --version | tee out/compiler.txt
+          nproc | tee out/nproc.txt
+          g++ -O3 -march=native -fopenmp -std=c++20 jobs/erdos64-wave2-agent2-cut-bounds/enum_ports_omp.cpp -o enum_ports_omp
+      - name: Soundness regression checks (known 3-port N=3,7 and 2-port N=20)
+        run: |
+          ./enum_ports_omp 3 3 0 3 | tee out/regression.log
+          ./enum_ports_omp 3 7 0 4 | tee -a out/regression.log
+          ./enum_ports_omp 2 20 1 6 | tee -a out/regression.log
+          grep -q "RESULT ports=3 N=3 tri_free=0 .* power_free=1 " out/regression.log
+          grep -q "RESULT ports=3 N=7 tri_free=0 .* power_free=10 " out/regression.log
+          grep -q "RESULT ports=2 N=20 tri_free=1 .* power_free=0 " out/regression.log
+      - name: Run exact exhaustive enumeration (${{ matrix.name }})
+        run: |
+          ./enum_ports_omp ${{ matrix.ports }} ${{ matrix.n }} ${{ matrix.tri_free }} ${{ matrix.stop_u }} | tee out/${{ matrix.name }}.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos64-wave2-agent2-${{ matrix.name }}
+          path: out/
+          retention-days: 90
