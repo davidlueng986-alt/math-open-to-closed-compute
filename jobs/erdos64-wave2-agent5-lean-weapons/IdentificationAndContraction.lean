@@ -66,11 +66,16 @@ theorem support_liftNoZ {V : Type u} {G : SimpleGraph V} {x y : V} (hxy : x ≠ 
     simp only [liftNoZ, Walk.support_cons, List.map_cons]
     rw [ih]
 
+theorem eq_of_walk_nil {W : Type u} {H : SimpleGraph W} {a b : W}
+    (w : H.Walk a b) (h : w.Nil) : a = b := by
+  cases h
+  rfl
+
 /-- Decompose a cycle starting at z into its first neighbor a, last neighbor b,
     and internal path m : Walk a b avoiding z. -/
 theorem decompose_cycle_at_start {W : Type u} {H : SimpleGraph W} {z : W}
     (d : H.Walk z z) (hd : d.IsCycle) :
-    ∃ (a b : W) (hza : H.Adj z a) (hbz : H.Adj b z) (m : H.Walk a b),
+    ∃ (a b : W) (_ : H.Adj z a) (_ : H.Adj b z) (m : H.Walk a b),
       m.length + 2 = d.length ∧
       m.support.Nodup ∧
       (∀ u ∈ m.support, u ≠ z) ∧
@@ -302,7 +307,7 @@ theorem universal_dyadic_path {V : Type u} [Fintype V] [DecidableEq V]
   have hv_deg (v : W) (hvz : v ≠ z) : G.degree v.1 ≤ H.degree v := by
     let f : G.neighborSet v.1 → H.neighborSet v := fun u =>
       if huy : u.1 = y then
-        ⟨z, ⟨hvz, Or.inr (Or.inr ⟨rfl, by rw [← huy]; exact u.2⟩)⟩⟩
+        ⟨z, ⟨hvz, Or.inr (Or.inr ⟨rfl, by have h := u.2; rw [huy] at h; exact h⟩)⟩⟩
       else
         ⟨⟨u.1, huy⟩, ⟨fun h => (G.ne_of_adj u.2) (congrArg Subtype.val h), Or.inl u.2⟩⟩
     have hf : Function.Injective f := by
@@ -348,7 +353,7 @@ theorem cubic_dist2_dyadic_path {V : Type u} [Fintype V] [DecidableEq V]
     have hyc0_ne : y ≠ c0 := G.ne_of_adj hyc
     have hxc_ne : x ≠ c := G.ne_of_adj hxc'
     have hyc_ne : y ≠ c := G.ne_of_adj hyc'
-    exact hm.2.1 (rectangle_power G hxc0_ne hxy hxc_ne hyc0_ne.symm (Ne.symm hne) hyc_ne.symm
+    exact hm.2.1 (rectangle_power G hxc0_ne hxy hxc_ne hyc0_ne.symm (Ne.symm hne) hyc_ne
       hxc hyc.symm hyc' hxc'.symm)
   let W := {v : V // v ≠ y}
   let H := identGraph G x y
@@ -374,7 +379,7 @@ theorem cubic_dist2_dyadic_path {V : Type u} [Fintype V] [DecidableEq V]
     have hvc : v.1 ≠ c0 := fun h => hvwc (Subtype.ext h)
     let f : G.neighborSet v.1 → H.neighborSet v := fun u =>
       if huy : u.1 = y then
-        ⟨z, ⟨hvz, Or.inr (Or.inr ⟨rfl, by rw [← huy]; exact u.2⟩)⟩⟩
+        ⟨z, ⟨hvz, Or.inr (Or.inr ⟨rfl, by have h := u.2; rw [huy] at h; exact h⟩)⟩⟩
       else
         ⟨⟨u.1, huy⟩, ⟨fun h => (G.ne_of_adj u.2) (congrArg Subtype.val h), Or.inl u.2⟩⟩
     have hf : Function.Injective f := by
@@ -493,14 +498,8 @@ theorem cubic_dist2_dyadic_path {V : Type u} [Fintype V] [DecidableEq V]
     intro hmem
     let m1 := m.takeUntil wc hmem
     let m2 := m.dropUntil wc hmem
-    have hm1_ne : ¬ m1.Nil := by
-      intro hnil
-      cases hnil
-      exact ha_not_wc rfl
-    have hm2_ne : ¬ m2.Nil := by
-      intro hnil
-      cases hnil
-      exact hb_not_wc rfl
+    have hm1_ne : ¬ m1.Nil := fun hnil => ha_not_wc (eq_of_walk_nil m1 hnil)
+    have hm2_ne : ¬ m2.Nil := fun hnil => hb_not_wc (eq_of_walk_nil m2 hnil).symm
     cases hm1r : m1.reverse with
     | nil =>
       have : m1.Nil := by
@@ -664,7 +663,7 @@ theorem edge_contraction_dyadic_plus_one {V : Type u} [Fintype V] [DecidableEq V
   have hx_deg (x : W) (hxz : x ≠ z) : G.degree x.1 ≤ H.degree x := by
     let f : G.neighborSet x.1 → H.neighborSet x := fun a =>
       if hav : a.1 = v then
-        ⟨z, ⟨hxz, Or.inr (Or.inr ⟨rfl, by rw [← hav]; exact a.2⟩)⟩⟩
+        ⟨z, ⟨hxz, Or.inr (Or.inr ⟨rfl, by have h := a.2; rw [hav] at h; exact h⟩)⟩⟩
       else
         ⟨⟨a.1, hav⟩, ⟨fun h => (G.ne_of_adj a.2) (congrArg Subtype.val h), Or.inl a.2⟩⟩
     have hf : Function.Injective f := by
