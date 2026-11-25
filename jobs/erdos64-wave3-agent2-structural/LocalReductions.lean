@@ -53,10 +53,8 @@ private lemma walk_support_head {W : Type u} {H : SimpleGraph W} {u v : W} (p : 
   cases p <;> rfl
 
 private lemma walk_append_single_eq_concat {W : Type u} {H : SimpleGraph W} {u v w : W}
-    (p : H.Walk u v) (h : H.Adj v w) : p.append (Walk.cons h Walk.nil) = p.concat h := by
-  induction p with
-  | nil => rfl
-  | cons h' p' ih => exact congrArg (Walk.cons h') ih
+    (p : H.Walk u v) (h : H.Adj v w) : p.append (Walk.cons h Walk.nil) = p.concat h :=
+  rfl
 
 private lemma path_of_cycle_with_edge {W : Type u} [DecidableEq W]
     {G H : SimpleGraph W} (u v : W) (_huv : u ≠ v)
