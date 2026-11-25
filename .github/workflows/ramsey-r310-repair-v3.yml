@@ -1,0 +1,112 @@
+name: Ramsey R(3,10) repair v3 proof search
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - jobs/ramsey-r310-repair-v3/launch.txt
+permissions:
+  contents: read
+  packages: read
+  actions: read
+defaults:
+  run:
+    shell: bash
+concurrency:
+  group: ramsey-r310-repair-v3
+  cancel-in-progress: false
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          python3 jobs/ramsey-r310-repair-v3/repair.py --selftest
+          g++ -O3 jobs/ramsey-r310-repair-v3/near_sets.cpp -o /tmp/near
+          /tmp/near 1 < jobs/ramsey-r310-repair-v3/seed31002.txt > /tmp/near.txt
+          awk '{c[$1]++} END {print c[0], c[1]; if(c[0]!=10||c[1]!=18015)exit 1}' /tmp/near.txt
+  local:
+    needs: selftest
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include:
+          - {k: 3, l: 180, near: 1, secs: 180}
+          - {k: 4, l: 180, near: 1, secs: 1200}
+          - {k: 5, l: 180, near: 1, secs: 1800}
+          - {k: 6, l: 180, near: 1, secs: 1800}
+          - {k: 8, l: 12, near: 2, secs: 1800}
+          - {k: 12, l: 16, near: 2, secs: 1800}
+          - {k: 16, l: 22, near: 2, secs: 1800}
+          - {k: 24, l: 30, near: 2, secs: 1800}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enumerate near-independent sets and repair
+        run: |
+          set -euo pipefail
+          g++ -O3 jobs/ramsey-r310-repair-v3/near_sets.cpp -o /tmp/near
+          /tmp/near ${{ matrix.near }} < jobs/ramsey-r310-repair-v3/seed31002.txt > near.txt
+          python3 jobs/ramsey-r310-repair-v3/repair.py --mode local --k ${{ matrix.k }} --l ${{ matrix.l }} --near near.txt --seconds ${{ matrix.secs }} --proof-seconds 300 --out out
+          if [ -f out/witness.txt ]; then python3 jobs/ramsey-r310-wave1/verify.py out/witness.txt | tee out/witness-check.json; python3 -c 'import json; assert json.load(open("out/witness-check.json"))["closure_witness"]'; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: LOCAL-${{ matrix.k }}-${{ matrix.l }}
+          path: out/
+          retention-days: 30
+  global:
+    needs: selftest
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include:
+          - {d: 5, q: 5}
+          - {d: 5, q: 6}
+          - {d: 5, q: 7}
+          - {d: 5, q: 8}
+          - {d: 5, q: 9}
+          - {d: 6, q: 5}
+          - {d: 9, q: 9}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reuse exact prior cuts when available
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45675361761'
+          name: D${{ matrix.d }}-N${{ matrix.q }}
+          path: reuse/
+      - name: Solve normalized leaf
+        run: |
+          set -euo pipefail
+          python3 jobs/ramsey-r310-repair-v3/repair.py --mode global --d ${{ matrix.d }} --q ${{ matrix.q }} --reuse reuse/cuts.jsonl --seconds 3600 --proof-seconds 480 --out out
+          if [ -f out/witness.txt ]; then python3 jobs/ramsey-r310-wave1/verify.py out/witness.txt | tee out/witness-check.json; python3 -c 'import json; assert json.load(open("out/witness-check.json"))["closure_witness"]'; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: D${{ matrix.d }}-N${{ matrix.q }}-v3
+          path: out/
+          retention-days: 30
