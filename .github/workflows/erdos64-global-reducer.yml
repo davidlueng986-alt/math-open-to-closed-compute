@@ -1,0 +1,47 @@
+name: E64 execute global certified descent engine
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'jobs/erdos64-global-reducer/**'
+      - '.github/workflows/erdos64-global-reducer.yml'
+permissions:
+  contents: read
+  packages: read
+defaults:
+  run:
+    shell: bash
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      matrix:
+        family: [synthetic, markstrom]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute exact global reduction on selected input graphs
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          if [ "${{ matrix.family }}" = synthetic ]; then
+            python3 jobs/erdos64-global-reducer/reduce.py --synthetic --out out/results.jsonl
+          else
+            for n in 24 26; do
+              curl -fsSL "https://raw.githubusercontent.com/chriss1245/erdos-gyarfas-cubic-frontier/b3cde3a80db0681ed89dad907aecf479369b3a29/data/markstrom-class/n${n}_no-c4c8_survivors.g6"
+            done > input.g6
+            python3 jobs/erdos64-global-reducer/reduce.py --input input.g6 --out out/results.jsonl
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: descent-${{ matrix.family }}
+          path: out/
+          retention-days: 30
