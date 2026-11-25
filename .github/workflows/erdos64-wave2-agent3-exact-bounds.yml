@@ -1,0 +1,46 @@
+name: E64 Wave2 Agent3 exact 2-port and 3-port bounds
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  exact-bounds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: general-2port-24
+            n: 24
+            ports: 2
+            trifree: 0
+            split: 12
+          - name: trifree-2port-26
+            n: 26
+            ports: 2
+            trifree: 1
+            split: 12
+          - name: trifree-3port-23
+            n: 23
+            ports: 3
+            trifree: 1
+            split: 12
+          - name: general-3port-21
+            n: 21
+            ports: 3
+            trifree: 0
+            split: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and run exact enumerator
+        run: |
+          mkdir -p out
+          g++ -O3 -fopenmp -std=c++17 jobs/erdos64-wave2-agent3-exact-bounds/enum_gadgets.cpp -o enum_gadgets
+          ./enum_gadgets single ${{ matrix.n }} ${{ matrix.ports }} ${{ matrix.trifree }} ${{ matrix.split }} | tee out/${{ matrix.name }}.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos64-wave2-agent3-${{ matrix.name }}
+          path: out/
+          retention-days: 90
