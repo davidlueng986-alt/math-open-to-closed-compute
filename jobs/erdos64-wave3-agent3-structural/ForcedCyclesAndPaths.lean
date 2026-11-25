@@ -102,7 +102,7 @@ theorem cycle_of_path_and_apex {G : SimpleGraph V} {u a b : V}
 theorem dyadic_path_of_identify_erase {G : SimpleGraph V} {x y u : V}
     (hxy : x ≠ y) (huy : u ≠ y) (hfree : ¬ HasPower G)
     (hpow : HasPower (identify G x y \ SimpleGraph.edge (⟨x, hxy⟩ : {v : V // v ≠ y}) ⟨u, huy⟩)) :
-    ∃ (k : ℕ) (a : V) (hxa : G.Adj x a) (p : G.Walk x y),
+    ∃ (k : ℕ) (a : V) (_hxa : G.Adj x a) (p : G.Walk x y),
       2 ≤ k ∧ a ≠ u ∧ p.IsPath ∧ p.length = 2 ^ k ∧
       s(x, a) ∈ p.edges ∧ s(x, u) ∉ p.edges := by
   classical
@@ -192,7 +192,7 @@ theorem dyadic_path_of_identify_erase {G : SimpleGraph V} {x y u : V}
         have mkPath : ∀ {z₁ z₂ : V} (hz₁u : z₁ ≠ u) (hxz₁ : G.Adj x z₁) (hz₂y : G.Adj z₂ y)
             (w : G.Walk z₁ z₂), w.IsPath → w.length + 2 = 2 ^ k →
             x ∉ w.support → y ∉ w.support →
-            ∃ (k : ℕ) (a : V) (hxa : G.Adj x a) (p : G.Walk x y),
+            ∃ (k : ℕ) (a : V) (_hxa : G.Adj x a) (p : G.Walk x y),
               2 ≤ k ∧ a ≠ u ∧ p.IsPath ∧ p.length = 2 ^ k ∧
               s(x, a) ∈ p.edges ∧ s(x, u) ∉ p.edges := by
           intro z₁ z₂ hz₁u hxz₁ hz₂y w hw hwlen hxw hyw
