@@ -87,9 +87,8 @@ theorem c4_free_sum_choose_two_le {W : Type u} [Fintype W] [DecidableEq W]
     apply Finset.sum_congr rfl; intro a _
     rw [Finset.sum_comm]
     apply Finset.sum_congr rfl; intro b _
-    by_cases hab : a ≠ b
-    · rw [if_pos hab]
-      have hterm : ∀ u : W, (if a ≠ b ∧ H.Adj u a ∧ H.Adj u b then (1 : ℕ) else 0) =
+    split_ifs with hab
+    · have hterm : ∀ u : W, (if a ≠ b ∧ H.Adj u a ∧ H.Adj u b then (1 : ℕ) else 0) =
           if H.Adj u a ∧ H.Adj u b then 1 else 0 := fun u => by simp [hab]
       simp_rw [hterm]
       rw [← Finset.sum_filter, Finset.sum_const, smul_eq_mul, mul_one]
@@ -102,9 +101,9 @@ theorem c4_free_sum_choose_two_le {W : Type u} [Fintype W] [DecidableEq W]
         ≤ ∑ a : W, ∑ b : W, (if a ≠ b then 1 else 0) := by
           apply Finset.sum_le_sum; intro a _
           apply Finset.sum_le_sum; intro b _
-          by_cases hab : a ≠ b
-          · rw [if_pos hab, if_pos hab]; exact hc4 a b hab
-          · rw [if_neg hab, if_neg hab]
+          split_ifs with hab
+          · exact hc4 a b hab
+          · exact le_rfl
     _ = ∑ a : W, (Fintype.card W - 1) := by
           apply Finset.sum_congr rfl; intro a _
           rw [← Finset.sum_filter, Finset.sum_const, smul_eq_mul, mul_one]
@@ -208,8 +207,11 @@ private lemma card_edges_delete_vertex {W : Type u} [Fintype W] [DecidableEq W]
     exact hc
   have hsplit : (∑ u : ↑({x : W | x ≠ v} : Set W), H.degree u.1) + H.degree v = ∑ x : W, H.degree x := by
     have h1 : (∑ u : ↑({x : W | x ≠ v} : Set W), H.degree u.1) = ∑ x ∈ Finset.univ.erase v, H.degree x := by
-      simpa using (Finset.sum_subtype (Finset.univ.erase v)
-        (p := fun x : W => x ∈ ({x : W | x ≠ v} : Set W)) (by intro x; simp) (fun x => H.degree x)).symm
+      refine Finset.sum_bij (fun u _ => u.1) ?_ ?_ ?_ ?_
+      · intro u _; exact Finset.mem_erase.mpr ⟨u.2, Finset.mem_univ u.1⟩
+      · intro u1 _ u2 _ h; exact Subtype.ext h
+      · intro x hx; exact ⟨⟨x, (Finset.mem_erase.mp hx).1⟩, Finset.mem_univ _, rfl⟩
+      · intro _ _; rfl
     rw [h1, Finset.sum_erase_add _ _ (Finset.mem_univ v)]
   omega
 
@@ -611,13 +613,18 @@ private lemma noNear_induce {W : Type u} [Fintype W] (H : SimpleGraph W) [Decida
   have hiso : ((H.induce S).induce T) ≃g (H.induce T') :=
     { toEquiv := e, map_rel_iff' := Iff.rfl }
   have hnear' : Near (H.induce T') := by
-    obtain ⟨hge2, w, hw⟩ := hnear
+    obtain ⟨⟨u0, hu0⟩, w, hw⟩ := hnear
+    have hcardT : 2 ≤ Fintype.card T := by
+      have := ((H.induce S).induce T).degree_lt_card_verts u0
+      omega
     have hcard_eq : Fintype.card T' = Fintype.card T := (Fintype.card_congr e).symm
     apply near_of_except (H.induce T') (e w) (by omega)
     intro u hu
     have hdeg_eq : (H.induce T').degree u = ((H.induce S).induce T).degree (e.symm u) := by
-      have := hiso.degree_eq (e.symm u)
-      simpa using this.symm
+      have h1 := hiso.degree_eq (e.symm u)
+      have h2 : hiso (e.symm u) = u := e.apply_symm_apply u
+      rw [h2] at h1
+      exact h1.symm
     rw [hdeg_eq]
     have hne : e.symm u ≠ w := fun h => hu (by rw [← h, e.apply_symm_apply])
     exact hw (e.symm u) hne
@@ -1665,8 +1672,8 @@ theorem class_h_trifree_density_8_11 {V : Type u} [Fintype V] [DecidableEq V]
               have hne2 : hdeg u ≠ 2 := fun h2 =>
                 hJ2_indep y hy u (Finset.mem_filter.mpr ⟨Finset.mem_filter.mpr ⟨Finset.mem_univ u, hu3⟩, h2⟩) hyu
               exact ⟨by omega, hyu⟩
-            · rintro ⟨⟨⟨hu3, _⟩ | ⟨hu3, _⟩⟩, hyu⟩ <;> exact ⟨hyu, by omega⟩
-          omega
+            · rintro ⟨⟨hu3, _⟩ | ⟨hu3, _⟩, hyu⟩ <;> exact ⟨hyu, by omega⟩
+          rw [hsub] at h1; exact h1.symm
     have hswap : (∑ y ∈ J2, ((J0 ∪ J1).filter fun z => G.Adj y z).card) =
         ∑ z ∈ J0 ∪ J1, (J2.filter fun y => G.Adj z y).card := by
       calc ∑ y ∈ J2, ((J0 ∪ J1).filter fun z => G.Adj y z).card
@@ -1678,7 +1685,9 @@ theorem class_h_trifree_density_8_11 {V : Type u} [Fintype V] [DecidableEq V]
             apply Finset.sum_congr rfl; intro y _
             simp only [SimpleGraph.adj_comm]
         _ = _ := by
-            apply Finset.sum_congr rfl; intro z _; rw [Finset.card_eq_sum_ones, Finset.sum_filter]
+            apply Finset.sum_congr rfl; intro z _
+            rw [Finset.card_eq_sum_ones]
+            simp only [J2, Finset.sum_filter]
     have hdisj : Disjoint J0 J1 := by
       rw [Finset.disjoint_left]; intro z hz0 hz1
       have h0 : hdeg z = 0 := (Finset.mem_filter.mp hz0).2
