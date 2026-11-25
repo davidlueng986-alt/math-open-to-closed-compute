@@ -10,17 +10,55 @@ namespace E64Wave3Local
 open SimpleGraph Erdos64Closure E64Core Erdos64Descent E64Wave3ClassH
 universe u
 
+private def rotCycle {W : Type u} [DecidableEq W] {H : SimpleGraph W} {v0 : W}
+    (c : H.Walk v0 v0) (u : W) (hu : u ∈ c.support) : H.Walk u u :=
+  (c.dropUntil u hu).append (c.takeUntil u hu)
+
+private lemma rotCycle_length {W : Type u} [DecidableEq W] {H : SimpleGraph W} {v0 : W}
+    (c : H.Walk v0 v0) (u : W) (hu : u ∈ c.support) :
+    (rotCycle c u hu).length = c.length := by
+  have hspec := c.take_spec hu
+  have h1 : c.length = (c.takeUntil u hu).length + (c.dropUntil u hu).length := by
+    rw [← Walk.length_append, hspec]
+  simp only [rotCycle, Walk.length_append]
+  omega
+
+private lemma mem_edges_rotCycle {W : Type u} [DecidableEq W] {H : SimpleGraph W} {v0 : W}
+    (c : H.Walk v0 v0) (u : W) (hu : u ∈ c.support) (e : Sym2 W) :
+    e ∈ (rotCycle c u hu).edges ↔ e ∈ c.edges := by
+  have hspec := c.take_spec hu
+  conv_rhs => rw [← hspec]
+  simp only [rotCycle, Walk.edges_append, List.mem_append, or_comm]
+
+private lemma rotCycle_isCycle {W : Type u} [DecidableEq W] {H : SimpleGraph W} {v0 : W}
+    (c : H.Walk v0 v0) (hcyc : c.IsCycle) (hlen3 : 3 ≤ c.length)
+    (u : W) (hu : u ∈ c.support) :
+    (rotCycle c u hu).IsCycle := by
+  have hspec := c.take_spec hu
+  have h1 : c.support.tail = (c.takeUntil u hu).support.tail ++ (c.dropUntil u hu).support.tail := by
+    conv_lhs => rw [← hspec]
+    rw [Walk.support_append, List.tail_append_of_ne_nil (Walk.support_ne_nil _)]
+  have h2 : (rotCycle c u hu).support.tail =
+      (c.dropUntil u hu).support.tail ++ (c.takeUntil u hu).support.tail := by
+    simp only [rotCycle, Walk.support_append, List.tail_append_of_ne_nil (Walk.support_ne_nil _)]
+  have hnd : (rotCycle c u hu).support.tail.Nodup := by
+    rw [h2]
+    have hnd0 := hcyc.support_nodup
+    rw [h1] at hnd0
+    exact (List.perm_append_comm.nodup_iff).mp hnd0
+  exact isCycle_of_support_tail_nodup (rotCycle c u hu) hnd (by rw [rotCycle_length]; exact hlen3)
+
 private lemma path_of_cycle_with_edge {W : Type u} [DecidableEq W]
     {G H : SimpleGraph W} (u v : W) (huv : u ≠ v)
     (hsub : ∀ x y, H.Adj x y → G.Adj x y ∨ s(x, y) = s(u, v))
-    {v0 : W} (c : H.Walk v0 v0) (hcyc : c.IsCycle) (hmem : s(u, v) ∈ c.edges) :
+    {v0 : W} (c : H.Walk v0 v0) (hcyc : c.IsCycle) (hlen3 : 3 ≤ c.length) (hmem : s(u, v) ∈ c.edges) :
     ∃ p : G.Walk u v, p.IsPath ∧ p.length + 1 = c.length := by
   classical
   have humem : u ∈ c.support := Walk.fst_mem_support_of_mem_edges c hmem
-  let c1 := c.rotate humem
-  have hc1 : c1.IsCycle := hcyc.rotate humem
-  have hlen1 : c1.length = c.length := Walk.length_rotate c humem
-  have hmem1 : s(u, v) ∈ c1.edges := (Walk.edges_rotate c humem).mem_iff.mpr hmem
+  let c1 := rotCycle c u humem
+  have hc1 : c1.IsCycle := rotCycle_isCycle c hcyc hlen3 u humem
+  have hlen1 : c1.length = c.length := rotCycle_length c u humem
+  have hmem1 : s(u, v) ∈ c1.edges := (mem_edges_rotCycle c u humem s(u, v)).mpr hmem
   cases hc1_eq : c1 with
   | nil => exact False.elim (hc1.ne_nil hc1_eq)
   | @cons _ w _ huw p1 =>
@@ -126,7 +164,7 @@ private lemma path_of_cycle_with_edge {W : Type u} [DecidableEq W]
 
 /-- Theorem 1 (2-Edge Y-Reduction in Triangle-Free MinimalBad):
     For every degree-3 vertex v with distinct neighbors a, b, c in a triangle-free MinimalBad G,
-    G - v contains a simple a-b path OR a simple b-c path of length 2^k - 1 (k ≥ 2). -/
+    G - v contains a simple a-b path OR a simple b-c path of length 2^k - 1 (k ≥ 2). -/\
 theorem trifree_two_edge_y_reduction {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (htf : ∀ x y z : V, G.Adj x y → G.Adj y z → ¬G.Adj x z)
@@ -170,15 +208,15 @@ theorem trifree_two_edge_y_reduction {V : Type u} [Fintype V] [DecidableEq V]
     by_cases hua : u = a'
     · subst hua
       have hda := degree_add_new_edge_left G0 a' b' hab' hnab
-      simp [hva.symm] at hd0; omega
+      simp [a', hva.symm] at hd0; omega
     by_cases hub : u = b'
     · subst hub
       have hdb := degree_add_new_edge_right G0 a' b' hab' hnab
-      simp [hvb.symm] at hd0; omega
+      simp [b', hvb.symm] at hd0; omega
     by_cases huc : u = c'
     · subst huc
       have hdc := degree_add_new_edge_right H1 b' c' hbc' hnab_H1
-      simp [hvc.symm] at hd0; omega
+      simp [c', hvc.symm] at hd0; omega
     have hnv : ¬G.Adj u.1 v := by
       intro huv
       have hsub : ({a, b, c} : Finset V) ⊆ G.neighborFinset v := by
@@ -200,11 +238,13 @@ theorem trifree_two_edge_y_reduction {V : Type u} [Fintype V] [DecidableEq V]
     simp [hnv] at hd0; omega
   have hWlt : Fintype.card Sv < Fintype.card V := by
     rw [Fintype.card_subtype, show (Finset.univ.filter fun x : V => x ∈ Sv) = Finset.univ.erase v by ext x; simp [Sv]]
-    have := Finset.card_erase_add_one (Finset.mem_univ v); omega
+    have hce := Finset.card_erase_add_one (Finset.mem_univ v)
+    rw [Finset.card_univ] at hce; omega
   have hWge2 : 2 ≤ Fintype.card Sv := by
     have hVge4 : 4 ≤ Fintype.card V := by have := G.degree_lt_card_verts v; omega
     rw [Fintype.card_subtype, show (Finset.univ.filter fun x : V => x ∈ Sv) = Finset.univ.erase v by ext x; simp [Sv]]
-    have := Finset.card_erase_add_one (Finset.mem_univ v); omega
+    have hce := Finset.card_erase_add_one (Finset.mem_univ v)
+    rw [Finset.card_univ] at hce; omega
   have hnear : Near H := by
     obtain ⟨_, w, hw⟩ := hm.1
     by_cases hwv : w = v
@@ -217,11 +257,11 @@ theorem trifree_two_edge_y_reduction {V : Type u} [Fintype V] [DecidableEq V]
   by_cases h1 : s(a', b') ∈ cyc.edges
   · by_cases h2 : s(b', c') ∈ cyc.edges
     · have hbmem : b' ∈ cyc.support := Walk.snd_mem_support_of_mem_edges cyc h1
-      let cyc1 := cyc.rotate hbmem
-      have hcyc1 : cyc1.IsCycle := hcyc.rotate hbmem
-      have hlen1 : cyc1.length = 2 ^ k := (Walk.length_rotate cyc hbmem).trans hlen
-      have h1' : s(a', b') ∈ cyc1.edges := (Walk.edges_rotate cyc hbmem).mem_iff.mpr h1
-      have h2' : s(b', c') ∈ cyc1.edges := (Walk.edges_rotate cyc hbmem).mem_iff.mpr h2
+      let cyc1 := rotCycle cyc b' hbmem
+      have hcyc1 : cyc1.IsCycle := rotCycle_isCycle cyc hcyc (by omega) b' hbmem
+      have hlen1 : cyc1.length = 2 ^ k := (rotCycle_length cyc b' hbmem).trans hlen
+      have h1' : s(a', b') ∈ cyc1.edges := (mem_edges_rotCycle cyc b' hbmem s(a', b')).mpr h1
+      have h2' : s(b', c') ∈ cyc1.edges := (mem_edges_rotCycle cyc b' hbmem s(b', c')).mpr h2
       cases hceq : cyc1 with
       | nil => exact False.elim (hcyc1.ne_nil hceq)
       | @cons _ u1 _ hbu1 p1 =>
@@ -340,9 +380,10 @@ theorem trifree_two_edge_y_reduction {V : Type u} [Fintype V] [DecidableEq V]
             · exact False.elim (h2 he)
             · exact False.elim (h2 (Sym2.eq_swap ▸ he))
       let cycH1 := cyc.transfer H1 htrans1
+      have hlenH1 : cycH1.length = 2 ^ k := by rw [Walk.length_transfer]; exact hlen
       obtain ⟨p, hp, hplen⟩ := path_of_cycle_with_edge a' b' hab' hsub cycH1 (hcyc.transfer htrans1)
-        (by simpa [cycH1] using h1)
-      exact ⟨k, hk, Or.inl ⟨p, hp, by simpa [cycH1, hlen] using hplen⟩⟩
+        (by omega) (by simpa [cycH1] using h1)
+      exact ⟨k, hk, Or.inl ⟨p, hp, by omega⟩⟩
   · by_cases h2 : s(b', c') ∈ cyc.edges
     · let H2 := G0 ⊔ SimpleGraph.edge b' c'
       have hsub : ∀ x y, H2.Adj x y → G0.Adj x y ∨ s(x, y) = s(b', c') := by
@@ -365,9 +406,10 @@ theorem trifree_two_edge_y_reduction {V : Type u} [Fintype V] [DecidableEq V]
               · exact False.elim (h1 (Sym2.eq_swap ▸ he))
           · exact (SimpleGraph.sup_adj G0 (SimpleGraph.edge b' c') x y).mpr (Or.inr he2)
       let cycH2 := cyc.transfer H2 htrans2
+      have hlenH2 : cycH2.length = 2 ^ k := by rw [Walk.length_transfer]; exact hlen
       obtain ⟨p, hp, hplen⟩ := path_of_cycle_with_edge b' c' hbc' hsub cycH2 (hcyc.transfer htrans2)
-        (by simpa [cycH2] using h2)
-      exact ⟨k, hk, Or.inr ⟨p, hp, by simpa [cycH2, hlen] using hplen⟩⟩
+        (by omega) (by simpa [cycH2] using h2)
+      exact ⟨k, hk, Or.inr ⟨p, hp, by omega⟩⟩
     · have htrans0 : ∀ e ∈ cyc.edges, e ∈ G0.edgeSet := by
         intro e he
         induction e using Sym2.ind with
@@ -382,11 +424,12 @@ theorem trifree_two_edge_y_reduction {V : Type u} [Fintype V] [DecidableEq V]
           · rcases (SimpleGraph.edge_adj b' c' x y).mp he2 |>.1 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
             · exact False.elim (h2 he)
             · exact False.elim (h2 (Sym2.eq_swap ▸ he))
-      exact False.elim (hm.2.1 (power_induce G _ ⟨k, v0, cyc.transfer G0 htrans0, hk, hcyc.transfer htrans0, by simpa using hlen⟩))
+      exact False.elim (hm.2.1 (power_induce G _ ⟨k, v0, cyc.transfer G0 htrans0, hk, hcyc.transfer htrans0,
+        by rw [Walk.length_transfer]; exact hlen⟩))
 
 /-- Theorem 2 (Class H High-Neighbor Suppression):
     For any degree-3 vertex v adjacent to x ∈ V_{≥4} with other two non-adjacent neighbors a, c,
-    G - v contains a simple a-c path of length 2^k - 1 (k ≥ 2). -/
+    G - v contains a simple a-c path of length 2^k - 1 (k ≥ 2). -/\
 theorem class_h_high_neighbor_suppression {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (v x a c : V) (hv : G.degree v = 3) (hx : 4 ≤ G.degree x)
@@ -411,11 +454,11 @@ theorem class_h_high_neighbor_suppression {V : Type u} [Fintype V] [DecidableEq 
     by_cases hua : u = a'
     · subst hua
       have hda := degree_add_new_edge_left G0 a' c' hac' hnac
-      simp [hva.symm] at hd0; omega
+      simp [a', hva.symm] at hd0; omega
     by_cases huc : u = c'
     · subst huc
       have hdc := degree_add_new_edge_right G0 a' c' hac' hnac
-      simp [hvc.symm] at hd0; omega
+      simp [c', hvc.symm] at hd0; omega
     have hnv : ¬G.Adj u.1 v := by
       intro huv
       have hsub : ({x, a, c} : Finset V) ⊆ G.neighborFinset v := by
@@ -443,11 +486,13 @@ theorem class_h_high_neighbor_suppression {V : Type u} [Fintype V] [DecidableEq 
     simp [hvx.symm] at hd0; omega
   have hWlt : Fintype.card Sv < Fintype.card V := by
     rw [Fintype.card_subtype, show (Finset.univ.filter fun u : V => u ∈ Sv) = Finset.univ.erase v by ext u; simp [Sv]]
-    have := Finset.card_erase_add_one (Finset.mem_univ v); omega
+    have hce := Finset.card_erase_add_one (Finset.mem_univ v)
+    rw [Finset.card_univ] at hce; omega
   have hWge2 : 2 ≤ Fintype.card Sv := by
     have hVge4 : 4 ≤ Fintype.card V := by have := G.degree_lt_card_verts v; omega
     rw [Fintype.card_subtype, show (Finset.univ.filter fun u : V => u ∈ Sv) = Finset.univ.erase v by ext u; simp [Sv]]
-    have := Finset.card_erase_add_one (Finset.mem_univ v); omega
+    have hce := Finset.card_erase_add_one (Finset.mem_univ v)
+    rw [Finset.card_univ] at hce; omega
   have hnear : Near H := by
     obtain ⟨_, w, hw⟩ := hm.1
     by_cases hwv : w = v
@@ -464,6 +509,9 @@ theorem class_h_high_neighbor_suppression {V : Type u} [Fintype V] [DecidableEq 
         rw [this]; exact hdeg_x
       · exact (hw u.1 (fun h => hu (Subtype.ext h))).trans (hdeg_ge u hux)
   obtain ⟨k, v0, cyc, hk, hcyc, hlen⟩ := hm.2.2.1 Sv H hWlt hnear
+  have hpow4 : 4 ≤ 2 ^ k := by
+    calc 4 = 2 ^ 2 := by decide
+      _ ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
   have hsub : ∀ u1 u2, H.Adj u1 u2 → G0.Adj u1 u2 ∨ s(u1, u2) = s(a', c') := by
     intro u1 u2 h
     rcases (SimpleGraph.sup_adj G0 (SimpleGraph.edge a' c') u1 u2).mp h with h0 | he
@@ -480,8 +528,9 @@ theorem class_h_high_neighbor_suppression {V : Type u} [Fintype V] [DecidableEq 
         rcases hsub u1 u2 (cyc.edges_subset_edgeSet he) with h0 | heq
         · exact h0
         · exact False.elim (hnot (heq ▸ he))
-    exact hm.2.1 (power_induce G _ ⟨k, v0, cyc.transfer G0 htrans, hk, hcyc.transfer htrans, by simpa using hlen⟩)
-  obtain ⟨p, hp, hplen⟩ := path_of_cycle_with_edge a' c' hac' hsub cyc hcyc hmem
+    exact hm.2.1 (power_induce G _ ⟨k, v0, cyc.transfer G0 htrans, hk, hcyc.transfer htrans,
+      by rw [Walk.length_transfer]; exact hlen⟩)
+  obtain ⟨p, hp, hplen⟩ := path_of_cycle_with_edge a' c' hac' hsub cyc hcyc (by omega) hmem
   exact ⟨k, p, hk, hp, by omega⟩
 
 private def contractEdge {V : Type u} [DecidableEq V] (G : SimpleGraph V) (y1 y2 : V) :
@@ -505,7 +554,7 @@ private def contractEdge {V : Type u} [DecidableEq V] (G : SimpleGraph V) (y1 y2
 
 /-- Theorem 3 (Class H High-Triangle Edge Contraction, H-T-2 / H-T-3):
     For any triangle {x, y1, y2} with d(x) ≥ 4, d(y1) = d(y2) = 3, and external neighbors z1 of y1
-    and z2 of y2, G - {y1, y2} contains a simple z1-z2 path of length 2^k - 2 (k ≥ 2). -/
+    and z2 of y2, G - {y1, y2} contains a simple z1-z2 path of length 2^k - 2 (k ≥ 2). -/\
 theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (x y1 y2 z1 z2 : V)
@@ -558,7 +607,8 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
   let z2' : Sy2 := ⟨z2, (G.ne_of_adj hy2z2).symm⟩
   have hNu0 : H.neighborFinset u0 = {x', z1', z2'} := by
     ext t
-    simp only [SimpleGraph.mem_neighborFinset, Finset.mem_insert, Finset.mem_singleton, H, contractEdge, u0]
+    rw [SimpleGraph.mem_neighborFinset]
+    simp only [Finset.mem_insert, Finset.mem_singleton, H, contractEdge, u0, ite_true]
     constructor
     · rintro ⟨hne, h1 | h2⟩
       · have hmem : t.1 ∈ ({x, y2, z1} : Finset V) := hNy1 ▸ (G.mem_neighborFinset y1 t.1).mpr h1
@@ -610,10 +660,13 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
             simp only [hv1, ht, ite_false] at hadj
             exact hadj⟩
         invFun := fun t =>
-          if ht : t.1 = y2 then ⟨u0, ⟨hvu, by simp [hv1, u0, ht ▸ t.2]⟩⟩
-          else if ht1 : t.1 = y1 then ⟨u0, ⟨hvu, by simp [hv1, u0, ht1 ▸ t.2]⟩⟩
-          else ⟨⟨t.1, ht⟩, ⟨fun h => ht1 (congrArg Subtype.val h).symm, by
-            simp only [hv1, ht1, ite_false]; exact t.2⟩⟩
+          if ht : t.1 = y2 then
+            ⟨u0, ⟨hvu, by simp only [hv1, u0, ite_false, ite_true]; exact Or.inr (ht ▸ t.2)⟩⟩
+          else if ht1 : t.1 = y1 then
+            ⟨u0, ⟨hvu, by simp only [hv1, u0, ite_false, ite_true]; exact Or.inl (ht1 ▸ t.2)⟩⟩
+          else
+            ⟨⟨t.1, ht⟩, ⟨fun h => G.ne_of_adj t.2 (congrArg Subtype.val h), by
+              simp only [hv1, ht1, ite_false]; exact t.2⟩⟩
         left_inv := by
           intro t
           apply Subtype.ext
@@ -631,13 +684,15 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
             simp [ht, h1, u0]
           · by_cases ht1 : t.1 = y1
             · have h1 : G.Adj v.1 y1 := ht1 ▸ t.2
-              simp [ht, ht1, h1, u0]
+              simp [ht1, h1, u0]
             · simp [ht, ht1] }
     have hc := Fintype.card_congr e
     rwa [SimpleGraph.card_neighborSet_eq_degree, SimpleGraph.card_neighborSet_eq_degree] at hc
   have hdeg_x' : 3 ≤ H.degree x' := by
-    have hsub : insert u0 ((G.neighborFinset x |>.erase y1 |>.erase y2).attach.image
-        fun t => (⟨t.1, (Finset.mem_erase.mp t.2).1⟩ : Sy2)) ⊆ H.neighborFinset x' := by
+    let Sx : Finset V := ((G.neighborFinset x).erase y1).erase y2
+    let fx : {a // a ∈ Sx} → Sy2 := fun t => ⟨t.1, (Finset.mem_erase.mp t.2).1⟩
+    have hfx_inj : Function.Injective fx := fun _ _ h => Subtype.ext (congrArg Subtype.val h)
+    have hsub : insert u0 (Sx.attach.image fx) ⊆ H.neighborFinset x' := by
       intro t ht
       simp only [Finset.mem_insert, Finset.mem_image, Finset.mem_attach, true_and, Subtype.exists] at ht
       rcases ht with rfl | ⟨a, ha, rfl⟩
@@ -647,25 +702,27 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
         have hxa : G.Adj x a := (G.mem_neighborFinset x a).mp (Finset.mem_erase.mp (Finset.mem_erase.mp ha).2).2
         exact (H.mem_neighborFinset x' ⟨a, ha2⟩).mpr ⟨fun h => (G.ne_of_adj hxa) (congrArg Subtype.val h),
           by simp [x', hx_ne_y1, ha1, hxa]⟩
-    have hnot_u0 : u0 ∉ ((G.neighborFinset x |>.erase y1 |>.erase y2).attach.image
-        fun t => (⟨t.1, (Finset.mem_erase.mp t.2).1⟩ : Sy2)) := by
+    have hnot_u0 : u0 ∉ Sx.attach.image fx := by
       simp only [Finset.mem_image, Finset.mem_attach, true_and, Subtype.exists, not_exists]
       intro a ha heq
       have ha1 : a ≠ y1 := (Finset.mem_erase.mp (Finset.mem_erase.mp ha).2).1
       exact ha1 (congrArg Subtype.val heq)
     have hc := Finset.card_le_card hsub
-    rw [Finset.card_insert_of_notMem hnot_u0, Finset.card_image_of_injective _ (fun _ _ h => Subtype.ext (congrArg Subtype.val h)),
-      Finset.card_attach, Finset.card_erase_of_mem (Finset.mem_erase.mpr ⟨hy1_ne_y2.symm, (G.mem_neighborFinset x y2).mpr hxy2⟩),
+    rw [Finset.card_insert_of_notMem hnot_u0, Finset.card_image_of_injective Sx.attach hfx_inj,
+      Finset.card_attach,
+      Finset.card_erase_of_mem (Finset.mem_erase.mpr ⟨hy1_ne_y2.symm, (G.mem_neighborFinset x y2).mpr hxy2⟩),
       Finset.card_erase_of_mem ((G.mem_neighborFinset x y1).mpr hxy1),
       SimpleGraph.card_neighborFinset_eq_degree, SimpleGraph.card_neighborFinset_eq_degree] at hc
     omega
   have hWlt : Fintype.card Sy2 < Fintype.card V := by
     rw [Fintype.card_subtype, show (Finset.univ.filter fun u : V => u ∈ Sy2) = Finset.univ.erase y2 by ext u; simp [Sy2]]
-    have := Finset.card_erase_add_one (Finset.mem_univ y2); omega
+    have hce := Finset.card_erase_add_one (Finset.mem_univ y2)
+    rw [Finset.card_univ] at hce; omega
   have hWge2 : 2 ≤ Fintype.card Sy2 := by
     have hVge4 : 4 ≤ Fintype.card V := by have := G.degree_lt_card_verts x; omega
     rw [Fintype.card_subtype, show (Finset.univ.filter fun u : V => u ∈ Sy2) = Finset.univ.erase y2 by ext u; simp [Sy2]]
-    have := Finset.card_erase_add_one (Finset.mem_univ y2); omega
+    have hce := Finset.card_erase_add_one (Finset.mem_univ y2)
+    rw [Finset.card_univ] at hce; omega
   have hnear : Near H := by
     obtain ⟨_, w, hw⟩ := hm.1
     by_cases hwy2 : w = y2
@@ -699,10 +756,10 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
         simp only [ha1, hb1, ite_false] at hadj
         exact hadj
     exact hm.2.1 (power_induce G _ ⟨k, v0, cyc.transfer (G.induce Sy2) htrans, hk,
-      hcyc.transfer htrans, by simpa using hlen⟩)
-  let c1 := cyc.rotate hu0_mem
-  have hc1 : c1.IsCycle := hcyc.rotate hu0_mem
-  have hlen1 : c1.length = 2 ^ k := (Walk.length_rotate cyc hu0_mem).trans hlen
+      hcyc.transfer htrans, by rw [Walk.length_transfer]; exact hlen⟩)
+  let c1 := rotCycle cyc u0 hu0_mem
+  have hc1 : c1.IsCycle := rotCycle_isCycle cyc hcyc (by omega) u0 hu0_mem
+  have hlen1 : c1.length = 2 ^ k := (rotCycle_length cyc u0 hu0_mem).trans hlen
   cases hc1_eq : c1 with
   | nil => exact False.elim (hc1.ne_nil hc1_eq)
   | @cons _ a1 _ ha1 p1 =>
@@ -772,7 +829,7 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
         | nil => simp [hqeq] at hq_len; omega
         | cons hstep qrest =>
           rw [hqeq, Walk.support_cons, List.nodup_cons] at hq_nodup
-          exact hq_nodup.1 Walk.end_mem_support
+          exact hq_nodup.1 qrest.end_mem_support
       rcases ha1_mem with rfl | rfl | rfl <;> rcases ha2_mem with rfl | rfl | rfl
       · exact False.elim (ha1_ne_a2 rfl)
       · exact False.elim (hno_close y1 hy1_not_qG hxy1.symm hy1z1.symm)

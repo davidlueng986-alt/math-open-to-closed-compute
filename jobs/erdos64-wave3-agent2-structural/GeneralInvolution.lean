@@ -38,7 +38,7 @@ lemma mkOrb_eq_iff {V : Type u} {σ : V → V} (hinv : ∀ v, σ (σ v) = v) (u 
     exact Quotient.exact hq
   · rintro (rfl | rfl)
     · rfl
-    · exact (Quot.sound (Or.inr rfl)).symm
+    · exact @Quot.sound V (invRel σ) (σ v) v (Or.inr rfl)
 
 def invQuot {V : Type u} (G : SimpleGraph V) (σ : V → V) : SimpleGraph (InvOrb σ) where
   Adj a b := a ≠ b ∧ ∃ u v : V, mkOrb σ u = a ∧ mkOrb σ v = b ∧ G.Adj u v
@@ -53,7 +53,7 @@ lemma invQuot_lift_step {V : Type u} {G : SimpleGraph V} {σ : V → V}
   have hrel := (mkOrb_eq_iff hinv u u').mp (hu.trans hu'.symm)
   rcases hrel with rfl | rfl
   · exact ⟨v', hv', hadj⟩
-  · exact ⟨σ v', (Quot.sound (Or.inr rfl)).symm.trans hv', hauto u' v' hadj⟩
+  · exact ⟨σ v', (@Quot.sound V (invRel σ) (σ v') v' (Or.inr rfl)).trans hv', hauto u' v' hadj⟩
 
 lemma invQuot_lift_walk {V : Type u} {G : SimpleGraph V} {σ : V → V}
     (hinv : ∀ v, σ (σ v) = v) (hauto : ∀ u v, G.Adj u v → G.Adj (σ u) (σ v))
@@ -76,9 +76,40 @@ private lemma copy_support_eq {V : Type u} {G : SimpleGraph V} {u v u' v' : V}
     (p : G.Walk u v) (hu : u = u') (hv : v = v') : (p.copy hu hv).support = p.support := by
   subst hu; subst hv; rfl
 
+private def rotCycle {W : Type u} [DecidableEq W] {H : SimpleGraph W} {v0 : W}
+    (c : H.Walk v0 v0) (u : W) (hu : u ∈ c.support) : H.Walk u u :=
+  (c.dropUntil u hu).append (c.takeUntil u hu)
+
+private lemma rotCycle_length {W : Type u} [DecidableEq W] {H : SimpleGraph W} {v0 : W}
+    (c : H.Walk v0 v0) (u : W) (hu : u ∈ c.support) :
+    (rotCycle c u hu).length = c.length := by
+  have hspec := c.take_spec hu
+  have h1 : c.length = (c.takeUntil u hu).length + (c.dropUntil u hu).length := by
+    rw [← Walk.length_append, hspec]
+  simp only [rotCycle, Walk.length_append]
+  omega
+
+private lemma rotCycle_isCycle {W : Type u} [DecidableEq W] {H : SimpleGraph W} {v0 : W}
+    (c : H.Walk v0 v0) (hcyc : c.IsCycle) (hlen3 : 3 ≤ c.length)
+    (u : W) (hu : u ∈ c.support) :
+    (rotCycle c u hu).IsCycle := by
+  have hspec := c.take_spec hu
+  have h1 : c.support.tail = (c.takeUntil u hu).support.tail ++ (c.dropUntil u hu).support.tail := by
+    conv_lhs => rw [← hspec]
+    rw [Walk.support_append, List.tail_append_of_ne_nil (Walk.support_ne_nil _)]
+  have h2 : (rotCycle c u hu).support.tail =
+      (c.dropUntil u hu).support.tail ++ (c.takeUntil u hu).support.tail := by
+    simp only [rotCycle, Walk.support_append, List.tail_append_of_ne_nil (Walk.support_ne_nil _)]
+  have hnd : (rotCycle c u hu).support.tail.Nodup := by
+    rw [h2]
+    have hnd0 := hcyc.support_nodup
+    rw [h1] at hnd0
+    exact (List.perm_append_comm.nodup_iff).mp hnd0
+  exact isCycle_of_support_tail_nodup (rotCycle c u hu) hnd (by rw [rotCycle_length]; exact hlen3)
+
 /-- Generalized Quotient Cycle Lifting:
     For ANY involution σ ∈ Aut(G) (with or without fixed points!),
-    HasPower (invQuot G σ) → HasPower G. -/
+    HasPower (invQuot G σ) → HasPower G. -/\
 theorem hasPower_of_general_invQuot {V : Type u} {G : SimpleGraph V} {σ : V → V}
     (hinv : ∀ v, σ (σ v) = v) (hauto : ∀ u v, G.Adj u v → G.Adj (σ u) (σ v)) :
     HasPower (invQuot G σ) → HasPower G := by
@@ -89,9 +120,9 @@ theorem hasPower_of_general_invQuot {V : Type u} {G : SimpleGraph V} {σ : V →
       _ ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
   by_cases hfix : ∃ z : V, mkOrb σ z ∈ c.support ∧ σ z = z
   · obtain ⟨z, hzmem, hzfix⟩ := hfix
-    let c' := c.rotate hzmem
-    have hc' : c'.IsCycle := hcyc.rotate hzmem
-    have hlen' : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
+    let c' := rotCycle c (mkOrb σ z) hzmem
+    have hc' : c'.IsCycle := rotCycle_isCycle c hcyc (by omega) (mkOrb σ z) hzmem
+    have hlen' : c'.length = 2 ^ k := (rotCycle_length c (mkOrb σ z) hzmem).trans hlen
     obtain ⟨u1, p, hu1, hplen, hpsupp⟩ := invQuot_lift_walk hinv hauto c' z rfl
     have hu1_eq : u1 = z := by
       rcases (mkOrb_eq_iff hinv u1 z).mp hu1 with h | h
@@ -100,13 +131,16 @@ theorem hasPower_of_general_invQuot {V : Type u} {G : SimpleGraph V} {σ : V →
     let q : G.Walk z z := p.copy rfl hu1_eq
     have hqlen : q.length = 2 ^ k := (copy_length_eq p rfl hu1_eq).trans (hplen.trans hlen')
     have hqtail : q.support.tail.map (mkOrb σ) = c'.support.tail := by
-      rw [copy_support_eq, ← List.map_tail, hpsupp]
+      have h := congrArg List.tail hpsupp
+      rw [copy_support_eq]
+      simpa [List.map_tail] using h
     have hqnodup : q.support.tail.Nodup := List.Nodup.of_map (mkOrb σ) (hqtail.symm ▸ hc'.support_nodup)
     exact ⟨k, z, q, hk, isCycle_of_support_tail_nodup q hqnodup (by omega), hqlen⟩
   · obtain ⟨u0, hu0⟩ := Quot.exists_rep a0
     obtain ⟨u1, p1, hu1, hp1len, hp1supp⟩ := invQuot_lift_walk hinv hauto c u0 hu0
     have htail1 : p1.support.tail.map (mkOrb σ) = c.support.tail := by
-      rw [← List.map_tail, hp1supp]
+      have h := congrArg List.tail hp1supp
+      simpa [List.map_tail] using h
     have hnodup1 : p1.support.tail.Nodup := List.Nodup.of_map (mkOrb σ) (htail1.symm ▸ hcyc.support_nodup)
     rcases (mkOrb_eq_iff hinv u1 u0).mp (hu1.trans hu0.symm) with hsame | hflip
     · let q : G.Walk u0 u0 := p1.copy rfl hsame
@@ -127,7 +161,8 @@ theorem hasPower_of_general_invQuot {V : Type u} {G : SimpleGraph V} {σ : V →
       have hp2supp : p2.support = p1.support.map σ := by
         rw [copy_support_eq]; exact Walk.support_map f p1
       have hp2tail : p2.support.tail = p1.support.tail.map σ := by
-        rw [hp2supp, ← List.map_tail]
+        have h := congrArg List.tail hp2supp
+        simpa [List.map_tail] using h
       have hqtail : q.support.tail = p1.support.tail ++ p2.support.tail := by
         simp only [q, Walk.support_append, List.tail_append_of_ne_nil (Walk.support_ne_nil p1)]
       have hnodup2 : p2.support.tail.Nodup := by
@@ -147,7 +182,7 @@ theorem hasPower_of_general_invQuot {V : Type u} {G : SimpleGraph V} {σ : V →
         exact hfix ⟨y, hmem_c, hsy_eq_y⟩
       have hqnodup : q.support.tail.Nodup := by
         rw [hqtail]
-        exact List.nodup_append.mpr ⟨hnodup1, hnodup2, hdisj⟩
+        exact List.nodup_append.mpr ⟨hnodup1, hnodup2, fun a ha b hb heq => hdisj ha (heq ▸ hb)⟩
       have hqge3 : 3 ≤ q.length := by rw [hqlen, pow_succ]; omega
       exact ⟨k + 1, u0, q, by omega, isCycle_of_support_tail_nodup q hqnodup hqge3, hqlen⟩
 
@@ -191,13 +226,14 @@ private lemma invQuot_degree_two_orbit {V : Type u} [Fintype V] [DecidableEq V]
       obtain ⟨v, hv, huv⟩ := invQuot_lift_step hinv hauto hab u rfl
       refine ⟨v, ⟨?_, huv⟩, hv⟩
       intro hveq
-      exact hab.1 (hv.symm.trans ((mkOrb_eq_iff hinv v u).mpr (Or.inr (by rw [hveq, hinv]))))
+      have h1 : mkOrb σ u = mkOrb σ v := (mkOrb_eq_iff hinv u v).mpr (Or.inr (by rw [hveq, hinv]))
+      exact hab.1 (h1.trans hv)
   rw [← SimpleGraph.card_neighborFinset_eq_degree, ← himg,
     Finset.card_image_of_injOn (fun x hx y hy => hnb_inj x hx y hy)]
-  by_cases hself : G.Adj u (σ u)
-  · rw [if_pos hself, Finset.card_erase_add_one ((G.mem_neighborFinset u (σ u)).mpr hself),
+  split_ifs with hself
+  · rw [Finset.card_erase_add_one ((G.mem_neighborFinset u (σ u)).mpr hself),
       SimpleGraph.card_neighborFinset_eq_degree]
-  · rw [if_neg hself, add_zero, Finset.erase_eq_of_notMem (fun h => hself ((G.mem_neighborFinset u (σ u)).mp h)),
+  · rw [add_zero, Finset.erase_eq_of_notMem (fun h => hself ((G.mem_neighborFinset u (σ u)).mp h)),
       SimpleGraph.card_neighborFinset_eq_degree]
 
 private lemma invQuot_degree_interior_fixed {V : Type u} [Fintype V] [DecidableEq V]
@@ -243,7 +279,7 @@ def isDefectOrbit {V : Type u} (G : SimpleGraph V) (σ : V → V) (a : InvOrb σ
 
 /-- Cubic General Involution Bound:
     In ANY cubic MinimalBad G, EVERY nontrivial involution σ ∈ Aut(G)
-    has at least 2 defect orbits! -/
+    has at least 2 defect orbits! -/\
 theorem cubic_involution_defect_ge_two {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (hcubic : ∀ v : V, G.degree v = 3)
@@ -260,6 +296,8 @@ theorem cubic_involution_defect_ge_two {V : Type u} [Fintype V] [DecidableEq V]
   have hnondef : ∀ a : InvOrb σ, ¬isDefectOrbit G σ a → 3 ≤ (invQuot G σ).degree a := by
     intro a hnd
     obtain ⟨u, rfl⟩ := Quot.exists_rep a
+    change 3 ≤ (invQuot G σ).degree (mkOrb σ u)
+    change ¬isDefectOrbit G σ (mkOrb σ u) at hnd
     by_cases hfix : σ u = u
     · have hall : ∀ x, G.Adj u x → σ x = x := by
         intro x hux
@@ -281,12 +319,12 @@ theorem cubic_involution_defect_ge_two {V : Type u} [Fintype V] [DecidableEq V]
           intro x hx
           rcases (mkOrb_eq_iff hinv x x0).mp (Finset.mem_filter.mp hx).2 with rfl | rfl <;> simp
         exact (Finset.card_le_card hsub).trans Finset.card_le_two
-      calc Fintype.card V = ∑ a : InvOrb σ, (Finset.univ.filter fun x : V => mkOrb σ x = a).card := by
-            rw [← Finset.card_biUnion]
-            · congr 1; ext x; simp
-            · intro a _ b _ hab
-              rw [Finset.disjoint_left]; intro x hxa hxb
-              exact hab ((Finset.mem_filter.mp hxa).2.symm.trans (Finset.mem_filter.mp hxb).2)
+      have hsum_fib : (Finset.univ : Finset V).card =
+          ∑ a ∈ (Finset.univ : Finset (InvOrb σ)), (Finset.univ.filter fun x : V => mkOrb σ x = a).card :=
+        Finset.card_eq_sum_card_fiberwise (f := mkOrb σ) (s := Finset.univ) (t := Finset.univ)
+          (fun _ _ => Finset.mem_univ _)
+      calc Fintype.card V = (Finset.univ : Finset V).card := Finset.card_univ.symm
+        _ = ∑ a : InvOrb σ, (Finset.univ.filter fun x : V => mkOrb σ x = a).card := hsum_fib
         _ ≤ ∑ _a : InvOrb σ, 2 := Finset.sum_le_sum fun a _ => hfib a
         _ = 2 * Fintype.card (InvOrb σ) := by rw [Finset.sum_const, Finset.card_univ, smul_eq_mul]; omega
     omega
@@ -304,7 +342,7 @@ theorem cubic_involution_defect_ge_two {V : Type u} [Fintype V] [DecidableEq V]
 
 /-- First symmetry exclusion for all 8 one-defect (S and H) leaves:
     No one-defect MinimalBad G admits a nontrivial involution σ fixing only w
-    with no σ-invariant edges. -/
+    with no σ-invariant edges. -/\
 theorem one_defect_no_symmetric_involution {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (w : V) (hw : G.degree w = 2) (hrest : ∀ v : V, v ≠ w → 3 ≤ G.degree v)
@@ -312,6 +350,7 @@ theorem one_defect_no_symmetric_involution {V : Type u} [Fintype V] [DecidableEq
     (hfix_only_w : ∀ v : V, σ v = v ↔ v = w)
     (hno_inv_edge : ∀ u : V, ¬G.Adj u (σ u)) : False := by
   classical
+  haveI : Fintype (InvOrb σ) := Fintype.ofSurjective (mkOrb σ) Quot.exists_rep
   have hc4 := minimal_bad_noC4 G hm
   obtain ⟨b1, hwb1⟩ := (G.degree_pos_iff_exists_adj w).mp (by omega : 0 < G.degree w)
   have hb1_ne_w : b1 ≠ w := (G.ne_of_adj hwb1).symm
