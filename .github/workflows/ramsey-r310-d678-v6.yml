@@ -1,0 +1,87 @@
+name: Ramsey R310 D678 v6 exact profile and nested dual pruning
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [jobs/ramsey-r310-d678-v6/launch.txt]
+permissions:
+  contents: read
+  packages: read
+  actions: read
+defaults:
+  run:
+    shell: bash
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          python -m pip install --quiet scipy
+          mkdir -p out
+          OPENBLAS_NUM_THREADS=1 python jobs/ramsey-r310-d678-v6/profile.py --out out/profile_cert.json
+          python jobs/ramsey-r310-d678-v6/profile.py --out out/profile_cert.json --verify
+          python jobs/ramsey-r310-d678-v6/branch.py --cert out/profile_cert.json --out out/branch_plan.json
+          python - <<'PY'
+          import json
+          a=json.load(open('out/branch_plan.json'))
+          assert len(a)==48
+          print('Empty bands:',[(x['d'],x['q'],x['band']) for x in a if not x['new_count']])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: D678-v6-profile
+          path: out/
+          retention-days: 30
+  pilot:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include:
+          - {d: 6, q: 6, band: 1}
+          - {d: 6, q: 7, band: 1}
+          - {d: 6, q: 8, band: 0}
+          - {d: 6, q: 9, band: 0}
+          - {d: 7, q: 7, band: 0}
+          - {d: 7, q: 8, band: 0}
+          - {d: 8, q: 7, band: 0}
+          - {d: 8, q: 8, band: 0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: D678-v6-profile
+          path: plan/
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45681429646'
+          name: D${{ matrix.d }}-N${{ matrix.q }}-v3
+          path: reuse-v3/
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45675361761'
+          name: D${{ matrix.d }}-N${{ matrix.q }}
+          path: reuse-v2/
+      - run: |
+          python3 jobs/ramsey-r310-d678-v6/nested.py --d ${{ matrix.d }} --q ${{ matrix.q }} --band ${{ matrix.band }} --cert plan/profile_cert.json --plan plan/branch_plan.json --reuse reuse-v3/cuts.jsonl --reuse reuse-v2/cuts.jsonl --out out --seconds 3000 --proof-seconds 480
+          if [ -f out/witness.txt ]; then python3 jobs/ramsey-r310-wave1/verify.py out/witness.txt | tee out/witness-check.json; python3 -c 'import json; assert json.load(open("out/witness-check.json"))["closure_witness"]'; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: D${{ matrix.d }}-N${{ matrix.q }}-B${{ matrix.band }}-v6
+          path: out/
+          retention-days: 30
