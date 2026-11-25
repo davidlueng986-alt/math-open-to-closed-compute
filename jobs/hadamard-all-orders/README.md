@@ -11,8 +11,8 @@ Let $H(n)$ mean that $n$ mutually orthogonal sign columns of length $n$ exist, a
 | 路線 | 已得到甚麼 | 仍缺甚麼 |
 | --- | --- | --- |
 | 已知構造的覆蓋 | 直接 Paley、Scarpis–Đoković，以及下文的長度 3 乘積覆蓋明列的無限族 | 覆蓋剩餘全部奇數乘數的定理 |
-| 外層設計與精確內欄 | 全寬同餘解及有理延伸。2396 的三交集模型只餘兩組，兩組皆須非交換。規範化的兩方陣疊接至少須加五欄，兩組候選上半部已排除 | 統一構造外層設計，且在共同證書上滿足整數內欄條件。[近互補](NEAR_COMPLEMENT.md) · [疊接](EXTERIOR_STACKS.md) |
-| 直接構造近滿矩陣 | 所有奇數乘數的混合奇偶缺 8 欄可完成；缺 9 至 11 欄可完成或到達缺 8 欄。2396 的缺 12 欄由至多兩個整幺模超格精確判定。完整補欄等價於某個仿射格的最短向量達到門檻 | 統一取得近滿矩陣，且解決無法直接完成的所有格型。[整幺模判準](OVERLATTICES.md) |
+| 外層設計與精確內欄 | 全寬同餘解及有理延伸。2396 的三交集模型只餘兩組，兩組皆須非交換。規範化的兩方陣疊接至少須加五欄。重配後的五欄證書同時實現精確行欄平衡及全部 Gram 條件模八 | 五欄證書須將全部內積同時提升至整數零。全階仍須統一構造外層設計，並在共同證書上滿足整數內欄條件。[交集限制](R_SYMMETRY.md) · [聯合同餘](EXTERIOR_MOD8.md) |
+| 直接構造近滿矩陣 | 所有奇數乘數的混合奇偶缺 8 欄可完成；缺 9 至 11 欄可完成或到達缺 8 欄。2396 的缺 12 欄由至多兩個整幺模超格精確判定。完整補欄等價於某個仿射格的最短向量達到門檻。缺 12 欄的 $D_{12}^{+}$ 模型可同時滿足兩個 Gram 等式模八 | 統一取得近滿矩陣，且解決無法直接完成的格型。缺 12 欄的模八模型還欠精確符號補空間。[整幺模判準](OVERLATTICES.md) · [缺 12 欄模八模型](MOD8_DEFECT12.md) |
 | 2396 階的專用構造 | 原始循環證書、邊框證書，以及長度 599 T 序列的支撐、模四符號與奇係數逐位提升 | 任一條路線取得完整二元矩陣；單階成果的構造若可推廣再接回全題。[T 序列](T599.md) |
 
 ## What is known about the distance
@@ -88,7 +88,7 @@ $$\sum_{C\ne B}\big((2|B\cap C|-t)^2-1\big)=(t-1)(t-3).$$
 
 交集組合 $(299,300,598)$ 亦不可能。令 $k=299$，$F$ 是交集 $k+1$ 的圖，$M$ 是交集 $2k$ 所給的完美配對。從 $P=(k+1)I+kJ+F+kM$ 的特徵值，得 $F^2+F=k(I+J-FM-MF-M)$。非對角各項非負，迫使兩個配對之間至多一條 $F$ 邊。配對的總度數恰為其他配對的數目，故恰有一條。在每個配對標記兩個端點為 $\pm1$，令 $T_{ij}$ 記錄從配對 $i$ 到 $j$ 的唯一邊在 $i$ 的端點符號，對角線為零。上式再給兩對端點之間的四個共同鄰居數 $k-1,0,0,k$，其中 $k-1$ 在有邊的位置。因此 $T^{\mathsf T}T=(4k+1)I-J$。由 $TT^{\mathsf T}$ 的對角線全為 $4k$，其一維零空間可取符號向量。以該向量和全一向量作邊框，得整數 $C$ 滿足 $CC^{\mathsf T}=1197I_{1198}$。
 
-模 7 時，$\ker C=\operatorname{im}C^{\mathsf T}$。若 $Cx\equiv0$，取整數代表並令 $y=Cx/7$，便有 $C^{\mathsf T}y=171x$，而 $171$ 在模 7 可逆。反向由 $CC^{\mathsf T}\equiv0$ 得出。於是標準點積有 $599$ 維全等向子空間。取其基底及點積對偶向量作一組基，Gram 行列式成為 $(-1)^{599}$，在 $\mathbb F_7$ 不是平方。但標準點積的 Gram 行列式經換基必保持平方類，矛盾。矩方程及上述限制留下 $(1,299,300)$、$(286,299,303)$、$(286,299,309)$。再按唯一伙伴分解成 Euler 多重圖，循環與整數 Gram 條件排除 $(1,299,300)$ 的全部分支。因此恰三種交集只餘 $(286,299,303)$ 和 $(286,299,309)$，兩者的可實現性仍待證。一般設計也可能有四種以上交集。[矩方程及數值核查](r_intersections.py) · [近互補譜的完整排除](NEAR_COMPLEMENT.md)
+模 7 時，$\ker C=\operatorname{im}C^{\mathsf T}$。若 $Cx\equiv0$，取整數代表並令 $y=Cx/7$，便有 $C^{\mathsf T}y=171x$，而 $171$ 在模 7 可逆。反向由 $CC^{\mathsf T}\equiv0$ 得出。於是標準點積有 $599$ 維全等向子空間。取其基底及點積對偶向量作一組基，Gram 行列式成為 $(-1)^{599}$，在 $\mathbb F_7$ 不是平方。但標準點積的 Gram 行列式經換基必保持平方類，矛盾。矩方程及上述限制留下 $(1,299,300)$、$(286,299,303)$、$(286,299,309)$。再按唯一伙伴分解成 Euler 多重圖，循環與整數 Gram 條件排除 $(1,299,300)$ 的全部分支。因此恰三種交集只餘 $(286,299,303)$ 和 $(286,299,309)$，兩者的可實現性仍待證。兩組都排除了固定零點或兩點的點對合。一般設計也可能有四種以上交集。[矩方程及數值核查](r_intersections.py) · [近互補譜的完整排除](NEAR_COMPLEMENT.md) · [對合與四區塊限制](R_SYMMETRY.md)
 
 **素數乘數的交集圖不能全交換。** 若交集為 $w$ 的整數鄰接矩陣 $A_w$ 與 $P=YY^{\mathsf T}$ 交換，它便保持 $P$ 唯一的常數特徵空間，故有常數度數 $d_w$。在特徵值 $t$ 的空間，其跡是有理數和代數整數，必為整數。用該空間的投影 $E=(P-(t/2)J)/t$ 計算，
 $$\operatorname{tr}(A_w E)=\frac{(2t-1)d_w(2w-t)}t.$$
@@ -154,6 +154,8 @@ For the $2396\times1196$ witness, the upper block is a full matrix of order $119
 
 另一個明列的對齊提供外層設計的**六欄精確補足問題**。先取 1,192 條正交欄，疊接時特意使指定兩行符號相反。再按每行所缺正號數循環填入六欄，所得 $2396\times1198$ 符號陣的每欄均平衡，其餘 2,394 行亦均平衡。驗算確認舊欄間的 709,836 個內積全為零，這個六欄填法只滿足 7,152 個新舊欄內積中的 288 個。下一個精確接點是同時滿足全部新舊欄及六條新欄互相之間的內積，或證明此對齊無法實現。這與上文直接近滿方陣的路線有不同的欄數及閉合條件。[外層平衡重現](verify.py)
 
-後續在同一下部來源找到 1,193 條舊欄和五條新欄，重現全部行欄平衡及十個新欄間內積。固定其上半部五符號行多重集時，所有上下欄配對均因 Gram 矩陣慣性而排除。另一個給出正定目標 Gram 的上半部型態，也因模 13 的整數實現條件而排除。五欄構造需要改選上半部行型態。換用另一個 $H(1200)$ 來源甚至有 1,195 條舊欄加三欄暫填的平衡候選。然而 Parseval 界證明，對奇數 $t\ge65$ 的規範化 $H(2t-2)/H(2t+2)$ 疊接，至多四欄的任何正交補法都不可能。明列的五欄和六欄候選還要求保留部分的消去矩陣滿欄秩。[疊接下界與滿秩證明](EXTERIOR_STACKS.md)
+後續在同一下部來源找到 1,193 條舊欄和五條新欄，重現全部行欄平衡及十個新欄間內積。固定其上半部五符號行多重集時，所有上下欄配對均因 Gram 矩陣慣性而排除。另一個給出正定目標 Gram 的上半部型態，也因模 13 的整數實現條件而排除。換用另一個 $H(1200)$ 來源甚至有 1,195 條舊欄加三欄暫填的平衡候選。然而 Parseval 界證明，對奇數 $t\ge65$ 的規範化 $H(2t-2)/H(2t+2)$ 疊接，至多四欄的任何正交補法都不可能。明列的五欄和六欄候選還要求保留部分的消去矩陣滿欄秩。[疊接下界與滿秩證明](EXTERIOR_STACKS.md)
 
-The GitHub workflow builds the Lean files with version 4.36.0 and treats warnings as errors. The two global implication theorems expose Paley-covered cases and Verheiden completion as inputs. R, B and their alternative marginal growth assumptions remain explicit hypotheses. The fractional identities, conditional induction, row-energy and parity obstructions, order-28 blocked prefix, doubling, and assembly have kernel-checked proofs. The complete fixed-design census and Gram determinant use exact Python arithmetic. The Python replays also cover the order-324 product, the intersection classification and figure-eight determinant sieve at order 2396, the five-column Gram certificates, and the length-599 phase congruences. The geometric lattice and group-algebra arguments are written proofs with separately checked arithmetic. [GitHub Actions](../../.github/workflows/hadamard-all-orders.yml)
+改選行型態及舊欄配對後，已有一組證書同時做到全部行欄平衡、新舊內積模八為零、新欄間內積模八為零。下一個缺口是同一組欄的全部內積精確為零。若沿用這組省略欄，任何精確五欄補法至少有四條下部新欄須距每條帶符號省略欄至少 25 格。[聯合同餘證書](EXTERIOR_MOD8.md) · [距離障礙](EXTERIOR_STACKS.md)
+
+The GitHub workflow builds the Lean files with version 4.36.0 and treats warnings as errors. The two global implication theorems expose Paley-covered cases and Verheiden completion as inputs. R, B and their alternative marginal growth assumptions remain explicit hypotheses. The fractional identities, conditional induction, row-energy and parity obstructions, order-28 blocked prefix, doubling, and assembly have kernel-checked proofs. The complete fixed-design census and Gram determinant use exact Python arithmetic. The Python replays also cover the order-324 product, the intersection classification and figure-eight determinant sieve at order 2396, the five-column Gram certificates and joint modular lift, the defect-12 modular Gram model, and the length-599 phase congruences. The geometric lattice and group-algebra arguments are written proofs with separately checked arithmetic. [GitHub Actions](../../.github/workflows/hadamard-all-orders.yml)

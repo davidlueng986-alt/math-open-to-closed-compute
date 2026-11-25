@@ -146,7 +146,8 @@ def check_fixture(top, lower, old, top_rows, bottom_rows, weights, spectral):
     print(f"  lower rows 1 and 180: impossible numerator differences {differences}")
 
 
-def main():
+def exterior_sources():
+    """Build the normalized upper and lower source squares."""
     top = goethals_seidel(length_299_words())
     top_mask = (1 << TOP) - 1
     top = [col ^ (top_mask ^ top[0]) for col in top]
@@ -160,6 +161,11 @@ def main():
     positive_lower = ([col | (col << 600) for col in paley_columns]
                       + [col | ((col ^ block_mask) << 600) for col in paley_columns])
     lower = [col ^ ((1 << BOTTOM) - 1) for col in positive_lower]
+    return top, lower
+
+
+def main():
+    top, lower = exterior_sources()
     retained_lower = [col for j, col in enumerate(lower) if j not in LOWER_OMISSIONS]
     old = [a | (b << TOP) for a, b in zip(top[3:], retained_lower, strict=True)]
     require(verify_orthogonal(ORDER, old) == 711028, "all old columns mutually orthogonal")
