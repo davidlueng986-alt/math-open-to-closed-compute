@@ -30,7 +30,7 @@ theorem discriminant_square {K : Type*} [Field K] (d w v : K)
       4*(d+1)/d^2*(w^2*(1-d*v)/(d-1)) =
     (w*(d*(d+1)*v-2)/(d*(d-1)))^2 := by
   field_simp
-  <;> ring
+  ring
 
 end MixedLinear
 
@@ -46,14 +46,13 @@ theorem terminal_residue_scaling {K : Type*} [Field K] [CharZero K]
       (3^13*a)^3/(16*(3^8*r)^5)) =
     c/(2*r)-a*b/(4*r^3)+a^3/(16*r^5) := by
   field_simp
-  <;> ring
 
 theorem square_correction {K : Type*} [Field K] [CharZero K]
     (r a b : K) (hr : r ≠ 0) :
     3*b^2/(8*r)-3*a^2*b/(16*r^3)+3*a^4/(128*r^5) =
     3*(4*r^2*b-a^2)^2/(128*r^5) := by
   field_simp
-  <;> ring
+  ring
 
 -- In a common square-root branch, A^2=cP*f5,
 -- C=cQ*g8/A^3, s=A*sigma, J=-cP*cQ/3.
@@ -63,7 +62,7 @@ theorem opposite_cancels {K : Type*} [Field K] [CharZero K]
     -(-cP*cQ/3)*(cQ*g8/A^3)*(3*(A*sigma)) =
        cQ^2*(g8/f5)*sigma := by
   field_simp
-  <;> linear_combination -cQ^2*g8*sigma*h
+  linear_combination -cQ^2*g8*sigma*h
 
 end Degree135
 
