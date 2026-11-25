@@ -1,0 +1,31 @@
+name: Cancel superseded Ramsey v3 run 45681429646
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/cancel-ramsey-v3-45681429646.yml']
+permissions:
+  actions: write
+  contents: read
+jobs:
+  cancel-obsolete-v3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TARGET_REPO: davidlueng986-alt/math-open-to-closed-compute
+      TARGET_RUN: '45681429646'
+    steps:
+      - name: Cancel only the superseded v3 run
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "$TARGET_REPO"
+          meta="$(gh api "repos/$TARGET_REPO/actions/runs/$TARGET_RUN")"
+          test "$(jq -r '.head_sha' <<< "$meta")" = '004e8b52efd9cfcc7079416354f7ec88af91ffa3'
+          status="$(jq -r '.status' <<< "$meta")"
+          if [[ "$status" = completed ]]; then
+            echo "Target already completed; no cancellation needed."
+            exit 0
+          fi
+          gh api --method POST "repos/$TARGET_REPO/actions/runs/$TARGET_RUN/cancel"
+          echo "Cancellation request accepted for $TARGET_RUN; completed artifacts are retained."
