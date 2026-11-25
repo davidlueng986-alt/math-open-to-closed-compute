@@ -32,7 +32,7 @@ theorem high_independent [Fintype V] [DecidableEq V]
     have := G.degree_lt_card_verts a
     omega
   let H := G \ SimpleGraph.edge a b
-  letI : DecidableRel H.Adj := inferInstanceAs (DecidableRel (G \ SimpleGraph.edge a b).Adj)
+  let _ : DecidableRel H.Adj := inferInstanceAs (DecidableRel (G \ SimpleGraph.edge a b).Adj)
   have hnear : Near H := by
     apply near_of_except H w hcard
     intro v hv
@@ -79,7 +79,7 @@ theorem high_code_weight_ge_two_sub_four [Fintype V] [DecidableEq V]
     letI : DecidableRel R := fun a y => Classical.dec _
     2 * d - 4 ≤ Fintype.card {y : V₃ // syndrome R z y = 1} := by
   classical
-  intro V₄ V₃ R _
+  intro V₄ V₃ R
   by_contra hlt
   have hOlt : Fintype.card {y : V₃ // syndrome R z y = 1} < 2 * d - 4 := by omega
   let S := Support z
@@ -95,7 +95,7 @@ theorem high_code_weight_ge_two_sub_four [Fintype V] [DecidableEq V]
     exact ⟨x, hx⟩
   choose pick hpick using hex
   let R' : S → V₃ → Prop := fun x y => R x.1 y ∧ ∀ hy : syndrome R z y = 1, pick ⟨y, hy⟩ ≠ x
-  letI : DecidableRel R' := fun x y => Classical.dec _
+  let _ : DecidableRel R' := fun x y => Classical.dec _
   have hrow : ∀ y : V₃, Fintype.card {x : S // R' x y} = 0 ∨ Fintype.card {x : S // R' x y} = 2 := by
     intro y
     have hle3 : Fintype.card {x : S // R x.1 y} ≤ 3 := by
@@ -231,7 +231,7 @@ theorem high_code_dist_ge_four [Fintype V] [DecidableEq V]
     letI : DecidableRel R := fun a y => Classical.dec _
     4 ≤ Fintype.card {y : V₃ // syndrome R z y = 1} := by
   classical
-  intro V₄ V₃ R _
+  intro V₄ V₃ R
   by_cases hS2 : 2 ≤ Fintype.card (Support z)
   · have h := high_code_weight_ge_two_sub_four G hm hH 4 le_rfl z hS2 (fun x => x.1.2)
     simpa using h

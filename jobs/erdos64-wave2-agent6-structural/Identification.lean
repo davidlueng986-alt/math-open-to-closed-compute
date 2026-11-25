@@ -38,7 +38,7 @@ def liftAvoid {G : SimpleGraph V} {x y : V}
     (havoid : ∀ v ∈ p.support, v.1 ≠ x) : G.Walk a.1 b.1 :=
   match p with
   | .nil => .nil
-  | @Walk.cons _ _ _ u v w huv q =>
+  | @Walk.cons _ _ u v w huv q =>
     have hu : u.1 ≠ x := havoid u (by simp)
     have hv : v.1 ≠ x := havoid v (by simp)
     have hedge : G.Adj u.1 v.1 := by
@@ -81,7 +81,6 @@ theorem cycle_of_path_and_apex {G : SimpleGraph V} {u a b : V}
   let c : G.Walk u u := .cons hua (midG.append (.cons hbu .nil))
   have hlen : c.length = midG.length + 2 := by
     simp [c, Walk.length_append]
-    omega
   have hsupp : c.support = u :: (midG.support ++ [u]) := by
     simp [c, Walk.support_cons, Walk.support_append]
   have htail : c.support.tail = midG.support ++ [u] := by
@@ -110,7 +109,6 @@ theorem path_of_mid_and_ends {G : SimpleGraph V} {x y a b : V}
   let p : G.Walk x y := .cons hxa (midG.append (.cons hby .nil))
   have hlen : p.length = midG.length + 2 := by
     simp [p, Walk.length_append]
-    omega
   have hsupp : p.support = x :: (midG.support ++ [y]) := by
     simp [p, Walk.support_cons, Walk.support_append]
   have hp : p.IsPath := by
@@ -134,12 +132,12 @@ theorem dyadic_path_of_identify {G : SimpleGraph V} {x y : V} (hxy : x ≠ y)
   obtain ⟨k, v₀, c, hk, hc, hlen⟩ := hpow
   let X : {v : V // v ≠ y} := ⟨x, hxy⟩
   by_cases hmem : X ∈ c.support
-  · let c' := c.rotate hmem
-    have hc' : c'.IsCycle := hc.rotate hmem
+  · let c' := c.rotate X hmem
+    have hc' : c'.IsCycle := SimpleGraph.Walk.IsCycle.rotate hc hmem
     have hlen' : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
     have hge4 : 4 ≤ c'.length := by
       rw [hlen']
-      have h1 : 2 ^ 2 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
+      have h1 : 2 ^ 2 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
       omega
     cases hce : c' with
     | nil =>
@@ -226,24 +224,24 @@ theorem dyadic_path_of_identify {G : SimpleGraph V} {x y : V} (hxy : x ≠ y)
           exact False.elim (hfree ⟨k, y, d, hk, hd, by omega⟩)
   · have havoid : ∀ v ∈ c.support, v.1 ≠ x := by
       intro v hv hvx
-      exact hmem (Subtype.ext hvx ▸ hv)
+      have hvX : v = X := Subtype.ext hvx; exact hmem (hvX ▸ hv)
     let d := liftAvoid c havoid
     have hdlen : d.length = 2 ^ k := by rw [length_liftAvoid, hlen]
     have hdtail : d.support.tail.Nodup := by
       have hs : d.support = c.support.map Subtype.val := support_liftAvoid c havoid
-      rw [hs, List.map_tail]
+      rw [hs, ← List.map_tail]
       exact (List.nodup_map_iff Subtype.val_injective).mpr hc.support_nodup
     have hdnil : ¬ d.Nil := by
       intro h
       have := Walk.length_eq_zero_iff.mpr h
-      have h1 : 2 ^ 2 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
+      have h1 : 2 ^ 2 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
       omega
     have hdc : d.IsCycle := by
       apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
       refine ⟨Walk.IsPath.mk' ?_, ?_⟩
       · rwa [Walk.support_tail_of_not_nil _ hdnil]
       · rw [hdlen]
-        have h1 : 2 ^ 2 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
+        have h1 : 2 ^ 2 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
         omega
     exact False.elim (hfree ⟨k, v₀.1, d, hk, hdc, hdlen⟩)
 
@@ -257,7 +255,7 @@ theorem unique_common_neighbor {G : SimpleGraph V} (hfree : ¬ HasPower G)
     (G.ne_of_adj hyu).symm huv (G.ne_of_adj hyv) hxu hyu.symm hyv hxv.symm)
 
 /-- Cardinality of `{v : V // v ≠ y}` is strictly less than `Fintype.card V`. -/
-theorem card_sub_lt [Fintype V] (y : V) :
+theorem card_sub_lt [Fintype V] [DecidableEq V] (y : V) :
     Fintype.card {v : V // v ≠ y} < Fintype.card V := by
   classical
   have h : Fintype.card {v : V // v ≠ y} + 1 = Fintype.card V := by
@@ -273,10 +271,10 @@ theorem identify_degree_other_of_not_common [Fintype V] [DecidableEq V]
     (v : {z : V // z ≠ y}) (hvx : v.1 ≠ x)
     (hnc : ¬ (G.Adj x v.1 ∧ G.Adj y v.1)) :
     let H := identify G x y
-    letI : DecidableRel H.Adj := fun a b => Classical.dec _
+    let _ : DecidableRel H.Adj := fun a b => Classical.dec _
     H.degree v = G.degree v.1 := by
   classical
-  intro H _
+  intro H
   let X : {z : V // z ≠ y} := ⟨x, hxy⟩
   let f : H.neighborSet v → G.neighborSet v.1 := fun u =>
     if hu : u.1.1 = x then
@@ -328,10 +326,10 @@ theorem identify_degree_common [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {x y : V} (hxy : x ≠ y)
     (u : {z : V // z ≠ y}) (hux : G.Adj x u.1) (huy : G.Adj y u.1) :
     let H := identify G x y
-    letI : DecidableRel H.Adj := fun a b => Classical.dec _
+    let _ : DecidableRel H.Adj := fun a b => Classical.dec _
     H.degree u + 1 = G.degree u.1 := by
   classical
-  intro H _
+  intro H
   have hunx : u.1 ≠ x := (G.ne_of_adj hux).symm
   let e : H.neighborSet u ≃ {z : V // G.Adj u.1 z ∧ z ≠ y} :=
     { toFun := fun v => ⟨v.1.1, by
@@ -356,11 +354,11 @@ theorem identify_degree_common [Fintype V] [DecidableEq V]
 theorem identify_degree_merged_ge [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {x y : V} (hxy : x ≠ y) :
     let H := identify G x y
-    letI : DecidableRel H.Adj := fun a b => Classical.dec _
+    let _ : DecidableRel H.Adj := fun a b => Classical.dec _
     let X : {z : V // z ≠ y} := ⟨x, hxy⟩
     H.degree X = ((G.neighborFinset x ∪ G.neighborFinset y).erase x |>.erase y).card := by
   classical
-  intro H _ X
+  intro H X
   rw [← H.card_neighborFinset_eq_degree]
   let f : H.neighborFinset X → ((G.neighborFinset x ∪ G.neighborFinset y).erase x |>.erase y) :=
     fun v => ⟨v.1.1, by
@@ -395,7 +393,7 @@ theorem dyadic_path_of_dist_ge_three [Fintype V] [DecidableEq V]
     ∃ (k : ℕ) (p : G.Walk x y), 2 ≤ k ∧ p.IsPath ∧ p.length = 2 ^ k := by
   classical
   let H := identify G x y
-  letI : DecidableRel H.Adj := fun a b => Classical.dec _
+  let _ : DecidableRel H.Adj := fun a b => Classical.dec _
   let X : {z : V // z ≠ y} := ⟨x, hxy⟩
   have hXdeg : H.degree X = G.degree x + G.degree y := by
     rw [identify_degree_merged_ge G hxy]
@@ -404,10 +402,12 @@ theorem dyadic_path_of_dist_ge_three [Fintype V] [DecidableEq V]
       intro u hux huy
       exact hnocom u ⟨(G.mem_neighborFinset x u).mp hux, (G.mem_neighborFinset y u).mp huy⟩
     have hxnot : x ∉ G.neighborFinset x ∪ G.neighborFinset y := by
-      simp [SimpleGraph.mem_neighborFinset, G.loopless, hnadj]
-      intro h; exact hnadj h.symm
+      simp only [Finset.mem_union, SimpleGraph.mem_neighborFinset, not_or]
+      exact ⟨G.loopless x, fun h => hnadj h.symm⟩
     have hynot : y ∉ (G.neighborFinset x ∪ G.neighborFinset y).erase x := by
-      simp [SimpleGraph.mem_neighborFinset, G.loopless, hnadj]
+      simp only [Finset.mem_erase, Finset.mem_union, SimpleGraph.mem_neighborFinset, not_and, not_or]
+      intro _
+      exact ⟨hnadj, G.loopless y⟩
     rw [Finset.erase_eq_of_notMem hynot, Finset.erase_eq_of_notMem hxnot,
       Finset.card_union_of_disjoint hdisj,
       G.card_neighborFinset_eq_degree, G.card_neighborFinset_eq_degree]
@@ -520,7 +520,7 @@ theorem dyadic_path_of_dist_two [Fintype V] [DecidableEq V]
     ∃ (k : ℕ) (p : G.Walk x y), 2 ≤ k ∧ p.IsPath ∧ p.length = 2 ^ k := by
   classical
   let H := identify G x y
-  letI : DecidableRel H.Adj := fun a b => Classical.dec _
+  let _ : DecidableRel H.Adj := fun a b => Classical.dec _
   let X : {z : V // z ≠ y} := ⟨x, hxy⟩
   have huy : u ≠ y := (G.ne_of_adj hyu).symm
   let U : {z : V // z ≠ y} := ⟨u, huy⟩
@@ -529,10 +529,12 @@ theorem dyadic_path_of_dist_two [Fintype V] [DecidableEq V]
   have hXdeg : H.degree X + 1 = G.degree x + G.degree y := by
     rw [identify_degree_merged_ge G hxy]
     have hxnot : x ∉ G.neighborFinset x ∪ G.neighborFinset y := by
-      simp [SimpleGraph.mem_neighborFinset, G.loopless, hnadj]
-      intro h; exact hnadj h.symm
+      simp only [Finset.mem_union, SimpleGraph.mem_neighborFinset, not_or]
+      exact ⟨G.loopless x, fun h => hnadj h.symm⟩
     have hynot : y ∉ (G.neighborFinset x ∪ G.neighborFinset y).erase x := by
-      simp [SimpleGraph.mem_neighborFinset, G.loopless, hnadj]
+      simp only [Finset.mem_erase, Finset.mem_union, SimpleGraph.mem_neighborFinset, not_and, not_or]
+      intro _
+      exact ⟨hnadj, G.loopless y⟩
     rw [Finset.erase_eq_of_notMem hynot, Finset.erase_eq_of_notMem hxnot]
     have hinter : G.neighborFinset x ∩ G.neighborFinset y = {u} := by
       ext z
@@ -597,7 +599,7 @@ theorem cubic_all_nonadj_dyadic_path [Fintype V] [DecidableEq V]
   · obtain ⟨u, hxu, hyu⟩ := hcom
     exact dyadic_path_of_dist_two G hm hxy hnadj hxu hyu (Or.inl hC)
   · push Not at hcom
-    exact dyadic_path_of_dist_ge_three G hm hxy hnadj hcom
+    exact dyadic_path_of_dist_ge_three G hm hxy hnadj (fun u h => hcom u h.1 h.2)
 
 /-- Helper: close a simple `x`-`y` path of length `2^k` (`k ≥ 2`) with an edge `x-y`
     to get a simple cycle of length `2^k + 1` containing the edge `s(x, y)`. -/
@@ -608,14 +610,16 @@ theorem fermat_cycle_of_path_and_edge {G : SimpleGraph V} {x y : V}
   let c : G.Walk x x := p.append (.cons hxy.symm .nil)
   have hclen : c.length = 2 ^ k + 1 := by simp [c, Walk.length_append, hlen]
   have hge4 : 4 ≤ p.length := by
-    rw [hlen]; exact Nat.pow_le_pow_right (by decide) hk
+    rw [hlen]; exact Nat.pow_le_pow_right (by decide : 0 < 2) hk
   have hsupp : c.support = p.support ++ [x] := by simp [c, Walk.support_append]
   have htail_nodup : c.support.tail.Nodup := by
     have hpnil : ¬ p.Nil := by
       intro h; have := Walk.length_eq_zero_iff.mpr h; omega
     have hps : p.support = x :: p.support.tail := (p.cons_tail_support).symm
     have htail : c.support.tail = p.support.tail ++ [x] := by
-      rw [hsupp, hps, List.cons_append, List.tail_cons]
+      calc c.support.tail = (p.support ++ [x]).tail := by rw [hsupp]
+        _ = (x :: p.support.tail ++ [x]).tail := by rw [← hps]
+        _ = p.support.tail ++ [x] := rfl
     have hpn := hp.support_nodup
     rw [hps, List.nodup_cons] at hpn
     rw [htail]
@@ -644,7 +648,7 @@ theorem fermat_cycle_of_non_triangle_edge [Fintype V] [DecidableEq V]
   classical
   have hne : x ≠ y := G.ne_of_adj hxy
   let H := identify G x y
-  letI : DecidableRel H.Adj := fun a b => Classical.dec _
+  let _ : DecidableRel H.Adj := fun a b => Classical.dec _
   let X : {z : V // z ≠ y} := ⟨x, hne⟩
   have hXdeg : H.degree X + 2 = G.degree x + G.degree y := by
     rw [identify_degree_merged_ge G hne]
@@ -699,7 +703,7 @@ theorem cubic_fermat_cycle_of_edge [Fintype V] [DecidableEq V]
     have hne : x ≠ y := G.ne_of_adj hxy
     have huy : u ≠ y := (G.ne_of_adj hyu).symm
     let H := identify G x y
-    letI : DecidableRel H.Adj := fun a b => Classical.dec _
+    let _ : DecidableRel H.Adj := fun a b => Classical.dec _
     let X : {z : V // z ≠ y} := ⟨x, hne⟩
     let U : {z : V // z ≠ y} := ⟨u, huy⟩
     have huniq : ∀ z, G.Adj x z ∧ G.Adj y z → z = u :=
@@ -732,7 +736,7 @@ theorem cubic_fermat_cycle_of_edge [Fintype V] [DecidableEq V]
     obtain ⟨c, hc, hclen, hmem⟩ := fermat_cycle_of_path_and_edge hxy hk p hp hplen
     exact ⟨k, c, hk, hc, hclen, hmem⟩
   · push Not at htri
-    exact fermat_cycle_of_non_triangle_edge G hm hxy htri
+    exact fermat_cycle_of_non_triangle_edge G hm hxy (fun u h => htri u h.1 h.2)
 
 /-- Bridgelessness of MinimalBad(G): every edge of any MinimalBad graph lies on a simple cycle
     (either a triangle or a (2^k + 1)-cycle). -/
@@ -745,12 +749,12 @@ theorem no_bridge_minimal_bad [Fintype V] [DecidableEq V]
     let c : G.Walk x x := .cons hxy (.cons hyu (.cons hxu.symm .nil))
     have hc : c.IsCycle := by
       apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
-      refine ⟨Walk.IsPath.mk' ?_, by decide⟩
-      simp [c, Walk.tail_cons, Walk.support_cons, G.ne_of_adj hxy, G.ne_of_adj hxu,
+      refine ⟨Walk.IsPath.mk' ?_, by simp [c]⟩
+      simp [c, Walk.tail_cons, Walk.support_cons,
         G.ne_of_adj hyu, (G.ne_of_adj hxy).symm, (G.ne_of_adj hxu).symm]
     exact ⟨c, hc, by simp [c]⟩
   · push Not at htri
-    obtain ⟨_, c, _, hc, _, hmem⟩ := fermat_cycle_of_non_triangle_edge G hm hxy htri
+    obtain ⟨_, c, _, hc, _, hmem⟩ := fermat_cycle_of_non_triangle_edge G hm hxy (fun u h => htri u h.1 h.2)
     exact ⟨c, hc, hmem⟩
 
 #print axioms dyadic_path_of_identify

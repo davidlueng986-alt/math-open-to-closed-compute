@@ -76,7 +76,7 @@ theorem lift_edge_exists {G : SimpleGraph V} {σ : V → V} {hinv : ∀ v, σ (�
   · exact ⟨b, hb, hab⟩
   · refine ⟨σ b, ?_, ?_⟩
     · rw [← hb]
-      exact Quotient.sound (Or.inr (hinv b).symm)
+      exact Quotient.sound (Or.inr rfl)
     · have := (haut (σ u) b).mp hab
       rwa [hinv u] at this
 
@@ -89,7 +89,7 @@ noncomputable def liftWalk {G : SimpleGraph V} {σ : V → V} {hinv : ∀ v, σ 
       res.2.support.map (Quotient.mk (invSetoid σ hinv)) = p.support} :=
   match p with
   | .nil => ⟨⟨u, .nil⟩, hu, rfl, by simp [hu]⟩
-  | @Walk.cons _ _ _ qa qb qc hab q =>
+  | @Walk.cons _ _ qa qb qc hab q =>
     let hex := lift_edge_exists haut (hu.symm ▸ hab)
     let v := Classical.choose hex
     let hv := Classical.choose_spec hex
@@ -119,10 +119,10 @@ theorem hasPower_of_invQuot {G : SimpleGraph V} {σ : V → V}
   have hp₁len : p₁.length = 2 ^ k := lifted.2.2.1.trans hlen
   have hp₁supp : p₁.support.map (Quotient.mk (invSetoid σ hinv)) = c.support := lifted.2.2.2
   have hp₁tail_map : p₁.support.tail.map (Quotient.mk (invSetoid σ hinv)) = c.support.tail := by
-    rw [← List.map_tail, hp₁supp]
+    rw [List.map_tail, hp₁supp]
   have hp₁tail_nodup : p₁.support.tail.Nodup :=
     List.Nodup.of_map _ (hp₁tail_map.symm ▸ hc.support_nodup)
-  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
+  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
   have hrel : u₁ = u₀ ∨ u₁ = σ u₀ := Quotient.exact (hu₁q.trans hu₀.symm)
   rcases hrel with hsame | hflip
   · subst hsame
@@ -147,7 +147,7 @@ theorem hasPower_of_invQuot {G : SimpleGraph V} {σ : V → V}
     have hp₂supp : p₂.support = p₁.support.map σ := by
       simp [p₂, p₂_raw, Walk.support_copy, Walk.support_map, f, mapWalkAut]
     have hp₂tail : p₂.support.tail = p₁.support.tail.map σ := by
-      rw [hp₂supp, List.map_tail]
+      rw [hp₂supp, ← List.map_tail]
     have hp_tail : p.support.tail = p₁.support.tail ++ p₂.support.tail := by
       have hps : p.support = p₁.support ++ p₂.support.tail := Walk.support_append p₁ p₂
       have hp₁s : p₁.support = u₀ :: p₁.support.tail := (p₁.cons_tail_support).symm
@@ -158,7 +158,7 @@ theorem hasPower_of_invQuot {G : SimpleGraph V} {σ : V → V}
       obtain ⟨y, hy1, hxy⟩ := List.mem_map.mp hx2
       have hqeq : (⟦x⟧ : Quotient (invSetoid σ hinv)) = ⟦y⟧ := by
         rw [← hxy]
-        exact Quotient.sound (Or.inr (hinv y).symm)
+        exact Quotient.sound (Or.inr rfl)
       have hinj_on := (List.nodup_map_iff_inj_on hp₁tail_nodup).mp
         (hp₁tail_map.symm ▸ hc.support_nodup)
       have heq : x = y := hinj_on x hx1 y hy1 hqeq
@@ -210,7 +210,7 @@ theorem no_fpf_involution_le_one_edge [Fintype V] [DecidableEq V]
   have hC : ∀ v : V, G.degree v = 3 := no_high_when_no_defect G hm hall3
   let Q := Quotient (invSetoid σ hinv)
   let H := invQuotGraph G σ hinv
-  letI : DecidableRel H.Adj := fun a b => Classical.dec _
+  let _ : DecidableRel H.Adj := fun a b => Classical.dec _
   obtain ⟨w₀, hw₀⟩ := h1edge
   have hcard_lt : Fintype.card Q < Fintype.card V := by
     let pickRep : Q → V := fun q => Classical.choose (Quotient.exists_rep q)
@@ -224,22 +224,24 @@ theorem no_fpf_involution_le_one_edge [Fintype V] [DecidableEq V]
         rw [← hrep q₁, ← hrep q₂, hq₁, hq₂]
         exact Quotient.sound (Or.inr (hinv w₀).symm)
       rw [hqeq, hq₂] at hq₁
-      exact hfpf w₀ hq₁.symm
+      exact hfpf w₀ hq₁
     exact Fintype.card_lt_of_injective_not_surjective pickRep hinj hnsurj
   have hHdeg : ∀ u : V, ¬ G.Adj u (σ u) → H.degree ⟦u⟧ = 3 := by
     intro u hno
     let f : G.neighborSet u → H.neighborSet (⟦u⟧ : Q) := fun v =>
       ⟨⟦v.1⟧, ⟨fun heq => by
         rcases Quotient.exact heq with h1 | h2
-        · exact (G.ne_of_adj v.2) h1
-        · exact hno (h2 ▸ v.2),
+        · exact (G.ne_of_adj v.2) h1.symm
+        · have hv2 : G.Adj u v.1 := v.2; rw [h2] at hv2; exact hno hv2,
         u, v.1, rfl, rfl, v.2⟩⟩
     have hfinj : Function.Injective f := by
       intro a b heq
       apply Subtype.ext
       rcases Quotient.exact (congrArg Subtype.val heq) with h1 | h2
       · exact h1
-      · exact False.elim (no_parallel_of_involution hm.2.1 σ hinv hfpf haut b.2 (h2 ▸ a.2))
+      · have ha2 : G.Adj u a.1 := a.2
+        rw [h2] at ha2
+        exact False.elim (no_parallel_of_involution hm.2.1 σ hinv hfpf haut b.2 ha2)
     have hfsurj : Function.Surjective f := by
       rintro ⟨q, hq⟩
       obtain ⟨v, hvq, huv⟩ := lift_edge_exists haut hq
@@ -266,7 +268,7 @@ theorem no_fpf_involution_le_one_edge [Fintype V] [DecidableEq V]
     refine ⟨⟨⟦u₁⟧, (hHdeg u₁ (hw₀ u₁ hu₁a hu₁b)).ge⟩, ⟨⟦w₀⟧, fun q hq => ?_⟩⟩
     obtain ⟨u, rfl⟩ := Quotient.exists_rep q
     have hu1 : u ≠ w₀ := fun h => hq (by rw [h])
-    have hu2 : u ≠ σ w₀ := fun h => hq (by rw [h]; exact Quotient.sound (Or.inr (hinv w₀).symm))
+    have hu2 : u ≠ σ w₀ := fun h => hq (by rw [h]; exact Quotient.sound (Or.inr rfl))
     exact (hHdeg u (hw₀ u hu1 hu2)).ge
   have hpow : HasPower H := hm.2.2.1 Q H hcard_lt hnear
   exact hm.2.1 (hasPower_of_invQuot hinv hfpf haut hpow)
