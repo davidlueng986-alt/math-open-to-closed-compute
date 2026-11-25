@@ -220,9 +220,9 @@ theorem dyadic_path_of_identify_erase {G : SimpleGraph V} {x y u : V}
               · exact (G.ne_of_adj hxz₁) h1
             · exact hxw (Walk.fst_mem_support_of_mem_edges w hmemw)
             · simp only [List.not_mem_nil, or_false] at hmemy
-              rcases Sym2.eq_iff.mp hmemy with ⟨h1, _⟩ | ⟨_, h2⟩
+              rcases Sym2.eq_iff.mp hmemy with ⟨h1, _⟩ | ⟨h1, _⟩
               · exact hxw (h1 ▸ Walk.end_mem_support w)
-              · exact hxy h2
+              · exact hxy h1
           exact ⟨k, z₁, hxz₁, p, hk, hz₁u, hp, hplen, hmem_xa, hnmem_xu⟩
         rcases h1G with hxa | hya <;> rcases h2G with hbx | hby
         · obtain ⟨d, hd, hdl⟩ := cycle_of_path_and_apex midG hmidGpath (by omega) hxnot hxa hbx
