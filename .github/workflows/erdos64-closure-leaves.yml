@@ -1,0 +1,55 @@
+name: E64 direct closure leaf exclusions
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['jobs/erdos64-closure-leaves/**','.github/workflows/erdos64-closure-leaves.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        proof: [BipartiteDegree,TriangleCut]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: leanprover-community/mathlib4
+          ref: 0df444a360eaa60ab8c11dca51a86af692955474
+          path: mathlib4
+      - name: Install pinned Lean
+        run: |
+          set -euo pipefail
+          curl -fsSL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          "$HOME/.elan/bin/elan" toolchain install "$(cat mathlib4/lean-toolchain)"
+      - name: Fetch Mathlib
+        working-directory: mathlib4
+        run: lake exe cache get
+      - name: Strict kernel check
+        working-directory: mathlib4
+        env:
+          MODULE: ${{ matrix.proof }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          src="$GITHUB_WORKSPACE/jobs/erdos64-closure-leaves"
+          export LEAN_PATH="$src"
+          if [ "$MODULE" = TriangleCut ]; then
+            cp "$GITHUB_WORKSPACE/jobs/erdos-64-lean-shadow/Shadow.lean" "$src/Shadow.lean"
+            cp "$GITHUB_WORKSPACE/jobs/erdos64-lean-global-pairing/PairedShadow.lean" "$src/PairedShadow.lean"
+            for mod in Shadow PairedShadow; do
+              lake env lean --root="$src" -DwarningAsError=true -o "$src/$mod.olean" "$src/$mod.lean" 2>&1 | tee "$GITHUB_WORKSPACE/out/$mod.log"
+            done
+          fi
+          lake env lean --root="$src" -DwarningAsError=true "$src/$MODULE.lean" 2>&1 | tee "$GITHUB_WORKSPACE/out/$MODULE.log"
+          ! grep -E 'sorryAx|native_decide' "$GITHUB_WORKSPACE/out/"*.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: leaf-${{ matrix.proof }}
+          path: out/
