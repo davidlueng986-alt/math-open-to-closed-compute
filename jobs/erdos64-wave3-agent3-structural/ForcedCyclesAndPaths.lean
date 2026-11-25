@@ -137,7 +137,7 @@ theorem dyadic_path_of_identify_erase {G : SimpleGraph V} {x y u : V}
           have := congrArg Walk.length hqre
           simp only [Walk.length_cons, hqrlen] at this
           have hml : mid.length = r.length := by
-            simp [mid, midH, Walk.length_mapLe, Walk.length_reverse]
+            simp [mid, midH, Walk.length_reverse]
           omega
         have hmidpath : mid.IsPath := by
           have hrp : r.IsPath := by
@@ -169,12 +169,12 @@ theorem dyadic_path_of_identify_erase {G : SimpleGraph V} {x y u : V}
           intro hm; obtain ⟨v, _, hvy⟩ := List.mem_map.mp hm; exact v.2 hvy
         have haU : a ≠ U := by
           intro heq
-          have hne : X ≠ U := H.ne_of_adj (heq ▸ h₁)
+          have hne : X ≠ a := H.ne_of_adj h₁
           have hnot := (SimpleGraph.sdiff_adj (identify G x y) (SimpleGraph.edge X U) X a).mp h₁
           exact hnot.2 ((SimpleGraph.edge_adj X U X a).mpr ⟨Or.inl ⟨rfl, heq⟩, hne⟩)
         have hbU : b ≠ U := by
           intro heq
-          have hne : X ≠ U := H.ne_of_adj (heq ▸ h₂)
+          have hne : X ≠ b := H.ne_of_adj h₂
           have hnot := (SimpleGraph.sdiff_adj (identify G x y) (SimpleGraph.edge X U) X b).mp h₂
           exact hnot.2 ((SimpleGraph.edge_adj X U X b).mpr ⟨Or.inl ⟨rfl, heq⟩, hne⟩)
         have h1I : (identify G x y).Adj X a := hle h₁
@@ -218,9 +218,9 @@ theorem dyadic_path_of_identify_erase {G : SimpleGraph V} {x y u : V}
             · rcases Sym2.eq_iff.mp heq with ⟨_, h2⟩ | ⟨h1, _⟩
               · exact hz₁u h2.symm
               · exact (G.ne_of_adj hxz₁) h1
-            · exact hxw (Walk.fst_mem_support_of_mem_edges w (Sym2.mem_mk_left x u) hmemw)
-            · rcases List.mem_singleton.mp hmemy with heq
-              rcases Sym2.eq_iff.mp heq with ⟨h1, _⟩ | ⟨_, h2⟩
+            · exact hxw (Walk.fst_mem_support_of_mem_edges w hmemw)
+            · simp only [List.not_mem_nil, or_false] at hmemy
+              rcases Sym2.eq_iff.mp hmemy with ⟨h1, _⟩ | ⟨_, h2⟩
               · exact hxw (h1 ▸ Walk.end_mem_support w)
               · exact hxy h2
           exact ⟨k, z₁, hxz₁, p, hk, hz₁u, hp, hplen, hmem_xa, hnmem_xu⟩
@@ -237,7 +237,8 @@ theorem dyadic_path_of_identify_erase {G : SimpleGraph V} {x y u : V}
   · have havoid : ∀ v ∈ (c.mapLe hle).support, v.1 ≠ x := by
       intro v hv hvx
       rw [support_mapLe_eq] at hv
-      exact hmem (Subtype.ext hvx ▸ hv)
+      have hvX : v = X := Subtype.ext hvx
+      exact hmem (hvX ▸ hv)
     let d := liftAvoid (c.mapLe hle) havoid
     have hdlen : d.length = 2 ^ k := by rw [length_liftAvoid, Walk.length_mapLe, hlen]
     have hdtail : d.support.tail.Nodup := by
@@ -284,7 +285,7 @@ theorem identify_degree_other_of_not_common [Fintype V] [DecidableEq V]
       · exact False.elim (hu hux)⟩
   let g : G.neighborSet v.1 → H.neighborSet v := fun u =>
     if hu : u.1 = y then
-      ⟨X, ⟨fun h => hvx (congrArg Subtype.val h), Or.inr (Or.inr ⟨rfl, hu ▸ u.2⟩)⟩⟩
+      ⟨X, ⟨fun h => hvx (congrArg Subtype.val h), Or.inr (Or.inr ⟨rfl, by have h := u.2; rw [hu] at h; exact h⟩)⟩⟩
     else
       ⟨⟨u.1, hu⟩, ⟨fun h => (G.ne_of_adj u.2) (congrArg Subtype.val h), Or.inl u.2⟩⟩
   have e : H.neighborSet v ≃ G.neighborSet v.1 :=
@@ -305,7 +306,7 @@ theorem identify_degree_other_of_not_common [Fintype V] [DecidableEq V]
           simp [f, g, huy, hnvx, X]
         · by_cases hux : u.1 = x
           · have hvxa : G.Adj v.1 x := hux ▸ u.2
-            simp [f, g, huy, hux, hvxa]
+            simp [f, g, hux, hvxa, hxy]
           · simp [f, g, huy, hux] }
   have hc := Fintype.card_congr e
   rwa [SimpleGraph.card_neighborSet_eq_degree, SimpleGraph.card_neighborSet_eq_degree] at hc
@@ -500,8 +501,8 @@ theorem cubic_non_triangle_two_path_fermat_cycle [Fintype V] [DecidableEq V]
               exact False.elim (hsn2.1 (Walk.end_mem_support _))
           have := Walk.length_eq_zero_iff.mpr hqnil
           omega
-        · exact hne hxy'
-      · have hxmemq : x ∈ q.support := Walk.fst_mem_support_of_mem_edges q (Sym2.mem_mk_left x y) hmemq
+        · exact (G.ne_of_adj hxz) hxy'
+      · have hxmemq : x ∈ q.support := Walk.fst_mem_support_of_mem_edges q hmemq
         have hsn := (hp_eq ▸ hp).support_nodup
         rw [Walk.support_cons, List.nodup_cons] at hsn
         exact hsn.1 hxmemq

@@ -277,8 +277,7 @@ theorem support_tail_expandWalk_perm {U : Type u} {Haux : SimpleGraph U} {G : Si
     simp only [expandWalk, Walk.support_cons, Walk.edges_cons, List.tail_cons, List.map_cons,
       List.cons_append]
     have hq : q.support = v :: q.support.tail := (q.cons_tail_support).symm
-    have hqmap : q.support.map emb = emb v :: q.support.tail.map emb := by
-      rw [hq, List.map_cons]
+    have hqmap : q.support.map emb = emb v :: q.support.tail.map emb := congrArg (List.map emb) hq
     have hexp : (expandWalk emb mid hmid1 hmid2 q).support =
         emb v :: (expandWalk emb mid hmid1 hmid2 q).support.tail :=
       ((expandWalk emb mid hmid1 hmid2 q).cons_tail_support).symm
@@ -371,9 +370,9 @@ theorem class_h_aux_edges_eq_and_no_near [Fintype V] [DecidableEq V]
       intro a b hab
       obtain ⟨_, y0, ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩⟩ := hab
       · have hex : ∃ y : {z : V // z ∈ M}, s(p1 y, p2 y) = s(p1 y0, p2 y0) := ⟨y0, rfl⟩
-        exact ⟨Classical.choose hex, by simp only [mid, dif_pos hex], Classical.choose_spec hex⟩
+        exact ⟨Classical.choose hex, by dsimp only [mid]; split_ifs with h; · rfl; · exact False.elim (h hex), Classical.choose_spec hex⟩
       · have hex : ∃ y : {z : V // z ∈ M}, s(p1 y, p2 y) = s(p2 y0, p1 y0) := ⟨y0, Sym2.eq_swap⟩
-        exact ⟨Classical.choose hex, by simp only [mid, dif_pos hex], Classical.choose_spec hex⟩
+        exact ⟨Classical.choose hex, by dsimp only [mid]; split_ifs with h; · rfl; · exact False.elim (h hex), Classical.choose_spec hex⟩
     have hmid_adj : ∀ {a b : {x : V // x ∈ S}}, Haux.Adj a b →
         G.Adj a.1 (mid s(a, b)) ∧ G.Adj (mid s(a, b)) b.1 := by
       intro a b hab

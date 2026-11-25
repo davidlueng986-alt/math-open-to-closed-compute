@@ -125,7 +125,10 @@ theorem hasPower_of_invQuot_general {G : SimpleGraph V} {σ : V → V}
     have hp₁len : p₁.length = 2 ^ k := lifted.2.2.1.trans hlen'
     have hp₁supp : p₁.support.map (Quotient.mk (invSetoid σ hinv)) = c'.support := lifted.2.2.2
     have hrel : u₁ = f ∨ u₁ = σ f := Quotient.exact hu₁q
-    have hsame : u₁ = f := by rcases hrel with h | h; · exact h; · rwa [hff] at h
+    have hsame : u₁ = f := by
+      rcases hrel with h | h
+      · exact h
+      · rwa [hff] at h
     let p₁' : G.Walk f f := p₁.copy rfl hsame
     have hp₁'len : p₁'.length = 2 ^ k := by rw [Walk.length_copy]; exact hp₁len
     have hp₁'supp : p₁'.support = p₁.support := Walk.support_copy p₁ rfl hsame
@@ -231,7 +234,9 @@ theorem invQuot_degree_nonfixed [Fintype V] [DecidableEq V]
     ⟨⟦v.1⟧, ⟨fun heq => by
       rcases Quotient.exact heq with h1 | h2
       · exact (G.ne_of_adj v.2) h1
-      · have hvσu : v.1 = σ u := by rw [h2, hinv v.1]
+      · have hvσu : v.1 = σ u := by
+          calc v.1 = σ (σ v.1) := (hinv v.1).symm
+            _ = σ u := congrArg σ h2.symm
         exact hno (hvσu ▸ v.2),
       u, v.1, rfl, rfl, v.2⟩⟩
   have hfinj : Function.Injective f := by
@@ -336,7 +341,7 @@ theorem general_involution_two_low_orbits [Fintype V] [DecidableEq V]
     ∃ q₁ q₂ : Quotient (invSetoid σ hinv), q₁ ≠ q₂ ∧
       (invQuotGraph G σ hinv).degree q₁ ≤ 2 ∧ (invQuotGraph G σ hinv).degree q₂ ≤ 2 := by
   let Q := Quotient (invSetoid σ hinv)
-  letI : DecidableEq Q := Classical.decEq Q
+  let _ : DecidableEq Q := Classical.decEq Q
   obtain ⟨x₀, hx₀⟩ := hnontriv
   have hcard_lt : Fintype.card Q < Fintype.card V := by
     let pickRep : Q → V := fun q => Classical.choose (Quotient.exists_rep q)
