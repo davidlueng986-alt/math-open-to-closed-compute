@@ -18,10 +18,11 @@ theorem rectangle_power (G : SimpleGraph V) {a b c d : V}
     apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
     constructor
     · apply Walk.IsPath.mk'
-      simp [w, Walk.tail_cons, Walk.support_cons, hab, hac, had, hbc, hbd, hcd,
-        Ne.symm hab, Ne.symm hac, Ne.symm had, Ne.symm hbc, Ne.symm hbd, Ne.symm hcd]
-    · decide
-  exact ⟨2, a, w, by decide, hc, by decide⟩
+      simp [w, Walk.tail_cons, Walk.support_cons, hbc, hbd, hcd,
+        Ne.symm hab, Ne.symm hac, Ne.symm had]
+    · change 3 ≤ 4
+      decide
+  exact ⟨2, a, w, by decide, hc, by change 4 = 2^2; decide⟩
 
 def shadow (R : X → Y → Prop) : SimpleGraph X where
   Adj a b := a ≠ b ∧ ∃ y, R a y ∧ R b y
@@ -54,13 +55,15 @@ theorem paired_of_two_rows [Fintype X] [DecidableEq X]
   have hcr : R c y := by
     have : c ∈ S := by simp [hS]
     simpa [S] using this
-  rcases hmem with rfl | rfl
-  · refine ⟨c, ⟨hbc.symm,hcr⟩, ?_⟩
+  rcases hmem with hab | hac
+  · subst a
+    refine ⟨c, ⟨hbc.symm,hcr⟩, ?_⟩
     intro z hz
     have hz' : z ∈ S := by simp [S, hz.2]
     have hz'' : z = b ∨ z = c := by simpa [hS] using hz'
     exact hz''.resolve_left hz.1
-  · refine ⟨b, ⟨hbc,hb⟩, ?_⟩
+  · subst a
+    refine ⟨b, ⟨hbc,hb⟩, ?_⟩
     intro z hz
     have hz' : z ∈ S := by simp [S, hz.2]
     have hz'' : z = b ∨ z = c := by simpa [hS] using hz'
@@ -74,7 +77,7 @@ theorem safe_step_of_paired_incidence (G : SimpleGraph V)
     [Fintype V] [Fintype X] [Fintype Y]
     (f : X → V) (g : Y → V) (hf : Function.Injective f)
     (hg : Function.Injective g) (hsep : ∀ x y, f x ≠ g y)
-    (R : X → Y → Prop) (hR : ∀ x y, R x y → G.Adj (f x) (g y))
+    (R : X → Y → Prop) [DecidableRel R] (hR : ∀ x y, R x y → G.Adj (f x) (g y))
     (hp : Paired R) (hY : Nonempty Y) (hsize : Fintype.card X < Fintype.card V)
     (hdegrees : ∃ a w : X,
       3 ≤ Fintype.card {y // R a y} ∧
@@ -109,7 +112,6 @@ theorem safe_step_of_paired_incidence (G : SimpleGraph V)
   obtain ⟨a,w,ha,hw⟩ := hdegrees
   have hnear : Near H := ⟨⟨a,ha.trans (hdeg a)⟩,
     ⟨w,fun x hx => (hw x hx).trans (hdeg x)⟩⟩
-  letI : Nonempty Y := hY
   let midY : Sym2 X → Y := fun e =>
     if h : ∃ y, ∀ x ∈ e, R x y then Classical.choose h
     else Classical.choice hY
@@ -125,8 +127,8 @@ theorem safe_step_of_paired_incidence (G : SimpleGraph V)
     intro e he e' he' hm
     obtain ⟨a,b⟩ := e
     obtain ⟨c,d⟩ := e'
-    have h1 : H.Adj a b := SimpleGraph.mem_edgeSet.mp he
-    have h2 : H.Adj c d := SimpleGraph.mem_edgeSet.mp he'
+    have h1 : H.Adj a b := (H.mem_edgeSet).mp he
+    have h2 : H.Adj c d := (H.mem_edgeSet).mp he'
     have h1' := hmid h1
     have h2' := hmid h2
     rw [← hm] at h2'
@@ -151,8 +153,7 @@ theorem safe_step_of_paired_incidence (G : SimpleGraph V)
     exact (hR b _ (hmid h).2).symm
   · exact hf
   · intro a c hc
-    apply (List.nodup_map_iff_inj_on).mpr
-    refine ⟨hc.isTrail.edges_nodup, ?_⟩
+    apply (List.nodup_map_iff_inj_on hc.isTrail.edges_nodup).mpr
     intro e he e' he' hh
     exact hinjMid e (c.edges_subset_edgeSet he) e' (c.edges_subset_edgeSet he') (hg hh)
   · intro a c hc

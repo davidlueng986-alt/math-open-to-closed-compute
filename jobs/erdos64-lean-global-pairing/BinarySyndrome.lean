@@ -6,10 +6,11 @@ variable {X Y : Type*} [Fintype X] [Fintype Y] [DecidableEq Y]
 
 def unit (y : Y) : Y → ZMod 2 := fun z => if z = y then 1 else 0
 
+omit [Fintype Y] in
 theorem unit_nonzero (y : Y) : unit y ≠ 0 := by
   intro h
   have h' := congrFun h y
-  simpa [unit] using h'
+  simp [unit] at h'
 
 /-- Full rank, low codimension, and an odd-weight vector force a unit
 syndrome. This is an unbounded finite-dimensional theorem, with no SAT
@@ -20,7 +21,7 @@ theorem kernel_or_unit (F : (X → ZMod 2) →ₗ[ZMod 2] (Y → ZMod 2))
     (∃ a, a ≠ 0 ∧ F a = 0) ∨ (∃ a y, F a = unit y) := by
   classical
   by_contra h
-  push_neg at h
+  push Not at h
   have hinj : Function.Injective F := by
     intro a b hab
     by_contra hne
@@ -51,7 +52,7 @@ theorem kernel_or_unit (F : (X → ZMod 2) →ₗ[ZMod 2] (Y → ZMod 2))
   have hc : Fintype.card (Y → ZMod 2) ≤ Fintype.card ((X → ZMod 2) × Bool) := by
     simp only [Fintype.card_fun, ZMod.card, Fintype.card_prod, Fintype.card_bool]
     rw [← pow_succ]
-    gcongr
+    exact Nat.pow_le_pow_right (by decide) hsize
   have hsurj : Function.Surjective shift := by
     by_contra hn
     have := Fintype.card_lt_of_injective_not_surjective shift hshift hn
@@ -70,7 +71,7 @@ theorem kernel_or_unit (F : (X → ZMod 2) →ₗ[ZMod 2] (Y → ZMod 2))
   have hw : ∑ y, w y = 1 := ha
   have hsum : (∑ y, w y • unit y) = w := by
     ext z
-    simp [unit, Pi.smul_apply, smul_eq_mul, mul_ite, Finset.sum_ite_eq']
+    simp [unit, Pi.smul_apply, smul_eq_mul, mul_ite]
   have hval : F (∑ y, w y • g y) = w - e := by
     rw [map_sum]
     simp_rw [map_smul, hg, smul_sub]
