@@ -39,7 +39,11 @@ theorem six_port_moments
     (h1 : 3*c3+4*c4+5*c5+6*c6 = 24)
     (h2 : 3*c3+6*c4+10*c5+15*c6 = 30+2*d) :
     d=0 ∧ c3=4 ∧ c4=3 ∧ c5=0 ∧ c6=0 := by
-  omega
+  have hsum : c4+2*c5+3*c6=3 := by omega
+  have hpar : c5+3*c6=2*d := by omega
+  have h5 : c5 ≤ 1 := by omega
+  have h6 : c6 ≤ 1 := by omega
+  interval_cases c5 <;> interval_cases c6 <;> omega
 
 /-- A bipartite graph with a nontrivial edge and at least two edges,
 maximum degree <= 2 and total deficit <=4 must have four vertices
