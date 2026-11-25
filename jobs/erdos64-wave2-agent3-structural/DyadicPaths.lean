@@ -535,10 +535,12 @@ theorem ident_degree_merged_ge_add {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x 
         · simp [h]
       right_inv := by
         rintro (⟨w, hw⟩ | ⟨w, hw⟩)
-        · split_ifs with h
+        · dsimp only
+          split_ifs with h
           · rfl
           · exact False.elim (h hw)
         · have hnx : ¬G.Adj x w := fun h => hdisj w ⟨h, hw⟩
+          dsimp only
           split_ifs with h
           · exact False.elim (hnx h)
           · rfl }
