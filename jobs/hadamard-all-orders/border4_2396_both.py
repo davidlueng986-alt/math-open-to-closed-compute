@@ -18,6 +18,16 @@ NEGATIVE_T = (
     0x2438A068200149E298088A3022180C2204B2042100881005800318210A03412810801002,
     0x4052420A064260D29628A0A8A012180000204F2043200D84245150508606A8E420861820800,
 )
+SYNC_NEGATIVE_S = (
+    0x14110458780C000A021C5A5BDA67020004404C020501842508140008340A4240010D240004C,
+    0x171100596C0E22080218CA715225821405C00402050110250830400920003248010C240014C,
+    *NEGATIVE_S[2:],
+)
+SYNC_NEGATIVE_T = (
+    0x42490202A014C46C22008001107808022000C50288238030010A4482108D3000825812203,
+    0x6A8B20019008445800000001000C086A08100142D4284000421A86496185002CB05073430,
+    *NEGATIVE_T[2:],
+)
 
 # Each triple is (constant, quadratic-character coefficient, coefficient at zero).
 PROFILES = {
@@ -46,13 +56,7 @@ def verify_residual_coordinates():
     assert len(tree) == 18 and len(remaining) == 131
 
 
-def verify():
-    assert SUPPORT_B & 1 == 0
-    assert all((SUPPORT_B >> i & 1) == (SUPPORT_B >> (SIZE - i) & 1) for i in range(1, SIZE))
-    support_s = (SUPPORT_A, SUPPORT_A, SUPPORT_B, SUPPORT_B | 1)
-    support_t = tuple(FULL ^ support for support in support_s)
-    assert tuple(mask.bit_count() for mask in support_s) == (150, 150, 148, 149)
-    s, t = signed(support_s, NEGATIVE_S), signed(support_t, NEGATIVE_T)
+def verify_fixture(s, t):
     assert tuple(map(sum, s)) == (0, 0, 0, 1)
     assert tuple(map(sum, t)) == (15, 7, 15, -10)
     for p, (s_profile, t_profile) in PROFILES.items():
@@ -73,14 +77,28 @@ def verify():
     correlations = periodic(binary)
     assert correlations[0] == 2392 and correlations[SIZE] == -4
     assert all((value + 4) % 8 == 0 for value in correlations[1:])
-    assert sum(value == -4 for value in correlations[1:]) == 47
-    assert max(abs(value + 4) for value in correlations[1:]) == 136
     for size in (26, 46):
         off = -2392 // size
         assert periodic(compress(binary, size)) == [2396 + off] + [off] * (size - 1)
+    errors = [value + 4 for value in correlations[1:]]
+    return errors.count(0), max(map(abs, errors)), sum(value**2 for value in errors)
+
+
+def verify():
+    assert SUPPORT_B & 1 == 0
+    assert all((SUPPORT_B >> i & 1) == (SUPPORT_B >> (SIZE - i) & 1) for i in range(1, SIZE))
+    support_s = (SUPPORT_A, SUPPORT_A, SUPPORT_B, SUPPORT_B | 1)
+    support_t = tuple(FULL ^ support for support in support_s)
+    assert tuple(mask.bit_count() for mask in support_s) == (150, 150, 148, 149)
+    assert verify_fixture(signed(support_s, NEGATIVE_S), signed(support_t, NEGATIVE_T)) \
+        == (47, 136, 1157120)
+    for old, new in ((NEGATIVE_S, SYNC_NEGATIVE_S), (NEGATIVE_T, SYNC_NEGATIVE_T)):
+        assert old[0] ^ old[1] == new[0] ^ new[1]
+    assert verify_fixture(signed(support_s, SYNC_NEGATIVE_S), signed(support_t, SYNC_NEGATIVE_T)) \
+        == (49, 112, 896000)
     verify_residual_coordinates()
     print("width four / 2396: exact 26- and 46-point quotients on one full modulo-eight witness")
-    print("width four / 2396: 47 exact original off-diagonal shifts, 131 sufficient errors per half")
+    print("width four / 2396: 49 exact original off-diagonal shifts, 131 sufficient errors per half")
 
 
 if __name__ == "__main__":
