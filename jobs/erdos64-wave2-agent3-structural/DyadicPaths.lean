@@ -34,7 +34,8 @@ def HasDyadicPath {V : Type u} (G : SimpleGraph V) (x y : V) : Prop :=
 def HasDyadicPathAvoiding {V : Type u} (G : SimpleGraph V) (x y z : V) : Prop :=
   ∃ (k : ℕ) (p : G.Walk x y), 2 ≤ k ∧ p.IsPath ∧ p.length = 2 ^ k ∧ z ∉ p.support
 
-/-- Every `MinimalBad G` is $C_4$-free. -/\ntheorem minimal_bad_no_c4 {V : Type u} [Fintype V]
+/-- Every `MinimalBad G` is $C_4$-free. -/
+theorem minimal_bad_no_c4 {V : Type u} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     {a b c d : V} (hab : G.Adj a b) (hbc : G.Adj b c)
     (hcd : G.Adj c d) (hda : G.Adj d a)
@@ -165,14 +166,6 @@ theorem isCycle_of_support_tail_nodup {a : V} (c : G.Walk a a)
     (hlen : 3 ≤ c.length) (hnodup : c.support.tail.Nodup) : c.IsCycle := by
   have hne : c ≠ Walk.nil := by
     intro h; subst h; simp at hlen
-  have htail_eq : c.support.tail.length = c.length := by
-    have := c.length_support
-    cases hs : c.support with
-    | nil => exact False.elim (by simp [hs] at this)
-    | cons _ tl => simp [hs] at this; omega
-  -- Construct via Walk.IsCycle: edges_nodup follows from support.tail.Nodup + length ≥ 3
-  -- Actually Mathlib has `Walk.IsCycle.mk` from `IsTrail`, `ne_nil`, `support_nodup`.
-  -- Let's prove `c.IsTrail` directly from `c.support.tail.Nodup` and `3 ≤ c.length`.
   have htrail : c.IsTrail := by
     cases c with
     | nil => exact False.elim (hne rfl)
@@ -184,10 +177,6 @@ theorem isCycle_of_support_tail_nodup {a : V} (c : G.Walk a a)
       rw [Walk.isTrail_def, Walk.edges_cons, List.nodup_cons]
       refine ⟨?_, hrest_trail.edges_nodup⟩
       intro hmem
-      -- If s(a, b) ∈ rest.edges, then since rest is a path from b to a of length ≥ 2,
-      -- the edge s(a, b) must connect two consecutive vertices in rest.support.
-      -- Since a only appears at the very end of rest.support (as rest.support.Nodup)
-      -- and b only appears at the very start of rest.support, rest would have length 1!
       have hrest_len : 2 ≤ rest.length := by simp at hlen; omega
       cases rest with
       | nil => simp at hrest_len
@@ -195,30 +184,19 @@ theorem isCycle_of_support_tail_nodup {a : V} (c : G.Walk a a)
         have hmem_dart := hmem
         simp only [Walk.edges_cons, List.mem_cons] at hmem_dart
         rcases hmem_dart with heq | hmem2
-        · -- s(a, b) = s(b, c') implies a = c'
-          have hac' : a = c' := by
+        · have hac' : a = c' := by
             rw [Sym2.eq_iff] at heq
             rcases heq with ⟨rfl, _⟩ | ⟨_, rfl⟩
             · exact False.elim (G.ne_of_adj hab rfl)
             · rfl
           subst hac'
-          -- Now rest2 : Walk a a, so a ∈ rest2.support and c' = a is head of cons
           cases rest2 with
           | nil => simp at hrest_len
-          | cons _ _ =>
-            have ha_in : a ∈ (Walk.cons hbc _).support.tail := Walk.end_mem_support _
-            -- Better: a is both the head of rest2.support and the end of rest2.support
-            -- Actually rest.support = b :: a :: rest2.support.tail, and a ∈ rest2.support.tail!
+          | @cons _ d' _ had' rest3 =>
             simp only [Walk.support_cons, List.nodup_cons] at hrest_nodup
-            have ha_end : a ∈ (Walk.cons _ _ : G.Walk a a).support.tail := by
-              -- For any non-nil walk from x to y, y ∈ support.tail
-              rename_i d' had' rest3
-              exact Walk.end_mem_support rest3
+            have ha_end : a ∈ rest3.support := Walk.end_mem_support rest3
             exact hrest_nodup.2.1 ha_end
-        · -- s(a, b) ∈ rest2.edges implies b ∈ rest2.support
-          have hb_in : b ∈ rest2.support := by
-            have := Walk.fst_mem_support_of_mem_edges rest2 hmem2
-            -- Wait: use Walk.mem_support_of_mem_edges
+        · have hb_in : b ∈ rest2.support := by
             have hsym : b ∈ s(a, b) := by simp
             exact Walk.mem_support_of_mem_edges rest2 hmem2 hsym
           simp only [Walk.support_cons, List.nodup_cons] at hrest_nodup
@@ -252,14 +230,12 @@ theorem ident_cycle_lifts {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x y)
         _ ≤ 2 ^ k := Nat.pow_le_pow_right (by norm_num) hk
     have hcG_cyc : cG.IsCycle := isCycle_of_support_tail_nodup G cG (by omega) hcG_tail
     exact hfree ⟨k, a.1, cG, hk, hcG_cyc, hcG_len⟩
-  -- Rotate c to start at u
   let c' : H.Walk u u := c.rotate hu_mem
   have hc' : c'.IsCycle := hc.rotate hu_mem
   have hc'_len : c'.length = 2 ^ k := by simp [c', hlen]
   have h4 : 4 ≤ 2 ^ k := by
     calc 4 = 2 ^ 2 := by norm_num
       _ ≤ 2 ^ k := Nat.pow_le_pow_right (by norm_num) hk
-  -- Peel first step u -> a1 and last step a2 -> u
   cases hce : c' with
   | nil => simp [hce] at hc'_len; omega
   | @cons _ a₁ _ h₁ rest =>
@@ -287,7 +263,6 @@ theorem ident_cycle_lifts {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x y)
       have hu_not_q : u ∉ q.support := by
         intro hm
         exact (List.nodup_append.mp hnodup_q_u).2.2 u hm (by simp) rfl
-      -- Lift q to G
       let qG : G.Walk a₁.1 a₂.1 := liftWalkAvoidU G hxy q hu_not_q
       have hqG_sup : qG.support = q.support.map Subtype.val := liftWalkAvoidU_support G hxy q hu_not_q
       have hqG_len : qG.length = q.length := liftWalkAvoidU_length G hxy q hu_not_q
@@ -301,7 +276,6 @@ theorem ident_cycle_lifts {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x y)
         rw [hqG_sup, List.mem_map]
         rintro ⟨v, _, hvy⟩
         exact v.2 hvy
-      -- Helper: if both a₁.1 and a₂.1 are adjacent to w ∈ {x, y}, we get a 2^k-cycle in G
       have no_both_x : ¬(G.Adj x a₁.1 ∧ G.Adj x a₂.1) := by
         rintro ⟨hxa₁, hxa₂⟩
         let cyc : G.Walk x x := Walk.cons hxa₁ (qG.concat hxa₂.symm)
@@ -320,7 +294,6 @@ theorem ident_cycle_lifts {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x y)
           exact ⟨hqG_nodup, List.nodup_singleton y, fun v hv hvy => by
             simp at hvy; subst hvy; exact hy_not_qG hv⟩
         exact hfree ⟨k, y, cyc, hk, isCycle_of_support_tail_nodup G cyc (by omega) hcyc_tail, hcyc_len⟩
-      -- Extract adjacency of a₁, a₂ to x or y
       have h₁_disj : G.Adj x a₁.1 ∨ G.Adj y a₁.1 := by
         rcases h₁.2 with h | ⟨_, h⟩ | ⟨hax, _⟩
         · exact Or.inl h
@@ -331,18 +304,12 @@ theorem ident_cycle_lifts {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x y)
         · exact Or.inl h
         · exact Or.inr h
         · exact False.elim (hu_not_q (by convert Walk.end_mem_support q; exact Subtype.ext hax.symm))
-      -- Helper for z-avoidance on q
       have hz_avoid : ∀ z : V, (hz : z ≠ y) → G.Adj x z → G.Adj y z →
           (∀ w₁ w₂ : {v : V // v ≠ y},
             H.Adj ⟨z, hz⟩ w₁ → H.Adj ⟨z, hz⟩ w₂ →
             w₁ ≠ u → w₂ ≠ u → w₁ = w₂) →
           z ∉ qG.support := by
         intro z hz hxz hyz hdeg2 hzm
-        have hzu_ne : (⟨z, hz⟩ : {v : V // v ≠ y}) ≠ u := by
-          intro heq
-          have hzx : z = x := congrArg Subtype.val heq
-          subst hzx
-          exact G.loopless z hxz
         have hza₁ : (⟨z, hz⟩ : {v : V // v ≠ y}) ≠ a₁ := by
           intro heq
           have h1 : z = a₁.1 := congrArg Subtype.val heq
@@ -361,7 +328,6 @@ theorem ident_cycle_lifts {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x y)
           rw [hqG_sup, List.mem_map] at hzm
           rcases hzm with ⟨v, hv, hvz⟩
           convert hv; exact Subtype.ext hvz.symm
-        -- Split q at ⟨z, hz⟩ into q₁ (from a₁ to z) and q₂ (from z to a₂)
         let q₁ := q.takeUntil ⟨z, hz⟩ hz_in_q
         let q₂ := q.dropUntil ⟨z, hz⟩ hz_in_q
         have hspec : q₁.append q₂ = q := Walk.take_spec q hz_in_q
@@ -369,7 +335,6 @@ theorem ident_cycle_lifts {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x y)
           intro h; exact hza₁ (Walk.eq_of_nil h).symm
         have hq₂_ne : q₂ ≠ Walk.nil := by
           intro h; exact hza₂ (Walk.eq_of_nil h)
-        -- Extract the neighbor w₁ of z in q₁ (last step into z) and w₂ in q₂ (first step out of z)
         cases hq₂e : q₂ with
         | nil => exact False.elim (hq₂_ne hq₂e)
         | @cons _ w₂ _ hzw₂ q₂' =>
@@ -392,7 +357,6 @@ theorem ident_cycle_lifts {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x y)
               intro h; subst h
               exact hu_not_q (by rw [← hspec]; exact Walk.support_append_subset_right q₁ q₂ hw₂_mem)
             have hw_eq : w₁ = w₂ := hdeg2 w₁ w₂ hzw₁ hzw₂ hw₁_ne_u hw₂_ne_u
-            -- But w₁ ∈ q₁.support.dropLast and w₂ ∈ q₂.support.tail, contradicting q.support.Nodup!
             have hq_sup_split : q.support = q₁.support.dropLast ++ q₂.support := by
               rw [← hspec, Walk.support_append]
             have hw₁_ne_z : w₁ ≠ ⟨z, hz⟩ := (H.ne_of_adj hzw₁).symm
@@ -405,7 +369,6 @@ theorem ident_cycle_lifts {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x y)
               exact hw₁_mem.resolve_right hw₁_ne_z
             rw [hq_sup_split, List.nodup_append] at hq_nodup
             exact hq_nodup.2.2 w₁ hw₁_in_dl (hw_eq ▸ hw₂_mem) rfl
-      -- Now build the simple x-y path!
       rcases h₁_disj with h1x | h1y
       · rcases h₂_disj with h2x | h2y
         · exact False.elim (no_both_x ⟨h1x, h2x⟩)
@@ -545,7 +508,7 @@ theorem ident_degree_common {x y z : V} (hxy : x ≠ y)
   rw [hc, Finset.card_erase_add_one ((G.mem_neighborFinset z y).mpr hyz.symm),
     SimpleGraph.card_neighborFinset_eq_degree]
 
-/-- Lower bound on the degree of the merged vertex `u = ⟨x, hxy⟩` when `¬G.Adj x y`. -/
+/-- Degree of the merged vertex `u = ⟨x, hxy⟩` when `N(x) ∩ N(y) = ∅`. -/
 theorem ident_degree_merged_ge_add {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x y)
     (hdisj : ∀ z, ¬(G.Adj x z ∧ G.Adj y z)) :
     letI : DecidableRel (identGraph G x y).Adj := Classical.decRel _
@@ -584,7 +547,7 @@ theorem ident_degree_merged_ge_add {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x 
     SimpleGraph.card_neighborSet_eq_degree, SimpleGraph.card_neighborSet_eq_degree] at hc
   exact hc
 
-/-- Degree of the merged vertex `u = ⟨x, hxy⟩` when `x, y` have unique common neighbor `z`. -/
+/-- Lower bound on the degree of the merged vertex `u = ⟨x, hxy⟩` when `¬G.Adj x y`. -/
 theorem ident_degree_merged_ge_left {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x y) :
     letI : DecidableRel (identGraph G x y).Adj := Classical.decRel _
     G.degree x ≤ (identGraph G x y).degree ⟨x, hxy⟩ := by
@@ -653,7 +616,6 @@ theorem unified_bipartite_exclusion {V : Type u} [Fintype V]
     (hB : Bip G) : False := by
   classical
   obtain ⟨color, hproper⟩ := hB
-  -- Every walk in a bipartite graph changes color iff its length is odd
   have hwalk_parity : ∀ {a b : V} (p : G.Walk a b),
       (color a = color b ↔ Even p.length) := by
     intro a b p
@@ -663,7 +625,6 @@ theorem unified_bipartite_exclusion {V : Type u} [Fintype V]
       have hc : color u ≠ color v := hproper u v huv
       simp only [Walk.length_cons, Nat.even_add_one]
       cases hcu : color u <;> cases hcv : color v <;> cases hcw : color w <;> simp_all
-  -- Hence every opposite-color pair must be adjacent!
   have hcomplete : ∀ x y : V, color x ≠ color y → G.Adj x y := by
     intro x y hcol
     by_contra hnadj
@@ -681,8 +642,6 @@ theorem unified_bipartite_exclusion {V : Type u} [Fintype V]
       refine ⟨2 ^ m, ?_⟩
       ring
     exact hcol ((hwalk_parity p).mpr heven)
-  -- Pick a vertex v with degree ≥ 3; it has ≥ 2 distinct neighbors b₁, b₂ of the opposite color,
-  -- and b₁ has ≥ 2 distinct neighbors of v's color (one of which is v, another is a₂ ≠ v).
   obtain ⟨⟨v, hv3⟩, _⟩ := hm.1
   have hcard_nv : 3 ≤ (G.neighborFinset v).card := by
     rw [SimpleGraph.card_neighborFinset_eq_degree]; exact hv3
@@ -752,7 +711,6 @@ theorem cubic_dist2_dyadic_path {V : Type u} [Fintype V]
   obtain ⟨k, a, c, hk, hc, hlen⟩ := hm.2.2.1 W H hlt hnear
   obtain ⟨p, hp, hplen, havoid⟩ := ident_cycle_lifts G hxy hnadj hm.2.1 hk c hc hlen
   refine ⟨k, p, hk, hp, hplen, havoid z hzy hxz hyz ?_⟩
-  -- Since H.degree ⟨z, hzy⟩ = 2 and H.Adj ⟨z, hzy⟩ ⟨x, hxy⟩, any two neighbors ≠ ⟨x, hxy⟩ must be equal
   intro w₁ w₂ hw₁ hw₂ hw₁u hw₂u
   have hzu : H.Adj ⟨z, hzy⟩ ⟨x, hxy⟩ := ⟨fun h => hzx (congrArg Subtype.val h), Or.inl hxz.symm⟩
   have hcard : (H.neighborFinset ⟨z, hzy⟩).card = 2 := by
@@ -844,7 +802,6 @@ theorem defect_dist2_dyadic_path {V : Type u} [Fintype V]
   subst hrw
   have hv3 : 3 ≤ G.degree v := hr v hvw
   have hu3 : 3 ≤ H.degree ⟨w, hvw.symm⟩ := by
-    -- u = ⟨w, hvw.symm⟩ has degree ≥ G.degree v ≥ 3 (in fact ≥ d(v) + 1 ≥ 4)
     have hle : G.degree v ≤ H.degree ⟨w, hvw.symm⟩ := by
       rw [← SimpleGraph.card_neighborSet_eq_degree, ← SimpleGraph.card_neighborSet_eq_degree]
       let f : G.neighborSet v → H.neighborSet ⟨w, hvw.symm⟩ := fun z =>
@@ -893,7 +850,6 @@ theorem defect_dist2_dyadic_path {V : Type u} [Fintype V]
       rw [← hw0]; exact Finset.mem_erase.mpr ⟨hw₂u, (H.mem_neighborFinset _ _).mpr hw₂⟩
     simp only [Finset.mem_singleton] at h1 h2
     exact h1.trans h2.symm
-  -- Peel the first step of p (from w): since b₁ ∉ p.support and N(w) = {b₁, b₂}, first step MUST be w -> b₂!
   cases hpe : p with
   | nil => exact False.elim (hvw rfl)
   | @cons _ next _ hwn rest =>
