@@ -57,6 +57,16 @@ $$\sum_{r=1}^{4t-2}(a_r-b_r)^2=2t^2.$$
 
 For odd $t$, every summand is positive. A row equal to either entire half contributes $t^2$. Two such rows would exhaust the sum and leave other positive terms. In particular no two rows of $Y$ are equal or complementary. At a prime $t=p\ge5$, this rules out invariance under a point permutation consisting of two $p$-cycles. Only the cycles themselves could be fixed blocks, so there is at most one. All other block orbits have size $p$, whereas the number of fixed blocks must be $4p-2\equiv p-2\pmod p$. This eliminates that proposed symmetry also at $p=599$. [Lean energy and pure-block bound](OuterEnergy.lean)
 
+**區塊交集限制。** 固定一個區塊 $B$，取 $B,B^c$ 為等分。扣掉 $B$ 自己的 $t^2$ 和每個其他區塊至少貢獻的 $1$，得到
+
+$$\sum_{C\ne B}\big((2|B\cap C|-t)^2-1\big)=(t-1)(t-3).$$
+
+若某個 $C$ 的交集大小是 $1$ 或 $t-1$，該項已用完整個右端，故其餘交集只可能為 $(t\pm1)/2$。對奇數 $t\ge5$，每個區塊至多有一個這樣的鄰居。更一般地，若有 $k$ 個其他區塊的平方失衡至少為 $M$，則 $(M-1)k\le(t-1)(t-3)$。兩個限制都經 Lean 核查。[Lean 區塊交集與數量上限](OuterEnergy.lean)
+
+**素數階對稱。** 若 $t=p\ge5$ 是素數，一個階為 $p$ 的點置換也可能只含一個 $p$-循環，其餘 $p$ 點固定。此時不動區塊仍只能是循環的支集及其補集。相同的區塊軌道計數排除這種置換，因此外層設計的自同構群沒有階為 $p$ 的元素。對任意奇數 $t\ge5$，若素數 $p>t$，階為 $p$ 的點置換只能有一個 $p$-循環且少於 $t$ 個不動點。它沒有任何不動區塊，故 $p\mid 4t-2$，只能是 $p=2t-1$。在 $t=599$，$2t-1=1197$ 合成，故任何素數 $p\ge599$ 都不可能是外層設計的自同構階。
+
+完整矩陣亦有一個限制。若 $H(4p)$ 有階為 $p\ge5$ 的帶符號行列自同構，可以在各 $p$-循環內重選符號，使它成為普通行列置換。因 $H$ 可逆，兩個置換矩陣相似，同有 $k$ 個 $p$-循環。取同一行循環中的三行。它們在所有不動列上相同，任兩行卻必在恰 $2p$ 個位置相異。若 $k=1$，可變位置不足。若 $k=2$，三行在可變位置上須兩兩全反，亦不可能。若 $k=3$，有 $p$ 個不動行及 $p$ 個不動列。以一個不動行和一個不動列規範化；這些行列變號在各循環內相同，故保留置換。規範化後，各其他不動行有 $2p$ 個負號，不動列上的負號數介乎 $0$ 至 $p-1$，而每個移動列循環的貢獻是 $0$ 或 $p$。於是每個其他不動行只能在三個移動循環中的兩個取負號，其餘全正。連同首行只有四種不同的行，與 $p\ge5$ 矛盾。故 $k=4$，即行列上的作用均無不動點。這也適用於 $p=599$。此段的置換結論是上述書面推導。
+
 ## B — round the next column
 
 Suppose $Y$ and $j$ inside columns satisfy the table. For a lower row $r$, write $d_r$ for its current number of inside ones, $u_r=t-1-d_r$ for how many ones it still needs, and $s=b-j$ for remaining inside slots. Call the prefix **admissible** if $0\le u_r\le s$ for every row. All prefixes of a full matrix are admissible. At $j=0$ every $Y$ supplies an admissible prefix.
@@ -70,6 +80,26 @@ For the last identity, the previous columns contribute $(2t-2)+(j-1)(t-2)$ to $\
 **How far fractional rounding goes.** The equality matrix has at most $2t+j$ independent rows because the outside incidence rows sum to $t$ times the size equation. If more than $2t+j$ coordinates are strictly fractional, there is a nonzero rational null vector supported there. Move in that direction to the first box boundary. This keeps all equations and all previously integral positions. Repeating gives the bound in row 9 of the table. The last fractional entries can be genuinely coupled. For a Paley order-20 example the first-step polytope has a vertex with eight fractional entries. Eight independent count equations on these eight positions have minor determinant 12. The other ten entries are fixed at their bounds, so this point is a vertex. The same $Y$ has an integral solution. Thus choosing an arbitrary LP vertex does not settle B. [Exact vertex and determinant](verify.py)
 
 **The remaining quantifier.** For every $t\in D$ and $0\le j<h$, prove that *if some admissible prefix of width $j$ exists, some admissible prefix of width $j+1$ exists*. One may replace both $Y$ and the earlier $X$ columns between steps. Proving integral rounding for every presented prefix would suffice too, but existence needs only a suitable choice. The first open rounding target is particularly concrete. Choose $2t-2$ blocks of a suitable $Y$ so every point occurs in exactly $t-1$ chosen blocks. At $t=599$ this asks for 1,196 of 2,394 blocks covering each of 1,198 points 598 times. Later columns must additionally meet every earlier selection in exactly 597 blocks. A construction for this first step on an explicitly described infinite subfamily of $D$ would advance the all-order route. [Lean implication from R and B](Rounding.lean)
+
+### 固定前綴與固定外層設計的障礙
+
+設 $t,j$ 皆為奇數。如果 $j$ 條內列在每一行的負載 $d_r$ 皆為偶數，則任何二元新列 $z$ 都不能保留全部內部交集。因為 $\sum_r z_r d_r$ 必為偶數，但若新列與每條舊列相交於 $t-2$ 行，這個總數便等於奇數 $j(t-2)$。由 $\sum_r d_r=j(2t-2)$ 和 $\sum_r d_r^2=j(j(t-2)+t)$，再用偶數的 $d_r^2-2d_r\equiv0\pmod8$，可得這類障礙只會出現在 $j\equiv2t-1\pmod8$。相應的兩條一般引理已用 Lean 核查。[Lean 奇偶性引理](Parity.lean)
+
+忽略容量強制的座標時，這也是全部交集奇偶條件唯一可能的障礙。在 $\mathbb F_2$ 上，外列滿足 $Y^{\mathsf T}Y=I$，且每行的 $t$ 個一使全一向量在 $Y$ 的列空間內。令 $q=\sum_{i<j}X_i$。若 $j$ 為偶數，取 $z=q$，則 $Y^{\mathsf T}z=0$ 且 $X_i^{\mathsf T}z=1$。若 $j$ 為奇數且 $q\ne0$，選滿足 $q_r=1$ 的行 $r$，取 $w=(I+YY^{\mathsf T})e_r$。此時 $X_i^{\mathsf T}w=X_i(r)$，而 $\delta_i=1+X_i(r)$ 的總和為零。令 $z=w+\sum_i\delta_iX_i$，便有 $X_i^{\mathsf T}z=1$，因為舊內列的 Gram 矩陣是 $I+J$。$Y^{\mathsf T}z=0$ 亦保證 $z$ 的重量為偶數。這給出模二的精確可行性判準，整數交集及容量仍需另行滿足。
+
+**可一開始就選出全寬的同餘解。** 給定任意奇數 $t\ge3$ 的 $Y$，設 $d=2t-2$ 及 $K=\ker(Y^{\mathsf T})$（在 $\mathbb F_2$ 上）。因 $Y^{\mathsf T}Y=I$，環境空間正交分解為 $K$ 與 $Y$ 的列空間。$K$ 中各向量重量為偶數，$q_K(v)=\operatorname{wt}(v)/2\bmod2$ 的極化是普通點積，因而非退化。在這個正交分解上，重量模四可相加。取虛數單位 $\mathrm i$，整個空間的權重和為 $(1+\mathrm i)^{4t-2}$；$Y$ 的正交基每項重量 $2t-1\equiv1\bmod4$，其列空間的權重和為 $(1+\mathrm i)^{2t}$。相除得
+
+$$\sum_{v\in K}(-1)^{q_K(v)}=(1+\mathrm i)^d.$$
+
+在 $\mathbb F_2^d$ 上，$q_0(a)=\binom{\operatorname{wt}(a)}2\bmod2$ 的極化矩陣是 $I+J$，同樣非退化。其權重和為 $(1+\mathrm i)^d$ 的實部與虛部之和，等於同一個實數，因 $4\mid d$。兩個二次型因此等距。此分類可用二維分解看出。非退化二次型若有非零等向量 $e$，可選與 $e$ 的極化值等於一的 $f$，再以 $f+e$ 調整至 $q(f)=0$，分離一個雙曲平面。維數至少四時，若兩個正交的非退化平面都沒有非零等向量，取各一個非零向量相加便得到一個。故反覆分離後至多剩一個各非零向量之 $q$ 值皆為一的平面。兩類平面的權重和分別為 $2$ 和 $-2$，因此同維數與同符號決定同一類。
+
+取 $q_0$ 標準基及其總和並映到 $K$，得到 $d+1=2t-1$ 條內列。它們的重量皆為 $0\bmod4$、任兩列的交集皆為奇數、與外列的交集皆為偶數。這符合全部內列重量的模四目標及兩組交集的模二目標。這一步適用於任意 $Y$，而後仍要把同餘提升為指定的整數計數及行容量。這是書面推導。
+
+在 $t=7$，一個明列的 $2$-$(14,7,6)$ 外層設計有五條相容內列，負載為一個 $0$、二十個 $2$ 和五個 $4$。因此 $j=5$ 的可行前綴具有有理下一列 $(6-d_r)/8$，但不能保留這五條內列而加第六條。Lean 直接檢查外層設計、內列、所有交集和容量，再由奇偶性證明無法延伸。另以整數枚舉 $\ker(Y^{\mathsf T}\bmod 2)$ 的 4,096 個向量，證實固定這個 $Y$ 時，能通過外層交集及重量測試的內列恰有這五條。即使重選內列，固定這個 $Y$ 也無法達到 $28-7=21$ 列的門檻。此階已有 Paley 構造，例子排除的是對任意固定 $Y$ 或前綴的延伸定理。文獻先前已記載不可嵌入完整設計的同參數例子。[Lean 28 階證書](BlockedPrefix.lean) · [完整枚舉](verify.py) · [Mackenzie–Fleming，§1](https://www.combinatorics.org/ojs/index.php/eljc/article/download/v6i1r24/pdf/)
+
+這個例子亦有一個可精確驗算的 $E_8$ 缺陷。組裝後的 $28\times20$ 矩陣為 $A$。驗算器檢查 $Q=(28I-AA^{\mathsf T})/4$ 為對角線全為 $2$ 的整數矩陣，且第 $11,2,3,4,5,6,8,9$ 行列（從零起數）的主子式等於 $1$。由 $A^{\mathsf T}A=28I$，$Q$ 半正定且秩為 $8$，故這八個 Gram 向量生成正定偶幺模格。其餘 Gram 向量與這八個基向量均有整數內積，所以已在同一格內。秩八的正定偶幺模格唯一，因而這個格是 $E_8$。[整數 Gram 證書](verify.py) · [Elkies 的唯一性證明](https://people.math.harvard.edu/~elkies/Misc/E8.pdf)
+
+**這個前綴最少要換掉三列。** 對 $A$ 的全部 $\binom{20}{2}=190$ 對刪除選擇，把候選符號列分成兩半，各列的 Hamming 距離相加必須是 $14$。先把候選首項固定為 $+1$，再以兩半的距離向量作精確配對。每次只有原本刪去的兩列符合，故保留任意十八列時，無法加入第三列。刪去索引 $9,12,19$（從零起數），則可加入十一列，得到完整的 $28\times28$ 矩陣。這十一列的前四列已達到二十一列的完成門檻。Lean 核查修復後完整矩陣的 378 個列對。[刪除配對及矩陣](verify.py) · [修復證書](BlockedPrefix.lean)
 
 ## Finer proof obligations with separate marginals
 
@@ -87,4 +117,8 @@ Run `python3 jobs/hadamard-all-orders/verify.py` from the repository root. Pytho
 
 For the $2396\times1196$ witness, the upper block is a full matrix of order $1196=4\cdot13\cdot23$. A length-13 ternary quadruple and a symmetric length-23 Williamson quadruple give four length-299 sign words. Their summed periodic autocorrelation vanishes at every nonzero shift, as the checker verifies before building the Goethals–Seidel array. The lower block consists of 1,196 columns of the order-1,200 Sylvester double of Paley $H(600)$. Stacking corresponding columns preserves zero inner products. Both source squares and **every** pair of stacked columns are independently checked. The construction uses known ingredients and supplies a reproducible lower bound at this order. [Williamson data, pinned SageMath table](https://github.com/sagemath/sage/blob/8de8dad7bcb38e1baa43508cbe944bf04a2d0401/src/sage/combinat/matrices/hadamard_matrix.py#L636) · [Goethals–Seidel array](https://github.com/sagemath/sage/blob/8de8dad7bcb38e1baa43508cbe944bf04a2d0401/src/sage/combinat/matrices/hadamard_matrix.py#L1020) · [Checker](verify.py)
 
-The GitHub workflow builds the Lean files with version 4.36.0 and treats warnings as errors. The two global implication theorems expose Paley-covered cases and Verheiden completion as inputs. R, B and their alternative marginal growth assumptions remain explicit hypotheses. The fractional identities, conditional induction, row-energy obstruction, doubling, and assembly have kernel-checked proofs. The converse via normalization, sparse rounding argument, and prime-cycle corollary have written proofs above. [GitHub Actions](../../.github/workflows/hadamard-all-orders.yml)
+**2396 階疊接證書與外層設計的差距。** 在已公布的疊接次序下，所有行對的絕對內積最大為 $168$。上部行對內積為零，下部不同行的內積由刪去的四列所決定，絕對值至多為四。跨區行對則逐一用整數驗算。因此任意兩行最多只在 $(1196+168)/2=682$ 條原列相異。外層設計組裝的 1,199 條列要求兩條指定行相異於其中 1,198 列。這個組裝最多沿用 $682+1=683$ 條原列，至少有 513 條原列不能保留。
+
+即使任意重排及變號後才疊接相同的上下來源，也無法保留全數 1,196 列而只加三列來得到外層設計。指定的兩行必須分處上、下兩部，因為同一部內的行對在原列上遠少於 1,195 個相異位置。令 $b$ 是指定的下部行。在每種相差整行變號視為相同的符號型態中，驗算證實四條省略列加任一原列所成的五符號型態至少出現 52 次。若兩條指定行在所有原列相反，選另一個在四條省略列上與 $b$ 相同至整行變號的下部行 $b'$。完整下部方陣的行正交性使截短後的 $b\cdot b'$ 等於 $\pm4$。兩條指定行的差與 $b'$ 的原列內積絕對值為 $8$，兩條相異的新列至多抵銷 $4$。若兩條指定行只在一條原列相同，選在該列和四條省略列上與 $b$ 同型的 $b'$。絕對值增至 $10$，三條相異的新列至多抵銷 $6$。這兩個情形都與外層設計逐行平衡所要求的零內積矛盾。這是對特定下部來源及四條省略列的排除。[精確行對及符號型態檢查](verify.py)
+
+The GitHub workflow builds the Lean files with version 4.36.0 and treats warnings as errors. The two global implication theorems expose Paley-covered cases and Verheiden completion as inputs. R, B and their alternative marginal growth assumptions remain explicit hypotheses. The fractional identities, conditional induction, row-energy and parity obstructions, order-28 blocked prefix, doubling, and assembly have kernel-checked proofs. The complete fixed-design census and Gram determinant use exact Python arithmetic. The converse via normalization, sparse rounding argument, and prime-cycle corollaries have written proofs above. [GitHub Actions](../../.github/workflows/hadamard-all-orders.yml)
