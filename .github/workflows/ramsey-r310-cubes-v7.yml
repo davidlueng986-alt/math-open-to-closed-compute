@@ -1,0 +1,120 @@
+name: Ramsey R310 v7 persistent cube and conquer
+on:
+  workflow_dispatch:
+    inputs:
+      resume_run:
+        description: Prior v7 run ID (same plan); blank starts new
+        type: string
+        default: ''
+      d:
+        type: string
+        default: '6'
+      q:
+        type: string
+        default: '9'
+      band:
+        type: string
+        default: '3'
+      group_size:
+        type: string
+        default: '1'
+      parts:
+        type: string
+        default: '8'
+  push:
+    branches: [main]
+    paths: [jobs/ramsey-r310-cubes-v7/launch.txt]
+permissions:
+  contents: read
+  packages: read
+  actions: read
+defaults:
+  run:
+    shell: bash
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      parent: ${{ steps.matrix.outputs.parent }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45701170354'
+          name: D678-v6-profile
+          path: evidence/
+      - id: matrix
+        env:
+          D: ${{ inputs.d || '6' }}
+          Q: ${{ inputs.q || '9' }}
+          BAND: ${{ inputs.band || '3' }}
+          GROUP: ${{ inputs.group_size || '1' }}
+          PARTS: ${{ inputs.parts || '8' }}
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          cp evidence/profile_cert.json out/
+          python3 jobs/ramsey-r310-cubes-v7/plan.py --cert evidence/profile_cert.json --prior evidence/branch_plan.json --out out/plan.json --d "$D" --q "$Q" --band "$BAND" --group-size "$GROUP" --parts "$PARTS"
+          python3 - <<'PY'
+          import json,os
+          x=json.load(open('out/plan.json'));b=x['parent']
+          assert x['tasks']
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f:
+              f.write('matrix='+json.dumps({'include':[{'id':t['id']} for t in x['tasks']]},separators=(',',':'))+'\n')
+              f.write(f"parent=D{b['d']}-N{b['q']}-B{b['band']}\n")
+          print('Exact initial tasks:',len(x['tasks']))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v7-exact-plan
+          path: out/
+          retention-days: 90
+  cube:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: v7-exact-plan
+          path: evidence/
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45697407494'
+          name: ${{ needs.plan.outputs.parent }}-v5
+          path: old/
+      - uses: actions/download-artifact@v4
+        if: ${{ inputs.resume_run != '' && inputs.resume_run != null }}
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ inputs.resume_run }}
+          name: checkpoint-${{ matrix.id }}
+          path: resume/
+      - name: Solve, certify and recursively split
+        env:
+          TASK: ${{ matrix.id }}
+        run: |
+          set -euo pipefail
+          python3 jobs/ramsey-r310-cubes-v7/worker.py --plan evidence/plan.json --cert evidence/profile_cert.json --task "$TASK" --out out --reuse old/cuts.jsonl --resume resume --seconds 3000 --cube-seconds 180 --proof-seconds 240 --max-depth 7
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: checkpoint-${{ matrix.id }}
+          path: out/
+          retention-days: 90
