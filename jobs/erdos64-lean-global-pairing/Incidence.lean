@@ -34,10 +34,12 @@ theorem field_cases (a : ZMod 2) : a=0 ∨ a=1 := by
   rcases h with h | h
   · left
     apply ZMod.val_injective 2
-    simpa using h
+    rw [h]
+    decide
   · right
     apply ZMod.val_injective 2
-    simpa using h
+    rw [h]
+    decide
 
 theorem indicator_sum {T : Type*} [Fintype T] (P : T → Prop) [DecidablePred P] :
     (∑ t, if P t then (1 : ZMod 2) else 0) =
@@ -45,6 +47,7 @@ theorem indicator_sum {T : Type*} [Fintype T] (P : T → Prop) [DecidablePred P]
   rw [Fintype.card_subtype, ← Finset.sum_filter]
   simp
 
+omit [Fintype Y] in
 theorem syndrome_unit [DecidableEq X] (R : X → Y → Prop) [DecidableRel R]
     (a : X) (y : Y) :
     syndrome R (Erdos64Binary.unit a) y = if R a y then 1 else 0 := by
@@ -79,6 +82,7 @@ theorem support_row (R : X → Y → Prop) [DecidableRel R]
   intro x _
   rcases field_cases (z x) with hz | hz <;> by_cases h : R x y <;> simp [h,hz]
 
+omit [Fintype Y] in
 theorem support_row_le (R : X → Y → Prop) [DecidableRel R]
     (z : X → ZMod 2) (y : Y) :
     Fintype.card {x : Support z // R x.1 y} ≤ Fintype.card {x : X // R x y} := by
@@ -86,6 +90,7 @@ theorem support_row_le (R : X → Y → Prop) [DecidableRel R]
     (fun x : {x : Support z // R x.1 y} => (⟨x.1.1,x.2⟩ : {x : X // R x y}))
     (by intro a b h; apply Subtype.ext; apply Subtype.ext; exact congrArg (fun t : {x : X // R x y} => t.val) h)
 
+omit [Fintype Y] in
 theorem support_row_mod (R : X → Y → Prop) [DecidableRel R]
     (z : X → ZMod 2) (y : Y) :
     Fintype.card {x : Support z // R x.1 y} % 2 = (syndrome R z y).val := by
@@ -175,14 +180,17 @@ theorem safe_step_of_low_codim_incidence (G : SimpleGraph V) [Fintype V]
       rw [congrFun hzero y] at hm
       simp at hm
       have hb := (support_row_le R z y).trans (hmid y)
-      change Fintype.card {x : Support z // R x.1 y}=0 ∨
-        Fintype.card {x : Support z // R x.1 y}=2
+      have he : Fintype.card {x : S // R0 x y} = Fintype.card {x : Support z // R x.1 y} :=
+        Fintype.card_congr (Equiv.subtypeEquivRight (fun x => Iff.rfl))
       omega
+    have hc (x : S) : Fintype.card {y // R0 x y} = Fintype.card {y // R x.1 y} :=
+      Fintype.card_congr (Equiv.subtypeEquivRight (fun y => Iff.rfl))
+    have hdeg (x : S) : 3 ≤ Fintype.card {y // R0 x y} := by
+      rw [hc, hbranch]
     exact safe_step_of_rows G f0 g hf0 hg (fun x y => hsep x.1 y) R0
       (fun x y h => hR x.1 y h) hY hsize0 hrow w
-      (fun x => by change 2 ≤ Fintype.card {y // R x.1 y}; rw [hbranch]; decide)
-      (fun x _ => by change 3 ≤ Fintype.card {y // R x.1 y}; rw [hbranch])
-      hfree
+      (fun x => (by decide : 2 ≤ 3).trans (hdeg x))
+      (fun x _ => hdeg x) hfree
   · let S := Support z
     let f0 : S → V := fun x => f x.1
     have hf0 : Function.Injective f0 := fun _ _ h => Subtype.ext (hf h)
