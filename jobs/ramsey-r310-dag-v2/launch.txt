@@ -1,1 +1,1 @@
-Wave 2: 21 covering leaves, core and profile; 2026-11-26
+Wave 2 retry: use bash in GHCR containers, no change to mathematical obligations; 2026-11-26

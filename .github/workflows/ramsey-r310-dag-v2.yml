@@ -11,6 +11,9 @@ permissions:
 concurrency:
   group: ramsey-r310-dag-v2
   cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
 jobs:
   profile:
     runs-on: ubuntu-latest
