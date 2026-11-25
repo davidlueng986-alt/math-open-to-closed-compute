@@ -14,14 +14,13 @@ Key theorems formalized:
 2. `exists_low_degree_neighbor`: Every vertex in `MinimalBad G` has a neighbor of degree `≤ 3`.
 3. `class_h_v3_ge_two_v4` & `class_h_v3_two_thirds`: In any Class `H` `MinimalBad G`,
    `2 * |V_{\ge 4}| ≤ |V_3|` and `2 * (|V| - 1) ≤ 3 * |V_3|`.
-4. `dyadic_path_of_identify`: Unified vertex-identification cycle-lifting theorem.
-5. `universal_dyadic_path`: For every `x, y` with `dist_G(x, y) ≥ 3` in `MinimalBad G`,
-   there is a simple `x`–`y` path of length `2 ^ k` (`k ≥ 2`).
-6. `unified_bipartite_exclusion`: Short unified exclusion of all bipartite `MinimalBad` graphs
-   (covering all 6 bipartite leaves `C-B, S-B, H-B-*` in one proof).
-7. `edge_contraction_dyadic_path` & `non_triangle_edge_odd_power_cycle`: Every non-triangle edge `xy`
-   in `MinimalBad G` has a simple `x`–`y` path of length `2 ^ k` (`k ≥ 2`) avoiding `xy`,
-   and hence lies on a simple cycle of length `2 ^ k + 1`.
+4. `dyadic_path_of_identify_power`: Unified vertex-identification cycle-lifting theorem.
+5. `dyadic_path_of_no_common_neighbor`: Universal Dyadic Path Theorem (`dist_G(x, y) ≥ 3`)
+   and non-triangle edge dyadic path theorem (`dist_G(x, y) = 1`, no common neighbor).
+6. `non_triangle_edge_odd_power_cycle`: Every non-triangle edge `xy` in `MinimalBad G`
+   lies on a simple cycle of length `2 ^ k + 1` (`k ≥ 2`).
+7. `unified_bipartite_exclusion`: Unified exclusion of all bipartite `MinimalBad` graphs
+   (covering all 6 bipartite leaves `C-B, S-B, H-B-*` in one short proof).
 8. `class_h_common_neighbor_dyadic_path`: For `z` with `4 ≤ G.degree z` and non-adjacent
    `x, y ∈ N(z)`, `G` has a simple `x`–`y` path of length `2 ^ k` (`k ≥ 2`) avoiding `{xz, yz}`.
 9. `cubic_triangle_free_two_path_mersenne` & `cubic_triangle_free_two_path_dyadic`:
@@ -279,16 +278,27 @@ theorem liftAvoidWalk_support {V : Type u} {G : SimpleGraph V} {x y : V} (hxy : 
   | cons h rest ih =>
     simp [liftAvoidWalk, ih]
 
+/-- Helper: any vertex belonging to an edge of a walk belongs to the walk's support. -/
+theorem mem_support_of_mem_edge {V : Type u} {G : SimpleGraph V} {u v w : V}
+    (p : G.Walk u v) {e : Sym2 V} (he : e ∈ p.edges) (hw : w ∈ e) : w ∈ p.support := by
+  induction p with
+  | nil => simp at he
+  | @cons a b c hab rest ih =>
+    rw [Walk.edges_cons, List.mem_cons] at he
+    rcases he with rfl | hrest
+    · rcases Sym2.mem_iff.mp hw with rfl | rfl
+      · simp
+      · simp [Walk.start_mem_support]
+    · exact List.mem_cons_of_mem a (ih hrest)
+
 /-- Core lifting lemma: if `identifyGraph G x y` has a simple `2^k`-cycle (`k ≥ 2`)
     while `G` is power-free, then `G` contains a simple `x`–`y` path of length `2^k`
-    whose internal vertices are all distinct from `x, y` and whose first and last
-    internal vertices are not common neighbors of `x` and `y`. -/
+    whose edges avoid `s(x, z)` and `s(y, z)` for every common neighbor `z` of `x, y`. -/
 theorem dyadic_path_of_identify_power {V : Type u} {G : SimpleGraph V}
     (hfree : ¬HasPower G) {x y : V} (hxy : x ≠ y)
     (hpow : HasPower (identifyGraph G x y)) :
     ∃ (k : ℕ) (p : G.Walk x y), 2 ≤ k ∧ p.IsPath ∧ p.length = 2 ^ k ∧
-      (∀ z, G.Adj x z → G.Adj y z →
-        ∀ h1 : G.Adj x z, s(x, z) ∉ p.edges ∧ s(y, z) ∉ p.edges) := by
+      (∀ z, G.Adj x z → G.Adj y z → s(x, z) ∉ p.edges ∧ s(y, z) ∉ p.edges) := by
   classical
   obtain ⟨k, v0, c, hk, hc, hlen⟩ := hpow
   let x' : {v : V // v ≠ y} := ⟨x, hxy⟩
@@ -371,9 +381,9 @@ theorem dyadic_path_of_identify_power {V : Type u} {G : SimpleGraph V}
         have hcycnodup : cyc.support.tail.Nodup := by
           rw [hcycsupp]
           exact List.nodup_append.mpr ⟨hqG_nodup, List.nodup_singleton s,
-            fun a ha b hb hab => by
-              simp only [List.mem_singleton] at hb
-              subst hb; subst hab; exact hs ha⟩
+            fun a ha c hc hac => by
+              simp only [List.mem_singleton] at hc
+              subst hc; subst hac; exact hs ha⟩
         have hcyclen : cyc.length = 2 ^ k := by
           simp [cyc, Walk.length_cons, Walk.length_append, hqG_len]
           omega
@@ -398,12 +408,9 @@ theorem dyadic_path_of_identify_power {V : Type u} {G : SimpleGraph V}
         · exact Or.inl h
         · exact Or.inr h
         · exact False.elim (e2.1 (Subtype.ext hb'.symm))
-      have hbuild : ∀ (h1 : G.Adj x b.1) (h2 : G.Adj b'.1 y),
-          ∃ (p : G.Walk x y), p.IsPath ∧ p.length = 2 ^ k ∧
-            (∀ z, G.Adj x z → G.Adj y z →
-              ∀ _ : G.Adj x z, s(x, z) ∉ p.edges ∧ s(y, z) ∉ p.edges) := by
-        intro h1 h2
-        let p : G.Walk x y := Walk.cons h1 (qG.append (Walk.cons h2 Walk.nil))
+      rcases he1 with h1x | h1y <;> rcases he2 with h2x | h2y
+      · exact False.elim (h_no_same x hnotx h1x h2x.symm)
+      · let p : G.Walk x y := Walk.cons h1x (qG.append (Walk.cons h2y.symm Walk.nil))
         have hpsupp : p.support = x :: (qG.support ++ [y]) := by
           simp [p, Walk.support_cons, Walk.support_append]
         have hpnodup : p.support.Nodup := by
@@ -416,23 +423,14 @@ theorem dyadic_path_of_identify_power {V : Type u} {G : SimpleGraph V}
         have hplen : p.length = 2 ^ k := by
           simp [p, Walk.length_cons, Walk.length_append, hqG_len]
           omega
-        refine ⟨p, Walk.IsPath.mk' hpnodup, hplen, ?_⟩
-        intro z hxz hyz _
+        refine ⟨k, p, hk, Walk.IsPath.mk' hpnodup, hplen, ?_⟩
+        intro z hxz hyz
         have hpedges : p.edges = s(x, b.1) :: (qG.edges ++ [s(b'.1, y)]) := by
           simp [p, Walk.edges_cons, Walk.edges_append]
         have hbz : b.1 ≠ z := by
-          intro h; subst h
-          exact h_no_same y hnoty hyz h2
+          intro h; subst h; exact h_no_same y hnoty hyz h2y.symm
         have hb'z : b'.1 ≠ z := by
-          intro h; subst h
-          exact h_no_same x hnotx h1 hxz.symm
-        have hq_no_x : ∀ e ∈ qG.edges, x ∉ e := by
-          intro e he hxmem
-          exact hnotx (Walk.fst_mem_support_of_mem_edges qG he |> fun _ =>
-            Walk.mem_support_of_mem_edges qG he hxmem)
-        have hq_no_y : ∀ e ∈ qG.edges, y ∉ e := by
-          intro e he hymem
-          exact hnoty (Walk.mem_support_of_mem_edges qG he hymem)
+          intro h; subst h; exact h_no_same x hnotx h1x hxz.symm
         constructor
         · intro hm
           rw [hpedges, List.mem_cons, List.mem_append, List.mem_singleton] at hm
@@ -440,8 +438,8 @@ theorem dyadic_path_of_identify_power {V : Type u} {G : SimpleGraph V}
           · rcases Sym2.eq_iff.mp h with ⟨_, h2'⟩ | ⟨h1', _⟩
             · exact hbz h2'.symm
             · exact (G.ne_of_adj hxz) h1'.symm
-          · exact hq_no_x s(x, z) h (by simp)
-          · rcases Sym2.eq_iff.mp h with ⟨h1', h2'⟩ | ⟨h1', h2'⟩
+          · exact hnotx (mem_support_of_mem_edge qG h (by simp))
+          · rcases Sym2.eq_iff.mp h with ⟨_, h2'⟩ | ⟨h1', _⟩
             · exact hxy h2'
             · exact hxy h1'.symm
         · intro hm
@@ -450,16 +448,11 @@ theorem dyadic_path_of_identify_power {V : Type u} {G : SimpleGraph V}
           · rcases Sym2.eq_iff.mp h with ⟨h1', _⟩ | ⟨_, h2'⟩
             · exact hxy h1'.symm
             · exact hxy h2'
-          · exact hq_no_y s(y, z) h (by simp)
+          · exact hnoty (mem_support_of_mem_edge qG h (by simp))
           · rcases Sym2.eq_iff.mp h with ⟨h1', _⟩ | ⟨_, h2'⟩
             · exact (G.ne_of_adj hyz) h1'
             · exact hb'z h2'.symm
-      rcases he1 with h1x | h1y <;> rcases he2 with h2x | h2y
-      · exact False.elim (h_no_same x hnotx h1x h2x.symm)
-      · obtain ⟨p, hp, hpl, hpe⟩ := hbuild h1x h2y.symm
-        exact ⟨k, p, hk, hp, hpl, hpe⟩
-      · -- Reverse case: `G.Adj y b.1` and `G.Adj x b'.1`
-        let p_rev : G.Walk y x := Walk.cons h1y (qG.append (Walk.cons h2x.symm Walk.nil))
+      · let p_rev : G.Walk y x := Walk.cons h1y (qG.append (Walk.cons h2x.symm Walk.nil))
         have hpsupp : p_rev.support = y :: (qG.support ++ [x]) := by
           simp [p_rev, Walk.support_cons, Walk.support_append]
         have hpnodup : p_rev.support.Nodup := by
@@ -475,21 +468,13 @@ theorem dyadic_path_of_identify_power {V : Type u} {G : SimpleGraph V}
           simp [p, p_rev, Walk.length_reverse, Walk.length_cons, Walk.length_append, hqG_len]
           omega
         refine ⟨k, p, hk, hprev_path.reverse, hplen, ?_⟩
-        intro z hxz hyz _
+        intro z hxz hyz
         have hpedges : p_rev.edges = s(y, b.1) :: (qG.edges ++ [s(b'.1, x)]) := by
           simp [p_rev, Walk.edges_cons, Walk.edges_append]
         have hbz : b.1 ≠ z := by
-          intro h; subst h
-          exact h_no_same x hnotx hxz h2x.symm
+          intro h; subst h; exact h_no_same x hnotx hxz h2x.symm
         have hb'z : b'.1 ≠ z := by
-          intro h; subst h
-          exact h_no_same y hnoty h1y hyz.symm
-        have hq_no_x : ∀ e ∈ qG.edges, x ∉ e := by
-          intro e he hxmem
-          exact hnotx (Walk.mem_support_of_mem_edges qG he hxmem)
-        have hq_no_y : ∀ e ∈ qG.edges, y ∉ e := by
-          intro e he hymem
-          exact hnoty (Walk.mem_support_of_mem_edges qG he hymem)
+          intro h; subst h; exact h_no_same y hnoty h1y hyz.symm
         constructor
         · intro hm
           rw [Walk.edges_reverse, List.mem_reverse, hpedges, List.mem_cons,
@@ -498,7 +483,7 @@ theorem dyadic_path_of_identify_power {V : Type u} {G : SimpleGraph V}
           · rcases Sym2.eq_iff.mp h with ⟨h1', _⟩ | ⟨_, h2'⟩
             · exact hxy h1'
             · exact hxy h2'.symm
-          · exact hq_no_x s(x, z) h (by simp)
+          · exact hnotx (mem_support_of_mem_edge qG h (by simp))
           · rcases Sym2.eq_iff.mp h with ⟨_, h2'⟩ | ⟨h1', _⟩
             · exact (G.ne_of_adj hxz) h2'.symm
             · exact hb'z h1'.symm
@@ -509,8 +494,8 @@ theorem dyadic_path_of_identify_power {V : Type u} {G : SimpleGraph V}
           · rcases Sym2.eq_iff.mp h with ⟨_, h2'⟩ | ⟨h1', _⟩
             · exact hbz h2'.symm
             · exact (G.ne_of_adj hyz) h1'.symm
-          · exact hq_no_y s(y, z) h (by simp)
-          · rcases Sym2.eq_iff.mp h with ⟨h1', h2'⟩ | ⟨h1', h2'⟩
+          · exact hnoty (mem_support_of_mem_edge qG h (by simp))
+          · rcases Sym2.eq_iff.mp h with ⟨_, h2'⟩ | ⟨h1', _⟩
             · exact hxy h2'.symm
             · exact hxy h1'
       · exact False.elim (h_no_same y hnoty h1y h2y.symm)
@@ -709,7 +694,7 @@ theorem non_triangle_edge_odd_power_cycle {V : Type u} [Fintype V]
   · simp [q, Walk.length_append, hlen]
   · simp [q, Walk.edges_append, Sym2.eq_swap]
 
-/-- **Unified 6-Line Bipartite Exclusion**:
+/-- **Unified Bipartite Exclusion**:
     Every `MinimalBad G` is nonbipartite (covers all 6 bipartite leaves `C-B, S-B, H-B-*` at once). -/
 theorem unified_bipartite_exclusion {V : Type u} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
@@ -750,7 +735,6 @@ theorem class_h_common_neighbor_dyadic_path {V : Type u} [Fintype V]
     ∃ (k : ℕ) (p : G.Walk x y), 2 ≤ k ∧ p.IsPath ∧ p.length = 2 ^ k ∧
       s(x, z) ∉ p.edges ∧ s(y, z) ∉ p.edges := by
   classical
-  -- By C4-freeness (`rectangle_power`), `z` is the unique common neighbor of `x` and `y`.
   have huniq : ∀ u, G.Adj x u → G.Adj y u → u = z := by
     intro u hxu hyu
     by_contra huz
@@ -770,18 +754,8 @@ theorem class_h_common_neighbor_dyadic_path {V : Type u} [Fintype V]
     exact Finset.card_erase_add_one (Finset.mem_univ y)
   have hdx : 2 ≤ G.degree x := no_small_defect G hm x
   have hdy : 2 ≤ G.degree y := no_small_defect G hm y
-  have hzw : z ≠ w := by
-    intro h; subst h
-    have hzx3 := high_degree_independent G hm hzx hz
-    -- Wait: `w` has degree 2 if `G` is not cubic; either way `4 ≤ G.degree z`!
-    -- Actually `z` might equal `w` if `G` is cubic (`w` arbitrary), so don't assume `z ≠ w`!
-    exact False.elim (by exact h ▸ rfl |> fun _ => by contradiction)
-  -- Wait: don't even need `z ≠ w`! Just compute `H.degree` directly for `⟨x, hxy⟩`, `⟨z, hzy⟩`, and all others!
-  -- Actually let's prove `3 ≤ H.degree ⟨z, _⟩` directly!
   have hzy_ne : z ≠ y := G.ne_of_adj hzy
-  have hzx_ne : z ≠ x := G.ne_of_adj hzx
   have hdeg_z : 3 ≤ H.degree ⟨z, hzy_ne⟩ := by
-    -- Every neighbor of `z` in `G` except `y` is a neighbor of `⟨z, hzy_ne⟩` in `H`!
     let f : ↥((G.neighborFinset z).erase y) → H.neighborSet ⟨z, hzy_ne⟩ := fun u =>
       ⟨⟨u.1, (Finset.mem_erase.mp u.2).1⟩,
         ⟨fun h => (G.ne_of_adj ((G.mem_neighborFinset z u.1).mp (Finset.mem_erase.mp u.2).2))
@@ -797,8 +771,6 @@ theorem class_h_common_neighbor_dyadic_path {V : Type u} [Fintype V]
     rw [G.card_neighborFinset_eq_degree] at he
     omega
   have hdeg_merged : 3 ≤ H.degree ⟨x, hxy⟩ := by
-    -- `G.neighborFinset x` injects into `H.neighborSet ⟨x, hxy⟩`, and `G.degree x ≥ 3` or `y` adds ≥ 1!
-    -- Specifically, `G.neighborFinset x ∪ (G.neighborFinset y).erase z` has size `≥ G.degree x + G.degree y - 1 ≥ 4`!
     let A := G.neighborFinset x
     let B := (G.neighborFinset y).erase z
     have hAB : Disjoint A B := by
@@ -860,24 +832,21 @@ theorem class_h_common_neighbor_dyadic_path {V : Type u} [Fintype V]
         exact hw u.1 (fun h => hu (Subtype.ext h))
   have hpow : HasPower H := hm.2.2.1 W H (by omega) hnear
   obtain ⟨k, p, hk, hp, hlen, havoid⟩ := dyadic_path_of_identify_power hm.2.1 hxy hpow
-  obtain ⟨h1, h2⟩ := havoid z hzx.symm hzy.symm hzx.symm
+  obtain ⟨h1, h2⟩ := havoid z hzx.symm hzy.symm
   exact ⟨k, p, hk, hp, hlen, h1, h2⟩
 
 /-! ### Part 5: Cubic Triangle-Free Bilateral 2-Path & All-Pairs Dyadic Path Theorems -/
 
-/-- In a cubic triangle-free `MinimalBad G` (`C-N-2, C-N-3, C-N-R`), for every 2-path
-    `u1 - v - u2`, `G - v` contains a simple `u1`–`u2` path of length `2 ^ k - 1` (`k ≥ 2`). -/
-theorem cubic_triangle_free_two_path_mersenne {V : Type u} [Fintype V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
-    (hC : Cubic G) (hN : ¬Triangle G)
+/-- Helper: in a cubic graph, any two distinct neighbors `u1, u2` of `v` determine a unique
+    third neighbor `u3` such that `N(v) = {u1, u2, u3}`. -/
+theorem cubic_three_neighbors {V : Type u} [Fintype V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] (hC : Cubic G)
     {v u1 u2 : V} (hv1 : G.Adj v u1) (hv2 : G.Adj v u2) (h12 : u1 ≠ u2) :
-    ∃ (k : ℕ) (p : (G.induce {x | x ≠ v}).Walk ⟨u1, (G.ne_of_adj hv1).symm⟩ ⟨u2, (G.ne_of_adj hv2).symm⟩),
-      2 ≤ k ∧ p.IsPath ∧ p.length = 2 ^ k - 1 := by
+    ∃ u3, G.Adj v u3 ∧ u3 ≠ u1 ∧ u3 ≠ u2 ∧
+      ∀ x, G.Adj v x ↔ x = u1 ∨ x = u2 ∨ x = u3 := by
   classical
-  have hn12 : ¬G.Adj u1 u2 := fun h => hN ⟨v, u1, u2, hv1, h, hv2.symm⟩
   have hncard : (G.neighborFinset v).card = 3 := by
     rw [G.card_neighborFinset_eq_degree, hC v]
-  -- Find the 3rd neighbor `u3` of `v`
   have h3ex : ∃ u3, G.Adj v u3 ∧ u3 ≠ u1 ∧ u3 ≠ u2 := by
     by_contra hbad
     have hsub : G.neighborFinset v ⊆ ({u1, u2} : Finset V) := by
@@ -892,19 +861,305 @@ theorem cubic_triangle_free_two_path_mersenne {V : Type u} [Fintype V]
     have h2 : ({u1, u2} : Finset V).card ≤ 2 := Finset.card_le_two
     omega
   obtain ⟨u3, hv3, h31, h32⟩ := h3ex
-  have hN_eq : ∀ x, G.Adj v x ↔ x = u1 ∨ x = u2 ∨ x = u3 := by
-    intro x
-    have hset : G.neighborFinset v = ({u1, u2, u3} : Finset V) := by
-      apply Finset.eq_of_subset_of_card_le
-      · intro y hy
-        have : y ∈ ({u1, u2, u3} : Finset V) := by
-          simp only [Finset.mem_insert, Finset.mem_singleton] at hy ⊢
-          rcases hy with rfl | rfl | rfl <;> simp
-        exact this
-      · -- Wait: we want `{u1, u2, u3} ⊆ G.neighborFinset v` and cards equal!
-        omega
-    -- Cleaner: prove `{u1, u2, u3} = G.neighborFinset v` directly
-    sorry
-  sorry
+  have hsub : ({u1, u2, u3} : Finset V) ⊆ G.neighborFinset v := by
+    intro x hx
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+    rcases hx with rfl | rfl | rfl
+    · exact (G.mem_neighborFinset v u1).mpr hv1
+    · exact (G.mem_neighborFinset v u2).mpr hv2
+    · exact (G.mem_neighborFinset v u3).mpr hv3
+  have hcard3 : ({u1, u2, u3} : Finset V).card = 3 := by
+    simp [h12, h31.symm, h32.symm]
+  have heq : ({u1, u2, u3} : Finset V) = G.neighborFinset v :=
+    Finset.eq_of_subset_of_card_le hsub (by omega)
+  refine ⟨u3, hv3, h31, h32, fun x => ?_⟩
+  rw [← G.mem_neighborFinset, ← heq]
+  simp
 
+/-- In a cubic triangle-free `MinimalBad G` (`C-N-2, C-N-3, C-N-R`), for every 2-path
+    `u1 - v - u2`, `G - v` contains a simple `u1`–`u2` path of length `2 ^ k - 1` (`k ≥ 2`). -/
+theorem cubic_triangle_free_two_path_mersenne {V : Type u} [Fintype V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
+    (hC : Cubic G) (hN : ¬Triangle G)
+    {v u1 u2 : V} (hv1 : G.Adj v u1) (hv2 : G.Adj v u2) (h12 : u1 ≠ u2) :
+    ∃ (k : ℕ) (p : (G.induce {x | x ≠ v}).Walk ⟨u1, (G.ne_of_adj hv1).symm⟩ ⟨u2, (G.ne_of_adj hv2).symm⟩),
+      2 ≤ k ∧ p.IsPath ∧ p.length = 2 ^ k - 1 := by
+  classical
+  have hn12 : ¬G.Adj u1 u2 := fun h => hN ⟨v, u1, u2, hv1, h, hv2.symm⟩
+  obtain ⟨u3, hv3, h31, h32, hN_eq⟩ := cubic_three_neighbors G hC hv1 hv2 h12
+  let W := {x : V // x ≠ v}
+  let K : SimpleGraph W := G.induce {x | x ≠ v}
+  let _ : DecidableRel K.Adj := inferInstanceAs (DecidableRel (G.induce {x | x ≠ v}).Adj)
+  let U1 : W := ⟨u1, (G.ne_of_adj hv1).symm⟩
+  let U2 : W := ⟨u2, (G.ne_of_adj hv2).symm⟩
+  let U3 : W := ⟨u3, (G.ne_of_adj hv3).symm⟩
+  have hU12 : U1 ≠ U2 := fun h => h12 (congrArg Subtype.val h)
+  have hKnot : ¬K.Adj U1 U2 := hn12
+  let H : SimpleGraph W := K ⊔ SimpleGraph.edge U1 U2
+  let _ : DecidableRel H.Adj := Classical.decRel _
+  have hV : 4 ≤ Fintype.card V := by
+    have := G.degree_lt_card_verts v
+    have := hC v
+    omega
+  have hW : Fintype.card W + 1 = Fintype.card V := by
+    rw [Fintype.card_subtype,
+      show (Finset.univ.filter (fun x : V => x ≠ v)) = Finset.univ.erase v by ext x; simp]
+    exact Finset.card_erase_add_one (Finset.mem_univ v)
+  have hda : H.degree U1 = K.degree U1 + 1 := degree_add_new_edge_left K U1 U2 hU12 hKnot
+  have hdb : H.degree U2 = K.degree U2 + 1 := degree_add_new_edge_right K U1 U2 hU12 hKnot
+  have hnear : Near H := by
+    apply near_of_except H U3 (by omega)
+    intro x hx
+    have hd := induce_delete_degree G v x
+    change K.degree x + (if G.Adj x.1 v then 1 else 0) = G.degree x.1 at hd
+    rw [hC x.1] at hd
+    by_cases hx1 : x = U1
+    · subst hx1
+      rw [ite_eq_left hv1.symm] at hd
+      omega
+    by_cases hx2 : x = U2
+    · subst hx2
+      rw [ite_eq_left hv2.symm] at hd
+      omega
+    · have hnot : ¬G.Adj x.1 v := by
+        intro hadj
+        rcases (hN_eq x.1).mp hadj.symm with h | h | h
+        · exact hx1 (Subtype.ext h)
+        · exact hx2 (Subtype.ext h)
+        · exact hx (Subtype.ext h)
+      rw [ite_eq_right hnot, add_zero] at hd
+      have hk3 : 3 ≤ K.degree x := by omega
+      exact hk3.trans (K.degree_le_of_le (v := x) (H := H) le_sup_left)
+  obtain ⟨k, a, c, hk, hc, hlen⟩ := hm.2.2.1 W H (by omega) hnear
+  have hKfree : ¬HasPower K := fun hp => hm.2.1 (power_induce G _ hp)
+  have hedge : s(U1, U2) ∈ c.edges := by
+    by_contra hno
+    have htr : ∀ e ∈ c.edges, e ∈ K.edgeSet := by
+      intro e he
+      have hmem := c.edges_subset_edgeSet he
+      rw [SimpleGraph.edgeSet_sup] at hmem
+      rcases hmem with hk' | hed
+      · exact hk'
+      · rw [SimpleGraph.edgeSet_edge_of_ne hU12] at hed
+        exact False.elim (hno ((Set.mem_singleton_iff.mp hed) ▸ he))
+    exact hKfree ⟨k, a, c.transfer K htr, hk, hc.transfer htr, by simpa using hlen⟩
+  have hU1mem : U1 ∈ c.support := mem_support_of_mem_edge c hedge (by simp)
+  let c' := c.rotate hU1mem
+  have hc' : c'.IsCycle := hc.rotate hU1mem
+  have hlen' : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
+  have hedge' : s(U1, U2) ∈ c'.edges := by
+    have hperm := Walk.edges_rotate c hU1mem
+    exact hperm.mem_iff.mpr hedge
+  have htransfer_tail : ∀ (r : H.Walk U2 U1), r.IsPath → s(U1, U2) ∉ r.edges →
+      r.length = 2 ^ k - 1 →
+      ∃ p : K.Walk U1 U2, p.IsPath ∧ p.length = 2 ^ k - 1 := by
+    intro r hr hno hrlen
+    have htr : ∀ e ∈ r.reverse.edges, e ∈ K.edgeSet := by
+      intro e he
+      have hmem := r.reverse.edges_subset_edgeSet he
+      rw [SimpleGraph.edgeSet_sup] at hmem
+      rcases hmem with hk' | hed
+      · exact hk'
+      · rw [SimpleGraph.edgeSet_edge_of_ne hU12] at hed
+        have he' : s(U1, U2) ∈ r.edges := by
+          rw [Set.mem_singleton_iff.mp hed] at he
+          rwa [Walk.edges_reverse, List.mem_reverse] at he
+        exact False.elim (hno he')
+    refine ⟨r.reverse.transfer K htr, hr.reverse.transfer htr, ?_⟩
+    simpa using hrlen
+  cases hc_eq : c' with
+  | nil =>
+    have := hc'.three_le_length
+    rw [hc_eq] at this; simp at this
+  | @cons _ b _ e1 r =>
+    by_cases hb : b = U2
+    · subst hb
+      have hrnodup : (s(U1, U2) :: r.edges).Nodup := by
+        have := hc'.isTrail.edges_nodup
+        rwa [hc_eq, Walk.edges_cons] at this
+      have hno : s(U1, U2) ∉ r.edges := (List.nodup_cons.mp hrnodup).1
+      have hrpath : r.IsPath := by
+        apply Walk.IsPath.mk'
+        have := hc'.support_nodup
+        rwa [hc_eq, Walk.support_cons, List.tail_cons] at this
+      have hrlen : r.length = 2 ^ k - 1 := by
+        rw [hc_eq, Walk.length_cons] at hlen'; omega
+      obtain ⟨p, hp, hpl⟩ := htransfer_tail r hrpath hno hrlen
+      exact ⟨k, p, hk, hp, hpl⟩
+    · -- Then `s(U1, U2)` must be the last edge of `c'`, i.e. the first edge of `c'.reverse`!
+      have hc'rev : c'.reverse.IsCycle := hc'.reverse
+      have hlen_rev : c'.reverse.length = 2 ^ k := by simpa using hlen'
+      cases hrev_eq : c'.reverse with
+      | nil =>
+        have := hc'rev.three_le_length
+        rw [hrev_eq] at this; simp at this
+      | @cons _ b' _ e2 r' =>
+        have hb' : b' = U2 := by
+          -- Every occurrence of `s(U1, U2)` in `c'.edges` must be at the start or end since `U1` appears once in `c'.support.tail`.
+          have hmem_rev : s(U1, U2) ∈ c'.reverse.edges := by
+            rw [Walk.edges_reverse, List.mem_reverse]; exact hedge'
+          rw [hrev_eq, Walk.edges_cons, List.mem_cons] at hmem_rev
+          rcases hmem_rev with hhead | htail
+          · rcases Sym2.eq_iff.mp hhead with ⟨_, h2⟩ | ⟨h1, _⟩
+            · exact h2.symm
+            · exact False.elim (hU12 h1.symm)
+          · -- If `s(U1, U2) ∈ r'.edges`, then `U1 ∈ r'.support` — check where `U1` can be!
+            -- Wait: `r'` ends at `U1`, so `s(U1, U2)` could be the LAST edge of `r'`, which is the FIRST edge of `c'` = `s(U1, b)`!
+            have h1 : c' = c'.reverse.reverse := c'.reverse_reverse.symm
+            rw [hrev_eq, Walk.reverse_cons] at h1
+            -- Actually simpler: `r'.reverse` starts at `U1` and ends at `b'`, and `r'.reverse` has `s(U1, b)` as its first edge?
+            -- Let's check: `r'` has `s(U1, U2) ∈ r'.edges`. Write `r'.reverse = cons _ _`!
+            cases hr'_eq : r'.reverse with
+            | nil =>
+              have := Walk.length_eq_zero_iff.mpr hr'_eq
+              have h3 := hc'rev.three_le_length
+              rw [hrev_eq, Walk.length_cons] at h3
+              simp at this; omega
+            | @cons _ b2 _ e3 rest =>
+              have hb2 : b2 = b := by
+                have h2 : c' = (Walk.cons e3 rest).append (Walk.cons e2.symm Walk.nil) := by
+                  rw [h1, hr'_eq]
+                rw [hc_eq, Walk.cons_append] at h2
+                injection h2 with _ h2'
+                exact h2'.symm
+              subst hb2
+              have hmem_rest : s(U1, U2) ∈ (Walk.cons e3 rest).edges := by
+                rw [← hr'_eq, Walk.edges_reverse, List.mem_reverse]; exact htail
+              rw [Walk.edges_cons, List.mem_cons] at hmem_rest
+              rcases hmem_rest with hfirst | hinrest
+              · rcases Sym2.eq_iff.mp hfirst with ⟨_, h2⟩ | ⟨h1', _⟩
+                · exact False.elim (hb h2.symm)
+                · exact False.elim (hU12 h1'.symm)
+              · -- `U1 ∈ rest.support`, contradicting `c'.support.tail.Nodup`!
+                have hU1_rest : U1 ∈ rest.support := mem_support_of_mem_edge rest hinrest (by simp)
+                have hsupp_rev : c'.reverse.support.tail = rest.reverse.support ++ [U1] := by
+                  have hr'_orig : r' = rest.reverse.append (Walk.cons e3.symm Walk.nil) := by
+                    have := congrArg Walk.reverse hr'_eq
+                    simpa using this
+                  rw [hrev_eq, Walk.support_cons, List.tail_cons, hr'_orig, Walk.support_append]
+                  simp
+                have hnod := hc'rev.support_nodup
+                rw [hsupp_rev, List.nodup_append] at hnod
+                have hU1_rev : U1 ∈ rest.reverse.support := by
+                  rw [Walk.support_reverse, List.mem_reverse]; exact hU1_rest
+                exact False.elim (hnod.2.2 U1 hU1_rev (by simp) rfl)
+        subst hb'
+        have hrnodup : (s(U1, U2) :: r'.edges).Nodup := by
+          have := hc'rev.isTrail.edges_nodup
+          rwa [hrev_eq, Walk.edges_cons] at this
+        have hno : s(U1, U2) ∉ r'.edges := (List.nodup_cons.mp hrnodup).1
+        have hrpath : r'.IsPath := by
+          apply Walk.IsPath.mk'
+          have := hc'rev.support_nodup
+          rwa [hrev_eq, Walk.support_cons, List.tail_cons] at this
+        have hrlen : r'.length = 2 ^ k - 1 := by
+          rw [hrev_eq, Walk.length_cons] at hlen_rev; omega
+        obtain ⟨p, hp, hpl⟩ := htransfer_tail r' hrpath hno hrlen
+        exact ⟨k, p, hk, hp, hpl⟩
+
+/-- In a cubic triangle-free `MinimalBad G` (`C-N-2, C-N-3, C-N-R`), for every 2-path
+    `u1 - v - u2`, `G - v` ALSO contains a simple `u1`–`u2` path of length `2 ^ m` (`m ≥ 2`). -/
+theorem cubic_triangle_free_two_path_dyadic {V : Type u} [Fintype V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
+    (hC : Cubic G) (hN : ¬Triangle G)
+    {v u1 u2 : V} (hv1 : G.Adj v u1) (hv2 : G.Adj v u2) (h12 : u1 ≠ u2) :
+    ∃ (m : ℕ) (p : (G.induce {x | x ≠ v}).Walk ⟨u1, (G.ne_of_adj hv1).symm⟩ ⟨u2, (G.ne_of_adj hv2).symm⟩),
+      2 ≤ m ∧ p.IsPath ∧ p.length = 2 ^ m := by
+  classical
+  have hn12 : ¬G.Adj u1 u2 := fun h => hN ⟨v, u1, u2, hv1, h, hv2.symm⟩
+  obtain ⟨u3, hv3, h31, h32, hN_eq⟩ := cubic_three_neighbors G hC hv1 hv2 h12
+  let W := {x : V // x ≠ v}
+  let K : SimpleGraph W := G.induce {x | x ≠ v}
+  let _ : DecidableRel K.Adj := inferInstanceAs (DecidableRel (G.induce {x | x ≠ v}).Adj)
+  let U1 : W := ⟨u1, (G.ne_of_adj hv1).symm⟩
+  let U2 : W := ⟨u2, (G.ne_of_adj hv2).symm⟩
+  let U3 : W := ⟨u3, (G.ne_of_adj hv3).symm⟩
+  have hU12 : U1 ≠ U2 := fun h => h12 (congrArg Subtype.val h)
+  have hU32 : U3 ≠ U2 := fun h => h32 (congrArg Subtype.val h)
+  have hKfree : ¬HasPower K := fun hp => hm.2.1 (power_induce G _ hp)
+  have hKdisj : ∀ z : W, ¬(K.Adj U1 z ∧ K.Adj U2 z) := by
+    intro z ⟨h1, h2⟩
+    exact hm.2.1 (rectangle_power G (G.ne_of_adj hv1) (G.ne_of_adj hv2) z.2.symm
+      h12 (G.ne_of_adj h1) (G.ne_of_adj h2) hv1 h1 h2.symm hv2.symm)
+  let W2 := {x : W // x ≠ U2}
+  let H := identifyGraph K U1 U2
+  let _ : DecidableRel H.Adj := Classical.decRel _
+  have hV : 4 ≤ Fintype.card V := by
+    have := G.degree_lt_card_verts v
+    have := hC v
+    omega
+  have hW : Fintype.card W + 1 = Fintype.card V := by
+    rw [Fintype.card_subtype,
+      show (Finset.univ.filter (fun x : V => x ≠ v)) = Finset.univ.erase v by ext x; simp]
+    exact Finset.card_erase_add_one (Finset.mem_univ v)
+  have hW2 : Fintype.card W2 + 1 = Fintype.card W := by
+    rw [Fintype.card_subtype,
+      show (Finset.univ.filter (fun x : W => x ≠ U2)) = Finset.univ.erase U2 by ext x; simp]
+    exact Finset.card_erase_add_one (Finset.mem_univ U2)
+  have hKdeg1 : K.degree U1 = 2 := by
+    have hd := induce_delete_degree G v U1
+    change K.degree U1 + (if G.Adj u1 v then 1 else 0) = G.degree u1 at hd
+    rw [ite_eq_left hv1.symm, hC u1] at hd; omega
+  have hKdeg2 : K.degree U2 = 2 := by
+    have hd := induce_delete_degree G v U2
+    change K.degree U2 + (if G.Adj u2 v then 1 else 0) = G.degree u2 at hd
+    rw [ite_eq_left hv2.symm, hC u2] at hd; omega
+  have hdeg_merged : H.degree ⟨U1, hU12⟩ = 4 := by
+    have hd := identifyGraph_degree_merged K hU12 hKdisj
+    have hnot : ¬K.Adj U1 U2 := hn12
+    rw [ite_eq_right hnot, hKdeg1, hKdeg2] at hd
+    omega
+  have hnear : Near H := by
+    apply near_of_except H (⟨U3, hU32⟩ : W2) (by omega)
+    intro x hx
+    by_cases hx1 : x.1 = U1
+    · have he : x = ⟨U1, hU12⟩ := Subtype.ext hx1
+      rw [he, hdeg_merged]; decide
+    · have hdeg := identifyGraph_degree_ne K hU12 x hx1 (fun ⟨h1, h2⟩ => hKdisj x.1 ⟨h1.symm, h2.symm⟩)
+      rw [hdeg]
+      have hd := induce_delete_degree G v x.1
+      change K.degree x.1 + (if G.Adj x.1.1 v then 1 else 0) = G.degree x.1.1 at hd
+      rw [hC x.1.1] at hd
+      have hnot : ¬G.Adj x.1.1 v := by
+        intro hadj
+        rcases (hN_eq x.1.1).mp hadj.symm with h | h | h
+        · exact hx1 (Subtype.ext h)
+        · exact x.2 (Subtype.ext h)
+        · exact hx (Subtype.ext (Subtype.ext h))
+      rw [ite_eq_right hnot, add_zero] at hd
+      omega
+  have hpow : HasPower H := hm.2.2.1 W2 H (by omega) hnear
+  obtain ⟨m, p, hm2, hp, hlen, _⟩ := dyadic_path_of_identify_power hKfree hU12 hpow
+  exact ⟨m, p, hm2, hp, hlen⟩
+
+/-- **All-Pairs Dyadic Path Theorem for Cubic Triangle-Free `MinimalBad`**:
+    In every cubic triangle-free `MinimalBad G` (`C-N-2`, `C-N-3`, `C-N-R`),
+    EVERY pair of distinct vertices `x ≠ y` is joined by a simple `x`–`y` path of
+    length `2 ^ k` for some `k ≥ 2`. -/
+theorem all_pairs_dyadic_path_cubic_triangle_free {V : Type u} [Fintype V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
+    (hC : Cubic G) (hN : ¬Triangle G) {x y : V} (hxy : x ≠ y) :
+    ∃ (k : ℕ) (p : G.Walk x y), 2 ≤ k ∧ p.IsPath ∧ p.length = 2 ^ k := by
+  by_cases hcom : ∃ v, G.Adj x v ∧ G.Adj y v
+  · obtain ⟨v, hxv, hyv⟩ := hcom
+    obtain ⟨m, p, hm2, hp, hlen⟩ :=
+      cubic_triangle_free_two_path_dyadic G hm hC hN hxv.symm hyv.symm hxy
+    let f : G.induce {z | z ≠ v} →g G := ⟨Subtype.val, fun h => h⟩
+    refine ⟨m, p.map f, hm2, ?_, by simpa using hlen⟩
+    exact (Walk.isPath_map_iff_of_injective Subtype.val_injective).mpr hp
+  · push Not at hcom
+    exact dyadic_path_of_no_common_neighbor G hm hxy (fun z ⟨h1, h2⟩ => hcom z h1 h2)
+
+#print axioms high_degree_independent
+#print axioms exists_low_degree_neighbor
+#print axioms class_h_v3_ge_two_v4
+#print axioms class_h_v3_two_thirds
+#print axioms dyadic_path_of_identify_power
+#print axioms dyadic_path_of_no_common_neighbor
+#print axioms non_triangle_edge_odd_power_cycle
+#print axioms unified_bipartite_exclusion
+#print axioms class_h_common_neighbor_dyadic_path
+#print axioms cubic_triangle_free_two_path_mersenne
+#print axioms cubic_triangle_free_two_path_dyadic
+#print axioms all_pairs_dyadic_path_cubic_triangle_free
 end E64Wave2Agent4
