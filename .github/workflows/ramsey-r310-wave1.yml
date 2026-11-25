@@ -1,0 +1,55 @@
+name: Ramsey R(3,10) wave 1 reproduction and witness search
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - jobs/ramsey-r310-wave1/launch.txt
+permissions:
+  contents: read
+concurrency:
+  group: ramsey-r310-wave1
+  cancel-in-progress: false
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          mkdir -p out
+          python3 jobs/ramsey-r310-wave1/verify.py | tee out/reproduction.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ramsey-reproduction
+          path: out/
+          retention-days: 30
+  search:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: reproduce
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        seed: [31001, 31002, 31003, 31004, 31005, 31006, 31007, 31008]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and perform bounded search
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          g++ -O3 -std=c++17 jobs/ramsey-r310-wave1/search.cpp -o search
+          ./search ${{ matrix.seed }} 900 out jobs/ramsey-r310-wave1/exoo39.g6 | tee out/search.log
+      - name: Independently verify best graph
+        run: |
+          set -euo pipefail
+          python3 jobs/ramsey-r310-wave1/verify.py out/best40.txt | tee out/verified.json
+          python3 -c 'import json; a=json.load(open("out/search.json")); b=json.load(open("out/verified.json")); assert a["independent_10_sets"]==b["independent_10_sets"] and a["witness"]==b["closure_witness"]'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ramsey-search-${{ matrix.seed }}
+          path: out/
+          retention-days: 30
