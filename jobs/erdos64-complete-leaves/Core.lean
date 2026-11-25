@@ -101,7 +101,7 @@ theorem erase_edge_degree {V : Type u} [Fintype V] [DecidableEq V]
         SimpleGraph.sdiff_adj, SimpleGraph.edge_adj]
       aesop
     rw [← SimpleGraph.card_neighborFinset_eq_degree,hs]
-    simp only [true_or, if_true]
+    simp only [true_or, ite_true]
     rw [Finset.card_erase_add_one (G.mem_neighborFinset a b |>.mpr hab),
       SimpleGraph.card_neighborFinset_eq_degree]
   · by_cases hb : x=b
@@ -112,7 +112,7 @@ theorem erase_edge_degree {V : Type u} [Fintype V] [DecidableEq V]
           SimpleGraph.sdiff_adj, SimpleGraph.edge_adj]
         aesop
       rw [← SimpleGraph.card_neighborFinset_eq_degree,hs]
-      simp only [or_true, if_true]
+      simp only [or_true, ite_true]
       rw [Finset.card_erase_add_one (G.mem_neighborFinset b a |>.mpr hab.symm),
         SimpleGraph.card_neighborFinset_eq_degree]
     · have hs : H.neighborFinset x = G.neighborFinset x := by
@@ -178,9 +178,9 @@ theorem induce_delete_degree {V : Type u} [Fintype V] [DecidableEq V]
     simp [and_comm]
   rw [hs] at hc
   by_cases h : G.Adj v.1 w
-  · rw [if_pos h,hc, ← G.card_neighborFinset_eq_degree]
+  · rw [ite_eq_left h,hc, ← G.card_neighborFinset_eq_degree]
     exact Finset.card_erase_add_one ((G.mem_neighborFinset v.1 w).mpr h)
-  · rw [if_neg h,add_zero,hc,Finset.erase_eq_of_notMem]
+  · rw [ite_eq_right h,add_zero,hc,Finset.erase_eq_of_notMem]
     · exact G.card_neighborFinset_eq_degree _
     · exact fun hm => h ((G.mem_neighborFinset v.1 w).mp hm)
 

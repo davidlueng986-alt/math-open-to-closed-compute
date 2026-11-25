@@ -120,7 +120,7 @@ theorem safe_step_of_paired_incidence (G : SimpleGraph V)
     obtain ⟨_, y, ha, hb⟩ := he
     have hex : ∃ y, ∀ x ∈ s(a,b), R x y := ⟨y, Sym2.ball.mpr ⟨ha,hb⟩⟩
     unfold midY
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     exact Sym2.ball.mp (Classical.choose_spec hex)
   have hinjMid : ∀ e ∈ H.edgeSet, ∀ e' ∈ H.edgeSet,
       midY e = midY e' → e = e' := by

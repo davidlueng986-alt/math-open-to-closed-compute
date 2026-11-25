@@ -68,14 +68,14 @@ theorem exclude_bipartite_defect {V : Type u} [Fintype V]
     · subst v
       have hd := induce_delete_degree G w A
       change K.degree A + (if G.Adj a w then 1 else 0) = G.degree a at hd
-      rw [if_pos hwa.symm] at hd
+      rw [ite_eq_left hwa.symm] at hd
       have hr := hrest a haw
       omega
     by_cases hvb : v = B
     · subst v
       have hd := induce_delete_degree G w B
       change K.degree B + (if G.Adj b w then 1 else 0) = G.degree b at hd
-      rw [if_pos hwb.symm] at hd
+      rw [ite_eq_left hwb.symm] at hd
       have hr := hrest b hbw
       omega
     have hnot : ¬G.Adj v.val w := by
@@ -85,7 +85,7 @@ theorem exclude_bipartite_defect {V : Type u} [Fintype V]
       · exact hvb (Subtype.ext h)
     have hd := induce_delete_degree G w v
     change K.degree v + (if G.Adj v.val w then 1 else 0) = G.degree v.val at hd
-    rw [if_neg hnot,add_zero] at hd
+    rw [ite_eq_right hnot,add_zero] at hd
     have hr : 3 ≤ K.degree v := by
       rw [hd]
       exact hrest v.val v.property

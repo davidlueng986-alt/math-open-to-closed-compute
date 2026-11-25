@@ -9,7 +9,9 @@
   "Core": {
     "path": "jobs/erdos64-closure-core/Core.lean",
     "base_commit": "0fb8bc1d63bf6b5530319d306c99a631b28408dd",
-    "changes": []
+    "changes": [
+      "Use Lean 4.36 names for deprecated ite/dite rewrite theorems; proof unchanged."
+    ]
   },
   "Leaves": {
     "path": "jobs/erdos64-closure-core/Leaves.lean",
@@ -29,7 +31,9 @@
   "PairedShadow": {
     "path": "jobs/erdos64-lean-global-pairing/PairedShadow.lean",
     "base_commit": "0fb8bc1d63bf6b5530319d306c99a631b28408dd",
-    "changes": []
+    "changes": [
+      "Use Lean 4.36 names for deprecated ite/dite rewrite theorems; proof unchanged."
+    ]
   },
   "Incidence": {
     "path": "jobs/erdos64-lean-global-pairing/Incidence.lean",
