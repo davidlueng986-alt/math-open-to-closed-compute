@@ -67,8 +67,59 @@ theorem no_next_of_even_load {t j : Nat} {x : Family} (oddT : t % 2 = 1)
   have jx : (j : Int) % 2 = 1 := by omega
   simp [tx, jx] at h
 
+/-- For balanced nonconstant columns in a normalized partial Hadamard
+matrix, uniform row parity at even total width forces defect divisible by eight. -/
+theorem normalized_even_load_mod_eight {t j : Nat} {x : Family}
+    (oddT : t % 2 = 1) (oddJ : j % 2 = 1)
+    (balanced : ∀ i, i < j → weight (4*t) (x i) = 2*(t : Int))
+    (common : ∀ i l, i < l → l < j → meet (4*t) (x i) (x l) = t)
+    (even : ∀ r, r < 4*t → load x j r % 2 = 0) :
+    j % 8 = 3 := by
+  have total : sumAt (4*t) (load x j) = (j : Int)*(2*(t : Int)) := by
+    unfold load weight
+    rw [swap_sums, ← sum_const]
+    exact sumAt_congr _ balanced
+  have onCol (i : Nat) (hi : i < j) :
+      countOn (4*t) (x i) (load x j) = (j : Int)*(t : Int) + t := by
+    rw [load_on]
+    have pair (l : Nat) (hl : l < j) :
+        meet (4*t) (x i) (x l) = (t : Int) + if l = i then (t : Int) else 0 := by
+      by_cases h : l = i
+      · subst l
+        rw [meet_self, balanced i hi]
+        simp
+        omega
+      · simp only [ite_eq_right h, Int.add_zero]
+        by_cases before : i < l
+        · exact common i l before hl
+        · rw [meet_comm]
+          exact common l i (by omega) hi
+    rw [sumAt_congr _ pair, Hadamard2396.sumAt_add, sum_const, sum_single hi]
+  have moment : sumAt (4*t) (fun r => load x j r * load x j r) =
+      (j : Int) * ((j : Int)*(t : Int) + t) := by
+    have expand (r : Nat) : load x j r * load x j r =
+        sumAt j (fun i => bit (x i r) * load x j r) :=
+      sum_mul (load x j r) j _
+    rw [sumAt_congr _ (fun r _ => expand r), swap_sums, ← sum_const]
+    exact sumAt_congr _ onCol
+  have h := sum_divisible 8 (4*t) (fun r => load x j r * load x j r - 2 * load x j r)
+    (fun r hr => even_square_sub_twice _ (even r hr))
+  rw [sum_sub, ← mul_sum, moment, total] at h
+  let a : Int := j
+  let b : Int := t
+  have eq : a * (a * b + b) - 2 * (a * (2 * b)) = b * a * (a - 3) := by grind
+  change (a * (a * b + b) - 2 * (a * (2 * b))) % 8 = 0 at h
+  rw [eq, Int.mul_emod, Int.mul_emod b, Int.sub_emod] at h
+  have ar : a % 8 = 1 ∨ a % 8 = 3 ∨ a % 8 = 5 ∨ a % 8 = 7 := by dsimp [a]; omega
+  have br : b % 8 = 1 ∨ b % 8 = 3 ∨ b % 8 = 5 ∨ b % 8 = 7 := by dsimp [b]; omega
+  have res : a % 8 = 3 := by
+    rcases ar with ar | ar | ar | ar <;> rcases br with br | br | br | br <;> simp_all
+  dsimp [a] at res
+  omega
+
 #print axioms squared_load
 #print axioms even_load_width_mod_eight
 #print axioms no_next_of_even_load
+#print axioms normalized_even_load_mod_eight
 
 end HadamardAllOrders

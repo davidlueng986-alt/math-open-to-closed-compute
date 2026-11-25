@@ -22,6 +22,9 @@ jobs:
           python3 -B jobs/hadamard-all-orders/triple_product.py
           python3 -B jobs/hadamard-all-orders/t599.py
           python3 -B jobs/hadamard-all-orders/r_intersections.py
+          python3 -B jobs/hadamard-all-orders/r_near_complement.py
+          c++ -O3 -std=c++20 -Wall -Wextra -Werror jobs/hadamard-all-orders/paley_omissions.cpp -o "$RUNNER_TEMP/paley_omissions"
+          "$RUNNER_TEMP/paley_omissions"
       - name: Install pinned Lean 4.36.0
         run: bash jobs/hadamard-2396-399/install_lean.sh
       - name: Check the universal reductions and their axioms
@@ -31,7 +34,7 @@ jobs:
           export LEAN_PATH="$RUNNER_TEMP/hadamard-all-orders"
           mkdir -p "$LEAN_PATH"
           lean -DwarningAsError=true -o "$LEAN_PATH/Triples.olean" jobs/hadamard-2396-projections/Triples.lean
-          for module in Assembly Reductions Constructions OuterEnergy Rounding Parity BlockedPrefix TripleProduct PrimeTMatrix TerminalBounds; do
+          for module in Assembly Reductions Constructions OuterEnergy Rounding Parity BlockedPrefix TripleProduct PrimeTMatrix TerminalBounds ExteriorBounds; do
             lean -DwarningAsError=true -o "$LEAN_PATH/$module.olean" "jobs/hadamard-all-orders/$module.lean" | tee "$RUNNER_TEMP/$module.log"
             if grep -q 'sorryAx' "$RUNNER_TEMP/$module.log"; then exit 1; fi
           done

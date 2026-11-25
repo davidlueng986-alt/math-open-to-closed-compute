@@ -13,11 +13,16 @@ theorem three_change_bound (p : Nat) (hp : 599 ≤ p) :
   exact Nat.lt_of_lt_of_le (by decide : 11 ^ 11 < (599 * 2 ^ 10) ^ 2)
     (Nat.pow_le_pow_left lower 2)
 
-theorem integral_defect_twelve_599_bound : 8 ^ 8 < 599 ^ 2 * 3 ^ 4 := by
-  decide
+/-- The determinant is a square p-power, so only 1 and p² are below this bound. -/
+theorem two_overlattices_bound (s : Nat) (lo : 1 ≤ s) (hi : s ≤ 16) :
+    4 * s ^ s < 599 ^ 4 * 4 ^ s := by
+  have values : s = 1 ∨ s = 2 ∨ s = 3 ∨ s = 4 ∨ s = 5 ∨ s = 6 ∨ s = 7 ∨ s = 8 ∨
+    s = 9 ∨ s = 10 ∨ s = 11 ∨ s = 12 ∨ s = 13 ∨ s = 14 ∨ s = 15 ∨ s = 16 := by omega
+  rcases values with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+    rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> decide
 
 #print axioms defect_599_bound
 #print axioms three_change_bound
-#print axioms integral_defect_twelve_599_bound
+#print axioms two_overlattices_bound
 
 end HadamardAllOrders
