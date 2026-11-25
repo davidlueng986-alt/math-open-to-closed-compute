@@ -39,8 +39,14 @@ def priced_fold_changes(rows, index, new_column, price):
     return total, changes
 
 
-def check_witness(here, reference, reference_anchors, upper, top, lower, upper_dots, label):
-    fixture = json.loads((here / "exterior_reindexed_pivot_witness.json").read_text())
+WITNESS_METRICS = {
+    "four": (4, (555, 419, (194, 0, 222, 236, 248), 8, 1022), [1193, 906, 282, 26, 15], 3),
+    "ten": (10, (560, 423, (200, 0, 232, 236, 238), 8, 1058), [1193, 913, 298, 47, 26], 4),
+}
+
+
+def check_witness(here, fixture, name, reference, reference_anchors, upper, top, lower, upper_dots, label):
+    slots, physical_metrics, expected_counts, expected_special = WITNESS_METRICS[name]
     half = BOTTOM // 2
     old_rows = [int(v, 32) for v in reference]
     rows = [int(v, 32) for v in fixture["lower"]]
@@ -67,17 +73,18 @@ def check_witness(here, reference, reference_anchors, upper, top, lower, upper_d
     reindexed = sum(residue(a) != residue(b) for a, b in zip(new_dots, old_dots, strict=True))
     require((sum(a != b for a, b in zip(rows, old_rows, strict=True)), sum(bool(v) for v in fold_xors),
              changes, sum(bool((a ^ b) & (1 << SECOND)) for a, b in zip(rows, old_rows, strict=True)), reindexed)
-            == (555, 419, (194, 0, 222, 236, 248), 8, 1022), "the entire second fold is unchanged")
+            == physical_metrics, "the entire second fold is unchanged")
     require(len(reference_anchors) == 9 and all(new_dots[i][SECOND] == old_dots[i][SECOND]
                 for base, _, _ in reference_anchors for i in (base, base + half)),
             "all 18 prior anchor dots preserved in the second coordinate")
 
-    require(fixture["anchors"] == [[12, 506, 313], [14, 128, 277], [18, 588, 77], [313, 592, 577]], "prescribed retained plus/minus partner indices")
+    require(len(fixture["anchors"]) == slots, "prescribed complete Sylvester pairs")
     anchors = {i: j for base, a, b in fixture["anchors"] for i, j in ((base, a), (base + half, b))}
     signed = {i: tuple(-v for v in row) for i, row in enumerate(new_dots) if i not in LOWER_OMISSIONS}
     high = dict(enumerate(upper_dots, start=3))
-    require(len(set(anchors.values())) == 8 and all(signed[i] == tuple(high[j]) for i, j in anchors.items()),
-            "the four complete Sylvester pairs cancel exactly")
+    require(len(anchors) == len(set(anchors.values())) == 2 * slots
+            and all(signed[i] == tuple(high[j]) for i, j in anchors.items()), "all complete Sylvester pairs cancel exactly")
+    require({18: 588, 618: 77, 313: 592, 913: 577}.items() <= anchors.items(), "the two pivot pairs are prescribed")
     require(signed[18] == (10, -48, 16, 6, 18) and signed[618] == (-6, 16, -36, 46, -18), "exact pivot vectors")
     new_label = residue(signed[18])
     require(label == (2, 0, 4, 6, 6) and new_label == (2, 0, 0, 6, 2), "the pivot changes its indexed mod8 label")
@@ -91,9 +98,49 @@ def check_witness(here, reference, reference_anchors, upper, top, lower, upper_d
         key = tuple if modulus is None else lambda row: residue(row, modulus)
         counts.append(len(anchors) + sum((Counter(map(key, remaining_above)) & Counter(map(key, remaining_below))).values()))
     special = sum(residue(row, 16) == (6, 4, 12, 14, 14) for row in signed.values())
-    require(counts == [1193, 906, 282, 26, 15] and special == 3, "all four named pairs extend to a complete modulo-eight pairing")
-    print(f"n=2396 exact reindexed pivot: four exact Sylvester pairs including 18/618; joint matches {tuple(counts)}; "
+    require(counts == expected_counts and special == expected_special, "all named pairs extend to a complete modulo-eight pairing")
+    print(f"n=2396 exact reindexed pivot: {name} exact Sylvester pairs including 18/618; joint matches {tuple(counts)}; "
           f"second fold unchanged, {reindexed} indexed mod8 changes, special count {special}")
+    return new_columns[SECOND], anchors
+
+
+def check_fixed_second_histogram(upper_dots, lower, second):
+    above = [row[SECOND] for row in upper_dots]
+    below = [-row[0] for i, row in enumerate(correlations(lower, [second], BOTTOM)) if i not in LOWER_OMISSIONS]
+    caps = []
+    for modulus in (8, 16, 32, 64, None):
+        key = int if modulus is None else lambda value: value % modulus
+        a, b = Counter(map(key, above)), Counter(map(key, below))
+        caps.append(sum((a & b).values()))
+        if modulus == 16:
+            require(a - b == {4: 4, 8: 4} and b - a == {0: 4, 12: 4}, "exact scalar modulo-sixteen shortfall")
+    require(caps == [1193, 1185, 1157, 1136, 1121], "fixed second coordinate bounds every joint pairing")
+    require(sum(above) == sum(below) == 932 and sum(x * x for x in above) == sum(x * x for x in below) == 608336,
+            "scalar first and second moments agree")
+    require((sum(x ** 4 for x in above), sum(x ** 4 for x in below)) == (907998464, 970642688),
+            "fixed second-coordinate fourth moments differ")
+    print(f"n=2396 fixed second sign column: scalar match caps {tuple(caps)} for mod 8, 16, 32, 64 and exact")
+
+
+def check_orientation_support(lower_text):
+    rows = [int(v, 32) for v in lower_text]
+    half = BOTTOM // 2
+    paley_columns = paley(half - 1)
+    coefficients = Counter()
+    for r, (a, b) in enumerate(zip(rows[:half], rows[half:], strict=True)):
+        if a.bit_count() in (0, WIDTH) or b.bit_count() in (0, WIDTH):
+            continue
+        sign = 1 - 2 * (a >> SECOND & 1)
+        state = (a ^ b) >> SECOND & 1
+        if state == 0:
+            coefficient = -sign * (paley_columns[1] >> r & 1)
+        else:
+            coefficient = sign * (1 - (paley_columns[978 - half] >> r & 1)
+                                      - (paley_columns[1013 - half] >> r & 1))
+        coefficients[state, coefficient] += 1
+    require(coefficients == {(0, 0): 66, (0, 1): 137, (1, 0): 105, (1, 1): 126},
+            "nonnegative exact orientation prices and capacities")
+    print("n=2396 fixed second fold: global weight and three omitted dots leave at most 171 movable orientation pairs")
 
 
 def main():
@@ -133,7 +180,14 @@ def main():
     print(f"n=2396 reindexed anchor pivot: index {INDEX}, global-weight caps {fixed_capacity}/{second_capacity}, "
           f"same-label upper minimum {min(old_class)}; {len(changed_labels)} labels across {sum(changed_labels.values())} upper indices")
     print("n=2396 pivot fold move: at least two more changes in 172 favorable than 128 unfavorable positions")
-    check_witness(here, profiles["nine"]["lower"], profiles["nine"]["anchors"], upper, top, lower, upper_dots, label)
+    fixture = json.loads((here / "exterior_reindexed_pivot_witness.json").read_text())
+    common = (profiles["nine"]["lower"], profiles["nine"]["anchors"], upper, top, lower, upper_dots, label)
+    four, first_anchors = check_witness(here, fixture, "four", *common)
+    ten, later_anchors = check_witness(here, fixture["ten"], "ten", *common)
+    require(four == ten, "the pivot growth keeps every physical second-column sign")
+    require(first_anchors.items() < later_anchors.items(), "the four earlier exact pairs remain fixed")
+    check_fixed_second_histogram(upper_dots, lower, four)
+    check_orientation_support(fixture["ten"]["lower"])
 
 
 if __name__ == "__main__":

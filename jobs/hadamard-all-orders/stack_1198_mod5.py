@@ -33,23 +33,37 @@ def raw_pairing(words):
 
 
 class Basis:
-    """Incremental Gaussian elimination over F5."""
-    def __init__(self,size):
-        self.profile=[None]*size
-        self.rank=0
+    """Incremental Gaussian elimination over a prime field."""
+    def __init__(self, size, prime=5):
+        self.profile = [None] * size
+        self.rank = 0
+        self.prime = prime
 
-    def add(self, v):
-        v=[x%5 for x in v]
-        for i,x in enumerate(v):
-            if not x:continue
-            pivot=self.profile[i]
+    def reduce(self, vector):
+        p = self.prime
+        v = [value % p for value in vector]
+        for i, x in enumerate(v):
+            if not x:
+                continue
+            pivot = self.profile[i]
             if pivot is None:
-                inv=pow(x,-1,5)
-                self.profile[i]=[(d*inv)%5 for d in v[i:]]
-                self.rank+=1
-                return True
-            for j,d in enumerate(pivot,i):v[j]=(v[j]-x*d)%5
-        return False
+                inv = pow(x, -1, p)
+                return i, [d * inv % p for d in v[i:]]
+            for j, d in enumerate(pivot, i):
+                v[j] = (v[j] - x * d) % p
+
+    def install(self, pivot):
+        index, vector = pivot
+        assert self.profile[index] is None
+        self.profile[index] = vector
+        self.rank += 1
+
+    def add(self, vector):
+        pivot = self.reduce(vector)
+        if pivot is None:
+            return False
+        self.install(pivot)
+        return True
 
 
 def main():

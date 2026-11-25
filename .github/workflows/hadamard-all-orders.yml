@@ -29,6 +29,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/stack_1198_energy.py
           python3 -B jobs/hadamard-all-orders/stack_1198_channels.py
           python3 -B jobs/hadamard-all-orders/stack_1198_reciprocal.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_reciprocal_mod5.py
           python3 -B jobs/hadamard-all-orders/stack_1198_mod5.py
           python3 -B jobs/hadamard-all-orders/stack_odd_t_auxiliary.py
           python3 -B jobs/hadamard-all-orders/stack_odd_t_residual.py
@@ -47,6 +48,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_nested.py
           python3 -B jobs/hadamard-all-orders/border4_2396_transfer.py
           python3 -B jobs/hadamard-all-orders/border4_2396_fixed_first.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_two_fibers.py
           python3 -B jobs/hadamard-all-orders/border4_2396_tensor_weighing.py
           python3 -B jobs/hadamard-all-orders/r_intersections.py
           python3 -B jobs/hadamard-all-orders/r_near_complement.py
@@ -135,6 +137,9 @@ jobs:
         run: |
           c++ -O3 -std=c++20 -Wall -Wextra -Werror -fopenmp jobs/hadamard-all-orders/stack_1198_replacements.cpp -o "$RUNNER_TEMP/stack_1198_replacements"
           OMP_NUM_THREADS=4 python3 -B jobs/hadamard-all-orders/stack_1198_replacements.py "$RUNNER_TEMP/stack_1198_replacements"
+          OMP_NUM_THREADS=4 python3 -B jobs/hadamard-all-orders/stack_1198_four_channel_moves.py "$RUNNER_TEMP/stack_1198_replacements"
+      - name: Exclude three balanced swaps of the two leading width-four words
+        run: python3 -B jobs/hadamard-all-orders/border4_2396_small_first.py
 
   structured-second-fold:
     runs-on: ubuntu-latest

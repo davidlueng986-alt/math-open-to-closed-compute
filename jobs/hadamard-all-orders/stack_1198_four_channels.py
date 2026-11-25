@@ -31,6 +31,15 @@ LOW_ENERGY_LOWER = (
     669, 213, 889, 305, 422, 461, 865, 257, 736, 80, 90, 137, 753, 1065, 460, 233,
     601, 192, 855,
 )
+SHARP_CAP_UPPER = (
+    331, 923, 908, 986, 951, 173, 764, 787, 248, 960, 1011, 862, 529, 563, 33, 683,
+    600, 205, 444, 1154, 75, 391, 934, 530, 465, 753, 1028, 60, 7, 490, 193, 155,
+)
+SHARP_CAP_LOWER = (
+    529, 961, 1143, 871, 518, 447, 852, 824, 578, 713, 125, 716, 1000, 263, 1056,
+    931, 375, 148, 4, 72, 451, 662, 482, 674, 702, 1024, 735, 1022, 294, 771, 417,
+    1142, 83, 349,
+)
 
 
 def sorted_pairing(upper_deck, lower_deck):
@@ -44,7 +53,24 @@ def sorted_pairing(upper_deck, lower_deck):
     return {i: j for p in groups_a for (_, i), (_, j) in zip(sorted(groups_a[p]), sorted(groups_b[p]), strict=True)}
 
 
-def check_channel_support(residues):
+def common_basis(graph, support, omitted, primes):
+    dimension = len(graph[0])
+    bases = [Basis(dimension, prime) for prime in primes]
+    selected = set()
+    for j in (*sorted(support), *(i for i in range(len(graph)) if i not in support and i not in omitted)):
+        pivots = [basis.reduce(graph[j]) for basis in bases]
+        if all(pivot is not None for pivot in pivots):
+            for basis, pivot in zip(bases, pivots, strict=True):
+                basis.install(pivot)
+            selected.add(j)
+        if len(selected) == dimension:
+            break
+    assert support <= selected and len(selected) == dimension
+    assert all(basis.rank == dimension for basis in bases)
+    return selected
+
+
+def check_channel_support(residues, primes):
     conference = conference_positive_columns(149)
     side = len(conference)
     graph = [[0 if i == j else 2 * (col >> i & 1) - 1 for i in range(side)]
@@ -55,16 +81,10 @@ def check_channel_support(residues):
     for start in range(0, len(residues), channel_size):
         values = residues[start:start + channel_size]
         support = {j for j, value in enumerate(values) if value}
-        basis = Basis(side)
-        assert all(basis.add(graph[j]) for j in sorted(support))
-        selected = set(support)
-        for j in range(channel_size):
-            if basis.rank == side:
-                break
-            if start + j not in LOWER_OMITTED and basis.add(graph[j]):
-                selected.add(j)
-        assert len(selected) == basis.rank == side
-        assert sum(j not in selected and start + j not in LOWER_OMITTED for j in range(channel_size)) == 149
+        omitted = {j - start for j in LOWER_OMITTED if start <= j < start + channel_size}
+        assert len(omitted) == 1 and not support & omitted
+        selected = common_basis(graph, support, omitted, primes)
+        assert len(set(range(channel_size)) - selected - omitted) == 149
         transform = [sum(graph[j][i] * (values[j] // 4) for j in support) for i in range(side)]
         failures.append(sum(value % 25 != 0 for value in transform))
         supports.append(len(support))
@@ -72,7 +92,7 @@ def check_channel_support(residues):
     return tuple(supports), tuple(energies), tuple(failures)
 
 
-def verify_candidate(upper, lower, u, v, pivot_a, pivot_b, flips_a, flips_b, projection):
+def verify_candidate(upper, lower, u, v, pivot_a, pivot_b, flips_a, flips_b, projection, primes=(5,)):
     n, m = len(upper), len(lower)
     assert len(set(flips_a)) == 32 and len(set(flips_b)) == 34
     x = upper[pivot_a] ^ sum(1 << i for i in flips_a)
@@ -101,7 +121,7 @@ def verify_candidate(upper, lower, u, v, pivot_a, pivot_b, flips_a, flips_b, pro
     dots = Counter(abs(dot(n + m, col, second)) for col in old)
     assert Counter(map(abs, residues)) == dots + Counter({0: 3})
     digest = sha256(''.join(f'{col:x}\n' for col in [*old, second]).encode('ascii')).hexdigest()
-    return dots, digest, check_channel_support(residues)
+    return dots, digest, check_channel_support(residues, primes)
 
 
 def main():
@@ -122,6 +142,14 @@ def main():
     assert channel_data == ((36, 14, 14, 54), (624, 272, 224, 864), (145, 147, 146, 143))
     print('Four-channel next column: 1079 exact products, 116 of magnitude four, two of eight, energy 1984')
     print('Four-channel lower-energy packed SHA256', digest)
+
+    dots, digest, channel_data = verify_candidate(upper, lower, u, v, 411, 30,
+                                                 SHARP_CAP_UPPER, SHARP_CAP_LOWER, (-18, 4, 34, -30), (3, 5))
+    assert dots == {0: 1077, 4: 120}
+    assert digest == '7505b040d35c59575e8c70f7c21847b4bb0421cbe49415e99b7366f8fbd23177'
+    assert channel_data == ((42, 18, 17, 43), (672, 288, 272, 688), (144, 121, 101, 130))
+    print('Four-channel next column: 1077 exact products, 120 of magnitude four, energy 1920')
+    print('Four-channel mod3 and mod5: common 150-column bases; 596 protected exact slots')
 
 
 if __name__ == '__main__':
