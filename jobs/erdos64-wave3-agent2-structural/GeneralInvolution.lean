@@ -84,6 +84,9 @@ theorem hasPower_of_general_invQuot {V : Type u} {G : SimpleGraph V} {σ : V →
     HasPower (invQuot G σ) → HasPower G := by
   classical
   rintro ⟨k, a0, c, hk, hcyc, hlen⟩
+  have hpow4 : 4 ≤ 2 ^ k := by
+    calc 4 = 2 ^ 2 := by decide
+      _ ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
   by_cases hfix : ∃ z : V, mkOrb σ z ∈ c.support ∧ σ z = z
   · obtain ⟨z, hzmem, hzfix⟩ := hfix
     let c' := c.rotate hzmem
@@ -99,10 +102,7 @@ theorem hasPower_of_general_invQuot {V : Type u} {G : SimpleGraph V} {σ : V →
     have hqtail : q.support.tail.map (mkOrb σ) = c'.support.tail := by
       rw [copy_support_eq, ← List.map_tail, hpsupp]
     have hqnodup : q.support.tail.Nodup := List.Nodup.of_map (mkOrb σ) (hqtail.symm ▸ hc'.support_nodup)
-    have hqne : q ≠ Walk.nil := by
-      intro h; have : q.length = 0 := by rw [h]; rfl
-      have : 0 < 2 ^ k := pow_pos (by decide) _; omega
-    exact ⟨k, z, q, hk, Walk.IsCycle.mk_of_support_nodup hqne hqnodup, hqlen⟩
+    exact ⟨k, z, q, hk, isCycle_of_support_tail_nodup q hqnodup (by omega), hqlen⟩
   · obtain ⟨u0, hu0⟩ := Quot.exists_rep a0
     obtain ⟨u1, p1, hu1, hp1len, hp1supp⟩ := invQuot_lift_walk hinv hauto c u0 hu0
     have htail1 : p1.support.tail.map (mkOrb σ) = c.support.tail := by
@@ -112,10 +112,7 @@ theorem hasPower_of_general_invQuot {V : Type u} {G : SimpleGraph V} {σ : V →
     · let q : G.Walk u0 u0 := p1.copy rfl hsame
       have hqlen : q.length = 2 ^ k := (copy_length_eq p1 rfl hsame).trans (hp1len.trans hlen)
       have hqnodup : q.support.tail.Nodup := by rw [copy_support_eq]; exact hnodup1
-      have hqne : q ≠ Walk.nil := by
-        intro h; have : q.length = 0 := by rw [h]; rfl
-        have : 0 < 2 ^ k := pow_pos (by decide) _; omega
-      exact ⟨k, u0, q, hk, Walk.IsCycle.mk_of_support_nodup hqne hqnodup, hqlen⟩
+      exact ⟨k, u0, q, hk, isCycle_of_support_tail_nodup q hqnodup (by omega), hqlen⟩
     · let f : G →g G := ⟨σ, fun h => hauto _ _ h⟩
       let p2_raw : G.Walk (σ u0) (σ u1) := p1.map f
       have hσu1 : σ u1 = u0 := by rw [hflip, hinv]
@@ -151,10 +148,8 @@ theorem hasPower_of_general_invQuot {V : Type u} {G : SimpleGraph V} {σ : V →
       have hqnodup : q.support.tail.Nodup := by
         rw [hqtail]
         exact List.nodup_append.mpr ⟨hnodup1, hnodup2, hdisj⟩
-      have hqne : q ≠ Walk.nil := by
-        intro h; have : q.length = 0 := by rw [h]; rfl
-        have : 0 < 2 ^ (k + 1) := pow_pos (by decide) _; omega
-      exact ⟨k + 1, u0, q, by omega, Walk.IsCycle.mk_of_support_nodup hqne hqnodup, hqlen⟩
+      have hqge3 : 3 ≤ q.length := by rw [hqlen, pow_succ]; omega
+      exact ⟨k + 1, u0, q, by omega, isCycle_of_support_tail_nodup q hqnodup hqge3, hqlen⟩
 
 private lemma invQuot_degree_two_orbit {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hc4 : NoC4 G)
@@ -227,7 +222,7 @@ private lemma invQuot_degree_interior_fixed {V : Type u} [Fintype V] [DecidableE
       exact ⟨x, hvx, hx⟩
   rw [← SimpleGraph.card_neighborFinset_eq_degree, ← himg, Finset.card_image_of_injOn,
     SimpleGraph.card_neighborFinset_eq_degree]
-  intro x hx y hy heq
+  intro x _ y hy heq
   have hvy := (G.mem_neighborFinset v y).mp hy
   rcases (mkOrb_eq_iff hinv x y).mp heq with rfl | h
   · rfl
@@ -247,7 +242,7 @@ def isDefectOrbit {V : Type u} (G : SimpleGraph V) (σ : V → V) (a : InvOrb σ
   (∃ v : V, mkOrb σ v = a ∧ σ v = v ∧ ∃ x : V, G.Adj v x ∧ σ x ≠ x)
 
 /-- Cubic General Involution Bound:
-    In ANY cubic MinimalBad G, EVERY nontrivial involution σ ∈ Aut(G) (with or without fixed points!)
+    In ANY cubic MinimalBad G, EVERY nontrivial involution σ ∈ Aut(G)
     has at least 2 defect orbits! -/
 theorem cubic_involution_defect_ge_two {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)

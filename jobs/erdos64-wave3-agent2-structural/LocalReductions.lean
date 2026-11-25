@@ -199,11 +199,11 @@ theorem trifree_two_edge_y_reduction {V : Type u} [Fintype V] [DecidableEq V]
       · exact huc (Subtype.ext h)
     simp [hnv] at hd0; omega
   have hWlt : Fintype.card Sv < Fintype.card V := by
-    rw [Fintype.card_subtype, show (Finset.univ.filter fun x : V => x ≠ v) = Finset.univ.erase v by ext x; simp]
+    rw [Fintype.card_subtype, show (Finset.univ.filter fun x : V => x ∈ Sv) = Finset.univ.erase v by ext x; simp [Sv]]
     have := Finset.card_erase_add_one (Finset.mem_univ v); omega
   have hWge2 : 2 ≤ Fintype.card Sv := by
     have hVge4 : 4 ≤ Fintype.card V := by have := G.degree_lt_card_verts v; omega
-    rw [Fintype.card_subtype, show (Finset.univ.filter fun x : V => x ≠ v) = Finset.univ.erase v by ext x; simp]
+    rw [Fintype.card_subtype, show (Finset.univ.filter fun x : V => x ∈ Sv) = Finset.univ.erase v by ext x; simp [Sv]]
     have := Finset.card_erase_add_one (Finset.mem_univ v); omega
   have hnear : Near H := by
     obtain ⟨_, w, hw⟩ := hm.1
@@ -211,6 +211,9 @@ theorem trifree_two_edge_y_reduction {V : Type u} [Fintype V] [DecidableEq V]
     · exact near_of_except H a' hWge2 (fun u _ => (hw u.1 (hwv ▸ u.2)).trans (hdeg_ge u))
     · exact near_of_except H ⟨w, hwv⟩ hWge2 (fun u hu => (hw u.1 (fun h => hu (Subtype.ext h))).trans (hdeg_ge u))
   obtain ⟨k, v0, cyc, hk, hcyc, hlen⟩ := hm.2.2.1 Sv H hWlt hnear
+  have hpow4 : 4 ≤ 2 ^ k := by
+    calc 4 = 2 ^ 2 := by decide
+      _ ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
   by_cases h1 : s(a', b') ∈ cyc.edges
   · by_cases h2 : s(b', c') ∈ cyc.edges
     · have hbmem : b' ∈ cyc.support := Walk.snd_mem_support_of_mem_edges cyc h1
@@ -318,7 +321,7 @@ theorem trifree_two_edge_y_reduction {V : Type u} [Fintype V] [DecidableEq V]
             rw [hbad_tail]
             exact List.nodup_append.mpr ⟨hqG_nodup, List.nodup_singleton v,
               fun x hx1 hx2 => hv_not_qG ((List.mem_singleton.mp hx2) ▸ hx1)⟩
-          exact False.elim (hm.2.1 ⟨k, v, badC, hk, Walk.IsCycle.mk_of_support_nodup (by simp [badC]) hbad_nodup, hbad_len⟩)
+          exact False.elim (hm.2.1 ⟨k, v, badC, hk, isCycle_of_support_tail_nodup badC hbad_nodup (by omega), hbad_len⟩)
     · have hsub : ∀ x y, H1.Adj x y → G0.Adj x y ∨ s(x, y) = s(a', b') := by
         intro x y h
         rcases (SimpleGraph.sup_adj G0 (SimpleGraph.edge a' b') x y).mp h with h0 | he
@@ -439,11 +442,11 @@ theorem class_h_high_neighbor_suppression {V : Type u} [Fintype V] [DecidableEq 
       G0.degree_le_of_le (H := H) le_sup_left
     simp [hvx.symm] at hd0; omega
   have hWlt : Fintype.card Sv < Fintype.card V := by
-    rw [Fintype.card_subtype, show (Finset.univ.filter fun u : V => u ≠ v) = Finset.univ.erase v by ext u; simp]
+    rw [Fintype.card_subtype, show (Finset.univ.filter fun u : V => u ∈ Sv) = Finset.univ.erase v by ext u; simp [Sv]]
     have := Finset.card_erase_add_one (Finset.mem_univ v); omega
   have hWge2 : 2 ≤ Fintype.card Sv := by
     have hVge4 : 4 ≤ Fintype.card V := by have := G.degree_lt_card_verts v; omega
-    rw [Fintype.card_subtype, show (Finset.univ.filter fun u : V => u ≠ v) = Finset.univ.erase v by ext u; simp]
+    rw [Fintype.card_subtype, show (Finset.univ.filter fun u : V => u ∈ Sv) = Finset.univ.erase v by ext u; simp [Sv]]
     have := Finset.card_erase_add_one (Finset.mem_univ v); omega
   have hnear : Near H := by
     obtain ⟨_, w, hw⟩ := hm.1
@@ -657,11 +660,11 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
       SimpleGraph.card_neighborFinset_eq_degree, SimpleGraph.card_neighborFinset_eq_degree] at hc
     omega
   have hWlt : Fintype.card Sy2 < Fintype.card V := by
-    rw [Fintype.card_subtype, show (Finset.univ.filter fun u : V => u ≠ y2) = Finset.univ.erase y2 by ext u; simp]
+    rw [Fintype.card_subtype, show (Finset.univ.filter fun u : V => u ∈ Sy2) = Finset.univ.erase y2 by ext u; simp [Sy2]]
     have := Finset.card_erase_add_one (Finset.mem_univ y2); omega
   have hWge2 : 2 ≤ Fintype.card Sy2 := by
     have hVge4 : 4 ≤ Fintype.card V := by have := G.degree_lt_card_verts x; omega
-    rw [Fintype.card_subtype, show (Finset.univ.filter fun u : V => u ≠ y2) = Finset.univ.erase y2 by ext u; simp]
+    rw [Fintype.card_subtype, show (Finset.univ.filter fun u : V => u ∈ Sy2) = Finset.univ.erase y2 by ext u; simp [Sy2]]
     have := Finset.card_erase_add_one (Finset.mem_univ y2); omega
   have hnear : Near H := by
     obtain ⟨_, w, hw⟩ := hm.1
@@ -679,6 +682,9 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
       · rw [hvx]; exact hdeg_x'
       · rw [hdeg_other v hvu hvx]; exact hw v.1 (fun h => hv (Subtype.ext h))
   obtain ⟨k, v0, cyc, hk, hcyc, hlen⟩ := hm.2.2.1 Sy2 H hWlt hnear
+  have hpow4 : 4 ≤ 2 ^ k := by
+    calc 4 = 2 ^ 2 := by decide
+      _ ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
   have hu0_mem : u0 ∈ cyc.support := by
     by_contra hnot
     have htrans : ∀ e ∈ cyc.edges, e ∈ (G.induce Sy2).edgeSet := by
@@ -755,7 +761,7 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
           rw [hbad_tail]
           exact List.nodup_append.mpr ⟨hqG_nodup, List.nodup_singleton y,
             fun t ht1 ht2 => hynot ((List.mem_singleton.mp ht2) ▸ ht1)⟩
-        exact hm.2.1 ⟨k, y, badC, hk, Walk.IsCycle.mk_of_support_nodup (by simp [badC]) hbad_nodup, hbad_len⟩
+        exact hm.2.1 ⟨k, y, badC, hk, isCycle_of_support_tail_nodup badC hbad_nodup (by omega), hbad_len⟩
       have ha1_mem : a1 = x' ∨ a1 = z1' ∨ a1 = z2' := by
         have := hNu0 ▸ (H.mem_neighborFinset u0 a1).mpr ha1; simpa using this
       have ha2_mem : a2 = x' ∨ a2 = z1' ∨ a2 = z2' := by
@@ -763,11 +769,7 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
       have ha1_ne_a2 : a1 ≠ a2 := by
         intro heq; subst heq
         cases hqeq : q with
-        | nil =>
-          have hpow : 4 ≤ 2 ^ k := by
-            calc 4 = 2 ^ 2 := by decide
-              _ ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
-          simp [hqeq] at hq_len; omega
+        | nil => simp [hqeq] at hq_len; omega
         | cons hstep qrest =>
           rw [hqeq, Walk.support_cons, List.nodup_cons] at hq_nodup
           exact hq_nodup.1 Walk.end_mem_support

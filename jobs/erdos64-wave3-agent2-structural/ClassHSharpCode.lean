@@ -3,29 +3,49 @@ import Incidence
 
 /-!
 # Wave 3 Agent #2 — Module 1: Sharp Class H F2 Weight-Enumerator & 8/11 Density Bound
-
-Proves:
-1. Elementary Turán/Reiman bounds for C4-free graphs:
-   - `c4_free_sum_choose_two_le`: ∑ d(u)(d(u)-1) ≤ n(n-1)
-   - `c4_free_four_edges_le_four`: ex(4, C4) ≤ 4
-   - `c4_free_five_edges_le_six`: ex(5, C4) ≤ 6
-   - `c4_free_six_edges_le_seven`: ex(6, C4) ≤ 7
-2. Extremal edge bounds for C4-free, Near-free graphs:
-   - `c4_near_free_edges_le_four`: |E(H)| ≤ 2|W| - 4 for |W| ≥ 4
-   - `c4_near_free_edges_le_five`: |E(H)| ≤ 2|W| - 5 for |W| ≥ 6
-3. Sharp Class H F2 code-weight hierarchy (strictly upgrading Wave 2's d_min ≥ 4):
-   - `high_code_weight_sharp_ge_six`: wt(M 1_S) ≥ 6 + ∑_{x∈S} (d(x)-4) for |S| ≥ 2
-   - `high_code_weight_sharp_ge_eight`: wt(M 1_S) ≥ 8 + ∑_{x∈S} (d(x)-4) for |S| ≥ 4
-   - `high_code_weight_sharp_ge_ten`: wt(M 1_S) ≥ 10 + ∑_{x∈S} (d(x)-4) for |S| ≥ 6
-   - `class_h_v3_sharp_bound`: |V_3| ≥ 2|V_{≥4}| + 5 + ∑_{x∈V_{≥4}} (d(x)-4) for |V_{≥4}| ≥ 6
-4. First Lean 4.36.0 kernel verification of the sharp 8/11 density bound on H-N-*:
-   - `class_h_trifree_density_8_11`: 11 * |V_3| ≥ 8 * (|V| - 1)
 -/
 
 namespace E64Wave3ClassH
 open SimpleGraph Erdos64Closure E64Core Erdos64Incidence
 open scoped BigOperators
 universe u
+
+/-- A closed walk with nodup support.tail and length ≥ 3 is a simple cycle. -/
+theorem isCycle_of_support_tail_nodup {W : Type u} {H : SimpleGraph W} {u : W}
+    (c : H.Walk u u) (hnd : c.support.tail.Nodup) (hlen : 3 ≤ c.length) :
+    c.IsCycle := by
+  cases c with
+  | nil => simp at hlen
+  | @cons _ v _ huv p =>
+    have hnd_p : p.support.Nodup := by simpa [Walk.support_cons] using hnd
+    have hp_path : p.IsPath := Walk.IsPath.mk' hnd_p
+    have hp_len : 2 ≤ p.length := by simp at hlen; omega
+    have hnotmem : s(u, v) ∉ p.edges := by
+      intro hmem
+      cases p with
+      | nil => simp at hp_len
+      | @cons _ w _ hvw q =>
+        simp only [Walk.edges_cons, List.mem_cons] at hmem
+        rcases hmem with heq | hq
+        · rw [Sym2.eq_iff] at heq
+          rcases heq with ⟨h1, _⟩ | ⟨_, rfl⟩
+          · exact H.ne_of_adj huv h1.symm
+          · -- q is a walk from u to u, and u ∈ q.support, but p.support = v :: u :: q.support.tail is Nodup!
+            -- Wait: if q = nil then p.length = 1, contradicting hp_len ≥ 2; else u appears twice in p.support!
+            cases q with
+            | nil => simp at hp_len
+            | cons _ q' =>
+              simp only [Walk.support_cons, List.nodup_cons] at hnd_p
+              exact hnd_p.2.1 Walk.end_mem_support
+        · -- s(u, v) ∈ q.edges ⇒ v ∈ q.support, contradicting p.support.Nodup!
+          have hvq : v ∈ q.support := Walk.snd_mem_support_of_mem_edges q hq
+          simp only [Walk.support_cons, List.nodup_cons] at hnd_p
+          exact hnd_p.1 hvq
+    have htrail : (Walk.cons huv p).IsTrail := by
+      refine ⟨?_⟩
+      simp only [Walk.edges_cons, List.nodup_cons]
+      exact ⟨hnotmem, hp_path.isTrail.edges_nodup⟩
+    exact ⟨⟨htrail, by simp⟩, hnd⟩
 
 /-- A graph is C4-free iff any two distinct vertices share at most one common neighbor. -/
 def NoC4 {W : Type u} [Fintype W] (H : SimpleGraph W) [DecidableRel H.Adj] : Prop :=
@@ -95,7 +115,6 @@ theorem c4_free_sum_choose_two_le {W : Type u} [Fintype W] [DecidableEq W]
             ring_nf
             omega
 
-/-- Elementary integer convexity: d*(d-1) + 6 ≥ 4*d for all d : ℕ. -/
 private lemma quad_linear_bound (d : ℕ) : 4 * d ≤ d * (d - 1) + 6 := by
   cases d with
   | zero => omega
@@ -135,7 +154,6 @@ theorem c4_free_five_edges_le_six {W : Type u} [Fintype W] [DecidableEq W]
   simp only [smul_eq_mul] at hsum
   omega
 
-/-- Deleting a vertex v reduces edge count by exactly H.degree v. -/
 private lemma card_edges_delete_vertex {W : Type u} [Fintype W] [DecidableEq W]
     (H : SimpleGraph W) [DecidableRel H.Adj] (v : W)
     [DecidableRel (H.induce {x : W | x ≠ v}).Adj] :
@@ -168,7 +186,6 @@ private lemma card_edges_delete_vertex {W : Type u} [Fintype W] [DecidableEq W]
     rw [h1, Finset.sum_erase_add _ _ (Finset.mem_univ v)]
   omega
 
-/-- Induced subgraph of a C4-free graph is C4-free. -/
 private lemma noC4_induce {W : Type u} [Fintype W] (H : SimpleGraph W) [DecidableRel H.Adj]
     (hc4 : NoC4 H) (S : Set W) [Fintype S] [DecidableRel (H.induce S).Adj] :
     NoC4 (H.induce S) := by
@@ -179,13 +196,13 @@ private lemma noC4_induce {W : Type u} [Fintype W] (H : SimpleGraph W) [Decidabl
       (H.neighborFinset a.1 ∩ H.neighborFinset b.1).card := by
     apply Finset.card_le_card_of_injOn (fun x : S => x.1)
     · intro x hx
-      simp only [Finset.mem_inter, SimpleGraph.mem_neighborFinset] at hx ⊢
-      exact hx
+      simp only [Finset.mem_inter] at hx ⊢
+      exact ⟨(H.mem_neighborFinset a.1 x.1).mpr ((H.induce S).mem_neighborFinset a x |>.mp hx.1),
+             (H.mem_neighborFinset b.1 x.1).mpr ((H.induce S).mem_neighborFinset b x |>.mp hx.2)⟩
     · intro x _ y _ hxy
       exact Subtype.ext hxy
   exact hle.trans (hc4 a.1 b.1 hne)
 
-/-- Any C4-free graph on 5 vertices with 6 edges has a vertex of degree 4. -/
 private lemma c4_free_five_six_has_deg_four {W : Type u} [Fintype W] [DecidableEq W]
     (H : SimpleGraph W) [DecidableRel H.Adj] (hc4 : NoC4 H)
     (hcard : Fintype.card W = 5) (he : H.edgeFinset.card = 6) :
@@ -437,7 +454,7 @@ theorem c4_free_six_edges_le_seven {W : Type u} [Fintype W] [DecidableEq W]
   let H' := H.induce S
   let _ : DecidableRel H'.Adj := inferInstanceAs (DecidableRel (H.induce S).Adj)
   have hScard : Fintype.card S = 5 := by
-    rw [Fintype.card_subtype, show (Finset.univ.filter fun x : W => x ≠ v) = Finset.univ.erase v by ext x; simp,
+    rw [Fintype.card_subtype, show (Finset.univ.filter fun x : W => x ∈ S) = Finset.univ.erase v by ext x; simp [S],
       Finset.card_erase_of_mem (Finset.mem_univ v), Finset.card_univ, hcard]
   have hH'c4 : NoC4 H' := noC4_induce H hc4 S
   have hH'edges_le : H'.edgeFinset.card ≤ 6 := c4_free_five_edges_le_six H' hH'c4 hScard
@@ -455,7 +472,6 @@ theorem c4_free_six_edges_le_seven {W : Type u} [Fintype W] [DecidableEq W]
         rw [Finset.card_erase_of_mem (Finset.mem_univ u0), Finset.card_univ, hScard,
           SimpleGraph.card_neighborFinset_eq_degree, hu0])
     exact (H'.mem_neighborFinset u0 z).mp (heq ▸ Finset.mem_erase.mpr ⟨hz, Finset.mem_univ z⟩)
-  -- Helper: every vertex z ≠ u0 in H' has degree exactly 2!
   have hall_le2 : ∀ z : S, z ≠ u0 → H'.degree z ≤ 2 := by
     intro z hz
     by_contra hge3
@@ -486,7 +502,6 @@ theorem c4_free_six_edges_le_seven {W : Type u} [Fintype W] [DecidableEq W]
               Finset.card_erase_of_mem (Finset.mem_univ u0), Finset.card_univ, hScard]
     have hle := hall_le2 z hz
     omega
-  -- v has two distinct neighbors x, y in S.
   have hnb_v : 1 < (H.neighborFinset v).card := by
     rw [SimpleGraph.card_neighborFinset_eq_degree, hv_eq]; decide
   obtain ⟨x, hx, y, hy, hxy⟩ := Finset.one_lt_card.mp hnb_v
@@ -495,7 +510,6 @@ theorem c4_free_six_edges_le_seven {W : Type u} [Fintype W] [DecidableEq W]
   let x' : S := ⟨x, (H.ne_of_adj hvx).symm⟩
   let y' : S := ⟨y, (H.ne_of_adj hvy).symm⟩
   have hxy' : x' ≠ y' := fun h => hxy (congrArg Subtype.val h)
-  -- x' and y' have NO common neighbor in H' (since v is already their common neighbor in H)!
   have hno_cn : ∀ z' : S, ¬(H'.Adj x' z' ∧ H'.Adj y' z') := by
     intro z' ⟨hxz, hyz⟩
     have hsub : ({v, z'.1} : Finset W) ⊆ H.neighborFinset x ∩ H.neighborFinset y := by
@@ -507,7 +521,6 @@ theorem c4_free_six_edges_le_seven {W : Type u} [Fintype W] [DecidableEq W]
     have hc := (Finset.card_le_card hsub).trans (hc4 x y hxy)
     rw [Finset.card_pair z'.2.symm] at hc
     omega
-  -- Every pair of distinct vertices in H' has a common neighbor!
   by_cases hx0 : x' = u0
   · have hy0 : y' ≠ u0 := fun h => hxy' (hx0.trans h.symm)
     have hdy' := hall_eq2 y' hy0
@@ -529,7 +542,6 @@ theorem c4_free_six_edges_le_seven {W : Type u} [Fintype W] [DecidableEq W]
       exact hno_cn z' ⟨hxz, hy0 ▸ hu0_univ z' hzu0⟩
     · exact hno_cn u0 ⟨(hu0_univ x' hx0).symm, (hu0_univ y' hy0).symm⟩
 
-/-- Every Near-free graph with ≥ 2 vertices has a vertex of degree ≤ 2. -/
 private lemma exists_deg_le_two_of_noNear {W : Type u} [Fintype W] [DecidableEq W]
     (H : SimpleGraph W) [DecidableRel H.Adj] (hnn : NoNearSubgraph H)
     (hcard : 2 ≤ Fintype.card W) : ∃ v : W, H.degree v ≤ 2 := by
@@ -554,7 +566,6 @@ private lemma exists_deg_le_two_of_noNear {W : Type u} [Fintype W] [DecidableEq 
   have hnear : Near H1 := near_of_except H1 ⟨w, trivial⟩ hcard1 (fun u _ => by rw [hdeg_eq]; exact hge3 u.1)
   exact hnn Set.univ hnear
 
-/-- Induced subgraph of a NoNearSubgraph graph is NoNearSubgraph. -/
 private lemma noNear_induce {W : Type u} [Fintype W] (H : SimpleGraph W) [DecidableRel H.Adj]
     (hnn : NoNearSubgraph H) (S : Set W) [Fintype S] [DecidableRel (H.induce S).Adj] :
     NoNearSubgraph (H.induce S) := by
@@ -587,7 +598,6 @@ private lemma noNear_induce {W : Type u} [Fintype W] (H : SimpleGraph W) [Decida
       omega
   exact hnn T' hnear'
 
-/-- General peeling induction: if base n0 satisfies |E| + c ≤ 2*n0, then all n ≥ n0 satisfy |E| + c ≤ 2*n. -/
 private lemma peel_edges_bound (n0 c : ℕ) (hn0 : 2 ≤ n0)
     (hbase : ∀ (W : Type u) [Fintype W] [DecidableEq W] (H : SimpleGraph W) [DecidableRel H.Adj],
       NoC4 H → NoNearSubgraph H → Fintype.card W = n0 → H.edgeFinset.card + c ≤ 2 * n0) :
@@ -606,7 +616,7 @@ private lemma peel_edges_bound (n0 c : ℕ) (hn0 : 2 ≤ n0)
     let H' := H.induce S
     let _ : DecidableRel H'.Adj := inferInstanceAs (DecidableRel (H.induce S).Adj)
     have hScard : Fintype.card S = n0 + k := by
-      rw [Fintype.card_subtype, show (Finset.univ.filter fun x : W => x ≠ v) = Finset.univ.erase v by ext x; simp,
+      rw [Fintype.card_subtype, show (Finset.univ.filter fun x : W => x ∈ S) = Finset.univ.erase v by ext x; simp [S],
         Finset.card_erase_of_mem (Finset.mem_univ v), Finset.card_univ, hcard]
       omega
     have hih := ih S H' (noC4_induce H hc4 S) (noNear_induce H hnn S) hScard
@@ -647,9 +657,8 @@ theorem minimal_bad_noC4 {V : Type u} [Fintype V] [DecidableEq V]
     Walk.cons ha.1 (Walk.cons ha.2.symm (Walk.cons hb.2 (Walk.cons hb.1.symm Walk.nil)))
   have hnd : c.support.tail.Nodup := by
     simp [c, hau, hav, hbu, hbv.symm, huv.symm, hab]
-  exact hm.2.1 ⟨2, u, c, le_rfl, Walk.IsCycle.mk_of_support_nodup (by simp [c]) hnd, rfl⟩
+  exact hm.2.1 ⟨2, u, c, le_rfl, isCycle_of_support_tail_nodup c hnd (by decide), rfl⟩
 
-/-- No two vertices of degree ≥ 4 are adjacent in MinimalBad G. -/
 private lemma high_indep {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     {x y : V} (hx : 4 ≤ G.degree x) (hy : 4 ≤ G.degree y) : ¬G.Adj x y := by
@@ -675,7 +684,6 @@ private lemma high_indep {V : Type u} [Fintype V] [DecidableEq V]
   exact ((SimpleGraph.sdiff_adj G (SimpleGraph.edge x y) x y).mp h1).2
     ((SimpleGraph.edge_adj x y x y).mpr ⟨Or.inl ⟨rfl, rfl⟩, G.ne_of_adj hxy⟩)
 
-/-- Every neighbor of a vertex of degree ≥ 4 has degree exactly 3. -/
 private lemma high_nb_cubic {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     {x y : V} (hx : 4 ≤ G.degree x) (hxy : G.Adj x y) : G.degree y = 3 := by
@@ -734,7 +742,7 @@ theorem class_h_no_all_high_cubic {V : Type u} [Fintype V] [DecidableEq V]
   have hVcard : 4 ≤ Fintype.card V := by
     have := G.degree_lt_card_verts y; omega
   have hScard : Fintype.card Sy + 1 = Fintype.card V := by
-    rw [Fintype.card_subtype, show (Finset.univ.filter fun z : V => z ≠ y) = Finset.univ.erase y by ext z; simp]
+    rw [Fintype.card_subtype, show (Finset.univ.filter fun z : V => z ∈ Sy) = Finset.univ.erase y by ext z; simp [Sy]]
     exact Finset.card_erase_add_one (Finset.mem_univ y)
   have hnear : Near H := by
     by_cases hwy : w = y
@@ -755,15 +763,13 @@ theorem class_h_no_all_high_cubic {V : Type u} [Fintype V] [DecidableEq V]
       · simp [hadj] at hd; have := hw v.1 (fun h => hv (Subtype.ext h)); omega
   exact hm.2.1 (power_induce G _ (hm.2.2.1 Sy H (by omega) hnear))
 
-/-- The midpoint shadow graph on a subset S ⊆ V_{≥4}: two distinct vertices in S are adjacent
-    iff they share a common neighbor in V_3. -/
+/-- The midpoint shadow graph on a subset S ⊆ V_{≥4}. -/
 def shadowOnHigh {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) : SimpleGraph S where
   Adj a b := a ≠ b ∧ ∃ y : V, G.degree y = 3 ∧ G.Adj a.1 y ∧ G.Adj b.1 y
   symm := ⟨fun _ _ ⟨hne, y, hy, ha, hb⟩ => ⟨hne.symm, y, hy, hb, ha⟩⟩
   loopless := ⟨fun _ ⟨hne, _⟩ => hne rfl⟩
 
-/-- Midpoint selector for edges of shadowOnHigh G S. -/
 private noncomputable def shadowMid {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V)
     {a b : S} (h : (shadowOnHigh G S).Adj a b) : V :=
@@ -775,7 +781,6 @@ private lemma shadowMid_spec {V : Type u} [Fintype V] [DecidableEq V]
     G.degree (shadowMid G S h) = 3 ∧ G.Adj a.1 (shadowMid G S h) ∧ G.Adj b.1 (shadowMid G S h) :=
   Classical.choose_spec h.2
 
-/-- Top-level walk lifter from shadowOnHigh G S to G (doubles walk length). -/
 private noncomputable def liftShadowWalk {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) :
     ∀ {u v : S}, (shadowOnHigh G S).Walk u v → G.Walk u.1 v.1
@@ -808,15 +813,15 @@ private lemma liftShadowWalk_mem {V : Type u} [Fintype V] [DecidableEq V]
       | nil =>
         simp only [liftShadowWalk, Walk.support_nil, List.mem_singleton] at hz'
         exact Or.inl ⟨b, by simp, hz'⟩
-      | cons h2 p2 =>
-        simp only [liftShadowWalk, Walk.support_cons, List.mem_cons] at hz'
-        rcases hz' with rfl | hz''
+      | @cons _ d _ h2 p2 =>
+        have hz_split : z = b.1 ∨ z ∈ (liftShadowWalk G S (Walk.cons h2 p2)).support.tail := by
+          simpa [liftShadowWalk, Walk.support_cons, List.tail_cons] using hz'
+        rcases hz_split with rfl | hz''
         · exact Or.inl ⟨b, by simp, rfl⟩
         · rcases ih hz'' with ⟨x, hx, rfl⟩ | ⟨a', b', h', he', rfl⟩
-          · exact Or.inl ⟨x, by simp [hx], rfl⟩
-          · exact Or.inr ⟨a', b', h', by simp [he'], rfl⟩
+          · exact Or.inl ⟨x, List.mem_cons_of_mem b hx, rfl⟩
+          · exact Or.inr ⟨a', b', h', List.mem_cons_of_mem s(a, b) he', rfl⟩
 
-/-- Lifting a simple walk in shadowOnHigh G S of length 2^k to a simple 2^(k+1)-cycle in G. -/
 private lemma shadowOnHigh_hasPower_lifts {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (S : Finset V) (hS : ∀ x ∈ S, 4 ≤ G.degree x)
@@ -845,7 +850,9 @@ private lemma shadowOnHigh_hasPower_lifts {V : Type u} [Fintype V] [DecidableEq 
     have hpair_eq : ({a1.1, b1.1} : Finset V) = A := by
       apply Finset.eq_of_subset_of_card_le
       · intro x hx; simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-        rcases hx with h | h; · exact h ▸ ha1A; · exact h ▸ hb1A
+        rcases hx with h | h
+        · rw [h]; exact ha1A
+        · rw [h]; exact hb1A
       · rw [Finset.card_pair (fun h => h1.1 (Subtype.ext h))]; exact hle2
     have ha2_in : a2.1 = a1.1 ∨ a2.1 = b1.1 := by
       have := hpair_eq.symm ▸ ha2A; simpa using this
@@ -861,6 +868,7 @@ private lemma shadowOnHigh_hasPower_lifts {V : Type u} [Fintype V] [DecidableEq 
     intro a b h x heq
     have h3 := (shadowMid_spec G S h).1
     have h4 := hS x.1 x.2
+    rw [heq] at h3
     omega
   have hlift_nodup : ∀ {u v : S} (p : (shadowOnHigh G S).Walk u v),
       p.support.tail.Nodup → p.edges.Nodup → (liftShadowWalk G S p).support.tail.Nodup := by
@@ -880,38 +888,40 @@ private lemma shadowOnHigh_hasPower_lifts {V : Type u} [Fintype V] [DecidableEq 
       cases p with
       | nil =>
         simp only [liftShadowWalk, Walk.support_cons, Walk.support_nil, List.tail_cons, List.nodup_cons,
-          List.mem_singleton, List.nodup_nil, and_true]
+          List.mem_singleton, List.nodup_nil, List.not_mem_nil, not_false_eq_true, and_true]
         exact hmid_ne_S h b
-      | @cons b' d w' h2 p2 =>
-        simp only [liftShadowWalk, Walk.support_cons, List.tail_cons, List.nodup_cons] at hih ⊢
+      | @cons _ d _ h2 p2 =>
+        have htail_eq : (liftShadowWalk G S (Walk.cons h (Walk.cons h2 p2))).support.tail =
+            shadowMid G S h :: b.1 :: (liftShadowWalk G S (Walk.cons h2 p2)).support.tail := by
+          simp [liftShadowWalk, Walk.support_cons, List.tail_cons]
+        rw [htail_eq, List.nodup_cons, List.nodup_cons]
         refine ⟨?_, ?_, hih⟩
         · intro hmem
           simp only [List.mem_cons] at hmem
           rcases hmem with heq | hmem'
-          · exact hmid_ne_S h b' heq
+          · exact hmid_ne_S h b heq
           · rcases liftShadowWalk_mem G S (Walk.cons h2 p2) (shadowMid G S h) hmem' with ⟨x, _, heq⟩ | ⟨a', b'', h', he', heq⟩
             · exact hmid_ne_S h x heq
             · exact hedge.1 (hmid_inj h h' heq ▸ he')
         · intro hmem'
-          rcases liftShadowWalk_mem G S (Walk.cons h2 p2) b'.1 hmem' with ⟨x, hx, heq⟩ | ⟨a', b'', h', _, heq⟩
-          · have hxb : x = b' := Subtype.ext heq.symm
+          rcases liftShadowWalk_mem G S (Walk.cons h2 p2) b.1 hmem' with ⟨x, hx, heq⟩ | ⟨a', b'', h', _, heq⟩
+          · have hxb : x = b := Subtype.ext heq.symm
             subst hxb
             simp only [Walk.support_cons, List.nodup_cons] at hsup
             exact hsup.1 hx
-          · exact hmid_ne_S h' b' heq.symm
+          · exact hmid_ne_S h' b heq.symm
   let L := liftShadowWalk G S c'
   have hL_len : L.length = 2 ^ (k + 1) := by
     rw [liftShadowWalk_length, hlen', pow_succ]
     omega
   have hL_nodup : L.support.tail.Nodup := hlift_nodup c' hc'.support_nodup hc'.isTrail.edges_nodup
-  have hL_ne_nil : L ≠ Walk.nil := by
-    intro h
-    have : L.length = 0 := by rw [h]; rfl
-    have hpos : 0 < 2 ^ (k + 1) := pow_pos (by decide) _
+  have hL_ge3 : 3 ≤ L.length := by
+    have hpow : 8 ≤ 2 ^ (k + 1) := by
+      calc 8 = 2 ^ 3 := by decide
+        _ ≤ 2 ^ (k + 1) := Nat.pow_le_pow_right (by decide) (by omega)
     omega
-  exact ⟨k + 1, v0.1.1, L, by omega, Walk.IsCycle.mk_of_support_nodup hL_ne_nil hL_nodup, hL_len⟩
+  exact ⟨k + 1, v0.1.1, L, by omega, isCycle_of_support_tail_nodup L hL_nodup hL_ge3, hL_len⟩
 
-/-- shadowOnHigh G S is C4-free (a C4 in shadowOnHigh lifts to a C8 in G!). -/
 private lemma shadowOnHigh_noC4 {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (S : Finset V) (hS : ∀ x ∈ S, 4 ≤ G.degree x)
@@ -930,13 +940,13 @@ private lemma shadowOnHigh_noC4 {V : Type u} [Fintype V] [DecidableEq V]
     Walk.cons ha.1 (Walk.cons ha.2.symm (Walk.cons hb.2 (Walk.cons hb.1.symm Walk.nil)))
   have hnd : c.support.tail.Nodup := by
     simp [c, hau, hav, hbu, hbv.symm, huv.symm, hab]
-  have hcyc : c.IsCycle := Walk.IsCycle.mk_of_support_nodup (by simp [c]) hnd
-  let cU : ((shadowOnHigh G S).induce Set.univ).Walk ⟨u, trivial⟩ ⟨u, trivial⟩ :=
-    c.map ⟨fun x => ⟨x, trivial⟩, fun h => h⟩
+  have hcyc : c.IsCycle := isCycle_of_support_tail_nodup c hnd (by decide)
+  let fU : shadowOnHigh G S →g (shadowOnHigh G S).induce Set.univ :=
+    ⟨fun x => ⟨x, trivial⟩, fun h => h⟩
+  let cU : ((shadowOnHigh G S).induce Set.univ).Walk ⟨u, trivial⟩ ⟨u, trivial⟩ := c.map fU
   have hcU : cU.IsCycle := (Walk.isCycle_map_iff_of_injective (fun _ _ h => congrArg Subtype.val h)).mpr hcyc
   exact hm.2.1 (shadowOnHigh_hasPower_lifts G hm S hS Set.univ ⟨2, ⟨u, trivial⟩, cU, le_rfl, hcU, by simpa [cU]⟩)
 
-/-- shadowOnHigh G S has no Near induced subgraph. -/
 private lemma shadowOnHigh_noNear {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (S : Finset V) (hS : ∀ x ∈ S, 4 ≤ G.degree x)
@@ -957,11 +967,10 @@ private lemma shadowOnHigh_noNear {V : Type u} [Fintype V] [DecidableEq V]
         simpa [Fintype.card_coe] using Fintype.card_subtype_le (fun x : S => x ∈ T)
       omega
     · have hS0 : S.card = 0 := Finset.card_eq_zero.mpr (Finset.not_nonempty_iff_eq_empty.mp hSne)
-      have hT0 : Fintype.card T = 0 := by
-        have hle := Fintype.card_subtype_le (fun x : S => x ∈ T)
-        simp only [Fintype.card_coe, hS0] at hle; omega
+      have hT_le : Fintype.card T ≤ S.card := by
+        simpa [Fintype.card_coe] using Fintype.card_subtype_le (fun x : S => x ∈ T)
       obtain ⟨⟨v, _⟩, _⟩ := hnear
-      have : 0 < Fintype.card T := Fintype.card_pos_iff.mpr ⟨v⟩
+      have hpos : 0 < Fintype.card T := Fintype.card_pos_iff.mpr ⟨v⟩
       omega
   have hpow := hm.2.2.1 T ((shadowOnHigh G S).induce T) hlt hnear
   exact hm.2.1 (shadowOnHigh_hasPower_lifts G hm S hS T hpow)
@@ -971,8 +980,6 @@ def highSyndromeWeight {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) : ℕ :=
   (Finset.univ.filter fun y : V => G.degree y = 3 ∧ (S.filter fun x => G.Adj x y).card % 2 = 1).card
 
-/-- Exact degree-syndrome-shadow identity:
-    ∑_{x ∈ S} G.degree x = highSyndromeWeight G S + 2 * (shadowOnHigh G S).edgeFinset.card. -/
 private lemma high_syndrome_edge_identity {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (S : Finset V) (hS : ∀ x ∈ S, 4 ≤ G.degree x)
@@ -1029,7 +1036,7 @@ private lemma high_syndrome_edge_identity {V : Type u} [Fintype V] [DecidableEq 
       intro y hy
       have h3 : G.degree y = 3 := (Finset.mem_filter.mp hy).2
       have hb := hle2 y h3
-      omega
+      split_ifs <;> omega
     rw [Finset.sum_congr rfl hterm, Finset.sum_add_distrib, ← Finset.mul_sum]
     simp only [J1, J2, Finset.sum_boole, Nat.cast_id]
   have hJ2_eq : J2.card = (shadowOnHigh G S).edgeFinset.card := by
@@ -1038,10 +1045,12 @@ private lemma high_syndrome_edge_identity {V : Type u} [Fintype V] [DecidableEq 
       intro ⟨y, hy⟩
       simp only [J2, V3, Finset.mem_filter, Finset.mem_univ, true_and] at hy
       obtain ⟨a, b, hab, hpair⟩ := Finset.card_eq_two.mp hy.2
-      have haS : a ∈ S := (Finset.mem_filter.mp (hpair ▸ Finset.mem_insert_self a {b})).1
-      have haA : G.Adj a y := (Finset.mem_filter.mp (hpair ▸ Finset.mem_insert_self a {b})).2
-      have hbS : b ∈ S := (Finset.mem_filter.mp (hpair ▸ Finset.mem_insert_of_mem (Finset.mem_singleton_self b))).1
-      have hbA : G.Adj b y := (Finset.mem_filter.mp (hpair ▸ Finset.mem_insert_of_mem (Finset.mem_singleton_self b))).2
+      have ha_mem : a ∈ S.filter (fun x => G.Adj x y) := by rw [hpair]; simp
+      have hb_mem : b ∈ S.filter (fun x => G.Adj x y) := by rw [hpair]; simp
+      have haS : a ∈ S := (Finset.mem_filter.mp ha_mem).1
+      have haA : G.Adj a y := (Finset.mem_filter.mp ha_mem).2
+      have hbS : b ∈ S := (Finset.mem_filter.mp hb_mem).1
+      have hbA : G.Adj b y := (Finset.mem_filter.mp hb_mem).2
       have hadj : (shadowOnHigh G S).Adj ⟨a, haS⟩ ⟨b, hbS⟩ :=
         ⟨fun h => hab (congrArg Subtype.val h), y, hy.1, haA, hbA⟩
       refine ⟨⟨s(⟨a, haS⟩, ⟨b, hbS⟩), (shadowOnHigh G S).mem_edgeFinset.mpr hadj⟩, ?_⟩
@@ -1063,10 +1072,12 @@ private lemma high_syndrome_edge_identity {V : Type u} [Fintype V] [DecidableEq 
       have hy1 := y1.2
       simp only [J2, V3, Finset.mem_filter, Finset.mem_univ, true_and] at hy1
       obtain ⟨a, b, hab, hpair⟩ := Finset.card_eq_two.mp hy1.2
-      have haS : a ∈ S := (Finset.mem_filter.mp (hpair ▸ Finset.mem_insert_self a {b})).1
-      have ha1 : G.Adj a y1.1 := (Finset.mem_filter.mp (hpair ▸ Finset.mem_insert_self a {b})).2
-      have hbS : b ∈ S := (Finset.mem_filter.mp (hpair ▸ Finset.mem_insert_of_mem (Finset.mem_singleton_self b))).1
-      have hb1 : G.Adj b y1.1 := (Finset.mem_filter.mp (hpair ▸ Finset.mem_insert_of_mem (Finset.mem_singleton_self b))).2
+      have ha_mem : a ∈ S.filter (fun x => G.Adj x y1.1) := by rw [hpair]; simp
+      have hb_mem : b ∈ S.filter (fun x => G.Adj x y1.1) := by rw [hpair]; simp
+      have haS : a ∈ S := (Finset.mem_filter.mp ha_mem).1
+      have ha1 : G.Adj a y1.1 := (Finset.mem_filter.mp ha_mem).2
+      have hbS : b ∈ S := (Finset.mem_filter.mp hb_mem).1
+      have hb1 : G.Adj b y1.1 := (Finset.mem_filter.mp hb_mem).2
       have ha2 : G.Adj a y2.1 := (hf y2 ⟨a, haS⟩).mp (heq ▸ (hf y1 ⟨a, haS⟩).mpr ha1)
       have hb2 : G.Adj b y2.1 := (hf y2 ⟨b, hbS⟩).mp (heq ▸ (hf y1 ⟨b, hbS⟩).mpr hb1)
       have hsub : ({y1.1, y2.1} : Finset V) ⊆ G.neighborFinset a ∩ G.neighborFinset b := by
@@ -1101,13 +1112,13 @@ private lemma high_syndrome_edge_identity {V : Type u} [Fintype V] [DecidableEq 
         refine ⟨⟨y, hyJ2⟩, Subtype.ext ?_⟩
         have hfa : a ∈ (f ⟨y, hyJ2⟩).1 := (hf ⟨y, hyJ2⟩ a).mpr hay
         have hfb : b ∈ (f ⟨y, hyJ2⟩).1 := (hf ⟨y, hyJ2⟩ b).mpr hby
-        exact (Sym2.mem_and_mem_iff hadj.1 |>.mp ⟨hfa, hfb⟩).symm
+        exact (Sym2.mem_and_mem_iff hadj.1).mp ⟨hfa, hfb⟩
     have hbij := Fintype.card_of_bijective ⟨hinj, hsurj⟩
     simpa only [Fintype.card_coe] using hbij
   rw [hsum_deg, hsum_part, hJ1_eq, hJ2_eq]
 
 /-- Sharp Class H F2 weight bound for |S| ≥ 2:
-    wt(M 1_S) + 4|S| ≥ ∑_{x∈S} d(x) + 6 (hence wt ≥ 6). -/
+    wt(M 1_S) + 4|S| ≥ ∑_{x∈S} d(x) + 6. -/
 theorem high_code_weight_sharp_ge_six {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (S : Finset V) (hS : ∀ x ∈ S, 4 ≤ G.degree x) (hcard : 2 ≤ S.card) :
@@ -1136,7 +1147,7 @@ theorem high_code_weight_sharp_ge_six {V : Type u} [Fintype V] [DecidableEq V]
     · rw [h3] at hE_le; omega
 
 /-- Sharp Class H F2 weight bound for |S| ≥ 4:
-    wt(M 1_S) + 4|S| ≥ ∑_{x∈S} d(x) + 8 (hence wt ≥ 8, doubling Wave 2's d_min ≥ 4!). -/
+    wt(M 1_S) + 4|S| ≥ ∑_{x∈S} d(x) + 8. -/
 theorem high_code_weight_sharp_ge_eight {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (S : Finset V) (hS : ∀ x ∈ S, 4 ≤ G.degree x) (hcard : 4 ≤ S.card) :
@@ -1150,7 +1161,7 @@ theorem high_code_weight_sharp_ge_eight {V : Type u} [Fintype V] [DecidableEq V]
   omega
 
 /-- Sharp Class H F2 weight bound for |S| ≥ 6:
-    wt(M 1_S) + 4|S| ≥ ∑_{x∈S} d(x) + 10 (hence wt ≥ 10!). -/
+    wt(M 1_S) + 4|S| ≥ ∑_{x∈S} d(x) + 10. -/
 theorem high_code_weight_sharp_ge_ten {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (S : Finset V) (hS : ∀ x ∈ S, 4 ≤ G.degree x) (hcard : 6 ≤ S.card) :
@@ -1164,7 +1175,7 @@ theorem high_code_weight_sharp_ge_ten {V : Type u} [Fintype V] [DecidableEq V]
   omega
 
 /-- Sharp Class H cubic vertex count bound for |V_{≥4}| ≥ 6:
-    |V_3| + 2|V_{≥4}| ≥ ∑_{x ∈ V_{≥4}} d(x) + 5 (i.e. |V_3| ≥ 2|V_{≥4}| + 5 + ∑ (d(x)-4)). -/
+    |V_3| + 2|V_{≥4}| ≥ ∑_{x ∈ V_{≥4}} d(x) + 5. -/
 theorem class_h_v3_sharp_bound {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (hcard : 6 ≤ (Finset.univ.filter fun x : V => 4 ≤ G.degree x).card) :
@@ -1223,9 +1234,9 @@ theorem class_h_v3_sharp_bound {V : Type u} [Fintype V] [DecidableEq V]
           have hb := hle2 y (Finset.mem_filter.mp hy).2
           split_ifs <;> omega
       _ = 2 * V3.card := by rw [Finset.sum_const, smul_eq_mul]; omega
+  change (∑ x ∈ S, G.degree x) + 5 ≤ V3.card + 2 * S.card
   omega
 
-/-- Safe subset pruning lemma (with explicit witness x0 ∈ V_{≥4} ensuring |W| ≥ 4). -/
 private lemma no_safe_prunable_v3_of_high {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (x0 : V) (hx0 : 4 ≤ G.degree x0)
@@ -1239,10 +1250,9 @@ private lemma no_safe_prunable_v3_of_high {V : Type u} [Fintype V] [DecidableEq 
   let _ : DecidableRel H.Adj := inferInstanceAs (DecidableRel (G.induce SA).Adj)
   have hdeg_drop : ∀ z : SA, H.degree z + (A.filter fun y => G.Adj z.1 y).card = G.degree z.1 := by
     intro z
-    have hpart : (G.neighborFinset z.1).card =
-        ((G.neighborFinset z.1).filter (fun y => y ∉ A)).card +
-        ((G.neighborFinset z.1).filter (fun y => y ∈ A)).card := by
-      have := Finset.filter_card_add_filter_neg_card_eq_card (s := G.neighborFinset z.1) (p := fun y => y ∈ A)
+    have hpart : ((G.neighborFinset z.1).filter (fun y => y ∉ A)).card +
+        ((G.neighborFinset z.1).filter (fun y => y ∈ A)).card = (G.neighborFinset z.1).card := by
+      have := Finset.card_filter_add_card_filter_not (s := G.neighborFinset z.1) (p := fun y => y ∈ A)
       omega
     have he1 : H.degree z = ((G.neighborFinset z.1).filter (fun y => y ∉ A)).card := by
       let e : H.neighborSet z ≃ {y : V // y ∈ (G.neighborFinset z.1).filter (fun y => y ∉ A)} :=
@@ -1259,6 +1269,7 @@ private lemma no_safe_prunable_v3_of_high {V : Type u} [Fintype V] [DecidableEq 
   have hx0W : x0 ∉ A := fun h => by have := hAv3 x0 h; omega
   have hW_ge2 : 2 ≤ Fintype.card SA := by
     have hd := hdeg_drop ⟨x0, hx0W⟩
+    dsimp only at hd
     have hh := hhigh x0 hx0
     have hlt := H.degree_lt_card_verts ⟨x0, hx0W⟩
     omega
@@ -1274,11 +1285,12 @@ private lemma no_safe_prunable_v3_of_high {V : Type u} [Fintype V] [DecidableEq 
       have := hw z.1 hzw; omega
   have hWlt : Fintype.card SA < Fintype.card V := by
     obtain ⟨y, hyA⟩ := hAne
-    have hss : (Finset.univ.filter fun z : V => z ∉ A) ⊂ Finset.univ :=
+    have hss : (Finset.univ.filter fun z : V => z ∈ SA) ⊂ Finset.univ :=
       Finset.ssubset_univ_iff.mpr (fun heq => by
-        have : y ∈ Finset.univ.filter (fun z : V => z ∉ A) := heq ▸ Finset.mem_univ y
-        exact (Finset.mem_filter.mp this).2 hyA)
-    simpa [SA, Fintype.card_subtype] using Finset.card_lt_card hss
+        have hmem : y ∈ Finset.univ := Finset.mem_univ y
+        rw [← heq] at hmem
+        exact (Finset.mem_filter.mp hmem).2 hyA)
+    simpa [Fintype.card_subtype] using Finset.card_lt_card hss
   have hnear : Near H := by
     by_cases hwA : w ∈ A
     · exact near_of_except H ⟨x0, hx0W⟩ hW_ge2 (fun z _ => hge3 z (fun heq => z.2 (heq ▸ hwA)))
@@ -1338,7 +1350,7 @@ theorem class_h_trifree_density_8_11 {V : Type u} [Fintype V] [DecidableEq V]
             have hsub : (V3.filter fun y => G.Adj x y) = G.neighborFinset x := by
               ext y; simp only [V3, Finset.mem_filter, Finset.mem_univ, true_and, SimpleGraph.mem_neighborFinset]
               exact ⟨fun h => h.2, fun h => ⟨high_nb_cubic G hm (Finset.mem_filter.mp hx).2 h, h⟩⟩
-            rw [hsub]; simp
+            rw [hsub]
         _ = ∑ y ∈ V3, ∑ x ∈ Vhigh, if G.Adj x y then 1 else 0 := Finset.sum_comm
         _ = ∑ y ∈ V3, hdeg y := by
             apply Finset.sum_congr rfl; intro y _
@@ -1356,7 +1368,7 @@ theorem class_h_trifree_density_8_11 {V : Type u} [Fintype V] [DecidableEq V]
     intro y hy
     have hy3 : G.degree y = 3 := (Finset.mem_filter.mp (Finset.mem_filter.mp hy).1).2
     have hy2 : hdeg y = 2 := (Finset.mem_filter.mp hy).2
-    have hpart := Finset.filter_card_add_filter_neg_card_eq_card (s := G.neighborFinset y) (p := fun u => 4 ≤ G.degree u)
+    have hpart := Finset.card_filter_add_card_filter_not (s := G.neighborFinset y) (p := fun u => 4 ≤ G.degree u)
     have hneg : ((G.neighborFinset y).filter fun u => ¬(4 ≤ G.degree u)) =
         (G.neighborFinset y).filter (fun u => G.degree u ≤ 3) := by
       ext u; simp only [Finset.mem_filter]; omega
@@ -1393,10 +1405,9 @@ theorem class_h_trifree_density_8_11 {V : Type u} [Fintype V] [DecidableEq V]
       exact ⟨fun h => by subst h; omega, fun h => by subst h; omega⟩
     have hdeg_drop : ∀ z : SA, H.degree z + (A.filter fun t => G.Adj z.1 t).card = G.degree z.1 := by
       intro z
-      have hpart : (G.neighborFinset z.1).card =
-          ((G.neighborFinset z.1).filter (fun t => t ∉ A)).card +
-          ((G.neighborFinset z.1).filter (fun t => t ∈ A)).card := by
-        have := Finset.filter_card_add_filter_neg_card_eq_card (s := G.neighborFinset z.1) (p := fun t => t ∈ A)
+      have hpart : ((G.neighborFinset z.1).filter (fun t => t ∉ A)).card +
+          ((G.neighborFinset z.1).filter (fun t => t ∈ A)).card = (G.neighborFinset z.1).card := by
+        have := Finset.card_filter_add_card_filter_not (s := G.neighborFinset z.1) (p := fun t => t ∈ A)
         omega
       have he1 : H.degree z = ((G.neighborFinset z.1).filter (fun t => t ∉ A)).card := by
         let e : H.neighborSet z ≃ {t : V // t ∈ (G.neighborFinset z.1).filter (fun t => t ∉ A)} :=
@@ -1418,12 +1429,13 @@ theorem class_h_trifree_density_8_11 {V : Type u} [Fintype V] [DecidableEq V]
         rw [Finset.card_pair hw_ne_y] at hle; omega
       have heq : A.filter (fun t => G.Adj z.1 t) = A :=
         Finset.eq_of_subset_of_card_le (Finset.filter_subset _ _) (by rw [hcard2, Finset.card_pair hw_ne_y])
-      have hzw : G.Adj z.1 w := (Finset.mem_filter.mp (heq ▸ Finset.mem_insert_self w {y})).2
-      have hzy : G.Adj z.1 y := (Finset.mem_filter.mp (heq ▸ Finset.mem_insert_of_mem (Finset.mem_singleton_self y))).2
-      exact htf z.1 w y hzw hwy hzy
+      have hwm : w ∈ A.filter (fun t => G.Adj z.1 t) := by rw [heq]; simp [A]
+      have hym : y ∈ A.filter (fun t => G.Adj z.1 t) := by rw [heq]; simp [A]
+      exact htf z.1 w y (Finset.mem_filter.mp hwm).2 hwy (Finset.mem_filter.mp hym).2
     have hW_ge2 : 2 ≤ Fintype.card SA := by
       have hd := hdeg_drop ⟨x0, hx0_not_A⟩
       have hb := hno_both ⟨x0, hx0_not_A⟩
+      dsimp only at hd hb
       have hlt := H.degree_lt_card_verts ⟨x0, hx0_not_A⟩
       omega
     have hnear : Near H := by
@@ -1456,11 +1468,12 @@ theorem class_h_trifree_density_8_11 {V : Type u} [Fintype V] [DecidableEq V]
         have := hrest z.1 hzw'
         omega
     have hWlt : Fintype.card SA < Fintype.card V := by
-      have hss : (Finset.univ.filter fun z : V => z ∉ A) ⊂ Finset.univ :=
+      have hss : (Finset.univ.filter fun z : V => z ∈ SA) ⊂ Finset.univ :=
         Finset.ssubset_univ_iff.mpr (fun heq => by
-          have : w ∈ Finset.univ.filter (fun z : V => z ∉ A) := heq ▸ Finset.mem_univ w
-          exact (Finset.mem_filter.mp this).2 (by simp [A]))
-      simpa [SA, Fintype.card_subtype] using Finset.card_lt_card hss
+          have hmem : w ∈ Finset.univ := Finset.mem_univ w
+          rw [← heq] at hmem
+          exact (Finset.mem_filter.mp hmem).2 (by simp [A]))
+      simpa [Fintype.card_subtype] using Finset.card_lt_card hss
     exact hm.2.1 (power_induce G _ (hm.2.2.1 SA H hWlt hnear))
   have hJ2_indep : ∀ y1 ∈ J2, ∀ y2 ∈ J2, ¬G.Adj y1 y2 := by
     intro y1 hy1 y2 hy2 hadj
@@ -1497,9 +1510,9 @@ theorem class_h_trifree_density_8_11 {V : Type u} [Fintype V] [DecidableEq V]
         rw [Finset.card_pair hne] at hle; omega
       have heq : ({y1, y2} : Finset V).filter (fun y => G.Adj x y) = {y1, y2} :=
         Finset.eq_of_subset_of_card_le (Finset.filter_subset _ _) (by rw [hcard2, Finset.card_pair hne])
-      have hx1 : G.Adj x y1 := (Finset.mem_filter.mp (heq ▸ Finset.mem_insert_self y1 {y2})).2
-      have hx2 : G.Adj x y2 := (Finset.mem_filter.mp (heq ▸ Finset.mem_insert_of_mem (Finset.mem_singleton_self y2))).2
-      exact htf x y1 y2 hx1 hadj hx2
+      have hm1 : y1 ∈ ({y1, y2} : Finset V).filter (fun y => G.Adj x y) := by rw [heq]; simp
+      have hm2 : y2 ∈ ({y1, y2} : Finset V).filter (fun y => G.Adj x y) := by rw [heq]; simp
+      exact htf x y1 y2 (Finset.mem_filter.mp hm1).2 hadj (Finset.mem_filter.mp hm2).2
   have hJ1_deg : ∀ z ∈ J1, (J2.filter fun y => G.Adj z y).card ≤ 1 := by
     intro z hz
     by_contra hgt
@@ -1517,7 +1530,7 @@ theorem class_h_trifree_density_8_11 {V : Type u} [Fintype V] [DecidableEq V]
       simp only [Finset.mem_insert, Finset.mem_singleton] at hy hu
       push Not at hu
       rcases hy with h | h | h
-      · have hpart := Finset.filter_card_add_filter_neg_card_eq_card (s := G.neighborFinset z) (p := fun t => 4 ≤ G.degree t)
+      · have hpart := Finset.card_filter_add_card_filter_not (s := G.neighborFinset z) (p := fun t => 4 ≤ G.degree t)
         have hneg : ((G.neighborFinset z).filter fun t => ¬(4 ≤ G.degree t)) =
             (G.neighborFinset z).filter (fun t => G.degree t ≤ 3) := by ext t; simp only [Finset.mem_filter]; omega
         rw [hneg, SimpleGraph.card_neighborFinset_eq_degree, hz3] at hpart
@@ -1552,28 +1565,28 @@ theorem class_h_trifree_density_8_11 {V : Type u} [Fintype V] [DecidableEq V]
       obtain ⟨a, ha, b, hb, hab⟩ := Finset.one_lt_card.mp (by omega : 1 < (({z, y1, y2} : Finset V).filter fun y => G.Adj x y).card)
       simp only [Finset.mem_filter, Finset.mem_insert, Finset.mem_singleton] at ha hb
       have hxz : x ≠ z := fun heq => by subst heq; omega
-      rcases ha.1 with rfl | rfl | rfl <;> rcases hb.1 with rfl | rfl | rfl
-      · exact hab rfl
-      · exact htf x z y1 ha.2 hy1.2 hb.2
-      · exact htf x z y2 ha.2 hy2.2 hb.2
-      · exact htf x z y1 hb.2 hy1.2 ha.2
-      · exact hab rfl
+      rcases ha.1 with ha1 | ha1 | ha1 <;> rcases hb.1 with hb1 | hb1 | hb1
+      · exact hab (ha1.trans hb1.symm)
+      · exact htf x z y1 (ha1 ▸ ha.2) hy1.2 (hb1 ▸ hb.2)
+      · exact htf x z y2 (ha1 ▸ ha.2) hy2.2 (hb1 ▸ hb.2)
+      · exact htf x z y1 (hb1 ▸ hb.2) hy1.2 (ha1 ▸ ha.2)
+      · exact hab (ha1.trans hb1.symm)
       · have hsub : ({y1, y2} : Finset V) ⊆ G.neighborFinset x ∩ G.neighborFinset z := by
           intro t ht; simp only [Finset.mem_insert, Finset.mem_singleton] at ht
           rcases ht with ht1 | ht2
-          · rw [ht1]; exact Finset.mem_inter.mpr ⟨(G.mem_neighborFinset x y1).mpr ha.2, (G.mem_neighborFinset z y1).mpr hy1.2⟩
-          · rw [ht2]; exact Finset.mem_inter.mpr ⟨(G.mem_neighborFinset x y2).mpr hb.2, (G.mem_neighborFinset z y2).mpr hy2.2⟩
+          · rw [ht1]; exact Finset.mem_inter.mpr ⟨(G.mem_neighborFinset x y1).mpr (ha1 ▸ ha.2), (G.mem_neighborFinset z y1).mpr hy1.2⟩
+          · rw [ht2]; exact Finset.mem_inter.mpr ⟨(G.mem_neighborFinset x y2).mpr (hb1 ▸ hb.2), (G.mem_neighborFinset z y2).mpr hy2.2⟩
         have hc := (Finset.card_le_card hsub).trans (hc4 x z hxz)
         rw [Finset.card_pair h12] at hc; omega
-      · exact htf x z y2 hb.2 hy2.2 ha.2
+      · exact htf x z y2 (hb1 ▸ hb.2) hy2.2 (ha1 ▸ ha.2)
       · have hsub : ({y1, y2} : Finset V) ⊆ G.neighborFinset x ∩ G.neighborFinset z := by
           intro t ht; simp only [Finset.mem_insert, Finset.mem_singleton] at ht
           rcases ht with ht1 | ht2
-          · rw [ht1]; exact Finset.mem_inter.mpr ⟨(G.mem_neighborFinset x y1).mpr hb.2, (G.mem_neighborFinset z y1).mpr hy1.2⟩
-          · rw [ht2]; exact Finset.mem_inter.mpr ⟨(G.mem_neighborFinset x y2).mpr ha.2, (G.mem_neighborFinset z y2).mpr hy2.2⟩
+          · rw [ht1]; exact Finset.mem_inter.mpr ⟨(G.mem_neighborFinset x y1).mpr (hb1 ▸ hb.2), (G.mem_neighborFinset z y1).mpr hy1.2⟩
+          · rw [ht2]; exact Finset.mem_inter.mpr ⟨(G.mem_neighborFinset x y2).mpr (ha1 ▸ ha.2), (G.mem_neighborFinset z y2).mpr hy2.2⟩
         have hc := (Finset.card_le_card hsub).trans (hc4 x z hxz)
         rw [Finset.card_pair h12] at hc; omega
-      · exact hab rfl
+      · exact hab (ha1.trans hb1.symm)
   have hJ0_deg : ∀ z ∈ J0, (J2.filter fun y => G.Adj z y).card ≤ 2 := by
     intro z hz
     by_contra hgt
@@ -1593,8 +1606,8 @@ theorem class_h_trifree_density_8_11 {V : Type u} [Fintype V] [DecidableEq V]
       · rw [← heq_nb] at hy'
         exact (Finset.mem_filter.mp (Finset.mem_filter.mp (Finset.mem_filter.mp hy').1).1).2
     · intro u hu hule3 y hy huy
-      rcases Finset.mem_insert.mp hy with rfl | hy'
-      · exact hu (Finset.mem_insert_of_mem ((G.mem_neighborFinset z u).mpr huy.symm))
+      rcases Finset.mem_insert.mp hy with hyz_eq | hy'
+      · exact hu (Finset.mem_insert_of_mem ((G.mem_neighborFinset z u).mpr (hyz_eq ▸ huy).symm))
       · have hyJ2 : y ∈ J2 := (Finset.mem_filter.mp (heq_nb.symm ▸ hy')).1
         have hyz : G.Adj z y := (G.mem_neighborFinset z y).mp hy'
         have huz : u ≠ z := fun h => hu (h ▸ Finset.mem_insert_self z _)
@@ -1610,10 +1623,10 @@ theorem class_h_trifree_density_8_11 {V : Type u} [Fintype V] [DecidableEq V]
       obtain ⟨a, ha, b, hb, hab⟩ := Finset.one_lt_card.mp (by omega : 1 < (A.filter fun y => G.Adj x y).card)
       simp only [Finset.mem_filter, A, Finset.mem_insert] at ha hb
       have hxz : x ≠ z := fun heq => by subst heq; omega
-      rcases ha.1 with rfl | ha' <;> rcases hb.1 with rfl | hb'
-      · exact hab rfl
-      · exact htf x z b ha.2 ((G.mem_neighborFinset z b).mp hb') hb.2
-      · exact htf x z a hb.2 ((G.mem_neighborFinset z a).mp ha') ha.2
+      rcases ha.1 with ha1 | ha' <;> rcases hb.1 with hb1 | hb'
+      · exact hab (ha1.trans hb1.symm)
+      · exact htf x z b (ha1 ▸ ha.2) ((G.mem_neighborFinset z b).mp hb') hb.2
+      · exact htf x z a (hb1 ▸ hb.2) ((G.mem_neighborFinset z a).mp ha') ha.2
       · have hsub : ({a, b} : Finset V) ⊆ G.neighborFinset x ∩ G.neighborFinset z := by
           intro t ht; simp only [Finset.mem_insert, Finset.mem_singleton] at ht
           rcases ht with hta | htb
@@ -1665,6 +1678,7 @@ theorem class_h_trifree_density_8_11 {V : Type u} [Fintype V] [DecidableEq V]
           ≤ ∑ _z ∈ J1, 1 := Finset.sum_le_sum fun z hz => hJ1_deg z hz
         _ = J1.card := by simp
     omega
+  change 8 * (Fintype.card V - 1) ≤ 11 * V3.card
   omega
 
 #print axioms c4_free_sum_choose_two_le
