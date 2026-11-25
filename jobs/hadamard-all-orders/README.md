@@ -21,13 +21,13 @@ Write $r(n)=\max\{k:P(n,k)\}$. Unconditionally, for every $\epsilon>0$ and all s
 
 At $n=2396$, matching absolute projection multisets constructs **1,197 orthogonal columns** and checks all **715,806** pairwise inner products exactly. The seven-column completion theorem would apply at **2,389**. Extension may require changing the alignment or previously chosen columns. In the separate cyclic construction, 310 of 598 shift pairs vanish on one witness and 49 further original equations suffice under its documented constraints. That shift count does not measure $r(2396)$. This order remains the smallest gap in the cited frontier. [Explicit construction and next-column constraints](STACK_1197.md) · [Cyclic certificates](../hadamard-2396-coverage/README.md) · [Frontier snapshot](https://github.com/vatskishan03/Hadamard/blob/d885022144ba6bf4efa8315e14871a3736947527/FRONTIER.md)
 
-**第 1,198 欄。** 雙通道重排保有前 1,197 欄的精確正交。最佳整數零計數的配置將最後一欄的非零內積由 113 個減至 88 個，其值全為八的倍數。另一配置有 100 個非零內積，誤差平方和更低。要完成下一欄，全部誤差須在同一組配置歸零。[聯合符號證書](STACK_1198_JOINT.md) · [有界排除與雙通道條件](STACK_1198.md)
+**第 1,198 欄。** 雙通道重排保有前 1,197 欄的精確正交。最佳整數零計數的配置將最後一欄的非零內積減至 88 個。固定這組新增符號與兩部來源後，保留模八的重配有精確最小上界 16。另一組符號可讓最後一欄的全部內積只取 \(-8,0,8\)。要完成下一欄，全部誤差須在同一組配置歸零。[整數運輸證書](STACK_1198_TRANSPORT.md) · [聯合符號證書](STACK_1198_JOINT.md) · [有界排除與雙通道條件](STACK_1198.md)
 
 **從相鄰序列長度轉進 2396。** 已重建精確非週期 \(T(598)\)。平方和條件排除從 600 的任意互補四元組各刪一位，以及 23 與 Golay 26 乘積族的差一位插入。299 與 Golay 2 的兩種座標排序同樣已排除所有一次插入，包括兩個互為反轉的中央切點。[平方和障礙](LENGTH_CHANGE_599.md) · [Golay 2 插入排除](T599_GOLAY2_CENTRAL.md)
 
-**四行四欄邊框。** 長度 598 的四字若在每個非零位移的合併相關均為 \(-4\)，即可直接構造完整 2396 階矩陣。它亦等價於一類指定循環軌道的外層設計。共同階 11 乘子已排除。另一組符號在原長全部位移達模八，並使 26 階商群精確，原長仍餘每個符號半部 142 個獨立誤差座標須同時歸零。[四邊框與軌道條件](BORDER4_2396.md) · [共同符號提升](BORDER4_2396_LIFT.md)
+**四行四欄邊框。** 長度 598 的四字若在每個非零位移的合併相關均為 \(-4\)，即可直接構造完整 2396 階矩陣。它亦等價於一類指定循環軌道的外層設計。共同階 11 乘子已排除。同一組符號在原長全數達模八，並同時精確滿足 26 階及 46 階商群。保持雙商群後，每個符號半部有 131 個原長誤差座標須共同歸零。另一個精確 Paley 正半部要求長度 299 的重複自相關四元組，兩種標準四元數乘積皆無法提供。[四邊框與軌道條件](BORDER4_2396.md) · [兩個精確商群](BORDER4_2396_BOTH.md) · [Paley 分解](BORDER4_2396_PALEY_SPLIT.md)
 
-**五欄省略投影。** 固定 988 上部後，八組參考下部折疊各排除其餘七個整數因數。若逐索引模八投影保持，任何非零折疊變更至少需要三個實體行使用其原省略型態未有的遮罩。[56 個整數容量界及遮罩剛性](EXTERIOR_FOLD_FACTOR_CAPACITY.md)
+**五欄省略投影。** 固定 988 上部後，八組參考下部折疊各排除其餘七個整數因數。若逐索引模八投影保持，任何非零折疊變更至少需要三個實體行使用其原省略型態未有的遮罩。現已構造變動 116 個行對異或的配置，保持全部逐索引模八、行欄重量與新欄 Gram。這組換號仍須修復省略投影的精確 Gram。[56 個整數容量界及遮罩剛性](EXTERIOR_FOLD_FACTOR_CAPACITY.md) · [實體換號證書](EXTERIOR_FOLD_TRADE.md)
 
 ## Dependency table
 

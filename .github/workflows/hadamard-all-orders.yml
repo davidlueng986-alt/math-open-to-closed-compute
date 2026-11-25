@@ -21,12 +21,15 @@ jobs:
           python3 -B jobs/hadamard-all-orders/verify.py
           python3 -B jobs/hadamard-all-orders/stack_1197.py
           python3 -B jobs/hadamard-all-orders/stack_1198_joint.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_transport.py
           python3 -B jobs/hadamard-all-orders/triple_product.py
           python3 -B jobs/hadamard-all-orders/t599.py
           python3 -B jobs/hadamard-all-orders/t599_length_change.py
           python3 -B jobs/hadamard-all-orders/t599_golay2_central.py
           python3 -B jobs/hadamard-all-orders/border4_2396.py
           python3 -B jobs/hadamard-all-orders/border4_2396_lift.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_both.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_split.py
           python3 -B jobs/hadamard-all-orders/r_intersections.py
           python3 -B jobs/hadamard-all-orders/r_near_complement.py
           python3 -B jobs/hadamard-all-orders/r_two_point.py
@@ -94,6 +97,8 @@ jobs:
         run: python3 -B jobs/hadamard-all-orders/exterior_wide_fold.py
       - name: Check fold capacities, factor distances and row-mask rigidity
         run: python3 -B jobs/hadamard-all-orders/exterior_fold_factor_capacity.py
+      - name: Check the indexed modulo-eight nonzero physical fold trade
+        run: python3 -B jobs/hadamard-all-orders/exterior_fold_trade.py
 
   exact-source-columns:
     runs-on: ubuntu-latest
