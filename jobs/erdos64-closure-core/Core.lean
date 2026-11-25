@@ -132,7 +132,7 @@ theorem no_high_when_no_defect {V : Type u} [Fintype V]
   have hpos : 0 < G.degree a := by omega
   obtain ⟨b,hab⟩ := (G.degree_pos_iff_exists_adj a).mp hpos
   let H := G \ SimpleGraph.edge a b
-  let _ : DecidableRel H.Adj := inferInstanceAs (DecidableRel (G \\ SimpleGraph.edge a b).Adj)
+  let _ : DecidableRel H.Adj := inferInstanceAs (DecidableRel (G \ SimpleGraph.edge a b).Adj)
   have hcard : 2 ≤ Fintype.card V := by
     have := G.degree_lt_card_verts a
     omega
@@ -177,12 +177,12 @@ theorem induce_delete_degree {V : Type u} [Fintype V] [DecidableEq V]
     ext x
     simp [and_comm]
   rw [hs] at hc
-  rw [← SimpleGraph.card_neighborFinset_eq_degree]
   by_cases h : G.Adj v.1 w
-  · rw [if_pos h,hc]
+  · rw [if_pos h,hc, ← G.card_neighborFinset_eq_degree]
     exact Finset.card_erase_add_one ((G.mem_neighborFinset v.1 w).mpr h)
   · rw [if_neg h,add_zero,hc,Finset.erase_eq_of_notMem]
-    exact fun hm => h ((G.mem_neighborFinset v.1 w).mp hm)
+    · exact G.card_neighborFinset_eq_degree _
+    · exact fun hm => h ((G.mem_neighborFinset v.1 w).mp hm)
 
 theorem power_induce {V : Type u} (G : SimpleGraph V) (S : Set V) :
     HasPower (G.induce S) → HasPower G := by
@@ -205,7 +205,7 @@ theorem no_small_defect {V : Type u} [Fintype V]
     have := hr w (Ne.symm h)
     omega
   subst r
-  let W := ↑({x : V | x ≠ w} : Set V)
+  let W := {x : V // x ≠ w}
   let H := G.induce {x | x ≠ w}
   let _ : DecidableRel H.Adj := inferInstanceAs (DecidableRel (G.induce {x | x ≠ w}).Adj)
   have haW : a≠w := by
@@ -217,7 +217,8 @@ theorem no_small_defect {V : Type u} [Fintype V]
     rw [Fintype.card_subtype, show (Finset.univ.filter (fun x : V => x ≠ w)) = Finset.univ.erase w by ext x; simp]
     exact Finset.card_erase_add_one (Finset.mem_univ w)
   have hW2 : 2 ≤ Fintype.card ↑({x : V | x ≠ w} : Set V) := by
-    change 2 ≤ Fintype.card W
+    have he : Fintype.card ↑({x : V | x ≠ w} : Set V) = Fintype.card W :=
+      Fintype.card_congr (Equiv.refl _)
     omega
   have hnear : Near H := by
     by_cases hz : G.degree w=0

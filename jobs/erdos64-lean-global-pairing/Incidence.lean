@@ -178,15 +178,16 @@ theorem safe_step_of_low_codim_incidence (G : SimpleGraph V) [Fintype V]
         Fintype.card {x // R0 x y}=0 ∨ Fintype.card {x // R0 x y}=2 := by
       have hm := support_row_mod R z y
       rw [congrFun hzero y] at hm
-      simp at hm
+      simp only [Pi.zero_apply, ZMod.val_zero] at hm
       have hb := (support_row_le R z y).trans (hmid y)
-      have he : Fintype.card {x : S // R0 x y} = Fintype.card {x : Support z // R x.1 y} :=
-        Fintype.card_congr (Equiv.subtypeEquivRight (fun x => Iff.rfl))
+      simp only [← Nat.card_eq_fintype_card] at hm hb ⊢
+      change Nat.card {x : Support z // R x.1 y}=0 ∨ Nat.card {x : Support z // R x.1 y}=2
       omega
-    have hc (x : S) : Fintype.card {y // R0 x y} = Fintype.card {y // R x.1 y} :=
-      Fintype.card_congr (Equiv.subtypeEquivRight (fun y => Iff.rfl))
     have hdeg (x : S) : 3 ≤ Fintype.card {y // R0 x y} := by
-      rw [hc, hbranch]
+      have hh := hbranch x.1
+      simp only [← Nat.card_eq_fintype_card] at hh ⊢
+      change 3 ≤ Nat.card {y // R x.1 y}
+      exact hh.ge
     exact safe_step_of_rows G f0 g hf0 hg (fun x y => hsep x.1 y) R0
       (fun x y h => hR x.1 y h) hY hsize0 hrow w
       (fun x => (by decide : 2 ≤ 3).trans (hdeg x))
