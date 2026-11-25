@@ -1,0 +1,28 @@
+name: E64 Wave 3 Agent 1 structural theorems
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile Wave 3 Agent 1 structural theorems and audit transitive axioms
+        run: bash jobs/erdos64-wave3-agent1-structural/verify.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos64-wave3-agent1-structural
+          path: out/
+          retention-days: 90
