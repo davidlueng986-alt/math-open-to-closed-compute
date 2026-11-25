@@ -29,7 +29,15 @@ def syndrome (R : X → Y → Prop) [DecidableRel R] :
     by_cases h : R x y <;> simp [h]
 
 theorem field_cases (a : ZMod 2) : a=0 ∨ a=1 := by
-  fin_cases a <;> decide
+  have ha : a.val < 2 := ZMod.val_lt a
+  have h : a.val = 0 ∨ a.val = 1 := by omega
+  rcases h with h | h
+  · left
+    apply ZMod.val_injective 2
+    simpa using h
+  · right
+    apply ZMod.val_injective 2
+    simpa using h
 
 theorem indicator_sum {T : Type*} [Fintype T] (P : T → Prop) [DecidablePred P] :
     (∑ t, if P t then (1 : ZMod 2) else 0) =
@@ -41,9 +49,10 @@ theorem syndrome_unit [DecidableEq X] (R : X → Y → Prop) [DecidableRel R]
     (a : X) (y : Y) :
     syndrome R (Erdos64Binary.unit a) y = if R a y then 1 else 0 := by
   classical
-  change (∑ x, if R x y then Erdos64Binary.unit a x else 0) = _
+  change (∑ x, if R x y then Erdos64Binary.unit a x else 0) = (if R a y then (1 : ZMod 2) else 0)
   calc
-    _ = ∑ x, if x=a then (if R a y then 1 else 0) else 0 := by
+    (∑ x, if R x y then Erdos64Binary.unit a x else 0) =
+        ∑ x, if x=a then (if R a y then (1 : ZMod 2) else 0) else 0 := by
       apply Finset.sum_congr rfl
       intro x _
       by_cases h : x=a
@@ -54,6 +63,7 @@ theorem syndrome_unit [DecidableEq X] (R : X → Y → Prop) [DecidableRel R]
 
 abbrev Support (z : X → ZMod 2) := {x : X // z x=1}
 
+omit [Fintype Y] in
 theorem support_row (R : X → Y → Prop) [DecidableRel R]
     (z : X → ZMod 2) (y : Y) :
     (Fintype.card {x : Support z // R x.1 y} : ZMod 2) = syndrome R z y := by
@@ -74,13 +84,14 @@ theorem support_row_le (R : X → Y → Prop) [DecidableRel R]
     Fintype.card {x : Support z // R x.1 y} ≤ Fintype.card {x : X // R x y} := by
   exact Fintype.card_le_of_injective
     (fun x : {x : Support z // R x.1 y} => (⟨x.1.1,x.2⟩ : {x : X // R x y}))
-    (by intro a b h; apply Subtype.ext; apply Subtype.ext; exact congrArg Subtype.val h)
+    (by intro a b h; apply Subtype.ext; apply Subtype.ext; exact congrArg (fun t : {x : X // R x y} => t.val) h)
 
 theorem support_row_mod (R : X → Y → Prop) [DecidableRel R]
     (z : X → ZMod 2) (y : Y) :
     Fintype.card {x : Support z // R x.1 y} % 2 = (syndrome R z y).val := by
   simpa only [ZMod.val_natCast] using congrArg ZMod.val (support_row R z y)
 
+omit [Fintype X] in
 theorem support_nonempty (z : X → ZMod 2) (hz : z ≠ 0) :
     Nonempty (Support z) := by
   by_contra h
@@ -152,7 +163,7 @@ theorem safe_step_of_low_codim_incidence (G : SimpleGraph V) [Fintype V]
     ⟨z,hz,hzero⟩ | ⟨z,y0,hunit⟩
   · let S := Support z
     let R0 : S → Y → Prop := fun x y => R x.1 y
-    let _ : DecidableRel R0 := Classical.decRel _
+    let _ : DecidableRel R0 := fun x y => Classical.propDecidable (R0 x y)
     let f0 : S → V := fun x => f x.1
     have hf0 : Function.Injective f0 := fun _ _ h => Subtype.ext (hf h)
     have hsize0 : Fintype.card S < Fintype.card V :=
@@ -192,7 +203,7 @@ theorem safe_step_of_low_codim_incidence (G : SimpleGraph V) [Fintype V]
       omega
     obtain ⟨⟨w,hw⟩⟩ := Fintype.card_pos_iff.mp hpos
     let R1 : S → Y → Prop := fun x y => R x.1 y ∧ (x≠w ∨ y≠y0)
-    let _ : DecidableRel R1 := Classical.decRel _
+    let _ : DecidableRel R1 := fun x y => Classical.propDecidable (R1 x y)
     have hrow (y : Y) :
         Fintype.card {x // R1 x y}=0 ∨ Fintype.card {x // R1 x y}=2 := by
       have hb : Fintype.card {x : S // R x.1 y} ≤3 :=
