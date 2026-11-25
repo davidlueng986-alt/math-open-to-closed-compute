@@ -398,11 +398,10 @@ theorem identify_degree_other {V : Type u} [Fintype V] [DecidableEq V]
     G.degree v.1 ≤ (identifyGraph G x y).degree v +
       (if G.Adj x v.1 ∧ G.Adj y v.1 then 1 else 0) := by
   classical
-  let H := identifyGraph G x y
   let X : {z : V // z ≠ y} := ⟨x, hxy⟩
   by_cases hboth : G.Adj x v.1 ∧ G.Adj y v.1
   · rw [ite_eq_left hboth]
-    let f : {u : V // G.Adj v.1 u ∧ u ≠ y} → H.neighborSet v := fun u =>
+    let f : {u : V // G.Adj v.1 u ∧ u ≠ y} → (identifyGraph G x y).neighborSet v := fun u =>
       ⟨⟨u.1, u.2.2⟩, ⟨fun heq => G.ne_of_adj u.2.1 (congrArg Subtype.val heq), Or.inl u.2.1⟩⟩
     have hf : Function.Injective f := by
       intro p q heq
@@ -419,10 +418,10 @@ theorem identify_degree_other {V : Type u} [Fintype V] [DecidableEq V]
     rw [G.card_neighborFinset_eq_degree] at he
     omega
   · rw [ite_eq_right hboth, add_zero]
-    let f : G.neighborSet v.1 → H.neighborSet v := fun u =>
+    let f : G.neighborSet v.1 → (identifyGraph G x y).neighborSet v := fun u =>
       if huy : u.1 = y then
         ⟨X, ⟨fun heq => hv (congrArg Subtype.val heq),
-          Or.inr (Or.inr ⟨rfl, by rw [← huy]; exact u.2⟩)⟩⟩
+          Or.inr (Or.inr ⟨rfl, by have hadj : G.Adj v.1 u.1 := u.2; exact huy ▸ hadj⟩)⟩⟩
       else
         ⟨⟨u.1, huy⟩, ⟨fun heq => G.ne_of_adj u.2 (congrArg Subtype.val heq), Or.inl u.2⟩⟩
     have hf : Function.Injective f := by
@@ -431,14 +430,18 @@ theorem identify_degree_other {V : Type u} [Fintype V] [DecidableEq V]
       · exact Subtype.ext (hp.trans hq.symm)
       · exfalso
         simp [f, hp, hq] at heq
-        have hqx : q.1 = x := (congrArg Subtype.val heq).symm
-        exact hboth ⟨(hqx ▸ q.2).symm, (hp ▸ p.2).symm⟩
+        have hqx : q.1 = x := (congrArg (fun t : {z : V // z ≠ y} => t.1) heq).symm
+        have hp_adj : G.Adj v.1 p.1 := p.2
+        have hq_adj : G.Adj v.1 q.1 := q.2
+        exact hboth ⟨(hqx ▸ hq_adj).symm, (hp ▸ hp_adj).symm⟩
       · exfalso
         simp [f, hp, hq] at heq
-        have hpx : p.1 = x := congrArg Subtype.val heq
-        exact hboth ⟨(hpx ▸ p.2).symm, (hq ▸ q.2).symm⟩
+        have hpx : p.1 = x := congrArg (fun t : {z : V // z ≠ y} => t.1) heq
+        have hp_adj : G.Adj v.1 p.1 := p.2
+        have hq_adj : G.Adj v.1 q.1 := q.2
+        exact hboth ⟨(hpx ▸ hp_adj).symm, (hq ▸ hq_adj).symm⟩
       · simp [f, hp, hq] at heq
-        exact Subtype.ext (congrArg Subtype.val heq)
+        exact Subtype.ext (congrArg (fun t : {z : V // z ≠ y} => t.1) heq)
     have hc := Fintype.card_le_of_injective f hf
     rwa [SimpleGraph.card_neighborSet_eq_degree, SimpleGraph.card_neighborSet_eq_degree] at hc
 
@@ -450,9 +453,8 @@ theorem identify_degree_common_le_two {V : Type u} [Fintype V] [DecidableEq V]
     (hux : G.Adj x u.1) (huy : G.Adj y u.1) (hdeg3 : G.degree u.1 = 3) :
     (identifyGraph G x y).degree u ≤ 2 := by
   classical
-  let H := identifyGraph G x y
   have huv_x : u.1 ≠ x := (G.ne_of_adj hux).symm
-  let f : H.neighborSet u → {z : V // G.Adj u.1 z ∧ z ≠ y} := fun v =>
+  let f : (identifyGraph G x y).neighborSet u → {z : V // G.Adj u.1 z ∧ z ≠ y} := fun v =>
     ⟨v.1.1, by
       refine ⟨?_, v.1.2⟩
       rcases v.2.2 with h | ⟨h1, _⟩ | ⟨h1, _⟩
@@ -461,7 +463,8 @@ theorem identify_degree_common_le_two {V : Type u} [Fintype V] [DecidableEq V]
       · exact h1 ▸ hux.symm⟩
   have hf : Function.Injective f := by
     intro p q heq
-    have hval : p.1.1 = q.1.1 := congrArg Subtype.val heq
+    have hval : p.1.1 = q.1.1 :=
+      congrArg (fun t : {z : V // G.Adj u.1 z ∧ z ≠ y} => t.1) heq
     exact Subtype.ext (Subtype.ext hval)
   have hc := Fintype.card_le_of_injective f hf
   rw [SimpleGraph.card_neighborSet_eq_degree, Fintype.card_subtype] at hc
@@ -482,15 +485,14 @@ theorem identify_degree_X_nonadj {V : Type u} [Fintype V] [DecidableEq V]
     G.degree x ≤ (identifyGraph G x y).degree ⟨x, hxy⟩ ∧
       G.degree y ≤ (identifyGraph G x y).degree ⟨x, hxy⟩ := by
   classical
-  let H := identifyGraph G x y
   constructor
-  · let f : G.neighborSet x → H.neighborSet ⟨x, hxy⟩ := fun u =>
+  · let f : G.neighborSet x → (identifyGraph G x y).neighborSet ⟨x, hxy⟩ := fun u =>
       ⟨⟨u.1, fun h => hnadj (h ▸ u.2)⟩,
         ⟨fun heq => G.ne_of_adj u.2 (congrArg Subtype.val heq), Or.inl u.2⟩⟩
     have hf : Function.Injective f := fun _ _ h => Subtype.ext (congrArg (fun t => t.1.1) h)
     have hc := Fintype.card_le_of_injective f hf
     rwa [SimpleGraph.card_neighborSet_eq_degree, SimpleGraph.card_neighborSet_eq_degree] at hc
-  · let f : G.neighborSet y → H.neighborSet ⟨x, hxy⟩ := fun u =>
+  · let f : G.neighborSet y → (identifyGraph G x y).neighborSet ⟨x, hxy⟩ := fun u =>
       ⟨⟨u.1, (G.ne_of_adj u.2).symm⟩,
         ⟨fun heq => hnadj ((congrArg Subtype.val heq ▸ u.2).symm), Or.inr (Or.inl ⟨rfl, u.2⟩)⟩⟩
     have hf : Function.Injective f := fun _ _ h => Subtype.ext (congrArg (fun t => t.1.1) h)
@@ -514,13 +516,12 @@ theorem universal_dyadic_path {V : Type u} [Fintype V]
     (hnocom : ∀ u, ¬(G.Adj x u ∧ G.Adj y u)) :
     ∃ (k : ℕ) (p : G.Walk x y), 2 ≤ k ∧ p.IsPath ∧ p.length = 2 ^ k := by
   classical
-  let W := {z : V // z ≠ y}
   let H := identifyGraph G x y
   let _ : DecidableRel H.Adj := Classical.decRel _
-  let X : W := ⟨x, hxy⟩
+  let X : {z : V // z ≠ y} := ⟨x, hxy⟩
   obtain ⟨⟨v0, hv0⟩, ⟨w, hw⟩⟩ := hm.1
   have hcardV : 4 ≤ Fintype.card V := by have := G.degree_lt_card_verts v0; omega
-  have hcardW := card_erase_vertex y
+  have hcardW : Fintype.card {z : V // z ≠ y} + 1 = Fintype.card V := card_erase_vertex y
   have hdegX : 3 ≤ H.degree X := by
     have hxy_deg := identify_degree_X_nonadj G hxy hnadj
     by_cases hxw : x = w
@@ -545,7 +546,7 @@ theorem universal_dyadic_path {V : Type u} [Fintype V]
         have hd := identify_degree_other G hxy v hvx
         rw [ite_eq_right (hnocom v.1), add_zero] at hd
         exact (hw v.1 hvw).trans hd
-  have hpow : HasPower H := hm.2.2.1 W H (by omega) hnear
+  have hpow : HasPower H := hm.2.2.1 {z : V // z ≠ y} H (by omega) hnear
   obtain ⟨k, a, b, q, hk, hqpath, hqlen, hXnot, hxa, _, hyb, _⟩ :=
     identify_power_extract G hm.2.1 hxy hpow
   let qG := liftAvoidWalk hxy q hXnot
@@ -696,18 +697,18 @@ theorem cubic_nonadj_dyadic_path {V : Type u} [Fintype V]
     ∃ (k : ℕ) (p : G.Walk x y), 2 ≤ k ∧ p.IsPath ∧ p.length = 2 ^ k ∧
       ∀ u, G.Adj x u → G.Adj y u → u ∉ p.support := by
   classical
-  let W := {z : V // z ≠ y}
   let H := identifyGraph G x y
   let _ : DecidableRel H.Adj := Classical.decRel _
-  let X : W := ⟨x, hxy⟩
+  let X : {z : V // z ≠ y} := ⟨x, hxy⟩
   have hcardV : 4 ≤ Fintype.card V := by
     have := G.degree_lt_card_verts x
     have := hC x
     omega
-  have hcardW := card_erase_vertex y
+  have hcardW : Fintype.card {z : V // z ≠ y} + 1 = Fintype.card V := card_erase_vertex y
   have hdegX : 3 ≤ H.degree X := by
-    have hxy_deg := identify_degree_X_nonadj G hxy hnadj
-    have := hC x
+    have hxy_deg : G.degree x ≤ H.degree X ∧ G.degree y ≤ H.degree X :=
+      identify_degree_X_nonadj G hxy hnadj
+    have hx3 := hC x
     omega
   have hnear : Near H := by
     by_cases hcom : ∃ u, G.Adj x u ∧ G.Adj y u
@@ -732,7 +733,7 @@ theorem cubic_nonadj_dyadic_path {V : Type u} [Fintype V]
       have hd := identify_degree_other G hxy v hvx
       rw [ite_eq_right hnotboth, add_zero, hC v.1] at hd
       exact hd
-  have hpow : HasPower H := hm.2.2.1 W H (by omega) hnear
+  have hpow : HasPower H := hm.2.2.1 {z : V // z ≠ y} H (by omega) hnear
   obtain ⟨k, a, b, q, hk, hqpath, hqlen, hXnot, hxa, hya_not, hyb, hxb_not⟩ :=
     identify_power_extract G hm.2.1 hxy hpow
   let qG := liftAvoidWalk hxy q hXnot
@@ -907,15 +908,14 @@ theorem cubic_edge_dyadic_plus_one_cycle {V : Type u} [Fintype V]
       s(x, y) ∈ c.edges := by
   classical
   have hxy : x ≠ y := G.ne_of_adj hxy_adj
-  let W := {z : V // z ≠ y}
   let H := identifyGraph G x y
   let _ : DecidableRel H.Adj := Classical.decRel _
-  let X : W := ⟨x, hxy⟩
+  let X : {z : V // z ≠ y} := ⟨x, hxy⟩
   have hcardV : 4 ≤ Fintype.card V := by
     have := G.degree_lt_card_verts x
     have := hC x
     omega
-  have hcardW := card_erase_vertex y
+  have hcardW : Fintype.card {z : V // z ≠ y} + 1 = Fintype.card V := card_erase_vertex y
   have hdegX : 3 ≤ H.degree X := identify_degree_X_adj_cubic G hm hC hxy_adj
   have hnear : Near H := by
     by_cases hcom : ∃ t, G.Adj x t ∧ G.Adj y t
@@ -940,7 +940,7 @@ theorem cubic_edge_dyadic_plus_one_cycle {V : Type u} [Fintype V]
       have hd := identify_degree_other G hxy v hvx
       rw [ite_eq_right hnotboth, add_zero, hC v.1] at hd
       exact hd
-  have hpow : HasPower H := hm.2.2.1 W H (by omega) hnear
+  have hpow : HasPower H := hm.2.2.1 {z : V // z ≠ y} H (by omega) hnear
   obtain ⟨k, a, b, q, hk, hqpath, hqlen, hXnot, hxa, _, hyb, _⟩ :=
     identify_power_extract G hm.2.1 hxy hpow
   let qG := liftAvoidWalk hxy q hXnot
