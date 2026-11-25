@@ -1,0 +1,63 @@
+name: Lean check for the 65-gate double-read circuit
+
+on:
+  push:
+    branches: [pnp-l-meta-2081]
+    paths:
+      - 'jobs/pequalnp-double-read/PlaneDoubleRead.lean'
+      - '.github/workflows/pequalnp-double-read-lean.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  lean:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      LEAN_NUM_THREADS: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: open-goat/pequalnp-proofs
+          ref: edfdca19a1266a91fb044ef21f44a6b164b38f73
+          path: upstream
+          persist-credentials: false
+      - name: Install upstream-pinned Lean
+        working-directory: upstream
+        run: |
+          set -euo pipefail
+          sh .github/scripts/install-elan.sh v4.4.0 \
+            0e8250aa2be86c7af929ade68db617af9edc8b9ccf6eaf5ece228250d0d032e2 \
+            "$HOME/.elan" "$(cat lean/lean-toolchain)"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Fetch required Mathlib artifacts and build project definitions
+        working-directory: upstream/lean
+        run: |
+          set -euo pipefail
+          mapfile -t modules < <(rg --no-filename '^import Mathlib\.' PEqualNP/Defs.lean PEqualNP/Defs | awk '{print $2}' | sort -u)
+          lake exe cache get "${modules[@]}"
+          lake build PEqualNP.Defs
+      - name: Check circuit theorem, desk statement, and kernel axioms
+        working-directory: upstream/lean
+        run: |
+          set -euo pipefail
+          lake env lean -DwarningAsError=true "$GITHUB_WORKSPACE/jobs/pequalnp-double-read/PlaneDoubleRead.lean" | tee "$RUNNER_TEMP/lean-axioms.log"
+          python3 - "$RUNNER_TEMP/lean-axioms.log" <<'PY'
+          from pathlib import Path
+          import re
+          import sys
+
+          log = Path(sys.argv[1]).read_text()
+          allowed = {'propext', 'Classical.choice', 'Quot.sound'}
+          for name in ('construct65', 'eval_true_iff', 'candidate64_is_desk'):
+              prefix = re.escape(f"'PlaneDoubleRead.{name}'")
+              if re.search(prefix + r' does not depend on any axioms', log):
+                  continue
+              result = re.search(prefix + r' depends on axioms: \[(.*?)\]', log, re.S)
+              if result is None or set(re.split(r',\s*', result.group(1))) - allowed:
+                  raise SystemExit(f'Missing or unexpected axioms for {name}')
+          PY

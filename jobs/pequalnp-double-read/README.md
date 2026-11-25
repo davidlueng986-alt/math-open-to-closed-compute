@@ -22,3 +22,9 @@ python jobs/pequalnp-double-read/control.py
 python jobs/pequalnp-double-read/synthesis.py 0 --gates 5
 python jobs/pequalnp-double-read/synthesis.py 0 1 --gates 10 --conflicts 300000
 ```
+
+## Lean verification
+
+`PlaneDoubleRead.lean` proves `PlaneDoubleRead.construct65` in the upstream circuit model. It checks the output for arbitrary Boolean inputs and both trace recurrences. `PlaneDoubleRead.candidate64_is_desk` identifies the 64-gate statement with the posted L-meta-2081 proposition. `PlaneDoubleRead.Desk2082` is its negation. Both 64-gate propositions remain open.
+
+The `pequalnp-double-read-lean.yml` workflow builds the pinned upstream definitions, checks the file with Lean, and audits the theorem dependencies against the upstream checker's axiom list.
