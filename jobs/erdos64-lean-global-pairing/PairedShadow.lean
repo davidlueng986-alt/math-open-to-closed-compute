@@ -156,8 +156,7 @@ theorem safe_step_of_paired_incidence (G : SimpleGraph V)
     apply (List.nodup_map_iff_inj_on hc.isTrail.edges_nodup).mpr
     intro e he e' he' hh
     exact hinjMid e (c.edges_subset_edgeSet he) e' (c.edges_subset_edgeSet he') (hg hh)
-  · intro a c hc
-    intro v h1 h2
+  · intro a c hc v h1 h2
     obtain ⟨x,_,rfl⟩ := List.mem_map.mp h1
     obtain ⟨e,_,he⟩ := List.mem_map.mp h2
     exact hsep x (midY e) he.symm
