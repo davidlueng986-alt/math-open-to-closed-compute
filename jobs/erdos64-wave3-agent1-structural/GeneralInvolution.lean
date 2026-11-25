@@ -278,11 +278,9 @@ private def dropAddedEdge {W : Type u} {H : SimpleGraph W} {a b u w : W}
       rcases hxy with h | h
       · exact h
       · exfalso
-        have hsym : s(x, y) = s(a, b) := by
-          rcases h.1 with ⟨hx, hy⟩ | ⟨hx, hy⟩
-          · rw [hx, hy]
-          · rw [hx, hy]; exact Sym2.eq_swap
-        exact hne hsym
+        rcases ((SimpleGraph.edge_adj a b x y).mp h).1 with ⟨hx, hy⟩ | ⟨hx, hy⟩
+        · exact hne (by rw [hx, hy])
+        · exact hne (by rw [hx, hy]; exact Sym2.eq_swap)
     .cons hH (dropAddedEdge q (fun hm => havoid (by rw [Walk.edges_cons, List.mem_cons]; exact Or.inr hm)))
 
 private theorem length_dropAddedEdge {W : Type u} {H : SimpleGraph W} {a b u w : W}
@@ -420,8 +418,8 @@ private theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
     have hσ_inj : Function.Injective σ := Function.LeftInverse.injective hinv
     let p₂ : G.Walk (σ w₁) (σ u₂) := (p₁.map f).reverse
     let cyc : G.Walk u₂ u₂ := p₁.append (.cons hw₁_inv (p₂.append (.cons h2.symm .nil)))
-    have hp₂len : p₂.length = 2 ^ k - 1 := by
-      simp only [p₂, Walk.length_reverse, Walk.length_map, hp₁len]
+    have hp₂len : p₂.length = 2 ^ k - 1 :=
+      (Walk.length_reverse (p₁.map f)).trans ((Walk.length_map f p₁).trans hp₁len)
     have hcyclen : cyc.length = 2 ^ (k + 1) := by
       change (p₁.append (.cons hw₁_inv (p₂.append (.cons h2.symm .nil)))).length = 2 ^ (k + 1)
       rw [Walk.length_append, Walk.length_cons, Walk.length_append, Walk.length_cons,

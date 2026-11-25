@@ -640,7 +640,7 @@ private theorem high_code_midpoint_bridge {V : Type u} [Fintype V] [DecidableEq 
     let V₄ := {v : V // 4 ≤ G.degree v}
     let V₃ := {v : V // G.degree v = 3}
     let R : V₄ → V₃ → Prop := fun a y => G.Adj a.1 y.1
-    letI : DecidableRel R := fun a y => Classical.dec _
+    letI : DecidableRel R := fun _ _ => Classical.dec _
     ∃ (H : SimpleGraph (Support z)),
       C4Free H ∧ TwoDegenerate H ∧
       ∀ [DecidableRel H.Adj],
@@ -856,7 +856,7 @@ theorem high_code_weight_ge_six {V : Type u} [Fintype V] [DecidableEq V]
     let V₄ := {v : V // 4 ≤ G.degree v}
     let V₃ := {v : V // G.degree v = 3}
     let R : V₄ → V₃ → Prop := fun a y => G.Adj a.1 y.1
-    letI : DecidableRel R := fun a y => Classical.dec _
+    letI : DecidableRel R := fun _ _ => Classical.dec _
     6 + (∑ x : Support z, (G.degree x.1.1 - 4)) ≤
       Fintype.card {y : V₃ // syndrome R z y = 1} := by
   classical
@@ -878,7 +878,7 @@ theorem high_code_weight_ge_eight {V : Type u} [Fintype V] [DecidableEq V]
     let V₄ := {v : V // 4 ≤ G.degree v}
     let V₃ := {v : V // G.degree v = 3}
     let R : V₄ → V₃ → Prop := fun a y => G.Adj a.1 y.1
-    letI : DecidableRel R := fun a y => Classical.dec _
+    letI : DecidableRel R := fun _ _ => Classical.dec _
     8 + (∑ x : Support z, (G.degree x.1.1 - 4)) ≤
       Fintype.card {y : V₃ // syndrome R z y = 1} := by
   classical
@@ -900,7 +900,7 @@ theorem high_code_weight_ge_ten {V : Type u} [Fintype V] [DecidableEq V]
     let V₄ := {v : V // 4 ≤ G.degree v}
     let V₃ := {v : V // G.degree v = 3}
     let R : V₄ → V₃ → Prop := fun a y => G.Adj a.1 y.1
-    letI : DecidableRel R := fun a y => Classical.dec _
+    letI : DecidableRel R := fun _ _ => Classical.dec _
     10 + (∑ x : Support z, (G.degree x.1.1 - 4)) ≤
       Fintype.card {y : V₃ // syndrome R z y = 1} := by
   classical

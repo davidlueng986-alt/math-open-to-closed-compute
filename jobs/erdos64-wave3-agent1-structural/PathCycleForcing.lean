@@ -36,11 +36,9 @@ private def liftAvoidEdge {G : SimpleGraph V} {S : Set V}
       rcases hxy with h | h
       · exact h
       · exfalso
-        have hsym : s(x, y) = s(a, b) := by
-          rcases h.1 with ⟨hx, hy⟩ | ⟨hx, hy⟩
-          · rw [hx, hy]
-          · rw [hx, hy]; exact Sym2.eq_swap
-        exact hne_edge hsym
+        rcases ((SimpleGraph.edge_adj a b x y).mp h).1 with ⟨hx, hy⟩ | ⟨hx, hy⟩
+        · exact hne_edge (by rw [hx, hy])
+        · exact hne_edge (by rw [hx, hy]; exact Sym2.eq_swap)
     .cons hG (liftAvoidEdge q (fun hm => havoid (by rw [Walk.edges_cons, List.mem_cons]; exact Or.inr hm)))
 
 private theorem length_liftAvoidEdge {G : SimpleGraph V} {S : Set V}
