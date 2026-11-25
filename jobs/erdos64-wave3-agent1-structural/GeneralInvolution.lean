@@ -101,7 +101,7 @@ theorem hasPower_of_general_invQuot {G : SimpleGraph V} {σ : V → V}
   by_cases hfix : ∃ q ∈ c.support, ∃ u : V, ⟦u⟧ = q ∧ σ u = u
   · obtain ⟨q, hqmem, u₀, hu₀, hσu₀⟩ := hfix
     let c' := c.rotate q hqmem
-    have hc' : c'.IsCycle := SimpleGraph.Walk.IsCycle.rotate hc hqmem
+    have hc' : c'.IsCycle := SimpleGraph.Walk.IsCycle.rotate hqmem hc
     have hlen' : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
     let lifted := liftWalk haut c' u₀ hu₀
     let u₁ := lifted.1.1
@@ -115,13 +115,15 @@ theorem hasPower_of_general_invQuot {G : SimpleGraph V} {σ : V → V}
       List.Nodup.of_map _ (hp₁tail_map.symm ▸ hc'.support_nodup)
     have hrel : u₁ = u₀ ∨ u₁ = σ u₀ := Quotient.exact (hu₁q.trans hu₀.symm)
     have hsame : u₁ = u₀ := by rcases hrel with h | h; exact h; exact h.trans hσu₀
-    subst hsame
-    have hnil : ¬ p₁.Nil := fun h => by have := Walk.length_eq_zero_iff.mpr h; omega
-    have hcyc : p₁.IsCycle := by
+    let p₁' : G.Walk u₀ u₀ := p₁.copy rfl hsame
+    have hp₁'len : p₁'.length = 2 ^ k := by rw [Walk.length_copy, hp₁len]
+    have hp₁'tail : p₁'.support.tail.Nodup := by rw [Walk.support_copy]; exact hp₁tail_nodup
+    have hnil : ¬ p₁'.Nil := fun h => by have := Walk.length_eq_zero_iff.mpr h; omega
+    have hcyc : p₁'.IsCycle := by
       apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
       refine ⟨Walk.IsPath.mk' ?_, by omega⟩
       rwa [Walk.support_tail_of_not_nil _ hnil]
-    exact ⟨k, u₀, p₁, hk, hcyc, hp₁len⟩
+    exact ⟨k, u₀, p₁', hk, hcyc, hp₁'len⟩
   · push Not at hfix
     obtain ⟨u₀, hu₀⟩ := Quotient.exists_rep q₀
     let lifted := liftWalk haut c u₀ hu₀
@@ -142,13 +144,15 @@ theorem hasPower_of_general_invQuot {G : SimpleGraph V} {σ : V → V}
       exact hfix ⟦y⟧ hqmem y rfl
     have hrel : u₁ = u₀ ∨ u₁ = σ u₀ := Quotient.exact (hu₁q.trans hu₀.symm)
     rcases hrel with hsame | hflip
-    · subst hsame
-      have hnil : ¬ p₁.Nil := fun h => by have := Walk.length_eq_zero_iff.mpr h; omega
-      have hcyc : p₁.IsCycle := by
+    · let p₁' : G.Walk u₀ u₀ := p₁.copy rfl hsame
+      have hp₁'len : p₁'.length = 2 ^ k := by rw [Walk.length_copy, hp₁len]
+      have hp₁'tail : p₁'.support.tail.Nodup := by rw [Walk.support_copy]; exact hp₁tail_nodup
+      have hnil : ¬ p₁'.Nil := fun h => by have := Walk.length_eq_zero_iff.mpr h; omega
+      have hcyc : p₁'.IsCycle := by
         apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
         refine ⟨Walk.IsPath.mk' ?_, by omega⟩
         rwa [Walk.support_tail_of_not_nil _ hnil]
-      exact ⟨k, u₀, p₁, hk, hcyc, hp₁len⟩
+      exact ⟨k, u₀, p₁', hk, hcyc, hp₁'len⟩
     · let f : G →g G := mapWalkAut σ haut
       have hσ_inj : Function.Injective σ := Function.LeftInverse.injective hinv
       let p₂_raw : G.Walk (σ u₀) (σ u₁) := p₁.map f
@@ -156,17 +160,17 @@ theorem hasPower_of_general_invQuot {G : SimpleGraph V} {σ : V → V}
       let p₂ : G.Walk u₁ u₀ := p₂_raw.copy hflip.symm hσu₁
       let p : G.Walk u₀ u₀ := p₁.append p₂
       have hp₂len : p₂.length = 2 ^ k := by
-        rw [Walk.copy_length_eq]; exact (Walk.length_map f p₁).trans hp₁len
+        rw [Walk.length_copy]; exact (Walk.length_map f p₁).trans hp₁len
       have hplen : p.length = 2 ^ (k + 1) := by
         simp only [p, Walk.length_append, hp₁len, hp₂len, pow_succ]; omega
       have hp₂supp : p₂.support = p₁.support.map σ := by
-        rw [Walk.copy_support_eq]; exact Walk.support_map f p₁
+        rw [Walk.support_copy]; exact Walk.support_map f p₁
       have hp₂tail : p₂.support.tail = p₁.support.tail.map σ := by
         rw [hp₂supp, ← List.map_tail]
       have hp_tail : p.support.tail = p₁.support.tail ++ p₂.support.tail := by
-        have hps : p.support = p₁.support ++ p₂.support.tail := Walk.support_append p₁ p₂
-        have hp₁s : p₁.support = u₀ :: p₁.support.tail := (p₁.cons_tail_support).symm
-        rw [hps, hp₁s, List.cons_append, List.tail_cons]
+        calc p.support.tail = (p₁.support ++ p₂.support.tail).tail := by rw [Walk.support_append]
+          _ = (u₀ :: p₁.support.tail ++ p₂.support.tail).tail := by rw [← p₁.cons_tail_support]
+          _ = p₁.support.tail ++ p₂.support.tail := rfl
       have hdisj : p₁.support.tail.Disjoint p₂.support.tail := by
         intro x hx1 hx2
         rw [hp₂tail] at hx2
@@ -265,14 +269,14 @@ private def dropAddedEdge {W : Type u} {H : SimpleGraph W} {a b u w : W}
     (p : (H ⊔ SimpleGraph.edge a b).Walk u w) (havoid : s(a, b) ∉ p.edges) : H.Walk u w :=
   match p with
   | .nil => .nil
-  | .cons hxy q =>
-    have hne : s(_, _) ≠ s(a, b) := fun heq =>
+  | .cons (u := x) (v := y) hxy q =>
+    have hne : s(x, y) ≠ s(a, b) := fun heq =>
       havoid (by rw [Walk.edges_cons, List.mem_cons]; exact Or.inl heq.symm)
-    have hH : H.Adj _ _ := by
+    have hH : H.Adj x y := by
       rcases hxy with h | h
       · exact h
       · exfalso
-        have hsym : s(_, _) = s(a, b) := by
+        have hsym : s(x, y) = s(a, b) := by
           rcases h.1 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
           · rfl
           · exact Sym2.eq_swap
@@ -302,7 +306,7 @@ private theorem extract_path_in_base {W : Type u} [DecidableEq W]
   classical
   have ha : a ∈ c.support := Walk.fst_mem_support_of_mem_edges c hmem
   let c₁ := c.rotate a ha
-  have hc₁ : c₁.IsCycle := SimpleGraph.Walk.IsCycle.rotate hc ha
+  have hc₁ : c₁.IsCycle := SimpleGraph.Walk.IsCycle.rotate ha hc
   have hlen₁ : c₁.length = c.length := Walk.length_rotate c a ha
   have hmem₁ : s(a, b) ∈ c₁.edges := by
     have hspec := Walk.take_spec c ha
@@ -402,19 +406,24 @@ private theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
     let p₁ : G.Walk u₂ w₁ := lifted.1.2
     have hw₁q : ⟦w₁⟧ = q₁ := lifted.2.1
     have hp₁len : p₁.length = 2 ^ k - 1 := by
-      have := lifted.2.2.1; omega
+      have h0 : p₁.length = p.length := lifted.2.2.1
+      rw [hlen] at hplen
+      omega
     have hp₁supp : p₁.support.map (Quotient.mk (invSetoid σ hinv)) = p.support := lifted.2.2.2
     have hw₁_inv : G.Adj w₁ (σ w₁) := by
-      rcases Quotient.exact hw₁q with rfl | rfl
-      · exact h1
-      · exact (haut u₁ (σ u₁)).mp h1
+      rcases Quotient.exact hw₁q with h | h
+      · rw [h]; exact h1
+      · rw [h, hinv u₁]; exact h1.symm
     let f : G →g G := mapWalkAut σ haut
     have hσ_inj : Function.Injective σ := Function.LeftInverse.injective hinv
     let p₂ : G.Walk (σ w₁) (σ u₂) := (p₁.map f).reverse
     let cyc : G.Walk u₂ u₂ := p₁.append (.cons hw₁_inv (p₂.append (.cons h2.symm .nil)))
+    have hp₂len : p₂.length = 2 ^ k - 1 := by
+      rw [Walk.length_reverse, Walk.length_map, hp₁len]
     have hcyclen : cyc.length = 2 ^ (k + 1) := by
-      simp only [cyc, p₂, Walk.length_append, Walk.length_cons, Walk.length_nil,
-        Walk.length_reverse, Walk.length_map, hp₁len, pow_succ]
+      change (p₁.append (.cons hw₁_inv (p₂.append (.cons h2.symm .nil)))).length = 2 ^ (k + 1)
+      rw [Walk.length_append, Walk.length_cons, Walk.length_append, Walk.length_cons,
+        Walk.length_nil, hp₁len, hp₂len, pow_succ]
       omega
     have hp₁_nodup : p₁.support.Nodup := List.Nodup.of_map _ (hp₁supp.symm ▸ hp.support_nodup)
     have hp₂_supp : p₂.support = (p₁.support.map σ).reverse := by
@@ -433,11 +442,12 @@ private theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
       rw [heq] at hxy
       exact hfpf y hxy
     have hcyc_supp : cyc.support = p₁.support ++ (p₂.support ++ [u₂]) := by
-      simp only [cyc, Walk.support_append, Walk.support_cons, Walk.support_nil,
-        List.tail_cons, List.append_assoc]
+      simp only [cyc, Walk.support_append, Walk.support_cons, Walk.support_nil, List.tail_cons]
     have hcyc_tail : cyc.support.tail = p₁.support.tail ++ p₂.support ++ [u₂] := by
-      have hp₁s : p₁.support = u₂ :: p₁.support.tail := (p₁.cons_tail_support).symm
-      rw [hcyc_supp, hp₁s, List.cons_append, List.tail_cons, List.append_assoc]
+      calc cyc.support.tail = (p₁.support ++ (p₂.support ++ [u₂])).tail := by rw [hcyc_supp]
+        _ = (u₂ :: p₁.support.tail ++ (p₂.support ++ [u₂])).tail := by rw [← p₁.cons_tail_support]
+        _ = p₁.support.tail ++ (p₂.support ++ [u₂]) := rfl
+        _ = p₁.support.tail ++ p₂.support ++ [u₂] := (List.append_assoc _ _ _).symm
     have hcyc_tail_nodup : cyc.support.tail.Nodup := by
       rw [hcyc_tail]
       have hp₁s : p₁.support = u₂ :: p₁.support.tail := (p₁.cons_tail_support).symm
@@ -487,7 +497,11 @@ private theorem fpf_quot_degree [Fintype V] [DecidableEq V]
     ⟨⟦v.1⟧, ⟨fun heq => by
       rcases Quotient.exact heq with h1 | h2
       · exact (G.ne_of_adj v.2.1) h1
-      · exact v.2.2 (by have := congrArg σ h2; rwa [hinv v.1] at this).symm,
+      · have hv' : v.1 = σ u := by
+          have := congrArg σ h2
+          rw [hinv v.1] at this
+          exact this.symm
+        exact v.2.2 hv',
       u, v.1, rfl, rfl, v.2.1⟩⟩
   have hfinj : Function.Injective f := by
     intro a b heq
@@ -590,7 +604,6 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
     · exact hw v hvw
   let Q := Quotient (invSetoid σ hinv)
   let H := invQuotGraph G σ hinv
-  let _ : DecidableRel H.Adj := fun a b => Classical.dec _
   obtain ⟨w₁, w₂, w₃, hw⟩ := h3edges
   have hlt : Fintype.card Q < Fintype.card V := card_invQuot_lt σ hinv ⟨w₁, hfpf w₁⟩
   by_cases hpair : ∃ u₁ u₂ : V, G.Adj u₁ (σ u₁) ∧ G.Adj u₂ (σ u₂) ∧
@@ -615,12 +628,13 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
     obtain ⟨q₃, hq₃⟩ := hthird
     have hnadj : ¬ H.Adj ⟦u₁⟧ ⟦u₂⟧ := inv_edges_nonadj hm.2.1 σ hinv hfpf haut hu₁ hu₂
     let H' := H ⊔ SimpleGraph.edge (⟦u₁⟧ : Q) ⟦u₂⟧
-    let _ : DecidableRel H'.Adj := fun a b => Classical.dec _
     have hdegH' : ∀ q : Q, q ≠ q₃ → 3 ≤ H'.degree q := by
       intro q hqq₃
       obtain ⟨v, rfl⟩ := Quotient.exists_rep q
-      have h1 := degree_sup_nonedge H hne12 hnadj ⟦v⟧
-      have h2 := fpf_quot_degree G hm σ hinv hfpf haut v
+      have h1 : H'.degree ⟦v⟧ = H.degree ⟦v⟧ + (if (⟦v⟧ : Q) = ⟦u₁⟧ ∨ (⟦v⟧ : Q) = ⟦u₂⟧ then 1 else 0) := by
+        convert degree_sup_nonedge H hne12 hnadj ⟦v⟧
+      have h2 : H.degree ⟦v⟧ + (if G.Adj v (σ v) then 1 else 0) = G.degree v := by
+        convert fpf_quot_degree G hm σ hinv hfpf haut v
       have h3 := hall3 v
       by_cases hv1 : (⟦v⟧ : Q) = ⟦u₁⟧
       · simp only [hv1, true_or, ite_true] at h1; omega
@@ -659,7 +673,8 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
     have hdegH : ∀ q : Q, q ≠ q₀ → 3 ≤ H.degree q := by
       intro q hqq
       obtain ⟨v, rfl⟩ := Quotient.exists_rep q
-      have h2 := fpf_quot_degree G hm σ hinv hfpf haut v
+      have h2 : H.degree ⟦v⟧ + (if G.Adj v (σ v) then 1 else 0) = G.degree v := by
+        convert fpf_quot_degree G hm σ hinv hfpf haut v
       have h3 := hall3 v
       simp only [hq₀ v hqq, ite_false, add_zero] at h2; omega
     have hnear : Near H := ⟨⟨q₁, hdegH q₁ hq₁⟩, ⟨q₀, hdegH⟩⟩

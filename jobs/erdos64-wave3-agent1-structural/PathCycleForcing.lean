@@ -29,14 +29,14 @@ private def liftAvoidEdge {G : SimpleGraph V} {S : Set V}
     (havoid : s(a, b) ∉ p.edges) : G.Walk u.1 w.1 :=
   match p with
   | .nil => .nil
-  | .cons hxy q =>
-    have hne_edge : s(_, _) ≠ s(a, b) := fun heq =>
+  | .cons (u := x) (v := y) hxy q =>
+    have hne_edge : s(x, y) ≠ s(a, b) := fun heq =>
       havoid (by rw [Walk.edges_cons, List.mem_cons]; exact Or.inl heq.symm)
-    have hG : G.Adj _ _ := by
+    have hG : G.Adj x.1 y.1 := by
       rcases hxy with h | h
       · exact h
       · exfalso
-        have hsym : s(_, _) = s(a, b) := by
+        have hsym : s(x, y) = s(a, b) := by
           rcases h.1 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
           · rfl
           · exact Sym2.eq_swap
@@ -70,7 +70,7 @@ private theorem extract_path_of_cycle_edge {W : Type u} [DecidableEq W]
   classical
   have ha : a ∈ c.support := Walk.fst_mem_support_of_mem_edges c hmem
   let c₁ := c.rotate a ha
-  have hc₁ : c₁.IsCycle := SimpleGraph.Walk.IsCycle.rotate hc ha
+  have hc₁ : c₁.IsCycle := SimpleGraph.Walk.IsCycle.rotate ha hc
   have hlen₁ : c₁.length = c.length := Walk.length_rotate c a ha
   have hmem₁ : s(a, b) ∈ c₁.edges := by
     have hspec := Walk.take_spec c ha
@@ -299,12 +299,12 @@ theorem cubic_p3_fermat_cycle [Fintype V] [DecidableEq V]
   let C₀ : S := ⟨c₀, (G.ne_of_adj hvc₀).symm⟩
   have hAB : A ≠ B := fun h => hab (congrArg Subtype.val h)
   let H := (G.induce S) ⊔ SimpleGraph.edge A B
-  let _ : DecidableRel (G.induce S).Adj := fun x y => Classical.dec _
-  let _ : DecidableRel H.Adj := fun x y => Classical.dec _
   have hdegH : ∀ u : S, u ≠ C₀ → 3 ≤ H.degree u := by
     intro u huC
-    have h1 := degree_sup_edge (G.induce S) hAB hnadj u
-    have h2 := degree_delete_one G v u
+    have h1 : H.degree u = (G.induce S).degree u + (if u = A ∨ u = B then 1 else 0) := by
+      convert degree_sup_edge (G.induce S) hAB hnadj u
+    have h2 : (G.induce S).degree u + (if G.Adj v u.1 then 1 else 0) = G.degree u.1 := by
+      convert degree_delete_one G v u
     have h3 := hC u.1
     by_cases huA : u = A
     · simp only [huA, true_or, ite_true] at h1; omega
@@ -320,8 +320,8 @@ theorem cubic_p3_fermat_cycle [Fintype V] [DecidableEq V]
         simp only [hnot, ite_false, add_zero] at h2; omega
   have hnear : Near H := ⟨⟨A, hdegH A (fun h => hc₀_mem.2.1 (congrArg Subtype.val h).symm)⟩, ⟨C₀, hdegH⟩⟩
   have hcard : Fintype.card S < Fintype.card V := by
-    rw [Fintype.card_subtype, show Finset.univ.filter (fun u : V => u ≠ v) = Finset.univ.erase v by ext z; simp]
-    have := Finset.card_erase_add_one (Finset.mem_univ v); omega
+    apply Fintype.card_lt_of_injective_not_surjective Subtype.val Subtype.val_injective
+    intro hsurj; obtain ⟨x, hx⟩ := hsurj v; exact x.2 hx
   have hpow : HasPower H := hm.2.2.1 _ H hcard hnear
   obtain ⟨k, c, hk, hc, hlen, hm1, hm2, _⟩ :=
     fermat_cycle_of_delete_add_edge (show v ∉ S from fun h => h rfl) hAB hva hvb hm.2.1 hpow
@@ -347,14 +347,14 @@ theorem defect_p3_fermat_cycle [Fintype V] [DecidableEq V]
   let B₂ : S := ⟨b₂, (G.ne_of_adj hwb₂).symm⟩
   have hB12 : B₁ ≠ B₂ := fun h => hb12 (congrArg Subtype.val h)
   let H := (G.induce S) ⊔ SimpleGraph.edge B₁ B₂
-  let _ : DecidableRel (G.induce S).Adj := fun x y => Classical.dec _
-  let _ : DecidableRel H.Adj := fun x y => Classical.dec _
   obtain ⟨_, w₀, hw₀⟩ := hm.1
   have hww₀ : w = w₀ := by by_contra hne; have := hw₀ w hne; omega
   have hdegH : ∀ u : S, 3 ≤ H.degree u := by
     intro u
-    have h1 := degree_sup_edge (G.induce S) hB12 hnadj u
-    have h2 := degree_delete_one G w u
+    have h1 : H.degree u = (G.induce S).degree u + (if u = B₁ ∨ u = B₂ then 1 else 0) := by
+      convert degree_sup_edge (G.induce S) hB12 hnadj u
+    have h2 : (G.induce S).degree u + (if G.Adj w u.1 then 1 else 0) = G.degree u.1 := by
+      convert degree_delete_one G w u
     have h3 : 3 ≤ G.degree u.1 := hw₀ u.1 (hww₀ ▸ u.2)
     by_cases hu1 : u = B₁
     · simp only [hu1, true_or, ite_true] at h1; omega
@@ -371,8 +371,8 @@ theorem defect_p3_fermat_cycle [Fintype V] [DecidableEq V]
         simp only [hnot, ite_false, add_zero] at h2; omega
   have hnear : Near H := ⟨⟨B₁, hdegH B₁⟩, ⟨B₁, fun u _ => hdegH u⟩⟩
   have hcard : Fintype.card S < Fintype.card V := by
-    rw [Fintype.card_subtype, show Finset.univ.filter (fun u : V => u ≠ w) = Finset.univ.erase w by ext z; simp]
-    have := Finset.card_erase_add_one (Finset.mem_univ w); omega
+    apply Fintype.card_lt_of_injective_not_surjective Subtype.val Subtype.val_injective
+    intro hsurj; obtain ⟨x, hx⟩ := hsurj w; exact x.2 hx
   have hpow : HasPower H := hm.2.2.1 _ H hcard hnear
   obtain ⟨k, c, hk, hc, hlen, hm1, hm2, _⟩ :=
     fermat_cycle_of_delete_add_edge (show w ∉ S from fun h => h rfl) hB12 hwb₁ hwb₂ hm.2.1 hpow
@@ -413,8 +413,6 @@ theorem defect_neighbor_p3_fermat_cycle [Fintype V] [DecidableEq V]
   let B₂ : S := ⟨b₂, ⟨(G.ne_of_adj hwb₂).symm, hb12.symm⟩⟩
   have hAB : A ≠ B := fun h => hab (congrArg Subtype.val h)
   let H := (G.induce S) ⊔ SimpleGraph.edge A B
-  let _ : DecidableRel (G.induce S).Adj := fun x y => Classical.dec _
-  let _ : DecidableRel H.Adj := fun x y => Classical.dec _
   obtain ⟨_, w₀, hw₀⟩ := hm.1
   have hww₀ : w = w₀ := by by_contra hne; have := hw₀ w hne; omega
   have hdeg_ind : ∀ u : S,
@@ -451,7 +449,8 @@ theorem defect_neighbor_p3_fermat_cycle [Fintype V] [DecidableEq V]
     omega
   have hdegH : ∀ u : S, u ≠ B₂ → 3 ≤ H.degree u := by
     intro u huB2
-    have h1 := degree_sup_edge (G.induce S) hAB hnadj u
+    have h1 : H.degree u = (G.induce S).degree u + (if u = A ∨ u = B then 1 else 0) := by
+      convert degree_sup_edge (G.induce S) hAB hnadj u
     have h2 := hdeg_ind u
     have h3 : 3 ≤ G.degree u.1 := hw₀ u.1 (hww₀ ▸ u.2.1)
     have hnotw : ¬ G.Adj w u.1 := by
