@@ -1,0 +1,26 @@
+name: Ramsey R(3,10) independent exact four-addition exclusion
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - jobs/ramsey-r310-repair-v3/exact4.py
+permissions:
+  contents: read
+jobs:
+  exact4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          mkdir -p out
+          g++ -O3 jobs/ramsey-r310-repair-v3/near_sets.cpp -o /tmp/near
+          /tmp/near 1 < jobs/ramsey-r310-repair-v3/seed31002.txt > out/near.txt
+          python3 jobs/ramsey-r310-repair-v3/exact4.py out/near.txt | tee out/result.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exact4-certificate
+          path: out/
+          retention-days: 30
