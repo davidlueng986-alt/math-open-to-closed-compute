@@ -115,7 +115,7 @@ theorem hasPower_of_invQuot_general {G : SimpleGraph V} {σ : V → V}
   have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
   by_cases hfix : ∃ f : V, σ f = f ∧ (⟦f⟧ : Quotient (invSetoid σ hinv)) ∈ c.support
   · obtain ⟨f, hff, hfmem⟩ := hfix
-    let c' := c.rotate hfmem
+    let c' := c.rotate (⟦f⟧ : Quotient (invSetoid σ hinv)) hfmem
     have hc' : c'.IsCycle := hc.rotate hfmem
     have hlen' : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
     let lifted := liftWalk haut c' f rfl
@@ -126,18 +126,20 @@ theorem hasPower_of_invQuot_general {G : SimpleGraph V} {σ : V → V}
     have hp₁supp : p₁.support.map (Quotient.mk (invSetoid σ hinv)) = c'.support := lifted.2.2.2
     have hrel : u₁ = f ∨ u₁ = σ f := Quotient.exact hu₁q
     have hsame : u₁ = f := by rcases hrel with h | h; · exact h; · rwa [hff] at h
-    subst hsame
-    have hp₁tail_map : p₁.support.tail.map (Quotient.mk (invSetoid σ hinv)) = c'.support.tail := by
-      rw [← List.map_tail, hp₁supp]
-    have hp₁tail_nodup : p₁.support.tail.Nodup :=
+    let p₁' : G.Walk f f := p₁.copy rfl hsame
+    have hp₁'len : p₁'.length = 2 ^ k := by rw [Walk.length_copy]; exact hp₁len
+    have hp₁'supp : p₁'.support = p₁.support := Walk.support_copy p₁ rfl hsame
+    have hp₁tail_map : p₁'.support.tail.map (Quotient.mk (invSetoid σ hinv)) = c'.support.tail := by
+      rw [hp₁'supp, List.map_tail, hp₁supp]
+    have hp₁tail_nodup : p₁'.support.tail.Nodup :=
       List.Nodup.of_map _ (hp₁tail_map.symm ▸ hc'.support_nodup)
-    have hnil : ¬ p₁.Nil := by
+    have hnil : ¬ p₁'.Nil := by
       intro h; have := Walk.length_eq_zero_iff.mpr h; omega
-    have hcyc : p₁.IsCycle := by
+    have hcyc : p₁'.IsCycle := by
       apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
       refine ⟨Walk.IsPath.mk' ?_, by omega⟩
       rwa [Walk.support_tail_of_not_nil _ hnil]
-    exact ⟨k, f, p₁, hk, hcyc, hp₁len⟩
+    exact ⟨k, f, p₁', hk, hcyc, hp₁'len⟩
   · push Not at hfix
     obtain ⟨u₀, hu₀⟩ := Quotient.exists_rep q₀
     let lifted := liftWalk haut c u₀ hu₀
@@ -147,19 +149,22 @@ theorem hasPower_of_invQuot_general {G : SimpleGraph V} {σ : V → V}
     have hp₁len : p₁.length = 2 ^ k := lifted.2.2.1.trans hlen
     have hp₁supp : p₁.support.map (Quotient.mk (invSetoid σ hinv)) = c.support := lifted.2.2.2
     have hp₁tail_map : p₁.support.tail.map (Quotient.mk (invSetoid σ hinv)) = c.support.tail := by
-      rw [← List.map_tail, hp₁supp]
+      rw [List.map_tail, hp₁supp]
     have hp₁tail_nodup : p₁.support.tail.Nodup :=
       List.Nodup.of_map _ (hp₁tail_map.symm ▸ hc.support_nodup)
     have hrel : u₁ = u₀ ∨ u₁ = σ u₀ := Quotient.exact (hu₁q.trans hu₀.symm)
     rcases hrel with hsame | hflip
-    · subst hsame
-      have hnil : ¬ p₁.Nil := by
+    · let p₁' : G.Walk u₀ u₀ := p₁.copy rfl hsame
+      have hp₁'len : p₁'.length = 2 ^ k := by rw [Walk.length_copy]; exact hp₁len
+      have hp₁'supp : p₁'.support = p₁.support := Walk.support_copy p₁ rfl hsame
+      have hp₁'nodup : p₁'.support.tail.Nodup := hp₁'supp ▸ hp₁tail_nodup
+      have hnil : ¬ p₁'.Nil := by
         intro h; have := Walk.length_eq_zero_iff.mpr h; omega
-      have hcyc : p₁.IsCycle := by
+      have hcyc : p₁'.IsCycle := by
         apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
         refine ⟨Walk.IsPath.mk' ?_, by omega⟩
         rwa [Walk.support_tail_of_not_nil _ hnil]
-      exact ⟨k, u₀, p₁, hk, hcyc, hp₁len⟩
+      exact ⟨k, u₀, p₁', hk, hcyc, hp₁'len⟩
     · let f : G →g G := mapWalkAut σ haut
       have hσ_inj : Function.Injective σ := Function.LeftInverse.injective hinv
       let p₂_raw : G.Walk (σ u₀) (σ u₁) := p₁.map f
@@ -178,9 +183,8 @@ theorem hasPower_of_invQuot_general {G : SimpleGraph V} {σ : V → V}
       have hp₂tail : p₂.support.tail = p₁.support.tail.map σ := by
         rw [hp₂supp, ← List.map_tail]
       have hp_tail : p.support.tail = p₁.support.tail ++ p₂.support.tail := by
-        have hps : p.support = p₁.support ++ p₂.support.tail := Walk.support_append p₁ p₂
-        have hp₁s : p₁.support = u₀ :: p₁.support.tail := (p₁.cons_tail_support).symm
-        rw [hps, hp₁s, List.cons_append, List.tail_cons]
+        rw [Walk.support_append]
+        exact congrArg (fun l => (l ++ p₂.support.tail).tail) (p₁.cons_tail_support).symm
       have hdisj : p₁.support.tail.Disjoint p₂.support.tail := by
         intro x hx1 hx2
         rw [hp₂tail] at hx2
@@ -222,14 +226,13 @@ theorem invQuot_degree_nonfixed [Fintype V] [DecidableEq V]
     [DecidableRel (invQuotGraph G σ hinv).Adj]
     {u : V} (hu : σ u ≠ u) (hno : ¬ G.Adj u (σ u)) :
     (invQuotGraph G σ hinv).degree ⟦u⟧ = G.degree u := by
-  classical
   let Q := Quotient (invSetoid σ hinv)
-  let H := invQuotGraph G σ hinv
-  let f : G.neighborSet u → H.neighborSet (⟦u⟧ : Q) := fun v =>
+  let f : G.neighborSet u → (invQuotGraph G σ hinv).neighborSet (⟦u⟧ : Q) := fun v =>
     ⟨⟦v.1⟧, ⟨fun heq => by
       rcases Quotient.exact heq with h1 | h2
       · exact (G.ne_of_adj v.2) h1
-      · exact hno (h2 ▸ v.2),
+      · have hvσu : v.1 = σ u := by rw [h2, hinv v.1]
+        exact hno (hvσu ▸ v.2),
       u, v.1, rfl, rfl, v.2⟩⟩
   have hfinj : Function.Injective f := by
     intro a b heq
@@ -256,23 +259,26 @@ theorem invQuot_degree_fixed_double_ge [Fintype V] [DecidableEq V]
     [DecidableRel (invQuotGraph G σ hinv).Adj]
     {f : V} (hf : σ f = f) :
     G.degree f ≤ 2 * (invQuotGraph G σ hinv).degree ⟦f⟧ := by
-  classical
   let Q := Quotient (invSetoid σ hinv)
-  let H := invQuotGraph G σ hinv
-  let rep : H.neighborSet (⟦f⟧ : Q) → V := fun q =>
+  let rep : (invQuotGraph G σ hinv).neighborSet (⟦f⟧ : Q) → V := fun q =>
     Classical.choose (lift_edge_exists haut q.2)
   have hrep_q : ∀ q, (⟦rep q⟧ : Q) = q.1 := fun q =>
     (Classical.choose_spec (lift_edge_exists haut q.2)).1
-  let map2 : H.neighborSet (⟦f⟧ : Q) × Bool → V := fun p =>
+  let map2 : (invQuotGraph G σ hinv).neighborSet (⟦f⟧ : Q) × Bool → V := fun p =>
     if p.2 then rep p.1 else σ (rep p.1)
-  have hsurj_sub : ∀ v : G.neighborSet f, ∃ p : H.neighborSet (⟦f⟧ : Q) × Bool, map2 p = v.1 := by
+  have hsurj_sub : ∀ v : G.neighborSet f,
+      ∃ p : (invQuotGraph G σ hinv).neighborSet (⟦f⟧ : Q) × Bool, map2 p = v.1 := by
     intro v
-    have hqadj : H.Adj (⟦f⟧ : Q) ⟦v.1⟧ := by
+    have hqadj : (invQuotGraph G σ hinv).Adj (⟦f⟧ : Q) ⟦v.1⟧ := by
       refine ⟨fun heq => ?_, f, v.1, rfl, rfl, v.2⟩
       rcases Quotient.exact heq with h1 | h2
       · exact (G.ne_of_adj v.2) h1
-      · exact (G.ne_of_adj v.2) (by rw [← hf, ← h2, hinv])
-    let q : H.neighborSet (⟦f⟧ : Q) := ⟨⟦v.1⟧, hqadj⟩
+      · have hfv : f = v.1 := by
+          calc f = σ f := hf.symm
+            _ = σ (σ v.1) := congrArg σ h2
+            _ = v.1 := hinv v.1
+        exact (G.ne_of_adj v.2) hfv
+    let q : (invQuotGraph G σ hinv).neighborSet (⟦f⟧ : Q) := ⟨⟦v.1⟧, hqadj⟩
     have hrel : rep q = v.1 ∨ rep q = σ v.1 := Quotient.exact (hrep_q q)
     rcases hrel with h1 | h2
     · exact ⟨(q, true), by simp [map2, h1]⟩
@@ -294,12 +300,10 @@ theorem invQuot_degree_fixed_all_fixed [Fintype V] [DecidableEq V]
     (haut : ∀ a b, G.Adj a b ↔ G.Adj (σ a) (σ b))
     [Fintype (Quotient (invSetoid σ hinv))]
     [DecidableRel (invQuotGraph G σ hinv).Adj]
-    {f : V} (hf : σ f = f) (hall : ∀ v, G.Adj f v → σ v = v) :
+    {f : V} (_hf : σ f = f) (hall : ∀ v, G.Adj f v → σ v = v) :
     (invQuotGraph G σ hinv).degree ⟦f⟧ = G.degree f := by
-  classical
   let Q := Quotient (invSetoid σ hinv)
-  let H := invQuotGraph G σ hinv
-  let φ : G.neighborSet f → H.neighborSet (⟦f⟧ : Q) := fun v =>
+  let φ : G.neighborSet f → (invQuotGraph G σ hinv).neighborSet (⟦f⟧ : Q) := fun v =>
     ⟨⟦v.1⟧, ⟨fun heq => by
       rcases Quotient.exact heq with h1 | h2
       · exact (G.ne_of_adj v.2) h1
@@ -331,9 +335,8 @@ theorem general_involution_two_low_orbits [Fintype V] [DecidableEq V]
     [DecidableRel (invQuotGraph G σ hinv).Adj] :
     ∃ q₁ q₂ : Quotient (invSetoid σ hinv), q₁ ≠ q₂ ∧
       (invQuotGraph G σ hinv).degree q₁ ≤ 2 ∧ (invQuotGraph G σ hinv).degree q₂ ≤ 2 := by
-  classical
   let Q := Quotient (invSetoid σ hinv)
-  let H := invQuotGraph G σ hinv
+  letI : DecidableEq Q := Classical.decEq Q
   obtain ⟨x₀, hx₀⟩ := hnontriv
   have hcard_lt : Fintype.card Q < Fintype.card V := by
     let pickRep : Q → V := fun q => Classical.choose (Quotient.exists_rep q)
@@ -347,7 +350,7 @@ theorem general_involution_two_low_orbits [Fintype V] [DecidableEq V]
         rw [← hrep q₁, ← hrep q₂, hq₁, hq₂]
         exact Quotient.sound (Or.inr (hinv x₀).symm)
       rw [hqeq, hq₂] at hq₁
-      exact hx₀ hq₁.symm
+      exact hx₀ hq₁
     exact Fintype.card_lt_of_injective_not_surjective pickRep hinj hnsurj
   have hcardQ_ge2 : 2 ≤ Fintype.card Q := by
     obtain ⟨a, ha⟩ := hm.1.1
@@ -365,9 +368,10 @@ theorem general_involution_two_low_orbits [Fintype V] [DecidableEq V]
       have hu : u = pickRep ⟦v⟧ ∨ u = σ (pickRep ⟦v⟧) := Quotient.exact (h1.trans (hrep ⟦v⟧).symm)
       have hv : v = pickRep ⟦v⟧ ∨ v = σ (pickRep ⟦v⟧) := Quotient.exact (hrep ⟦v⟧).symm
       by_cases hp : v = pickRep ⟦v⟧
-      · have : u = pickRep ⟦v⟧ := by simp [hp] at h2; exact h2
-        exact this.trans hp.symm
-      · have hu' : u ≠ pickRep ⟦v⟧ := by simp [hp] at h2; exact h2
+      · rw [decide_eq_true hp] at h2
+        exact (of_decide_eq_true h2).trans hp.symm
+      · rw [decide_eq_false hp] at h2
+        have hu' : u ≠ pickRep ⟦v⟧ := of_decide_eq_false h2
         rcases hu with h | h
         · exact False.elim (hu' h)
         · rcases hv with hv1 | hv2
@@ -378,20 +382,20 @@ theorem general_involution_two_low_orbits [Fintype V] [DecidableEq V]
     omega
   by_contra hno
   push Not at hno
-  have hnear : Near H := by
-    by_cases hex : ∃ q₀ : Q, H.degree q₀ ≤ 2
+  have hnear : Near (invQuotGraph G σ hinv) := by
+    by_cases hex : ∃ q₀ : Q, (invQuotGraph G σ hinv).degree q₀ ≤ 2
     · obtain ⟨q₀, hq₀⟩ := hex
-      apply near_of_except H q₀ hcardQ_ge2
+      apply near_of_except (invQuotGraph G σ hinv) q₀ hcardQ_ge2
       intro q hq
       have hgt := hno q₀ q hq.symm hq₀
       omega
     · push Not at hex
       obtain ⟨q₀⟩ := Fintype.card_pos_iff.mp (by omega : 0 < Fintype.card Q)
-      apply near_of_except H q₀ hcardQ_ge2
+      apply near_of_except (invQuotGraph G σ hinv) q₀ hcardQ_ge2
       intro q _
       have := hex q
       omega
-  have hpow : HasPower H := hm.2.2.1 Q H hcard_lt hnear
+  have hpow : HasPower (invQuotGraph G σ hinv) := hm.2.2.1 Q (invQuotGraph G σ hinv) hcard_lt hnear
   exact hm.2.1 (hasPower_of_invQuot_general hinv haut hpow)
 
 /-- COROLLARY 1 (covers all 8 open S/H leaves): No 1-defect MinimalBad(G) admits a nontrivial
@@ -408,10 +412,9 @@ theorem no_defect_fixing_involution_no_other_low [Fintype V] [DecidableEq V]
     (hnoflip : ∀ v : V, σ v ≠ v → ¬ G.Adj v (σ v))
     (hno_other_fix : ∀ f : V, σ f = f → f ≠ w → 3 ≤ (invQuotGraph G σ hinv).degree ⟦f⟧) :
     False := by
-  classical
-  let H := invQuotGraph G σ hinv
   obtain ⟨q₁, q₂, hne, h1, h2⟩ := general_involution_two_low_orbits G hm σ hinv hnontriv haut
-  have hbad_eq_w : ∀ q : Quotient (invSetoid σ hinv), H.degree q ≤ 2 → q = ⟦w⟧ := by
+  have hbad_eq_w : ∀ q : Quotient (invSetoid σ hinv),
+      (invQuotGraph G σ hinv).degree q ≤ 2 → q = ⟦w⟧ := by
     intro q hq
     obtain ⟨u, rfl⟩ := Quotient.exists_rep q
     by_cases hfu : σ u = u
@@ -439,9 +442,8 @@ theorem cubic_involution_two_seam_orbits [Fintype V] [DecidableEq V]
     ∃ q₁ q₂ : Q, q₁ ≠ q₂ ∧ IsSeam q₁ ∧ IsSeam q₂ := by
   classical
   intro Q IsSeam
-  let H := invQuotGraph G σ hinv
   obtain ⟨q₁, q₂, hne, h1, h2⟩ := general_involution_two_low_orbits G hm σ hinv hnontriv haut
-  have hseam : ∀ q : Q, H.degree q ≤ 2 → IsSeam q := by
+  have hseam : ∀ q : Q, (invQuotGraph G σ hinv).degree q ≤ 2 → IsSeam q := by
     intro q hq
     obtain ⟨u, rfl⟩ := Quotient.exists_rep q
     by_cases hfu : σ u = u

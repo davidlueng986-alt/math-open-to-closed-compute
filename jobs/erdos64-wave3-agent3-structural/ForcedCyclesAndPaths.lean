@@ -68,6 +68,12 @@ theorem isPath_liftAvoid {G : SimpleGraph V} {x y : V}
   rw [support_liftAvoid]
   exact (List.nodup_map_iff Subtype.val_injective).mpr hp.support_nodup
 
+theorem support_mapLe_eq {G₁ G₂ : SimpleGraph V} (hle : G₁ ≤ G₂) {a b : V} (p : G₁.Walk a b) :
+    (p.mapLe hle).support = p.support := by
+  induction p with
+  | nil => rfl
+  | cons _ _ ih => simp [Walk.mapLe, ih]
+
 theorem cycle_of_path_and_apex {G : SimpleGraph V} {u a b : V}
     (midG : G.Walk a b) (hmid : midG.IsPath) (hpos : 1 ≤ midG.length)
     (hu : u ∉ midG.support) (hua : G.Adj u a) (hbu : G.Adj b u) :
@@ -107,7 +113,7 @@ theorem dyadic_path_of_identify_erase {G : SimpleGraph V} {x y u : V}
   have hle : H ≤ identify G x y := sdiff_le
   have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
   by_cases hmem : X ∈ c.support
-  · let c' := c.rotate hmem
+  · let c' := c.rotate X hmem
     have hc' : c'.IsCycle := hc.rotate hmem
     have hlen' : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
     cases hce : c' with
@@ -148,7 +154,7 @@ theorem dyadic_path_of_identify_erase {G : SimpleGraph V} {x y u : V}
           intro v hv hvx
           have hvX : v = X := Subtype.ext hvx
           rw [hvX] at hv
-          have hs1 : mid.support = midH.support := Walk.support_mapLe hle midH
+          have hs1 : mid.support = midH.support := support_mapLe_eq hle midH
           have hs2 : midH.support = r.support.reverse := Walk.support_reverse r
           rw [hs1, hs2, List.mem_reverse] at hv
           exact hXnotr hv
@@ -230,14 +236,14 @@ theorem dyadic_path_of_identify_erase {G : SimpleGraph V} {x y u : V}
           exact False.elim (hfree ⟨k, y, d, hk, hd, by omega⟩)
   · have havoid : ∀ v ∈ (c.mapLe hle).support, v.1 ≠ x := by
       intro v hv hvx
-      rw [Walk.support_mapLe] at hv
+      rw [support_mapLe_eq] at hv
       exact hmem (Subtype.ext hvx ▸ hv)
     let d := liftAvoid (c.mapLe hle) havoid
     have hdlen : d.length = 2 ^ k := by rw [length_liftAvoid, Walk.length_mapLe, hlen]
     have hdtail : d.support.tail.Nodup := by
       have hs : d.support = c.support.map Subtype.val := by
-        rw [support_liftAvoid, Walk.support_mapLe]
-      rw [hs, List.map_tail]
+        rw [support_liftAvoid, support_mapLe_eq]
+      rw [hs, ← List.map_tail]
       exact (List.nodup_map_iff Subtype.val_injective).mpr hc.support_nodup
     have hdnil : ¬ d.Nil := by
       intro h; have := Walk.length_eq_zero_iff.mpr h; omega
@@ -267,18 +273,18 @@ theorem identify_degree_other_of_not_common [Fintype V] [DecidableEq V]
   let f : H.neighborSet v → G.neighborSet v.1 := fun u =>
     if hu : u.1.1 = x then
       if h : G.Adj v.1 x then ⟨x, h⟩ else ⟨y, by
-        rcases u.2.2 with h1 | ⟨_, hyv⟩ | ⟨hvx', _⟩
+        rcases u.2.2 with h1 | ⟨hvx', _⟩ | ⟨_, hvy⟩
         · exact False.elim (h (hu ▸ h1))
-        · exact hyv.symm
-        · exact False.elim (hvx hvx')⟩
+        · exact False.elim (hvx hvx')
+        · exact hvy⟩
     else ⟨u.1.1, by
-      rcases u.2.2 with h1 | ⟨hux, _⟩ | ⟨hvx', _⟩
+      rcases u.2.2 with h1 | ⟨hvx', _⟩ | ⟨hux, _⟩
       · exact h1
-      · exact False.elim (hu hux)
-      · exact False.elim (hvx hvx')⟩
+      · exact False.elim (hvx hvx')
+      · exact False.elim (hu hux)⟩
   let g : G.neighborSet v.1 → H.neighborSet v := fun u =>
     if hu : u.1 = y then
-      ⟨X, ⟨fun h => hvx (congrArg Subtype.val h), Or.inr (Or.inl ⟨rfl, hu ▸ u.2.symm⟩)⟩⟩
+      ⟨X, ⟨fun h => hvx (congrArg Subtype.val h), Or.inr (Or.inr ⟨rfl, hu ▸ u.2⟩)⟩⟩
     else
       ⟨⟨u.1, hu⟩, ⟨fun h => (G.ne_of_adj u.2) (congrArg Subtype.val h), Or.inl u.2⟩⟩
   have e : H.neighborSet v ≃ G.neighborSet v.1 :=
@@ -363,13 +369,13 @@ theorem cubic_forbidden_edge_dyadic_path [Fintype V] [DecidableEq V]
     have hxnot : x ∉ G.neighborFinset x ∪ G.neighborFinset y := by
       intro h
       rcases Finset.mem_union.mp h with h1 | h2
-      · exact G.loopless x ((G.mem_neighborFinset x x).mp h1)
+      · exact G.loopless.irrefl x ((G.mem_neighborFinset x x).mp h1)
       · exact hnadj ((G.mem_neighborFinset y x).mp h2).symm
     have hynot : y ∉ (G.neighborFinset x ∪ G.neighborFinset y).erase x := by
       intro h
       rcases Finset.mem_union.mp (Finset.mem_erase.mp h).2 with h1 | h2
       · exact hnadj ((G.mem_neighborFinset x y).mp h1)
-      · exact G.loopless y ((G.mem_neighborFinset y y).mp h2)
+      · exact G.loopless.irrefl y ((G.mem_neighborFinset y y).mp h2)
     rw [Finset.erase_eq_of_notMem hynot, Finset.erase_eq_of_notMem hxnot,
       Finset.card_union_of_disjoint hdisj,
       G.card_neighborFinset_eq_degree, G.card_neighborFinset_eq_degree, hC x, hC y]
@@ -471,7 +477,7 @@ theorem cubic_non_triangle_two_path_fermat_cycle [Fintype V] [DecidableEq V]
     dyadic_path_of_identify_erase hne huy hm.2.1 hpow
   have ha'y : a' ≠ y := by
     intro h
-    subst h
+    subst a'
     cases hp_eq : p with
     | nil => exact hne rfl
     | @cons _ z _ hxz q =>
@@ -527,9 +533,8 @@ theorem cubic_non_triangle_two_path_fermat_cycle [Fintype V] [DecidableEq V]
   have htail_nodup : c.support.tail.Nodup := by
     have hps : p.support = x :: p.support.tail := (p.cons_tail_support).symm
     have htail : c.support.tail = p.support.tail ++ [x] := by
-      calc c.support.tail = (p.support ++ [x]).tail := by rw [hsupp]
-        _ = (x :: p.support.tail ++ [x]).tail := by rw [hps]
-        _ = p.support.tail ++ [x] := rfl
+      rw [hsupp]
+      exact congrArg (fun l => (l ++ [x]).tail) hps
     have hpn := hp.support_nodup
     rw [hps, List.nodup_cons] at hpn
     rw [htail]
@@ -641,13 +646,13 @@ theorem defect_three_path_dyadic_plus_two_cycle [Fintype V] [DecidableEq V]
     have hAnot : A ∉ G₁.neighborFinset A ∪ G₁.neighborFinset B := by
       intro h
       rcases Finset.mem_union.mp h with h1 | h2
-      · exact G₁.loopless A ((G₁.mem_neighborFinset A A).mp h1)
+      · exact G₁.loopless.irrefl A ((G₁.mem_neighborFinset A A).mp h1)
       · exact hnab ((G₁.mem_neighborFinset B A).mp h2).symm
     have hBnot : B ∉ (G₁.neighborFinset A ∪ G₁.neighborFinset B).erase A := by
       intro h
       rcases Finset.mem_union.mp (Finset.mem_erase.mp h).2 with h1 | h2
       · exact hnab ((G₁.mem_neighborFinset A B).mp h1)
-      · exact G₁.loopless B ((G₁.mem_neighborFinset B B).mp h2)
+      · exact G₁.loopless.irrefl B ((G₁.mem_neighborFinset B B).mp h2)
     rw [Finset.erase_eq_of_notMem hBnot, Finset.erase_eq_of_notMem hAnot,
       Finset.card_union_of_disjoint hdisj,
       G₁.card_neighborFinset_eq_degree, G₁.card_neighborFinset_eq_degree, hG₁_A, hG₁_B]
@@ -707,16 +712,15 @@ theorem defect_three_path_dyadic_plus_two_cycle [Fintype V] [DecidableEq V]
   have htail_nodup : c.support.tail.Nodup := by
     have hps : pG.support = a :: pG.support.tail := (pG.cons_tail_support).symm
     have htail : c.support.tail = pG.support.tail ++ [w, a] := by
-      calc c.support.tail = (pG.support ++ [w, a]).tail := by rw [hsupp]
-        _ = (a :: pG.support.tail ++ [w, a]).tail := by rw [hps]
-        _ = pG.support.tail ++ [w, a] := rfl
+      rw [hsupp]
+      exact congrArg (fun l => (l ++ [w, a]).tail) hps
     have hpn := hpG_path.support_nodup
     rw [hps, List.nodup_cons] at hpn
     rw [htail]
     refine List.nodup_append'.mpr ⟨hpn.2, ?_, ?_⟩
     · simp [haw.symm]
     · intro z hz1 hz2
-      simp only [List.mem_cons, List.mem_singleton] at hz2
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hz2
       rcases hz2 with rfl | rfl
       · exact hwnot (List.mem_of_mem_tail hz1)
       · exact hpn.1 hz1

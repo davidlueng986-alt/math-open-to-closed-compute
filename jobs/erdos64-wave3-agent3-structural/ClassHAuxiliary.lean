@@ -75,7 +75,8 @@ theorem card_edgeFinset_induce_erase {W : Type u} [DecidableEq W]
       fun x => ⟨x.1, Finset.mem_of_mem_erase x.2⟩
     have hlift_inj : Function.Injective liftV := by
       intro a b h
-      exact Subtype.ext (congrArg Subtype.val h)
+      have h1 : (liftV a).1 = (liftV b).1 := congrArg Subtype.val h
+      exact Subtype.ext h1
     let ψ : HT'.edgeFinset → E_rem := fun e =>
       ⟨e.1.map liftV, by
         rcases e with ⟨e, he⟩
@@ -244,6 +245,92 @@ theorem unique_common_neighbor_h {G : SimpleGraph V} (hfree : ¬ HasPower G)
   exact hfree (rectangle_power G (G.ne_of_adj hxu) hxy (G.ne_of_adj hxv)
     (G.ne_of_adj hyu).symm huv (G.ne_of_adj hyv) hxu hyu.symm hyv hxv.symm)
 
+/-- Self-contained ×2 subdivision walk expansion along edge midpoints. -/
+def expandWalk {U : Type u} {Haux : SimpleGraph U} {G : SimpleGraph V}
+    (emb : U → V) (mid : Sym2 U → V)
+    (hmid1 : ∀ {a b : U}, Haux.Adj a b → G.Adj (emb a) (mid s(a, b)))
+    (hmid2 : ∀ {a b : U}, Haux.Adj a b → G.Adj (mid s(a, b)) (emb b)) :
+    {a b : U} → Haux.Walk a b → G.Walk (emb a) (emb b)
+  | _, _, .nil => .nil
+  | _, _, .cons hab q => .cons (hmid1 hab) (.cons (hmid2 hab) (expandWalk emb mid hmid1 hmid2 q))
+
+theorem length_expandWalk {U : Type u} {Haux : SimpleGraph U} {G : SimpleGraph V}
+    (emb : U → V) (mid : Sym2 U → V)
+    (hmid1 : ∀ {a b : U}, Haux.Adj a b → G.Adj (emb a) (mid s(a, b)))
+    (hmid2 : ∀ {a b : U}, Haux.Adj a b → G.Adj (mid s(a, b)) (emb b))
+    {a b : U} (p : Haux.Walk a b) :
+    (expandWalk emb mid hmid1 hmid2 p).length = 2 * p.length := by
+  induction p with
+  | nil => rfl
+  | cons hab q ih => simp only [expandWalk, Walk.length_cons, ih]; omega
+
+theorem support_tail_expandWalk_perm {U : Type u} {Haux : SimpleGraph U} {G : SimpleGraph V}
+    (emb : U → V) (mid : Sym2 U → V)
+    (hmid1 : ∀ {a b : U}, Haux.Adj a b → G.Adj (emb a) (mid s(a, b)))
+    (hmid2 : ∀ {a b : U}, Haux.Adj a b → G.Adj (mid s(a, b)) (emb b))
+    {a b : U} (p : Haux.Walk a b) :
+    (expandWalk emb mid hmid1 hmid2 p).support.tail.Perm
+      (p.edges.map mid ++ p.support.tail.map emb) := by
+  induction p with
+  | nil => simp [expandWalk]
+  | @cons u v w hab q ih =>
+    simp only [expandWalk, Walk.support_cons, Walk.edges_cons, List.tail_cons, List.map_cons,
+      List.cons_append]
+    have hq : q.support = v :: q.support.tail := (q.cons_tail_support).symm
+    have hqmap : q.support.map emb = emb v :: q.support.tail.map emb := by
+      rw [hq, List.map_cons]
+    have hexp : (expandWalk emb mid hmid1 hmid2 q).support =
+        emb v :: (expandWalk emb mid hmid1 hmid2 q).support.tail :=
+      ((expandWalk emb mid hmid1 hmid2 q).cons_tail_support).symm
+    rw [hexp, hqmap]
+    refine List.Perm.cons (mid s(u, v)) ?_
+    exact (List.Perm.cons (emb v) ih).trans List.perm_middle.symm
+
+theorem mem_edgeSet_of_mem_edges_aux {U : Type u} {Haux : SimpleGraph U}
+    {a b : U} (p : Haux.Walk a b) {e : Sym2 U} (he : e ∈ p.edges) : e ∈ Haux.edgeSet := by
+  induction p with
+  | nil => simp at he
+  | cons hab q ih =>
+    simp only [Walk.edges_cons, List.mem_cons] at he
+    rcases he with rfl | hq
+    · exact hab
+    · exact ih hq
+
+theorem power_lift_of_mid {U : Type u} {Haux : SimpleGraph U} {G : SimpleGraph V}
+    (emb : U → V) (hemb : Function.Injective emb) (mid : Sym2 U → V)
+    (hmid1 : ∀ {a b : U}, Haux.Adj a b → G.Adj (emb a) (mid s(a, b)))
+    (hmid2 : ∀ {a b : U}, Haux.Adj a b → G.Adj (mid s(a, b)) (emb b))
+    (hmid_disj : ∀ {e : Sym2 U} (x : U), e ∈ Haux.edgeSet → mid e ≠ emb x)
+    (hmid_inj : ∀ {e₁ e₂ : Sym2 U}, e₁ ∈ Haux.edgeSet → e₂ ∈ Haux.edgeSet →
+      mid e₁ = mid e₂ → e₁ = e₂)
+    (hpow : HasPower Haux) : HasPower G := by
+  obtain ⟨k, v₀, c, hk, hc, hlen⟩ := hpow
+  let c' := expandWalk emb mid hmid1 hmid2 c
+  have hlen' : c'.length = 2 ^ (k + 1) := by
+    rw [length_expandWalk, hlen, pow_succ]; omega
+  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
+  have hge8 : 8 ≤ 2 ^ (k + 1) := by rw [pow_succ]; omega
+  have hperm := support_tail_expandWalk_perm emb mid hmid1 hmid2 c
+  have hnodup_edges : (c.edges.map mid).Nodup :=
+    (List.nodup_map_iff_inj_on hc.edges_nodup).mpr (fun e₁ he₁ e₂ he₂ heq =>
+      hmid_inj (mem_edgeSet_of_mem_edges_aux c he₁) (mem_edgeSet_of_mem_edges_aux c he₂) heq)
+  have hnodup_verts : (c.support.tail.map emb).Nodup :=
+    (List.nodup_map_iff hemb).mpr hc.support_nodup
+  have hdisj : (c.edges.map mid).Disjoint (c.support.tail.map emb) := by
+    intro z hz1 hz2
+    obtain ⟨e, he, rfl⟩ := List.mem_map.mp hz1
+    obtain ⟨x, _, hzx⟩ := List.mem_map.mp hz2
+    exact hmid_disj x (mem_edgeSet_of_mem_edges_aux c he) hzx.symm
+  have hnodup_tail : c'.support.tail.Nodup :=
+    hperm.nodup_iff.mpr (List.nodup_append'.mpr ⟨hnodup_edges, hnodup_verts, hdisj⟩)
+  have hnil : ¬ c'.Nil := by
+    intro h; have := Walk.length_eq_zero_iff.mpr h; omega
+  have hc' : c'.IsCycle := by
+    apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
+    refine ⟨Walk.IsPath.mk' ?_, by omega⟩
+    rwa [Walk.support_tail_of_not_nil _ hnil]
+  exact ⟨k + 1, emb v₀, c', by omega, hc', hlen'⟩
+
 /-- Helper: build the paired auxiliary graph on S ⊆ V_{≥4} from M(S) = {y ∈ V₃ | |N(y) ∩ S| ≥ 2}
     and prove it is power-free, has no Near induced subgraph, and has |E| = |M(S)|. -/
 theorem class_h_aux_edges_eq_and_no_near [Fintype V] [DecidableEq V]
@@ -274,21 +361,19 @@ theorem class_h_aux_edges_eq_and_no_near [Fintype V] [DecidableEq V]
         · exact ⟨hne.symm, y, Or.inr ⟨rfl, rfl⟩⟩
         · exact ⟨hne.symm, y, Or.inl ⟨rfl, rfl⟩⟩⟩
       loopless := ⟨fun _ h => h.1 rfl⟩ }
-  -- Power-freeness of Haux via Erdos64Shadow.power_cycle_expand
   have hHaux_free : ¬ HasPower Haux := by
     intro hpow
     let mid : Sym2 {x : V // x ∈ S} → V := fun e =>
       if h : ∃ y : {z : V // z ∈ M}, s(p1 y, p2 y) = e then (Classical.choose h).1 else
-        -- dummy fallback (never reached on edges of Haux)
         (Classical.choose (show ∃ v : V, True from ⟨(hm.1.1).choose, trivial⟩))
     have hmid_spec : ∀ {a b : {x : V // x ∈ S}}, Haux.Adj a b →
         ∃ y : {z : V // z ∈ M}, mid s(a, b) = y.1 ∧ s(p1 y, p2 y) = s(a, b) := by
       intro a b hab
       obtain ⟨_, y0, ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩⟩ := hab
       · have hex : ∃ y : {z : V // z ∈ M}, s(p1 y, p2 y) = s(p1 y0, p2 y0) := ⟨y0, rfl⟩
-        exact ⟨Classical.choose hex, by simp [mid, hex], Classical.choose_spec hex⟩
+        exact ⟨Classical.choose hex, by simp only [mid, dif_pos hex], Classical.choose_spec hex⟩
       · have hex : ∃ y : {z : V // z ∈ M}, s(p1 y, p2 y) = s(p2 y0, p1 y0) := ⟨y0, Sym2.eq_swap⟩
-        exact ⟨Classical.choose hex, by simp [mid, hex], Classical.choose_spec hex⟩
+        exact ⟨Classical.choose hex, by simp only [mid, dif_pos hex], Classical.choose_spec hex⟩
     have hmid_adj : ∀ {a b : {x : V // x ∈ S}}, Haux.Adj a b →
         G.Adj a.1 (mid s(a, b)) ∧ G.Adj (mid s(a, b)) b.1 := by
       intro a b hab
@@ -296,15 +381,18 @@ theorem class_h_aux_edges_eq_and_no_near [Fintype V] [DecidableEq V]
       rw [hmy]
       rcases Sym2.eq_iff.mp hsy with ⟨h1, h2⟩ | ⟨h1, h2⟩
       · exact ⟨h1 ▸ hp_adj1 y, (h2 ▸ hp_adj2 y).symm⟩
-      · exact ⟨h1 ▸ hp_adj2 y, (h2 ▸ hp_adj1 y).symm⟩
-    have hmid_disj : ∀ {a b c : {x : V // x ∈ S}}, Haux.Adj a b → mid s(a, b) ≠ c.1 := by
-      intro a b c hab hEq
-      obtain ⟨y, hmy, _⟩ := hmid_spec hab
-      rw [hmy] at hEq
-      have hc4 := hS4 c.1 c.2
-      have hy3 := (Finset.mem_filter.mp y.2).2.1
-      rw [← hEq] at hc4
-      omega
+      · exact ⟨h2 ▸ hp_adj2 y, (h1 ▸ hp_adj1 y).symm⟩
+    have hmid_disj : ∀ {e : Sym2 {x : V // x ∈ S}} (c : {x : V // x ∈ S}),
+        e ∈ Haux.edgeSet → mid e ≠ c.1 := by
+      intro e c he hEq
+      induction e using Sym2.ind with
+      | _ a b =>
+        obtain ⟨y, hmy, _⟩ := hmid_spec he
+        rw [hmy] at hEq
+        have hc4 := hS4 c.1 c.2
+        have hy3 := (Finset.mem_filter.mp y.2).2.1
+        rw [← hEq] at hc4
+        omega
     have hmid_inj : ∀ {e₁ e₂ : Sym2 {x : V // x ∈ S}},
         e₁ ∈ Haux.edgeSet → e₂ ∈ Haux.edgeSet → mid e₁ = mid e₂ → e₁ = e₂ := by
       intro e₁ e₂ he₁ he₂ hmeq
@@ -316,10 +404,8 @@ theorem class_h_aux_edges_eq_and_no_near [Fintype V] [DecidableEq V]
           obtain ⟨y₂, hm₂, hs₂⟩ := hmid_spec he₂
           have hy : y₁ = y₂ := Subtype.ext (hm₁.symm.trans (hmeq.trans hm₂))
           rw [← hs₁, ← hs₂, hy]
-    obtain ⟨k, v₀, c, hk, hc, hlen⟩ := hpow
-    exact hm.2.1 (Erdos64Shadow.power_cycle_expand Subtype.val Subtype.val_injective
-      mid (fun h => (hmid_adj h).1) (fun h => (hmid_adj h).2)
-      (fun h c' => hmid_disj h) hmid_inj ⟨k, v₀, c, hk, hc, hlen⟩)
+    exact hm.2.1 (power_lift_of_mid Subtype.val Subtype.val_injective mid
+      (fun h => (hmid_adj h).1) (fun h => (hmid_adj h).2) hmid_disj hmid_inj hpow)
   obtain ⟨w₀, hw₀, _, _⟩ := hH
   have hScard_lt : Fintype.card {x : V // x ∈ S} < Fintype.card V := by
     apply Fintype.card_lt_of_injective_not_surjective Subtype.val Subtype.val_injective
