@@ -1,4 +1,4 @@
-"""Check the 64-gate baseline and a 66-gate double-read control."""
+"""Check the 64-gate baseline and a 65-gate double-read construction."""
 import json
 
 from synthesis import DIFF, evaluate
@@ -13,16 +13,23 @@ def incidence_circuit(double_read):
         return 25 + len(gates)
 
     terms = []
+    first_term = None
     for line in range(13):
         points = [(line + offset) % 13 for offset in DIFF]
         any_point = points[0]
         for point in points[1:]:
             any_point = add(True, any_point, point)
-        term = add(False, 13 + line, any_point)
-        if line == 0 and double_read:
-            duplicate = add(False, any_point, 13 + line)
-            term = add(False, term, duplicate)
-        terms.append(term)
+        if line == 1 and double_read:
+            # (line_1 OR A) AND (neighbors_1 OR A) = star_1 OR A.
+            assert first_term is not None and 0 not in points
+            left = add(True, 13 + line, first_term)
+            right = add(True, any_point, first_term)
+            terms[-1] = add(False, left, right)
+        else:
+            term = add(False, 13 + line, any_point)
+            terms.append(term)
+            if line == 0:
+                first_term = term
     output = terms[0]
     for term in terms[1:]:
         output = add(True, output, term)
@@ -58,5 +65,5 @@ if __name__ == '__main__':
     plain = verify(incidence_circuit(False))
     doubled = verify(incidence_circuit(True))
     assert plain['gates'] == 64 and plain['mark_point_zero'] and plain['mark_line_zero']
-    assert doubled['gates'] == 66 and not doubled['mark_point_zero'] and not doubled['mark_line_zero']
-    print(json.dumps({'baseline': plain, 'double_read_control': doubled}, indent=2))
+    assert doubled['gates'] == 65 and not doubled['mark_point_zero'] and not doubled['mark_line_zero']
+    print(json.dumps({'baseline': plain, 'double_read_construction': doubled}, indent=2))

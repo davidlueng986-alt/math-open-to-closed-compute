@@ -1,12 +1,14 @@
 # L-meta-2081 order-3 plane incidence circuit
 
-The desk asks for a circuit with at most 64 gates that computes plane incidence and has both formal traces zero at the point-0, line-0 incidence. The standard line-star circuit has 64 gates and both traces are one. A 66-gate control meets both trace conditions. Duplicate the AND producing the line-0 star and conjoin the two distinct output wires. Both operands of this conjunction are false on each singleton background, so its trace is zero in both directions. All other stars also have trace zero in those directions.
+The desk asks for a circuit with at most 64 gates that computes plane incidence and has both formal traces zero at the point-0, line-0 incidence. The standard line-star circuit has 64 gates and both traces are one.
+
+A 65-gate circuit satisfies both trace conditions. Let `A` be the line-0 star and let `B` be the OR of the four points incident to line 1. Replace the OR of the first two stars with `(line_1 ∨ A) ∧ (B ∨ A)`. Distributivity gives `A ∨ (line_1 ∧ B)`, and this substitution adds just one gate. Both factors are false on both singleton backgrounds, because point 0 is off line 1. The conjunction therefore has zero trace in both directions. The other eleven stars also have zero trace in those directions.
 
 The control checks all 52 incidences and all 8,192 assignments formed by taking an arbitrary set of points and every compatible line. These contain every maximal false input. There are 704 maximal false inputs. Monotonicity extends these checks to all Boolean assignments.
 
 ## Small replacements
 
-On a single line, synthesis rules out five gates with both traces zero. It finds a six-gate circuit. For two lines, the intersection point is either the marked point or a different point on line 0. The representatives are lines `(0, 12)` and `(0, 1)`. The usual two-star circuit takes nine gates. The eight-gate SAT instances are UNSAT and the initial nine-gate searches reached their conflict budget.
+On a single line, synthesis rules out five gates with both traces zero. It finds a six-gate circuit. For two lines, the intersection point is either the marked point or a different point on line 0. The representatives are lines `(0, 12)` and `(0, 1)`. The usual two-star circuit takes nine gates. The eight-gate SAT instances are UNSAT and the initial nine-gate searches reached their conflict budget. The `(0, 1)` ten-gate instance found a circuit; the factored expression above gives a direct construction of that size.
 
 There is a separate argument excluding a nine-gate double-read replacement for either two-line case. There are nine essential inputs, so the live cone has at least eight gates. An eight-gate circuit is read-once. A read-once formula for the connected edge function would have an AND at its root. Since all minterms have size two and the children use disjoint nonempty sets of variables, both children must be ORs of their variables, which would give a complete bipartite graph. The two-line graph is connected and is missing cross edges.
 
@@ -18,5 +20,5 @@ This excludes isolated one- and two-line replacements within the corresponding s
 python -m pip install python-sat==1.9.dev25
 python jobs/pequalnp-double-read/control.py
 python jobs/pequalnp-double-read/synthesis.py 0 --gates 5
-python jobs/pequalnp-double-read/synthesis.py 0 12 --gates 9
+python jobs/pequalnp-double-read/synthesis.py 0 1 --gates 10 --conflicts 300000
 ```
