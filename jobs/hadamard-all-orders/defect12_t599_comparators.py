@@ -106,7 +106,7 @@ def mirror_system(supports, reflection):
     return rows, reference, maps, masks
 
 
-def lift_is_consistent(reference, maps, masks, pivots):
+def lift_is_consistent(reference, maps, masks, pivots, keep_polynomials=False):
     def expand(moves):
         return tuple(sum(1 << j for j, i in enumerate(coordinates)
                          if i is not None and ((moves >> i) & 1))
@@ -129,6 +129,7 @@ def lift_is_consistent(reference, maps, masks, pivots):
         return result
 
     target = residual(initial)
+    coefficient_columns = [target] if keep_polynomials else None
     columns = {}
 
     def reduce(word):
@@ -149,14 +150,105 @@ def lift_is_consistent(reference, maps, masks, pivots):
         change = residual(tuple(a ^ b for a, b in zip(initial, move, strict=True))) ^ target
         first_changes.append(change)
         insert(change)
-    if not reduce(target):
-        return True, len(free)
+    if keep_polynomials:
+        coefficient_columns.extend(first_changes)
+    elif not reduce(target):
+        return True, len(free), None
     for i, j in combinations(range(len(moves)), 2):
         signs = tuple(a ^ b ^ c for a, b, c in zip(initial, moves[i], moves[j], strict=True))
-        insert(residual(signs) ^ target ^ first_changes[i] ^ first_changes[j])
-        if not reduce(target):
-            return True, len(free)
-    return False, len(free)
+        change = residual(signs) ^ target ^ first_changes[i] ^ first_changes[j]
+        insert(change)
+        if keep_polynomials:
+            coefficient_columns.append(change)
+        elif not reduce(target):
+            return True, len(free), None
+    if not keep_polynomials:
+        return False, len(free), None
+    equations = [0] * LAST
+    for j, coefficient in enumerate(coefficient_columns):
+        for i in bit_indices(coefficient):
+            equations[i] ^= 1 << j
+    return not reduce(target), len(free), equations
+
+
+def monomials(dimension, maximum_degree):
+    return [sum(1 << i for i in subset) for degree in range(maximum_degree + 1)
+            for subset in combinations(range(dimension), degree)]
+
+
+def polynomial_pivots(equations, pivots=None):
+    if pivots is None:
+        pivots = {}
+    for equation in equations:
+        while equation:
+            j = equation.bit_length() - 1
+            if j not in pivots:
+                if j == 0:
+                    return None
+                pivots[j] = equation
+                break
+            equation ^= pivots[j]
+    return pivots
+
+
+def substitute_linear_equations(equations, dimension):
+    """Reduce the Boolean equations by the linear rows of their span."""
+    dimensions = []
+    while True:
+        dimensions.append(dimension)
+        pivots = polynomial_pivots(equations)
+        if pivots is None:
+            return None, dimensions
+        linear = {j: row for j, row in pivots.items() if j <= dimension}
+        if not linear:
+            return list(pivots.values()), dimensions
+        free = [j for j in range(1, dimension + 1) if j not in linear]
+        new_monomials = {mask: i for i, mask in enumerate(monomials(len(free), 2))}
+        substitutions = [1] + [0] * dimension
+        for i, j in enumerate(free, 1):
+            substitutions[j] = 1 << i
+        for j, row in sorted(linear.items()):
+            for i in bit_indices(row ^ (1 << j)):
+                substitutions[j] ^= substitutions[i]
+
+        def multiply(left, right):
+            result = 0
+            for i in bit_indices(left):
+                a = 1 << (i - 1) if i else 0
+                for j in bit_indices(right):
+                    b = 1 << (j - 1) if j else 0
+                    result ^= 1 << new_monomials[a | b]
+            return result
+
+        mapping = substitutions + [multiply(substitutions[i], substitutions[j])
+                                   for i, j in combinations(range(1, dimension + 1), 2)]
+        equations = []
+        for row in pivots.values():
+            result = 0
+            for i in bit_indices(row):
+                result ^= mapping[i]
+            equations.append(result)
+        dimension = len(free)
+
+
+def cubic_lift(equations, dimension):
+    quadratic = monomials(dimension, 2)
+    cubic = {mask: i for i, mask in enumerate(monomials(dimension, 3))}
+    pivots = polynomial_pivots(equations)
+    assert pivots is not None
+    basis = list(pivots.values())
+    for variable in range(dimension):
+        mapping = [1 << cubic[(1 << variable) | mask] for mask in quadratic]
+        multiples = []
+        for row in basis:
+            result = 0
+            for i in bit_indices(row):
+                result ^= mapping[i]
+            multiples.append(result)
+        pivots = polynomial_pivots(multiples, pivots)
+        if pivots is None:
+            return variable + 1, ()
+    return None, [row for j, row in pivots.items() if j <= dimension]
 
 
 def verify():
@@ -175,15 +267,36 @@ def verify():
         if mirror_pivots is None:
             outcomes["mod32"] += 1
             continue
-        consistent, nullity = lift_is_consistent(reference, coordinates, masks, mirror_pivots)
+        consistent, nullity, polynomials = lift_is_consistent(
+            reference, coordinates, masks, mirror_pivots, keep_polynomials=hole in (2, 37, 99))
         if not consistent:
             outcomes["mod64 linearization"] += 1
             continue
+        if hole == 2:
+            reduced, dimensions = substitute_linear_equations(polynomials, nullity)
+            assert reduced is None and dimensions == [32, 30, 28, 27, 26, 24]
+            outcomes["mod64 linear substitution"] += 1
+            continue
+        if hole == 37:
+            assert cubic_lift(polynomials, nullity) == (33, ())
+            outcomes["mod64 cubic"] += 1
+            continue
+        if hole == 99:
+            contradiction, linear = cubic_lift(polynomials, nullity)
+            assert contradiction is None and len(linear) == 1
+            reduced, dimensions = substitute_linear_equations(polynomials + linear, nullity)
+            assert reduced is not None and dimensions == [51, 50]
+            assert cubic_lift(reduced, dimensions[-1]) == (33, ())
+            outcomes["mod64 cubic and substitution"] += 1
+            continue
         survivors.append((hole, nullity))
 
-    assert outcomes == {"mod16": 17, "mod32": 16, "mod64 linearization": 110}
-    assert survivors == [(0, 149), (1, 51), (2, 32), (37, 38), (74, 75), (99, 51)]
+    assert outcomes == {"mod16": 17, "mod32": 16, "mod64 linearization": 110,
+                        "mod64 linear substitution": 1, "mod64 cubic": 1,
+                        "mod64 cubic and substitution": 1}
+    assert survivors == [(0, 149), (1, 51), (74, 75)]
     print("t=599 comparators: 17 fail mod16, 16 more fail mod32, 110 more fail the mod64 linearization")
+    print("Boolean lift: h=2,37,99 fail by linear substitution, cubic lifting, or both")
     print("surviving hole indices and normalized residual nullities:", survivors)
 
 

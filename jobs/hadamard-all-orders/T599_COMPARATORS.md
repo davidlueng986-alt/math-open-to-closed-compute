@@ -1,6 +1,6 @@
-# Six surviving three-negative comparators at length 599
+# Three surviving three-negative comparators at length 599
 
-Consider a half-flip Goethals–Seidel source of length 599 from \((s,s\tau,sq,sq\tau)\), where \(\tau=+1\) on indices \(0,\ldots,299\) and \(-1\) on indices \(300,\ldots,598\). Assume \(q\) has one negative entry in the first half and two in the second. The necessary correlation congruences reduce all such comparators, up to reflecting the first half, to 149 symmetric placements. Of these, six survive the tests below. Survival leaves a system of quadratic equations and does not establish a 64-modular source.
+Consider a half-flip Goethals–Seidel source of length 599 from \((s,s\tau,sq,sq\tau)\), where \(\tau=+1\) on indices \(0,\ldots,299\) and \(-1\) on indices \(300,\ldots,598\). Assume \(q\) has one negative entry in the first half and two in the second. The necessary correlation congruences reduce all such comparators, up to reflecting the first half, to 149 symmetric placements. Three survive the exact tests below. Survival leaves a system of quadratic equations and does not establish a 64-modular source.
 
 ## Positions of the three negative entries
 
@@ -32,4 +32,12 @@ The constant, linear and quadratic coefficients can therefore be recovered by ev
 | 74 | 75 |
 | 99 | 51 |
 
-The [stdlib verifier](defect12_t599_comparators.py) reconstructs the two parity systems and the quadratic linearization for all 149 cases. The \(h=0\) comparator is the one used in [NEAR64_599.md](NEAR64_599.md). For the six survivors, consistency with independent monomials does not enforce their product relations. Solving those relations, and finding an exact tetrad and panel for any positive source, remain open in this calculation.
+## Three exact Boolean contradictions
+
+The table lists the six comparators that survive linearization. For \(h=2\), taking linear consequences of the quadratic equations and substituting the resulting pivot variables reduces the dimension successively to \(30,28,27,26,24\). The resulting equation span contains the constant polynomial 1, which contradicts the requirement that every equation vanish.
+
+For \(h=37\), work in the Boolean polynomial ring over \(\mathbb F_2\), with \(x_i^2=x_i\). Multiply the quadratic equations by the individual variables and add the resulting degree-at-most-three equations to the original span. Gaussian elimination produces the constant polynomial 1 after adding the multipliers for the first 33 of the 38 variables. This is an exact contradiction because every polynomial so added vanishes at a common solution of the original equations.
+
+For \(h=99\), a first cubic pass gives one linear equation. Substitute its pivot to reduce from 51 to 50 free bits in the quadratic equations. A second cubic pass gives the constant polynomial 1 after adding the multipliers for the first 33 of the 50 variables.
+
+The [stdlib verifier](defect12_t599_comparators.py) reconstructs the systems for all 149 cases and checks the three Boolean contradictions. The remaining indices are \(0,1,74\). The \(h=0\) comparator is the one used in [NEAR64_599.md](NEAR64_599.md). Solving the product relations for any surviving index, and finding an exact tetrad and panel for any positive source, remain open in this calculation.
