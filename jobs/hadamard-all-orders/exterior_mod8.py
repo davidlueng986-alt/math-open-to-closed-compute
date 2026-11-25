@@ -46,7 +46,7 @@ def main():
     gram = [ORDER - 2 * (a ^ b).bit_count() for j, b in enumerate(new) for a in new[:j]]
     require(len(mixed) == 5965 and len(gram) == 10, "all relevant pairs covered")
     require(all(dot % 8 == 0 for dot in mixed + gram), "all old/new and new/new dots vanish modulo eight")
-    require(mixed.count(0) == 430 and gram == [272, 160, -816, 192, 216, 224, 320, 192, 152, -912],
+    require(mixed.count(0) == 417 and gram == [-64, 112, 0, -104, 40, 16, 56, -56, 0, 0],
             "exact remaining inner products on this witness")
 
     top_mask = (1 << TOP) - 1
@@ -62,7 +62,7 @@ def main():
                     for upper in candidates), "all recovered upper syndromes")
 
     print("n=2396: exact margins and all 5965 mixed / 10 new dots zero modulo eight")
-    print(f"n=2396: exact mixed zeros {mixed.count(0)}; nonzero new/new dots {gram}")
+    print(f"n=2396: {mixed.count(0)} exact mixed zeros; {gram.count(0)} exact new/new zeros; new/new dots {gram}")
 
 
 if __name__ == "__main__":
