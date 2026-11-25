@@ -8,7 +8,7 @@ Erdos 64 (Wave 3, Agent #4): Generalized Involution Exclusions.
 1. Triples Wave 2's FPF involution exclusion from <= 1 to <= 3 invariant edges
    via single-edge quotient completion + double-path lifting.
 2. Excludes defect-fixed involutions with 0 invariant edges on all 1-defect
-   MinimalBad(G) graphs with non-adjacent defect neighbors (S-N-*, H-N-*).
+   MinimalBad(G) graphs.
 -/
 
 namespace E64Involution3
@@ -16,6 +16,38 @@ open SimpleGraph Erdos64Closure E64Core E64Leaves Erdos64Paired E64Involution
 universe u
 
 variable {V : Type u}
+
+/-- Transfer a walk in `H₀ ⊔ edge q₁ q₂` that avoids `s(q₁, q₂)` into `H₀`. -/
+def walkDropAddedEdge {α : Type u} {H₀ : SimpleGraph α} {q₁ q₂ : α} :
+    ∀ {a b : α} (w : (H₀ ⊔ SimpleGraph.edge q₁ q₂).Walk a b),
+      s(q₁, q₂) ∉ w.edges → H₀.Walk a b
+  | _, _, .nil, _ => .nil
+  | a, _, .cons (v := b) hab rest, hno =>
+    have hab0 : H₀.Adj a b := by
+      rcases hab with h0 | hedge
+      · exact h0
+      · exfalso
+        apply hno
+        rw [Walk.edges_cons, List.mem_cons]
+        left
+        rcases hedge.1 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        · rfl
+        · exact Sym2.eq_swap
+    .cons hab0 (walkDropAddedEdge rest (fun hm => hno (by rw [Walk.edges_cons]; exact List.mem_cons_of_mem _ hm)))
+
+lemma walkDropAddedEdge_length {α : Type u} {H₀ : SimpleGraph α} {q₁ q₂ : α}
+    {a b : α} (w : (H₀ ⊔ SimpleGraph.edge q₁ q₂).Walk a b) (hno : s(q₁, q₂) ∉ w.edges) :
+    (walkDropAddedEdge w hno).length = w.length := by
+  induction w with
+  | nil => rfl
+  | cons _ _ ih => simp [walkDropAddedEdge, ih]
+
+lemma walkDropAddedEdge_support {α : Type u} {H₀ : SimpleGraph α} {q₁ q₂ : α}
+    {a b : α} (w : (H₀ ⊔ SimpleGraph.edge q₁ q₂).Walk a b) (hno : s(q₁, q₂) ∉ w.edges) :
+    (walkDropAddedEdge w hno).support = w.support := by
+  induction w with
+  | nil => rfl
+  | cons _ _ ih => simp [walkDropAddedEdge, ih]
 
 /-- In any power-free graph with FPF involution `σ`, the quotient orbits of two distinct
     `σ`-invariant edges cannot be adjacent in `G / ⟨σ⟩` (otherwise `G` contains a `C4`). -/
@@ -34,7 +66,9 @@ theorem inv_edges_independent_in_quot {G : SimpleGraph V} (hfree : ¬ HasPower G
   have hne : (⟦u₁⟧ : Quotient (invSetoid σ hinv)) ≠ ⟦v₂⟧ := hv₂q.symm ▸ hadj.1
   have hu₁v₂_ne : u₁ ≠ v₂ := fun h => hne (by rw [h])
   have hu₁sv₂_ne : u₁ ≠ σ v₂ := fun h => hne (by rw [h]; exact Quotient.sound (Or.inr rfl))
-  have hsu₁v₂_ne : σ u₁ ≠ v₂ := fun h => hne (by rw [← h]; exact Quotient.sound (Or.inr rfl)).symm
+  have hsu₁v₂_ne : σ u₁ ≠ v₂ := fun h => by
+    have hq : (⟦σ u₁⟧ : Quotient (invSetoid σ hinv)) = ⟦u₁⟧ := Quotient.sound (Or.inr rfl)
+    exact hne (hq.symm.trans (by rw [h]))
   have hsu₁sv₂_ne : σ u₁ ≠ σ v₂ := fun h => hu₁v₂_ne (by
     have := congrArg σ h; rwa [hinv u₁, hinv v₂] at this)
   exact hfree (rectangle_power G hu₁v₂_ne hu₁sv₂_ne (hfpf u₁).symm (hfpf v₂).symm hsu₁v₂_ne.symm
@@ -59,34 +93,16 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
   have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by omega : 0 < 2) hk
   by_cases huse : s(q₁, q₂) ∈ c.edges
   · have hq₁_mem : q₁ ∈ c.support := Walk.fst_mem_support_of_mem_edges c huse
-    let c' := c.rotate hq₁_mem
-    have hc' : c'.IsCycle := hc.rotate hq₁_mem
-    have hlen' : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
-    have huse' : s(q₁, q₂) ∈ c'.edges := (Walk.edges_rotate c hq₁_mem).mem_iff.mpr huse
+    let c' : H.Walk q₁ q₁ := (c.dropUntil q₁ hq₁_mem).append (c.takeUntil q₁ hq₁_mem)
+    have hc'_eq : c' = c.rotate hq₁_mem := rfl
+    have hc' : c'.IsCycle := hc'_eq ▸ hc.rotate hq₁_mem
+    have hlen' : c'.length = 2 ^ k := by rw [hc'_eq, Walk.length_rotate, hlen]
+    have huse' : s(q₁, q₂) ∈ c'.edges := by
+      have hsp : c = (c.takeUntil q₁ hq₁_mem).append (c.dropUntil q₁ hq₁_mem) := (Walk.take_spec c hq₁_mem).symm
+      rw [hsp, Walk.edges_append, List.mem_append] at huse
+      rw [Walk.edges_append, List.mem_append]
+      exact huse.symm
     have hex_path : ∃ P₀ : H₀.Walk q₁ q₂, P₀.IsPath ∧ P₀.length + 1 = 2 ^ k := by
-      let rec toH0 : ∀ {a b : Q} (w : H.Walk a b), s(q₁, q₂) ∉ w.edges → H₀.Walk a b
-        | _, _, .nil, _ => .nil
-        | a, _, .cons (v := b) hab rest, hno =>
-          have hab0 : H₀.Adj a b := by
-            rcases hab with h0 | hedge
-            · exact h0
-            · exfalso
-              have hs : s(a, b) = s(q₁, q₂) := by
-                rcases hedge.1 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-                · rfl
-                · exact Sym2.eq_swap
-              exact hno (by simp [hs])
-          .cons hab0 (toH0 rest (fun hm => hno (by simp [hm])))
-      have htoH0_len : ∀ {a b : Q} (w : H.Walk a b) (hno : s(q₁, q₂) ∉ w.edges),
-          (toH0 w hno).length = w.length := by
-        intro a b w hno; induction w with
-        | nil => rfl
-        | cons _ _ ih => simp [toH0, ih]
-      have htoH0_supp : ∀ {a b : Q} (w : H.Walk a b) (hno : s(q₁, q₂) ∉ w.edges),
-          (toH0 w hno).support = w.support := by
-        intro a b w hno; induction w with
-        | nil => rfl
-        | cons _ _ ih => simp [toH0, ih]
       cases hce : c' with
       | nil => rw [hce] at hlen'; simp at hlen'; omega
       | @cons _ b _ h₁ rest =>
@@ -102,11 +118,11 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
         by_cases hb2 : b = q₂
         · subst hb2
           have hno : s(q₁, q₂) ∉ rest.edges := hen.1
-          let P := toH0 rest hno
-          refine ⟨P.reverse, ?_, by rw [Walk.length_reverse, htoH0_len, hrest_len]⟩
+          let P := walkDropAddedEdge rest hno
+          refine ⟨P.reverse, ?_, by rw [Walk.length_reverse, walkDropAddedEdge_length, hrest_len]⟩
           apply Walk.IsPath.reverse
           apply Walk.IsPath.mk'
-          rw [htoH0_supp]; exact hrest_path.support_nodup
+          rw [walkDropAddedEdge_support]; exact hrest_path.support_nodup
         · let cr := c'.reverse
           have hcr : cr.IsCycle := hc'.reverse
           have hcr_len : cr.length = 2 ^ k := by rw [Walk.length_reverse, hlen']
@@ -164,11 +180,11 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
               exact hsn
             have hrest'_len : rest'.length + 1 = 2 ^ k := by
               have := congrArg Walk.length hcre; simp at this; omega
-            let P := toH0 rest' hno'
-            refine ⟨P.reverse, ?_, by rw [Walk.length_reverse, htoH0_len, hrest'_len]⟩
+            let P := walkDropAddedEdge rest' hno'
+            refine ⟨P.reverse, ?_, by rw [Walk.length_reverse, walkDropAddedEdge_length, hrest'_len]⟩
             apply Walk.IsPath.reverse
             apply Walk.IsPath.mk'
-            rw [htoH0_supp]; exact hrest'_path.support_nodup
+            rw [walkDropAddedEdge_support]; exact hrest'_path.support_nodup
     obtain ⟨P₀, hP₀_path, hP₀_len⟩ := hex_path
     let lifted := liftWalk haut P₀ u₁ rfl
     let v₂ := lifted.1.1
@@ -235,31 +251,14 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
       · rwa [Walk.support_tail_of_not_nil _ hnil]
       · rw [hcyclen, pow_succ]; omega
     exact ⟨k + 1, u₁, cyc, by omega, hcyc_is, hcyclen⟩
-  · let rec toH0 : ∀ {a b : Q} (w : H.Walk a b), s(q₁, q₂) ∉ w.edges → H₀.Walk a b
-      | _, _, .nil, _ => .nil
-      | a, _, .cons (v := b) hab rest, hno =>
-        have hab0 : H₀.Adj a b := by
-          rcases hab with h0 | hedge
-          · exact h0
-          · exfalso
-            have hs : s(a, b) = s(q₁, q₂) := by
-              rcases hedge.1 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-              · rfl
-              · exact Sym2.eq_swap
-            exact hno (by simp [hs])
-        .cons hab0 (toH0 rest (fun hm => hno (by simp [hm])))
-    have hlen0 : ∀ {a b : Q} (w : H.Walk a b) (hno : s(q₁, q₂) ∉ w.edges), (toH0 w hno).length = w.length := by
-      intro a b w hno; induction w with | nil => rfl | cons _ _ ih => simp [toH0, ih]
-    have hsupp0 : ∀ {a b : Q} (w : H.Walk a b) (hno : s(q₁, q₂) ∉ w.edges), (toH0 w hno).support = w.support := by
-      intro a b w hno; induction w with | nil => rfl | cons _ _ ih => simp [toH0, ih]
-    let c0 := toH0 c huse
-    have hc0_len : c0.length = 2 ^ k := (hlen0 c huse).trans hlen
+  · let c0 := walkDropAddedEdge c huse
+    have hc0_len : c0.length = 2 ^ k := (walkDropAddedEdge_length c huse).trans hlen
     have hc0_nil : ¬ c0.Nil := by
       intro h; have := Walk.length_eq_zero_iff.mpr h; omega
     have hc0 : c0.IsCycle := by
       apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
       refine ⟨Walk.IsPath.mk' ?_, by omega⟩
-      rw [Walk.support_tail_of_not_nil _ hc0_nil, hsupp0]
+      rw [Walk.support_tail_of_not_nil _ hc0_nil, walkDropAddedEdge_support]
       exact hc.support_nodup
     exact hasPower_of_invQuot hinv hfpf haut ⟨k, v₀, c0, hk, hc0, hc0_len⟩
 
@@ -351,7 +350,7 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
         ⟨⟦v.1⟧, ⟨fun heq => by
           rcases Quotient.exact heq with h1 | h2
           · exact (G.ne_of_adj v.2) h1
-          · have hv : v.1 = σ u := by rw [h2, hinv v.1]
+          · have hv : v.1 = σ u := (hinv v.1).symm.trans (congrArg σ h2).symm
             exact hno (hv ▸ v.2),
           u, v.1, rfl, rfl, v.2⟩⟩
       have hfinj : Function.Injective f := by
@@ -373,7 +372,7 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
         ⟨⟦v.1⟧, ⟨fun heq => by
           rcases Quotient.exact heq with h1 | h2
           · exact (G.ne_of_adj v.2.1) h1
-          · exact v.2.2 (by rw [h2, hinv v.1]),
+          · exact v.2.2 ((hinv v.1).symm.trans (congrArg σ h2).symm),
           u, v.1, rfl, rfl, v.2.1⟩⟩
       have hfinj : Function.Injective f := by
         intro a b heq
@@ -384,7 +383,9 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
       have hfsurj : Function.Surjective f := by
         rintro ⟨q, hq⟩
         obtain ⟨v, hvq, huv⟩ := lift_edge_exists haut hq
-        have hvne : v ≠ σ u := fun h => hq.1 (by rw [← hvq, h]; exact Quotient.sound (Or.inr rfl)).symm
+        have hvne : v ≠ σ u := fun h => by
+          have hq1 : (⟦u⟧ : Q) = ⟦σ u⟧ := (Quotient.sound (Or.inr rfl)).symm
+          exact hq.1 (hq1.trans (by rw [← h, hvq]))
         exact ⟨⟨v, huv, hvne⟩, Subtype.ext hvq⟩
       have hc := Fintype.card_congr (Equiv.ofBijective f ⟨hfinj, hfsurj⟩)
       rw [SimpleGraph.card_neighborSet_eq_degree] at hc
@@ -513,9 +514,9 @@ theorem no_defect_fixed_involution_zero_edges [Fintype V] [DecidableEq V]
     have hsub : ({b₁, σ b₁} : Finset V) ⊆ G.neighborFinset w := by
       intro z hz
       simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-      rcases hz with rfl | rfl
-      · exact (G.mem_neighborFinset w b₁).mpr hwb₁
-      · exact (G.mem_neighborFinset w (σ b₁)).mpr hwb₂
+      rcases hz with h | h
+      · rw [h]; exact (G.mem_neighborFinset w b₁).mpr hwb₁
+      · rw [h]; exact (G.mem_neighborFinset w (σ b₁)).mpr hwb₂
     have hne_b : b₁ ≠ σ b₁ := fun h => hb₁_ne_w ((hfix b₁).mp h.symm)
     have hcard2 : ({b₁, σ b₁} : Finset V).card = 2 := by
       rw [Finset.card_insert_of_notMem (by simp [hne_b]), Finset.card_singleton]
@@ -537,7 +538,7 @@ theorem no_defect_fixed_involution_zero_edges [Fintype V] [DecidableEq V]
         · have hv : v.1.1 = σ u.1 := by
             have := congrArg Subtype.val h2
             dsimp [σ'] at this
-            rw [this, hinv v.1.1]
+            exact (hinv v.1.1).symm.trans (congrArg σ this).symm
           exact hno_edge u.1 (hv ▸ v.2),
         u, v.1, rfl, rfl, v.2⟩⟩
     have hfinj : Function.Injective f := by
@@ -565,7 +566,7 @@ theorem no_defect_fixed_involution_zero_edges [Fintype V] [DecidableEq V]
       · exact hvne (Quotient.sound (Or.inr rfl))
     let e : G'.neighborSet v ≃ G.neighborSet v.1 :=
       { toFun := fun u => ⟨u.1.1, u.2⟩
-        invFun := fun u => ⟨⟨u.1, fun h => hnw (by rw [← h]; exact u.2.symm)⟩, u.2⟩
+        invFun := fun u => ⟨⟨u.1, fun h => hnw (Eq.mp (congrArg (fun x => G.Adj x v.1) h) u.2.symm)⟩, u.2⟩
         left_inv := fun _ => rfl
         right_inv := fun _ => rfl }
     rw [← SimpleGraph.card_neighborSet_eq_degree, Fintype.card_congr e, SimpleGraph.card_neighborSet_eq_degree]

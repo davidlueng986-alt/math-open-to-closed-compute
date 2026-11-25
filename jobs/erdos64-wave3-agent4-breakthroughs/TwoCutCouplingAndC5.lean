@@ -178,7 +178,7 @@ theorem no_two_c5_share_single_edge {G : SimpleGraph V} (hfree : ¬ HasPower G)
     exact (List.Perm.nodup_iff hperm).mp hdist
   have hcyc : c.IsCycle := by
     apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
-    refine ⟨Walk.IsPath.mk' hnod, by decide⟩
+    refine ⟨Walk.IsPath.mk' hnod, by rw [hlen]; omega⟩
   exact hfree ⟨3, u, c, by decide, hcyc, hlen⟩
 
 #print axioms two_cut_cross_side_dyadic_coupling
