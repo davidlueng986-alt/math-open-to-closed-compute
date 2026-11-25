@@ -25,7 +25,9 @@ jobs:
           python3 -B jobs/hadamard-all-orders/stack_1198_auxiliary.py
           python3 -B jobs/hadamard-all-orders/stack_1198_energy.py
           python3 -B jobs/hadamard-all-orders/stack_1198_channels.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_mod5.py
           python3 -B jobs/hadamard-all-orders/stack_odd_t_auxiliary.py
+          python3 -B jobs/hadamard-all-orders/stack_odd_t_residual.py
           python3 -B jobs/hadamard-all-orders/triple_product.py
           python3 -B jobs/hadamard-all-orders/paley_progression.py
           python3 -B jobs/hadamard-all-orders/t_product_parity.py
@@ -113,6 +115,18 @@ jobs:
         run: python3 -B jobs/hadamard-all-orders/exterior_fold_hall.py
       - name: Check prescribed fold-coordinate changes and the new physical fold
         run: python3 -B jobs/hadamard-all-orders/exterior_fold_coordinates.py
+      - name: Check exact Sylvester anchor pairs and their reindexed modulo-eight matching
+        run: python3 -B jobs/hadamard-all-orders/exterior_reindexed_anchors.py
+
+  stack-replacement-neighborhood:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exclude three support replacements for the fixed pivots
+        run: |
+          c++ -O3 -std=c++20 -Wall -Wextra -Werror -fopenmp jobs/hadamard-all-orders/stack_1198_replacements.cpp -o "$RUNNER_TEMP/stack_1198_replacements"
+          OMP_NUM_THREADS=4 python3 -B jobs/hadamard-all-orders/stack_1198_replacements.py "$RUNNER_TEMP/stack_1198_replacements"
 
   structured-second-fold:
     runs-on: ubuntu-latest

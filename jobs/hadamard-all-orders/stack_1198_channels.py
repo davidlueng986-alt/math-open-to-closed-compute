@@ -31,20 +31,9 @@ def signatures(columns, first, second):
     return dots, [signature(a, b) for a, b in dots]
 
 
-def verify():
-    path = Path(__file__).with_name('stack_1198_channels_data.json')
-    witness = json.loads(path.read_text(encoding='ascii'))
-    upper, original = source_matrices()
-    n, m = len(upper), len(original)
-    side = m//2
-    u, v = flipped_column(n, UPPER_FLIPS), flipped_column(m, LOWER_FLIPS)
-    x = upper[witness['upper_pivot']] ^ sum(1 << i for i in witness['upper_flips'])
-    lower, y = lower_channels(original, v, witness)
-    check_fold(lower, original)
-    check_boundary(lower, v, y)
-    assert dot(n, u, x) == dot(m, v, y) == 0
-    upper_dots, upper_deck = signatures(upper, u, x)
-    lower_dots, lower_deck = signatures(lower, v, y)
+def match_anti_first(upper_deck, lower_deck):
+    n, m = len(upper_deck), len(lower_deck)
+    side = m // 2
     supply = defaultdict(list)
     for i, key in enumerate(upper_deck):
         supply[key].append(i)
@@ -68,6 +57,24 @@ def verify():
         for (_, i), (_, j) in zip(sorted(left[first]), sorted(right[first]), strict=True):
             pairs[i] = j
     assert len(pairs) == n and set(pairs.values()) == set(range(m)) - set(LOWER_OMITTED)
+    return pairs
+
+
+def verify():
+    path = Path(__file__).with_name('stack_1198_channels_data.json')
+    witness = json.loads(path.read_text(encoding='ascii'))
+    upper, original = source_matrices()
+    n, m = len(upper), len(original)
+    side = m//2
+    u, v = flipped_column(n, UPPER_FLIPS), flipped_column(m, LOWER_FLIPS)
+    x = upper[witness['upper_pivot']] ^ sum(1 << i for i in witness['upper_flips'])
+    lower, y = lower_channels(original, v, witness)
+    check_fold(lower, original)
+    check_boundary(lower, v, y)
+    assert dot(n, u, x) == dot(m, v, y) == 0
+    upper_dots, upper_deck = signatures(upper, u, x)
+    lower_dots, lower_deck = signatures(lower, v, y)
+    pairs = match_anti_first(upper_deck, lower_deck)
     packed, residual_by_lower = [], [0] * m
     for i, a_col in enumerate(upper):
         j = pairs[i]
