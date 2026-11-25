@@ -193,10 +193,51 @@ def check_blocked_prefix():
     require(determinant([[defect[r][s] for s in roots] for r in roots]) == 1, "E8 Gram determinant")
     print(f"n=28: {len(kernel):,} binary kernel vectors; fixed outer design has exactly {len(x)} inside columns")
     print("n=28: integral rank-8 defect Gram matrix with diagonal 2 and a principal determinant of 1")
-    check_prefix_repair(columns)
+    replacement = check_repair_residues(columns, defect, roots, t)
+    check_prefix_repair(columns, replacement)
 
 
-def check_prefix_repair(columns):
+def check_repair_residues(columns, defect, roots, prime):
+    # Eliminate the defect-space columns first. The bottom part then reads
+    # each original sign column in the quotient F_p^n / im(Q[:, roots]).
+    equations = [[defect[r][i] % prime for i in roots]
+                 + [(1 if col >> r & 1 else -1) % prime for col in columns]
+                 for r in range(len(defect))]
+    rank = len(roots)
+    for i in range(rank):
+        pivot = next(r for r in range(i, len(defect)) if equations[r][i])
+        equations[i], equations[pivot] = equations[pivot], equations[i]
+        factor = pow(equations[i][i], -1, prime)
+        equations[i] = [factor * value % prime for value in equations[i]]
+        for r, row in enumerate(equations):
+            if r != i and row[i]:
+                equations[r] = [(a - row[i] * b) % prime
+                                for a, b in zip(row, equations[i], strict=True)]
+
+    def line(vector):
+        first = next((value for value in vector if value), None)
+        if first is None:
+            return None
+        factor = pow(first, -1, prime)
+        return tuple(value * factor % prime for value in vector)
+
+    images = list(zip(*(row[rank:] for row in equations[rank:]), strict=True))
+    lines = {line(word): i for i, word in enumerate(images)}
+    require(None not in lines and len(lines) == len(columns), "independent pairs modulo defect")
+    dependent = set()
+    for i, j in combinations(range(len(columns)), 2):
+        for ratio in range(1, prime):
+            point = line(tuple((a + ratio * b) % prime
+                               for a, b in zip(images[i], images[j], strict=True)))
+            k = lines.get(point)
+            if k is not None and j < k:
+                dependent.add((i, j, k))
+    require(dependent == {(9, 12, 19)}, "unique dependent triple modulo defect")
+    print("n=28: among all 1,140 triples, only (9, 12, 19) are dependent in the F_7 defect quotient")
+    return next(iter(dependent))
+
+
+def check_prefix_repair(columns, replaced):
     # Normalization fixes the first entry to +1, leaving 2^13 choices in the
     # first half and 2^14 in the second. Each five-bit digit is a distance.
     half_mask = (1 << 14) - 1
@@ -205,22 +246,31 @@ def check_prefix_repair(columns):
     right = [sum((14 - (v ^ (col >> 14)).bit_count()) << (5*i)
                  for i, col in enumerate(columns)) for v in range(1 << 14)]
     full_mask = (1 << (5*len(columns))) - 1
-    for i, j in combinations(range(len(columns)), 2):
-        keep = full_mask ^ (31 << (5*i)) ^ (31 << (5*j))
+
+    def candidates(removed):
+        keep = full_mask
+        for i in removed:
+            keep ^= 31 << (5*i)
         index = {}
         for v, signature in enumerate(left):
             index.setdefault(signature & keep, []).append(2*v+1)
-        eligible = {lo | (hi << 14) for hi, signature in enumerate(right)
-                    for lo in index.get(signature & keep, ())}
-        require(eligible == {columns[i], columns[j]}, f"new column after deleting {i}, {j}")
+        return {lo | (hi << 14) for hi, signature in enumerate(right)
+                for lo in index.get(signature & keep, ())}
 
-    replaced = {9, 12, 19}
+    for i, j in combinations(range(len(columns)), 2):
+        require(candidates((i, j)) == {columns[i], columns[j]}, f"new column after deleting {i}, {j}")
+
     kept = [word for i, word in enumerate(columns) if i not in replaced]
     first_four = [210585043, 90966887, 54089267, 43457415]
     last_seven = [238560157, 72738319, 82980019, 51293467, 174485591, 219361643, 102562017]
+    expected = {columns[i] for i in replaced} | set(first_four + last_seven)
+    require(candidates(replaced) == expected, "complete normalized candidate set after deleting the triple")
+    require(all((col ^ columns[i]).bit_count() != 14
+                for i in replaced for col in first_four + last_seven), "old columns cannot mix with the repair")
     require(len(kept + first_four) == 21 and len(kept + first_four + last_seven) == 28, "repair widths")
     checked = verify_orthogonal(28, kept + first_four + last_seven)
     print(f"n=28: no new columns for any of 190 deletion pairs; three deletions give a full repair ({checked} dots)")
+    print("n=28: the 17 retained columns have exactly one normalized full completion up to column order")
 
 
 def signs(word):
@@ -343,6 +393,43 @@ def check_2396():
             min_pattern = min(min_pattern, ones, len(group) - ones)
     require(min_pattern == 52, "joint retained and omitted row patterns")
     print("n=2396: every joint five-sign pattern up to negation occurs at least 52 times")
+    check_outer_margin_seed(short, long)
+
+
+def check_outer_margin_seed(short, long):
+    # A different alignment with room for six new columns. Both distinguished
+    # rows have constant opposite signs, and every column is balanced.
+    top_size, bottom_size = len(short), len(long)
+    top_mask, bottom_mask = (1 << top_size) - 1, (1 << bottom_size) - 1
+    top_flips = top_mask ^ short[0]
+    top = [col ^ top_flips for col in short]
+    top = [col if col & 1 else col ^ top_mask for col in top]
+    omit = {0, 181, 440, 565, 594, 677, 871, 1035}
+    old = [upper | ((lower ^ bottom_mask) << top_size) for upper, lower in zip(
+        top[4:], (col for i, col in enumerate(long) if i not in omit), strict=True)]
+    require(len(old) == 1192, "retained exterior width")
+    pairs = verify_orthogonal(top_size + bottom_size, old)
+
+    # Fill each row's deficit cyclically. This checks all margins on one
+    # matrix; the new columns still have orthogonality equations to solve.
+    new = [1] * 6
+    cursor = 0
+    for r in range(1, top_size + bottom_size):
+        if r == top_size:
+            continue
+        need = 599 - sum(col >> r & 1 for col in old)
+        require(0 <= need <= len(new), f"exterior row deficit at {r}")
+        for _ in range(need):
+            new[cursor] |= 1 << r
+            cursor = (cursor + 1) % len(new)
+    exterior = old + new
+    require(all(col.bit_count() == 1198 and col & 1 and not (col >> top_size & 1)
+                for col in exterior), "exterior column margins and distinguished rows")
+    require(all(sum(col >> r & 1 for col in exterior) == 599
+                for r in range(1, top_size + bottom_size) if r != top_size), "exterior row margins")
+    mixed = sum((left ^ right).bit_count() == 1198 for left in old for right in new)
+    require(mixed == 288, "reproduced mixed orthogonality count")
+    print(f"n=2396: exact exterior margins with {pairs:,} old pairs and {mixed}/7,152 mixed pairs orthogonal")
 
 
 if __name__ == "__main__":

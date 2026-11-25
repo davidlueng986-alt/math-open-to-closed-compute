@@ -16,8 +16,12 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: Check the incidence examples and reconstruct the 2396 by 1196 matrix
-        run: python3 jobs/hadamard-all-orders/verify.py
+      - name: Check the exact matrices, defect repair and T-sequence congruences
+        run: |
+          python3 -B jobs/hadamard-all-orders/verify.py
+          python3 -B jobs/hadamard-all-orders/triple_product.py
+          python3 -B jobs/hadamard-all-orders/t599.py
+          python3 -B jobs/hadamard-all-orders/r_intersections.py
       - name: Install pinned Lean 4.36.0
         run: bash jobs/hadamard-2396-399/install_lean.sh
       - name: Check the universal reductions and their axioms
@@ -27,7 +31,7 @@ jobs:
           export LEAN_PATH="$RUNNER_TEMP/hadamard-all-orders"
           mkdir -p "$LEAN_PATH"
           lean -DwarningAsError=true -o "$LEAN_PATH/Triples.olean" jobs/hadamard-2396-projections/Triples.lean
-          for module in Assembly Reductions Constructions OuterEnergy Rounding Parity BlockedPrefix; do
+          for module in Assembly Reductions Constructions OuterEnergy Rounding Parity BlockedPrefix TripleProduct PrimeTMatrix TerminalBounds; do
             lean -DwarningAsError=true -o "$LEAN_PATH/$module.olean" "jobs/hadamard-all-orders/$module.lean" | tee "$RUNNER_TEMP/$module.log"
             if grep -q 'sorryAx' "$RUNNER_TEMP/$module.log"; then exit 1; fi
           done

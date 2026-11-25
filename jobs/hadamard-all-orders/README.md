@@ -4,6 +4,17 @@ Let $H(n)$ mean that $n$ mutually orthogonal sign columns of length $n$ exist, a
 
 **全題仲未攻克。** 以下每條未證引理都寫明要覆蓋邊啲 $t$、可以更換邊啲已選嘅集合，以及點樣接返去全猜想。單獨做好幾多個階數，量度唔到距離通證仲有幾遠。
 
+## 全題進度
+
+原題要求每個正整數 $t$ 的 $H(4t)$；一個被證明無解的階數足以反證。已知族先逐階覆蓋適用參數，未覆蓋的奇數乘數須有能涵蓋全部的證明。下列正面路線可互補。對同一階，各項以「且」相接的條件必須由相容的構造共同提供。
+
+| 路線 | 已得到甚麼 | 仍缺甚麼 |
+| --- | --- | --- |
+| 已知構造的覆蓋 | 直接 Paley、Scarpis–Đoković，以及下文的長度 3 乘積覆蓋明列的無限族 | 覆蓋剩餘全部奇數乘數的定理 |
+| 外層設計與精確內欄 | 全寬同餘解及每一步的有理延伸；整數固定前綴可失敗。排除所有只有兩種交集量的奇數外層設計，在 2396 的三交集情況餘三組 | 統一構造外層設計，且在共同證書上滿足整數內欄條件 |
+| 直接構造近滿矩陣 | 對 2396，缺 9 至 11 欄的後段已縮到完整矩陣或明確的 $E_8$ 缺陷；缺 8 欄且行奇偶混合時可直接完成 | 統一取得近滿矩陣，且解決無法直接完成的所有情況。[精確格論與換欄界](TERMINAL_REPAIR.md) |
+| 2396 階的專用構造 | 原始循環證書、邊框證書，以及長度 599 T 序列的支撐、模四符號與奇係數逐位提升 | 任一條路線取得完整二元矩陣；單階成果的構造若可推廣再接回全題。[T 序列](T599.md) |
+
 ## What is known about the distance
 
 Write $r(n)=\max\{k:P(n,k)\}$. Unconditionally, for every $\epsilon>0$ and all sufficiently large multiples of four, $r(n)\ge n/2-O_\epsilon(n^{113/132+\epsilon})$. In particular the literature guarantees $(1/2-o(1))n$ orthogonal columns. Verheiden proved that **any** $n-7$ real orthogonal sign columns of length $n$ can be completed to $n$ for the orders used here. The conjecture follows if that threshold can be reached for every required $n$. The lower bound gives neither a rate of proof progress nor an effective finite search for the rest. [Graham–Shparlinski, §3](https://arxiv.org/abs/0709.2704) · [de Launey–Levin, Theorem A](https://arxiv.org/abs/1003.4003) · [Verheiden, thesis §4](https://thesis.caltech.edu/2899/) · [Verheiden, journal article](https://doi.org/10.1016/0097-3165(80)90028-X)
@@ -32,6 +43,14 @@ At $n=2396$, the verifier constructs **1,196 orthogonal columns** and checks all
 Let $D$ contain all odd $t\ge5$ missed by the three substitutions in row 2. Obligations R and B run over **every** $t\in D$. Other proved constructions may be added to the covered cases. The remaining set is infinite. For $t=599+100590k$, $k\ge0$, the integer $4t-1$ is divisible by both 5 and 479, and $2t-1$ by both 3 and 7. Only $O(\sqrt T)$ integers $t\le T$ can have $4t=q(q+1)$, while this progression has positive density. At $t=599$ the factorizations are $2395=5\cdot479$ and $1197=3^2\cdot7\cdot19$, and $16t+1=9585$ lies strictly between $97^2$ and $98^2$. [Paley (1933)](https://doi.org/10.1002/sapm1933121311) · [Đoković, Theorem 1](https://arxiv.org/abs/1601.00635)
 
 **One infinite branch already closes.** Set $q=43^{60k+1}$ and $t=q(q+1)/4$ for $k\ge0$. Then $q\equiv43\pmod{226920}$ with $226920=8\cdot3\cdot5\cdot31\cdot61$. Thus $t$ is odd, $4t-1$ is divisible by 31 and 61, and $2t-1$ is divisible by 3 and 5. Both direct Paley tests miss every member. Applying Paley to $q+1$ and then Scarpis–Đoković gives a full $H(q(q+1))$ for **every** $k$. The modular identity is checked in Lean. Python reconstructs the first member, $H(1892)$, and checks all 1,788,886 pairwise products. This branch is an application of published constructions. [Lean congruence](Constructions.lean) · [Matrix reconstruction](verify.py) · [Đoković’s construction](https://arxiv.org/abs/1601.00635)
+
+### 長度 3 乘積覆蓋另一個無限族
+
+對每個 $q=107^{528k+1}$，$k\ge0$，設 $s=(q+1)/4$。有 $q\equiv107\pmod{2080120}$，所以 $s$ 為奇數。階數 $n=3(q+1)=4(3s)$ 的兩個直接 Paley 參數 $n-1$ 和 $n/2-1$ 分別有不同素因子 $17,19$ 及 $7,23$，而 $4n+1\equiv2\pmod5$，排除 $n=a(a+1)$ 的 Scarpis 輸入。Lean 核查冪次同餘以及這三個排除。
+
+構造 $H(n)$ 用四個循環區塊的 Paley 方陣及長度 3 的 T 矩陣。取 $\mathbb F_{q^2}^\times$ 中階 $s$ 的元素 $\zeta$。它的範數為 1，且 $\gcd(s,q-1)=1$，故在射影直線上有四個長 $s$ 的軌道；每個軌道選向量代表 $v,\zeta v,\ldots,\zeta^{s-1}v$。令 Paley 矩陣的非對角項為 $\chi(\det(v_i,v_j))$，對角項為 1。標準 Paley 論證給出 $NN^{\mathsf T}=4sI$。其中任兩不同射影點的非對角字符列內積是直線上斜率的二次字符和，為零；每列的平方和是 $q$，且非對角矩陣反對稱。因乘 $\zeta$ 保持二維行列式，每個 $s\times s$ 區塊都循環。
+
+令 $A_j(a,x)$ 為 $N$ 第 $a$ 個區塊行、第 $j$ 個區塊列的循環生成字在 $x$ 的值，取 $a\in\mathbb Z/3$ 對應前三個區塊行，$x\in\mathbb Z/s$。固定移位 $(d,e)$ 後，對 $j,x$ 求和的自相關是 $N$ 的第 $(a,0)$ 行與第 $(a+d,-e)$ 行的內積。再對 $a$ 求和，非零移位得零，零移位得 $12s$。在 $\mathbb Z/3\times\mathbb Z/s$ 上用 Goethals–Seidel 組裝即得 $H(12s)$。這是已發表的 T 矩陣乘積在長度 3 的應用。首個 $H(324)$ 已重建並逐一核查全部 52,326 個行內積。$t=599+100590k$ 恆為 $2\bmod3$，故此族仍留下該無限剩餘類。[Lean 算術](TripleProduct.lean) · [首例驗算](triple_product.py) · [乘積構造來源](https://arxiv.org/html/2610.27175v2#S4)
 
 ## The construction and its converse
 
@@ -62,6 +81,14 @@ For odd $t$, every summand is positive. A row equal to either entire half contri
 $$\sum_{C\ne B}\big((2|B\cap C|-t)^2-1\big)=(t-1)(t-3).$$
 
 若某個 $C$ 的交集大小是 $1$ 或 $t-1$，該項已用完整個右端，故其餘交集只可能為 $(t\pm1)/2$。對奇數 $t\ge5$，每個區塊至多有一個這樣的鄰居。更一般地，若有 $k$ 個其他區塊的平方失衡至少為 $M$，則 $(M-1)k\le(t-1)(t-3)$。兩個限制都經 Lean 核查。[Lean 區塊交集與數量上限](OuterEnergy.lean)
+
+**奇數 $t\ge5$ 時至少需要三種區塊交集大小。** 若只有兩種 $a<b$，設 $d=b-a$，以 $F$ 表示交集為 $b$ 的鄰接矩陣。區塊 Gram 矩陣是 $(t-a)I+aJ+dF$。另一方面 $Y^{\mathsf T}Y=tI+(t-1)J$，故在全一向量的垂直空間，$YY^{\mathsf T}$ 有兩個特徵值 $t,0$。這使整數矩陣 $F$ 的兩個特徵值為 $a/d,(a-t)/d$；有理代數整數必為整數，所以 $d$ 整除 $a,t$。令 $t=du$，$u$ 為奇數。每個區塊和其他區塊的平均交集除以 $d$ 等於 $u/2-u/(2(4t-3))$，嚴格在 $(u-1)/2$ 和 $(u+1)/2$ 之間。因 $a/d,b/d$ 相鄰，$a+b=t$ 且 $ab=(t^2-d^2)/4$。由 Gram 平方，各行的非對角交集平方和為 $t^2(t-1)$。用 $x^2=tx-ab$ 代入兩種交集值，得 $(4t-3)d^2=t^2$，即 $u(4d-u)=3$。正整數解只給 $t=1,3$。若只有一種交集大小，Gram 在全一向量的垂直空間只能有一個特徵值，也不可能。這排除了以兩種交集構成強正則圖的整條外層設計路線。
+
+在 $t=599$，若限制為**恰三種**交集 $a<b<c$，用相同特徵值論證可知 $\gcd(b-a,c-a)$ 整除 599，故等於 1。每行的三種次數由零次、一次及二次矩 $(2393,716404,214562998)$ 唯一決定，逐一檢查得到六種正整數分布。再以交集為 $a$ 的子圖為例，模 $c-b$ 有 $P=YY^{\mathsf T}\equiv (t-b)I+bJ+(a-b)F$。在 $P^2=tP+t^2(t-1)J$ 中代入上式，便能限制 $F^2$ 的共同鄰居數。每行非對角共同鄰居之和必等於 $\deg(F)(\deg(F)-1)$。驗算器對三個例外值各做此測試，排除 $(259,295,306)$ 及 $(270,299,322)$。[完整整數枚舉](r_intersections.py)
+
+交集組合 $(299,300,598)$ 亦不可能。令 $k=299$，$F$ 是交集 $k+1$ 的圖，$M$ 是交集 $2k$ 所給的完美配對。從 $P=(k+1)I+kJ+F+kM$ 的特徵值，得 $F^2+F=k(I+J-FM-MF-M)$。非對角各項非負，迫使兩個配對之間至多一條 $F$ 邊。配對的總度數恰為其他配對的數目，故恰有一條。在每個配對標記兩個端點為 $\pm1$，令 $T_{ij}$ 記錄從配對 $i$ 到 $j$ 的唯一邊在 $i$ 的端點符號，對角線為零。上式再給兩對端點之間的四個共同鄰居數 $k-1,0,0,k$，其中 $k-1$ 在有邊的位置。因此 $T^{\mathsf T}T=(4k+1)I-J$。由 $TT^{\mathsf T}$ 的對角線全為 $4k$，其一維零空間可取符號向量。以該向量和全一向量作邊框，得整數 $C$ 滿足 $CC^{\mathsf T}=1197I_{1198}$。
+
+模 7 時，$\ker C=\operatorname{im}C^{\mathsf T}$。若 $Cx\equiv0$，取整數代表並令 $y=Cx/7$，便有 $C^{\mathsf T}y=171x$，而 $171$ 在模 7 可逆。反向由 $CC^{\mathsf T}\equiv0$ 得出。於是標準點積有 $599$ 維全等向子空間。取其基底及點積對偶向量作一組基，Gram 行列式成為 $(-1)^{599}$，在 $\mathbb F_7$ 不是平方。但標準點積的 Gram 行列式經換基必保持平方類，矛盾。因此三交集路線餘 $(1,299,300)$、$(286,299,303)$、$(286,299,309)$，各組是否能實現仍待證明。一般設計也可能有四種以上交集。[矩方程及數值核查](r_intersections.py)
 
 **素數階對稱。** 若 $t=p\ge5$ 是素數，一個階為 $p$ 的點置換也可能只含一個 $p$-循環，其餘 $p$ 點固定。此時不動區塊仍只能是循環的支集及其補集。相同的區塊軌道計數排除這種置換，因此外層設計的自同構群沒有階為 $p$ 的元素。對任意奇數 $t\ge5$，若素數 $p>t$，階為 $p$ 的點置換只能有一個 $p$-循環且少於 $t$ 個不動點。它沒有任何不動區塊，故 $p\mid 4t-2$，只能是 $p=2t-1$。在 $t=599$，$2t-1=1197$ 合成，故任何素數 $p\ge599$ 都不可能是外層設計的自同構階。
 
@@ -121,4 +148,6 @@ For the $2396\times1196$ witness, the upper block is a full matrix of order $119
 
 即使任意重排及變號後才疊接相同的上下來源，也無法保留全數 1,196 列而只加三列來得到外層設計。指定的兩行必須分處上、下兩部，因為同一部內的行對在原列上遠少於 1,195 個相異位置。令 $b$ 是指定的下部行。在每種相差整行變號視為相同的符號型態中，驗算證實四條省略列加任一原列所成的五符號型態至少出現 52 次。若兩條指定行在所有原列相反，選另一個在四條省略列上與 $b$ 相同至整行變號的下部行 $b'$。完整下部方陣的行正交性使截短後的 $b\cdot b'$ 等於 $\pm4$。兩條指定行的差與 $b'$ 的原列內積絕對值為 $8$，兩條相異的新列至多抵銷 $4$。若兩條指定行只在一條原列相同，選在該列和四條省略列上與 $b$ 同型的 $b'$。絕對值增至 $10$，三條相異的新列至多抵銷 $6$。這兩個情形都與外層設計逐行平衡所要求的零內積矛盾。這是對特定下部來源及四條省略列的排除。[精確行對及符號型態檢查](verify.py)
 
-The GitHub workflow builds the Lean files with version 4.36.0 and treats warnings as errors. The two global implication theorems expose Paley-covered cases and Verheiden completion as inputs. R, B and their alternative marginal growth assumptions remain explicit hypotheses. The fractional identities, conditional induction, row-energy and parity obstructions, order-28 blocked prefix, doubling, and assembly have kernel-checked proofs. The complete fixed-design census and Gram determinant use exact Python arithmetic. The converse via normalization, sparse rounding argument, and prime-cycle corollaries have written proofs above. [GitHub Actions](../../.github/workflows/hadamard-all-orders.yml)
+另一個明列的對齊提供外層設計的**六欄精確補足問題**。先取 1,192 條正交欄，疊接時特意使指定兩行符號相反。再按每行所缺正號數循環填入六欄，所得 $2396\times1198$ 符號陣的每欄均平衡，其餘 2,394 行亦均平衡。驗算確認舊欄間的 709,836 個內積全為零，這個六欄填法只滿足 7,152 個新舊欄內積中的 288 個。下一個精確接點是同時滿足全部新舊欄及六條新欄互相之間的內積，或證明此對齊無法實現。這與上文直接近滿方陣的路線有不同的欄數及閉合條件。[外層平衡重現](verify.py)
+
+The GitHub workflow builds the Lean files with version 4.36.0 and treats warnings as errors. The two global implication theorems expose Paley-covered cases and Verheiden completion as inputs. R, B and their alternative marginal growth assumptions remain explicit hypotheses. The fractional identities, conditional induction, row-energy and parity obstructions, order-28 blocked prefix, doubling, and assembly have kernel-checked proofs. The complete fixed-design census and Gram determinant use exact Python arithmetic. The newer Python replays cover the order-324 product, the intersection classification at order 2396, and the length-599 phase congruences. The geometric lattice and group-algebra arguments are written proofs with separately checked arithmetic. [GitHub Actions](../../.github/workflows/hadamard-all-orders.yml)
