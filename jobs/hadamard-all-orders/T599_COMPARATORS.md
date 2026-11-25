@@ -1,6 +1,6 @@
-# Three surviving three-negative comparators at length 599
+# Two surviving three-negative comparators at length 599
 
-Consider a half-flip Goethals–Seidel source of length 599 from \((s,s\tau,sq,sq\tau)\), where \(\tau=+1\) on indices \(0,\ldots,299\) and \(-1\) on indices \(300,\ldots,598\). Assume \(q\) has one negative entry in the first half and two in the second. The necessary correlation congruences reduce all such comparators, up to reflecting the first half, to 149 symmetric placements. Three survive the exact tests below. Survival leaves a system of quadratic equations and does not establish a 64-modular source.
+Consider a half-flip Goethals–Seidel source of length 599 from \((s,s\tau,sq,sq\tau)\), where \(\tau=+1\) on indices \(0,\ldots,299\) and \(-1\) on indices \(300,\ldots,598\). Assume \(q\) has one negative entry in the first half and two in the second. The necessary correlation congruences reduce all such comparators, up to reflecting the first half, to 149 symmetric placements. Two survive the exact tests below. Survival leaves a system of quadratic equations and does not establish a 64-modular source.
 
 ## Positions of the three negative entries
 
@@ -32,12 +32,14 @@ The constant, linear and quadratic coefficients can therefore be recovered by ev
 | 74 | 75 |
 | 99 | 51 |
 
-## Three exact Boolean contradictions
+## Four exact Boolean contradictions
 
-The table lists the six comparators that survive linearization. For \(h=2\), taking linear consequences of the quadratic equations and substituting the resulting pivot variables reduces the dimension successively to \(30,28,27,26,24\). The resulting equation span contains the constant polynomial 1, which contradicts the requirement that every equation vanish.
+The table lists the six comparators that survive linearization. For \(h=1\), alternate linear substitution with two cubic passes. The three linear reductions have dimension chains \((51,50)\), \((50,48)\), and \((48,47,45)\). From the resulting 45-bit system, the verifier checks a complete binary tree. Each internal node substitutes both values of a chosen variable after linear reduction, and each leaf must reduce to the constant polynomial 1. All 86 leaves reduce to this contradiction and the maximum depth is 9.
+
+For \(h=2\), taking linear consequences of the quadratic equations and substituting the resulting pivot variables reduces the dimension successively to \(30,28,27,26,24\). The resulting equation span contains the constant polynomial 1, which contradicts the requirement that every equation vanish.
 
 For \(h=37\), work in the Boolean polynomial ring over \(\mathbb F_2\), with \(x_i^2=x_i\). Multiply the quadratic equations by the individual variables and add the resulting degree-at-most-three equations to the original span. Gaussian elimination produces the constant polynomial 1 after adding the multipliers for the first 33 of the 38 variables. This is an exact contradiction because every polynomial so added vanishes at a common solution of the original equations.
 
 For \(h=99\), a first cubic pass gives one linear equation. Substitute its pivot to reduce from 51 to 50 free bits in the quadratic equations. A second cubic pass gives the constant polynomial 1 after adding the multipliers for the first 33 of the 50 variables.
 
-The [stdlib verifier](defect12_t599_comparators.py) reconstructs the systems for all 149 cases and checks the three Boolean contradictions. The remaining indices are \(0,1,74\). The \(h=0\) comparator is the one used in [NEAR64_599.md](NEAR64_599.md). Solving the product relations for any surviving index, and finding an exact tetrad and panel for any positive source, remain open in this calculation.
+The [stdlib verifier](defect12_t599_comparators.py) reconstructs the systems for all 149 cases and checks the four Boolean contradictions. The remaining indices are \(0,74\). The \(h=0\) comparator is the one used in [NEAR64_599.md](NEAR64_599.md). Solving the product relations for either surviving index, and finding an exact tetrad and panel for any positive source, remain open in this calculation. The integer class-sum obstruction rules out exact orthogonality in this three-negative family and all other balanced interval comparators with at most six minority positions. [Exact sparse conditions](T599_SPARSE_INTERVALS.md)

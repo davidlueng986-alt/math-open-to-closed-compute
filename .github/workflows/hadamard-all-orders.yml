@@ -43,6 +43,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/defect12_near64_family.py
           python3 -B jobs/hadamard-all-orders/defect12_t599_relative.py
           python3 -B jobs/hadamard-all-orders/defect12_t599_comparators.py
+          python3 -B jobs/hadamard-all-orders/defect12_t599_sparse.py
           c++ -O3 -std=c++20 -Wall -Wextra -Werror jobs/hadamard-all-orders/paley_omissions.cpp -o "$RUNNER_TEMP/paley_omissions"
           "$RUNNER_TEMP/paley_omissions"
       - name: Install pinned Lean 4.36.0
@@ -66,3 +67,41 @@ jobs:
       - uses: actions/checkout@v4
       - name: Exhaust the fixed comparator's 36-sign repair radius
         run: python3 -B jobs/hadamard-all-orders/defect12_t599_repairs.py --extended
+
+  exact-exterior-factors:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enumerate the eight exact omitted projection factors
+        run: |
+          c++ -O3 -std=c++20 -Wall -Wextra -Werror jobs/hadamard-all-orders/exterior_exact_factors.cpp -o "$RUNNER_TEMP/exterior_exact_factors"
+          python3 -B jobs/hadamard-all-orders/exterior_exact_factors.py "$RUNNER_TEMP/exterior_exact_factors"
+
+  exact-source-columns:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the pinned CaDiCaL solver and DRAT checker
+        shell: bash
+        run: |
+          cadical="$RUNNER_TEMP/cadical"
+          mkdir "$cadical"
+          curl -fsSL --retry 3 https://codeload.github.com/arminbiere/cadical/tar.gz/146207318796f094dcded87349a64f0c6927309e | tar xz --strip-components=1 -C "$cadical"
+          (cd "$cadical" && ./configure --quiet && make -j2)
+          checker="$RUNNER_TEMP/drat-trim.c"
+          curl -fsSL --retry 3 https://raw.githubusercontent.com/marijnheule/drat-trim/2e3b2dc0ecf938addbd779d42877b6ed69d9a985/drat-trim.c -o "$checker"
+          echo "d834b649f437e091597f5347f259b9f681087f89ca0844d0cee250a1a1a0c2ee  $checker" | sha256sum --check
+          cc -O2 "$checker" -o "$RUNNER_TEMP/drat-trim"
+      - name: Verify that no cyclic block can keep 15 original columns
+        shell: bash
+        run: |
+          input="$RUNNER_TEMP/near64-exact.cnf"
+          proof="$RUNNER_TEMP/near64-exact.drat"
+          python3 -B jobs/hadamard-all-orders/defect12_t599_exact_cnf.py "$input"
+          unsat=0
+          "$RUNNER_TEMP/cadical/build/cadical" "$input" "$proof" || unsat=$?
+          test "$unsat" -eq 20
+          "$RUNNER_TEMP/drat-trim" "$input" "$proof" | tr '\r' '\n' | tee "$RUNNER_TEMP/near64-exact-check.log"
+          grep -qx 's VERIFIED' "$RUNNER_TEMP/near64-exact-check.log"

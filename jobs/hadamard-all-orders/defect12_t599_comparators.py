@@ -9,6 +9,20 @@ MIDPOINT = HALF_LENGTH // 2
 LAST = HALF_LENGTH - 1
 FULL = (1 << HALF_LENGTH) - 1
 
+# Preorder certificate for h=1. Internal labels are zero-based variable
+# indices after linear reduction. Each -1 must reduce to a contradiction.
+H1_TREE = (
+    0, 2, 0, 0, 1, -1, -1, 0, 3, 3, 0, -1, -1, 0, -1, -1, 3, 0, -1, -1,
+    1, -1, -1, -1, 0, 1, -1, -1, 0, -1, -1, 1, 3, 1, 0, -1, 0, -1, -1, 5,
+    5, 1, -1, -1, 1, -1, -1, 5, 1, 0, -1, -1, -1, 2, -1, -1, 1, -1, 0, 0,
+    -1, -1, 0, -1, 0, -1, -1, 3, 6, 5, 4, -1, -1, 0, -1, 0, -1, -1, 5, 0,
+    -1, -1, 0, -1, -1, -1, 2, 1, 3, -1, 6, 5, 0, 0, -1, -1, -1, 4, -1, -1,
+    5, 0, -1, -1, 0, -1, -1, 3, 1, 0, 0, -1, 0, -1, -1, 0, -1, -1, -1, 1,
+    5, 5, 2, -1, -1, 1, -1, 0, -1, -1, 5, 1, -1, -1, 1, -1, -1, 0, 0, -1,
+    -1, -1, 0, 0, 0, -1, -1, 1, -1, -1, 0, 0, 3, 3, 1, -1, -1, 0, -1, -1,
+    3, 0, -1, -1, 0, -1, -1, -1, 1, -1, -1,
+)
+
 
 def bit_indices(word):
     while word:
@@ -251,6 +265,60 @@ def cubic_lift(equations, dimension):
     return None, [row for j, row in pivots.items() if j <= dimension]
 
 
+def fix_variable(equations, dimension, variable, value):
+    """Substitute one Boolean value and renumber the remaining variables."""
+    target = {mask: i for i, mask in enumerate(monomials(dimension - 1, 2))}
+    bit = 1 << variable
+    lower = bit - 1
+    upper = ~((bit << 1) - 1)
+    substitution = []
+    for mask in monomials(dimension, 2):
+        if mask & bit and not value:
+            substitution.append(0)
+        else:
+            reduced_mask = (mask & lower) | ((mask & upper) >> 1)
+            substitution.append(1 << target[reduced_mask])
+    reduced = []
+    for equation in equations:
+        result = 0
+        for i in bit_indices(equation):
+            result ^= substitution[i]
+        reduced.append(result)
+    return reduced
+
+
+def h1_contradiction(equations, dimension):
+    """Check the cubic reduction at the root and all Boolean branches."""
+    for expected in ([51, 50], [50, 48], [48, 47, 45]):
+        equations, chain = substitute_linear_equations(equations, dimension)
+        assert equations is not None and chain == expected
+        dimension = chain[-1]
+        if dimension != 45:
+            contradiction, linear = cubic_lift(equations, dimension)
+            assert contradiction is None and linear
+            equations += linear
+
+    branches = iter(H1_TREE)
+
+    def check(rows, width, depth):
+        variable = next(branches)
+        rows, chain = substitute_linear_equations(rows, width)
+        if variable == -1:
+            assert rows is None
+            return 1, depth
+        width = chain[-1]
+        assert rows is not None and 0 <= variable < width
+        left = fix_variable(rows, width, variable, 0)
+        right = fix_variable(rows, width, variable, 1)
+        left_leaves, left_depth = check(left, width - 1, depth + 1)
+        right_leaves, right_depth = check(right, width - 1, depth + 1)
+        return left_leaves + right_leaves, max(left_depth, right_depth)
+
+    leaves, depth = check(equations, dimension, 0)
+    assert len(H1_TREE) == 2 * leaves - 1 and next(branches, None) is None
+    return leaves, depth
+
+
 def verify():
     outcomes = Counter()
     survivors = []
@@ -268,9 +336,13 @@ def verify():
             outcomes["mod32"] += 1
             continue
         consistent, nullity, polynomials = lift_is_consistent(
-            reference, coordinates, masks, mirror_pivots, keep_polynomials=hole in (2, 37, 99))
+            reference, coordinates, masks, mirror_pivots, keep_polynomials=hole in (1, 2, 37, 99))
         if not consistent:
             outcomes["mod64 linearization"] += 1
+            continue
+        if hole == 1:
+            assert h1_contradiction(polynomials, nullity) == (86, 9)
+            outcomes["mod64 Boolean branching"] += 1
             continue
         if hole == 2:
             reduced, dimensions = substitute_linear_equations(polynomials, nullity)
@@ -293,10 +365,11 @@ def verify():
 
     assert outcomes == {"mod16": 17, "mod32": 16, "mod64 linearization": 110,
                         "mod64 linear substitution": 1, "mod64 cubic": 1,
-                        "mod64 cubic and substitution": 1}
-    assert survivors == [(0, 149), (1, 51), (74, 75)]
+                        "mod64 cubic and substitution": 1, "mod64 Boolean branching": 1}
+    assert survivors == [(0, 149), (74, 75)]
     print("t=599 comparators: 17 fail mod16, 16 more fail mod32, 110 more fail the mod64 linearization")
     print("Boolean lift: h=2,37,99 fail by linear substitution, cubic lifting, or both")
+    print("Boolean lift: h=1 has 86 contradictory leaves at maximum branch depth 9")
     print("surviving hole indices and normalized residual nullities:", survivors)
 
 
