@@ -56,10 +56,10 @@ private lemma walk_append_single_eq_concat {W : Type u} {H : SimpleGraph W} {u v
     (p : H.Walk u v) (h : H.Adj v w) : p.append (Walk.cons h Walk.nil) = p.concat h := by
   induction p with
   | nil => rfl
-  | cons h' p' ih => simp [Walk.append, Walk.concat, ih]
+  | cons h' p' ih => exact congrArg (Walk.cons h') ih
 
 private lemma path_of_cycle_with_edge {W : Type u} [DecidableEq W]
-    {G H : SimpleGraph W} (u v : W) (huv : u ≠ v)
+    {G H : SimpleGraph W} (u v : W) (_huv : u ≠ v)
     (hsub : ∀ x y, H.Adj x y → G.Adj x y ∨ s(x, y) = s(u, v))
     {v0 : W} (c : H.Walk v0 v0) (hcyc : c.IsCycle) (hlen3 : 3 ≤ c.length) (hmem : s(u, v) ∈ c.edges) :
     ∃ p : G.Walk u v, p.IsPath ∧ p.length + 1 = c.length := by
@@ -717,7 +717,7 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
             simp [ht, h1, u0]
           · by_cases ht1 : t.1 = y1
             · have h1 : G.Adj v.1 y1 := Eq.mp (congrArg (G.Adj v.1) ht1) t.2
-              simp [ht1, h1, u0]
+              simp [ht1, h1, u0, hy1_ne_y2]
             · simp [ht, ht1] }
     have hc := Fintype.card_congr e
     rwa [SimpleGraph.card_neighborSet_eq_degree, SimpleGraph.card_neighborSet_eq_degree] at hc
