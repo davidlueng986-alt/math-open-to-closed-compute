@@ -1,0 +1,41 @@
+name: E64 continuation obstruction audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'jobs/erdos64-continuation-obstructions/**'
+      - '.github/workflows/erdos64-continuation-obstructions.yml'
+permissions:
+  contents: read
+  packages: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check exact finite obstructions and scope
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          python3 -VV | tee out/python-version.txt
+          python3 jobs/erdos64-continuation-obstructions/obstruction.py | tee out/two-cut.log
+          python3 jobs/erdos64-continuation-obstructions/degree_pruning_obstruction.py | tee out/degree-pruning.log
+          python3 jobs/erdos64-continuation-obstructions/audit.py | tee out/gadget-and-alternating.log
+          cp jobs/erdos64-continuation-obstructions/*.json out/
+          cp jobs/erdos64-continuation-obstructions/*.md out/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos64-continuation-obstructions
+          path: out/
+          retention-days: 90
