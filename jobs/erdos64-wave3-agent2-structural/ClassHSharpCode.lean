@@ -622,9 +622,9 @@ private lemma noNear_induce {W : Type u} [Fintype W] (H : SimpleGraph W) [Decida
     intro u hu
     have hdeg_eq : (H.induce T').degree u = ((H.induce S).induce T).degree (e.symm u) := by
       have h1 := hiso.degree_eq (e.symm u)
-      have h2 : hiso (e.symm u) = u := e.apply_symm_apply u
+      have h2 : hiso (e.symm u) = u := by change e (e.symm u) = u; exact e.apply_symm_apply u
       rw [h2] at h1
-      exact h1.symm
+      exact h1
     rw [hdeg_eq]
     have hne : e.symm u ≠ w := fun h => hu (by rw [← h, e.apply_symm_apply])
     exact hw (e.symm u) hne
