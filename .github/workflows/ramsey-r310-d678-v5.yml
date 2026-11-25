@@ -1,0 +1,80 @@
+name: Ramsey R310 D678 v5 structural cover
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [jobs/ramsey-r310-d678-v5/launch.txt]
+permissions:
+  contents: read
+  packages: read
+  actions: read
+defaults:
+  run:
+    shell: bash
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: plan
+        run: |
+          python3 jobs/ramsey-r310-d678-v5/solve.py --selftest
+          mkdir -p out
+          python3 jobs/ramsey-r310-d678-v5/solve.py --plan > out/plan.json
+          python3 - <<'PY'
+          import os,json
+          a=json.load(open('out/plan.json'))
+          assert len(a)==48
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f: f.write('matrix='+json.dumps({'include':a},separators=(',',':'))+'\n')
+          print(a)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: D678-coverage-plan
+          path: out/
+  prove:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45675361761'
+          name: D${{ matrix.d }}-N${{ matrix.q }}
+          path: reuse-v2/
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45681429646'
+          name: D${{ matrix.d }}-N${{ matrix.q }}-v3
+          path: reuse-v3/
+      - run: |
+          python3 jobs/ramsey-r310-d678-v5/solve.py --d ${{ matrix.d }} --q ${{ matrix.q }} --band ${{ matrix.band }} --reuse reuse-v3/cuts.jsonl --reuse reuse-v2/cuts.jsonl --out out --seconds 3000 --proof-seconds 480
+          if [ -f out/witness.txt ]; then python3 jobs/ramsey-r310-wave1/verify.py out/witness.txt | tee out/witness-check.json; python3 -c 'import json; assert json.load(open("out/witness-check.json"))["closure_witness"]'; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: D${{ matrix.d }}-N${{ matrix.q }}-B${{ matrix.band }}-v5
+          path: out/
+          retention-days: 30
