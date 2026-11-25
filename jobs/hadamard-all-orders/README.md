@@ -21,7 +21,7 @@ Write $r(n)=\max\{k:P(n,k)\}$. Unconditionally, for every $\epsilon>0$ and all s
 
 At $n=2396$, matching absolute projection multisets constructs **1,197 orthogonal columns** and checks all **715,806** pairwise inner products exactly. The seven-column completion theorem would apply at **2,389**. Extension may require changing the alignment or previously chosen columns. In the separate cyclic construction, 310 of 598 shift pairs vanish on one witness and 49 further original equations suffice under its documented constraints. That shift count does not measure $r(2396)$. This order remains the smallest gap in the cited frontier. [Explicit construction and next-column constraints](STACK_1197.md) · [Cyclic certificates](../hadamard-2396-coverage/README.md) · [Frontier snapshot](https://github.com/vatskishan03/Hadamard/blob/d885022144ba6bf4efa8315e14871a3736947527/FRONTIER.md)
 
-**第 1,198 欄。** 雙通道重排所得一組符號陣保有前 1,197 欄的精確正交。最後一欄的 1,197 個內積全部模八為零，其中 1,081 個也是整數零。須在同一配置消去餘下 116 個內積。[聯合符號證書](STACK_1198_JOINT.md) · [有界排除與雙通道條件](STACK_1198.md)
+**第 1,198 欄。** 雙通道重排所得一組符號陣保有前 1,197 欄的精確正交。最後一欄的 1,197 個內積全部模八為零，其中 1,084 個也是整數零。須在同一配置消去餘下 113 個內積。[聯合符號證書](STACK_1198_JOINT.md) · [有界排除與雙通道條件](STACK_1198.md)
 
 **從相鄰序列長度轉進 2396。** 已重建精確非週期 \(T(598)\)。平方和條件排除從 600 的任意互補四元組各刪一位，以及 23 與 Golay 26 乘積族的差一位插入。299 與 Golay 2 的兩種座標排序同樣已排除所有一次插入，包括兩個互為反轉的中央切點。[平方和障礙](LENGTH_CHANGE_599.md) · [Golay 2 插入排除](T599_GOLAY2_CENTRAL.md)
 

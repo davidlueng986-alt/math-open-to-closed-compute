@@ -12,20 +12,20 @@ UPPER_PIVOT = 522
 LOWER_PIVOT = 30
 UPPER_SECOND_FLIPS = (
     459, 1001, 808, 266, 817, 572, 49, 80, 1155, 873, 97, 843, 714, 675, 327,
-    382, 760, 585, 163, 965, 491, 74, 1164, 243, 1151, 165, 1051, 211, 794,
+    382, 760, 585, 163, 965, 148, 74, 1164, 243, 1151, 165, 1051, 211, 794,
     1126, 342, 333,
 )
 LOWER_DENSE_HOLES = (
-    298, 117, 439, 0, 271, 276, 97, 426, 371, 56, 499, 495, 542, 459, 126,
+    298, 434, 439, 0, 271, 276, 97, 426, 299, 56, 499, 495, 542, 459, 126,
     279, 532, 127, 579, 22, 370, 165, 485, 261, 438, 10, 398, 76, 66, 341,
     590, 60, 32, 247,
 )
 LOWER_SPARSE_SUPPORT = (
     50, 240, 440, 87, 241, 383, 585, 328, 39, 32, 542, 450, 578, 438, 443,
     527, 419, 29, 209, 415, 113, 330, 177, 57, 238, 528, 176, 441, 370, 308,
-    117, 148, 106, 247,
+    117, 148, 106, 212,
 )
-PACKED_HASH = "c5e68035fc641f8f656202828d1874d0eb24852dbce944237078eb1a0161781f"
+PACKED_HASH = "e7286d504cd73630268065c939e1140dfcaebe1bba165abc8c301ee5df3f9b6c"
 
 
 def dot(size, left, right):
@@ -97,7 +97,7 @@ def match_columns(first_a, second_a, first_b, second_b):
         possibilities = exact[signature(first, second)]
         if possibilities:
             pairs[i] = possibilities.pop()
-    assert len(pairs) == 1080
+    assert len(pairs) == 1083
 
     modular = defaultdict(list)
     for remaining in exact.values():
@@ -151,11 +151,11 @@ def verify():
     new = x | (y << n)
     products = [dot(n + m, new, old) for old in columns]
     assert all(value % 8 == 0 for value in products)
-    assert products.count(0) == 1081 and max(map(abs, products)) == 40
-    assert sum(value**2 for value in products) == 34560
+    assert products.count(0) == 1084 and max(map(abs, products)) == 32
+    assert sum(value**2 for value in products) == 25984
     packed = "".join(f"{col:x}\n" for col in [*columns, new]).encode("ascii")
     assert sha256(packed).hexdigest() == PACKED_HASH
-    print("1197 exact columns; next column: 1081 zeros and 116 nonzero multiples of eight")
+    print("1197 exact columns; next column: 1084 zeros and 113 nonzero multiples of eight")
 
 
 if __name__ == "__main__":
