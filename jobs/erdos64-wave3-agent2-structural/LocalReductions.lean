@@ -63,7 +63,7 @@ private lemma path_of_cycle_with_edge {W : Type u} [DecidableEq W]
   | nil => exact False.elim (hc1.ne_nil hc1_eq)
   | @cons _ w _ huw p1 =>
     by_cases hwv : w = v
-    · subst hwv
+    · rcases hwv with rfl
       have hnotmem : s(u, v) ∉ p1.edges := by
         have hnd := hc1.isTrail.edges_nodup
         rw [hc1_eq, Walk.edges_cons, List.nodup_cons] at hnd
@@ -89,8 +89,6 @@ private lemma path_of_cycle_with_edge {W : Type u} [DecidableEq W]
     · let c2 := c1.reverse
       have hc2 : c2.IsCycle := hc1.reverse
       have hlen2 : c2.length = c.length := by rw [Walk.length_reverse, hlen1]
-      have hmem2 : s(u, v) ∈ c2.edges := by
-        rw [Walk.edges_reverse, List.mem_reverse]; exact hmem1
       cases hc2_eq : c2 with
       | nil => exact False.elim (hc2.ne_nil hc2_eq)
       | @cons _ w2 _ huw2 p2 =>
@@ -110,35 +108,35 @@ private lemma path_of_cycle_with_edge {W : Type u} [DecidableEq W]
           | @cons _ w3 _ huw3 p3 =>
             have hc2_alt : c2 = Walk.cons huw3 (p3.concat huw.symm) := by
               change c1.reverse = _
-              rw [hc1_eq, Walk.reverse_cons, hpr, Walk.cons_concat]
+              rw [hc1_eq, Walk.reverse_cons, hpr]
+              rfl
             have hw3_eq : w3 = w2 := by
               have h1 := congrArg Walk.support (hc2_eq.symm.trans hc2_alt)
               simp only [Walk.support_cons] at h1
               have h2 := congrArg List.tail h1
               simp only [List.tail_cons] at h2
-              have h3 := congrArg List.head? h2
-              simp only [Walk.head?_support] at h3
-              exact (Option.some.inj h3).symm
+              rw [Walk.support_eq_cons p2, Walk.support_eq_cons (p3.concat huw.symm)] at h2
+              exact (List.cons.inj h2).1.symm
             have hmem_pr : s(u, v) ∈ p1.reverse.edges := by
               rw [Walk.edges_reverse, List.mem_reverse]
               rw [hc1_eq, Walk.edges_cons, List.mem_cons] at hmem1
               rcases hmem1 with heq | hp
               · rw [Sym2.eq_iff] at heq
-                rcases heq with ⟨_, rfl⟩ | ⟨h1, _⟩
-                · exact False.elim (hwv rfl)
-                · exact False.elim (huv h1)
+                rcases heq with ⟨_, h2⟩ | ⟨h1, _⟩
+                · exact False.elim (hwv h2.symm)
+                · exact False.elim (H.ne_of_adj huw h1)
               · exact hp
             rw [hpr, Walk.edges_cons, List.mem_cons] at hmem_pr
             rcases hmem_pr with heq | hp3
             · rw [Sym2.eq_iff] at heq
-              rcases heq with ⟨_, rfl⟩ | ⟨h1, _⟩
-              · exact hne hw3_eq.symm
-              · exact huv h1
+              rcases heq with ⟨_, h2⟩ | ⟨h1, _⟩
+              · exact hne (hw3_eq.symm.trans h2.symm)
+              · exact H.ne_of_adj huw3 h1
             · have hu_p3 : u ∈ p3.support := Walk.fst_mem_support_of_mem_edges p3 hp3
               have hnd_pr := hp1r_path.support_nodup
               rw [hpr, Walk.support_cons, List.nodup_cons] at hnd_pr
               exact hnd_pr.1 hu_p3
-        subst hw2v
+        rcases hw2v with rfl
         have hnotmem : s(u, v) ∉ p2.edges := by
           have hnd := hc2.isTrail.edges_nodup
           rw [hc2_eq, Walk.edges_cons, List.nodup_cons] at hnd
@@ -164,7 +162,7 @@ private lemma path_of_cycle_with_edge {W : Type u} [DecidableEq W]
 
 /-- Theorem 1 (2-Edge Y-Reduction in Triangle-Free MinimalBad):
     For every degree-3 vertex v with distinct neighbors a, b, c in a triangle-free MinimalBad G,
-    G - v contains a simple a-b path OR a simple b-c path of length 2^k - 1 (k ≥ 2). -/\
+    G - v contains a simple a-b path OR a simple b-c path of length 2^k - 1 (k ≥ 2). -/
 theorem trifree_two_edge_y_reduction {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (htf : ∀ x y z : V, G.Adj x y → G.Adj y z → ¬G.Adj x z)
@@ -208,15 +206,21 @@ theorem trifree_two_edge_y_reduction {V : Type u} [Fintype V] [DecidableEq V]
     by_cases hua : u = a'
     · subst hua
       have hda := degree_add_new_edge_left G0 a' b' hab' hnab
-      simp [a', hva.symm] at hd0; omega
+      change H1.degree a' = G0.degree a' + 1 at hda
+      simp [a', hva.symm] at hd0
+      change G.degree a ≤ H.degree a'; omega
     by_cases hub : u = b'
     · subst hub
       have hdb := degree_add_new_edge_right G0 a' b' hab' hnab
-      simp [b', hvb.symm] at hd0; omega
+      change H1.degree b' = G0.degree b' + 1 at hdb
+      simp [b', hvb.symm] at hd0
+      change G.degree b ≤ H.degree b'; omega
     by_cases huc : u = c'
     · subst huc
       have hdc := degree_add_new_edge_right H1 b' c' hbc' hnab_H1
-      simp [c', hvc.symm] at hd0; omega
+      change H.degree c' = H1.degree c' + 1 at hdc
+      simp [c', hvc.symm] at hd0
+      change G.degree c ≤ H.degree c'; omega
     have hnv : ¬G.Adj u.1 v := by
       intro huv
       have hsub : ({a, b, c} : Finset V) ⊆ G.neighborFinset v := by
@@ -281,12 +285,11 @@ theorem trifree_two_edge_y_reduction {V : Type u} [Fintype V] [DecidableEq V]
             rw [hpr, Walk.support_cons, List.nodup_cons] at hnd
             simpa [q, Walk.support_reverse] using hnd.1
           have hp1_eq : p1 = q.concat hbu2.symm := by
-            have := congrArg Walk.reverse hpr
-            simpa [q, Walk.reverse_cons] using this
+            rw [← Walk.reverse_reverse p1, hpr, Walk.reverse_cons]
           have hq_no1 : s(a', b') ∉ q.edges := fun hm => hb_not_q (Walk.snd_mem_support_of_mem_edges q hm)
           have hq_no2 : s(b', c') ∉ q.edges := fun hm => hb_not_q (Walk.fst_mem_support_of_mem_edges q hm)
           have hedges_eq : cyc1.edges = s(b', u1) :: (q.edges ++ [s(u2, b')]) := by
-            rw [hceq, hp1_eq, Walk.edges_cons, Walk.edges_concat]
+            rw [hceq, hp1_eq, Walk.edges_cons, Walk.edges_concat, List.concat_eq_append]
           have hu12 : (u1 = a' ∧ u2 = c') ∨ (u1 = c' ∧ u2 = a') := by
             rw [hedges_eq, List.mem_cons, List.mem_append, List.mem_singleton] at h1' h2'
             have h1_or : s(a', b') = s(b', u1) ∨ s(a', b') = s(u2, b') := by
@@ -301,20 +304,20 @@ theorem trifree_two_edge_y_reduction {V : Type u} [Fintype V] [DecidableEq V]
               · exact Or.inr h
             have h1_u : u1 = a' ∨ u2 = a' := by
               rcases h1_or with h | h <;> rw [Sym2.eq_iff] at h
-              · rcases h with ⟨h1, _⟩ | ⟨_, rfl⟩
+              · rcases h with ⟨h1, _⟩ | ⟨h1, _⟩
                 · exact False.elim (hab' h1)
-                · exact Or.inl rfl
-              · rcases h with ⟨rfl, _⟩ | ⟨_, h2⟩
-                · exact Or.inr rfl
-                · exact False.elim (hab' h2.symm)
+                · exact Or.inl h1.symm
+              · rcases h with ⟨h1, _⟩ | ⟨h1, _⟩
+                · exact Or.inr h1.symm
+                · exact False.elim (hab' h1)
             have h2_u : u1 = c' ∨ u2 = c' := by
               rcases h2_or with h | h <;> rw [Sym2.eq_iff] at h
-              · rcases h with ⟨_, rfl⟩ | ⟨h1, _⟩
-                · exact Or.inl rfl
-                · exact False.elim (hbc' h1.symm)
-              · rcases h with ⟨h1, _⟩ | ⟨_, rfl⟩
-                · exact False.elim (hbc' h1.symm)
-                · exact Or.inr rfl
+              · rcases h with ⟨_, h2⟩ | ⟨_, h2⟩
+                · exact Or.inl h2.symm
+                · exact False.elim (hbc' h2.symm)
+              · rcases h with ⟨_, h2⟩ | ⟨_, h2⟩
+                · exact False.elim (hbc' h2.symm)
+                · exact Or.inr h2.symm
             rcases h1_u with rfl | rfl <;> rcases h2_u with h | h
             · exact False.elim (hac' h)
             · exact Or.inl ⟨rfl, h⟩
@@ -334,22 +337,28 @@ theorem trifree_two_edge_y_reduction {V : Type u} [Fintype V] [DecidableEq V]
               · rcases (SimpleGraph.edge_adj b' c' x y).mp he2 |>.1 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
                 · exact False.elim (hq_no2 he)
                 · exact False.elim (hq_no2 (Sym2.eq_swap ▸ he))
-          let qG : G.Walk u1.1 u2.1 := (q.transfer G0 hq_G0).map ⟨Subtype.val, fun h => h⟩
+          let fVal : G0 →g G := ⟨Subtype.val, fun h => h⟩
+          let qG : G.Walk u1.1 u2.1 := (q.transfer G0 hq_G0).map fVal
           have hqG_nodup : qG.support.Nodup := by
             have hnd : q.support.Nodup := by
               have h := hp1_path.reverse.support_nodup
               rw [hpr, Walk.support_cons, List.nodup_cons] at h
               simpa [q, Walk.support_reverse] using h.2
-            simpa [qG, Walk.support_map] using hnd.map Subtype.val_injective
+            dsimp only [qG]
+            rw [Walk.support_map, Walk.support_transfer]
+            exact hnd.map Subtype.val_injective
           have hv_not_qG : v ∉ qG.support := by
             intro hvmem
+            dsimp only [qG] at hvmem
             rw [Walk.support_map, List.mem_map] at hvmem
             obtain ⟨x, _, hxv⟩ := hvmem
             exact x.2 hxv
           have hqG_len : qG.length + 2 = 2 ^ k := by
             have hl1 : cyc1.length = q.length + 2 := by
               rw [hceq, hp1_eq, Walk.length_cons, Walk.length_concat]
-            simpa [qG] using (hl1.symm.trans hlen1).symm
+            dsimp only [qG]
+            rw [Walk.length_map, Walk.length_transfer]
+            omega
           have hv_u1 : G.Adj v u1.1 := by rcases hu12 with ⟨rfl, _⟩ | ⟨rfl, _⟩; exact hva; exact hvc
           have hv_u2 : G.Adj u2.1 v := by rcases hu12 with ⟨_, rfl⟩ | ⟨_, rfl⟩; exact hvc.symm; exact hva.symm
           let badC : G.Walk v v := Walk.cons hv_u1 (qG.concat hv_u2)
@@ -360,7 +369,7 @@ theorem trifree_two_edge_y_reduction {V : Type u} [Fintype V] [DecidableEq V]
           have hbad_nodup : badC.support.tail.Nodup := by
             rw [hbad_tail]
             exact List.nodup_append.mpr ⟨hqG_nodup, List.nodup_singleton v,
-              fun x hx1 hx2 => hv_not_qG ((List.mem_singleton.mp hx2) ▸ hx1)⟩
+              fun x hx1 y hy2 heq => hv_not_qG ((List.mem_singleton.mp hy2) ▸ heq ▸ hx1)⟩
           exact False.elim (hm.2.1 ⟨k, v, badC, hk, isCycle_of_support_tail_nodup badC hbad_nodup (by omega), hbad_len⟩)
     · have hsub : ∀ x y, H1.Adj x y → G0.Adj x y ∨ s(x, y) = s(a', b') := by
         intro x y h
@@ -429,7 +438,7 @@ theorem trifree_two_edge_y_reduction {V : Type u} [Fintype V] [DecidableEq V]
 
 /-- Theorem 2 (Class H High-Neighbor Suppression):
     For any degree-3 vertex v adjacent to x ∈ V_{≥4} with other two non-adjacent neighbors a, c,
-    G - v contains a simple a-c path of length 2^k - 1 (k ≥ 2). -/\
+    G - v contains a simple a-c path of length 2^k - 1 (k ≥ 2). -/
 theorem class_h_high_neighbor_suppression {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (v x a c : V) (hv : G.degree v = 3) (hx : 4 ≤ G.degree x)
@@ -454,11 +463,15 @@ theorem class_h_high_neighbor_suppression {V : Type u} [Fintype V] [DecidableEq 
     by_cases hua : u = a'
     · subst hua
       have hda := degree_add_new_edge_left G0 a' c' hac' hnac
-      simp [a', hva.symm] at hd0; omega
+      change H.degree a' = G0.degree a' + 1 at hda
+      simp [a', hva.symm] at hd0
+      change G.degree a ≤ H.degree a'; omega
     by_cases huc : u = c'
     · subst huc
       have hdc := degree_add_new_edge_right G0 a' c' hac' hnac
-      simp [c', hvc.symm] at hd0; omega
+      change H.degree c' = G0.degree c' + 1 at hdc
+      simp [c', hvc.symm] at hd0
+      change G.degree c ≤ H.degree c'; omega
     have hnv : ¬G.Adj u.1 v := by
       intro huv
       have hsub : ({x, a, c} : Finset V) ⊆ G.neighborFinset v := by
@@ -554,7 +567,7 @@ private def contractEdge {V : Type u} [DecidableEq V] (G : SimpleGraph V) (y1 y2
 
 /-- Theorem 3 (Class H High-Triangle Edge Contraction, H-T-2 / H-T-3):
     For any triangle {x, y1, y2} with d(x) ≥ 4, d(y1) = d(y2) = 3, and external neighbors z1 of y1
-    and z2 of y2, G - {y1, y2} contains a simple z1-z2 path of length 2^k - 2 (k ≥ 2). -/\
+    and z2 of y2, G - {y1, y2} contains a simple z1-z2 path of length 2^k - 2 (k ≥ 2). -/
 theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (x y1 y2 z1 z2 : V)
@@ -661,9 +674,9 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
             exact hadj⟩
         invFun := fun t =>
           if ht : t.1 = y2 then
-            ⟨u0, ⟨hvu, by simp only [hv1, u0, ite_false, ite_true]; exact Or.inr (ht ▸ t.2)⟩⟩
+            ⟨u0, ⟨hvu, by simp only [hv1, u0, ite_false, ite_true]; exact Or.inr (by rw [← ht]; exact t.2)⟩⟩
           else if ht1 : t.1 = y1 then
-            ⟨u0, ⟨hvu, by simp only [hv1, u0, ite_false, ite_true]; exact Or.inl (ht1 ▸ t.2)⟩⟩
+            ⟨u0, ⟨hvu, by simp only [hv1, u0, ite_false, ite_true]; exact Or.inl (by rw [← ht1]; exact t.2)⟩⟩
           else
             ⟨⟨t.1, ht⟩, ⟨fun h => G.ne_of_adj t.2 (congrArg Subtype.val h), by
               simp only [hv1, ht1, ite_false]; exact t.2⟩⟩
@@ -680,10 +693,10 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
           intro t
           apply Subtype.ext
           by_cases ht : t.1 = y2
-          · have h1 : ¬G.Adj v.1 y1 := fun h => hnot_both ⟨h, ht ▸ t.2⟩
+          · have h1 : ¬G.Adj v.1 y1 := fun h => hnot_both ⟨h, by rw [← ht]; exact t.2⟩
             simp [ht, h1, u0]
           · by_cases ht1 : t.1 = y1
-            · have h1 : G.Adj v.1 y1 := ht1 ▸ t.2
+            · have h1 : G.Adj v.1 y1 := by rw [← ht1]; exact t.2
               simp [ht1, h1, u0]
             · simp [ht, ht1] }
     have hc := Fintype.card_congr e
@@ -691,7 +704,7 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
   have hdeg_x' : 3 ≤ H.degree x' := by
     let Sx : Finset V := ((G.neighborFinset x).erase y1).erase y2
     let fx : {a // a ∈ Sx} → Sy2 := fun t => ⟨t.1, (Finset.mem_erase.mp t.2).1⟩
-    have hfx_inj : Function.Injective fx := fun _ _ h => Subtype.ext (congrArg Subtype.val h)
+    have hfx_inj : Function.Injective fx := fun _ _ h => Subtype.ext (congrArg (fun z : Sy2 => z.1) h)
     have hsub : insert u0 (Sx.attach.image fx) ⊆ H.neighborFinset x' := by
       intro t ht
       simp only [Finset.mem_insert, Finset.mem_image, Finset.mem_attach, true_and, Subtype.exists] at ht
@@ -706,7 +719,7 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
       simp only [Finset.mem_image, Finset.mem_attach, true_and, Subtype.exists, not_exists]
       intro a ha heq
       have ha1 : a ≠ y1 := (Finset.mem_erase.mp (Finset.mem_erase.mp ha).2).1
-      exact ha1 (congrArg Subtype.val heq)
+      exact ha1 (congrArg (fun z : Sy2 => z.1) heq)
     have hc := Finset.card_le_card hsub
     rw [Finset.card_insert_of_notMem hnot_u0, Finset.card_image_of_injective Sx.attach hfx_inj,
       Finset.card_attach,
@@ -775,7 +788,7 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
     | @cons _ a2 _ ha2 q_rev =>
       let q := q_rev.reverse
       have hp1_eq : p1 = q.concat ha2.symm := by
-        have := congrArg Walk.reverse hpr; simpa [q, Walk.reverse_cons] using this
+        rw [← Walk.reverse_reverse p1, hpr, Walk.reverse_cons]
       have hu0_not_q : u0 ∉ q.support := by
         have hnd := hp1_path.reverse.support_nodup
         rw [hpr, Walk.support_cons, List.nodup_cons] at hnd
@@ -798,16 +811,28 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
           have hb1' : b.1 ≠ y1 := fun h => hb (Subtype.ext h)
           simp only [ha1', hb1', ite_false] at hadj
           exact hadj
-      let qG : G.Walk a1.1 a2.1 := (q.transfer (G.induce Sy2) hq_G).map ⟨Subtype.val, fun h => h⟩
+      let fVal : (G.induce Sy2) →g G := ⟨Subtype.val, fun h => h⟩
+      let qG : G.Walk a1.1 a2.1 := (q.transfer (G.induce Sy2) hq_G).map fVal
       have hqG_nodup : qG.support.Nodup := by
-        simpa [qG, Walk.support_map] using hq_nodup.map Subtype.val_injective
+        dsimp only [qG]
+        rw [Walk.support_map, Walk.support_transfer]
+        exact hq_nodup.map Subtype.val_injective
       have hy1_not_qG : y1 ∉ qG.support := by
-        intro hm1; rw [Walk.support_map, List.mem_map] at hm1
-        obtain ⟨t, ht, ht1⟩ := hm1; exact hu0_not_q ((show t = u0 from Subtype.ext ht1) ▸ ht)
+        intro hm1
+        dsimp only [qG] at hm1
+        rw [Walk.support_map, Walk.support_transfer, List.mem_map] at hm1
+        obtain ⟨t, ht, ht1⟩ := hm1
+        exact hu0_not_q ((show t = u0 from Subtype.ext ht1) ▸ ht)
       have hy2_not_qG : y2 ∉ qG.support := by
-        intro hm2; rw [Walk.support_map, List.mem_map] at hm2
-        obtain ⟨t, _, ht2⟩ := hm2; exact t.2 ht2
-      have hqG_len : qG.length + 2 = 2 ^ k := by simpa [qG] using hq_len
+        intro hm2
+        dsimp only [qG] at hm2
+        rw [Walk.support_map, List.mem_map] at hm2
+        obtain ⟨t, _, ht2⟩ := hm2
+        exact t.2 ht2
+      have hqG_len : qG.length + 2 = 2 ^ k := by
+        dsimp only [qG]
+        rw [Walk.length_map, Walk.length_transfer]
+        exact hq_len
       have hno_close : ∀ y : V, y ∉ qG.support → G.Adj y a1.1 → G.Adj a2.1 y → False := by
         intro y hynot hy_a1 ha2_y
         let badC : G.Walk y y := Walk.cons hy_a1 (qG.concat ha2_y)
@@ -817,7 +842,7 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
         have hbad_nodup : badC.support.tail.Nodup := by
           rw [hbad_tail]
           exact List.nodup_append.mpr ⟨hqG_nodup, List.nodup_singleton y,
-            fun t ht1 ht2 => hynot ((List.mem_singleton.mp ht2) ▸ ht1)⟩
+            fun t ht1 u2 hu2 heq => hynot ((List.mem_singleton.mp hu2) ▸ heq ▸ ht1)⟩
         exact hm.2.1 ⟨k, y, badC, hk, isCycle_of_support_tail_nodup badC hbad_nodup (by omega), hbad_len⟩
       have ha1_mem : a1 = x' ∨ a1 = z1' ∨ a1 = z2' := by
         have := hNu0 ▸ (H.mem_neighborFinset u0 a1).mpr ha1; simpa using this
@@ -830,49 +855,34 @@ theorem class_h_high_triangle_contraction {V : Type u} [Fintype V] [DecidableEq 
         | cons hstep qrest =>
           rw [hqeq, Walk.support_cons, List.nodup_cons] at hq_nodup
           exact hq_nodup.1 qrest.end_mem_support
+      let S : Set V := {u : V | u ≠ y1 ∧ u ≠ y2}
+      have hlift_S : ∀ {a b : V} (p : G.Walk a b), y1 ∉ p.support → y2 ∉ p.support →
+          ∃ (ha : a ∈ S) (hb : b ∈ S) (p' : (G.induce S).Walk ⟨a, ha⟩ ⟨b, hb⟩),
+            p'.length = p.length ∧ p'.support.map Subtype.val = p.support := by
+        intro a b p
+        induction p with
+        | @nil u =>
+          intro h1 h2
+          have hu : u ∈ S := ⟨Ne.symm (by simpa using h1), Ne.symm (by simpa using h2)⟩
+          exact ⟨hu, hu, Walk.nil, rfl, rfl⟩
+        | @cons u v w huv p ih =>
+          intro h1 h2
+          simp only [Walk.support_cons, List.mem_cons, not_or] at h1 h2
+          obtain ⟨hv, hw, p', hlen', hsupp'⟩ := ih h1.2 h2.2
+          have hu : u ∈ S := ⟨Ne.symm h1.1, Ne.symm h2.1⟩
+          have huvS : (G.induce S).Adj ⟨u, hu⟩ ⟨v, hv⟩ := huv
+          exact ⟨hu, hw, Walk.cons huvS p', by simp [hlen'], by simp [hsupp']⟩
       rcases ha1_mem with rfl | rfl | rfl <;> rcases ha2_mem with rfl | rfl | rfl
       · exact False.elim (ha1_ne_a2 rfl)
       · exact False.elim (hno_close y1 hy1_not_qG hxy1.symm hy1z1.symm)
       · exact False.elim (hno_close y2 hy2_not_qG hxy2.symm hy2z2.symm)
       · exact False.elim (hno_close y1 hy1_not_qG hy1z1 hxy1)
       · exact False.elim (ha1_ne_a2 rfl)
-      · let S := {u : V | u ≠ y1 ∧ u ≠ y2}
-        have hlift_S : ∀ {a b : V} (p : G.Walk a b), y1 ∉ p.support → y2 ∉ p.support →
-            ∃ (ha : a ∈ S) (hb : b ∈ S) (p' : (G.induce S).Walk ⟨a, ha⟩ ⟨b, hb⟩),
-              p'.length = p.length ∧ p'.support.map Subtype.val = p.support := by
-          intro a b p
-          induction p with
-          | nil =>
-            intro h1 h2
-            have ha : a ∈ S := ⟨fun h => h1 (by simp [h]), fun h => h2 (by simp [h])⟩
-            exact ⟨ha, ha, Walk.nil, rfl, rfl⟩
-          | @cons u v w huv p ih =>
-            intro h1 h2
-            simp only [Walk.support_cons, List.mem_cons, not_or] at h1 h2
-            obtain ⟨hv, hw, p', hlen', hsupp'⟩ := ih h1.2 h2.2
-            have hu : u ∈ S := ⟨Ne.symm h1.1, Ne.symm h2.1⟩
-            exact ⟨hu, hw, Walk.cons huv p', by simp [hlen'], by simp [hsupp']⟩
-        obtain ⟨hz1S, hz2S, p', hp'len, hp'supp⟩ := hlift_S qG hy1_not_qG hy2_not_qG
+      · obtain ⟨hz1S, hz2S, p', hp'len, hp'supp⟩ := hlift_S qG hy1_not_qG hy2_not_qG
         have hp'_path : p'.IsPath := Walk.IsPath.mk' (List.Nodup.of_map Subtype.val (hp'supp.symm ▸ hqG_nodup))
         exact ⟨k, p', hk, hp'_path, by omega⟩
       · exact False.elim (hno_close y2 hy2_not_qG hy2z2 hxy2)
-      · let S := {u : V | u ≠ y1 ∧ u ≠ y2}
-        have hlift_S : ∀ {a b : V} (p : G.Walk a b), y1 ∉ p.support → y2 ∉ p.support →
-            ∃ (ha : a ∈ S) (hb : b ∈ S) (p' : (G.induce S).Walk ⟨a, ha⟩ ⟨b, hb⟩),
-              p'.length = p.length ∧ p'.support.map Subtype.val = p.support := by
-          intro a b p
-          induction p with
-          | nil =>
-            intro h1 h2
-            have ha : a ∈ S := ⟨fun h => h1 (by simp [h]), fun h => h2 (by simp [h])⟩
-            exact ⟨ha, ha, Walk.nil, rfl, rfl⟩
-          | @cons u v w huv p ih =>
-            intro h1 h2
-            simp only [Walk.support_cons, List.mem_cons, not_or] at h1 h2
-            obtain ⟨hv, hw, p', hlen', hsupp'⟩ := ih h1.2 h2.2
-            have hu : u ∈ S := ⟨Ne.symm h1.1, Ne.symm h2.1⟩
-            exact ⟨hu, hw, Walk.cons huv p', by simp [hlen'], by simp [hsupp']⟩
-        obtain ⟨hz2S, hz1S, p', hp'len, hp'supp⟩ := hlift_S qG hy1_not_qG hy2_not_qG
+      · obtain ⟨hz2S, hz1S, p', hp'len, hp'supp⟩ := hlift_S qG hy1_not_qG hy2_not_qG
         have hp'_path : p'.IsPath := Walk.IsPath.mk' (List.Nodup.of_map Subtype.val (hp'supp.symm ▸ hqG_nodup))
         exact ⟨k, p'.reverse, hk, hp'_path.reverse, by simp [Walk.length_reverse, hp'len]; omega⟩
       · exact False.elim (ha1_ne_a2 rfl)

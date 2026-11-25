@@ -109,7 +109,7 @@ private lemma rotCycle_isCycle {W : Type u} [DecidableEq W] {H : SimpleGraph W} 
 
 /-- Generalized Quotient Cycle Lifting:
     For ANY involution σ ∈ Aut(G) (with or without fixed points!),
-    HasPower (invQuot G σ) → HasPower G. -/\
+    HasPower (invQuot G σ) → HasPower G. -/
 theorem hasPower_of_general_invQuot {V : Type u} {G : SimpleGraph V} {σ : V → V}
     (hinv : ∀ v, σ (σ v) = v) (hauto : ∀ u v, G.Adj u v → G.Adj (σ u) (σ v)) :
     HasPower (invQuot G σ) → HasPower G := by
@@ -279,7 +279,7 @@ def isDefectOrbit {V : Type u} (G : SimpleGraph V) (σ : V → V) (a : InvOrb σ
 
 /-- Cubic General Involution Bound:
     In ANY cubic MinimalBad G, EVERY nontrivial involution σ ∈ Aut(G)
-    has at least 2 defect orbits! -/\
+    has at least 2 defect orbits! -/
 theorem cubic_involution_defect_ge_two {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (hcubic : ∀ v : V, G.degree v = 3)
@@ -342,7 +342,7 @@ theorem cubic_involution_defect_ge_two {V : Type u} [Fintype V] [DecidableEq V]
 
 /-- First symmetry exclusion for all 8 one-defect (S and H) leaves:
     No one-defect MinimalBad G admits a nontrivial involution σ fixing only w
-    with no σ-invariant edges. -/\
+    with no σ-invariant edges. -/
 theorem one_defect_no_symmetric_involution {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (w : V) (hw : G.degree w = 2) (hrest : ∀ v : V, v ≠ w → 3 ≤ G.degree v)
@@ -350,7 +350,7 @@ theorem one_defect_no_symmetric_involution {V : Type u} [Fintype V] [DecidableEq
     (hfix_only_w : ∀ v : V, σ v = v ↔ v = w)
     (hno_inv_edge : ∀ u : V, ¬G.Adj u (σ u)) : False := by
   classical
-  haveI : Fintype (InvOrb σ) := Fintype.ofSurjective (mkOrb σ) Quot.exists_rep
+  have : Fintype (InvOrb σ) := Fintype.ofSurjective (mkOrb σ) Quot.exists_rep
   have hc4 := minimal_bad_noC4 G hm
   obtain ⟨b1, hwb1⟩ := (G.degree_pos_iff_exists_adj w).mp (by omega : 0 < G.degree w)
   have hb1_ne_w : b1 ≠ w := (G.ne_of_adj hwb1).symm
@@ -387,10 +387,12 @@ theorem one_defect_no_symmetric_involution {V : Type u} [Fintype V] [DecidableEq
     have hna : ¬Q.Adj a.1 (mkOrb σ w) := fun h => hab1 (hw_nb_orb a.1 h.symm)
     simp [hna] at hd
     obtain ⟨u, hu⟩ := Quot.exists_rep a.1
+    change mkOrb σ u = a.1 at hu
     have huw : u ≠ w := fun h => a.2 (hu.symm.trans (by rw [h]))
     have hmove : σ u ≠ u := fun h => huw ((hfix_only_w u).mp h)
     have hQd := invQuot_degree_two_orbit G hc4 σ hinv hauto u hmove
     simp [hno_inv_edge u] at hQd
+    change Q.degree (mkOrb σ u) = G.degree u at hQd
     have hu3 := hrest u huw
     rw [← hu] at hd
     omega
@@ -401,12 +403,14 @@ theorem one_defect_no_symmetric_involution {V : Type u} [Fintype V] [DecidableEq
     · rw [(hfix_only_w w).mpr rfl] at h1; exact hb1_ne_w h1
   have hW_ge2 : 2 ≤ Fintype.card Sw := by
     have hd := induce_delete_degree Q (mkOrb σ w) ⟨mkOrb σ b1, hb1_orb_ne_w⟩
-    change H.degree ⟨mkOrb σ b1, hb1_orb_ne_w⟩ + _ = Q.degree (mkOrb σ b1) at hd
+    change H.degree ⟨mkOrb σ b1, hb1_orb_ne_w⟩ + (if Q.Adj (mkOrb σ b1) (mkOrb σ w) then 1 else 0) =
+      Q.degree (mkOrb σ b1) at hd
     have hQd := invQuot_degree_two_orbit G hc4 σ hinv hauto b1 hb1_move
     simp [hno_inv_edge b1] at hQd
+    change Q.degree (mkOrb σ b1) = G.degree b1 at hQd
     have hb1_3 := hrest b1 hb1_ne_w
     have hltW := H.degree_lt_card_verts ⟨mkOrb σ b1, hb1_orb_ne_w⟩
-    omega
+    split_ifs at hd <;> omega
   have hWlt : Fintype.card Sw < Fintype.card V :=
     (Fintype.card_subtype_le _).trans_lt hlt
   have hnear : Near H :=
