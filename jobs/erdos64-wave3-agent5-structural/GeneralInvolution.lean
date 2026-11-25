@@ -27,7 +27,7 @@ universe u
 variable {V : Type u}
 
 /-- In a power-free graph, an involution σ cannot map a non-fixed neighbor v of a non-fixed
-    vertex u to another neighbor of u (otherwise u - v - σu - σv - u is a C4). -/\
+    vertex u to another neighbor of u (otherwise u - v - σu - σv - u is a C4). -/
 theorem no_parallel_of_gen_involution {G : SimpleGraph V} (hfree : ¬ HasPower G)
     (σ : V → V) (hinv : ∀ v, σ (σ v) = v)
     (haut : ∀ a b, G.Adj a b ↔ G.Adj (σ a) (σ b))
@@ -62,7 +62,7 @@ theorem hasPower_of_genInvQuot {G : SimpleGraph V} {σ : V → V}
   · obtain ⟨qf, hqf, x, hxq, hσx⟩ := hfix
     let c' := c.rotate qf hqf
     have hc' : c'.IsCycle := SimpleGraph.Walk.IsCycle.rotate hqf hc
-    have hlen' : c'.length = 2 ^ k := (Walk.length_rotate c hqf).trans hlen
+    have hlen' : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
     let lifted := liftWalk haut c' x hxq
     let u₁ := lifted.1.1
     let p₁ : G.Walk x u₁ := lifted.1.2
@@ -70,7 +70,7 @@ theorem hasPower_of_genInvQuot {G : SimpleGraph V} {σ : V → V}
     have hp₁len : p₁.length = 2 ^ k := lifted.2.2.1.trans hlen'
     have hp₁supp : p₁.support.map (Quotient.mk (invSetoid σ hinv)) = c'.support := lifted.2.2.2
     have hp₁tail_map : p₁.support.tail.map (Quotient.mk (invSetoid σ hinv)) = c'.support.tail := by
-      rw [← List.map_tail, hp₁supp]
+      rw [List.map_tail, hp₁supp]
     have hp₁tail_nodup : p₁.support.tail.Nodup :=
       List.Nodup.of_map _ (hp₁tail_map.symm ▸ hc'.support_nodup)
     have hrel : u₁ = x ∨ u₁ = σ x := Quotient.exact (hu₁q.trans hxq.symm)
@@ -97,7 +97,7 @@ theorem hasPower_of_genInvQuot {G : SimpleGraph V} {σ : V → V}
     have hp₁len : p₁.length = 2 ^ k := lifted.2.2.1.trans hlen
     have hp₁supp : p₁.support.map (Quotient.mk (invSetoid σ hinv)) = c.support := lifted.2.2.2
     have hp₁tail_map : p₁.support.tail.map (Quotient.mk (invSetoid σ hinv)) = c.support.tail := by
-      rw [← List.map_tail, hp₁supp]
+      rw [List.map_tail, hp₁supp]
     have hp₁tail_nodup : p₁.support.tail.Nodup :=
       List.Nodup.of_map _ (hp₁tail_map.symm ▸ hc.support_nodup)
     have hrel : u₁ = u₀ ∨ u₁ = σ u₀ := Quotient.exact (hu₁q.trans hu₀.symm)
@@ -142,7 +142,7 @@ theorem hasPower_of_genInvQuot {G : SimpleGraph V} {σ : V → V}
         obtain ⟨y, hy1, hxy⟩ := List.mem_map.mp hx2
         have hqeq : (⟦x⟧ : Quotient (invSetoid σ hinv)) = ⟦y⟧ := by
           rw [← hxy]
-          exact Quotient.sound (Or.inr (hinv y).symm)
+          exact Quotient.sound (Or.inr rfl)
         have hinj_on := (List.nodup_map_iff_inj_on hp₁tail_nodup).mp
           (hp₁tail_map.symm ▸ hc.support_nodup)
         have heq : x = y := hinj_on x hx1 y hy1 hqeq
@@ -174,6 +174,7 @@ theorem genInvQuot_degree_of_nonfixed [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hfree : ¬ HasPower G)
     (σ : V → V) (hinv : ∀ v, σ (σ v) = v)
     (haut : ∀ a b, G.Adj a b ↔ G.Adj (σ a) (σ b))
+    [Fintype (Quotient (invSetoid σ hinv))]
     [DecidableRel (invQuotGraph G σ hinv).Adj]
     {u : V} (hu : σ u ≠ u) (hno : ¬ G.Adj u (σ u)) :
     (invQuotGraph G σ hinv).degree (⟦u⟧ : Quotient (invSetoid σ hinv)) = G.degree u := by
@@ -212,6 +213,7 @@ theorem no_gen_involution_near_quot [Fintype V] [DecidableEq V]
     (σ : V → V) (hinv : ∀ v, σ (σ v) = v)
     (haut : ∀ a b, G.Adj a b ↔ G.Adj (σ a) (σ b))
     (hnontriv : ∃ u₀ : V, σ u₀ ≠ u₀)
+    [Fintype (Quotient (invSetoid σ hinv))]
     [DecidableRel (invQuotGraph G σ hinv).Adj]
     (hnear : Near (invQuotGraph G σ hinv)) : False := by
   classical
@@ -230,7 +232,7 @@ theorem no_gen_involution_near_quot [Fintype V] [DecidableEq V]
         rw [← hrep q₁, ← hrep q₂, hq₁, hq₂]
         exact Quotient.sound (Or.inr (hinv u₀).symm)
       rw [hqeq, hq₂] at hq₁
-      exact hu₀ hq₁.symm
+      exact hu₀ hq₁
     exact Fintype.card_lt_of_injective_not_surjective pickRep hinj hnsurj
   have hpow : HasPower H := hm.2.2.1 Q H hcard_lt hnear
   exact hm.2.1 (hasPower_of_genInvQuot hinv haut hpow)
@@ -274,7 +276,7 @@ theorem no_single_fixed_involution_zero_inv_edge [Fintype V] [DecidableEq V]
   obtain ⟨u₀, hu₀⟩ := hex_u₀
   have hσu₀ : σ u₀ ≠ u₀ := fun h => hu₀ ((huniq_fix u₀).mp h)
   let H := invQuotGraph G σ hinv
-  letI : DecidableRel H.Adj := fun a b => Classical.dec _
+  let _ : DecidableRel H.Adj := fun a b => Classical.dec _
   have hnear : Near H := by
     refine ⟨⟨⟦u₀⟧, ?_⟩, ⟨⟦w₀⟧, fun q hq => ?_⟩⟩
     · rw [genInvQuot_degree_of_nonfixed G hm.2.1 σ hinv haut hσu₀ (hno_edge u₀)]
@@ -314,7 +316,7 @@ theorem no_mirror_involution_ge3_fixed [Fintype V] [DecidableEq V]
     · exact hw v hvw
   let Q := Quotient (invSetoid σ hinv)
   let H := invQuotGraph G σ hinv
-  letI : DecidableRel H.Adj := fun a b => Classical.dec _
+  let _ : DecidableRel H.Adj := fun a b => Classical.dec _
   have hfix_qdeg : ∀ x : V, σ x = x → 3 ≤ H.degree (⟦x⟧ : Q) := by
     intro x hσx
     let S := (G.neighborFinset x).filter (fun y => σ y = y)
@@ -322,7 +324,7 @@ theorem no_mirror_involution_ge3_fixed [Fintype V] [DecidableEq V]
       ⟨⟦y.1⟧, ⟨fun heq => by
         rcases Quotient.exact heq with h1 | h2
         · exact (G.ne_of_adj ((G.mem_neighborFinset x y.1).mp (Finset.mem_filter.mp y.2).1)) h1
-        · rw [hσx] at h2
+        · rw [(Finset.mem_filter.mp y.2).2] at h2
           exact (G.ne_of_adj ((G.mem_neighborFinset x y.1).mp (Finset.mem_filter.mp y.2).1)) h2,
         x, y.1, rfl, rfl, (G.mem_neighborFinset x y.1).mp (Finset.mem_filter.mp y.2).1⟩⟩
     have hfinj : Function.Injective f := by
@@ -341,7 +343,7 @@ theorem no_mirror_involution_ge3_fixed [Fintype V] [DecidableEq V]
     by_cases hfix : σ u = u
     · exact hfix_qdeg u hfix
     · have hu1 : u ≠ e₀ := fun h => hq (by rw [h])
-      have hu2 : u ≠ σ e₀ := fun h => hq (by rw [h]; exact Quotient.sound (Or.inr (hinv e₀).symm))
+      have hu2 : u ≠ σ e₀ := fun h => hq (by rw [h]; exact Quotient.sound (Or.inr rfl))
       rw [genInvQuot_degree_of_nonfixed G hm.2.1 σ hinv haut hfix (he₀ u hu1 hu2)]
       exact hnonfix_ge3 u hfix
   have hQ2 : 2 ≤ Fintype.card Q := by
@@ -352,7 +354,7 @@ theorem no_mirror_involution_ge3_fixed [Fintype V] [DecidableEq V]
     have hall_eq : ∀ v : V, v = e₀ ∨ v = σ e₀ := by
       intro v
       have hq : (⟦v⟧ : Q) = ⟦e₀⟧ := by
-        haveI : Subsingleton Q := Fintype.card_le_one_iff_subsingleton.mp hle1
+        have _ : Subsingleton Q := Fintype.card_le_one_iff_subsingleton.mp hle1
         exact Subsingleton.elim _ _
       exact Quotient.exact hq
     have hs : (Finset.univ : Finset V) ⊆ {e₀, σ e₀} := by
