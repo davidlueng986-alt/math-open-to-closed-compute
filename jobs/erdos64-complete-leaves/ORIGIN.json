@@ -1,0 +1,49 @@
+{
+  "Shadow": {
+    "path": "jobs/erdos-64-lean-shadow/Shadow.lean",
+    "base_commit": "0fb8bc1d63bf6b5530319d306c99a631b28408dd",
+    "changes": [
+      "Lean 4.36 Nat.strong_induction_on alternative renamed h to ind; proof unchanged."
+    ]
+  },
+  "Core": {
+    "path": "jobs/erdos64-closure-core/Core.lean",
+    "base_commit": "0fb8bc1d63bf6b5530319d306c99a631b28408dd",
+    "changes": []
+  },
+  "Leaves": {
+    "path": "jobs/erdos64-closure-core/Leaves.lean",
+    "base_commit": "0fb8bc1d63bf6b5530319d306c99a631b28408dd",
+    "changes": []
+  },
+  "Descent": {
+    "path": "jobs/erdos-64-lean-descent/Descent.lean",
+    "base_commit": "0fb8bc1d63bf6b5530319d306c99a631b28408dd",
+    "changes": []
+  },
+  "BinarySyndrome": {
+    "path": "jobs/erdos64-lean-global-pairing/BinarySyndrome.lean",
+    "base_commit": "0fb8bc1d63bf6b5530319d306c99a631b28408dd",
+    "changes": []
+  },
+  "PairedShadow": {
+    "path": "jobs/erdos64-lean-global-pairing/PairedShadow.lean",
+    "base_commit": "0fb8bc1d63bf6b5530319d306c99a631b28408dd",
+    "changes": []
+  },
+  "Incidence": {
+    "path": "jobs/erdos64-lean-global-pairing/Incidence.lean",
+    "base_commit": "0fb8bc1d63bf6b5530319d306c99a631b28408dd",
+    "changes": []
+  },
+  "BipartiteDegree": {
+    "path": "jobs/erdos64-closure-leaves/BipartiteDegree.lean",
+    "base_commit": "0fb8bc1d63bf6b5530319d306c99a631b28408dd",
+    "changes": []
+  },
+  "TriangleCut": {
+    "path": "jobs/erdos64-closure-leaves/TriangleCut.lean",
+    "base_commit": "0fb8bc1d63bf6b5530319d306c99a631b28408dd",
+    "changes": []
+  }
+}

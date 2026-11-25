@@ -3,11 +3,6 @@ set -euo pipefail
 src="$GITHUB_WORKSPACE/jobs/erdos64-complete-leaves"
 out="$GITHUB_WORKSPACE/out"
 mkdir -p "$out/source"
-cp "$GITHUB_WORKSPACE/jobs/erdos-64-lean-shadow/Shadow.lean" "$src/"
-cp "$GITHUB_WORKSPACE/jobs/erdos-64-lean-descent/Descent.lean" "$src/"
-cp "$GITHUB_WORKSPACE/jobs/erdos64-closure-core/"{Core,Leaves}.lean "$src/"
-cp "$GITHUB_WORKSPACE/jobs/erdos64-lean-global-pairing/"{BinarySyndrome,PairedShadow,Incidence}.lean "$src/"
-cp "$GITHUB_WORKSPACE/jobs/erdos64-closure-leaves/"{BipartiteDegree,TriangleCut}.lean "$src/"
 cp "$src/"*.lean "$out/source/"
 cd /opt/mathlib4
 git rev-parse HEAD | tee "$out/mathlib-commit.txt"
