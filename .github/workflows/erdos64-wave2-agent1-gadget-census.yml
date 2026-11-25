@@ -1,0 +1,52 @@
+name: E64 Wave2 Agent1 Exact Cubic Gadget Census
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  census:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: gen-2port-n24
+            n: 24
+            k: 2
+            tri_free: 0
+            depth: 12
+          - name: tf-2port-n26
+            n: 26
+            k: 2
+            tri_free: 1
+            depth: 12
+          - name: tf-3port-n23
+            n: 23
+            k: 3
+            tri_free: 1
+            depth: 12
+          - name: gen-3port-n21
+            n: 21
+            k: 3
+            tri_free: 0
+            depth: 11
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and run exact bitboard census (${{ matrix.name }})
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          g++ -O3 -fopenmp -march=native -o gadget_search_mt jobs/erdos64-wave2-agent1-gadget-census/gadget_search_mt.cpp
+          # Ground-truth sanity check first
+          ./gadget_search_mt 3 3 0 3 | tee out/sanity.log
+          ./gadget_search_mt 7 3 0 5 | tee -a out/sanity.log
+          ./gadget_search_mt 15 3 0 6 | tee -a out/sanity.log
+          # Target frontier census
+          ./gadget_search_mt ${{ matrix.n }} ${{ matrix.k }} ${{ matrix.tri_free }} ${{ matrix.depth }} | tee out/${{ matrix.name }}.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos64-wave2-agent1-${{ matrix.name }}
+          path: out/
+          retention-days: 90
