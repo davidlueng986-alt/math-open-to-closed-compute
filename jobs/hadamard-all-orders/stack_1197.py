@@ -130,6 +130,20 @@ def check_extension_sieve():
     assert odd_frame_counts == [2, 2]
     print("n=2396 stacked extension: radius at least 28, 23 next projection directions, 4 full frame pairs")
 
+    fixed = (0, 1, 600, 601)
+    fixed_block = [tuple(2 * (lower[j] >> i & 1) - 1 for i in fixed) for j in fixed]
+    normalized = {tuple(sorted(abs(dot(column, row_signs)) // 2 for column in fixed_block))
+                  for row_signs in product((-1, 1), repeat=4)}
+    assert normalized == {(1, 1, 1, 1), (0, 0, 0, 2)}
+    partitions = [values for parity in (0, 1)
+                  for values in combinations_with_replacement(range(parity, isqrt(4 * multiplier) + 1, 2), 4)
+                  if dot(values, values) == 4 * multiplier]
+    for order in (13, 23, 299):
+        for values in partitions:
+            folded = tuple(sorted(min(value % order, (-value) % order) for value in values))
+            assert folded not in normalized
+    print("n=2396 stacked extension: the matched 13-, 23-, and 299-fold projection families are impossible")
+
 
 def verify():
     columns = construct()

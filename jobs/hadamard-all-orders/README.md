@@ -21,6 +21,10 @@ Write $r(n)=\max\{k:P(n,k)\}$. Unconditionally, for every $\epsilon>0$ and all s
 
 At $n=2396$, matching absolute projection multisets constructs **1,197 orthogonal columns** and checks all **715,806** pairwise inner products exactly. The seven-column completion theorem would apply at **2,389**. Extension may require changing the alignment or previously chosen columns. In the separate cyclic construction, 310 of 598 shift pairs vanish on one witness and 49 further original equations suffice under its documented constraints. That shift count does not measure $r(2396)$. This order remains the smallest gap in the cited frontier. [Explicit construction and next-column constraints](STACK_1197.md) · [Cyclic certificates](../hadamard-2396-coverage/README.md) · [Frontier snapshot](https://github.com/vatskishan03/Hadamard/blob/d885022144ba6bf4efa8315e14871a3736947527/FRONTIER.md)
 
+**第 1,198 欄。** 固定已驗證來源與第一條新增欄，兩部取雙來源欄乘積再各變更至多四個符號的情形已排除。改作雙通道正交變換，可保持第一條新增欄並取得符合省略投影的精確下部候選，仍須配出完整上部。[有界排除與精確下部](STACK_1198.md)
+
+**從相鄰序列長度轉進 2396。** 已重建精確非週期 \(T(598)\)。平方和條件排除從 600 的任意互補四元組各刪一位，以及 23 與 Golay 26 乘積族的差一位插入。299 與 Golay 2 的半區塊插入只餘切點 149、150，互為反轉；等價的兩條整數方程仍未解。[平方和障礙](LENGTH_CHANGE_599.md) · [中央插入方程](T599_GOLAY2_CENTRAL.md)
+
 ## Dependency table
 
 | ID | Statement to establish | Status |
