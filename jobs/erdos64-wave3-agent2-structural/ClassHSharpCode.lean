@@ -610,8 +610,6 @@ private lemma noNear_induce {W : Type u} [Fintype W] (H : SimpleGraph W) [Decida
       invFun := fun y => ⟨⟨y.1, hmemS y⟩, hmemT y⟩
       left_inv := fun _ => Subtype.ext (Subtype.ext rfl)
       right_inv := fun _ => Subtype.ext rfl }
-  have hiso : ((H.induce S).induce T) ≃g (H.induce T') :=
-    { toEquiv := e, map_rel_iff' := Iff.rfl }
   have hnear' : Near (H.induce T') := by
     obtain ⟨⟨u0, hu0⟩, w, hw⟩ := hnear
     have hcardT : 2 ≤ Fintype.card T := by
@@ -621,10 +619,13 @@ private lemma noNear_induce {W : Type u} [Fintype W] (H : SimpleGraph W) [Decida
     apply near_of_except (H.induce T') (e w) (by omega)
     intro u hu
     have hdeg_eq : (H.induce T').degree u = ((H.induce S).induce T).degree (e.symm u) := by
-      have h1 := hiso.degree_eq (e.symm u)
-      have h2 : hiso (e.symm u) = u := by change e (e.symm u) = u; exact e.apply_symm_apply u
-      rw [h2] at h1
-      exact h1
+      let en : (H.induce T').neighborSet u ≃ ((H.induce S).induce T).neighborSet (e.symm u) :=
+        { toFun := fun x => ⟨e.symm x.1, x.2⟩
+          invFun := fun x => ⟨e x.1, x.2⟩
+          left_inv := fun x => Subtype.ext (e.apply_symm_apply x.1)
+          right_inv := fun x => Subtype.ext (e.symm_apply_apply x.1) }
+      have hc := Fintype.card_congr en
+      rwa [SimpleGraph.card_neighborSet_eq_degree, SimpleGraph.card_neighborSet_eq_degree] at hc
     rw [hdeg_eq]
     have hne : e.symm u ≠ w := fun h => hu (by rw [← h, e.apply_symm_apply])
     exact hw (e.symm u) hne
