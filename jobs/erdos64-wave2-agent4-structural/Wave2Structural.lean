@@ -361,7 +361,7 @@ theorem dyadic_path_of_identify_power {V : Type u} {G : SimpleGraph V}
       have hqnodup : q.support.Nodup := (List.nodup_append.mp hnodup_all).1
       have hnotx' : x' ∉ q.support := by
         intro hx
-        exact (List.nodup_append.mp hnodup_all).2.2 x' hx (by simp) rfl
+        exact (List.nodup_append.mp hnodup_all).2.2 x' hx x' (List.mem_singleton.mpr rfl) rfl
       let qG := liftAvoidWalk hxy q hnotx'
       have hqG_len : qG.length = q.length := liftAvoidWalk_length hxy q hnotx'
       have hqG_supp : qG.support = q.support.map Subtype.val := liftAvoidWalk_support hxy q hnotx'
@@ -1020,10 +1020,11 @@ theorem cubic_triangle_free_two_path_mersenne {V : Type u} [Fintype V]
             rw [hrev_eq, Walk.reverse_cons] at h1
             cases hr'_eq : r'.reverse with
             | nil =>
-              have hlen0 : r'.reverse.length = 0 := by rw [hr'_eq]; rfl
+              have hlen0 : r'.length = 0 := by
+                rw [← Walk.length_reverse, hr'_eq]; rfl
               have h3 := hc'rev.three_le_length
               rw [hrev_eq, Walk.length_cons] at h3
-              simp at hlen0; omega
+              omega
             | @cons _ b2 _ e3 rest =>
               have hb2 : b2 = b := by
                 have h2 : c' = (Walk.cons e3 rest).append (Walk.cons e2.symm Walk.nil) := by
