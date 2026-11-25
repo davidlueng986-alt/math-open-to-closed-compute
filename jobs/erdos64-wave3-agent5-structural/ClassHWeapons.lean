@@ -154,7 +154,7 @@ theorem class_h_no_defect_triangle_adj_high [Fintype V] [DecidableEq V]
   have hxdeg : 3 ≤ H.degree ⟨x, hxS⟩ := by
     have hd := hdeg_drop ⟨x, hxS⟩
     dsimp only at hd
-    omega
+    split_ifs at hd <;> omega
   obtain ⟨_, w', hw'⟩ := hm.1
   have hww : w' = w := by
     by_contra hne; have := hw' w (Ne.symm hne); omega

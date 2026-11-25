@@ -108,6 +108,7 @@ theorem wfree_2cut_matching_and_cubic_boundary [Fintype V] [DecidableEq V]
     have hge4 : 4 ≤ G.degree u₁.1 := by omega
     have hu1_H : 3 ≤ H.degree u₁ := by
       have hd := induce_degree_add_out G B u₁
+      change H.degree u₁ + _ = G.degree u₁.1 at hd
       omega
     have hnear : Near H := near_of_except H u₂ hB2 (fun u hu => by
       by_cases hu1 : u = u₁
@@ -120,6 +121,7 @@ theorem wfree_2cut_matching_and_cubic_boundary [Fintype V] [DecidableEq V]
     have hge4 : 4 ≤ G.degree u₂.1 := by omega
     have hu2_H : 3 ≤ H.degree u₂ := by
       have hd := induce_degree_add_out G B u₂
+      change H.degree u₂ + _ = G.degree u₂.1 at hd
       omega
     have hnear : Near H := near_of_except H u₁ hB2 (fun u hu => by
       by_cases hu2 : u = u₂
@@ -152,9 +154,13 @@ theorem wfree_3cut_at_most_one_high_boundary [Fintype V] [DecidableEq V]
     obtain ⟨x, hx⟩ := hsurj z
     exact hz (hx ▸ x.2)
   have hu1_H : 3 ≤ H.degree u₁ := by
-    have hd := induce_degree_add_out G B u₁; omega
+    have hd := induce_degree_add_out G B u₁
+    change H.degree u₁ + _ = G.degree u₁.1 at hd
+    omega
   have hu2_H : 3 ≤ H.degree u₂ := by
-    have hd := induce_degree_add_out G B u₂; omega
+    have hd := induce_degree_add_out G B u₂
+    change H.degree u₂ + _ = G.degree u₂.1 at hd
+    omega
   have hnear : Near H := near_of_except H u₃ hB2 (fun u hu3 => by
     by_cases hu1 : u = u₁
     · rw [hu1]; exact hu1_H
