@@ -30,9 +30,9 @@ def walkDropAddedEdge {α : Type u} {H₀ : SimpleGraph α} {q₁ q₂ : α} :
         apply hno
         rw [Walk.edges_cons, List.mem_cons]
         left
-        rcases hedge.1 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-        · rfl
-        · exact Sym2.eq_swap
+        rcases hedge.1 with ⟨h1, h2⟩ | ⟨h1, h2⟩
+        · rw [h1, h2]
+        · rw [h1, h2, Sym2.eq_swap]
     .cons hab0 (walkDropAddedEdge rest (fun hm => hno (by rw [Walk.edges_cons]; exact List.mem_cons_of_mem _ hm)))
 
 lemma walkDropAddedEdge_length {α : Type u} {H₀ : SimpleGraph α} {q₁ q₂ : α}
@@ -93,13 +93,13 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
   have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by omega : 0 < 2) hk
   by_cases huse : s(q₁, q₂) ∈ c.edges
   · have hq₁_mem : q₁ ∈ c.support := Walk.fst_mem_support_of_mem_edges c huse
-    let c' : H.Walk q₁ q₁ := (c.dropUntil q₁ hq₁_mem).append (c.takeUntil q₁ hq₁_mem)
-    have hc'_eq : c' = c.rotate hq₁_mem := rfl
-    have hc' : c'.IsCycle := hc'_eq ▸ hc.rotate hq₁_mem
-    have hlen' : c'.length = 2 ^ k := by rw [hc'_eq, Walk.length_rotate, hlen]
+    let c' : H.Walk q₁ q₁ := c.rotate q₁ hq₁_mem
+    have hc' : c'.IsCycle := hc.rotate hq₁_mem
+    have hlen' : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
     have huse' : s(q₁, q₂) ∈ c'.edges := by
       have hsp : c = (c.takeUntil q₁ hq₁_mem).append (c.dropUntil q₁ hq₁_mem) := (Walk.take_spec c hq₁_mem).symm
       rw [hsp, Walk.edges_append, List.mem_append] at huse
+      change s(q₁, q₂) ∈ ((c.dropUntil q₁ hq₁_mem).append (c.takeUntil q₁ hq₁_mem)).edges
       rw [Walk.edges_append, List.mem_append]
       exact huse.symm
     have hex_path : ∃ P₀ : H₀.Walk q₁ q₂, P₀.IsPath ∧ P₀.length + 1 = 2 ^ k := by
@@ -138,9 +138,9 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
                 rw [Walk.edges_reverse, List.mem_reverse]; exact huse'
               rw [hcre, Walk.edges_cons, List.mem_cons] at huse_cr
               rcases huse_cr with heq | hmem_r'
-              · rcases Sym2.eq_iff.mp heq with ⟨_, h2⟩ | ⟨h1, _⟩
+              · rcases Sym2.eq_iff.mp heq with ⟨_, h2⟩ | ⟨_, h2⟩
                 · exact h2.symm
-                · exact False.elim (hne h1)
+                · exact False.elim (hne h2.symm)
               · exfalso
                 have hlast : ∀ {x y : Q} (w : H.Walk x y), w.IsPath → ∀ z, s(y, z) ∈ w.edges →
                     ∃ hzy : H.Adj y z, ∃ w' : H.Walk z x, w.reverse = .cons hzy w' := by
@@ -164,7 +164,7 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
                       exact hnod.1 hy_in_w'
                 have hrest'_path : rest'.IsPath := Walk.IsPath.mk' hrest'_nodup
                 obtain ⟨_, w', hw'⟩ := hlast rest' hrest'_path q₂ hmem_r'
-                have hc'_first : c'.getVert 1 = b := by rw [hce]; rfl
+                have hc'_first : c'.getVert 1 = b := by rw [hce]; simp [Walk.getVert_cons]
                 have hcr_rev : cr.reverse = c' := Walk.reverse_reverse c'
                 rw [hcre, Walk.reverse_cons, hw'] at hcr_rev
                 have hc'_first2 : c'.getVert 1 = q₂ := by rw [← hcr_rev]; simp
@@ -194,13 +194,14 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
     have hp₁supp : p₁.support.map (Quotient.mk (invSetoid σ hinv)) = P₀.support := lifted.2.2.2
     have hp₁nodup : p₁.support.Nodup := List.Nodup.of_map _ (hp₁supp.symm ▸ hP₀_path.support_nodup)
     have hv₂_inv : G.Adj v₂ (σ v₂) := by
-      rcases Quotient.exact hv₂q with rfl | rfl
-      · exact he₂
-      · rw [hinv u₂]; exact ((haut u₂ (σ u₂)).mp he₂) |> fun h => by rwa [hinv u₂] at h
+      rcases Quotient.exact hv₂q with h | h
+      · rw [h]; exact he₂
+      · rw [h, hinv u₂]; exact ((haut u₂ (σ u₂)).mp he₂) |> fun h' => by rwa [hinv u₂] at h'
     let f : G →g G := mapWalkAut σ haut
     have hσ_inj : Function.Injective σ := Function.LeftInverse.injective hinv
     let p₂ : G.Walk (σ v₂) (σ u₁) := (p₁.map f).reverse
-    have hp₂len : p₂.length + 1 = 2 ^ k := by simp [p₂, hp₁len]
+    have hp₂len : p₂.length + 1 = 2 ^ k := by
+      dsimp only [p₂]; rw [Walk.length_reverse, Walk.length_map]; exact hp₁len
     have hp₂supp : p₂.support = (p₁.support.map σ).reverse := by
       simp [p₂, Walk.support_reverse, Walk.support_map, f, mapWalkAut]
     have hp₂nodup : p₂.support.Nodup := by
@@ -224,7 +225,8 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
       have h1 : cyc.support = p₁.support ++ (p₂.support ++ [u₁]) := by
         simp [cyc, Walk.support_append, Walk.support_cons]
       have h2 : p₁.support = u₁ :: p₁.support.tail := (p₁.cons_tail_support).symm
-      rw [h1, h2, List.cons_append, List.tail_cons, List.append_assoc]
+      rw [h1, h2]
+      simp only [List.cons_append, List.tail_cons, List.append_assoc]
     have hcyc_nodup : cyc.support.tail.Nodup := by
       rw [hcyc_tail]
       have hp₁_split : p₁.support = u₁ :: p₁.support.tail := (p₁.cons_tail_support).symm
@@ -447,7 +449,7 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
           rw [heq]; simp [h1, h2]
     have hcard_lt : Fintype.card Q < Fintype.card V := by
       let pickRep : Q → V := fun q => Classical.choose (Quotient.exists_rep q)
-      have hrep : ∀ q, ⟦pickRep q⟧ = q := fun q => Classical.choose_spec (Quotient.exists_rep q)
+      have hrep : ∀ q : Q, (⟦pickRep q⟧ : Q) = q := fun q => Classical.choose_spec (Quotient.exists_rep q)
       have hinj : Function.Injective pickRep := fun a b h => by rw [← hrep a, ← hrep b, h]
       have hnsurj : ¬ Function.Surjective pickRep := by
         intro hsurj
@@ -592,7 +594,7 @@ theorem no_defect_fixed_involution_zero_edges [Fintype V] [DecidableEq V]
   obtain ⟨u, hu⟩ := hex_u
   have hcard_lt : Fintype.card Q < Fintype.card V := by
     let pickRep : Q → V := fun q => (Classical.choose (Quotient.exists_rep q)).1
-    have hrep : ∀ q, ⟦Classical.choose (Quotient.exists_rep q)⟧ = q :=
+    have hrep : ∀ q : Q, (⟦Classical.choose (Quotient.exists_rep q)⟧ : Q) = q :=
       fun q => Classical.choose_spec (Quotient.exists_rep q)
     have hinj : Function.Injective pickRep := fun a b h => by
       rw [← hrep a, ← hrep b]
