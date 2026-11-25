@@ -99,8 +99,8 @@ theorem hasPower_of_any_invQuot {G : SimpleGraph V} {σ : V → V}
   have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
   by_cases hfix : ∃ v : V, σ v = v ∧ (⟦v⟧ : Quotient (invSetoid σ hinv)) ∈ c.support
   · obtain ⟨v₀, hv₀fix, hv₀mem⟩ := hfix
-    let c' := c.rotate hv₀mem
-    have hc' : c'.IsCycle := hc.rotate hv₀mem
+    let c' := c.rotate (⟦v₀⟧ : Quotient (invSetoid σ hinv)) hv₀mem
+    have hc' : c'.IsCycle := hc.rotate (⟦v₀⟧ : Quotient (invSetoid σ hinv)) hv₀mem
     have hlen' : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
     let lifted := liftWalk haut c' v₀ rfl
     let v₁ := lifted.1.1
@@ -109,7 +109,7 @@ theorem hasPower_of_any_invQuot {G : SimpleGraph V} {σ : V → V}
     have hp₁len : p₁.length = 2 ^ k := lifted.2.2.1.trans hlen'
     have hp₁supp : p₁.support.map (Quotient.mk (invSetoid σ hinv)) = c'.support := lifted.2.2.2
     have hp₁tail_map : p₁.support.tail.map (Quotient.mk (invSetoid σ hinv)) = c'.support.tail := by
-      rw [← List.map_tail, hp₁supp]
+      rw [List.map_tail, hp₁supp]
     have hp₁tail_nodup : p₁.support.tail.Nodup :=
       List.Nodup.of_map _ (hp₁tail_map.symm ▸ hc'.support_nodup)
     have hrel : v₁ = v₀ ∨ v₁ = σ v₀ := Quotient.exact hv₁q
@@ -117,14 +117,17 @@ theorem hasPower_of_any_invQuot {G : SimpleGraph V} {σ : V → V}
       rcases hrel with h | h
       · exact h
       · exact h.trans hv₀fix
-    subst hsame
-    have hnil : ¬ p₁.Nil := by
+    let p₁' : G.Walk v₀ v₀ := p₁.copy rfl hsame
+    have hp₁'len : p₁'.length = 2 ^ k := by rw [Walk.length_copy, hp₁len]
+    have hp₁'supp : p₁'.support = p₁.support := Walk.support_copy p₁ rfl hsame
+    have hnil : ¬ p₁'.Nil := by
       intro h; have := Walk.length_eq_zero_iff.mpr h; omega
-    have hcyc : p₁.IsCycle := by
+    have hcyc : p₁'.IsCycle := by
       apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
       refine ⟨Walk.IsPath.mk' ?_, by omega⟩
-      rwa [Walk.support_tail_of_not_nil _ hnil]
-    exact ⟨k, v₀, p₁, hk, hcyc, hp₁len⟩
+      rw [Walk.support_tail_of_not_nil _ hnil, hp₁'supp]
+      exact hp₁tail_nodup
+    exact ⟨k, v₀, p₁', hk, hcyc, hp₁'len⟩
   · push Not at hfix
     obtain ⟨u₀, hu₀⟩ := Quotient.exists_rep q₀
     let lifted := liftWalk haut c u₀ hu₀
@@ -134,19 +137,22 @@ theorem hasPower_of_any_invQuot {G : SimpleGraph V} {σ : V → V}
     have hp₁len : p₁.length = 2 ^ k := lifted.2.2.1.trans hlen
     have hp₁supp : p₁.support.map (Quotient.mk (invSetoid σ hinv)) = c.support := lifted.2.2.2
     have hp₁tail_map : p₁.support.tail.map (Quotient.mk (invSetoid σ hinv)) = c.support.tail := by
-      rw [← List.map_tail, hp₁supp]
+      rw [List.map_tail, hp₁supp]
     have hp₁tail_nodup : p₁.support.tail.Nodup :=
       List.Nodup.of_map _ (hp₁tail_map.symm ▸ hc.support_nodup)
     have hrel : u₁ = u₀ ∨ u₁ = σ u₀ := Quotient.exact (hu₁q.trans hu₀.symm)
     rcases hrel with hsame | hflip
-    · subst hsame
-      have hnil : ¬ p₁.Nil := by
+    · let p₁' : G.Walk u₀ u₀ := p₁.copy rfl hsame
+      have hp₁'len : p₁'.length = 2 ^ k := by rw [Walk.length_copy, hp₁len]
+      have hp₁'supp : p₁'.support = p₁.support := Walk.support_copy p₁ rfl hsame
+      have hnil : ¬ p₁'.Nil := by
         intro h; have := Walk.length_eq_zero_iff.mpr h; omega
-      have hcyc : p₁.IsCycle := by
+      have hcyc : p₁'.IsCycle := by
         apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
         refine ⟨Walk.IsPath.mk' ?_, by omega⟩
-        rwa [Walk.support_tail_of_not_nil _ hnil]
-      exact ⟨k, u₀, p₁, hk, hcyc, hp₁len⟩
+        rw [Walk.support_tail_of_not_nil _ hnil, hp₁'supp]
+        exact hp₁tail_nodup
+      exact ⟨k, u₀, p₁', hk, hcyc, hp₁'len⟩
     · let f : G →g G := mapWalkAut σ haut
       have hσ_inj : Function.Injective σ := Function.LeftInverse.injective hinv
       let p₂_raw : G.Walk (σ u₀) (σ u₁) := p₁.map f
@@ -154,7 +160,8 @@ theorem hasPower_of_any_invQuot {G : SimpleGraph V} {σ : V → V}
       let p₂ : G.Walk u₁ u₀ := p₂_raw.copy hflip.symm hσu₁
       let p : G.Walk u₀ u₀ := p₁.append p₂
       have hp₂len : p₂.length = 2 ^ k := by
-        simp [p₂, p₂_raw, Walk.length_copy, Walk.length_map, hp₁len]
+        show (p₂_raw.copy hflip.symm hσu₁).length = 2 ^ k
+        rw [Walk.length_copy, Walk.length_map, hp₁len]
       have hplen : p.length = 2 ^ (k + 1) := by
         simp only [p, Walk.length_append, hp₁len, hp₂len, pow_succ]
         omega
@@ -165,7 +172,7 @@ theorem hasPower_of_any_invQuot {G : SimpleGraph V} {σ : V → V}
       have hp_tail : p.support.tail = p₁.support.tail ++ p₂.support.tail := by
         have hps : p.support = p₁.support ++ p₂.support.tail := Walk.support_append p₁ p₂
         have hp₁s : p₁.support = u₀ :: p₁.support.tail := (p₁.cons_tail_support).symm
-        rw [hps, hp₁s, List.cons_append, List.tail_cons]
+        conv_lhs => rw [hps, hp₁s, List.cons_append, List.tail_cons]
       have hdisj : p₁.support.tail.Disjoint p₂.support.tail := by
         intro x hx1 hx2
         rw [hp₂tail] at hx2
@@ -217,7 +224,7 @@ theorem card_invQuot_lt [Fintype V] (σ : V → V) (hinv : ∀ v, σ (σ v) = v)
       rw [← hrep q₁, ← hrep q₂, hq₁, hq₂]
       exact Quotient.sound (Or.inr (hinv u₀).symm)
     rw [hqeq, hq₂] at hq₁
-    exact hu₀ hq₁.symm
+    exact hu₀ hq₁
   exact Fintype.card_lt_of_injective_not_surjective pickRep hinj hnsurj
 
 /-- NEW (Wave 3, Agent #6): No MinimalBad(G) admits a nontrivial involution whose quotient is Near. -/
@@ -273,7 +280,7 @@ theorem invQuot_degree_nonfixed [Fintype V] [DecidableEq V]
     ⟨⟦v.1⟧, ⟨fun heq => by
       rcases Quotient.exact heq with h1 | h2
       · exact (G.ne_of_adj v.2) h1
-      · exact hno (h2 ▸ v.2),
+      · exact hno (h2 ▸ (v.2 : G.Adj u v.1)),
       u, v.1, rfl, rfl, v.2⟩⟩
   have hfinj : Function.Injective f := by
     intro a b heq
@@ -282,7 +289,7 @@ theorem invQuot_degree_nonfixed [Fintype V] [DecidableEq V]
     · exact h1
     · by_cases hbfix : σ b.1 = b.1
       · exact h2.trans hbfix
-      · exact False.elim (no_parallel_nonfixed hfree σ hinv haut hu hbfix b.2 (h2 ▸ a.2))
+      · exact False.elim (no_parallel_nonfixed hfree σ hinv haut hu hbfix b.2 (h2 ▸ (a.2 : G.Adj u a.1)))
   have hfsurj : Function.Surjective f := by
     rintro ⟨q, hq⟩
     obtain ⟨v, hvq, huv⟩ := lift_edge_exists haut hq

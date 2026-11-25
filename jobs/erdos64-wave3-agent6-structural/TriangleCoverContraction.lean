@@ -25,7 +25,6 @@ structure TriangleFamily {V : Type u} [Fintype V] (G : SimpleGraph V) [Decidable
 
 namespace TriangleFamily
 
-open Classical in
 variable {V I : Type u} [Fintype V] [Fintype I] {G : SimpleGraph V} [DecidableRel G.Adj]
 
 /-- Predicate: `x` lies in one of the triangles of `F`. -/
@@ -49,7 +48,7 @@ theorem proj_tri (F : TriangleFamily G I) (i : I) (a : Fin 3) :
   classical
   have h : F.inTri (F.v i a) := ⟨i, a, rfl⟩
   unfold proj
-  simp only [dite_eq_left, h, forall_const]
+  simp only [h, ↓reduceDIte]
   congr 1
   obtain ⟨b, hb⟩ := Classical.choose_spec h
   have := @F.inj (Classical.choose h, b) (i, a) hb
@@ -279,9 +278,9 @@ theorem card_contr_lt (F : TriangleFamily G I) [Fintype F.ContrV] (hI : Nonempty
       right_inv := by
         intro x
         by_cases h : F.inTri x
-        · simp only [h, ↓reduceDIte, Sum.elim_inl]
+        · simp [h]
           exact Classical.choose_spec (Classical.choose_spec h)
-        · simp only [h, ↓reduceDIte, Sum.elim_inr] }
+        · simp [h] }
   have hc := Fintype.card_congr e
   rw [Fintype.card_sum, Fintype.card_prod, Fintype.card_fin] at hc
   have hsum : Fintype.card F.ContrV = Fintype.card I + Fintype.card F.Res := by
@@ -297,8 +296,8 @@ theorem filterMap_inl_length {α β : Type*} (l : List (α ⊕ β)) :
   | nil => rfl
   | cons x xs ih =>
     cases x with
-    | inl i => simp [ih]
-    | inr r => simp [ih]
+    | inl _ => simp only [List.filterMap_cons, List.filter_cons, Sum.isLeft_inl, ↓reduceIte, List.length_cons, ih]
+    | inr _ => simp only [List.filterMap_cons, List.filter_cons, Sum.isLeft_inr, Bool.false_eq_true, ↓reduceIte, ih]
 
 /-- Helper list lemma: `filter isRight` + `filter isLeft` = total length. -/
 theorem filter_right_add_left {α β : Type*} (l : List (α ⊕ β)) :
@@ -346,6 +345,11 @@ theorem sum_wt_split {α β : Type*} [DecidableEq α] (S_list : List α) (l : Li
       by_cases hi : i ∈ S_list
       · simp [hi, ih]; omega
       · simp [hi, ih]; omega
+
+/-- Unique bridge edge in `G` lifting an edge `u - v` of `contrGraph` when `G` is power-free. -/
+theorem bridge_edge_exists (F : TriangleFamily G I) {u v : F.ContrV}
+    (h : F.contrGraph.Adj u v) :
+    ∃ x y : V, F.proj x = u ∧ F.proj y = v ∧ G.Adj x y := h.2
 
 /-- Lift a simple cycle of length `2^k` in `contrGraph` to a simple cycle of length `2^(k+1)` in `G`
     whenever the number of residual vertices `r` on the cycle satisfies `r ≤ t`. -/
@@ -512,7 +516,7 @@ theorem lift_cycle_double (F : TriangleFamily G I)
           intro z hz
           rw [Walk.support_append] at hz
           rcases List.mem_append.mp hz with hz1 | hz2
-          · rw [Walk.support_cons]; simp [hseg1S z hz1]
+          · rw [Walk.support_cons]; exact List.mem_cons_of_mem _ (by simp [hseg1S z hz1]) |> fun _ => by simp [hseg1S z hz1]
           · have hz2' : z ∈ W2.support := by
               have : (Walk.cons hbr.2.2 W2).support.tail = W2.support := by simp [Walk.support_cons]
               rwa [this] at hz2

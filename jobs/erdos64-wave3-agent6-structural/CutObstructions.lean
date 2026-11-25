@@ -193,7 +193,10 @@ theorem no_bipartite_small_cut_side [Fintype V] [DecidableEq V]
           omega
         have hcut_ge4 : 4 ≤ cutCount G T := by
           unfold cutCount
-          rw [hTeq, Finset.sum_pair hba.symm]
+          have hsum : ∑ v ∈ T, ((G.neighborFinset v) \ T).card =
+              ((G.neighborFinset a.1) \ T).card + ((G.neighborFinset b) \ T).card := by
+            conv_lhs => rw [hTeq]
+            exact Finset.sum_pair hba.symm
           omega
         omega
       exact ih T'.card (by omega) T' rfl hT'2 (by omega)

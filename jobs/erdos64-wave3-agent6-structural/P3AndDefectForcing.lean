@@ -9,7 +9,9 @@ Proves (unconditionally, all finite orders, standard axioms only):
 1. `cubic_p3_fermat_cycle`: In EVERY cubic MinimalBad(G) (C-N-R, C-N-2, C-N-3, C-T-2, C-T-3),
    EVERY induced P3 (u1 - v - u2 with ¬G.Adj u1 u2) lies on a simple (2^k + 1)-cycle (k ≥ 2).
    (Strictly new: complements Wave 2's (2^m + 2)-cycle through every induced P3.)
-2. `defect_edge_del_mersenne_path`: In ANY MinimalBad(G) with defect w (N(w) = {b1, b2},
+2. `defect_fermat_cycle`: In ANY MinimalBad(G) with defect w (deg w = 2, N(w) = {b1, b2},
+   ¬G.Adj b1 b2), b1 - w - b2 lies on a simple (2^k + 1)-cycle (k ≥ 2).
+3. `defect_edge_del_mersenne_path`: In ANY MinimalBad(G) with defect w (N(w) = {b1, b2},
    ¬G.Adj b1 b2) and ANY edge xy with 4 ≤ deg x and x, y ≠ w, the graph G - w - xy
    contains a simple b1-b2 path of length 2^k - 1 (k ≥ 2).
 -/
@@ -20,9 +22,9 @@ universe u
 
 variable {V : Type u}
 
-/-- Generic lifting lemma: if `H ≤ (G.induce {x | x ≠ v}) ⊔ edge a b`
-    has a power-of-2 cycle and `G` is power-free, then `H \ edge a b` contains a
-    simple `a`-`b` path of length `2^k - 1` (k ≥ 2). -/
+/-- Generic lifting lemma: if `H = (G.induce {x | x ≠ v}) ⊔ edge a b` (or a subgraph of it)
+    has a power-of-2 cycle and `G` is power-free, then `G.induce {x | x ≠ v}` contains a
+    simple `a`-`b` path of length `2^k - 1` (k ≥ 2) avoiding `v`. -/
 theorem mersenne_path_of_add_edge {G : SimpleGraph V} {v : V}
     {a b : {x : V // x ≠ v}} (hab : a ≠ b)
     {H : SimpleGraph {x : V // x ≠ v}}
@@ -35,10 +37,18 @@ theorem mersenne_path_of_add_edge {G : SimpleGraph V} {v : V}
   have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide : 0 < 2) hk
   by_cases hmem : s(a, b) ∈ c.edges
   · have hmemA : a ∈ c.support := Walk.fst_mem_support_of_mem_edges c hmem
-    let c' := c.rotate hmemA
-    have hc' : c'.IsCycle := hc.rotate hmemA
+    let c' := c.rotate a hmemA
+    have hc' : c'.IsCycle := hc.rotate a hmemA
     have hlen' : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
-    have hmem' : s(a, b) ∈ c'.edges := (Walk.edges_rotate c hmemA).mem_iff.mpr hmem
+    have hmem' : s(a, b) ∈ c'.edges := by
+      have hspec : ((c.takeUntil a hmemA).append (c.dropUntil a hmemA)).edges = c.edges :=
+        congrArg Walk.edges (c.take_spec hmemA)
+      rw [Walk.edges_append] at hspec
+      have hmem_or : s(a, b) ∈ (c.takeUntil a hmemA).edges ∨ s(a, b) ∈ (c.dropUntil a hmemA).edges :=
+        List.mem_append.mp (hspec.symm ▸ hmem)
+      show s(a, b) ∈ ((c.dropUntil a hmemA).append (c.takeUntil a hmemA)).edges
+      rw [Walk.edges_append, List.mem_append]
+      exact hmem_or.symm
     have hstart : ∃ q : H.Walk b a, q.IsPath ∧ q.length + 1 = 2 ^ k ∧ s(a, b) ∉ q.edges := by
       cases hce : c' with
       | nil => rw [hce] at hlen'; simp at hlen'; omega
@@ -87,6 +97,8 @@ theorem mersenne_path_of_add_edge {G : SimpleGraph V} {v : V}
                   cases hqr : q.reverse.edges with
                   | nil =>
                     rw [hqr, List.nil_append] at hq_edges
+                    have := congrArg List.head? hq_edges
+                    simp at this
                     have hql : q.reverse.length = 0 := by
                       have := Walk.length_edges q.reverse; rw [hqr] at this; exact this.symm
                     have hcl : c'.length = 1 := by
@@ -156,7 +168,7 @@ theorem mersenne_path_of_add_edge {G : SimpleGraph V} {v : V}
     exact False.elim (hfree (power_induce G _ hpowInd))
 
 /-- Close a simple `a`-`b` path in `G - v` of length `2^k - 1` via `a - v - b`
-    to obtain a simple `(2^k + 1)`-cycle in `G` containing both edges `s(v, a)` and `s(v, b)`. -/
+    to obtain a simple `(2^k + 1)`-cycle in `G` containing both edges `s(a, v)` and `s(v, b)`. -/
 theorem fermat_cycle_of_p3_and_mersenne {G : SimpleGraph V} {v : V}
     {a b : {x : V // x ≠ v}} (hav : G.Adj a.1 v) (hvb : G.Adj v b.1)
     {k : ℕ} (hk : 2 ≤ k) (p : (G.induce {x | x ≠ v}).Walk a b)
@@ -371,6 +383,8 @@ theorem defect_edge_del_mersenne_path [Fintype V] [DecidableEq V]
     · subst hza
       have hd_add := Erdos64Descent.degree_add_new_edge_left G0 a b hab hna_G0
       change H.degree a = G0.degree a + 1 at hd_add
+      change Gv.degree a + (if G.Adj b₁ w then 1 else 0) = G.degree b₁ at hdeg_ind
+      simp [hb1.symm] at hdeg_ind
       have hda3 := hr b₁ hb1w
       by_cases hax : a = xW
       · have : b₁ = x := congrArg Subtype.val hax
@@ -380,6 +394,8 @@ theorem defect_edge_del_mersenne_path [Fintype V] [DecidableEq V]
       · subst hzb
         have hd_add := Erdos64Descent.degree_add_new_edge_right G0 a b hab hna_G0
         change H.degree b = G0.degree b + 1 at hd_add
+        change Gv.degree b + (if G.Adj b₂ w then 1 else 0) = G.degree b₂ at hdeg_ind
+        simp [hb2.symm] at hdeg_ind
         have hdb3 := hr b₂ hb2w
         by_cases hbx : b = xW
         · have : b₂ = x := congrArg Subtype.val hbx
