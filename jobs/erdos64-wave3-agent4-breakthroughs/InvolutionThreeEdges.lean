@@ -29,12 +29,12 @@ theorem inv_edges_independent_in_quot {G : SimpleGraph V} (hfree : ¬ HasPower G
   have hv₂_inv : G.Adj v₂ (σ v₂) := by
     rcases Quotient.exact hv₂q with rfl | rfl
     · exact he₂
-    · have := (haut u₂ (σ u₂)).mp he₂; rwa [hinv u₂] at this
+    · rw [hinv u₂]; exact ((haut u₂ (σ u₂)).mp he₂) |> fun h => by rwa [hinv u₂] at h
   have hsu₁sv₂ : G.Adj (σ u₁) (σ v₂) := (haut u₁ v₂).mp hu₁v₂
   have hne : (⟦u₁⟧ : Quotient (invSetoid σ hinv)) ≠ ⟦v₂⟧ := hv₂q.symm ▸ hadj.1
   have hu₁v₂_ne : u₁ ≠ v₂ := fun h => hne (by rw [h])
-  have hu₁sv₂_ne : u₁ ≠ σ v₂ := fun h => hne (by rw [h]; exact Quotient.sound (Or.inr (hinv v₂).symm))
-  have hsu₁v₂_ne : σ u₁ ≠ v₂ := fun h => hne (by rw [← h]; exact Quotient.sound (Or.inr (hinv u₁).symm))
+  have hu₁sv₂_ne : u₁ ≠ σ v₂ := fun h => hne (by rw [h]; exact Quotient.sound (Or.inr rfl))
+  have hsu₁v₂_ne : σ u₁ ≠ v₂ := fun h => hne (by rw [← h]; exact Quotient.sound (Or.inr rfl)).symm
   have hsu₁sv₂_ne : σ u₁ ≠ σ v₂ := fun h => hu₁v₂_ne (by
     have := congrArg σ h; rwa [hinv u₁, hinv v₂] at this)
   exact hfree (rectangle_power G hu₁v₂_ne hu₁sv₂_ne (hfpf u₁).symm (hfpf v₂).symm hsu₁v₂_ne.symm
@@ -56,19 +56,14 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
   let q₂ : Q := ⟦u₂⟧
   let H := H₀ ⊔ SimpleGraph.edge q₁ q₂
   obtain ⟨k, v₀, c, hk, hc, hlen⟩ := hpow
-  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
+  have hge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by omega : 0 < 2) hk
   by_cases huse : s(q₁, q₂) ∈ c.edges
-  · -- Rotate c so it starts at q₁, and its first or last edge is s(q₁, q₂)
-    have hq₁_mem : q₁ ∈ c.support := Walk.fst_mem_support_of_mem_edges c huse
+  · have hq₁_mem : q₁ ∈ c.support := Walk.fst_mem_support_of_mem_edges c huse
     let c' := c.rotate hq₁_mem
     have hc' : c'.IsCycle := hc.rotate hq₁_mem
     have hlen' : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
     have huse' : s(q₁, q₂) ∈ c'.edges := (Walk.edges_rotate c hq₁_mem).mem_iff.mpr huse
-    -- Extract a simple path P₀ in H₀ between q₁ and q₂ of length 2^k - 1
-    -- Since c' is a cycle starting at q₁ with edge s(q₁, q₂), either its first edge is s(q₁, q₂)
-    -- or its last edge is s(q₁, q₂) (because q₁ appears only at start/end of c').
     have hex_path : ∃ P₀ : H₀.Walk q₁ q₂, P₀.IsPath ∧ P₀.length + 1 = 2 ^ k := by
-      -- Helper to transfer a walk avoiding s(q₁, q₂) into H₀
       let rec toH0 : ∀ {a b : Q} (w : H.Walk a b), s(q₁, q₂) ∉ w.edges → H₀.Walk a b
         | _, _, .nil, _ => .nil
         | a, _, .cons (v := b) hab rest, hno =>
@@ -112,27 +107,13 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
           apply Walk.IsPath.reverse
           apply Walk.IsPath.mk'
           rw [htoH0_supp]; exact hrest_path.support_nodup
-        · -- s(q₁, q₂) is in rest.edges, so it must be the LAST edge of rest (since q₁ is only at the end of rest!)
-          have huse_rest : s(q₁, q₂) ∈ rest.edges := by
-            rw [hce, Walk.edges_cons, List.mem_cons] at huse'
-            rcases huse' with heq | hr
-            · exfalso
-              rcases Sym2.eq_iff.mp heq with ⟨_, h2⟩ | ⟨h1, _⟩
-              · exact hb2 h2.symm
-              · exact hne h1
-            · exact hr
-          -- Look at c'.reverse: its first edge is the last edge of rest!
-          let cr := c'.reverse
+        · let cr := c'.reverse
           have hcr : cr.IsCycle := hc'.reverse
           have hcr_len : cr.length = 2 ^ k := by rw [Walk.length_reverse, hlen']
           cases hcre : cr with
           | nil => rw [hcre] at hcr_len; simp at hcr_len; omega
           | @cons _ b' _ h₁' rest' =>
             have hb'_eq : b' = q₂ := by
-              -- In rest, q₁ only appears as the last vertex (since rest.support.Nodup and rest ends at q₁)
-              -- In cr = cons h₁' rest', s(q₁, q₂) ∈ cr.edges; if s(q₁, q₂) ∈ rest'.edges, then q₁ ∈ rest'.support,
-              -- contradicting rest'.IsPath unless q₁ is the end of rest', wait: q₁ IS the end of rest',
-              -- so the ONLY edges incident to q₁ in c' are its first edge s(q₁, b) and its last edge s(q₁, b')!
               have hrest'_nodup : rest'.support.Nodup := by
                 have hsn := hcr.support_nodup
                 rw [hcre, Walk.support_cons, List.tail_cons] at hsn
@@ -144,15 +125,7 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
               · rcases Sym2.eq_iff.mp heq with ⟨_, h2⟩ | ⟨h1, _⟩
                 · exact h2.symm
                 · exact False.elim (hne h1)
-              · -- If s(q₁, q₂) ∈ rest'.edges, since q₁ is the END of rest' and rest'.support.Nodup,
-                -- s(q₁, q₂) must be the LAST edge of rest', which is the FIRST edge of c' = s(q₁, b)!
-                -- Wait: we know s(q₁, q₂) ≠ s(q₁, b) since b ≠ q₂!
-                -- Even simpler: in any path `w : H.Walk u q₁` with `w.support.Nodup`, if `s(q₁, q₂) ∈ w.edges`,
-                -- then `s(q₁, q₂)` is the last edge of `w`, i.e., the first edge of `w.reverse`!
-                exfalso
-                have hrev_eq : c' = cr.reverse := (Walk.reverse_reverse c').symm
-                -- Actually rest'.reverse is a path from q₁ to b' whose first edge is s(q₁, b)!
-                -- Let's prove: in any path `w : H.Walk x y`, if `y ∈ e` for `e ∈ w.edges`, then `e` is the first edge of `w.reverse`.
+              · exfalso
                 have hlast : ∀ {x y : Q} (w : H.Walk x y), w.IsPath → ∀ z, s(y, z) ∈ w.edges →
                     ∃ hzy : H.Adj y z, ∃ w' : H.Walk z x, w.reverse = .cons hzy w' := by
                   intro x y w hw z hz
@@ -175,7 +148,6 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
                       exact hnod.1 hy_in_w'
                 have hrest'_path : rest'.IsPath := Walk.IsPath.mk' hrest'_nodup
                 obtain ⟨_, w', hw'⟩ := hlast rest' hrest'_path q₂ hmem_r'
-                -- c' = cr.reverse = (cons h₁' rest').reverse = rest'.reverse.append (cons h₁'.symm nil)
                 have hc'_first : c'.getVert 1 = b := by rw [hce]; rfl
                 have hcr_rev : cr.reverse = c' := Walk.reverse_reverse c'
                 rw [hcre, Walk.reverse_cons, hw'] at hcr_rev
@@ -198,7 +170,6 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
             apply Walk.IsPath.mk'
             rw [htoH0_supp]; exact hrest'_path.support_nodup
     obtain ⟨P₀, hP₀_path, hP₀_len⟩ := hex_path
-    -- Lift P₀ starting at u₁: gives a simple path p₁ from u₁ to v₂ ∈ {u₂, σ u₂} of length 2^k - 1
     let lifted := liftWalk haut P₀ u₁ rfl
     let v₂ := lifted.1.1
     let p₁ : G.Walk u₁ v₂ := lifted.1.2
@@ -209,8 +180,7 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
     have hv₂_inv : G.Adj v₂ (σ v₂) := by
       rcases Quotient.exact hv₂q with rfl | rfl
       · exact he₂
-      · have := (haut u₂ (σ u₂)).mp he₂; rwa [hinv u₂] at this
-    -- Second path p₂ = (p₁.map σ).reverse from σ v₂ to σ u₁
+      · rw [hinv u₂]; exact ((haut u₂ (σ u₂)).mp he₂) |> fun h => by rwa [hinv u₂] at h
     let f : G →g G := mapWalkAut σ haut
     have hσ_inj : Function.Injective σ := Function.LeftInverse.injective hinv
     let p₂ : G.Walk (σ v₂) (σ u₁) := (p₁.map f).reverse
@@ -220,18 +190,16 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
     have hp₂nodup : p₂.support.Nodup := by
       rw [hp₂supp, List.nodup_reverse]
       exact (List.nodup_map_iff hσ_inj).mpr hp₁nodup
-    -- p₁.support and p₂.support are completely disjoint!
     have hdisj : p₁.support.Disjoint p₂.support := by
       intro x hx1 hx2
       rw [hp₂supp, List.mem_reverse] at hx2
       obtain ⟨y, hy1, hxy⟩ := List.mem_map.mp hx2
       have hqeq : (⟦x⟧ : Q) = ⟦y⟧ := by
-        rw [← hxy]; exact Quotient.sound (Or.inr (hinv y).symm)
+        rw [← hxy]; exact Quotient.sound (Or.inr rfl)
       have hinj_on := (List.nodup_map_iff_inj_on hp₁nodup).mp (hp₁supp.symm ▸ hP₀_path.support_nodup)
       have heq : x = y := hinj_on x hx1 y hy1 hqeq
       rw [heq] at hxy
       exact hfpf y hxy
-    -- Close the cycle: u₁ --(p₁)--> v₂ --(hv₂_inv)--> σ v₂ --(p₂)--> σ u₁ --(he₁.symm)--> u₁
     let cyc : G.Walk u₁ u₁ := p₁.append (.cons hv₂_inv (p₂.append (.cons he₁.symm .nil)))
     have hcyclen : cyc.length = 2 ^ (k + 1) := by
       simp only [cyc, Walk.length_append, Walk.length_cons, Walk.length_nil, pow_succ]
@@ -267,8 +235,7 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
       · rwa [Walk.support_tail_of_not_nil _ hnil]
       · rw [hcyclen, pow_succ]; omega
     exact ⟨k + 1, u₁, cyc, by omega, hcyc_is, hcyclen⟩
-  · -- Cycle does not use s(q₁, q₂), so it already lives in H₀ = invQuotGraph G σ hinv
-    let rec toH0 : ∀ {a b : Q} (w : H.Walk a b), s(q₁, q₂) ∉ w.edges → H₀.Walk a b
+  · let rec toH0 : ∀ {a b : Q} (w : H.Walk a b), s(q₁, q₂) ∉ w.edges → H₀.Walk a b
       | _, _, .nil, _ => .nil
       | a, _, .cons (v := b) hab rest, hno =>
         have hab0 : H₀.Adj a b := by
@@ -296,9 +263,7 @@ theorem hasPower_of_invQuot_add_edge {G : SimpleGraph V} {σ : V → V}
       exact hc.support_nodup
     exact hasPower_of_invQuot hinv hfpf haut ⟨k, v₀, c0, hk, hc0, hc0_len⟩
 
-/-- NEW (Wave 3, Agent #4): Generalized FPF Involution Exclusion (up to 3 invariant edges).
-    Triples Wave 2's `no_fpf_involution_le_one_edge`: no MinimalBad(G) admits a fixed-point-free
-    involution `σ` with at most 3 `σ`-invariant edges. -/
+/-- NEW (Wave 3, Agent #4): Generalized FPF Involution Exclusion (up to 3 invariant edges). -/
 theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (σ : V → V) (hinv : ∀ v, σ (σ v) = v) (hfpf : ∀ v, σ v ≠ v)
@@ -307,7 +272,6 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
       v ≠ w₁ → v ≠ σ w₁ → v ≠ w₂ → v ≠ σ w₂ → v ≠ w₃ → v ≠ σ w₃ → ¬ G.Adj v (σ v)) :
     False := by
   classical
-  -- First, G is cubic (same proof as in InvolutionExclusion)
   have hdeg_eq : ∀ v : V, G.degree (σ v) = G.degree v := by
     intro v
     let e : G.neighborSet (σ v) ≃ G.neighborSet v :=
@@ -325,19 +289,15 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
     · exact hw v hvw
   have hC : ∀ v : V, G.degree v = 3 := no_high_when_no_defect G hm hall3
   obtain ⟨w₁, w₂, w₃, hw3⟩ := h3edges
-  -- Reduce to the case where there exist two distinct orbits of invariant edges u₁, u₂
   by_cases hex2 : ∃ u₁ u₂ : V, G.Adj u₁ (σ u₁) ∧ G.Adj u₂ (σ u₂) ∧
       (⟦u₁⟧ : Quotient (invSetoid σ hinv)) ≠ ⟦u₂⟧
   · obtain ⟨u₁, u₂, he₁, he₂, hne⟩ := hex2
     let Q := Quotient (invSetoid σ hinv)
     let H₀ := invQuotGraph G σ hinv
-    letI : DecidableRel H₀.Adj := fun a b => Classical.dec _
     let q₁ : Q := ⟦u₁⟧
     let q₂ : Q := ⟦u₂⟧
-    -- Pick the third possible invariant-edge orbit q₃ (from {w₁, w₂, w₃})
     have hthird : ∃ q₃ : Q, ∀ u : V, (⟦u⟧ : Q) ≠ q₁ → (⟦u⟧ : Q) ≠ q₂ → (⟦u⟧ : Q) ≠ q₃ →
         ¬ G.Adj u (σ u) := by
-      -- Since u₁, u₂ have G.Adj uᵢ (σ uᵢ), each of ⟦u₁⟧, ⟦u₂⟧ lies in {⟦w₁⟧, ⟦w₂⟧, ⟦w₃⟧}.
       have hmem : ∀ u : V, G.Adj u (σ u) →
           (⟦u⟧ : Q) = ⟦w₁⟧ ∨ (⟦u⟧ : Q) = ⟦w₂⟧ ∨ (⟦u⟧ : Q) = ⟦w₃⟧ := by
         intro u hu
@@ -345,30 +305,54 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
         push Not at hnot
         refine hw3 u ?_ ?_ ?_ ?_ ?_ ?_ hu
         · intro h; exact hnot.1 (by rw [h])
-        · intro h; exact hnot.1 (by rw [h]; exact Quotient.sound (Or.inr (hinv w₁).symm))
+        · intro h; exact hnot.1 (by rw [h]; exact Quotient.sound (Or.inr rfl))
         · intro h; exact hnot.2.1 (by rw [h])
-        · intro h; exact hnot.2.1 (by rw [h]; exact Quotient.sound (Or.inr (hinv w₂).symm))
+        · intro h; exact hnot.2.1 (by rw [h]; exact Quotient.sound (Or.inr rfl))
         · intro h; exact hnot.2.2 (by rw [h])
-        · intro h; exact hnot.2.2 (by rw [h]; exact Quotient.sound (Or.inr (hinv w₃).symm))
+        · intro h; exact hnot.2.2 (by rw [h]; exact Quotient.sound (Or.inr rfl))
       rcases hmem u₁ he₁ with h1 | h1 | h1 <;> rcases hmem u₂ he₂ with h2 | h2 | h2
       · exact False.elim (hne (h1.trans h2.symm))
-      · exact ⟨⟦w₃⟧, fun u hu1 hu2 hu3 hu => by rcases hmem u hu with h | h | h <;> simp_all [q₁, q₂]⟩
-      · exact ⟨⟦w₂⟧, fun u hu1 hu2 hu3 hu => by rcases hmem u hu with h | h | h <;> simp_all [q₁, q₂]⟩
-      · exact ⟨⟦w₃⟧, fun u hu1 hu2 hu3 hu => by rcases hmem u hu with h | h | h <;> simp_all [q₁, q₂]⟩
+      · exact ⟨⟦w₃⟧, fun u hu1 hu2 hu3 hu => by
+          rcases hmem u hu with h | h | h
+          · exact hu1 (h.trans h1.symm)
+          · exact hu2 (h.trans h2.symm)
+          · exact hu3 h⟩
+      · exact ⟨⟦w₂⟧, fun u hu1 hu2 hu3 hu => by
+          rcases hmem u hu with h | h | h
+          · exact hu1 (h.trans h1.symm)
+          · exact hu3 h
+          · exact hu2 (h.trans h2.symm)⟩
+      · exact ⟨⟦w₃⟧, fun u hu1 hu2 hu3 hu => by
+          rcases hmem u hu with h | h | h
+          · exact hu2 (h.trans h2.symm)
+          · exact hu1 (h.trans h1.symm)
+          · exact hu3 h⟩
       · exact False.elim (hne (h1.trans h2.symm))
-      · exact ⟨⟦w₁⟧, fun u hu1 hu2 hu3 hu => by rcases hmem u hu with h | h | h <;> simp_all [q₁, q₂]⟩
-      · exact ⟨⟦w₂⟧, fun u hu1 hu2 hu3 hu => by rcases hmem u hu with h | h | h <;> simp_all [q₁, q₂]⟩
-      · exact ⟨⟦w₁⟧, fun u hu1 hu2 hu3 hu => by rcases hmem u hu with h | h | h <;> simp_all [q₁, q₂]⟩
+      · exact ⟨⟦w₁⟧, fun u hu1 hu2 hu3 hu => by
+          rcases hmem u hu with h | h | h
+          · exact hu3 h
+          · exact hu1 (h.trans h1.symm)
+          · exact hu2 (h.trans h2.symm)⟩
+      · exact ⟨⟦w₂⟧, fun u hu1 hu2 hu3 hu => by
+          rcases hmem u hu with h | h | h
+          · exact hu2 (h.trans h2.symm)
+          · exact hu3 h
+          · exact hu1 (h.trans h1.symm)⟩
+      · exact ⟨⟦w₁⟧, fun u hu1 hu2 hu3 hu => by
+          rcases hmem u hu with h | h | h
+          · exact hu3 h
+          · exact hu2 (h.trans h2.symm)
+          · exact hu1 (h.trans h1.symm)⟩
       · exact False.elim (hne (h1.trans h2.symm))
     obtain ⟨q₃, hq₃⟩ := hthird
-    -- Degrees in H₀: 3 if ¬G.Adj u (σ u), and 2 if G.Adj u (σ u)
     have hH₀_deg_non : ∀ u : V, ¬ G.Adj u (σ u) → H₀.degree ⟦u⟧ = 3 := by
       intro u hno
       let f : G.neighborSet u → H₀.neighborSet (⟦u⟧ : Q) := fun v =>
         ⟨⟦v.1⟧, ⟨fun heq => by
           rcases Quotient.exact heq with h1 | h2
           · exact (G.ne_of_adj v.2) h1
-          · exact hno (h2 ▸ v.2),
+          · have hv : v.1 = σ u := by rw [h2, hinv v.1]
+            exact hno (hv ▸ v.2),
           u, v.1, rfl, rfl, v.2⟩⟩
       have hfinj : Function.Injective f := by
         intro a b heq
@@ -389,7 +373,7 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
         ⟨⟦v.1⟧, ⟨fun heq => by
           rcases Quotient.exact heq with h1 | h2
           · exact (G.ne_of_adj v.2.1) h1
-          · exact v.2.2 h2,
+          · exact v.2.2 (by rw [h2, hinv v.1]),
           u, v.1, rfl, rfl, v.2.1⟩⟩
       have hfinj : Function.Injective f := by
         intro a b heq
@@ -400,7 +384,7 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
       have hfsurj : Function.Surjective f := by
         rintro ⟨q, hq⟩
         obtain ⟨v, hvq, huv⟩ := lift_edge_exists haut hq
-        have hvne : v ≠ σ u := fun h => hq.1 (by rw [← hvq, h]; exact Quotient.sound (Or.inr (hinv u).symm))
+        have hvne : v ≠ σ u := fun h => hq.1 (by rw [← hvq, h]; exact Quotient.sound (Or.inr rfl)).symm
         exact ⟨⟨v, huv, hvne⟩, Subtype.ext hvq⟩
       have hc := Fintype.card_congr (Equiv.ofBijective f ⟨hfinj, hfsurj⟩)
       rw [SimpleGraph.card_neighborSet_eq_degree] at hc
@@ -413,10 +397,8 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
         rw [G.card_neighborFinset_eq_degree, hC u] at h1
         omega
       omega
-    -- Add the edge q₁ q₂ (not in H₀ by inv_edges_independent_in_quot!)
     have hnot_adj : ¬ H₀.Adj q₁ q₂ := inv_edges_independent_in_quot hm.2.1 σ hinv hfpf haut he₁ he₂
     let H := H₀ ⊔ SimpleGraph.edge q₁ q₂
-    letI : DecidableRel H.Adj := fun a b => Classical.dec _
     have hH_deg : ∀ q : Q, H.degree q = H₀.degree q + (if q = q₁ ∨ q = q₂ then 1 else 0) := by
       intro q
       rw [← H.card_neighborFinset_eq_degree, ← H₀.card_neighborFinset_eq_degree]
@@ -428,14 +410,14 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
           simp only [H, SimpleGraph.mem_neighborFinset, SimpleGraph.sup_adj, SimpleGraph.edge_adj,
             Finset.mem_insert]
           constructor
-          · rintro (h0 | ⟨⟨rfl, rfl⟩ | ⟨h12, _⟩, _⟩)
+          · rintro (h0 | ⟨⟨_, hr⟩ | ⟨h12, _⟩, _⟩)
             · exact Or.inr h0
-            · exact Or.inl rfl
+            · exact Or.inl hr
             · exact False.elim (hne h12)
           · rintro (rfl | h0)
-            · exact Or.inr ⟨Or.inl ⟨rfl, rfl⟩, hne⟩
+            · exact Or.inr ⟨Or.inl ⟨trivial, rfl⟩, hne⟩
             · exact Or.inl h0
-        rw [heq, Finset.card_insert_of_notMem hmem, if_pos (Or.inl rfl)]
+        rw [heq, Finset.card_insert_of_notMem hmem]; simp
       · by_cases h2 : q = q₂
         · subst h2
           have hmem : q₁ ∉ H₀.neighborFinset q₂ := fun hm' => hnot_adj ((H₀.mem_neighborFinset _ _).mp hm').symm
@@ -444,14 +426,14 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
             simp only [H, SimpleGraph.mem_neighborFinset, SimpleGraph.sup_adj, SimpleGraph.edge_adj,
               Finset.mem_insert]
             constructor
-            · rintro (h0 | ⟨⟨h21, _⟩ | ⟨rfl, rfl⟩, _⟩)
+            · rintro (h0 | ⟨⟨h21, _⟩ | ⟨_, hr⟩, _⟩)
               · exact Or.inr h0
               · exact False.elim (hne h21.symm)
-              · exact Or.inl rfl
+              · exact Or.inl hr
             · rintro (rfl | h0)
-              · exact Or.inr ⟨Or.inr ⟨rfl, rfl⟩, hne.symm⟩
+              · exact Or.inr ⟨Or.inr ⟨trivial, rfl⟩, hne.symm⟩
               · exact Or.inl h0
-          rw [heq, Finset.card_insert_of_notMem hmem, if_pos (Or.inr rfl)]
+          rw [heq, Finset.card_insert_of_notMem hmem]; simp
         · have heq : H.neighborFinset q = H₀.neighborFinset q := by
             ext r
             simp only [H, SimpleGraph.mem_neighborFinset, SimpleGraph.sup_adj, SimpleGraph.edge_adj]
@@ -461,7 +443,7 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
               · exact False.elim (h1 hq1)
               · exact False.elim (h2 hq2)
             · exact Or.inl
-          rw [heq, if_neg (by tauto), Nat.add_zero]
+          rw [heq]; simp [h1, h2]
     have hcard_lt : Fintype.card Q < Fintype.card V := by
       let pickRep : Q → V := fun q => Classical.choose (Quotient.exists_rep q)
       have hrep : ∀ q, ⟦pickRep q⟧ = q := fun q => Classical.choose_spec (Quotient.exists_rep q)
@@ -471,8 +453,8 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
         obtain ⟨qa, hqa⟩ := hsurj u₁
         obtain ⟨qb, hqb⟩ := hsurj (σ u₁)
         have hqeq : qa = qb := by
-          rw [← hrep qa, ← hrep qb, hqa, hqb]; exact Quotient.sound (Or.inr (hinv u₁).symm)
-        rw [hqeq, hqb] at hqa; exact hfpf u₁ hqa.symm
+          rw [← hrep qa, ← hrep qb, hqa, hqb]; exact (Quotient.sound (Or.inr rfl)).symm
+        rw [hqeq, hqb] at hqa; exact hfpf u₁ hqa
       exact Fintype.card_lt_of_injective_not_surjective pickRep hinj hnsurj
     have hnear : Near H := by
       refine ⟨⟨q₁, by rw [hH_deg q₁, hH₀_deg_inv u₁ he₁]; simp⟩, ⟨q₃, fun q hq => ?_⟩⟩
@@ -486,35 +468,31 @@ theorem no_fpf_involution_le_three_edges [Fintype V] [DecidableEq V]
           omega
     have hpow : HasPower H := hm.2.2.1 Q H hcard_lt hnear
     exact hm.2.1 (hasPower_of_invQuot_add_edge hinv hfpf haut he₁ he₂ hne hpow)
-  · -- At most 1 invariant-edge orbit: apply Wave 2's `no_fpf_involution_le_one_edge`!
-    push Not at hex2
+  · push Not at hex2
     by_cases hex1 : ∃ u₁ : V, G.Adj u₁ (σ u₁)
     · obtain ⟨u₁, he₁⟩ := hex1
       refine no_fpf_involution_le_one_edge G hm σ hinv hfpf haut ⟨u₁, fun v hv1 hv2 hv => ?_⟩
       have hqeq := hex2 u₁ v he₁ hv
       rcases Quotient.exact hqeq with h1 | h2
       · exact hv1 h1.symm
-      · exact hv2 (by have := congrArg σ h2; rwa [hinv v] at this)
+      · have := congrArg σ h2; rw [hinv v] at this; exact hv2 this.symm
     · push Not at hex1
       obtain ⟨v₀, _⟩ := hm.1.1
       exact no_fpf_involution_le_one_edge G hm σ hinv hfpf haut ⟨v₀, fun v _ _ => hex1 v⟩
 
 /-- NEW (Wave 3, Agent #4): Defect-Fixed Involution Exclusion for 1-Defect MinimalBad(G).
-    No 1-defect MinimalBad(G) with non-adjacent defect neighbors (covering all S-N-*, H-N-*)
-    admits an involution `σ` fixing only the defect `w` with 0 invariant edges. -/
+    No 1-defect MinimalBad(G) admits an involution `σ` fixing only the defect `w`
+    with 0 invariant edges. -/
 theorem no_defect_fixed_involution_zero_edges [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     (w : V) (hw : G.degree w = 2)
-    (hnb_nonadj : ∀ b₁ b₂, G.Adj w b₁ → G.Adj w b₂ → ¬ G.Adj b₁ b₂)
     (σ : V → V) (hinv : ∀ v, σ (σ v) = v)
     (hfix : ∀ v, σ v = v ↔ v = w)
     (haut : ∀ a b, G.Adj a b ↔ G.Adj (σ a) (σ b))
     (hno_edge : ∀ v, ¬ G.Adj v (σ v)) : False := by
   classical
-  -- Restrict to G' = G - w on W = {v : V // v ≠ w}
   let W := {v : V // v ≠ w}
   let G' : SimpleGraph W := G.induce {v : V | v ≠ w}
-  letI : DecidableRel G'.Adj := fun a b => Classical.dec _
   have hσW : ∀ v : W, σ v.1 ≠ w := fun v h => v.2 (by
     have := congrArg σ h; rw [hinv v.1, (hfix w).mpr rfl] at this; exact this)
   let σ' : W → W := fun v => ⟨σ v.1, hσW v⟩
@@ -524,7 +502,6 @@ theorem no_defect_fixed_involution_zero_edges [Fintype V] [DecidableEq V]
   have hfree' : ¬ HasPower G' := by
     intro ⟨k, v₀, c, hk, hc, hlen⟩
     exact hm.2.1 ⟨k, v₀.1, c.map ⟨Subtype.val, fun h => h⟩, hk, hc.map Subtype.val_injective, by simp [hlen]⟩
-  -- Pick the two neighbors b₁, b₂ = σ b₁ of w
   have hpos : 0 < G.degree w := by omega
   obtain ⟨b₁, hwb₁⟩ := (G.degree_pos_iff_exists_adj w).mp hpos
   have hb₁_ne_w : b₁ ≠ w := (G.ne_of_adj hwb₁).symm
@@ -549,17 +526,19 @@ theorem no_defect_fixed_involution_zero_edges [Fintype V] [DecidableEq V]
     rcases hvmem with h1 | h2
     · exact Or.inl (Subtype.ext h1)
     · exact Or.inr (Subtype.ext h2)
-  -- Quotient Q = W / ⟨σ'⟩ and H = invQuotGraph G' σ' hinv'
   let Q := Quotient (invSetoid σ' hinv')
   let H := invQuotGraph G' σ' hinv'
-  letI : DecidableRel H.Adj := fun a b => Classical.dec _
   have hHdeg : ∀ u : W, H.degree ⟦u⟧ = G'.degree u := by
     intro u
     let f : G'.neighborSet u → H.neighborSet (⟦u⟧ : Q) := fun v =>
       ⟨⟦v.1⟧, ⟨fun heq => by
         rcases Quotient.exact heq with h1 | h2
         · exact (G'.ne_of_adj v.2) h1
-        · exact hno_edge u.1 (congrArg Subtype.val h2 ▸ v.2),
+        · have hv : v.1.1 = σ u.1 := by
+            have := congrArg Subtype.val h2
+            dsimp [σ'] at this
+            rw [this, hinv v.1.1]
+          exact hno_edge u.1 (hv ▸ v.2),
         u, v.1, rfl, rfl, v.2⟩⟩
     have hfinj : Function.Injective f := by
       intro a b heq
@@ -574,7 +553,6 @@ theorem no_defect_fixed_involution_zero_edges [Fintype V] [DecidableEq V]
     have hc := Fintype.card_congr (Equiv.ofBijective f ⟨hfinj, hfsurj⟩)
     rw [SimpleGraph.card_neighborSet_eq_degree, SimpleGraph.card_neighborSet_eq_degree] at hc
     exact hc.symm
-  -- Every v ∈ W with ⟦v⟧ ≠ ⟦b₁W⟧ is not adjacent to w, so G'.degree v = G.degree v.1 ≥ 3!
   obtain ⟨_, w₀, hw₀⟩ := hm.1
   have hww₀ : w = w₀ := by
     by_contra hne'; have := hw₀ w hne'; omega
@@ -584,15 +562,14 @@ theorem no_defect_fixed_involution_zero_edges [Fintype V] [DecidableEq V]
       intro hwv
       rcases hNw v hwv with rfl | rfl
       · exact hvne rfl
-      · exact hvne (Quotient.sound (Or.inr (hinv' b₁W).symm))
+      · exact hvne (Quotient.sound (Or.inr rfl))
     let e : G'.neighborSet v ≃ G.neighborSet v.1 :=
       { toFun := fun u => ⟨u.1.1, u.2⟩
-        invFun := fun u => ⟨⟨u.1, fun h => hnw (h ▸ u.2.symm)⟩, u.2⟩
+        invFun := fun u => ⟨⟨u.1, fun h => hnw (by rw [← h]; exact u.2.symm)⟩, u.2⟩
         left_inv := fun _ => rfl
         right_inv := fun _ => rfl }
     rw [← SimpleGraph.card_neighborSet_eq_degree, Fintype.card_congr e, SimpleGraph.card_neighborSet_eq_degree]
     exact hw₀ v.1 (hww₀ ▸ v.2)
-  -- Find a vertex in W not in {b₁W, σ' b₁W} (since G.degree b₁ ≥ 3 and b₁ is not adjacent to σ b₁)
   have hb₁_deg3 : 3 ≤ G.degree b₁ := hw₀ b₁ (hww₀ ▸ hb₁_ne_w)
   have hex_u : ∃ u : W, (⟦u⟧ : Q) ≠ ⟦b₁W⟧ := by
     by_contra hno
@@ -605,7 +582,8 @@ theorem no_defect_fixed_involution_zero_edges [Fintype V] [DecidableEq V]
       · have hq := hno ⟨z, hzw⟩
         rcases Quotient.exact hq with h1 | h2
         · exfalso; exact (G.ne_of_adj hadj) (congrArg Subtype.val h1).symm
-        · simp [congrArg Subtype.val h2]
+        · have hz2 : z = σ b₁ := congrArg Subtype.val h2
+          simp [hz2]
     have hc := Finset.card_le_card hsub
     rw [G.card_neighborFinset_eq_degree] at hc
     have h2 : ({w, σ b₁} : Finset V).card ≤ 2 := Finset.card_le_two
