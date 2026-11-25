@@ -69,45 +69,33 @@ private theorem extract_path_of_cycle_edge {W : Type u} [DecidableEq W]
     (c : H.Walk v₀ v₀) (hc : c.IsCycle) (hmem : s(a, b) ∈ c.edges) :
     ∃ p : H.Walk a b, p.IsPath ∧ p.length + 1 = c.length ∧ s(a, b) ∉ p.edges := by
   classical
-  -- Rotate c to start at a.
   have ha : a ∈ c.support := Walk.fst_mem_support_of_mem_edges c hmem
   let c₁ := c.rotate ha
   have hc₁ : c₁.IsCycle := hc.rotate ha
   have hlen₁ : c₁.length = c.length := Walk.length_rotate c ha
   have hmem₁ : s(a, b) ∈ c₁.edges := (Walk.edges_rotate c ha).mem_iff.mpr hmem
-  -- Every edge of c₁ incident to a is either the first edge or the last edge!
-  -- Because c₁.support = a :: c₁.support.tail and c₁.support.tail is Nodup with last = a,
-  -- any edge s(x, y) in c₁.edges with x = a or y = a must be the first or last edge!
-  -- Case split on whether the first edge of c₁ is s(a, b).
   cases hce : c₁ with
   | nil => exact False.elim (hc₁.ne_nil hce)
   | @cons _ u _ hau rest =>
     by_cases hub : u = b
     · subst hub
-      -- rest : H.Walk b a is a path of length c₁.length - 1, and s(a,b) ∉ rest.edges!
       have hrest_path : rest.IsPath := by
         apply Walk.IsPath.mk'
         have hn := hc₁.support_nodup
-        rw [hce, Walk.support_cons, List.tail_cons] at hn
-        exact hn
+        rw [hce, Walk.support_cons, List.tail_cons] at hn; exact hn
       have hrest_len : rest.length + 1 = c.length := by
-        have := congrArg Walk.length hce
-        simp only [Walk.length_cons] at this; omega
+        have := congrArg Walk.length hce; simp only [Walk.length_cons] at this; omega
       have hnot_mem : s(a, b) ∉ rest.edges := by
-        have hnd := hc₁.edges_nodup
-        rw [hce, Walk.edges_cons, List.nodup_cons] at hnd
-        exact hnd.1
+        have hnd := hc₁.edges_nodup; rw [hce, Walk.edges_cons, List.nodup_cons] at hnd; exact hnd.1
       refine ⟨rest.reverse, hrest_path.reverse, ?_, ?_⟩
       · rw [Walk.length_reverse]; exact hrest_len
       · rw [Walk.edges_reverse, List.mem_reverse]; exact hnot_mem
-    · -- Otherwise, look at c₁.reverse: its first edge MUST be s(a, b)!
-      have hrev_cyc : c₁.reverse.IsCycle := hc₁.reverse
+    · have hrev_cyc : c₁.reverse.IsCycle := hc₁.reverse
       have hrev_len : c₁.reverse.length = c.length := by rw [Walk.length_reverse, hlen₁]
       cases hre : c₁.reverse with
       | nil => exact False.elim (hrev_cyc.ne_nil hre)
       | @cons _ w _ haw rest' =>
         have hwb : w = b := by
-          -- Show s(a, b) is NOT in rest'.edges by using that a only appears at the end of rest'!
           have hmem_rev : s(a, b) ∈ c₁.reverse.edges := by
             rw [Walk.edges_reverse, List.mem_reverse]; exact hmem₁
           rw [hre, Walk.edges_cons, List.mem_cons] at hmem_rev
@@ -116,21 +104,13 @@ private theorem extract_path_of_cycle_edge {W : Type u} [DecidableEq W]
             · rfl
             · exact False.elim (hab h1)
           · exfalso
-            -- In rest', every edge incident to a must be the last edge of rest' (= first edge of c₁ = s(a,u)),
-            -- which contradicts u ≠ b!
-            -- Prove: for any path q : Walk w a, if s(a, b) ∈ q.edges, then q's last edge is s(b, a).
             have hrest'_path : rest'.IsPath := by
               apply Walk.IsPath.mk'
               have hn := hrev_cyc.support_nodup
-              rw [hre, Walk.support_cons, List.tail_cons] at hn
-              exact hn
-            -- Actually: rest'.reverse is a path from a to w whose first edge is the first edge of c₁ (s(a, u))!
-            -- Wait: c₁ = c₁.reverse.reverse = (cons haw rest').reverse = rest'.reverse.append (cons haw.symm nil).
+              rw [hre, Walk.support_cons, List.tail_cons] at hn; exact hn
             have hc1_eq : c₁ = rest'.reverse.append (.cons haw.symm .nil) := by
               have h1 := congrArg Walk.reverse hre
-              rw [Walk.reverse_reverse, Walk.reverse_cons] at h1
-              exact h1
-            -- Since rest'.reverse starts at a, its first edge is s(a, u)!
+              rw [Walk.reverse_reverse, Walk.reverse_cons] at h1; exact h1
             cases hrr : rest'.reverse with
             | nil =>
               have := congrArg Walk.edges hrr
@@ -138,8 +118,7 @@ private theorem extract_path_of_cycle_edge {W : Type u} [DecidableEq W]
               rw [this] at hin; simp at hin
             | @cons _ u' _ hau' rest'' =>
               have hu' : u' = u := by
-                rw [hrr, Walk.cons_append] at hc1_eq
-                rw [hce] at hc1_eq
+                rw [hrr, Walk.cons_append] at hc1_eq; rw [hce] at hc1_eq
                 exact (Walk.cons.inj hc1_eq).1.symm
               subst hu'
               have hin_rr : s(a, b) ∈ (rest'.reverse).edges := by
@@ -151,29 +130,21 @@ private theorem extract_path_of_cycle_edge {W : Type u} [DecidableEq W]
                 · exact hab h1
               · have ha_in : a ∈ rest''.support := Walk.fst_mem_support_of_mem_edges rest'' h2
                 have hnd := hrest'_path.reverse.support_nodup
-                rw [hrr, Walk.support_cons, List.nodup_cons] at hnd
-                exact hnd.1 ha_in
+                rw [hrr, Walk.support_cons, List.nodup_cons] at hnd; exact hnd.1 ha_in
         subst hwb
         have hrest'_path : rest'.IsPath := by
           apply Walk.IsPath.mk'
           have hn := hrev_cyc.support_nodup
-          rw [hre, Walk.support_cons, List.tail_cons] at hn
-          exact hn
+          rw [hre, Walk.support_cons, List.tail_cons] at hn; exact hn
         have hrest'_len : rest'.length + 1 = c.length := by
-          have := congrArg Walk.length hre
-          simp only [Walk.length_cons] at this; omega
+          have := congrArg Walk.length hre; simp only [Walk.length_cons] at this; omega
         have hnot_mem : s(a, b) ∉ rest'.edges := by
-          have hnd := hrev_cyc.edges_nodup
-          rw [hre, Walk.edges_cons, List.nodup_cons] at hnd
-          exact hnd.1
+          have hnd := hrev_cyc.edges_nodup; rw [hre, Walk.edges_cons, List.nodup_cons] at hnd; exact hnd.1
         refine ⟨rest'.reverse, hrest'_path.reverse, ?_, ?_⟩
         · rw [Walk.length_reverse]; exact hrest'_len
         · rw [Walk.edges_reverse, List.mem_reverse]; exact hnot_mem
 
-/-- Master P3-to-(2^k+1)-cycle lifting lemma:
-    If `(G.induce P) ⊔ edge a b` has a `2^k`-cycle, `G` is power-free, `¬ P v`,
-    and `G.Adj v a.1`, `G.Adj v b.1`, then `G` has a simple `(2^k + 1)`-cycle
-    through `a.1 - v - b.1` whose remaining vertices all satisfy `P`. -/
+/-- Master P3-to-(2^k+1)-cycle lifting lemma. -/
 private theorem fermat_cycle_of_delete_add_edge [DecidableEq V]
     {G : SimpleGraph V} {P : V → Prop} {v : V} (hv : ¬ P v)
     {a b : {u : V // P u}} (hab : a ≠ b)
@@ -225,8 +196,7 @@ private theorem fermat_cycle_of_delete_add_edge [DecidableEq V]
           exact Or.inr w.2
         · exact Or.inl (List.mem_singleton.mp h2)
     exact ⟨k, cyc, hk, hcyc, hclen, hmem1, hmem2, hsuppP⟩
-  · -- c avoids s(a, b), so it lifts directly to a 2^k-cycle in G!
-    let cG : G.Walk v₀.1 v₀.1 := liftAvoidEdge c huses
+  · let cG : G.Walk v₀.1 v₀.1 := liftAvoidEdge c huses
     have hcG_len : cG.length = 2 ^ k := by rw [length_liftAvoidEdge, hlen]
     have hcG_tail : cG.support.tail.Nodup := by
       rw [support_liftAvoidEdge, ← List.map_tail]
@@ -238,7 +208,6 @@ private theorem fermat_cycle_of_delete_add_edge [DecidableEq V]
       rwa [Walk.support_tail_of_not_nil _ hcG_nil]
     exact False.elim (hfree ⟨k, v₀.1, cG, hk, hcG_cyc, hcG_len⟩)
 
-/-- Helper: adding a non-edge `s(a, b)` increases degrees of `a` and `b` by 1 and leaves others unchanged. -/
 private theorem degree_sup_edge {W : Type u} [Fintype W] [DecidableEq W]
     (H : SimpleGraph W) [DecidableRel H.Adj] {a b : W} (hab : a ≠ b) (hnadj : ¬ H.Adj a b)
     [DecidableRel (H ⊔ SimpleGraph.edge a b).Adj] (u : W) :
@@ -247,8 +216,7 @@ private theorem degree_sup_edge {W : Type u} [Fintype W] [DecidableEq W]
   let H' := H ⊔ SimpleGraph.edge a b
   rw [← H'.card_neighborFinset_eq_degree, ← H.card_neighborFinset_eq_degree]
   by_cases hua : u = a
-  · subst hua
-    rw [if_pos (Or.inl rfl)]
+  · subst hua; rw [if_pos (Or.inl rfl)]
     have heq : H'.neighborFinset u = insert b (H.neighborFinset u) := by
       ext z; simp only [H', SimpleGraph.mem_neighborFinset, Finset.mem_insert,
         SimpleGraph.sup_adj, SimpleGraph.edge_adj]
@@ -262,8 +230,7 @@ private theorem degree_sup_edge {W : Type u} [Fintype W] [DecidableEq W]
         · exact Or.inl h
     rw [heq, Finset.card_insert_of_notMem (by simp [SimpleGraph.mem_neighborFinset, hnadj])]
   · by_cases hub : u = b
-    · subst hub
-      rw [if_pos (Or.inr rfl)]
+    · subst hub; rw [if_pos (Or.inr rfl)]
       have heq : H'.neighborFinset u = insert a (H.neighborFinset u) := by
         ext z; simp only [H', SimpleGraph.mem_neighborFinset, Finset.mem_insert,
           SimpleGraph.sup_adj, SimpleGraph.edge_adj]
@@ -286,7 +253,6 @@ private theorem degree_sup_edge {W : Type u} [Fintype W] [DecidableEq W]
         · exact False.elim (hub h1)
       · exact Or.inl
 
-/-- Helper: degree in `G.induce (· ≠ v)`. -/
 private theorem degree_delete_one [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (v : V)
     [DecidableRel (G.induce (fun u : V => u ≠ v)).Adj] (u : {u : V // u ≠ v}) :
@@ -306,16 +272,13 @@ private theorem degree_delete_one [Fintype V] [DecidableEq V]
   · rw [if_neg hadj, add_zero]
     rw [Finset.erase_eq_of_notMem (fun hm => hadj ((G.mem_neighborFinset u.1 v).mp hm).symm)]
 
-/-- 1. NEW (Wave 3, Agent #1): Cubic Induced-P3 Fermat Cycle Theorem.
-    In EVERY cubic `MinimalBad(G)`, every induced P3 `a - v - b` lies on a simple
-    `(2^k + 1)`-cycle (`k ≥ 2`). -/
+/-- 1. NEW (Wave 3, Agent #1): Cubic Induced-P3 Fermat Cycle Theorem. -/
 theorem cubic_p3_fermat_cycle [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G) (hC : Cubic G)
     {v a b : V} (hab : a ≠ b) (hva : G.Adj v a) (hvb : G.Adj v b) (hnadj : ¬ G.Adj a b) :
     ∃ (k : ℕ) (c : G.Walk v v), 2 ≤ k ∧ c.IsCycle ∧ c.length = 2 ^ k + 1 ∧
       s(v, a) ∈ c.edges ∧ s(v, b) ∈ c.edges := by
   classical
-  -- v has degree 3, so it has a unique third neighbor c₀ ≠ a, b.
   have hdv : (G.neighborFinset v).card = 3 := by rw [G.card_neighborFinset_eq_degree, hC v]
   have ha_mem : a ∈ G.neighborFinset v := (G.mem_neighborFinset v a).mpr hva
   have hb_mem : b ∈ (G.neighborFinset v).erase a :=
@@ -360,9 +323,7 @@ theorem cubic_p3_fermat_cycle [Fintype V] [DecidableEq V]
     fermat_cycle_of_delete_add_edge (show ¬ P v from fun h => h rfl) hAB hva hvb hm.2.1 hpow
   exact ⟨k, c, hk, hc, hlen, hm1, hm2⟩
 
-/-- 2. NEW (Wave 3, Agent #1): Defect-Vertex Induced-P3 Fermat Cycle Theorem.
-    In EVERY `MinimalBad(G)` with `deg(w) = 2` and non-adjacent neighbors `b₁, b₂`,
-    `b₁ - w - b₂` lies on a simple `(2^k + 1)`-cycle (`k ≥ 2`). -/
+/-- 2. NEW (Wave 3, Agent #1): Defect-Vertex Induced-P3 Fermat Cycle Theorem. -/
 theorem defect_p3_fermat_cycle [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     {w b₁ b₂ : V} (hw : G.degree w = 2) (hb12 : b₁ ≠ b₂)
@@ -371,10 +332,12 @@ theorem defect_p3_fermat_cycle [Fintype V] [DecidableEq V]
       s(w, b₁) ∈ c.edges ∧ s(w, b₂) ∈ c.edges := by
   classical
   have hNw : G.neighborFinset w = {b₁, b₂} := by
-    apply Finset.eq_of_subset_of_card_le
-    · rw [Finset.card_pair hb12, G.card_neighborFinset_eq_degree, hw]
-      -- Wait: eq_of_subset_of_card_le needs subset first; prove reverse!
-    · sorry
+    symm; apply Finset.eq_of_subset_of_card_le
+    · intro z hz; simp only [Finset.mem_insert, Finset.mem_singleton] at hz
+      rcases hz with rfl | rfl
+      · exact (G.mem_neighborFinset w b₁).mpr hwb₁
+      · exact (G.mem_neighborFinset w b₂).mpr hwb₂
+    · rw [G.card_neighborFinset_eq_degree, hw, Finset.card_pair hb12]
   let P : V → Prop := fun u => u ≠ w
   let B₁ : {u : V // P u} := ⟨b₁, (G.ne_of_adj hwb₁).symm⟩
   let B₂ : {u : V // P u} := ⟨b₂, (G.ne_of_adj hwb₂).symm⟩
@@ -383,8 +346,7 @@ theorem defect_p3_fermat_cycle [Fintype V] [DecidableEq V]
   letI : DecidableRel (G.induce P).Adj := fun x y => Classical.dec _
   letI : DecidableRel H.Adj := fun x y => Classical.dec _
   obtain ⟨_, w₀, hw₀⟩ := hm.1
-  have hww₀ : w = w₀ := by
-    by_contra hne; have := hw₀ w hne; omega
+  have hww₀ : w = w₀ := by by_contra hne; have := hw₀ w hne; omega
   have hdegH : ∀ u : {u : V // P u}, 3 ≤ H.degree u := by
     intro u
     have h1 := degree_sup_edge (G.induce P) hB12 hnadj u
@@ -412,9 +374,7 @@ theorem defect_p3_fermat_cycle [Fintype V] [DecidableEq V]
     fermat_cycle_of_delete_add_edge (show ¬ P w from fun h => h rfl) hB12 hwb₁ hwb₂ hm.2.1 hpow
   exact ⟨k, c, hk, hc, hlen, hm1, hm2⟩
 
-/-- 3. NEW (Wave 3, Agent #1): Defect-Neighbor Induced-P3 Fermat Cycle Theorem (avoiding `w`).
-    In EVERY `MinimalBad(G)` with `deg(w) = 2`, `b₁ ∈ N(w)`, and non-adjacent `a, b ∈ N(b₁) \ {w}`,
-    `a - b₁ - b` lies on a simple `(2^k + 1)`-cycle (`k ≥ 2`) avoiding `w`. -/
+/-- 3. NEW (Wave 3, Agent #1): Defect-Neighbor Induced-P3 Fermat Cycle Theorem (avoiding `w`). -/
 theorem defect_neighbor_p3_fermat_cycle [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G)
     {w b₁ b₂ a b : V} (hw : G.degree w = 2) (hb12 : b₁ ≠ b₂)
