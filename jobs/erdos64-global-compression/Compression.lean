@@ -23,7 +23,7 @@ def singles : List Slot → ℕ
 
 def Valid : List Slot → Prop
   | [] => True
-  | (q, true) :: xs => Valid xs
+  | (_, true) :: xs => Valid xs
   | (q, false) :: xs => q = 1 ∧ Valid xs
 
 inductive LiftLength : List Slot → ℕ → Prop
