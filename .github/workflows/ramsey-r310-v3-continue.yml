@@ -1,0 +1,98 @@
+name: Ramsey R(3,10) v3 remaining global leaves and D5 proof audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - jobs/ramsey-r310-repair-v3/continue.txt
+permissions:
+  contents: read
+  packages: read
+  actions: read
+defaults:
+  run:
+    shell: bash
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        q: [5,6,7,8,9]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45681007261'
+          name: D5-N${{ matrix.q }}-v3
+          path: prior/
+      - run: python3 jobs/ramsey-r310-repair-v3/audit_d5.py --q ${{ matrix.q }} --prior prior --out out --seconds 1500
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: audit-D5-N${{ matrix.q }}
+          path: out/
+          retention-days: 30
+  global:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include:
+          - {d: 6, q: 6}
+          - {d: 6, q: 7}
+          - {d: 6, q: 8}
+          - {d: 6, q: 9}
+          - {d: 7, q: 5}
+          - {d: 7, q: 6}
+          - {d: 7, q: 7}
+          - {d: 7, q: 8}
+          - {d: 7, q: 9}
+          - {d: 8, q: 5}
+          - {d: 8, q: 6}
+          - {d: 8, q: 7}
+          - {d: 8, q: 8}
+          - {d: 8, q: 9}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Previous same-leaf exact cuts
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45675361761'
+          name: D${{ matrix.d }}-N${{ matrix.q }}
+          path: own/
+      - name: Universal exact cut pool
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45681007261'
+          name: D5-N5-v3
+          path: pool/
+      - run: |
+          set -euo pipefail
+          (if [ -f own/cuts.jsonl ]; then head -n 150000 own/cuts.jsonl; fi; head -n 50000 pool/cuts.jsonl) > reuse.jsonl
+          python3 jobs/ramsey-r310-repair-v3/repair.py --mode global --d ${{ matrix.d }} --q ${{ matrix.q }} --reuse reuse.jsonl --seconds 4500 --proof-seconds 480 --out out
+          if [ -f out/witness.txt ]; then python3 jobs/ramsey-r310-wave1/verify.py out/witness.txt | tee out/witness-check.json; python3 -c 'import json; assert json.load(open("out/witness-check.json"))["closure_witness"]'; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: D${{ matrix.d }}-N${{ matrix.q }}-v3
+          path: out/
+          retention-days: 30
