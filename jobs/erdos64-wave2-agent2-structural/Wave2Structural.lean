@@ -124,10 +124,10 @@ theorem no_defect_triangle_without_2cut {V : Type u} [Fintype V]
       have hsub : ({a, b, x} : Finset V) ⊆ G.neighborFinset w := by
         intro z hz
         simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-        rcases hz with rfl | rfl | rfl
-        · exact (G.mem_neighborFinset w a).mpr hwa
-        · exact (G.mem_neighborFinset w b).mpr hwb
-        · exact (G.mem_neighborFinset w x).mpr hwx
+        rcases hz with hz | hz | hz
+        · rw [hz]; exact (G.mem_neighborFinset w a).mpr hwa
+        · rw [hz]; exact (G.mem_neighborFinset w b).mpr hwb
+        · rw [hz]; exact (G.mem_neighborFinset w x).mpr hwx
       have hc := Finset.card_le_card hsub
       have h3 : ({a, b, x} : Finset V).card = 3 := by
         simp [hab_ne, Ne.symm hnot.1, Ne.symm hnot.2]
@@ -143,9 +143,9 @@ theorem no_defect_triangle_without_2cut {V : Type u} [Fintype V]
     have hmem : e.1.2 ∈ G.neighborFinset w := (G.mem_neighborFinset w e.1.2).mpr hadj
     rw [hNw] at hmem
     simp only [Finset.mem_insert, Finset.mem_singleton] at hmem
-    rcases hmem with rfl | rfl
-    · exact e.2.2.1 (by simp [S])
-    · exact e.2.2.1 (by simp [S])
+    rcases hmem with h | h
+    · exact e.2.2.1 (by simp [S, h])
+    · exact e.2.2.1 (by simp [S, h])
   have hinj : Function.Injective f := by
     intro p q he
     have hpS : p.1.1 = a ∨ p.1.1 = b := by
@@ -183,13 +183,13 @@ def identifyGraph {V : Type u} (G : SimpleGraph V) (x y : V) :
     SimpleGraph {v : V // v ≠ y} where
   Adj u v := u ≠ v ∧
     (G.Adj u.1 v.1 ∨ (u.1 = x ∧ G.Adj y v.1) ∨ (v.1 = x ∧ G.Adj u.1 y))
-  symm := by
+  symm := ⟨by
     rintro u v ⟨hne, h⟩
     refine ⟨hne.symm, ?_⟩
     rcases h with h | ⟨h1, h2⟩ | ⟨h1, h2⟩
     · exact Or.inl h.symm
     · exact Or.inr (Or.inr ⟨h1, h2.symm⟩)
-    · exact Or.inr (Or.inl ⟨h1, h2.symm⟩)
+    · exact Or.inr (Or.inl ⟨h1, h2.symm⟩)⟩
   loopless := ⟨fun _ h => h.1 rfl⟩
 
 /-- Lift a walk in `identifyGraph G x y` whose support avoids `⟨x, hxy⟩` directly to `G`. -/
@@ -200,7 +200,9 @@ def liftAvoidWalk {V : Type u} {G : SimpleGraph V} {x y : V} (hxy : x ≠ y)
   | .nil => .nil
   | @Walk.cons _ _ a b _ hab q =>
     have ha : a ≠ ⟨x, hxy⟩ := fun h => havoid (by simp [h])
-    have hb : b ≠ ⟨x, hxy⟩ := fun h => havoid (by simp [h])
+    have hb : b ≠ ⟨x, hxy⟩ := fun h => havoid (by
+      rw [Walk.support_cons]
+      exact List.mem_cons_of_mem a (h ▸ Walk.start_mem_support q))
     have habG : G.Adj a.1 b.1 := by
       rcases hab.2 with h | ⟨h1, _⟩ | ⟨h1, _⟩
       · exact h
@@ -252,7 +254,7 @@ theorem liftAvoidWalk_isCycle {V : Type u} {G : SimpleGraph V} {x y : V} (hxy : 
 /-- Core extraction lemma: any 2^k-cycle in `identifyGraph G x y` (when `¬HasPower G`)
     must pass through the identified vertex `X = ⟨x, hxy⟩`, lifting to a simple path `q`
     in `G - {x, y}` of length `2^k - 2` between a private neighbor of `x` and a private
-    neighbor of `y` (and avoiding `u` whenever `X` is adjacent to `u` and `deg_H(u) ≤ 2`). -/
+    neighbor of `y`. -/
 theorem identify_power_extract {V : Type u} [Fintype V]
     (G : SimpleGraph V) (hfree : ¬HasPower G)
     {x y : V} (hxy : x ≠ y)
@@ -270,7 +272,7 @@ theorem identify_power_extract {V : Type u} [Fintype V]
     by_contra hnot
     exact hfree ⟨k, v0.1, liftAvoidWalk hxy c0 hnot, hk,
       liftAvoidWalk_isCycle hxy c0 hnot hc0, by rw [liftAvoidWalk_length, hl0]⟩
-  let c : H.Walk X X := c0.rotate hXmem
+  let c : H.Walk X X := c0.rotate X hXmem
   have hc : c.IsCycle := hc0.rotate hXmem
   have hl : c.length = 2 ^ k := by rw [Walk.length_rotate, hl0]
   have h4 : 4 ≤ 2 ^ k := by
@@ -282,15 +284,14 @@ theorem identify_power_extract {V : Type u} [Fintype V]
     simp at hl
     omega
   | @cons _ a _ hXa p1 =>
-    -- Peel the last edge of p1 by reversing p1
     cases hpe : p1.reverse with
     | nil =>
-      have : p1.length = 0 := by
-        have := congrArg Walk.length hpe
-        simp at this
-        exact this
+      have hp1len : p1.length = 0 := by
+        have h := congrArg Walk.length hpe
+        rw [Walk.length_reverse, Walk.length_nil] at h
+        exact h
       rw [hce] at hl
-      simp at hl
+      simp [hp1len] at hl
       omega
     | @cons _ b _ hXb qrev =>
       let q : H.Walk a b := qrev.reverse
@@ -324,7 +325,8 @@ theorem identify_power_extract {V : Type u} [Fintype V]
         rw [liftAvoidWalk_support]
         intro hm
         obtain ⟨z, hz, hzx⟩ := List.mem_map.mp hm
-        exact hXnot ((Subtype.ext hzx : z = X) ▸ hz)
+        have hzX : z = X := Subtype.ext hzx
+        exact hXnot (hzX ▸ hz)
       have hynot : y ∉ qG.support := by
         rw [liftAvoidWalk_support]
         intro hm
@@ -389,14 +391,14 @@ theorem identify_power_extract {V : Type u} [Fintype V]
       · exact False.elim (hclose_y ⟨hya, hyb⟩)
 
 /-- Degree lower bound for `v ≠ X` in `identifyGraph G x y`. -/
-theorem identify_degree_other {V : Type u} [Fintype V]
+theorem identify_degree_other {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    {x y : V} (hxy : x ≠ y) (v : {z : V // z ≠ y}) (hv : v.1 ≠ x) :
-    let H := identifyGraph G x y
-    let _ : DecidableRel H.Adj := Classical.decRel _
-    G.degree v.1 ≤ H.degree v + (if G.Adj x v.1 ∧ G.Adj y v.1 then 1 else 0) := by
+    {x y : V} (hxy : x ≠ y) [DecidableRel (identifyGraph G x y).Adj]
+    (v : {z : V // z ≠ y}) (hv : v.1 ≠ x) :
+    G.degree v.1 ≤ (identifyGraph G x y).degree v +
+      (if G.Adj x v.1 ∧ G.Adj y v.1 then 1 else 0) := by
   classical
-  intro H _
+  let H := identifyGraph G x y
   let X : {z : V // z ≠ y} := ⟨x, hxy⟩
   by_cases hboth : G.Adj x v.1 ∧ G.Adj y v.1
   · rw [ite_eq_left hboth]
@@ -419,7 +421,8 @@ theorem identify_degree_other {V : Type u} [Fintype V]
   · rw [ite_eq_right hboth, add_zero]
     let f : G.neighborSet v.1 → H.neighborSet v := fun u =>
       if huy : u.1 = y then
-        ⟨X, ⟨fun heq => hv (congrArg Subtype.val heq), Or.inr (Or.inr ⟨rfl, huy ▸ u.2⟩)⟩⟩
+        ⟨X, ⟨fun heq => hv (congrArg Subtype.val heq),
+          Or.inr (Or.inr ⟨rfl, by rw [← huy]; exact u.2⟩)⟩⟩
       else
         ⟨⟨u.1, huy⟩, ⟨fun heq => G.ne_of_adj u.2 (congrArg Subtype.val heq), Or.inl u.2⟩⟩
     have hf : Function.Injective f := by
@@ -427,28 +430,27 @@ theorem identify_degree_other {V : Type u} [Fintype V]
       by_cases hp : p.1 = y <;> by_cases hq : q.1 = y
       · exact Subtype.ext (hp.trans hq.symm)
       · exfalso
-        simp only [f, ite_eq_left hp, ite_eq_right hq] at heq
-        have hqx : q.1 = x := (congrArg (fun t => t.1.1) heq).symm
+        simp [f, hp, hq] at heq
+        have hqx : q.1 = x := (congrArg Subtype.val heq).symm
         exact hboth ⟨(hqx ▸ q.2).symm, (hp ▸ p.2).symm⟩
       · exfalso
-        simp only [f, ite_eq_right hp, ite_eq_left hq] at heq
-        have hpx : p.1 = x := congrArg (fun t => t.1.1) heq
+        simp [f, hp, hq] at heq
+        have hpx : p.1 = x := congrArg Subtype.val heq
         exact hboth ⟨(hpx ▸ p.2).symm, (hq ▸ q.2).symm⟩
-      · simp only [f, ite_eq_right hp, ite_eq_right hq] at heq
-        exact Subtype.ext (congrArg (fun t => t.1.1) heq)
+      · simp [f, hp, hq] at heq
+        exact Subtype.ext (congrArg Subtype.val heq)
     have hc := Fintype.card_le_of_injective f hf
     rwa [SimpleGraph.card_neighborSet_eq_degree, SimpleGraph.card_neighborSet_eq_degree] at hc
 
 /-- Exact degree upper bound for a cubic common neighbor `u` in `identifyGraph G x y`. -/
-theorem identify_degree_common_le_two {V : Type u} [Fintype V]
+theorem identify_degree_common_le_two {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    {x y : V} (hxy : x ≠ y) (u : {z : V // z ≠ y})
+    {x y : V} [DecidableRel (identifyGraph G x y).Adj]
+    (u : {z : V // z ≠ y})
     (hux : G.Adj x u.1) (huy : G.Adj y u.1) (hdeg3 : G.degree u.1 = 3) :
-    let H := identifyGraph G x y
-    let _ : DecidableRel H.Adj := Classical.decRel _
-    H.degree u ≤ 2 := by
+    (identifyGraph G x y).degree u ≤ 2 := by
   classical
-  intro H _
+  let H := identifyGraph G x y
   have huv_x : u.1 ≠ x := (G.ne_of_adj hux).symm
   let f : H.neighborSet u → {z : V // G.Adj u.1 z ∧ z ≠ y} := fun v =>
     ⟨v.1.1, by
@@ -459,7 +461,8 @@ theorem identify_degree_common_le_two {V : Type u} [Fintype V]
       · exact h1 ▸ hux.symm⟩
   have hf : Function.Injective f := by
     intro p q heq
-    exact Subtype.ext (Subtype.ext (congrArg Subtype.val heq))
+    have hval : p.1.1 = q.1.1 := congrArg Subtype.val heq
+    exact Subtype.ext (Subtype.ext hval)
   have hc := Fintype.card_le_of_injective f hf
   rw [SimpleGraph.card_neighborSet_eq_degree, Fintype.card_subtype] at hc
   have hfilt : (Finset.univ.filter (fun z : V => G.Adj u.1 z ∧ z ≠ y)) =
@@ -472,14 +475,14 @@ theorem identify_degree_common_le_two {V : Type u} [Fintype V]
   omega
 
 /-- Degree lower bound at the identified vertex `X = ⟨x, hxy⟩` when `x, y` are non-adjacent. -/
-theorem identify_degree_X_nonadj {V : Type u} [Fintype V]
+theorem identify_degree_X_nonadj {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x y) :
-    let H := identifyGraph G x y
-    let _ : DecidableRel H.Adj := Classical.decRel _
-    G.degree x ≤ H.degree ⟨x, hxy⟩ ∧ G.degree y ≤ H.degree ⟨x, hxy⟩ := by
+    {x y : V} (hxy : x ≠ y) (hnadj : ¬G.Adj x y)
+    [DecidableRel (identifyGraph G x y).Adj] :
+    G.degree x ≤ (identifyGraph G x y).degree ⟨x, hxy⟩ ∧
+      G.degree y ≤ (identifyGraph G x y).degree ⟨x, hxy⟩ := by
   classical
-  intro H _
+  let H := identifyGraph G x y
   constructor
   · let f : G.neighborSet x → H.neighborSet ⟨x, hxy⟩ := fun u =>
       ⟨⟨u.1, fun h => hnadj (h ▸ u.2)⟩,
@@ -495,9 +498,8 @@ theorem identify_degree_X_nonadj {V : Type u} [Fintype V]
     rwa [SimpleGraph.card_neighborSet_eq_degree, SimpleGraph.card_neighborSet_eq_degree] at hc
 
 /-- Cardinality of `{z : V // z ≠ y}` is `Fintype.card V - 1`. -/
-theorem card_erase_vertex {V : Type u} [Fintype V] (y : V) :
+theorem card_erase_vertex {V : Type u} [Fintype V] [DecidableEq V] (y : V) :
     Fintype.card {z : V // z ≠ y} + 1 = Fintype.card V := by
-  classical
   rw [Fintype.card_subtype,
     show (Finset.univ.filter (fun z : V => z ≠ y)) = Finset.univ.erase y by ext z; simp]
   exact Finset.card_erase_add_one (Finset.mem_univ y)
@@ -553,7 +555,8 @@ theorem universal_dyadic_path {V : Type u} [Fintype V]
     rw [liftAvoidWalk_support]
     intro hm'
     obtain ⟨z, hz, hzx⟩ := List.mem_map.mp hm'
-    exact hXnot ((Subtype.ext hzx : z = X) ▸ hz)
+    have hzX : z = ⟨x, hxy⟩ := Subtype.ext hzx
+    exact hXnot (hzX ▸ hz)
   have hynot : y ∉ qG.support := by
     rw [liftAvoidWalk_support]
     intro hm'
@@ -622,7 +625,7 @@ theorem unified_bipartite_exclusion {V : Type u} [Fintype V]
   have hcol_y : color y1 = color y2 := by
     have h1 := hproper v y1 hvy1
     have h2 := hproper v y2 hvy2
-    cases color v <;> cases color y1 <;> cases color y2 <;> simp_all
+    cases hcv : color v <;> cases hcy1 : color y1 <;> cases hcy2 : color y2 <;> simp_all
   have hcol_x1y2 : color x1 ≠ color y2 := by
     rw [← hcol_y]; exact (hproper y1 x1 hy1x1).symm
   have hcol_x2y2 : color x2 ≠ color y2 := by
@@ -636,7 +639,7 @@ theorem unified_bipartite_exclusion {V : Type u} [Fintype V]
 
 /-! ### 6. NEW: Strengthened Cubic Non-Edge Dyadic Path & (2^k + 2)-Cycle Theorems -/
 
-/-- Helper: an internal vertex of a path has at least 2 distinct neighbors in the graph,
+/-- Helper: an internal vertex of a path has at least 2 distinct neighbors on the path,
     and if `u` is adjacent to `X ∉ q.support`, then `u` has degree >= 3. -/
 theorem mem_path_avoiding_deg_ge_three {V : Type u} [Fintype V]
     {H : SimpleGraph V} [DecidableRel H.Adj]
@@ -659,18 +662,24 @@ theorem mem_path_avoiding_deg_ge_three {V : Type u} [Fintype V]
         | nil => exact False.elim (hub rfl)
         | @cons _ t _ hrt q'' =>
           have hXne_p : X ≠ p := fun h => hXnot (by simp [h])
-          have hXne_t : X ≠ t := fun h => hXnot (by simp [h])
+          have hXne_t : X ≠ t := fun h => hXnot (by
+            rw [Walk.support_cons, Walk.support_cons]
+            exact List.mem_cons_of_mem p (List.mem_cons_of_mem r (h ▸ Walk.start_mem_support q'')))
           have hpne_t : p ≠ t := by
+            intro heq
             have hnodup := hq.support_nodup
-            simp only [Walk.support_cons, List.nodup_cons, List.mem_cons, not_or] at hnodup
-            exact hnodup.1.2.1
+            rw [Walk.support_cons, List.nodup_cons] at hnodup
+            have htmem : t ∈ (Walk.cons hrt q'').support := by
+              rw [Walk.support_cons]
+              exact List.mem_cons_of_mem r (Walk.start_mem_support q'')
+            exact hnodup.1 (heq ▸ htmem)
           have hsub : ({X, p, t} : Finset V) ⊆ H.neighborFinset r := by
             intro z hz
             simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-            rcases hz with rfl | rfl | rfl
-            · exact (H.mem_neighborFinset r X).mpr hXu.symm
-            · exact (H.mem_neighborFinset r p).mpr hpr.symm
-            · exact (H.mem_neighborFinset r t).mpr hrt
+            rcases hz with hz | hz | hz
+            · rw [hz]; exact (H.mem_neighborFinset r X).mpr hXu.symm
+            · rw [hz]; exact (H.mem_neighborFinset r p).mpr hpr.symm
+            · rw [hz]; exact (H.mem_neighborFinset r t).mpr hrt
           have hc := Finset.card_le_card hsub
           have h3 : ({X, p, t} : Finset V).card = 3 := by
             simp [hXne_p, hXne_t, hpne_t]
@@ -733,7 +742,8 @@ theorem cubic_nonadj_dyadic_path {V : Type u} [Fintype V]
     rw [liftAvoidWalk_support]
     intro hm'
     obtain ⟨z, hz, hzx⟩ := List.mem_map.mp hm'
-    exact hXnot ((Subtype.ext hzx : z = X) ▸ hz)
+    have hzX : z = ⟨x, hxy⟩ := Subtype.ext hzx
+    exact hXnot (hzX ▸ hz)
   have hynot : y ∉ qG.support := by
     rw [liftAvoidWalk_support]
     intro hm'
@@ -753,7 +763,7 @@ theorem cubic_nonadj_dyadic_path {V : Type u} [Fintype V]
   intro u hxu hyu humem
   rw [hp_supp, List.mem_cons, List.mem_append, List.mem_singleton] at humem
   rcases humem with rfl | (huq | rfl)
-  · exact G.loopless x hxu
+  · exact G.ne_of_adj hxu rfl
   · rw [liftAvoidWalk_support] at huq
     obtain ⟨uW, huW_mem, huW_val⟩ := List.mem_map.mp huq
     have hxuW : G.Adj x uW.1 := huW_val.symm ▸ hxu
@@ -764,9 +774,9 @@ theorem cubic_nonadj_dyadic_path {V : Type u} [Fintype V]
     have hdeg3 : 3 ≤ H.degree uW :=
       mem_path_avoiding_deg_ge_three q hqpath hXnot huW_mem hu_ne_a hu_ne_b hXuW
     have hdeg2 : H.degree uW ≤ 2 :=
-      identify_degree_common_le_two G hxy uW hxuW hyuW (hC uW.1)
+      identify_degree_common_le_two G uW hxuW hyuW (hC uW.1)
     omega
-  · exact G.loopless y hyu
+  · exact G.ne_of_adj hyu rfl
 
 /-- NEW Theorem: Every non-triangle 2-path `x - u - y` in cubic `MinimalBad`
     lies on a simple cycle of length `2^k + 2` (`k >= 2`). -/
@@ -800,7 +810,7 @@ theorem cubic_two_path_dyadic_plus_two_cycle {V : Type u} [Fintype V]
     refine List.nodup_append.mpr ⟨htail_nodup, ?_, ?_⟩
     · simp [(G.ne_of_adj hxu).symm]
     · intro a ha b hb heq
-      simp only [List.mem_cons, List.mem_singleton, or_false] at hb
+      simp at hb
       rcases hb with rfl | rfl
       · exact hunot_tail (heq ▸ ha)
       · exact hxnot_tail (heq ▸ ha)
@@ -819,14 +829,13 @@ theorem cubic_two_path_dyadic_plus_two_cycle {V : Type u} [Fintype V]
 /-! ### 7. NEW: Cubic Edge-Contraction (2^k + 1)-Cycle Theorem -/
 
 /-- Degree lower bound at `X = ⟨x, hxy⟩` when contracting an edge `xy` in a cubic `MinimalBad` graph. -/
-theorem identify_degree_X_adj_cubic {V : Type u} [Fintype V]
+theorem identify_degree_X_adj_cubic {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hm : MinimalBad G) (hC : Cubic G)
-    {x y : V} (hxy_adj : G.Adj x y) :
-    let H := identifyGraph G x y
-    let _ : DecidableRel H.Adj := Classical.decRel _
-    3 ≤ H.degree ⟨x, G.ne_of_adj hxy_adj⟩ := by
+    {x y : V} (hxy_adj : G.Adj x y)
+    [DecidableRel (identifyGraph G x y).Adj] :
+    3 ≤ (identifyGraph G x y).degree ⟨x, G.ne_of_adj hxy_adj⟩ := by
   classical
-  intro H _
+  let H := identifyGraph G x y
   have hxy : x ≠ y := G.ne_of_adj hxy_adj
   let X : {z : V // z ≠ y} := ⟨x, hxy⟩
   have hNx : ((G.neighborFinset x).erase y).card = 2 := by
@@ -853,7 +862,6 @@ theorem identify_degree_X_adj_cubic {V : Type u} [Fintype V]
   have hx2y : x2 ≠ y := (Finset.mem_erase.mp hx2_mem).1
   have hy1y : y1 ≠ y := (G.ne_of_adj hy1_adj).symm
   have hy2y : y2 ≠ y := (G.ne_of_adj hy2_adj).symm
-  -- At least one of y1, y2 is distinct from both x1 and x2 (otherwise y1, y2 are two common neighbors!)
   have hex_y : ∃ z : {v : V // v ≠ y}, G.Adj y z.1 ∧ z.1 ≠ x ∧ z.1 ≠ x1 ∧ z.1 ≠ x2 := by
     by_cases h1 : y1 ≠ x1 ∧ y1 ≠ x2
     · exact ⟨⟨y1, hy1y⟩, hy1_adj, (Finset.mem_erase.mp hy1_mem).1, h1.1, h1.2⟩
@@ -877,12 +885,12 @@ theorem identify_degree_X_adj_cubic {V : Type u} [Fintype V]
   have hsub : ({a1, a2, z} : Finset {v : V // v ≠ y}) ⊆ H.neighborFinset X := by
     intro w hw
     simp only [Finset.mem_insert, Finset.mem_singleton] at hw
-    rcases hw with rfl | rfl | rfl
-    · exact (H.mem_neighborFinset X a1).mpr
+    rcases hw with hw | hw | hw
+    · rw [hw]; exact (H.mem_neighborFinset X a1).mpr
         ⟨fun h => G.ne_of_adj hx1_adj (congrArg Subtype.val h), Or.inl hx1_adj⟩
-    · exact (H.mem_neighborFinset X a2).mpr
+    · rw [hw]; exact (H.mem_neighborFinset X a2).mpr
         ⟨fun h => G.ne_of_adj hx2_adj (congrArg Subtype.val h), Or.inl hx2_adj⟩
-    · exact (H.mem_neighborFinset X z).mpr
+    · rw [hw]; exact (H.mem_neighborFinset X z).mpr
         ⟨fun h => hzx (congrArg Subtype.val h).symm, Or.inr (Or.inl ⟨rfl, hyz⟩)⟩
   have hc := Finset.card_le_card hsub
   have h3 : ({a1, a2, z} : Finset {v : V // v ≠ y}).card = 3 := by
@@ -942,7 +950,8 @@ theorem cubic_edge_dyadic_plus_one_cycle {V : Type u} [Fintype V]
     rw [liftAvoidWalk_support]
     intro hm'
     obtain ⟨z, hz, hzx⟩ := List.mem_map.mp hm'
-    exact hXnot ((Subtype.ext hzx : z = X) ▸ hz)
+    have hzX : z = ⟨x, hxy⟩ := Subtype.ext hzx
+    exact hXnot (hzX ▸ hz)
   have hynot : y ∉ qG.support := by
     rw [liftAvoidWalk_support]
     intro hm'
@@ -955,7 +964,7 @@ theorem cubic_edge_dyadic_plus_one_cycle {V : Type u} [Fintype V]
     rw [hctail]
     refine List.nodup_append.mpr ⟨hqGpath.support_nodup, by simp [hxy.symm], ?_⟩
     intro u hu v hv heq
-    simp only [List.mem_cons, List.mem_singleton, or_false] at hv
+    simp at hv
     rcases hv with rfl | rfl
     · exact hynot (heq ▸ hu)
     · exact hxnot (heq ▸ hu)
