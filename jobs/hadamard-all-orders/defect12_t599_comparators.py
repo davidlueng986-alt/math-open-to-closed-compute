@@ -1,0 +1,191 @@
+"""Check the 149 symmetric two-hole comparators for half-flip sources at 599."""
+
+from collections import Counter
+from itertools import combinations
+
+
+HALF_LENGTH = 299
+MIDPOINT = HALF_LENGTH // 2
+LAST = HALF_LENGTH - 1
+FULL = (1 << HALF_LENGTH) - 1
+
+
+def bit_indices(word):
+    while word:
+        bit = word & -word
+        yield bit.bit_length() - 1
+        word ^= bit
+
+
+def eliminate(rows):
+    pivots = {}
+    for word, value in rows:
+        while word:
+            j = word.bit_length() - 1
+            if j not in pivots:
+                pivots[j] = (word, value)
+                break
+            previous, constant = pivots[j]
+            word ^= previous
+            value ^= constant
+        else:
+            if value:
+                return None
+    return sorted(pivots.items())
+
+
+def assignment(pivots, free=0, homogeneous=False):
+    values = free
+    for j, (row, constant) in pivots:
+        target = 0 if homogeneous else constant
+        if ((row & values).bit_count() & 1) != target:
+            values ^= 1 << j
+    return values
+
+
+def reflection_system(supports):
+    """An unknown records the parity difference across one reflection pair."""
+    coordinates = [(support, j) for support in supports
+                   for j in range(MIDPOINT) if (support >> j) & 1]
+    assert len(coordinates) == 298
+    for distance in range(1, HALF_LENGTH):
+        active = {support: support & ((support << distance) ^ (support >> distance))
+                  for support in supports}
+        row = sum(((active[support] >> j) & 1) << i
+                  for i, (support, j) in enumerate(coordinates))
+        count = sum((support & (support >> distance)).bit_count() for support in supports)
+        assert count % 2 == 0
+        yield row, (count // 2) & 1
+
+
+def mirror_system(supports, reflection):
+    """Choose representative signs, then form the next linear lift."""
+    reference = []
+    reflection_words = []
+    maps = []
+    difference_index = orbit_index = 0
+    for support in supports:
+        signs = parity = 0
+        coordinates = [None] * HALF_LENGTH
+        for i in range(MIDPOINT + 1):
+            if not ((support >> i) & 1):
+                continue
+            j = LAST - i
+            coordinates[i] = coordinates[j] = orbit_index
+            orbit_index += 1
+            if i < j:
+                if (reflection >> difference_index) & 1:
+                    signs |= 1 << j
+                    parity |= (1 << i) | (1 << j)
+                difference_index += 1
+        reference.append(signs)
+        reflection_words.append(parity)
+        maps.append(coordinates)
+    assert difference_index == 298 and orbit_index == 300
+
+    rows = []
+    masks = []
+    for distance in range(1, HALF_LENGTH):
+        correlation = row = 0
+        selected = tuple(support & (support >> distance) for support in supports)
+        for mask, signs, parity, coordinates in zip(selected, reference, reflection_words, maps, strict=True):
+            correlation += mask.bit_count() - 2 * (mask & (signs ^ (signs >> distance))).bit_count()
+            # Count just one of each pair of reflected edges. Their
+            # products agree exactly when their endpoint parities agree.
+            left_of_reflection = (1 << ((HALF_LENGTH - distance) // 2)) - 1
+            paired = mask & ~(parity ^ (parity >> distance)) & left_of_reflection
+            for i in bit_indices(paired):
+                row ^= (1 << coordinates[i]) ^ (1 << coordinates[i + distance])
+        assert correlation % 4 == 0
+        rows.append((row, (correlation // 4) & 1))
+        masks.append(selected)
+
+    # Independent global signs of the three nonsingleton classes do
+    # not affect the correlation. Fix one mirror variable in each.
+    rows.extend((1 << next(v for v in coordinates if v is not None), 0) for coordinates in maps)
+    return rows, reference, maps, masks
+
+
+def lift_is_consistent(reference, maps, masks, pivots):
+    def expand(moves):
+        return tuple(sum(1 << j for j, i in enumerate(coordinates)
+                         if i is not None and ((moves >> i) & 1))
+                     for coordinates in maps)
+
+    initial = tuple(a ^ b for a, b in zip(reference, expand(assignment(pivots)), strict=True))
+    fixed = {i for i, _ in pivots}
+    free = [i for i in range(300) if i not in fixed]
+    moves = [expand(assignment(pivots, 1 << i, homogeneous=True)) for i in free]
+    counts = [sum(mask.bit_count() for mask in selected) for selected in masks]
+
+    def residual(signs):
+        result = 0
+        for i, (selected, count) in enumerate(zip(masks, counts, strict=True)):
+            distance = i + 1
+            correlation = count - 2 * sum((mask & (word ^ (word >> distance))).bit_count()
+                                          for mask, word in zip(selected, signs, strict=True))
+            assert correlation % 8 == 0
+            result |= ((correlation // 8) & 1) << i
+        return result
+
+    target = residual(initial)
+    columns = {}
+
+    def reduce(word):
+        while word:
+            i = word.bit_length() - 1
+            if i not in columns:
+                break
+            word ^= columns[i]
+        return word
+
+    def insert(word):
+        reduced = reduce(word)
+        if reduced:
+            columns[reduced.bit_length() - 1] = reduced
+
+    first_changes = []
+    for move in moves:
+        change = residual(tuple(a ^ b for a, b in zip(initial, move, strict=True))) ^ target
+        first_changes.append(change)
+        insert(change)
+    if not reduce(target):
+        return True, len(free)
+    for i, j in combinations(range(len(moves)), 2):
+        signs = tuple(a ^ b ^ c for a, b, c in zip(initial, moves[i], moves[j], strict=True))
+        insert(residual(signs) ^ target ^ first_changes[i] ^ first_changes[j])
+        if not reduce(target):
+            return True, len(free)
+    return False, len(free)
+
+
+def verify():
+    outcomes = Counter()
+    survivors = []
+    for hole in range(MIDPOINT):
+        pair = (1 << hole) | (1 << (LAST - hole))
+        supports = (FULL, FULL ^ pair, pair)
+        reflection_pivots = eliminate(reflection_system(supports))
+        if reflection_pivots is None:
+            outcomes["mod16"] += 1
+            continue
+        assert len(reflection_pivots) == 298
+        equations, reference, coordinates, masks = mirror_system(supports, assignment(reflection_pivots))
+        mirror_pivots = eliminate(equations)
+        if mirror_pivots is None:
+            outcomes["mod32"] += 1
+            continue
+        consistent, nullity = lift_is_consistent(reference, coordinates, masks, mirror_pivots)
+        if not consistent:
+            outcomes["mod64 linearization"] += 1
+            continue
+        survivors.append((hole, nullity))
+
+    assert outcomes == {"mod16": 17, "mod32": 16, "mod64 linearization": 110}
+    assert survivors == [(0, 149), (1, 51), (2, 32), (37, 38), (74, 75), (99, 51)]
+    print("t=599 comparators: 17 fail mod16, 16 more fail mod32, 110 more fail the mod64 linearization")
+    print("surviving hole indices and normalized residual nullities:", survivors)
+
+
+if __name__ == "__main__":
+    verify()

@@ -11,8 +11,8 @@ Let $H(n)$ mean that $n$ mutually orthogonal sign columns of length $n$ exist, a
 | 路線 | 已得到甚麼 | 仍缺甚麼 |
 | --- | --- | --- |
 | 已知構造的覆蓋 | 直接 Paley、Scarpis–Đoković，以及下文的長度 3 乘積覆蓋明列的無限族 | 覆蓋剩餘全部奇數乘數的定理 |
-| 外層設計與精確內欄 | 全寬同餘解及有理延伸。2396 的三交集模型只餘兩組，兩組皆須非交換。規範化的兩方陣疊接至少須加五欄。同一五欄證書實現精確行欄平衡、新欄正交、完整省略欄 Gram 及全部新舊內積模八為零，其中 994 組完整向量可配對至模十六 | 同一組五欄仍須讓所有新舊內積精確為零。全階仍須統一構造外層設計，並在共同證書上滿足整數內欄條件。[交集限制](R_SYMMETRY.md) · [精確省略欄 Gram](EXTERIOR_STACKS.md) · [模十六提升](EXTERIOR_LIFT.md) · [雙欄對限制](EXTERIOR_CONTRASTS.md) |
-| 直接構造近滿矩陣 | 所有奇數乘數的混合奇偶缺 8 欄可完成；缺 9 至 11 欄可完成或到達缺 8 欄。2396 的缺 12 欄由至多兩個整幺模超格精確判定。完整補欄等價於某個仿射格的最短向量達到門檻。缺 12 欄的 $D_{12}^{+}$ 在 28、44、60 階有精確阻塞例；$t=4r+3$ 的模型通過兩個 Gram 等式模十六，$t=16k+3$ 的另一構造達模三十二 | 統一取得近滿矩陣，且解決無法直接完成的格型。2396 模型還欠精確符號補空間。[整幺模判準](OVERLATTICES.md) · [統一模十六構造](MOD16_DEFECT12_FAMILY.md) · [模三十二構造](MOD32_DEFECT12_CONSTRUCTION.md) |
+| 外層設計與精確內欄 | 全寬同餘解及有理延伸。2396 的三交集模型只餘兩組，兩組皆須非交換。規範化的兩方陣疊接至少須加五欄。同一五欄證書實現精確行欄平衡、新欄正交、完整省略欄 Gram 及全部新舊內積模八為零，988 組可配對至模十六並通過新的省略欄必要條件 | 同一組五欄仍須讓所有新舊內積精確為零。全階仍須統一構造外層設計，並在共同證書上滿足整數內欄條件。[交集限制](R_SYMMETRY.md) · [精確省略欄 Gram](EXTERIOR_STACKS.md) · [模十六提升與排除](EXTERIOR_MOD16_INVARIANT.md) · [雙欄對限制](EXTERIOR_CONTRASTS.md) |
+| 直接構造近滿矩陣 | 所有奇數乘數的混合奇偶缺 8 欄可完成；缺 9 至 11 欄可完成或到達缺 8 欄。2396 的缺 12 欄由至多兩個整幺模超格精確判定。完整補欄等價於某個仿射格的最短向量達到門檻。缺 12 欄的 $D_{12}^{+}$ 在 28、44、60 階有精確阻塞例；$t=4r+3$ 的模型通過兩個 Gram 等式模十六，$t=16k+3$ 的另一構造達模三十二 | 統一取得近滿矩陣，且解決無法直接完成的格型。2396 模六十四來源只餘一個主位移的近候選，仍欠精確來源及符號補空間。[整幺模判準](OVERLATTICES.md) · [統一模十六構造](MOD16_DEFECT12_FAMILY.md) · [模三十二構造](MOD32_DEFECT12_CONSTRUCTION.md) · [單位移近來源](NEAR64_599.md) |
 | 2396 階的專用構造 | 原始循環證書、邊框證書，以及長度 599 T 序列的支撐、模四符號與奇係數逐位提升 | 任一條路線取得完整二元矩陣；單階成果的構造若可推廣再接回全題。[T 序列](T599.md) |
 
 ## What is known about the distance
@@ -94,7 +94,7 @@ $$\sum_{C\ne B}\big((2|B\cap C|-t)^2-1\big)=(t-1)(t-3).$$
 $$\operatorname{tr}(A_w E)=\frac{(2t-1)d_w(2w-t)}t.$$
 對素數 $t\ge5$，所有允許的 $w$ 介乎 $1$ 與 $t-1$，所以 $t\mid d_w$。若所有交集圖都交換，其度數相加卻為 $4t-3$，矛盾。這排除素數乘數的交換交集模型。2396 階餘下兩組分布中的每個度數均非 599 的倍數，所以每個交集圖都不與 $P$ 交換。[度數與精確核查](r_intersections.py)
 
-**2396 餘譜的線性規劃與嵌入。** 一旦基本 Gram 條件成立，常重量 Johnson 核與球面兩點核的所有階都自動半正定。對 $(286,299,309)$，若外層可嵌入完整 Hadamard，整數方差已達下界，外欄的每個低交集跨組鄰居數只能為 137 或 147。兩組譜的可實現性仍開放。[兩點核](R_TWO_POINT.md) · [方差與逐欄限制](R_EMBEDDING.md)
+**2396 餘譜的線性規劃與嵌入。** 一旦基本 Gram 條件成立，常重量 Johnson 核與球面兩點核的所有階都自動半正定。對 $(286,299,309)$，若外層可嵌入完整 Hadamard，整數方差已達下界，外欄的每個低交集跨組鄰居數只能為 137 或 147。結合點對 Gram 與握手定理，至少有 570 個點的切分不均勻。兩組譜的可實現性仍開放。[兩點核](R_TWO_POINT.md) · [方差與逐欄限制](R_EMBEDDING.md)
 
 **素數階對稱。** 若 $t=p\ge5$ 是素數，一個階為 $p$ 的點置換也可能只含一個 $p$-循環，其餘 $p$ 點固定。此時不動區塊仍只能是循環的支集及其補集。相同的區塊軌道計數排除這種置換，因此外層設計的自同構群沒有階為 $p$ 的元素。對任意奇數 $t\ge5$，若素數 $p>t$，階為 $p$ 的點置換只能有一個 $p$-循環且少於 $t$ 個不動點。它沒有任何不動區塊，故 $p\mid 4t-2$，只能是 $p=2t-1$。在 $t=599$，$2t-1=1197$ 合成，故任何素數 $p\ge599$ 都不可能是外層設計的自同構階。
 
@@ -158,6 +158,6 @@ For the $2396\times1196$ witness, the upper block is a full matrix of order $119
 
 後續在同一下部來源找到 1,193 條舊欄和五條新欄，重現全部行欄平衡及十個新欄間內積。固定其上半部五符號行多重集時，所有上下欄配對均因 Gram 矩陣慣性而排除。另一個給出正定目標 Gram 的上半部型態，也因模 13 的整數實現條件而排除。換用另一個 $H(1200)$ 來源甚至有 1,195 條舊欄加三欄暫填的平衡候選。然而 Parseval 界證明，對奇數 $t\ge65$ 的規範化 $H(2t-2)/H(2t+2)$ 疊接，至多四欄的任何正交補法都不可能。明列的五欄和六欄候選還要求保留部分的消去矩陣滿欄秩。[疊接下界與滿秩證明](EXTERIOR_STACKS.md)
 
-改選行型態及舊欄配對後，已有一組證書同時做到全部行欄平衡、新舊內積模八為零、新欄間內積模八為零，其中三個新欄間內積精確為零。Parseval 界也證明這個證書需要更換上部符號，才有機會讓全部內積精確為零。若沿用這組省略欄，任何精確五欄補法至少有四條下部新欄須距每條帶符號省略欄至少 25 格。 改排另一組實際符號行後，已在同一組欄上實現精確行欄平衡、十個新欄間內積為零、完整省略欄 Gram 及 5,965 個新舊內積模八為零。跨省略型態交換與配對調整使模十六的完整向量配對由 887 條增至 994 條，保有精確 Gram 與全部模八正交。仍須使全部新舊內積精確相消。任意來源的 2396 階精確五欄補法都不能有兩對互不重疊的新欄，其上部距離均至少 955。[聯合同餘證書](EXTERIOR_MOD8.md) · [模十六提升](EXTERIOR_LIFT.md) · [省略欄 Gram 與下部距離](EXTERIOR_STACKS.md) · [上部欄對距離](EXTERIOR_CONTRASTS.md)
+改選行型態及舊欄配對後，已有一組證書同時做到全部行欄平衡、新舊內積模八為零、新欄間內積模八為零，其中三個新欄間內積精確為零。Parseval 界也證明這個證書需要更換上部符號，才有機會讓全部內積精確為零。若沿用這組省略欄，任何精確五欄補法至少有四條下部新欄須距每條帶符號省略欄至少 25 格。 改排另一組實際符號行後，已在同一組欄上實現精確行欄平衡、十個新欄間內積為零、完整省略欄 Gram 及 5,965 個新舊內積模八為零。跨省略型態交換與配對調整使模十六的完整向量配對由 887 條增至 994 條，保有精確 Gram 與全部模八正交。混合位元不變量排除固定有 994 組配對的上部，容許任意下部與配對。另有 988 組配對的配置通過此必要條件，全部新舊內積仍須精確相消。任意來源的 2396 階精確五欄補法都不能有兩對互不重疊的新欄，其上部距離均至少 955。[聯合同餘證書](EXTERIOR_MOD8.md) · [模十六提升](EXTERIOR_LIFT.md) · [固定上部的排除](EXTERIOR_MOD16_INVARIANT.md) · [省略欄 Gram 與下部距離](EXTERIOR_STACKS.md) · [上部欄對距離](EXTERIOR_CONTRASTS.md)
 
 The GitHub workflow builds the Lean files with version 4.36.0 and treats warnings as errors. The two global implication theorems expose Paley-covered cases and Verheiden completion as inputs. R, B and their alternative marginal growth assumptions remain explicit hypotheses. The fractional identities, conditional induction, row-energy and parity obstructions, order-28 blocked prefix, doubling, and assembly have kernel-checked proofs. The complete fixed-design census and Gram determinant use exact Python arithmetic. The Python replays also cover the order-324 product, the intersection classification and figure-eight determinant sieve at order 2396, the five-column Gram certificates and joint modular lift, the exact order-28 defect and the order-2396 defect-12 Gram model modulo sixteen, and the length-599 phase congruences. The geometric lattice and group-algebra arguments are written proofs with separately checked arithmetic. [GitHub Actions](../../.github/workflows/hadamard-all-orders.yml)
