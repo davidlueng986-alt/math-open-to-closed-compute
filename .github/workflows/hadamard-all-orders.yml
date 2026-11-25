@@ -26,6 +26,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/t599_length_change.py
           python3 -B jobs/hadamard-all-orders/t599_golay2_central.py
           python3 -B jobs/hadamard-all-orders/border4_2396.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_lift.py
           python3 -B jobs/hadamard-all-orders/r_intersections.py
           python3 -B jobs/hadamard-all-orders/r_near_complement.py
           python3 -B jobs/hadamard-all-orders/r_two_point.py
@@ -91,6 +92,8 @@ jobs:
         run: python3 -B jobs/hadamard-all-orders/exterior_folded_obstruction.py
       - name: Check wider folded row changes and matching counts
         run: python3 -B jobs/hadamard-all-orders/exterior_wide_fold.py
+      - name: Check fold capacities, factor distances and row-mask rigidity
+        run: python3 -B jobs/hadamard-all-orders/exterior_fold_factor_capacity.py
 
   exact-source-columns:
     runs-on: ubuntu-latest

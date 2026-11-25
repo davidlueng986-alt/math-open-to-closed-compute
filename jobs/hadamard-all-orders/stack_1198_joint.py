@@ -2,30 +2,12 @@
 
 from collections import defaultdict
 from hashlib import sha256
+import json
+from pathlib import Path
 
 from stack_1197 import LOWER_FLIPS, LOWER_OMITTED, UPPER_FLIPS, flipped_column, source_matrices
 from stack_1198 import pack, projection_targets, signs
 from verify import verify_orthogonal
-
-
-UPPER_PIVOT = 522
-LOWER_PIVOT = 30
-UPPER_SECOND_FLIPS = (
-    459, 1001, 808, 266, 817, 572, 49, 80, 1155, 873, 97, 843, 714, 675, 327,
-    382, 760, 585, 163, 965, 148, 74, 1164, 243, 1151, 165, 1051, 211, 794,
-    1126, 342, 333,
-)
-LOWER_DENSE_HOLES = (
-    298, 434, 439, 0, 271, 276, 97, 426, 299, 56, 499, 495, 542, 459, 126,
-    279, 532, 127, 579, 22, 370, 165, 485, 261, 438, 10, 398, 76, 66, 341,
-    590, 60, 32, 247,
-)
-LOWER_SPARSE_SUPPORT = (
-    50, 240, 440, 87, 241, 383, 585, 328, 39, 32, 542, 450, 578, 438, 443,
-    527, 419, 29, 209, 415, 113, 330, 177, 57, 238, 528, 176, 441, 370, 308,
-    117, 148, 106, 212,
-)
-PACKED_HASH = "e7286d504cd73630268065c939e1140dfcaebe1bba165abc8c301ee5df3f9b6c"
 
 
 def dot(size, left, right):
@@ -43,17 +25,19 @@ def signature(first, second, modulus=None):
     return abs(first), oriented
 
 
-def lower_channels(lower, reference):
+def lower_channels(lower, reference, witness):
     side = len(lower) // 2
     mask = (1 << side) - 1
     top, bottom = signs(reference & mask, side), signs(reference >> side, side)
     parts = ([i for i in range(side) if top[i] == bottom[i]],
              [i for i in range(side) if top[i] != bottom[i]])
     sole_right, = [index - side for index in LOWER_OMITTED if index >= side]
-    dense_column = signs(lower[LOWER_PIVOT] & mask, side)
+    dense_column = signs(lower[witness["lower_pivot"]] & mask, side)
     sparse_column = signs(lower[sole_right] & mask, side)
-    dense = [dense_column[i] if i not in LOWER_DENSE_HOLES else 0 for i in range(side)]
-    sparse = [sparse_column[i] if i in LOWER_SPARSE_SUPPORT else 0 for i in range(side)]
+    holes = set(witness["dense_holes"])
+    support = set(witness["sparse_support"])
+    dense = [0 if i in holes else dense_column[i] for i in range(side)]
+    sparse = [witness["sparse_sign"] * sparse_column[i] if i in support else 0 for i in range(side)]
 
     permutation = [0] * side
     row_signs = [1] * side
@@ -87,7 +71,7 @@ def lower_channels(lower, reference):
     return modified, word_top | (word_bottom << side)
 
 
-def match_columns(first_a, second_a, first_b, second_b):
+def match_columns(first_a, second_a, first_b, second_b, exact_matches):
     exact = defaultdict(list)
     for j in range(len(first_b)):
         if j not in LOWER_OMITTED:
@@ -97,7 +81,7 @@ def match_columns(first_a, second_a, first_b, second_b):
         possibilities = exact[signature(first, second)]
         if possibilities:
             pairs[i] = possibilities.pop()
-    assert len(pairs) == 1083
+    assert len(pairs) == exact_matches
 
     modular = defaultdict(list)
     for remaining in exact.values():
@@ -117,14 +101,18 @@ def match_columns(first_a, second_a, first_b, second_b):
     return pairs
 
 
-def verify():
-    upper, lower = source_matrices()
+def verify_witness(upper, lower, u, v, witness):
     n, m = len(upper), len(lower)
-    assert len(set(UPPER_SECOND_FLIPS)) == 32
-    assert len(set(LOWER_DENSE_HOLES)) == len(set(LOWER_SPARSE_SUPPORT)) == 34
-    u, v = flipped_column(n, UPPER_FLIPS), flipped_column(m, LOWER_FLIPS)
-    x = upper[UPPER_PIVOT] ^ sum(1 << i for i in UPPER_SECOND_FLIPS)
-    modified_lower, y = lower_channels(lower, v)
+    upper_pivot = witness["upper_pivot"]
+    lower_pivot = witness["lower_pivot"]
+    assert len(witness["upper_flips"]) == len(set(witness["upper_flips"])) == 32
+    for support in (witness["dense_holes"], witness["sparse_support"]):
+        assert len(support) == len(set(support)) == 34
+        assert all(0 <= i < m // 2 for i in support)
+    assert witness["sparse_sign"] in (-1, 1)
+    assert all(0 <= i < n for i in witness["upper_flips"])
+    x = upper[upper_pivot] ^ sum(1 << i for i in witness["upper_flips"])
+    modified_lower, y = lower_channels(lower, v, witness)
     assert verify_orthogonal(m, modified_lower) == 719400
     assert dot(n, u, x) == dot(m, v, y) == 0
     first_a, second_a = ([dot(n, reference, col) for col in upper] for reference in (u, x))
@@ -133,9 +121,9 @@ def verify():
     omitted = tuple(second_b[j] // 2 for j in LOWER_OMITTED)
     assert omitted == (18, 4, 34, -30) and (omitted, 0) in projection_targets(upper, lower, v)
     assert second_a[0] == second_b[0]
-    assert first_a[UPPER_PIVOT] == first_b[LOWER_PIVOT]
-    assert second_a[UPPER_PIVOT] == second_b[LOWER_PIVOT] == 1132
-    pairs = match_columns(first_a, second_a, first_b, second_b)
+    assert first_a[upper_pivot] == first_b[lower_pivot]
+    assert second_a[upper_pivot] == second_b[lower_pivot] == 1132
+    pairs = match_columns(first_a, second_a, first_b, second_b, witness["exact_zeros"] - 1)
 
     lower_mask = (1 << m) - 1
     columns = []
@@ -151,11 +139,27 @@ def verify():
     new = x | (y << n)
     products = [dot(n + m, new, old) for old in columns]
     assert all(value % 8 == 0 for value in products)
-    assert products.count(0) == 1084 and max(map(abs, products)) == 32
-    assert sum(value**2 for value in products) == 25984
+    assert products.count(0) == witness["exact_zeros"]
+    assert max(map(abs, products)) == witness["max_abs_dot"]
+    assert sum(value**2 for value in products) == witness["squared_residual"]
     packed = "".join(f"{col:x}\n" for col in [*columns, new]).encode("ascii")
-    assert sha256(packed).hexdigest() == PACKED_HASH
-    print("1197 exact columns; next column: 1084 zeros and 113 nonzero multiples of eight")
+    assert sha256(packed).hexdigest() == witness["sha256"]
+
+
+def verify():
+    path = Path(__file__).with_name("stack_1198_joint_data.json")
+    witnesses = json.loads(path.read_text(encoding="ascii"))
+    upper, lower = source_matrices()
+    u = flipped_column(len(upper), UPPER_FLIPS)
+    v = flipped_column(len(lower), LOWER_FLIPS)
+    for witness in witnesses:
+        verify_witness(upper, lower, u, v, witness)
+        zeros = witness["exact_zeros"]
+        if witness["name"] == "highest_zero_count":
+            print(f"1197 exact columns; next column: {zeros} zeros and {1197 - zeros} nonzero multiples of eight")
+        else:
+            energy = witness["squared_residual"]
+            print(f"1198 mod eight alternative: {zeros} zeros; squared residual {energy}")
 
 
 if __name__ == "__main__":
