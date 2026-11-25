@@ -371,7 +371,8 @@ theorem dyadic_path_of_identify_power {V : Type u} {G : SimpleGraph V}
       have hnotx : x ∉ qG.support := by
         rw [hqG_supp, List.mem_map]
         rintro ⟨u, hu, hux⟩
-        exact hnotx' ((Subtype.ext hux) ▸ hu)
+        have hueq : u = x' := Subtype.ext hux
+        exact hnotx' (hueq ▸ hu)
       have hnoty : y ∉ qG.support := by
         rw [hqG_supp, List.mem_map]
         rintro ⟨u, _, huy⟩
@@ -438,22 +439,22 @@ theorem dyadic_path_of_identify_power {V : Type u} {G : SimpleGraph V}
         · intro hm
           rw [hpedges, List.mem_cons, List.mem_append, List.mem_singleton] at hm
           rcases hm with h | h | h
-          · rcases Sym2.eq_iff.mp h with ⟨_, h2'⟩ | ⟨h1', _⟩
+          · rcases Sym2.eq_iff.mp h with ⟨_, h2'⟩ | ⟨_, h2'⟩
             · exact hbz h2'.symm
-            · exact (G.ne_of_adj hxz) h1'.symm
+            · exact (G.ne_of_adj hxz) h2'.symm
           · exact hnotx (mem_support_of_mem_edge qG h (by simp))
           · rcases Sym2.eq_iff.mp h with ⟨_, h2'⟩ | ⟨h1', _⟩
-            · exact hxy h2'
-            · exact hxy h1'.symm
+            · exact (G.ne_of_adj hyz) h2'.symm
+            · exact hxy h1'
         · intro hm
           rw [hpedges, List.mem_cons, List.mem_append, List.mem_singleton] at hm
           rcases hm with h | h | h
           · rcases Sym2.eq_iff.mp h with ⟨h1', _⟩ | ⟨_, h2'⟩
             · exact hxy h1'.symm
-            · exact hxy h2'
+            · exact (G.ne_of_adj hxz) h2'.symm
           · exact hnoty (mem_support_of_mem_edge qG h (by simp))
-          · rcases Sym2.eq_iff.mp h with ⟨h1', _⟩ | ⟨_, h2'⟩
-            · exact (G.ne_of_adj hyz) h1'
+          · rcases Sym2.eq_iff.mp h with ⟨_, h2'⟩ | ⟨_, h2'⟩
+            · exact (G.ne_of_adj hyz) h2'.symm
             · exact hb'z h2'.symm
       · let p_rev : G.Walk y x := Walk.cons h1y (qG.append (Walk.cons h2x.symm Walk.nil))
         have hpsupp : p_rev.support = y :: (qG.support ++ [x]) := by
@@ -485,22 +486,22 @@ theorem dyadic_path_of_identify_power {V : Type u} {G : SimpleGraph V}
           rcases hm with h | h | h
           · rcases Sym2.eq_iff.mp h with ⟨h1', _⟩ | ⟨_, h2'⟩
             · exact hxy h1'
-            · exact hxy h2'.symm
+            · exact (G.ne_of_adj hyz) h2'.symm
           · exact hnotx (mem_support_of_mem_edge qG h (by simp))
-          · rcases Sym2.eq_iff.mp h with ⟨_, h2'⟩ | ⟨h1', _⟩
+          · rcases Sym2.eq_iff.mp h with ⟨_, h2'⟩ | ⟨_, h2'⟩
             · exact (G.ne_of_adj hxz) h2'.symm
-            · exact hb'z h1'.symm
+            · exact hb'z h2'.symm
         · intro hm
           rw [Walk.edges_reverse, List.mem_reverse, hpedges, List.mem_cons,
             List.mem_append, List.mem_singleton] at hm
           rcases hm with h | h | h
-          · rcases Sym2.eq_iff.mp h with ⟨_, h2'⟩ | ⟨h1', _⟩
+          · rcases Sym2.eq_iff.mp h with ⟨_, h2'⟩ | ⟨_, h2'⟩
             · exact hbz h2'.symm
-            · exact (G.ne_of_adj hyz) h1'.symm
+            · exact (G.ne_of_adj hyz) h2'.symm
           · exact hnoty (mem_support_of_mem_edge qG h (by simp))
           · rcases Sym2.eq_iff.mp h with ⟨_, h2'⟩ | ⟨h1', _⟩
-            · exact hxy h2'.symm
-            · exact hxy h1'
+            · exact (G.ne_of_adj hxz) h2'.symm
+            · exact hxy h1'.symm
       · exact False.elim (h_no_same y hnoty h1y h2y.symm)
 
 /-! ### Part 3: Degree Formulas for `identifyGraph` & Main Unconditional Corollaries -/
@@ -604,6 +605,7 @@ theorem identifyGraph_degree_merged {V : Type u} [Fintype V] [DecidableEq V]
   have hc := Fintype.card_congr e
   rw [SimpleGraph.card_neighborSet_eq_degree, Fintype.card_coe,
     Finset.card_union_of_disjoint hAB] at hc
+  change (identifyGraph G x y).degree ⟨x, hxy⟩ = A.card + B.card at hc
   by_cases hadj : G.Adj x y
   · have hA : A.card + 1 = G.degree x := by
       have := Finset.card_erase_add_one ((G.mem_neighborFinset x y).mpr hadj)
@@ -650,7 +652,8 @@ theorem dyadic_path_of_no_common_neighbor {V : Type u} [Fintype V]
     · have := hw x hxw
       omega
   have hdeg_merged : 3 ≤ H.degree ⟨x, hxy⟩ := by
-    have hd := identifyGraph_degree_merged G hxy hdisj
+    have hd : H.degree ⟨x, hxy⟩ = G.degree x + G.degree y - (if G.Adj x y then 2 else 0) :=
+      identifyGraph_degree_merged G hxy hdisj
     by_cases hadj : G.Adj x y
     · rw [ite_eq_left hadj] at hd; omega
     · rw [ite_eq_right hadj] at hd; omega
@@ -901,7 +904,7 @@ theorem cubic_triangle_free_two_path_mersenne {V : Type u} [Fintype V]
   obtain ⟨u3, hv3, _, _, hN_eq⟩ := cubic_three_neighbors G hC hv1 hv2 h12
   let W := {x : V // x ≠ v}
   let K : SimpleGraph W := G.induce {x | x ≠ v}
-  let _ : DecidableRel K.Adj := fun x y => Classical.propDecidable (K.Adj x y)
+  let _ : DecidableRel K.Adj := inferInstanceAs (DecidableRel (G.induce {x | x ≠ v}).Adj)
   let U1 : W := ⟨u1, (G.ne_of_adj hv1).symm⟩
   let U2 : W := ⟨u2, (G.ne_of_adj hv2).symm⟩
   let U3 : W := ⟨u3, (G.ne_of_adj hv3).symm⟩
@@ -944,24 +947,24 @@ theorem cubic_triangle_free_two_path_mersenne {V : Type u} [Fintype V]
       exact hk3.trans (K.degree_le_of_le (v := x) (H := H) le_sup_left)
   obtain ⟨k, a, c, hk, hc, hlen⟩ := hm.2.2.1 W H (by omega) hnear
   have hKfree : ¬HasPower K := fun hp => hm.2.1 (power_induce G _ hp)
-  have hedge : s(U1, U2) ∈ c.edges := by
+  have h_uses_edge : ∀ {u : W} (w : H.Walk u u), w.IsCycle → w.length = 2 ^ k → s(U1, U2) ∈ w.edges := by
+    intro u w hw hwlen
     by_contra hno
-    have htr : ∀ e ∈ c.edges, e ∈ K.edgeSet := by
+    have htr : ∀ e ∈ w.edges, e ∈ K.edgeSet := by
       intro e he
-      have hmem := c.edges_subset_edgeSet he
+      have hmem := w.edges_subset_edgeSet he
       rw [SimpleGraph.edgeSet_sup] at hmem
       rcases hmem with hk' | hed
       · exact hk'
       · rw [SimpleGraph.edgeSet_edge_of_ne hU12] at hed
         exact False.elim (hno ((Set.mem_singleton_iff.mp hed) ▸ he))
-    exact hKfree ⟨k, a, c.transfer K htr, hk, hc.transfer htr, by simpa using hlen⟩
+    exact hKfree ⟨k, u, w.transfer K htr, hk, hw.transfer htr, by simpa using hwlen⟩
+  have hedge : s(U1, U2) ∈ c.edges := h_uses_edge c hc hlen
   have hU1mem : U1 ∈ c.support := mem_support_of_mem_edge c hedge (by simp)
   let c' := c.rotate U1 hU1mem
   have hc' : c'.IsCycle := hc.rotate hU1mem
   have hlen' : c'.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
-  have hedge' : s(U1, U2) ∈ c'.edges := by
-    have hperm := Walk.edges_rotate c hU1mem
-    exact hperm.mem_iff.mpr hedge
+  have hedge' : s(U1, U2) ∈ c'.edges := h_uses_edge c' hc' hlen'
   have htransfer_tail : ∀ (r : H.Walk U2 U1), r.IsPath → s(U1, U2) ∉ r.edges →
       r.length = 2 ^ k - 1 →
       ∃ p : K.Walk U1 U2, p.IsPath ∧ p.length = 2 ^ k - 1 := by
@@ -1010,17 +1013,17 @@ theorem cubic_triangle_free_two_path_mersenne {V : Type u} [Fintype V]
             rw [Walk.edges_reverse, List.mem_reverse]; exact hedge'
           rw [hrev_eq, Walk.edges_cons, List.mem_cons] at hmem_rev
           rcases hmem_rev with hhead | htail
-          · rcases Sym2.eq_iff.mp hhead with ⟨_, h2⟩ | ⟨h1, _⟩
+          · rcases Sym2.eq_iff.mp hhead with ⟨_, h2⟩ | ⟨_, h2⟩
             · exact h2.symm
-            · exact False.elim (hU12 h1.symm)
+            · exact False.elim (hU12 h2.symm)
           · have h1 : c' = c'.reverse.reverse := c'.reverse_reverse.symm
             rw [hrev_eq, Walk.reverse_cons] at h1
             cases hr'_eq : r'.reverse with
             | nil =>
-              have := Walk.length_eq_zero_iff.mpr hr'_eq
+              have hlen0 : r'.reverse.length = 0 := by rw [hr'_eq]; rfl
               have h3 := hc'rev.three_le_length
               rw [hrev_eq, Walk.length_cons] at h3
-              simp at this; omega
+              simp at hlen0; omega
             | @cons _ b2 _ e3 rest =>
               have hb2 : b2 = b := by
                 have h2 : c' = (Walk.cons e3 rest).append (Walk.cons e2.symm Walk.nil) := by
@@ -1033,9 +1036,9 @@ theorem cubic_triangle_free_two_path_mersenne {V : Type u} [Fintype V]
                 rw [← hr'_eq, Walk.edges_reverse, List.mem_reverse]; exact htail
               rw [Walk.edges_cons, List.mem_cons] at hmem_rest
               rcases hmem_rest with hfirst | hinrest
-              · rcases Sym2.eq_iff.mp hfirst with ⟨_, h2⟩ | ⟨h1', _⟩
+              · rcases Sym2.eq_iff.mp hfirst with ⟨_, h2⟩ | ⟨_, h2⟩
                 · exact False.elim (hb h2.symm)
-                · exact False.elim (hU12 h1'.symm)
+                · exact False.elim (hU12 h2.symm)
               · have hU1_rest : U1 ∈ rest.support := mem_support_of_mem_edge rest hinrest (by simp)
                 have hsupp_rev : c'.reverse.support.tail = rest.reverse.support ++ [U1] := by
                   have hr'_orig : r' = rest.reverse.append (Walk.cons e3.symm Walk.nil) := by
@@ -1047,7 +1050,7 @@ theorem cubic_triangle_free_two_path_mersenne {V : Type u} [Fintype V]
                 rw [hsupp_rev, List.nodup_append] at hnod
                 have hU1_rev : U1 ∈ rest.reverse.support := by
                   rw [Walk.support_reverse, List.mem_reverse]; exact hU1_rest
-                exact False.elim (hnod.2.2 U1 hU1_rev (by simp) rfl)
+                exact False.elim (hnod.2.2 U1 hU1_rev U1 (List.mem_singleton.mpr rfl) rfl)
         subst hb'
         have hrnodup : (s(U1, U2) :: r'.edges).Nodup := by
           have := hc'rev.isTrail.edges_nodup
@@ -1109,12 +1112,19 @@ theorem cubic_triangle_free_two_path_dyadic {V : Type u} [Fintype V]
     change (G.induce {x | x ≠ v}).degree U2 + (if G.Adj u2 v then 1 else 0) = G.degree u2 at hd
     rw [ite_eq_left hv2.symm, hC u2] at hd; omega
   have hdeg_merged : H.degree ⟨U1, hU12⟩ = 4 := by
-    have hd := identifyGraph_degree_merged (G.induce {x | x ≠ v}) hU12 hKdisj
+    have hd : H.degree ⟨U1, hU12⟩ = (G.induce {x | x ≠ v}).degree U1 + (G.induce {x | x ≠ v}).degree U2 -
+        (if (G.induce {x | x ≠ v}).Adj U1 U2 then 2 else 0) :=
+      identifyGraph_degree_merged (G.induce {x | x ≠ v}) hU12 hKdisj
     have hnot : ¬(G.induce {x | x ≠ v}).Adj U1 U2 := hn12
     rw [ite_eq_right hnot, hKdeg1, hKdeg2] at hd
     omega
+  have hcardW2 : 2 ≤ Fintype.card {v_1 : {x : V // x ≠ v} // v_1 ≠ U2} := by
+    have hEq : Fintype.card {v_1 : {x : V // x ≠ v} // v_1 ≠ U2} =
+        Fintype.card {x : {x : V // x ≠ v} // x ≠ U2} :=
+      Fintype.card_congr (Equiv.refl _)
+    omega
   have hnear : Near H := by
-    apply near_of_except H (⟨U3, hU32⟩ : {x : {x : V // x ≠ v} // x ≠ U2}) (by omega)
+    apply near_of_except H (⟨U3, hU32⟩ : {x : {x : V // x ≠ v} // x ≠ U2}) hcardW2
     intro x hx
     by_cases hx1 : x.1 = U1
     · have he : x = ⟨U1, hU12⟩ := Subtype.ext hx1
