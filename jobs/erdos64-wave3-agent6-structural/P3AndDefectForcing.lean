@@ -77,15 +77,15 @@ theorem mersenne_path_of_add_edge {G : SimpleGraph V} {v : V}
                 rw [Walk.edges_reverse, List.mem_reverse]; exact hmem'
               rw [hre, Walk.edges_cons, List.mem_cons] at hmem_rev
               rcases hmem_rev with heq | _
-              · rcases Sym2.eq_iff.mp heq with ⟨_, rfl⟩ | ⟨h1, _⟩
+              · rcases Sym2.eq_iff.mp heq with ⟨_, rfl⟩ | ⟨_, h2⟩
                 · rfl
-                · exact False.elim (hab h1)
+                · exact False.elim (hab h2.symm)
               · have hmem_c : s(a, b) ∈ q.edges := by
                   rw [hce, Walk.edges_cons, List.mem_cons] at hmem'
                   rcases hmem' with heq | hq
-                  · rcases Sym2.eq_iff.mp heq with ⟨_, hbx⟩ | ⟨h1, _⟩
+                  · rcases Sym2.eq_iff.mp heq with ⟨_, hbx⟩ | ⟨_, h2⟩
                     · exact False.elim (hxb hbx.symm)
-                    · exact False.elim (hab h1)
+                    · exact False.elim (hab h2.symm)
                   · exact hq
                 have hq_edges : c'.reverse.edges = q.reverse.edges ++ [s(x, a)] := by
                   rw [hce, Walk.reverse_cons, Walk.edges_append]
@@ -108,7 +108,7 @@ theorem mersenne_path_of_add_edge {G : SimpleGraph V} {v : V}
                     rw [hqr, List.cons_append] at hq_edges
                     have := congrArg List.head? hq_edges
                     simp at this
-                    rw [this]
+                    rw [this]; rfl
                 have hqpath : q.IsPath := by
                   apply Walk.IsPath.mk'
                   have hsn := hc'.support_nodup
@@ -120,12 +120,12 @@ theorem mersenne_path_of_add_edge {G : SimpleGraph V} {v : V}
                   rw [hqrv] at hmem_qrev; simp at hmem_qrev
                 | @cons _ z _ haz rest =>
                   rw [hqrv, Walk.edges_cons] at hqrev_hd hmem_qrev
-                  simp at hqrev_hd
+                  simp only [List.head?_cons, Option.some.injEq] at hqrev_hd
                   rcases List.mem_cons.mp hmem_qrev with heq1 | hmem_rest
                   · rw [← hqrev_hd] at heq1
-                    rcases Sym2.eq_iff.mp heq1 with ⟨_, hby⟩ | ⟨h1, _⟩
+                    rcases Sym2.eq_iff.mp heq1 with ⟨_, hby⟩ | ⟨_, h2⟩
                     · exact hby.symm
-                    · exact False.elim (hab h1)
+                    · exact False.elim (hab h2.symm)
                   · have ha_rest : a ∈ rest.support := Walk.fst_mem_support_of_mem_edges rest hmem_rest
                     have hnd := hqrp.support_nodup
                     rw [hqrv, Walk.support_cons, List.nodup_cons] at hnd
@@ -147,7 +147,7 @@ theorem mersenne_path_of_add_edge {G : SimpleGraph V} {v : V}
     have htrans : ∀ e ∈ q.reverse.edges, e ∈ (H \ SimpleGraph.edge a b).edgeSet := by
       intro e he
       rw [Walk.edges_reverse, List.mem_reverse] at he
-      rw [SimpleGraph.edgeSet_sdiff, Set.mem_diff]
+      rw [SimpleGraph.edgeSet_sdiff, Set.mem_sdiff]
       refine ⟨q.edges_subset_edgeSet he, ?_⟩
       rw [SimpleGraph.edgeSet_edge_of_ne hab, Set.mem_singleton_iff]
       exact fun heq => hqno (heq ▸ he)

@@ -159,9 +159,8 @@ theorem hasPower_of_any_invQuot {G : SimpleGraph V} {σ : V → V}
       have hσu₁ : σ u₁ = u₀ := by rw [hflip, hinv u₀]
       let p₂ : G.Walk u₁ u₀ := p₂_raw.copy hflip.symm hσu₁
       let p : G.Walk u₀ u₀ := p₁.append p₂
-      have hp₂len : p₂.length = 2 ^ k := by
-        show ((p₁.map f).copy hflip.symm hσu₁).length = 2 ^ k
-        rw [Walk.length_copy, Walk.length_map, hp₁len]
+      have hp₂len : p₂.length = 2 ^ k :=
+        (Walk.length_copy p₂_raw hflip.symm hσu₁).trans ((Walk.length_map f p₁).trans hp₁len)
       have hplen : p.length = 2 ^ (k + 1) := by
         simp only [p, Walk.length_append, hp₁len, hp₂len, pow_succ]
         omega
@@ -280,7 +279,7 @@ theorem invQuot_degree_nonfixed [Fintype V] [DecidableEq V]
     ⟨⟦v.1⟧, ⟨fun heq => by
       rcases Quotient.exact heq with h1 | h2
       · exact (G.ne_of_adj v.2) h1
-      · have hv_eq : v.1 = σ u := by rw [h2, hinv v.1]
+      · have hv_eq : v.1 = σ u := (hinv v.1).symm.trans (congrArg σ h2).symm
         exact hno (hv_eq ▸ (v.2 : G.Adj u v.1)),
       u, v.1, rfl, rfl, v.2⟩⟩
   have hfinj : Function.Injective f := by

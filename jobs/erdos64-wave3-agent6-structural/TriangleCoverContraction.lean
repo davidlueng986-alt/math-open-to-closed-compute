@@ -348,7 +348,7 @@ theorem sum_wt_split {α β : Type*} [DecidableEq α] (S_list : List α) (l : Li
   | nil => simp
   | cons x xs ih =>
     cases x with
-    | inr _ => simp [triWt, getInl, ih]
+    | inr _ => simp only [List.map_cons, triWt, List.sum_cons, zero_add, List.filterMap_cons, getInl, ih]
     | inl i =>
       by_cases hi : i ∈ S_list
       · simp [triWt, getInl, hi, ih]; omega
