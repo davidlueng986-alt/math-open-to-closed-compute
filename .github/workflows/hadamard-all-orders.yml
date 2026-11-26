@@ -128,6 +128,9 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_primitive_field.py
           python3 -B jobs/hadamard-all-orders/border4_2396_q23_taylor.py
           python3 -B jobs/hadamard-all-orders/direct_2396_cyclic.py
+          python3 -B jobs/hadamard-all-orders/direct_2396_cyclic_ap.py
+          python3 -B jobs/hadamard-all-orders/direct_2396_cyclic_mod16.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_q23_minimal_residual.py
           python3 -B jobs/hadamard-all-orders/border4_2396_delay_screen.py
           python3 -B jobs/hadamard-all-orders/border4_2396_dynamic_tail.py --radius both
       - name: Install pinned Lean 4.36.0
@@ -164,6 +167,10 @@ jobs:
           python3 -B jobs/hadamard-all-orders/r_paley_used_reserve_radius.py
       - name: Exclude up to three physical flips from period-23 partners
         run: python3 -B jobs/hadamard-all-orders/r_paley_near_periodic_partner.py
+      - name: Reconstruct a common exact exterior for two far inner columns
+        run: |
+          python3 -B jobs/hadamard-all-orders/r_paley_double_far.py
+          python3 -B jobs/hadamard-all-orders/r_paley_double_far_mixed.py
 
   near64-repair-extent:
     runs-on: ubuntu-latest

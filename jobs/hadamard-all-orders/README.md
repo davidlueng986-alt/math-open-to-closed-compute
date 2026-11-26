@@ -17,6 +17,8 @@ Let $H(n)$ mean that $n$ mutually orthogonal sign columns of length $n$ exist, a
 
 直接循環路線有兩組長度 599 的四字，完整整數重播的原長殘差峰值為 24、20，平方和分別為 42,560、43,392。若峰值至多 20 且同時滿足模 2 與模 3 本原根等式，即可用同一四字組裝完整 2396 階。這些候選尚未滿足本原等式。[直接循環證書和充分條件](DIRECT_2396_CYCLIC.md)
 
+直接循環的模八提升可保留任意合格的巢狀末對，且不需固定前兩條的 Legendre 形式。固定末對後，反射配對的首對換號提供線性模十六提升，已重建同時滿足精確序列和及全部 598 位移模 16 的四字。該見證殘差峰值 160，在單一模 11 本原根等式的精確充分範圍內，但尚未達到等式。固定近 Legendre 首對及 13 點等差末對時，七種模八步長有三種被整數範數排除。[模八、模十六提升與範數排除](DIRECT_2396_CYCLIC_AP.md)
+
 ## What is known about the distance
 
 Write $r(n)=\max\{k:P(n,k)\}$. Unconditionally, for every $\epsilon>0$ and all sufficiently large multiples of four, $r(n)\ge n/2-O_\epsilon(n^{113/132+\epsilon})$. In particular the literature guarantees $(1/2-o(1))n$ orthogonal columns. Verheiden proved that **any** $n-7$ real orthogonal sign columns of length $n$ can be completed to $n$ for the orders used here. The conjecture follows if that threshold can be reached for every required $n$. The lower bound gives neither a rate of proof progress nor an effective finite search for the rest. [Graham–Shparlinski, §3](https://arxiv.org/abs/0709.2704) · [de Launey–Levin, Theorem A](https://arxiv.org/abs/1003.4003) · [Verheiden, thesis §4](https://thesis.caltech.edu/2899/) · [Verheiden, journal article](https://doi.org/10.1016/0097-3165(80)90028-X)
@@ -39,9 +41,13 @@ For \(t\equiv3\pmod4\) and \(t\ge11\), allowing arbitrary lower Hadamard source 
 
 十五個一位換號樞紐強制分裂出十五個彼此正交的單位軸。新欄在這些軸上的座標由實體行符號直接決定，餘下秩 581 的短根可定向使其預留餘量平方範數至多 290。布林二次方程的滿秩證書進一步排除一個明列的十九軸張成空間。固定 1,215 欄外層及其十五條增欄時，任一相容新下部字與每條舊下部字的帶號漢明距離至少 18。此界結合既有距離下界及對十五條舊來源在距離 13、15 的聯合整數矩完整枚舉。[預留格分裂](R_PALEY_GAMMA_SPLITTING.md) · [二次方程證書](R_PALEY_GAMMA_QUADRATIC.md) · [兩個新排除半徑](R_PALEY_USED_RESERVE_RADIUS.md)
 
+固定 1,215 欄見證有完整的短根整數搜尋化簡。選定端係數通過兩組線性檢查後，預留向量有唯一的模 299 中心代表。精確短根至多需要四個非中心代表，其中樞紐以外至多三個。布林二次秩證書亦擴至一個明列的二十九維預留空間。[完整 CRT 短根化簡](R_PALEY_GAMMA_QUADRATIC.md)
+
 44 階另有確切 \(D_{20}^+\) 格，但二十條平方範數四的特徵直線都在錯相位，實際最大欄寬為 36。對現有的 483 位週期遠距字，任何兩或三個實體列纖維內的換號都無法產生共用外層的相容第二欄；兩個稱重基底中，任一相容週期第二欄亦各需至少七個非零係數。[錯相位實例](R_PALEY_WRONG_PHASE44.md) · [物理纖維排除](R_PALEY_FAR_PHYSICAL_MIXED.md) · [週期稱重基底](R_PALEY_PERIODIC_WEIGHING.md)
 
 固定原 1196 階來源及 483 位遠距字，容許重選全部 600 條來源欄時，仍排除每一條不同的純週期 23 相容內欄。另一個獨立枚舉涵蓋任意纖維配置的十四位換號，使相容第二欄與首欄兩種定向的漢明距離下界提高到 16。[完整週期排除](R_PALEY_PERIODIC_PARTNER.md) · [任意纖維距離界](R_PALEY_FAR_PHYSICAL_MIXED.md)
+
+改用長度 23 選擇字與長度 13 Williamson 字組出的 1196 階來源後，已有兩條各距最近帶號來源 483 位的下部字，可在同一外層精確正交。共同合格投影有 736 個，同號異號各 368 個，重建 1,202 欄的全部欄內積精確為零。重選外層同時容納九條一位換號欄後，達到 1,211 欄及全部 732,655 對欄精確正交。[兩條遠距欄的完整重播](R_PALEY_DOUBLE_FAR.md) · [雙遠距混合見證](R_PALEY_DOUBLE_FAR_MIXED.md)
 
 對同一 483 位遠距首欄及同一來源，亦排除距任一純週期 23 字一至三個實體位置的候選。它們達不到共同選欄的 600 個投影，即使放寬其餘 Gram 條件亦然。[原長換號的完整排除](R_PALEY_NEAR_PERIODIC_PARTNER.md)
 
@@ -116,6 +122,8 @@ For \(t\equiv3\pmod4\) and \(t\ge11\), allowing arbitrary lower Hadamard source 
 在精確負半部、精確 \(C_{13}\) 及全原長模 16 保留且最大殘差至多 80 時，若再滿足模 11 的本原根等式，可能的整數殘差由 142 維降至 10 維。消去精確 \(C_{23}\) 殘差便給出完整四邊框。現有共同見證仍未通過本原根等式。固定巢狀支撐時，所有採用一條非等向直線延遲及固定斜對合的構造均被排除。[有限域整數判準](BORDER4_2396_PRIMITIVE_FIELD.md) · [巢狀支撐排除](BORDER4_2396_DELAY_SCREEN.md)
 
 固定前兩條的 \(C_{23}\) 商群字時，後兩個相位的模 23 範數可在 \(\tau=z-z^{-1}\) 的截斷多項式環按次展開。除首個二平方等式外，各層為線性，並可用整數流測試候選商群邊際的符號提升。現有共同見證的模 23 目標首項為 \(20\tau^2\)，已有純商群解，仍須由同一份保留精確 \(C_{13}\) 和全原長模 16 的實體符號實現。[\(C_{23}\) 截斷多項式及重播](BORDER4_2396_Q23_TAYLOR.md)
+
+另一個實體四邊框見證在精確負半部、精確 (C_{13})、全部序列和及全原長模 8 下，使 (C_{23}) 整數殘差平方和達到最小非零值 64。該符號的 397 個非零原長位移符合模 16，65 個精確，仍須消去商群兩對反向殘差。[最小非零 (C_{23}) 見證](BORDER4_2396_Q23_MINIMAL_RESIDUAL.md)
 
 **五欄省略投影。** 改變 148 個行對異或的新折疊保有逐索引模八、行欄重量及全部精確 Gram，得到 39 組精確五維配對。它的索引 313 在任何重配下都無法精確相消，故 136 和 148 兩個固定折疊都需更換。保持參考配置的逐索引模八值時，要從第八個因數切換到其他因數並完成精確相消，必須改動全部五個折疊座標。[Hall 排除與 34 組見證](EXTERIOR_FOLD_HALL.md) · [新折疊及因數切換限制](EXTERIOR_FOLD_COORDINATES.md)
 
