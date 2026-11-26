@@ -82,6 +82,8 @@ jobs:
           python3 -B jobs/hadamard-all-orders/r_paley_uniform_growth.py
           python3 -B jobs/hadamard-all-orders/r_paley_large_lower.py
           python3 -B jobs/hadamard-all-orders/r_paley_far_periodic.py
+          python3 -B jobs/hadamard-all-orders/r_paley_far_family.py
+          python3 -B jobs/hadamard-all-orders/r_paley_far_restrictions.py
           python3 -B jobs/hadamard-all-orders/r_paley_giant_anchored.py
           python3 -B jobs/hadamard-all-orders/r_skew_conference_doubling.py
           python3 -B jobs/hadamard-all-orders/r_near_complement.py
