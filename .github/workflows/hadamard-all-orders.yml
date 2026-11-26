@@ -47,6 +47,9 @@ jobs:
           python3 -B jobs/hadamard-all-orders/triple_product.py
           python3 -B jobs/hadamard-all-orders/paley_progression.py
           python3 -B jobs/hadamard-all-orders/golay_progression.py
+          python3 -B jobs/hadamard-all-orders/golay_conference_free.py
+          python3 -B jobs/hadamard-all-orders/conference_free_golay_paley.py
+          python3 -B jobs/hadamard-all-orders/t43_conference_free.py
           python3 -B jobs/hadamard-all-orders/t_product_parity.py
           python3 -B jobs/hadamard-all-orders/conference_plus_two.py
           python3 -B jobs/hadamard-all-orders/t599.py
@@ -138,6 +141,8 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_dual_mod11_independent.py
           python3 -B jobs/hadamard-all-orders/border4_2396_dual_isotropic.py
           python3 -B jobs/hadamard-all-orders/border4_2396_dual_synchronous.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_peak72.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_peak48.py
           python3 -B jobs/hadamard-all-orders/border4_2396_dual_relative_distance.py
           python3 -B jobs/hadamard-all-orders/border4_2396_q23_minimal_residual.py
           python3 -B jobs/hadamard-all-orders/border4_2396_delay_screen.py
@@ -157,7 +162,7 @@ jobs:
           export LEAN_PATH="$RUNNER_TEMP/hadamard-all-orders"
           mkdir -p "$LEAN_PATH"
           lean -DwarningAsError=true -o "$LEAN_PATH/Triples.olean" jobs/hadamard-2396-projections/Triples.lean
-          for module in Assembly Reductions Constructions OuterEnergy Rounding Parity BlockedPrefix TripleProduct PaleyProgression GolayProgression PrimeTMatrix TerminalBounds ExteriorBounds; do
+          for module in Assembly Reductions Constructions OuterEnergy Rounding Parity BlockedPrefix TripleProduct PaleyProgression GolayProgression ConferenceFreeGolayPaley PrimeTMatrix TerminalBounds ExteriorBounds; do
             lean -DwarningAsError=true -o "$LEAN_PATH/$module.olean" "jobs/hadamard-all-orders/$module.lean" | tee "$RUNNER_TEMP/$module.log"
             if grep -q 'sorryAx' "$RUNNER_TEMP/$module.log"; then exit 1; fi
           done
@@ -193,6 +198,8 @@ jobs:
           python3 -B jobs/hadamard-all-orders/r_paley_gamma_periodic_radius.py
           python3 -B jobs/hadamard-all-orders/r_paired_transversal.py
           python3 -B jobs/hadamard-all-orders/r_paired_transversal_gap.py
+      - name: Classify compressed period-23 support through eleven
+        run: python3 -B jobs/hadamard-all-orders/r_paley_period23_support.py
 
   near64-repair-extent:
     runs-on: ubuntu-latest
