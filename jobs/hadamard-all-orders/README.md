@@ -28,6 +28,10 @@ Let $H(n)$ mean that $n$ mutually orthogonal sign columns of length $n$ exist, a
 
 兩份精確雙商群、全長模 8 的實體見證另有 19 頂點拓撲次序，也同時通過全部 150 個頻譜必要條件。若低殘差位置維持小於 40 或 56，高位置只保持方向，匹配本原模 5 或模 7 便足以得到完整 2396 階構造。此條件不需要全長模 16。頻譜和雙邊際投影的最新見證峰值 32，可單用本原模 5，無須符號形狀。另有峰值 48 且 157 項位移精確歸零的見證，可用本原模 7。另有本原模 32 配門檻 32 的有向無環見證。[有向無環閉合條件](BORDER4_2396_PALEY_DIRECTED_GATE.md)
 
+峰值 32 的 Paley 閉合可任選兩個本原模 5 因子，維持 32 個零位移及因子對指定的 19 至 22 個單側區間。另一條閉合路線可用兩對模 3 因子、41 個指定位移的模 16 及有向圖。固定目前首字，整數有限域反推排除第三字只在兩行或兩列保持邊際的交換。另一支四邊框採逐邊 2 進估值森林，峰值 56 見證尚欠 44 個局部同餘。[兩因子閉合](BORDER4_2396_PALEY_PEAK32_GATES.md) · [兩行或兩列障礙](BORDER4_2396_PALEY_ROW_PAIR_MOD5.md) · [逐邊估值森林](BORDER4_2396_VALUATION_FOREST.md)
+
+含兩條距全部帶號來源 503 位內欄的 Cooper–Wallis 見證現已達 1,210 欄，全部 731,445 個欄對精確。兩組各自達 1,217 欄的 full92 外層則皆已證明至多容納 17 條一位換號內欄，即使重選翻號行和預留欄。[遠距內欄擴充](R_PALEY_COOPER_WALLIS_GROWTH.md) · [固定外層的單翻轉上限](R_PALEY_FIXED_EXTERIOR_SATURATION.md)
+
 | 路線 | 已得到甚麼 | 仍缺甚麼 |
 | --- | --- | --- |
 | 已知構造的覆蓋 | 直接 Paley、Scarpis–Đoković、長度 3 區塊乘積，以及原有剩餘等差數列中長度 13、19 區塊乘積與兩個 Golay 構造的四個不相交無限子族 | 覆蓋餘下全部奇數乘數的定理。[Paley 子族](PALEY_PROGRESSION.md) · [Golay 子族](GOLAY_PROGRESSION.md) · [群標籤直接乘積的奇偶障礙](T_PRODUCT_PARITY.md) |

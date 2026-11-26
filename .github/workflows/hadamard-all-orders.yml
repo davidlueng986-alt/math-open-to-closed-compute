@@ -73,11 +73,14 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_lift.py
           python3 -B jobs/hadamard-all-orders/border4_2396_both.py
           python3 -B jobs/hadamard-all-orders/border4_2396_adaptive_forest.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_valuation_forest.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_split.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_reflection_kernel.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_q13_mod16.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_dual_integer.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_directed_gate.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_row_pair_mod5.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_peak32_gates.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_head_obstruction.py
           python3 -B jobs/hadamard-all-orders/border4_2396_primitive_traces.py
           python3 -B jobs/hadamard-all-orders/border4_2396_exact_negative.py
@@ -108,6 +111,8 @@ jobs:
           python3 -B jobs/hadamard-all-orders/r_paley_far_periodic.py
           python3 -B jobs/hadamard-all-orders/r_paley_far_family.py
           python3 -B jobs/hadamard-all-orders/r_paley_far_restrictions.py
+          python3 -B jobs/hadamard-all-orders/r_paley_fixed_exterior_saturation.py
+          python3 -B jobs/hadamard-all-orders/r_paley_cooper_wallis_growth.py
           python3 -B jobs/hadamard-all-orders/r_paley_far_physical_mixed.py
           python3 -B jobs/hadamard-all-orders/r_paley_far_fibre_budget.py
           python3 -B jobs/hadamard-all-orders/r_paley_periodic_weighing.py
@@ -143,6 +148,8 @@ jobs:
           python3 -B jobs/hadamard-all-orders/defect12_t599_sparse.py
           c++ -O3 -std=c++20 -Wall -Wextra -Werror jobs/hadamard-all-orders/paley_omissions.cpp -o "$RUNNER_TEMP/paley_omissions"
           "$RUNNER_TEMP/paley_omissions"
+      - name: Replay the fixed-head Paley swap neighborhood
+        run: python3 -B jobs/hadamard-all-orders/border4_2396_paley_peak32_gates.py --neighborhood
       - name: Replay the four-border fiber exclusions
         run: |
           python3 -B jobs/hadamard-all-orders/border4_2396_full_y_expanded.py
