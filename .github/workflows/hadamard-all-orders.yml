@@ -62,6 +62,8 @@ jobs:
           python3 -B jobs/hadamard-all-orders/unreal_butson_product.py
           python3 -B jobs/hadamard-all-orders/yamada_circulant_reverse.py
           python3 -B jobs/hadamard-all-orders/yamada_noncirculant_rational.py
+          python3 -B jobs/hadamard-all-orders/yamada_single_prime_denominator.py
+          python3 -B jobs/hadamard-all-orders/parity_denominator_descent.py
           c++ -std=c++20 -O3 -Wall -Wextra -Werror jobs/hadamard-all-orders/t11_walsh_exhaustive.cpp -o "$RUNNER_TEMP/t11-walsh-exhaustive"
           "$RUNNER_TEMP/t11-walsh-exhaustive"
           python3 -B jobs/hadamard-all-orders/butson_towers_7572.py
@@ -91,6 +93,8 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_single_mod3.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_reflected_f3.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_projected_f3.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_two_f3.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_two_f3_gate.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_q3_head_limit.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_head_obstruction.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_inert_deck.py
@@ -126,6 +130,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/r_paley_fixed_exterior_saturation.py
           python3 -B jobs/hadamard-all-orders/r_paley_gram_edit_bound.py
           python3 -B jobs/hadamard-all-orders/r_paley_reserve_axis_conference.py
+          python3 -B jobs/hadamard-all-orders/r_paley_reserve_span.py
           python3 -B jobs/hadamard-all-orders/r_paley_cooper_wallis_growth.py
           python3 -B jobs/hadamard-all-orders/r_paley_cw_four_trade.py
           python3 -B jobs/hadamard-all-orders/r_paley_cw_mixed_distance.py
