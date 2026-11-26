@@ -26,6 +26,8 @@ Let $H(n)$ mean that $n$ mutually orthogonal sign columns of length $n$ exist, a
 
 若存在使用四個非實六次根的 (BH(p,6))，與 (T(11)) 的非交換代入構造出 (H(44p))。已核查 (H(572)) 的 163,306 個行內積。固定六次根表示時，任意 (44) 階正交區塊列、欄變換能成功，當且僅當來源可用相位改成上述四根。細分數列的質數 (p) 尚缺此種來源。[非交換六次根乘積](UNREAL_BUTSON_PRODUCT.md)
 
+兩份精確雙商群、全長模 8 的實體見證另有同樣的 19 頂點拓撲次序。若低殘差位置維持小於 40 或 56，高位置只保持方向，匹配本原模 5 或模 7 便足以得到完整 2396 階構造。此條件不需要全長模 16。原長殘差平方和分別為 506,368 及 753,152。[有向無環閉合條件](BORDER4_2396_PALEY_DIRECTED_GATE.md)
+
 | 路線 | 已得到甚麼 | 仍缺甚麼 |
 | --- | --- | --- |
 | 已知構造的覆蓋 | 直接 Paley、Scarpis–Đoković、長度 3 區塊乘積，以及原有剩餘等差數列中長度 13、19 區塊乘積與兩個 Golay 構造的四個不相交無限子族 | 覆蓋餘下全部奇數乘數的定理。[Paley 子族](PALEY_PROGRESSION.md) · [Golay 子族](GOLAY_PROGRESSION.md) · [群標籤直接乘積的奇偶障礙](T_PRODUCT_PARITY.md) |

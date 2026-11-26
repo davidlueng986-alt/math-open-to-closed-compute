@@ -135,11 +135,8 @@ def verify_inert_obstruction():
     print(f"Fixed predecessor: real norm has odd valuation at inert prime {prime}")
 
 
-def verify_fixture(seed, u_mask, v_mask, w_23, sums, expected):
-    u, v = map(sign_word, (u_mask, v_mask))
-    w = physical_word(W_13, w_23, seed)
+def audit_signs(u, v, w, sums):
     assert tuple(map(sum, (u, v, w))) == sums
-    field_root_certificate(u, v, w_23)
     skew, d = paley_words()
     shifted = d[-8:] + d[:-8]
     assert all(a * b == -c * e for a, b, c, e in zip(u, v, d, shifted, strict=True))
@@ -158,6 +155,14 @@ def verify_fixture(seed, u_mask, v_mask, w_23, sums, expected):
     assert tuple(map(sum, words)) == (0, 2, 0, 0)
     raw = tuple(value + 4 for value in periodic(words)[1:])
     assert all(value % 8 == 0 for value in raw)
+    return raw
+
+
+def verify_fixture(seed, u_mask, v_mask, w_23, sums, expected):
+    u, v = map(sign_word, (u_mask, v_mask))
+    w = physical_word(W_13, w_23, seed)
+    field_root_certificate(u, v, w_23)
+    raw = audit_signs(u, v, w, sums)
     stats = (sum(value % 16 == 0 for value in raw), raw.count(0),
              max(map(abs, raw)), sum(value*value for value in raw))
     assert stats == expected

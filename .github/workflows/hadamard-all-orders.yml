@@ -77,6 +77,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_reflection_kernel.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_q13_mod16.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_dual_integer.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_directed_gate.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_head_obstruction.py
           python3 -B jobs/hadamard-all-orders/border4_2396_primitive_traces.py
           python3 -B jobs/hadamard-all-orders/border4_2396_exact_negative.py
