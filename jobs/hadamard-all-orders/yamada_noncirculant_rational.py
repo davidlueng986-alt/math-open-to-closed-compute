@@ -30,7 +30,13 @@ def reversal_core():
     profiles={tuple(sorted(sum(core[x][y]==1 for y in left if core[i][y]==1)
                            for x in left if core[i][x]==1)) for i in left}
     print(f'Vertex profiles of the skew half: {len(profiles)} distinct')
-    assert len(profiles)>1
+    assert len(profiles)==9
+    half = len(left)
+    d = tuple(tuple(core[i][j]-core[i][k] for j,k in zip(left,right,strict=True)) for i in left)
+    assert all(sum(row) == -1 for row in d)
+    assert all(d[i][j] % 2 == (i==j) for i,j in product(range(half),repeat=2))
+    column_gram = gram(tuple(zip(*d,strict=True)), tuple(zip(*d,strict=True)))
+    assert all(column_gram[i][j] == n*(i==j)-2 for i,j in product(range(half),repeat=2))
     order=left+(fixed,)+right[::-1]
     normalized=tuple(tuple(core[i][j] for j in order) for i in order)
     pp=gram(normalized,normalized)

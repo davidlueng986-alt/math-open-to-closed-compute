@@ -13,10 +13,14 @@ from border4_2396_primitive_field import remainder
 
 ORBITS = tuple(representative for representative, _ in PROJECTED_TRACE_LAGS)
 FIXTURES = (
-    (0, 235, 0x381FBAD2B3C3F3CFC38D4955E81D408667DAD2E8DA2C6E597D5B57D36EC68B6AF16BF4CC304,
-     (301, 33, 144, 1117696)),
+    (3, 216, 0x34C9F9539F9D318CB9B9C897832D5EA6A393B2F85C48DD6969AAB6D2F7424743E9F9B0ACAF6,
+     0, (269, 21, 112, 1274368)),
+    (3, 274, 0x7559F956B793B42DC9AD68978AAF5D9637830BE19C1ADD69E0AAA4F2F74B0730FA58B58D376,
+     1, (301, 53, 112, 1185280)),
     (3, 293, 0x419B353C69D9DB9B923C8C588211FF3B6D210F99CD0FC3973BBBDD3A7C16733E149E5B9FF2,
-     (301, 57, 96, 901632)),
+     2, (301, 57, 96, 901632)),
+    (0, 293, 0x7AD9F8D3377090090EACC9178B5FE686369B4A6C9FB42F4D759135D67E85BF2ED25BA58C3CE,
+     3, (333, 45, 120, 1245696)),
 )
 
 
@@ -80,9 +84,10 @@ def replay(factor, multiplier, encoded_tail):
 
 
 def main():
-    for factor, multiplier, tail, expected in FIXTURES:
+    assert {index for _, _, _, index, _ in FIXTURES} == set(range(4))
+    for factor, multiplier, tail, expected_factor, expected_raw in FIXTURES:
         final_factor, sums, statistics = replay(factor, multiplier, tail)
-        assert final_factor == 2 and statistics == expected
+        assert final_factor == expected_factor and statistics == expected_raw
         print(f"One primitive F3 pair {final_factor}, multiplier {multiplier}, "
               f"nine folded sums {sums}, raw {statistics}")
 
