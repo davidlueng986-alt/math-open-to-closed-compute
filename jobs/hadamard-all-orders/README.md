@@ -49,6 +49,12 @@ At $n=2396$, matching absolute projection multisets constructs **1,197 orthogona
 
 移動一個上方翻號位置後，實際配對同時保有 1,197 欄精確正交、四個精確省略投影及輔助分子的全部模三十二條件。候選第 1,198 欄的平方殘差為 4,352，最大幅度八。對此 Paley 來源，平方殘差低於 9,600 時，幅度八可用兩個 Walsh 合併通道的模 25 同餘判定精確相消。這兩個奇數檢查仍待取得。完整二次冪的 Walsh 判準亦適用於任意 Sylvester 階數的下方張量來源。[實際配對與兩個奇數檢查](STACK_1198_FOUR_CHANNEL_MOD32.md) · [全階張量判準與 Paley 精確間隙](STACK_ODD_T_WALSH.md)
 
+任意重配這兩條固定原始詞時，通過輔助模三十二的能量最小值精確為 4,352，整數證書涵蓋任意殘差幅度。另一種配對在同一原始詞上同時保持全模三十二及一條 Walsh 組合精確為零，能量 7,040、最大幅度八。相容第二條的平方長度為 106，仍有 150 條模 25 方程中的 141 條未滿足。完成此分支須改原始詞或來源。[精確能量最小值](STACK_1198_FOUR_CHANNEL_ENERGY_BOUND.md) · [一條精確奇數檢查的配對](STACK_1198_FOUR_CHANNEL_ODD_ONE.md)
+
+固定舊配對及省略投影時，任意 Sylvester 階數的完整輔助二次冪同餘限制上方詞的 Hamming 距離。2396 階這個來源至少須改八個上方符號。從能量 4,352 的配置移動一個上方翻號位置則至少須重配 328 個保留舊欄。固定上方詞和舊配對時，下方換號無法改變未滿足的奇數同餘。[距離、重配與不變量](STACK_ODD_T_PAIR_RIGIDITY.md)
+
+另一個等價入口固定下方詞。對奇數 \(a=(t-1)/2\)，只須讓配對定向後的半投影進入上方模 \(a\) 的碼，並在全奇半投影時另驗一個模四值，就能從範數復原精確符號欄。2396 階的上方碼是模 13 及 23，短週期總和給出三組較小的先行檢查。對較大的 Paley II 下方來源，固定奇因數除去後仍可保持原奇數能量門檻。[從下方反求上方的碼](STACK_UPPER_CODE.md) · [Paley II 縮小奇數模數](STACK_PALEY_ODD_QUOTIENT.md)
+
 另有新的雙通道邊界投影方向。在同一組符號字上取得兩個精確絕對邊際，並讓全部 597 個對稱保留欄精確相消。最佳共同配對有 1,075 個精確舊內積，餘下 122 個；其 1,197 欄 Gram 已重播。[新邊界的精確邊際及三種形態](STACK_1198_DENSE_BOUNDARY.md)
 
 **從相鄰序列長度轉進 2396。** 已重建精確非週期 \(T(598)\)。平方和條件排除從 600 的任意互補四元組各刪一位，以及 23 與 Golay 26 乘積族的差一位插入。299 與 Golay 2 的兩種座標排序同樣已排除所有一次插入，包括兩個互為反轉的中央切點。[平方和障礙](LENGTH_CHANGE_599.md) · [Golay 2 插入排除](T599_GOLAY2_CENTRAL.md)
@@ -69,7 +75,7 @@ At $n=2396$, matching absolute projection multisets constructs **1,197 orthogona
 
 在精確負半部及精確 13 階商群的同一組字上，一份候選有 485 個非零位移通過原長模十六，其中 85 個精確。另一份有 477 個通過模十六，其中 101 個精確。獨立平移負半部一個相位可改變互補支撐而保持整數自相關。新支撐各有精確商群及全原長模十六的符號提升，兩條條件仍待合成。[相位平移和兩種提升的重播](BORDER4_2396_SHIFTED_TAIL.md)
 
-保有精確負半部及精確 13 階商群的新候選達到 501 個原長非零位移模十六，其中 101 個精確。另對較早 493 位移候選，固定其前兩條符號時，完整枚舉證明即使任意更換尾字，保持精確商群仍至少留下 40 個原長二元模十六失敗位移。[兩組候選與固定首對證書](BORDER4_2396_493.md)
+保有精確負半部及精確 13 階商群的新候選達到 501 個原長非零位移模十六，其中 125 個精確。新見證保留原有的 52 項整數商群邊際。另對較早 493 位移候選，固定其前兩條符號時，完整枚舉證明即使任意更換尾字，保持精確商群仍至少留下 40 個原長二元模十六失敗位移。[兩組候選與固定首對證書](BORDER4_2396_493.md)
 
 **五欄省略投影。** 改變 148 個行對異或的新折疊保有逐索引模八、行欄重量及全部精確 Gram，得到 39 組精確五維配對。它的索引 313 在任何重配下都無法精確相消，故 136 和 148 兩個固定折疊都需更換。保持參考配置的逐索引模八值時，要從第八個因數切換到其他因數並完成精確相消，必須改動全部五個折疊座標。[Hall 排除與 34 組見證](EXTERIOR_FOLD_HALL.md) · [新折疊及因數切換限制](EXTERIOR_FOLD_COORDINATES.md)
 
@@ -86,6 +92,8 @@ At $n=2396$, matching absolute projection multisets constructs **1,197 orthogona
 第二實體符號欄的新方向達到全部 1,193 組第二座標模三十二相消。同一配置保留全部五座標聯合模八、十對指定的整數投影，以及原有行欄重量和精確 Gram。931 組達到聯合模十六，完整整數相消仍待取得。[物理第二欄及同欄精確配對](EXTERIOR_SCALAR32.md)
 
 固定這條第二實體符號欄並保有行重量奇偶時，完整聯合模十六要求其餘四個折疊改變且生成二元秩三的空間。若同時保留原十對精確配對及 35 項省略投影，至少須改動十個不同的基底行對。這個下界允許任意重配其他欄位。[條件多重集、秩與支撐枚舉](EXTERIOR_SCALAR32_FOLD_RANK.md)
+
+在同一物理配置中，固定原第二實體符號欄後，第二座標模十六搭配第三或第五座標模八的兩種邊際均達全部 1,193 組，並保留四對指定精確配對及兩個精確 Gram。若同時固定這兩個已匹配的折疊和各行重量奇偶，完整聯合模十六最多只能配到 1,185 組。因此在第二欄維持時，至少須重新改動其中一個已匹配的折疊。[物理見證與條件上界](EXTERIOR_SCALAR32_CONDITIONAL.md)
 
 **近正交 conference 種子。** 當 \(4t-3\) 是素數冪，可從階數 \(4t-2\) 的對稱 conference 填符號對角，再嘗試加兩行兩欄。任何完整構造的左上改動秩至少 \(t-2\)。2396 階至少要改動 2,296 條原行和原欄。[統一修復下界](CONFERENCE_PLUS_TWO.md)
 
@@ -139,6 +147,8 @@ Put $n=4t$, $m=4t-2$, $b=2t-1$ and $h=2t-8$. The common ground set for **columns
 **Assembly.** Conversely, append two signs at the top of each incidence column. Append $(+,-)$ to $Y$ and $(+,+)$ to $X$, and add one constant positive column. Each nonconstant column has $2t$ plus signs and each pair has $t$ simultaneous plus signs. For positive supports $U,V$, the inner product is $n-2(|U|+|V|)+4|U\cap V|$, hence every off-diagonal inner product vanishes. This proves $P(4t,1+2t+j)$, with $1+2t+h=4t-7$. Conversely any full witness supplies every prefix by taking any $j$ of its $b$ inside columns. No cyclic, circulant, or multiplier symmetry is required. [Lean assembly](Assembly.lean)
 
 ## R — choose the outside blocks
+
+對任何奇數 \(t\ge55\)，若外層設計有大於 \(t/2\) 的素數階點自同構，階數只能是 \(2t-1\) 或 \((2t-1)/3\)。在整個 \(t\equiv599\pmod{100590}\) 剩餘類，這兩個可能的階都排除。這縮小了外層設計的對稱構造範圍，一般設計的存在性仍待解。[平均分割及固定區塊界](R_LARGE_PRIME_SYMMETRY.md)
 
 There is a finite, explicit system for each $t$. For every $t$-subset $S$ of the $2t$ points introduce a variable $w_S$. For each unordered pair $\{u,v\}$ require $\sum_{S\supseteq\{u,v\}}w_S=t-1$. A nonnegative integral solution gives R. Summing over $v\ne u$ gives degree $2t-1$ at $u$. Summing those degrees gives $4t-2$ blocks. The constant rational choice $w_S=(t-1)/\binom{2t-2}{t-2}$ meets every pair equation. For odd $t\ge3$ any integral solution also satisfies $w_S+w_{S^c}\le1$, as follows from the identity below. Thus one may use binary selection variables from the outset. A way to subdivide R is to enumerate the point pairs and prove feasibility after imposing each extra equality while retaining all earlier ones.
 

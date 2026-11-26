@@ -1,4 +1,4 @@
-"""Replay the 493- and 501-shift sources and the 493 fixed-first exclusion."""
+"""Replay three exact C13 sources, a fixed-first exclusion, and the full-y kernel."""
 
 from collections import defaultdict
 from itertools import combinations
@@ -82,6 +82,42 @@ MORE_MOD16 = (
         "...-+...-...--...+..+-.......-+........--...+.+++--+---.--"
         ".......--.......--......-+--++++-.-+......+++-++----++-----"
         "++++-+-+++-+"
+    ),
+)
+
+
+MORE_EXACT = (
+    (
+        "...-..+.+--++++....---..--+.....-+-+++-....+.+.-.-++...-++-"
+        "+-..++.+....++-..-++-++-+-.-..-+....-.+.-.+++++-...-.-"
+        "..++.+....+-+-+-+.....+-.-..++....++-++-.+-..-...-.-..-+.+-"
+        "++-+.-..--.....--.+..----+-..-.+-.--..+...-.--+-+-"
+        ".....+.+..+-.....-+----++...+..-.++.-+..+-+-++-..+--.....-"
+        ".+..+--++-+.+.-.---"
+    ),
+    (
+        "+..+..+.+-+-+--....-++.--+-.....-++-+--....-.+++.+++...-++-"
+        "+-..+-.+..-.+--..-+---++--.-..--.-..+.+.-.-++--+...-.-..+-"
+        ".+....-++++++.....--.-..++....---+++.--..+..-+.+..--.-----"
+        "+.-..--..+..+-.-..-++--+..-.++.-+..-...+.+---+-.....-.--"
+        ".++.....+--++-++...-..+.++.-+..+--++-+..++-..+..-.+..+++-+--"
+        ".+.-.+++"
+    ),
+    (
+        "......-+.-++++-+++......+-.......--.......-+.-+-+--+--"
+        ".+...+-........--.......+-..-...--...+...--...-...--...+...-"
+        "-...+...--...-...+-........+-.......+-.......++.......-"
+        "+.......--.......++..+...-+...+...+-........+-.+-+++---"
+        "+.+...+-...-...-+...-...+-..+++++-+-+.-...--..++++-----++-+-"
+        "+++--+++---++++"
+    ),
+    (
+        "..-+...-.-+---++--..--...+...-+...+...-+...+.---+++---"
+        ".++........+-...-...-+...-..--.......-"
+        "+.......++.......++.......-+.......-+........-+...+...++...-"
+        "...++...-...++...-...+-...-...+-...+..++.......--"
+        "........++...+.+--+----+.++.......--.......--......-++-++++-"
+        ".-+......+-+++-----+--+-+--++-++-+++--"
     ),
 )
 
@@ -189,6 +225,45 @@ def verify_radius(positive):
     print("Fixed first words: no full mod16; exact C13 has at least ten inverse misses.")
 
 
+
+def product_mod2(a, b, size):
+    result = 0
+    mask = (1 << size) - 1
+    for i in range(size):
+        if b >> i & 1:
+            result ^= ((a << i) | (a >> (size - i))) & mask
+    return result
+
+
+def reverse_mod2(word, size):
+    return sum(1 << ((-i) % size) for i in range(size) if word >> i & 1)
+
+
+def verify_full_y(negative):
+    x_full = {6, 8, 11, 12}
+    r = sum(1 << i for i in range(Q) if i not in x_full)
+    short = tuple(sum((sign != ".") << i for i, sign in enumerate(pattern)) for pattern in
+                  ("+--.+++++......+++--.+-", ".+-.++-++......--+-+.-+"))
+    u, v = short
+    assert u ^ v == 1 and all(w == reverse_mod2(w, 23) for w in short)
+    assert product_mod2(r, reverse_mod2(r, Q), Q) == 1
+    full = [i for i in range(23) if not (u >> i & 1)]
+    assert full == [3, 9, 10, 11, 12, 13, 14, 20]
+    assert all(abs(a) == ((r >> (i % Q)) & (w >> (i % 23)) & 1)
+               for row, w in zip(negative[:2], short, strict=True) for i, a in enumerate(row))
+
+    even_columns = [(1 << full[0]) ^ (1 << j) for j in full[1:]]
+    columns = [product_mod2(w, c, 23) for w in short for c in even_columns]
+    rank, _ = reducer(enumerate(columns))
+    assert rank == 14
+
+    r_squared = product_mod2(r, r, Q)
+    involution = [product_mod2(r_squared, reverse_mod2(1 << j, Q), Q) for j in range(Q)]
+    rank, _ = reducer((j, a ^ (1 << j)) for j, a in enumerate(involution))
+    assert rank == 6
+    print("Full-y mod-four frame: two independent row kernels of dimension 46.")
+
+
 def main():
     negative = nested_negative_words()
     positive = verify_lift(SOURCE, negative, [0] * 7, 493, 93, 112, 698880)
@@ -199,8 +274,13 @@ def main():
     assert tuple(map(compress, broader)) == tuple(map(compress, positive))
     assert tuple(sum(a != b for a, b in zip(u, v, strict=True))
                  for u, v in zip(positive, broader, strict=True)) == (44, 46, 48, 48)
-    print("Exact C13 and exact negative half; 493 and 501 of 597 mod16.")
+    more_exact = verify_lift(MORE_EXACT, negative, [0] * 7, 501, 125, 88, 580608)
+    assert tuple(map(compress, more_exact)) == tuple(map(compress, positive))
+    assert tuple(sum(a != b for a, b in zip(u, v, strict=True))
+                 for u, v in zip(broader, more_exact, strict=True)) == (44, 46, 52, 52)
+    print("Exact C13 and exact T: 493/93, 501/101 and 501/125 mod16/fully exact.")
     verify_radius(positive)
+    verify_full_y(negative)
 
 
 if __name__ == "__main__":
