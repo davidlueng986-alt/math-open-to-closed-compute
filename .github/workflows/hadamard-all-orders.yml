@@ -24,6 +24,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/stack_1197_four_channel_gap.py
           python3 -B jobs/hadamard-all-orders/stack_1198_four_channels.py
           python3 -B jobs/hadamard-all-orders/stack_1198_four_channel_compressed.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_four_channel_mod32.py
           python3 -B jobs/hadamard-all-orders/stack_1198_dense_boundary.py
           python3 -B jobs/hadamard-all-orders/stack_1198_joint.py
           python3 -B jobs/hadamard-all-orders/stack_1198_transport.py
@@ -37,8 +38,10 @@ jobs:
           python3 -B jobs/hadamard-all-orders/stack_odd_t_auxiliary.py
           python3 -B jobs/hadamard-all-orders/stack_odd_t_code_components.py
           python3 -B jobs/hadamard-all-orders/stack_odd_t_residual.py
+          python3 -B jobs/hadamard-all-orders/stack_odd_t_walsh.py
           python3 -B jobs/hadamard-all-orders/triple_product.py
           python3 -B jobs/hadamard-all-orders/paley_progression.py
+          python3 -B jobs/hadamard-all-orders/golay_progression.py
           python3 -B jobs/hadamard-all-orders/t_product_parity.py
           python3 -B jobs/hadamard-all-orders/conference_plus_two.py
           python3 -B jobs/hadamard-all-orders/t599.py
@@ -55,6 +58,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_two_fibers.py
           python3 -B jobs/hadamard-all-orders/border4_2396_primitive_lifts.py
           python3 -B jobs/hadamard-all-orders/border4_2396_shifted_tail.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_493.py
           python3 -B jobs/hadamard-all-orders/border4_2396_tensor_weighing.py
           python3 -B jobs/hadamard-all-orders/r_intersections.py
           python3 -B jobs/hadamard-all-orders/r_near_complement.py
@@ -96,7 +100,7 @@ jobs:
           export LEAN_PATH="$RUNNER_TEMP/hadamard-all-orders"
           mkdir -p "$LEAN_PATH"
           lean -DwarningAsError=true -o "$LEAN_PATH/Triples.olean" jobs/hadamard-2396-projections/Triples.lean
-          for module in Assembly Reductions Constructions OuterEnergy Rounding Parity BlockedPrefix TripleProduct PaleyProgression PrimeTMatrix TerminalBounds ExteriorBounds; do
+          for module in Assembly Reductions Constructions OuterEnergy Rounding Parity BlockedPrefix TripleProduct PaleyProgression GolayProgression PrimeTMatrix TerminalBounds ExteriorBounds; do
             lean -DwarningAsError=true -o "$LEAN_PATH/$module.olean" "jobs/hadamard-all-orders/$module.lean" | tee "$RUNNER_TEMP/$module.log"
             if grep -q 'sorryAx' "$RUNNER_TEMP/$module.log"; then exit 1; fi
           done
@@ -138,6 +142,8 @@ jobs:
         run: python3 -B jobs/hadamard-all-orders/exterior_orientation.py
       - name: Check the exact matching retained under physical scalar modulo thirty-two
         run: python3 -B jobs/hadamard-all-orders/exterior_scalar32.py
+      - name: Check required fold rank and support for joint modulo sixteen
+        run: python3 -B jobs/hadamard-all-orders/exterior_scalar32_fold_rank.py
 
   stack-replacement-neighborhood:
     runs-on: ubuntu-latest

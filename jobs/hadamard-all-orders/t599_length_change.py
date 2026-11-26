@@ -6,6 +6,9 @@ from math import isqrt
 from verify import signs
 
 
+GOLAY_26 = tuple(map(signs, ("++++-++--+-+-+--+-+++--+++", "++++-++--+-+++++-+---++---")))
+
+
 def aperiodic(words):
     return [sum(a * b for word in words for a, b in zip(word, word[lag:]))
             for lag in range(max(map(len, words)))]
@@ -24,9 +27,8 @@ def exact_t598():
     base = tuple(word + (0,) * 11 for word in first) + tuple((0,) * 12 + word for word in second)
     assert aperiodic(base) == [23] + [0] * 22
 
-    golay = tuple(map(signs, ("++++-++--+-+-+--+-+++--+++", "++++-++--+-+++++-+---++---")))
-    assert aperiodic(golay) == [52] + [0] * 25
-    x, y = disjoint(*golay)
+    assert aperiodic(GOLAY_26) == [52] + [0] * 25
+    x, y = disjoint(*GOLAY_26)
     words = []
     for left, right in (base[:2], base[2:]):
         words.append(tuple(a * c + b * d for a, b in zip(left, right, strict=True)
