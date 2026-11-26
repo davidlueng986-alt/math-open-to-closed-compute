@@ -60,6 +60,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/odd_transfer_basis_parity.py
           python3 -B jobs/hadamard-all-orders/ito_prime_block.py
           python3 -B jobs/hadamard-all-orders/unreal_butson_product.py
+          python3 -B jobs/hadamard-all-orders/yamada_circulant_reverse.py
           c++ -std=c++20 -O3 -Wall -Wextra -Werror jobs/hadamard-all-orders/t11_walsh_exhaustive.cpp -o "$RUNNER_TEMP/t11-walsh-exhaustive"
           "$RUNNER_TEMP/t11-walsh-exhaustive"
           python3 -B jobs/hadamard-all-orders/butson_towers_7572.py
@@ -121,7 +122,9 @@ jobs:
           python3 -B jobs/hadamard-all-orders/r_paley_far_restrictions.py
           python3 -B jobs/hadamard-all-orders/r_paley_fixed_exterior_saturation.py
           python3 -B jobs/hadamard-all-orders/r_paley_gram_edit_bound.py
+          python3 -B jobs/hadamard-all-orders/r_paley_reserve_axis_conference.py
           python3 -B jobs/hadamard-all-orders/r_paley_cooper_wallis_growth.py
+          python3 -B jobs/hadamard-all-orders/r_paley_cw_four_trade.py
           python3 -B jobs/hadamard-all-orders/r_paley_cw_mixed_distance.py
           python3 -B jobs/hadamard-all-orders/r_paley_far_physical_mixed.py
           python3 -B jobs/hadamard-all-orders/r_paley_far_fibre_budget.py
