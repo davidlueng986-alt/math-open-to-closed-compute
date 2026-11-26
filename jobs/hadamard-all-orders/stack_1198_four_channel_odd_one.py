@@ -20,7 +20,7 @@ def pair_words(upper, lower, u, v, x, y, updates):
     bottom, bottom_keys = signatures(lower, v, y)
     desired = {j: top_keys[i][1] for i, j in sorted_pairing(top_keys, bottom_keys).items()}
     assert desired.keys() == set(range(m)) - set(LOWER_OMITTED)
-    assert len(updates) == 435 and updates.keys() <= desired.keys()
+    assert updates.keys() <= desired.keys()
     assert all(desired[j] != q for j, q in updates.items())
     desired.update(updates)
     stock = defaultdict(list)
@@ -87,6 +87,7 @@ def verify():
     assert prior_lower == lower and first_old[-1] == u | v << n
     x, y = candidate & ((1 << n) - 1), candidate >> n
     updates = {int(j): q for j, q in record['signed_second_updates'].items()}
+    assert len(updates) == 435
     old, r = pair_words(upper, lower, u, v, x, y, updates)
     assert verify_orthogonal(n + m, old) == 715806
     assert Counter(abs(dot(n + m, column, candidate)) for column in old) == {0: 853, 4: 312, 8: 32}

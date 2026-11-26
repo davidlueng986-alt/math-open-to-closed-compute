@@ -27,6 +27,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/stack_1198_four_channel_mod32.py
           python3 -B jobs/hadamard-all-orders/stack_1198_four_channel_energy_bound.py
           python3 -B jobs/hadamard-all-orders/stack_1198_four_channel_odd_one.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_four_channel_odd_raw.py
           python3 -B jobs/hadamard-all-orders/stack_upper_code.py
           python3 -B jobs/hadamard-all-orders/stack_1198_dense_boundary.py
           python3 -B jobs/hadamard-all-orders/stack_1198_joint.py
@@ -63,9 +64,13 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_primitive_lifts.py
           python3 -B jobs/hadamard-all-orders/border4_2396_shifted_tail.py
           python3 -B jobs/hadamard-all-orders/border4_2396_493.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_changed_margins.py
           python3 -B jobs/hadamard-all-orders/border4_2396_tensor_weighing.py
           python3 -B jobs/hadamard-all-orders/r_intersections.py
           python3 -B jobs/hadamard-all-orders/r_large_prime_symmetry.py
+          python3 -B jobs/hadamard-all-orders/r_involution_parity.py
+          python3 -B jobs/hadamard-all-orders/r_paley_projective_lift.py
+          python3 -B jobs/hadamard-all-orders/r_paley_skew_inner.py
           python3 -B jobs/hadamard-all-orders/r_near_complement.py
           python3 -B jobs/hadamard-all-orders/r_two_point.py
           python3 -B jobs/hadamard-all-orders/r_embedding.py
@@ -151,6 +156,8 @@ jobs:
         run: python3 -B jobs/hadamard-all-orders/exterior_scalar32_fold_rank.py
       - name: Check mixed conditional margins and the joint obstruction
         run: python3 -B jobs/hadamard-all-orders/exterior_scalar32_conditional.py
+      - name: Check exact Gram obstructions for five Paley folds
+        run: python3 -B jobs/hadamard-all-orders/exterior_scalar32_fold_capacity.py
 
   stack-replacement-neighborhood:
     runs-on: ubuntu-latest

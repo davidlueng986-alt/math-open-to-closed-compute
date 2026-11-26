@@ -11,7 +11,7 @@ Let $H(n)$ mean that $n$ mutually orthogonal sign columns of length $n$ exist, a
 | 路線 | 已得到甚麼 | 仍缺甚麼 |
 | --- | --- | --- |
 | 已知構造的覆蓋 | 直接 Paley、Scarpis–Đoković、長度 3 區塊乘積，以及原有剩餘等差數列中長度 13、19 區塊乘積與兩個 Golay 構造的四個不相交無限子族 | 覆蓋餘下全部奇數乘數的定理。[Paley 子族](PALEY_PROGRESSION.md) · [Golay 子族](GOLAY_PROGRESSION.md) · [群標籤直接乘積的奇偶障礙](T_PRODUCT_PARITY.md) |
-| 外層設計與精確內欄 | 全寬同餘解及有理延伸。2396 的三交集模型只餘兩組，兩組皆須非交換。規範化的兩方陣疊接至少須加五欄。固定 988 組可模十六配對的上部，精確解的六行下部省略投影在行重排下只餘八種 | 同一組五欄仍須讓所有新舊內積精確為零。全階仍須統一構造外層設計，並在共同證書上滿足整數內欄條件。[交集限制](R_SYMMETRY.md) · [精確省略欄 Gram](EXTERIOR_STACKS.md) · [模十六提升與排除](EXTERIOR_MOD16_INVARIANT.md) · [八種省略投影](EXTERIOR_EXACT_FACTORS.md) |
+| 外層設計與精確內欄 | 2396 階有精確外層設計與十二條相容內欄，得到 1,211 欄。全寬同餘解及有理延伸。2396 的三交集模型只餘兩組，兩組皆須非交換。規範化的兩方陣疊接至少須加五欄。固定 988 組可模十六配對的上部，精確解的六行下部省略投影在行重排下只餘八種 | 同一組五欄仍須讓所有新舊內積精確為零。全階仍須統一構造外層設計，並在共同證書上滿足整數內欄條件。[精確外層及內欄](R_PALEY_PROJECTIVE_LIFT.md) · [交集限制](R_SYMMETRY.md) · [精確省略欄 Gram](EXTERIOR_STACKS.md) · [模十六提升與排除](EXTERIOR_MOD16_INVARIANT.md) · [八種省略投影](EXTERIOR_EXACT_FACTORS.md) |
 | 直接構造近滿矩陣 | 所有奇數乘數的混合奇偶缺 8 欄可完成；缺 9 至 11 欄可完成或到達缺 8 欄。2396 的缺 12 欄由至多兩個整幺模超格精確判定。完整補欄等價於某個仿射格的最短向量達到門檻。缺 12 欄的 $D_{12}^{+}$ 在 28、44、60 階有精確阻塞例；$t=4r+3$ 的模型通過兩個 Gram 等式模十六，$t=16k+3$ 的另一構造達模三十二 | 統一取得近滿矩陣，且解決無法直接完成的格型。2396 的單位移近來源須翻轉逾四分之一符號才能精確正交，精確構造需要其他來源或整體重建。[整幺模判準](OVERLATTICES.md) · [統一模十六構造](MOD16_DEFECT12_FAMILY.md) · [模三十二構造](MOD32_DEFECT12_CONSTRUCTION.md) · [精確修復下界](NEAR64_EXACT_REPAIR.md) |
 | 2396 階的專用構造 | 原始循環證書、邊框證書，以及長度 599 T 序列的支撐、模四符號與奇係數逐位提升。300／299 分段下，兩區間共至多六個少數比較符號的精確構造已排除 | 任一條路線取得完整二元矩陣；單階成果的構造若可推廣再接回全題。[T 序列](T599.md) · [稀疏比較序列](T599_SPARSE_INTERVALS.md) |
 
@@ -19,9 +19,9 @@ Let $H(n)$ mean that $n$ mutually orthogonal sign columns of length $n$ exist, a
 
 Write $r(n)=\max\{k:P(n,k)\}$. Unconditionally, for every $\epsilon>0$ and all sufficiently large multiples of four, $r(n)\ge n/2-O_\epsilon(n^{113/132+\epsilon})$. In particular the literature guarantees $(1/2-o(1))n$ orthogonal columns. Verheiden proved that **any** $n-7$ real orthogonal sign columns of length $n$ can be completed to $n$ for the orders used here. The conjecture follows if that threshold can be reached for every required $n$. The lower bound gives neither a rate of proof progress nor an effective finite search for the rest. [Graham–Shparlinski, §3](https://arxiv.org/abs/0709.2704) · [de Launey–Levin, Theorem A](https://arxiv.org/abs/1003.4003) · [Verheiden, thesis §4](https://thesis.caltech.edu/2899/) · [Verheiden, journal article](https://doi.org/10.1016/0097-3165(80)90028-X)
 
-At $n=2396$, matching absolute projection multisets constructs **1,197 orthogonal columns** and checks all **715,806** pairwise inner products exactly. The seven-column completion theorem would apply at **2,389**. Extension may require changing the alignment or previously chosen columns. In the separate cyclic construction, 310 of 598 shift pairs vanish on one witness and 49 further original equations suffice under its documented constraints. That shift count does not measure $r(2396)$. This order remains the smallest gap in the cited frontier. [Explicit construction and next-column constraints](STACK_1197.md) · [Cyclic certificates](../hadamard-2396-coverage/README.md) · [Frontier snapshot](https://github.com/vatskishan03/Hadamard/blob/d885022144ba6bf4efa8315e14871a3736947527/FRONTIER.md)
+At $n=2396$, the Paley exterior construction yields an exact \(2\)-\((1198,599,598)\) design and **1,211 orthogonal columns** with twelve compatible inner columns and one constant column. This witness checks all 732,655 column-pair products. A fixed different exterior choice independently provides 1,209 columns. The seven-column completion theorem applies at **2,389**, which requires another 1,178 columns starting from the 1,211-column witness. The earlier 1,197-column construction uses a separate two-source stack. In the separate cyclic search, 310 of 598 shift pairs vanish on one witness and 49 further original equations suffice subject to its constraints. This order remains the smallest gap in the cited frontier. [Exact exterior and fixed extension](R_PALEY_PROJECTIVE_LIFT.md) · [Chosen-skew extension](R_PALEY_SKEW_INNER.md) · [Earlier two-source stack](STACK_1197.md) · [Frontier snapshot](https://github.com/vatskishan03/Hadamard/blob/d885022144ba6bf4efa8315e14871a3736947527/FRONTIER.md)
 
-**第 1,198 欄。** 雙通道重排保有前 1,197 欄的精確正交。最佳整數零計數的配置將最後一欄的非零內積減至 88 個。固定這組新增符號與兩部來源後，保留模八的重配有精確最小上界 16。另一組符號可讓最後一欄的全部內積只取 \(-8,0,8\)。要完成下一欄，全部誤差須在同一組配置歸零。[整數運輸證書](STACK_1198_TRANSPORT.md) · [聯合符號證書](STACK_1198_JOINT.md) · [有界排除與雙通道條件](STACK_1198.md)
+**另一條疊接路線的第 1,198 欄。** 雙通道重排保有前 1,197 欄的精確正交。最佳整數零計數的配置將最後一欄的非零內積減至 88 個。固定這組新增符號與兩部來源後，保留模八的重配有精確最小上界 16。另一組符號可讓最後一欄的全部內積只取 \(-8,0,8\)。要完成下一欄，全部誤差須在同一組配置歸零。[整數運輸證書](STACK_1198_TRANSPORT.md) · [聯合符號證書](STACK_1198_JOINT.md) · [有界排除與雙通道條件](STACK_1198.md)
 
 固定 1,196 個舊欄及已知首條新增欄後，第二條新增欄等價於四個明列矩陣之一的模 1200 核中存在非常數二元向量。該向量會自動具有重量 600。完整延伸等價於對應的輔助 1200 階矩陣能同時滿足奇數模數碼匹配及模 32 仿射條件。[精確輔助矩陣與同餘](STACK_1198_AUXILIARY.md)
 
@@ -51,6 +51,8 @@ At $n=2396$, matching absolute projection multisets constructs **1,197 orthogona
 
 任意重配這兩條固定原始詞時，通過輔助模三十二的能量最小值精確為 4,352，整數證書涵蓋任意殘差幅度。另一種配對在同一原始詞上同時保持全模三十二及一條 Walsh 組合精確為零，能量 7,040、最大幅度八。相容第二條的平方長度為 106，仍有 150 條模 25 方程中的 141 條未滿足。完成此分支須改原始詞或來源。[精確能量最小值](STACK_1198_FOUR_CHANNEL_ENERGY_BOUND.md) · [一條精確奇數檢查的配對](STACK_1198_FOUR_CHANNEL_ODD_ONE.md)
 
+改動下方一個翻號位置並重新配對，仍保持舊欄 Gram、全部輔助模三十二及第一條 Walsh 組合精確為零。第二條模 25 方程剩 116／150 條，配對能量 9,472 且最大幅度八，仍在精確判準範圍內。[改變原始詞的見證](STACK_1198_FOUR_CHANNEL_ODD_RAW.md)
+
 固定舊配對及省略投影時，任意 Sylvester 階數的完整輔助二次冪同餘限制上方詞的 Hamming 距離。2396 階這個來源至少須改八個上方符號。從能量 4,352 的配置移動一個上方翻號位置則至少須重配 328 個保留舊欄。固定上方詞和舊配對時，下方換號無法改變未滿足的奇數同餘。[距離、重配與不變量](STACK_ODD_T_PAIR_RIGIDITY.md)
 
 另一個等價入口固定下方詞。對奇數 \(a=(t-1)/2\)，只須讓配對定向後的半投影進入上方模 \(a\) 的碼，並在全奇半投影時另驗一個模四值，就能從範數復原精確符號欄。2396 階的上方碼是模 13 及 23，短週期總和給出三組較小的先行檢查。對較大的 Paley II 下方來源，固定奇因數除去後仍可保持原奇數能量門檻。[從下方反求上方的碼](STACK_UPPER_CODE.md) · [Paley II 縮小奇數模數](STACK_PALEY_ODD_QUOTIENT.md)
@@ -77,6 +79,8 @@ At $n=2396$, matching absolute projection multisets constructs **1,197 orthogona
 
 保有精確負半部及精確 13 階商群的新候選達到 501 個原長非零位移模十六，其中 125 個精確。新見證保留原有的 52 項整數商群邊際。另對較早 493 位移候選，固定其前兩條符號時，完整枚舉證明即使任意更換尾字，保持精確商群仍至少留下 40 個原長二元模十六失敗位移。[兩組候選與固定首對證書](BORDER4_2396_493.md)
 
+允許改變 13 階商群邊際後，同一精確負半部及精確商群的見證達到 509／597 個模十六原長位移。另一份同負半部見證達全部原長模十六，商群僅餘零位移的 \(+16\) 與 \(\pm6\) 的 \(-8\)。兩條條件仍須在同一符號配置上達到。[改變邊際的兩份實際見證](BORDER4_2396_CHANGED_MARGINS.md)
+
 **五欄省略投影。** 改變 148 個行對異或的新折疊保有逐索引模八、行欄重量及全部精確 Gram，得到 39 組精確五維配對。它的索引 313 在任何重配下都無法精確相消，故 136 和 148 兩個固定折疊都需更換。保持參考配置的逐索引模八值時，要從第八個因數切換到其他因數並完成精確相消，必須改動全部五個折疊座標。[Hall 排除與 34 組見證](EXTERIOR_FOLD_HALL.md) · [新折疊及因數切換限制](EXTERIOR_FOLD_COORDINATES.md)
 
 第二條折疊的週期碼支援另有精確容量界，已排除列出的階 13 與階 23 射影週期族。對任意可行的非零第二折疊改變，指定的 280 個座標中至少改兩個，且至多改 32 個。[週期族與縮短碼驗算](EXTERIOR_SECOND_FOLD.md)
@@ -95,6 +99,8 @@ At $n=2396$, matching absolute projection multisets constructs **1,197 orthogona
 
 在同一物理配置中，固定原第二實體符號欄後，第二座標模十六搭配第三或第五座標模八的兩種邊際均達全部 1,193 組，並保留四對指定精確配對及兩個精確 Gram。若同時固定這兩個已匹配的折疊和各行重量奇偶，完整聯合模十六最多只能配到 1,185 組。因此在第二欄維持時，至少須重新改動其中一個已匹配的折疊。[物理見證與條件上界](EXTERIOR_SCALAR32_CONDITIONAL.md)
 
+有五種實體折疊可以在固定第二欄時逐行對符合局部行重量，並完成指定混合同餘的配對。精確 Gram 對這五種各有一項整數容量矛盾，故須另選折疊，或改動共同邊界。[五個折疊及 Gram 容量證書](EXTERIOR_SCALAR32_FOLD_CAPACITY.md)
+
 **近正交 conference 種子。** 當 \(4t-3\) 是素數冪，可從階數 \(4t-2\) 的對稱 conference 填符號對角，再嘗試加兩行兩欄。任何完整構造的左上改動秩至少 \(t-2\)。2396 階至少要改動 2,296 條原行和原欄。[統一修復下界](CONFERENCE_PLUS_TWO.md)
 
 ## Dependency table
@@ -104,7 +110,7 @@ At $n=2396$, matching absolute projection multisets constructs **1,197 orthogona
 | 1 | $H(n)\Rightarrow H(2n)$. Strip powers of two from $t$. | Lean |
 | 2 | Paley handles odd $t$ when $4t-1$ or $2t-1$ is a prime power, including $t=1,3$. Scarpis–Đoković handles $4t=q(q+1)$ for prime powers $q\equiv3\bmod4$. | Published |
 | 3 | Normalize a square witness and extract the two incidence families below. | Proved below |
-| 4 | For every remaining $t$, choose $4t-2$ blocks of size $t$ on $2t$ points so every point pair occurs $t-1$ times. This is obligation **R**. | **Open in this route** |
+| 4 | For every remaining $t$, choose $4t-2$ blocks of size $t$ on $2t$ points so every point pair occurs $t-1$ times. This is obligation **R**. | Open in general; proved for odd prime-power $t$ given $H(2t-2)$ |
 | 5 | Pair counts in R force all point degrees and the total number of blocks. The symmetric fractional block selection satisfies every equation. | Proved below |
 | 6 | In any such design, each equal partition of the points has squared row imbalances summing to $2t^2$. For odd $t\ge3$ at most one block can be an entire half. | Lean |
 | 7 | Start with the empty inner family. Its row capacities hold. | Lean |
@@ -148,7 +154,9 @@ Put $n=4t$, $m=4t-2$, $b=2t-1$ and $h=2t-8$. The common ground set for **columns
 
 ## R — choose the outside blocks
 
-對任何奇數 \(t\ge55\)，若外層設計有大於 \(t/2\) 的素數階點自同構，階數只能是 \(2t-1\) 或 \((2t-1)/3\)。在整個 \(t\equiv599\pmod{100590}\) 剩餘類，這兩個可能的階都排除。這縮小了外層設計的對稱構造範圍，一般設計的存在性仍待解。[平均分割及固定區塊界](R_LARGE_PRIME_SYMMETRY.md)
+對任意奇素數冪 $t$，Paley 會議矩陣的核心配上 $H(2t-2)$ 即可精確構造 $R$。因此若考慮最小反例，這一族的外層義務可由較小階供應。$t=599$ 已明列並驗算全部 2,394 個區塊、1,198 個點及 717,003 個點對，且在同一構造取得十二條相容內欄。其餘內欄可寫成指定行 Gram 的奇負號符號方陣。[精確外層定理](R_PALEY_PROJECTIVE_LIFT.md) · [相容內欄及完成條件](R_PALEY_SKEW_INNER.md)
+
+對任何奇數 \(t\ge55\)，若外層設計有大於 \(t/2\) 的素數階點自同構，階數只能是 \(2t-1\) 或 \((2t-1)/3\)。在整個 \(t\equiv599\pmod{100590}\) 剩餘類，這兩個可能的階都排除。這縮小了外層設計的對稱構造範圍，一般設計的存在性仍待解。[平均分割及固定區塊界](R_LARGE_PRIME_SYMMETRY.md) · [無固定點對合的奇偶限制](R_INVOLUTION_PARITY.md)
 
 There is a finite, explicit system for each $t$. For every $t$-subset $S$ of the $2t$ points introduce a variable $w_S$. For each unordered pair $\{u,v\}$ require $\sum_{S\supseteq\{u,v\}}w_S=t-1$. A nonnegative integral solution gives R. Summing over $v\ne u$ gives degree $2t-1$ at $u$. Summing those degrees gives $4t-2$ blocks. The constant rational choice $w_S=(t-1)/\binom{2t-2}{t-2}$ meets every pair equation. For odd $t\ge3$ any integral solution also satisfies $w_S+w_{S^c}\le1$, as follows from the identity below. Thus one may use binary selection variables from the outset. A way to subdivide R is to enumerate the point pairs and prove feasibility after imposing each extra equality while retaining all earlier ones.
 
