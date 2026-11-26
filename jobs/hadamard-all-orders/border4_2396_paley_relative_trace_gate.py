@@ -1,14 +1,19 @@
 """Replay the degree-44 relative trace gate on the reselected Paley heads."""
 
+from itertools import product
+
 from border4_2396_dual_mod5_forest import forest
 from border4_2396_paley_dual_integer import audit_signs
 from border4_2396_paley_negative_norm import DIRECTED_PAIRS, N, periodic, sign_word
 from border4_2396_paley_negative_norm import remainder as binary_remainder
-from border4_2396_paley_peak32_gates import FACTORS_3, check_factors_3
+from border4_2396_paley_peak32_gates import FACTORS_3, check_factors_3, column, kernel
 from border4_2396_paley_q13_mod16 import margins
 from border4_2396_paley_reselected_heads import FIXTURES
 from border4_2396_primitive_field import remainder
 
+
+PROJECTED_TRACE_LAGS = ((3, 43), (7, 7), (10, 10), (11, 11), (16, 30),
+                        (22, 22), (23, 69), (25, 113), (48, 48))
 
 def inverse_class(d, modulus):
     return min(d % modulus, -d % modulus)
@@ -38,8 +43,7 @@ def prove_trace_gate():
     high = {d for d in range(1, 150) if abs(residual[d]) >= 24}
     assert len(high) == 25
 
-    selected = ((3, 43), (7, 7), (10, 10), (11, 11), (16, 30),
-                (22, 22), (23, 69), (25, 113), (48, 48))
+    selected = PROJECTED_TRACE_LAGS
     for representative, unique in selected:
         orbit = {inverse_class(representative * pow(multiplier, i, N), N) for i in range(3)}
         assert representative == min(orbit) and orbit & high == {unique}
@@ -61,6 +65,27 @@ def prove_trace_gate():
     factor = next(p for p in DIRECTED_PAIRS if p.bit_length() == 133)
     assert binary_remainder(trace44(e), factor)
     check_factors_3()
+
+    support = tuple(d for d in range(1, 150) if e[d])
+    options = (
+        ((0, 1, 2), (3, 49, 4, 55, 8, 9)),
+        ((0, 1, 3), (3, 101, 4, 9, 8, 12)),
+        ((0, 2, 3), (3, 8, 4, 18, 9, 17)),
+        ((1, 2, 3), (3, 87, 8, 26, 12, 19)),
+    )
+    assert len(support) == 120
+    for inds, boxes in options:
+        factors = tuple(FACTORS_3[i] for i in inds)
+        basis = kernel(tuple(column(d, factors, 3) for d in support), 3)
+        assert len(basis) == 3 and all(abs(e[d]) == 1 for d in boxes)
+        rows = {d: tuple(b[support.index(d)] for b in basis) for d in boxes}
+        allowed = [
+            x for x in product(range(3), repeat=3)
+            if all(sum(a*b for a, b in zip(x, rows[d], strict=True)) % 3 in (0, e[d] % 3)
+                   for d in boxes)
+        ]
+        assert allowed == [(0, 0, 0)]
+    print("Tighter envelope: any three F3 factors and six specified one-sided boxes force all mod 3")
     assert any(any(remainder(e, p, 3)) for p in FACTORS_3)
     print("Relative degree-44 trace: 25 high lags reduce to (2, 21, 71), each alone in C13")
 
