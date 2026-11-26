@@ -137,6 +137,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_dual_shared_axes.py
           python3 -B jobs/hadamard-all-orders/border4_2396_dual_mod11_independent.py
           python3 -B jobs/hadamard-all-orders/border4_2396_dual_isotropic.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_synchronous.py
           python3 -B jobs/hadamard-all-orders/border4_2396_dual_relative_distance.py
           python3 -B jobs/hadamard-all-orders/border4_2396_q23_minimal_residual.py
           python3 -B jobs/hadamard-all-orders/border4_2396_delay_screen.py
@@ -181,6 +182,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/r_paley_double_far_mixed.py
           python3 -B jobs/hadamard-all-orders/r_paley_double_far_ten.py
           python3 -B jobs/hadamard-all-orders/r_paley_double_far_eleven.py
+          python3 -B jobs/hadamard-all-orders/r_paley_double_far_nonperiodic.py
           python3 -B jobs/hadamard-all-orders/r_paley_double_far_family.py
       - name: Check the third periodic column and narrow reserve coordinate families
         run: |
@@ -190,6 +192,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/r_paley_gamma_coordinate_radius.py
           python3 -B jobs/hadamard-all-orders/r_paley_gamma_periodic_radius.py
           python3 -B jobs/hadamard-all-orders/r_paired_transversal.py
+          python3 -B jobs/hadamard-all-orders/r_paired_transversal_gap.py
 
   near64-repair-extent:
     runs-on: ubuntu-latest
