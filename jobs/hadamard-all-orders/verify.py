@@ -2,7 +2,7 @@
 
 from fractions import Fraction
 from itertools import combinations
-from math import comb, isqrt
+from math import comb, gcd, isqrt
 
 
 def require(condition, message):
@@ -16,6 +16,10 @@ def verify_orthogonal(n, columns):
         for j in range(i):
             require(2 * (left ^ columns[j]).bit_count() == n, f"dot product at {i}, {j}")
     return comb(len(columns), 2)
+
+
+def rows_from_columns(n, columns):
+    return [sum(1 << i for i, col in enumerate(columns) if col >> r & 1) for r in range(n)]
 
 
 def paley(p):
@@ -136,6 +140,191 @@ def check_extraction(t):
     raise ValueError("expected an incompatible row permutation")
 
 
+def check_blocked_prefix():
+    t = 7
+    blocks = (
+        885, 1819, 2174, 2667, 3245, 3544, 4551, 5546, 5857, 5940, 6866, 7052,
+        7191, 8678, 8892, 9395, 10058, 11153, 11589, 11910, 12505, 12815, 13404,
+        14633, 14642, 15968,
+    )
+    m = len(blocks)
+    y = [sum(1 << r for r, block in enumerate(blocks) if block >> j & 1) for j in range(2*t)]
+    check_marginals(t, y, [])
+
+    # Since YᵀY = I over F₂, project each row basis vector by I + YYᵀ.
+    # These projections span exactly ker(Yᵀ), which contains every candidate.
+    basis = {}
+    for r, block in enumerate(blocks):
+        projected = 1 << r
+        for j, column in enumerate(y):
+            if block >> j & 1:
+                projected ^= column
+        while projected:
+            pivot = projected.bit_length() - 1
+            if pivot not in basis:
+                basis[pivot] = projected
+                break
+            projected ^= basis[pivot]
+    require(len(basis) == m - len(y), "binary kernel rank")
+    require(all((v & a).bit_count() % 2 == 0 for a in y for v in basis.values()), "kernel basis")
+
+    kernel = [0]
+    for v in basis.values():
+        kernel += [z ^ v for z in kernel]
+    x = sorted(z for z in kernel if z.bit_count() == 2*t-2
+               and all((z & a).bit_count() == t-1 for a in y))
+    require(x == [31991091, 37103254, 40024233, 43545194, 52742502], "complete mixed census")
+    check_marginals(t, y, x)
+    loads = [sum(z >> r & 1 for z in x) for r in range(m)]
+    require(sorted(loads) == [0] + [2]*20 + [4]*5, "even row loads")
+    columns = [(1 << (4*t)) - 1] + [(z << 2) | 1 for z in y] + [(z << 2) | 3 for z in x]
+    verify_orthogonal(4*t, columns)
+    rows = rows_from_columns(4*t, columns)
+    defect = []
+    for r, left in enumerate(rows):
+        row = []
+        for s, right in enumerate(rows):
+            dot = len(columns) - 2 * (left ^ right).bit_count()
+            value = (4*t if r == s else 0) - dot
+            require(value % 4 == 0, "integral defect Gram matrix")
+            row.append(value // 4)
+        defect.append(row)
+    roots = (11, 2, 3, 4, 5, 6, 8, 9)
+    require(determinant([[defect[r][s] for s in roots] for r in roots]) == 1, "E8 Gram determinant")
+    print(f"n=28: {len(kernel):,} binary kernel vectors; fixed outer design has exactly {len(x)} inside columns")
+    print("n=28: integral rank-8 defect Gram matrix with diagonal 2 and a principal determinant of 1")
+    replacement = check_repair_residues(columns, defect, roots, t)
+    new = check_prefix_repair(columns, replacement)
+    check_order28_neighbor(columns, replacement, new, defect, roots)
+
+
+def check_repair_residues(columns, defect, roots, prime):
+    # Eliminate the defect-space columns first. The bottom part then reads
+    # each original sign column in the quotient F_p^n / im(Q[:, roots]).
+    equations = [[defect[r][i] % prime for i in roots]
+                 + [(1 if col >> r & 1 else -1) % prime for col in columns]
+                 for r in range(len(defect))]
+    rank = len(roots)
+    for i in range(rank):
+        pivot = next(r for r in range(i, len(defect)) if equations[r][i])
+        equations[i], equations[pivot] = equations[pivot], equations[i]
+        factor = pow(equations[i][i], -1, prime)
+        equations[i] = [factor * value % prime for value in equations[i]]
+        for r, row in enumerate(equations):
+            if r != i and row[i]:
+                equations[r] = [(a - row[i] * b) % prime
+                                for a, b in zip(row, equations[i], strict=True)]
+
+    def line(vector):
+        first = next((value for value in vector if value), None)
+        if first is None:
+            return None
+        factor = pow(first, -1, prime)
+        return tuple(value * factor % prime for value in vector)
+
+    images = list(zip(*(row[rank:] for row in equations[rank:]), strict=True))
+    lines = {line(word): i for i, word in enumerate(images)}
+    require(None not in lines and len(lines) == len(columns), "independent pairs modulo defect")
+    dependent = set()
+    for i, j in combinations(range(len(columns)), 2):
+        for ratio in range(1, prime):
+            point = line(tuple((a + ratio * b) % prime
+                               for a, b in zip(images[i], images[j], strict=True)))
+            k = lines.get(point)
+            if k is not None and j < k:
+                dependent.add((i, j, k))
+    require(dependent == {(9, 12, 19)}, "unique dependent triple modulo defect")
+    print("n=28: among all 1,140 triples, only (9, 12, 19) are dependent in the F_7 defect quotient")
+    return next(iter(dependent))
+
+
+def check_prefix_repair(columns, replaced):
+    # Normalization fixes the first entry to +1, leaving 2^13 choices in the
+    # first half and 2^14 in the second. Each five-bit digit is a distance.
+    half_mask = (1 << 14) - 1
+    left = [sum(((v ^ (col & half_mask)).bit_count()) << (5*i)
+                for i, col in enumerate(columns)) for v in range(1, 1 << 14, 2)]
+    right = [sum((14 - (v ^ (col >> 14)).bit_count()) << (5*i)
+                 for i, col in enumerate(columns)) for v in range(1 << 14)]
+    full_mask = (1 << (5*len(columns))) - 1
+
+    def candidates(removed):
+        keep = full_mask
+        for i in removed:
+            keep ^= 31 << (5*i)
+        index = {}
+        for v, signature in enumerate(left):
+            index.setdefault(signature & keep, []).append(2*v+1)
+        return {lo | (hi << 14) for hi, signature in enumerate(right)
+                for lo in index.get(signature & keep, ())}
+
+    for i, j in combinations(range(len(columns)), 2):
+        require(candidates((i, j)) == {columns[i], columns[j]}, f"new column after deleting {i}, {j}")
+
+    kept = [word for i, word in enumerate(columns) if i not in replaced]
+    first_four = [210585043, 90966887, 54089267, 43457415]
+    last_seven = [238560157, 72738319, 82980019, 51293467, 174485591, 219361643, 102562017]
+    expected = {columns[i] for i in replaced} | set(first_four + last_seven)
+    require(candidates(replaced) == expected, "complete normalized candidate set after deleting the triple")
+    require(all((col ^ columns[i]).bit_count() != 14
+                for i in replaced for col in first_four + last_seven), "old columns cannot mix with the repair")
+    require(len(kept + first_four) == 21 and len(kept + first_four + last_seven) == 28, "repair widths")
+    checked = verify_orthogonal(28, kept + first_four + last_seven)
+    print(f"n=28: no new columns for any of 190 deletion pairs; three deletions give a full repair ({checked} dots)")
+    print("n=28: the 17 retained columns have exactly one normalized full completion up to column order")
+    for removed, expected_count in (((3, 14, 15, 19), 0), ((0, 1, 2, 15), 4), ((0, 1, 3, 19), 12)):
+        fresh = candidates(removed) - {columns[i] for i in removed}
+        require(len(fresh) == expected_count, f"distinct four-release outcome for {removed}")
+        verify_orthogonal(28, sorted(fresh))
+    print("n=28: distinct four-column releases give 0, 4, or 12 genuinely new orthogonal columns")
+    return first_four + last_seven
+
+
+def check_order28_neighbor(columns, replaced, new, defect, roots):
+    gram = [[defect[r][s] for s in roots] for r in roots]
+    released = [[1 if columns[j] >> r & 1 else -1 for j in replaced] for r in range(28)]
+    # Coordinates in the displayed E8 basis followed by the three released axes.
+    # This lifts the modular normal vector to norm zero modulo 7^2.
+    normal = (0, 4, 2, 4, 2, 0, 2, 2, 8, 6, 4)
+
+    def inner(left, right):
+        root_part = sum(a * row_entry * b for a, row in zip(left[:8], gram, strict=True)
+                        for row_entry, b in zip(row, right[:8], strict=True))
+        return root_part + sum(a * b for a, b in zip(left[8:], right[8:], strict=True))
+
+    require(inner(normal, normal) % 49 == 0, "isotropic neighbor lift")
+    for r, row in enumerate(released):
+        value = 2 * sum(defect[r][i] * a for i, a in zip(roots, normal[:8], strict=True))
+        value += sum(a * b for a, b in zip(row, normal[8:], strict=True))
+        require(value % 7 == 0, "normal to all residual rows")
+
+    axes = []
+    for word in new:
+        overlaps = [28 - 2 * (word ^ columns[j]).bit_count() for j in replaced]
+        require(all(c % 4 == 0 for c in overlaps), "normalized sign overlap")
+        tail = [c // 4 for c in overlaps]
+        values = []
+        for r in roots:
+            value = 7 * (1 if word >> r & 1 else -1)
+            value -= sum(a * b for a, b in zip(released[r], tail, strict=True))
+            require(value % 2 == 0, "even defect contribution")
+            values.append(value // 2)
+        # Cramer's rule uses det(gram) = 1, checked at the start of this replay.
+        root = [determinant([row[:j] + [value] + row[j+1:]
+                            for row, value in zip(gram, values, strict=True)]) for j in range(8)]
+        require(all(value.denominator == 1 for value in root), "integral scaled axis")
+        axis = [int(a) for a in root] + tail
+        scalar = axis[8] % 7
+        require(scalar != 0, "nonzero neighbor discriminant class")
+        differences = [a - scalar * b for a, b in zip(axis, normal, strict=True)]
+        require(all(value % 7 == 0 for value in differences), "common neighbor line")
+        require(inner([value // 7 for value in differences], normal) % 7 == 0, "neighbor membership")
+        axes.append(axis)
+    require(len(axes) == 11 and all(inner(a, a) == 49 for a in axes)
+            and all(inner(a, b) == 0 for a, b in combinations(axes, 2)), "cubic 7-neighbor basis")
+    print("n=28: all 11 new sign columns are the axes of one explicit cubic 7-neighbor")
+
+
 def signs(word):
     return tuple(1 if symbol == '+' else -1 for symbol in word)
 
@@ -232,10 +421,159 @@ def check_2396():
     columns = [word | (long[j] << 1196) for j, word in enumerate(short)]
     checked = verify_orthogonal(2396, columns)
     print(f"n=2396: {len(columns)} explicit orthogonal columns; all {checked:,} pairwise dots zero")
+    rows = rows_from_columns(2396, columns)
+    # Top-top dots are zero and bottom-bottom dots are bounded by the four
+    # omitted entries of the order-1200 Hadamard, so only cross pairs can win.
+    maximum = max(abs(len(columns) - 2 * (a ^ b).bit_count())
+                  for a in rows[:1196] for b in rows[1196:])
+    require(maximum == 168, "maximum absolute row correlation")
+    reusable = 1 + (len(columns) + maximum) // 2
+    print(f"n=2396: largest absolute row dot {maximum}; outer design can reuse at most {reusable} columns")
+    retained_mask = (1 << 1196) - 1
+    classes = [[] for _ in range(8)]
+    omitted_rows = rows_from_columns(1200, long[1196:])
+    for retained, omitted in zip(rows[1196:], omitted_rows, strict=True):
+        # Make the first omitted sign positive to quotient by row negation.
+        if not omitted & 1:
+            omitted ^= 15
+            retained ^= retained_mask
+        classes[omitted >> 1].append(retained)
+    min_pattern = 1200
+    for group in classes:
+        for j in range(1196):
+            ones = sum(row >> j & 1 for row in group)
+            min_pattern = min(min_pattern, ones, len(group) - ones)
+    require(min_pattern == 52, "joint retained and omitted row patterns")
+    print("n=2396: every joint five-sign pattern up to negation occurs at least 52 times")
+    check_outer_margin_seed(short, long)
 
+
+def check_outer_margin_seed(short, long):
+    top_mask = (1 << len(short)) - 1
+    normalized = [col ^ (top_mask ^ short[0]) for col in short]
+    top = [col if col & 1 else col ^ top_mask for col in normalized]
+    five_patterns = (
+        (1, 64, 0, 150, 0, 0, 220, 0, 181, 0, 0, 55, 0, 0, 172, 0,
+         53, 0, 94, 71, 0, 0, 0, 0, 134, 1, 0, 0, 0, 0, 0, 0),
+        (24, 123, 0, 0, 0, 17, 0, 0, 0, 0, 1, 0, 0, 189, 0, 1,
+         0, 18, 1, 0, 206, 93, 0, 63, 0, 0, 110, 117, 0, 94, 1, 142),
+    )
+    double_omissions = (
+        ((0, 1, 2, 3), (0, 181, 440, 565, 594, 677, 871, 1035),
+         (11, 11, 7, 13, 15, 6, 12, 10), 288, None),
+        ((0, 1, 2), (0, 1, 40, 602, 978, 1013, 1108),
+         (25, 25, 25, 26, 20, 20, 24), 277, five_patterns),
+    )
+    for omit_top, omit_bottom, forced, expected_mixed, patterns in double_omissions:
+        mixed = check_exterior_margins(top, long, omit_top, omit_bottom, patterns)
+        require(mixed == expected_mixed, "reproduced mixed orthogonality count")
+        check_cancellation_fixture(top, long, omit_top, omit_bottom, forced)
+
+    other_long = paley_ii_1200()
+    omit = (0, 2, 301, 750, 1051)
+    intersection = (1 << len(other_long)) - 1
+    for j in omit:
+        intersection &= other_long[j]
+    require(intersection == 1, "single common positive row of the five omissions")
+    check_exterior_margins(top, other_long, (0,), omit)
+
+
+def check_exterior_margins(top, bottom, omitted_top, omitted_bottom, pattern_counts=None):
+    top_size, bottom_size = len(top), len(bottom)
+    order = top_size + bottom_size
+    bottom_mask = (1 << bottom_size) - 1
+    old = [upper | ((lower ^ bottom_mask) << top_size) for upper, lower in zip(
+        (col for j, col in enumerate(top) if j not in omitted_top),
+        (col for j, col in enumerate(bottom) if j not in omitted_bottom), strict=True)]
+    pairs = verify_orthogonal(order, old)
+
+    width = order // 2 - len(old)
+    required = [order // 4 - sum(col >> r & 1 for col in old) for r in range(order)]
+    required[0], required[top_size] = width, 0
+    require(all(0 <= need <= width for need in required), "exterior row deficits")
+    new = [0] * width
+    if pattern_counts is None:
+        # Cycle through the columns to fill the margins alone.
+        cursor = 0
+        for r, need in enumerate(required):
+            for _ in range(need):
+                new[cursor] |= 1 << r
+                cursor = (cursor + 1) % width
+    else:
+        # The joint margin/Gram certificate supplies counts of negative masks
+        # in each half. Place them only at rows with the right deficit.
+        halves = (range(top_size), range(top_size, order))
+        for rows, counts in zip(halves, pattern_counts, strict=True):
+            require(len(counts) == 1 << width, "complete pattern counts")
+            buckets = [[r for r in rows if width - required[r] == size] for size in range(width + 1)]
+            for mask, count in enumerate(counts):
+                bucket = buckets[mask.bit_count()]
+                require(0 <= count <= len(bucket), "realizable deficit distribution")
+                for _ in range(count):
+                    r = bucket.pop()
+                    for j in range(width):
+                        if not mask >> j & 1:
+                            new[j] |= 1 << r
+            require(not any(buckets), "every row assigned a pattern")
+        new_pairs = verify_orthogonal(order, new)
+        print(f"n={order}: {new_pairs} new/new inner products also vanish on the margin certificate")
+    exterior = old + new
+    require(all(col.bit_count() == order // 2 and col & 1 and not (col >> top_size & 1)
+                for col in exterior), "exterior column margins and distinguished rows")
+    require(all(sum(col >> r & 1 for col in exterior) == order // 4
+                for r in range(1, order) if r != top_size), "exterior row margins")
+    mixed = sum((left ^ right).bit_count() == order // 2 for left in old for right in new)
+    print(f"n={order}: exact exterior margins with {len(old):,} retained columns and {len(new)} provisional columns; "
+          f"{pairs:,} retained pairs and {mixed}/{len(old)*len(new):,} mixed pairs orthogonal")
+    return mixed
+
+
+def check_cancellation_fixture(top, bottom, omitted_top, omitted_bottom, expected_forced):
+    top_size, bottom_size = len(top), len(bottom)
+    bottom_mask = (1 << bottom_size) - 1
+    top_patterns = rows_from_columns(top_size, [top[j] for j in omitted_top])
+    top_all = (1 << len(omitted_top)) - 1
+    require(top_patterns[0] == top_all and set(top_patterns[1:]) == set(range(1, top_all + 1, 2)),
+            "upper cube patterns")
+    bottom_patterns = rows_from_columns(bottom_size, [bottom[j] ^ bottom_mask for j in omitted_bottom])
+    require(bottom_patterns[0] == 0, "lower distinguished pattern")
+    patterns = [1 << j for j in range(1, len(omitted_bottom))] + [(1 << len(omitted_bottom)) - 2]
+    forced = tuple(bottom_patterns[1:].count(pattern) for pattern in patterns)
+    require(forced == expected_forced, "forced affine interpolation patterns")
+    missing = (top_size + bottom_size) // 2 - (top_size - len(omitted_top))
+    bounds = [isqrt((d + 1) ** (d + 1)) // (2 ** d) for d in range(missing - 1)]
+    divisor = top_size // gcd(top_size, top_size + bottom_size)
+    require(missing * max(bounds)**2 < divisor, "impossible small integer dependence")
+    print(f"n=2396: forced types verified; the fixed {missing}-column extension needs cancellation rank {missing}")
+
+
+def paley_ii_1200():
+    """Tensor the normalized Paley-II H(300) with the Sylvester H(4)."""
+    q, side = 149, 150
+    squares = {j*j % q for j in range(1, q)}
+
+    def entry(i, j):
+        left, a = divmod(i, side)
+        right, b = divmod(j, side)
+        if a == b:
+            return 1 if left == right == 0 else -1
+        character = 1 if q in (a, b) or (b - a) % q in squares else -1
+        return -character if left == right == 1 else character
+
+    edge = [entry(0, j) for j in range(300)]
+    require(entry(0, 0) == 1 and all(entry(j, 0) == value for j, value in enumerate(edge)),
+            "symmetric Paley normalization")
+    base = [sum((entry(i, j) * edge[i] * edge[j] == 1) << i for i in range(300)) for j in range(300)]
+    verify_orthogonal(300, base)
+    mask = (1 << 300) - 1
+    bottom = [sum((word ^ (mask if (a & c).bit_count() % 2 else 0)) << (300*a)
+                  for a in range(4)) for c in range(4) for word in base]
+    verify_orthogonal(1200, bottom)
+    return bottom
 
 if __name__ == "__main__":
     for multiplier in (5, 11, 15):
         check_extraction(multiplier)
+    check_blocked_prefix()
     check_scarpis()
     check_2396()

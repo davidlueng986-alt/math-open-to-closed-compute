@@ -1,0 +1,106 @@
+[
+  {
+    "seed": 5031,
+    "masks": [
+      "0x26997b99b1482369a81150d6e56eebd6a6d7981bcad904b0cff131e65c37105da587175000",
+      "0x606434d6eee478f28730fea75fc4510b63c883d8ba7244d3c9a26bc5e7f681ff35342a71654",
+      "0x194078cd8b1ce95e04ece36e69b948f1aab6d1a9f1fbaf5b53baf48a08d076fdf407f6343ee"
+    ],
+    "norm_certificate": [
+      169831,
+      366477097,
+      7947751138
+    ]
+  },
+  {
+    "seed": 5055,
+    "masks": [
+      "0x2f633643332fcc05d5e8121e78c4d43941cae7dcfeb854dd80711a7149045cc48fa0247e4aa",
+      "0x4d6e952c46df36c1c859f9b449566b8f486f1d85f8678045452c62aacb31ac3e60cc7f7a2fe",
+      "0x94fd7b78754a25ede5c26e2c8b0baaec7abfa83f5f6ac0373e9435a3794559663ed8c07976"
+    ],
+    "norm_certificate": [
+      8969,
+      17944742,
+      33167362
+    ]
+  },
+  {
+    "seed": 5058,
+    "masks": [
+      "0x23dcb2883e590a6261303bad7e841c99204a87c49ee964fb8ca85bc397626a2f82923bad583",
+      "0x41d111e74ba9f0a67c81d0074f16a32f29ef7d9d9836b06349f5231815579ad56dfe60a93d7",
+      "0x11892699515bb9c9edac91592e4a1ef3b6e5a910f59dedf1ecfdbfd0f2e2aa44930388fd75b"
+    ],
+    "norm_certificate": [
+      6577,
+      40813587,
+      17185701
+    ]
+  },
+  {
+    "seed": 5059,
+    "masks": [
+      "0x26b47ee934ddc531100d39ceb52d0ef187b1f05580a524114692b037fa4d8a4d4f8c5750ee",
+      "0x6066e481e6bd26970cb13836dac06f5911dee55c5ed586d9d13453d8fd91285e3b949e716ba",
+      "0x72c86fc0300e983713b16c6311dffb92aa0e5f359db47ebc5aca9cdea2d51d7affd0df44276"
+    ],
+    "norm_certificate": [
+      8969,
+      43579054,
+      77599788
+    ]
+  },
+  {
+    "seed": 5065,
+    "masks": [
+      "0x4a4f14a53e7594333258d3083c366c08324e85c01679802fa6f92aaf3fc5f96f89d46734282",
+      "0x2842b7ca4b856ef72fe938a20da4d3be3beb7f9910a654b763a45274bdf0099566b83c304d6",
+      "0x44e9757f7e543942e0bbd2773bcdd31de371ff5fbe23913472750586e8a5454987dc996756"
+    ],
+    "norm_certificate": [
+      73553,
+      1860912577,
+      2232480656
+    ]
+  },
+  {
+    "seed": 5075,
+    "masks": [
+      "0x8e4304b2f21fe0347399d2f7cc5009c48ca77d5f4eaecdf88be02c5df009bc70ea62a60082",
+      "0x6ae993245ad104c75a8876854d57bf2a416f8d8cf23538474de37a1e5d356b3de1ca71646d6",
+      "0x52d16df7ced2a0458b31b1f9d23b4cbbd66228d76d72fc2b77efaa8de27056318931f6ec664"
+    ],
+    "norm_certificate": [
+      84317,
+      5816946060,
+      4163826411
+    ]
+  },
+  {
+    "seed": 5112,
+    "masks": [
+      "0x2a4c131e0233923e7fe11bad7c954513417ce10cfbf0cc7f8ca8137414c3ff4c440a6b34482",
+      "0x4841b07177c368fa6250f0074d07faa548d91b55fd2f18e749f56baf96f60fb6ab6630302d6",
+      "0x49f4c687e76424fd4b4e7c79198d43aac36ae6ffe7d32eb745db312b90df1e13d586e128572"
+    ],
+    "norm_certificate": [
+      4783,
+      13136566,
+      7557140
+    ]
+  },
+  {
+    "seed": 5128,
+    "masks": [
+      "0x22c8b2389a97081487f117c97ce44dc928e78c959e41c49f8ecb13f5e1866d1dd24239254aa",
+      "0x40c51157ef67f2d09a40fc634d76f27f214276cc989e10074b966b2e63b39de73d2e62212fe",
+      "0x3d566ae9a271ab9d8f23cd6be355cb5b9b761a15874b7f2862f7c4faac8bb056790edd36016"
+    ],
+    "norm_certificate": [
+      6577,
+      31746066,
+      17258048
+    ]
+  }
+]

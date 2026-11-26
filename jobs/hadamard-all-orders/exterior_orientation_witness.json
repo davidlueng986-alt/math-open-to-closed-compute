@@ -1,0 +1,56 @@
+{
+  "released": 384,
+  "base_rows": [
+    1,
+    151,
+    303,
+    356,
+    569,
+    578
+  ],
+  "exchange_column": 3,
+  "complete_anchors": [
+    12,
+    14,
+    18,
+    105,
+    213,
+    313,
+    430
+  ],
+  "lower": "vtb78ik2v9ci3lc7v8og9jpvvl0bm3ptm7jpqffgmc8qjqrbg8i5mimmcoroj9jpsoqa59ov75bjqa60iqq9bqsqjnrqivrvq079uj7mg8vqqnbuifoaojqn9ggqvm9uvu3nrvhfg8qtgugibvav74v31f04srjniaj138vuqpfmcvbrmnvjf0mfsvv8vpqkikgr7mprnmi8958fvj35vksqrt7qsjjmfvfm78qfk7n0ajfvsgruiog5ajn3aunm0qrvnfmv7qnislcgncrrnvvjefbn9gacvg1ivro7rfpfubfcfmjvgginpv5bunvl5kgm8897uqrvnn0jkvvnk7bgqvvjuqpfqqvrnjrbuviaiqvr7rp4uvvqnian5i0npn9pvv5gblnjnvimv788nvfifjqnfmagg158nmp5i8ojc8prcmvjvrpnuv3kvgifvdkf89piqrpvjii89psm7fruqp7fnbsfjk6vk9j7mqqqtmi7bvtmviflvvrq0cqs50kqlgvnj9urpnlkjr9morgrvn078pgfp7ji3lvvrrtong57pnvuv73flmqvi8frqqc1qnji3vlvvl7nv97rvvrv99j7v9fbbifkrqnv1737nlvj7jf77rv3v8v7v9hv1k7qqq0vq7kr8kj1rr0nqfvvbagfrnnp8fjpg9krrglf7bbqq9i8r2c1jfvf37vjmplgj3viaruarq1ruqjj1qfn49r9nlr07vmnmrqkqgnm4v76v5uvv0vnc3pjrmp0mv0dn7m3mfqq5f1nj7gvg7jaravr2pvi329v3fm5l8urgn7vrklbbm7ln13v8vjnav9r3vr7bqr09r7r3vk39k3jn1nbf07mmb9rbqtqri5irmp7jrq0nb9r7mqrbir2h3vukmh9ngv8jb5rj2nvrf8bffvgbjnl9grpu5uval15r8gvjb1q0jvfgqjr3v3431k95m2f2n7v981j5krf33nnv3fjbqn7vqrqfjiv287qrb39u8b9f8rvqvnvcq7nk7njnvqn3lpmlivn31anpqff8vu3vu73j0v77r37nq7gp9n0pv2fkvmfvi3p3nv7jv2pf2f7jpr4lah7pp32rfjmfrfj7vbrq3fijuqkvi3lufqrj9u7v77n7lpurv8gia3rkvfvjnsf7mr3v2q1rvruqgovbivuuq7ppbvu73v3g1rb",
+  "joint_matches": [
+    1193,
+    921,
+    288,
+    40,
+    21
+  ],
+  "refinement": {
+    "extra_anchors": [
+      [
+        564,
+        655,
+        1072
+      ],
+      [
+        128,
+        681,
+        330
+      ],
+      [
+        82,
+        227,
+        368
+      ]
+    ],
+    "lower": "vtb78ik2v9ci3lc7v8og9jpvvl0bm3ptm7jpqffgmc8qjqrbg8i5mimmcoroj9jpsoqa59ov75bjqa60iqq5bqsqjnrqivrvq079uj7mg8vqqnbuifoaojqn9ggqvm9uvu3nrvhf88qtgugibvav74v31f04srjniaj138vuqpfmcvbrmnvjf0mfsvv8vpqkikgr7mprnmi8958fvj35vksqrt7qsjjmfvfm78qfk7n0ajfvsgruiog5ajn3aunq0qfvnfmv7qnislcgncrrnvvjefbn9gacvg1ivfo7rfpfujfcfmjvgginpv5bunvl5kgm8897umrvnn0jkvvnk7bgqvvjuqpfqqvrnjrbuviaiqvr7rp4uvvqnian9i0npn9pvv5gblnjnvimv788nvfifjqnfmagg158nmp5i8ojc8prcmvjvrpnuv3kvgirvdkf89piqrpvjii89psm7fruqp7fnbsfbk6vk9j7mqqqtmi7bvtmvirlvvrq0cqs50kqlgvnj9urpnlkjr9morgrvn07gpgfp7ji3lvvrrtong57pnvuv73flmqvi8frqqc1qnji3vlvvl7nv97rvvrv99j7v9fbbifkfqnv1737nlvj7jf7jrv3v8v7v9hv1k7qqq0vq7kr8k71rr0nqfvvbagfrnnp8fjpg9krr8lf7jbqq9i8r2c1jfvf37vjmplgj3viaruirq1ruqbj1qfn49r9nlr07vmnmrqkqgrm4v76v5uvv0vnc3pjrmp0mv0dn7m3mfqq5f1nj7gvg7jafavf2pvi329v3fm5l8urgn7vrkljbm7ln13v8vjnav9r3vr7bqr09r7r3vk39k3jn1nbf07mmb9rbqtqri5armp7jrq0nb9r7mqrbir2h3vukmh9ngv8jb5rj2nvnf8bffvgbjnl9grpu9uval15r8gvjb1q0jvfgqjr3v3431k95m2f2n7v981j5krf33nnv3fjbqn7vqrqfjiv287qrb35ugb9f8rvqvnvcq7nk7njnvqn3lpmlivn31anpqrf8vu3vu73j0v77r37nq7gp9n0pv2fkvmfvi3p3nv7jv2pf2r7jpr4lah7pp32rfbmfrfj7vbrq3fijuqkvi3lufqrj9u7v77n7lpurv8gia3rkvfvjnsr7mr3v2q1rvruqgovbivuuq7ppbvu73v3g1rb",
+    "joint_matches": [
+      1193,
+      900,
+      291,
+      39,
+      26
+    ]
+  }
+}

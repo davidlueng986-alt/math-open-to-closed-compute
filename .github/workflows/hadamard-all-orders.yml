@@ -16,10 +16,215 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: Reconstruct the incidence examples and the 2396 by 1196 matrix
-        run: python3 jobs/hadamard-all-orders/verify.py
+      - name: Check the exact matrices, defect repair and T-sequence congruences
+        run: |
+          python3 -B jobs/hadamard-all-orders/verify.py
+          python3 -B jobs/hadamard-all-orders/stack_1197.py
+          python3 -B jobs/hadamard-all-orders/stack_1197_four_channels.py
+          python3 -B jobs/hadamard-all-orders/stack_1197_four_channel_gap.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_four_channels.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_four_channel_compressed.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_four_channel_mod32.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_four_channel_energy_bound.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_four_channel_odd_one.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_four_channel_odd_raw.py
+          python3 -B jobs/hadamard-all-orders/stack_upper_code.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_dense_boundary.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_joint.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_transport.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_auxiliary.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_energy.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_channels.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_reciprocal.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_reciprocal_mod5.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_marginals.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_mod5.py
+          python3 -B jobs/hadamard-all-orders/stack_odd_t_auxiliary.py
+          python3 -B jobs/hadamard-all-orders/stack_odd_t_code_components.py
+          python3 -B jobs/hadamard-all-orders/stack_odd_t_residual.py
+          python3 -B jobs/hadamard-all-orders/stack_odd_t_walsh.py
+          python3 -B jobs/hadamard-all-orders/stack_odd_t_pair_rigidity.py
+          python3 -B jobs/hadamard-all-orders/triple_product.py
+          python3 -B jobs/hadamard-all-orders/paley_progression.py
+          python3 -B jobs/hadamard-all-orders/golay_progression.py
+          python3 -B jobs/hadamard-all-orders/golay_conference_free.py
+          python3 -B jobs/hadamard-all-orders/conference_free_golay_paley.py
+          python3 -B jobs/hadamard-all-orders/t43_conference_free.py
+          python3 -B jobs/hadamard-all-orders/t187_yang.py
+          python3 -B jobs/hadamard-all-orders/yang_four_residues.py
+          python3 -B jobs/hadamard-all-orders/yang_residue_extension.py
+          python3 -B jobs/hadamard-all-orders/yang_thirteen_residues.py
+          python3 -B jobs/hadamard-all-orders/semiprime_t_paley_slice.py
+          python3 -B jobs/hadamard-all-orders/semiprime_williamson.py
+          python3 -B jobs/hadamard-all-orders/square_field_t_paley.py
+          python3 -B jobs/hadamard-all-orders/odd_transfer_basis_parity.py
+          python3 -B jobs/hadamard-all-orders/ito_prime_block.py
+          python3 -B jobs/hadamard-all-orders/unreal_butson_product.py
+          python3 -B jobs/hadamard-all-orders/yamada_circulant_reverse.py
+          python3 -B jobs/hadamard-all-orders/yamada_noncirculant_rational.py
+          python3 -B jobs/hadamard-all-orders/yamada_paley_doubling_reverse_limit.py
+          python3 -B jobs/hadamard-all-orders/yamada_single_prime_denominator.py
+          python3 -B jobs/hadamard-all-orders/parity_denominator_descent.py
+          python3 -B jobs/hadamard-all-orders/parity_neighbor_rank_descent.py
+          python3 -B jobs/hadamard-all-orders/level5_marked_frames.py
+          c++ -std=c++20 -O2 -Wall -Wextra -Werror jobs/hadamard-all-orders/level5_cubic.cpp -o "$RUNNER_TEMP/level5-cubic"
+          "$RUNNER_TEMP/level5-cubic"
+          python3 -B jobs/hadamard-all-orders/yamada_explicit_pell_factor.py
+          python3 -B jobs/hadamard-all-orders/yamada_cyclic_pell_descent_limit.py
+          c++ -std=c++20 -O3 -Wall -Wextra -Werror jobs/hadamard-all-orders/t11_walsh_exhaustive.cpp -o "$RUNNER_TEMP/t11-walsh-exhaustive"
+          "$RUNNER_TEMP/t11-walsh-exhaustive"
+          python3 -B jobs/hadamard-all-orders/butson_towers_7572.py
+          python3 -B jobs/hadamard-all-orders/butson_2396_scalar.py
+          python3 -B jobs/hadamard-all-orders/quaternary_599_phase.py
+          python3 -B jobs/hadamard-all-orders/quaternary_singleton_reverse.py
+          python3 -B jobs/hadamard-all-orders/t_product_parity.py
+          python3 -B jobs/hadamard-all-orders/conference_plus_two.py
+          python3 -B jobs/hadamard-all-orders/t599.py
+          python3 -B jobs/hadamard-all-orders/t599_length_change.py
+          python3 -B jobs/hadamard-all-orders/t599_golay2_central.py
+          python3 -B jobs/hadamard-all-orders/border4_2396.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_lift.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_both.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_adaptive_forest.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_valuation_forest.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_split.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_reflection_kernel.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_q13_mod16.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_dual_integer.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_directed_gate.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_row_pair_mod5.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_peak32_gates.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_reselected_heads.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_relative_trace_gate.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_trace_pairs.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_single_mod3.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_reflected_f3.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_projected_f3.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_two_f3.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_two_f3_gate.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_three_f3_distance.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_three_f3_information.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_q3_head_limit.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_head_obstruction.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_inert_deck.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_primitive_traces.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_exact_negative.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_nested.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_transfer.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_fixed_first.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_two_fibers.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_primitive_lifts.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_shifted_tail.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_493.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_changed_margins.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_tensor_weighing.py
+          python3 -B jobs/hadamard-all-orders/r_intersections.py
+          python3 -B jobs/hadamard-all-orders/r_large_prime_symmetry.py
+          python3 -B jobs/hadamard-all-orders/r_involution_parity.py
+          python3 -B jobs/hadamard-all-orders/r_paley_projective_lift.py
+          python3 -B jobs/hadamard-all-orders/r_paley_skew_inner.py
+          python3 -B jobs/hadamard-all-orders/r_paley_anchored_triples.py
+          python3 -B jobs/hadamard-all-orders/r_paley_inner_binary.py
+          python3 -B jobs/hadamard-all-orders/r_paley_inner_spectrum.py
+          python3 -B jobs/hadamard-all-orders/r_paley_multiflip_inner.py
+          python3 -B jobs/hadamard-all-orders/r_paley_nonzero_lower.py
+          python3 -B jobs/hadamard-all-orders/r_paley_periodic_skew.py
+          python3 -B jobs/hadamard-all-orders/r_paley_bucket_extension.py
+          python3 -B jobs/hadamard-all-orders/r_paley_isotropic_code.py
+          python3 -B jobs/hadamard-all-orders/r_paley_uniform_growth.py
+          python3 -B jobs/hadamard-all-orders/r_paley_large_lower.py
+          python3 -B jobs/hadamard-all-orders/r_paley_far_periodic.py
+          python3 -B jobs/hadamard-all-orders/r_paley_far_family.py
+          python3 -B jobs/hadamard-all-orders/r_paley_far_restrictions.py
+          python3 -B jobs/hadamard-all-orders/r_paley_fixed_exterior_saturation.py
+          python3 -B jobs/hadamard-all-orders/r_paley_gram_edit_bound.py
+          python3 -B jobs/hadamard-all-orders/r_paley_reserve_axis_conference.py
+          python3 -B jobs/hadamard-all-orders/r_paley_reserve_span.py
+          python3 -B jobs/hadamard-all-orders/r_paley_reserve_sparse_lift.py
+          python3 -B jobs/hadamard-all-orders/r_paley_cooper_wallis_growth.py
+          python3 -B jobs/hadamard-all-orders/r_paley_cw_four_trade.py
+          python3 -B jobs/hadamard-all-orders/r_paley_cw_movement.py
+          python3 -B jobs/hadamard-all-orders/r_paley_cw_short_fibre.py
+          python3 -B jobs/hadamard-all-orders/r_paley_full92_eighteen.py
+          python3 -B jobs/hadamard-all-orders/r_paley_cw_mixed_distance.py
+          python3 -B jobs/hadamard-all-orders/r_paley_far_physical_mixed.py
+          python3 -B jobs/hadamard-all-orders/r_paley_far_fibre_budget.py
+          python3 -B jobs/hadamard-all-orders/r_paley_periodic_weighing.py
+          python3 -B jobs/hadamard-all-orders/r_paley_far_alternative.py
+          python3 -B jobs/hadamard-all-orders/r_paley_lattice_lift.py
+          python3 -B jobs/hadamard-all-orders/r_paley_root_extension.py
+          python3 -B jobs/hadamard-all-orders/r_paley_periodic_partner.py
+          python3 -B jobs/hadamard-all-orders/r_paley_order44_classifier.py --lattice-roots
+          python3 -B jobs/hadamard-all-orders/r_paley_wrong_phase44.py
+          python3 -B jobs/hadamard-all-orders/r_paley_giant_anchored.py
+          python3 -B jobs/hadamard-all-orders/r_skew_conference_doubling.py
+          python3 -B jobs/hadamard-all-orders/r_near_complement.py
+          python3 -B jobs/hadamard-all-orders/r_two_point.py
+          python3 -B jobs/hadamard-all-orders/r_embedding.py
+          python3 -B jobs/hadamard-all-orders/five_column_constraints.py
+          python3 -B jobs/hadamard-all-orders/five_column_radius.py
+          python3 -B jobs/hadamard-all-orders/five_column_gram.py
+          python3 -B jobs/hadamard-all-orders/exterior_lift.py
+          python3 -B jobs/hadamard-all-orders/exterior_lower_fiber.py
+          python3 -B jobs/hadamard-all-orders/exterior_mod16_invariant.py
+          python3 -B jobs/hadamard-all-orders/five_column_contrasts.py
+          python3 -B jobs/hadamard-all-orders/exterior_mod8.py
+          python3 -B jobs/hadamard-all-orders/defect12_mod8.py
+          python3 -B jobs/hadamard-all-orders/defect12_exact.py
+          python3 -B jobs/hadamard-all-orders/defect12_mod16.py
+          python3 -B jobs/hadamard-all-orders/defect12_mod16_family.py
+          python3 -B jobs/hadamard-all-orders/defect12_mod32.py
+          python3 -B jobs/hadamard-all-orders/defect12_mod32_construction.py
+          python3 -B jobs/hadamard-all-orders/defect12_t599_near64.py
+          python3 -B jobs/hadamard-all-orders/defect12_near64_family.py
+          python3 -B jobs/hadamard-all-orders/defect12_t599_relative.py
+          python3 -B jobs/hadamard-all-orders/defect12_t599_comparators.py
+          python3 -B jobs/hadamard-all-orders/defect12_t599_sparse.py
+          c++ -O3 -std=c++20 -Wall -Wextra -Werror jobs/hadamard-all-orders/paley_omissions.cpp -o "$RUNNER_TEMP/paley_omissions"
+          "$RUNNER_TEMP/paley_omissions"
+      - name: Replay the fixed-head Paley swap neighborhood
+        run: python3 -B jobs/hadamard-all-orders/border4_2396_paley_peak32_gates.py --neighborhood
+      - name: Replay the four-border fiber exclusions
+        run: |
+          python3 -B jobs/hadamard-all-orders/border4_2396_full_y_expanded.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_565.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_raw_mod16_256.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_joint_q13_mod16.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_primitive_field.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_q23_taylor.py
+          python3 -B jobs/hadamard-all-orders/direct_2396_cyclic.py
+          python3 -B jobs/hadamard-all-orders/direct_2396_cyclic_ap.py
+          python3 -B jobs/hadamard-all-orders/direct_2396_cyclic_mod16.py
+          python3 -B jobs/hadamard-all-orders/direct_2396_cyclic_mod12.py
+          python3 -B jobs/hadamard-all-orders/direct_2396_cyclic_mod11_phase.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_quotient.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_mod11_reflection.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_shared_axes.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_mod11_independent.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_isotropic.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_synchronous.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_peak72.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_peak48.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_paired_fibres.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_peak40.py --census
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_mod5_forest.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_changed_support.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_joint_geometry.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_mod5_two_factors.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_one_hole.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_negative_norm.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_relative_distance.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_q23_minimal_residual.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_delay_screen.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dynamic_tail.py --radius both
       - name: Install pinned Lean 4.36.0
         run: bash jobs/hadamard-2396-399/install_lean.sh
+      - name: Check the next-column neighborhood and the lower-channel candidate
+        run: |
+          python3 -B jobs/hadamard-all-orders/stack_1198.py --export "$RUNNER_TEMP/stack-1198.bin"
+          python3 -B jobs/hadamard-all-orders/stack_1198_two_adic.py
+          c++ -O3 -std=c++17 -mpopcnt -Wall -Wextra -Werror jobs/hadamard-all-orders/stack_1198_radii.cpp -o "$RUNNER_TEMP/stack-1198-radii"
+          "$RUNNER_TEMP/stack-1198-radii" "$RUNNER_TEMP/stack-1198.bin"
       - name: Check the universal reductions and their axioms
         shell: bash
         run: |
@@ -27,7 +232,154 @@ jobs:
           export LEAN_PATH="$RUNNER_TEMP/hadamard-all-orders"
           mkdir -p "$LEAN_PATH"
           lean -DwarningAsError=true -o "$LEAN_PATH/Triples.olean" jobs/hadamard-2396-projections/Triples.lean
-          for module in Assembly Reductions Constructions OuterEnergy Rounding; do
+          for module in Assembly Reductions Constructions OuterEnergy Rounding Parity BlockedPrefix TripleProduct PaleyProgression GolayProgression ConferenceFreeGolayPaley PrimeTMatrix TerminalBounds ExteriorBounds; do
             lean -DwarningAsError=true -o "$LEAN_PATH/$module.olean" "jobs/hadamard-all-orders/$module.lean" | tee "$RUNNER_TEMP/$module.log"
             if grep -q 'sorryAx' "$RUNNER_TEMP/$module.log"; then exit 1; fi
           done
+
+  paley-finite-classifications:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Classify order-44 exteriors for all three order-20 source classes
+        run: python3 -B jobs/hadamard-all-orders/r_paley_order44_multiclass.py --wrong-phase --root-components
+      - name: Check the forced reserve units and fixed-width physical radius
+        run: |
+          python3 -B jobs/hadamard-all-orders/r_paley_gamma_splitting.py
+          python3 -B jobs/hadamard-all-orders/r_paley_gamma_quadratic.py
+          python3 -B jobs/hadamard-all-orders/r_paley_used_reserve_radius.py
+      - name: Exclude up to three physical flips from period-23 partners
+        run: python3 -B jobs/hadamard-all-orders/r_paley_near_periodic_partner.py
+      - name: Reconstruct a common exact exterior for two far inner columns
+        run: |
+          python3 -B jobs/hadamard-all-orders/r_paley_double_far.py
+          python3 -B jobs/hadamard-all-orders/r_paley_double_far_mixed.py
+          python3 -B jobs/hadamard-all-orders/r_paley_double_far_ten.py
+          python3 -B jobs/hadamard-all-orders/r_paley_double_far_eleven.py
+          python3 -B jobs/hadamard-all-orders/r_paley_double_far_nonperiodic.py
+          python3 -B jobs/hadamard-all-orders/r_paley_double_far_family.py
+      - name: Check the third periodic column and narrow reserve coordinate families
+        run: |
+          python3 -B jobs/hadamard-all-orders/r_paley_double_far_periodic.py
+          python3 -B jobs/hadamard-all-orders/r_paley_double_far_extensions.py
+          python3 -B jobs/hadamard-all-orders/r_paley_double_far_twoflip.py
+          python3 -B jobs/hadamard-all-orders/r_paley_gamma_coordinate_radius.py
+          python3 -B jobs/hadamard-all-orders/r_paley_gamma_periodic_radius.py
+          python3 -B jobs/hadamard-all-orders/r_paired_transversal.py
+          python3 -B jobs/hadamard-all-orders/r_paired_transversal_gap.py
+      - name: Classify compressed period-23 support through eleven
+        run: python3 -B jobs/hadamard-all-orders/r_paley_period23_support.py
+      - name: Reconstruct the full 92-row skew reserve frame
+        run: python3 -B jobs/hadamard-all-orders/r_paley_full92_skew.py
+      - name: Exclude nontrivial additive CRT third words
+        run: python3 -B jobs/hadamard-all-orders/r_paley_additive_crt.py
+      - name: Check cross-anchor physical edit limits
+        run: python3 -B jobs/hadamard-all-orders/r_paley_cross_anchor_radius.py
+      - name: Build a new cyclic selector and replay the mixed far pair
+        run: python3 -B jobs/hadamard-all-orders/r_paley_cyclic_selector.py
+      - name: Check contrast pairs on the 92-row frame
+        run: python3 -B jobs/hadamard-all-orders/r_paley_full92_contrast.py
+      - name: Replay the full-92 unrestricted source at widths 1213 to 1217
+        run: python3 -B jobs/hadamard-all-orders/r_paley_full92_unrestricted.py
+      - name: Verify the affine circuits and fixed-core capacity
+        run: |
+          python3 -B jobs/hadamard-all-orders/r_paley_affine_circuit.py
+          python3 -B jobs/hadamard-all-orders/r_paley_full92_core_capacity.py
+          python3 -B jobs/hadamard-all-orders/r_paley_cooper_wallis.py
+          python3 -B jobs/hadamard-all-orders/r_paley_punctured_fibre.py
+
+  near64-repair-extent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exhaust the fixed comparator's 36-sign repair radius
+        run: python3 -B jobs/hadamard-all-orders/defect12_t599_repairs.py --extended
+
+  exact-exterior-factors:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enumerate the eight exact omitted projection factors
+        run: |
+          c++ -O3 -std=c++20 -Wall -Wextra -Werror jobs/hadamard-all-orders/exterior_exact_factors.cpp -o "$RUNNER_TEMP/exterior_exact_factors"
+          python3 -B jobs/hadamard-all-orders/exterior_exact_factors.py "$RUNNER_TEMP/exterior_exact_factors"
+      - name: Check the folded exterior certificate and its scope
+        run: python3 -B jobs/hadamard-all-orders/exterior_folded_obstruction.py
+      - name: Check wider folded row changes and matching counts
+        run: python3 -B jobs/hadamard-all-orders/exterior_wide_fold.py
+      - name: Check fold capacities, factor distances and row-mask rigidity
+        run: python3 -B jobs/hadamard-all-orders/exterior_fold_factor_capacity.py
+      - name: Check the indexed modulo-eight nonzero physical fold trade
+        run: python3 -B jobs/hadamard-all-orders/exterior_fold_trade.py
+      - name: Check the exact Hall obstruction at the fixed physical fold
+        run: python3 -B jobs/hadamard-all-orders/exterior_fold_hall.py
+      - name: Check prescribed fold-coordinate changes and the new physical fold
+        run: python3 -B jobs/hadamard-all-orders/exterior_fold_coordinates.py
+      - name: Check exact Sylvester anchor pairs and their reindexed modulo-eight matching
+        run: python3 -B jobs/hadamard-all-orders/exterior_reindexed_anchors.py
+      - name: Check the index-18 fold capacity and exact reindexed witness
+        run: python3 -B jobs/hadamard-all-orders/exterior_reindexed_pivot.py
+      - name: Check the second-fold orientation census and released anchor witnesses
+        run: python3 -B jobs/hadamard-all-orders/exterior_orientation.py
+      - name: Check the exact matching retained under physical scalar modulo thirty-two
+        run: python3 -B jobs/hadamard-all-orders/exterior_scalar32.py
+      - name: Check required fold rank and support for joint modulo sixteen
+        run: python3 -B jobs/hadamard-all-orders/exterior_scalar32_fold_rank.py
+      - name: Check mixed conditional margins and the joint obstruction
+        run: python3 -B jobs/hadamard-all-orders/exterior_scalar32_conditional.py
+      - name: Check exact Gram obstructions for five Paley folds
+        run: python3 -B jobs/hadamard-all-orders/exterior_scalar32_fold_capacity.py
+
+  stack-replacement-neighborhood:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exclude three support replacements for the fixed pivots
+        run: |
+          c++ -O3 -std=c++20 -Wall -Wextra -Werror -fopenmp jobs/hadamard-all-orders/stack_1198_replacements.cpp -o "$RUNNER_TEMP/stack_1198_replacements"
+          OMP_NUM_THREADS=4 python3 -B jobs/hadamard-all-orders/stack_1198_replacements.py "$RUNNER_TEMP/stack_1198_replacements"
+          OMP_NUM_THREADS=4 python3 -B jobs/hadamard-all-orders/stack_1198_four_channel_moves.py "$RUNNER_TEMP/stack_1198_replacements"
+      - name: Exclude three balanced swaps of the two leading width-four words
+        run: python3 -B jobs/hadamard-all-orders/border4_2396_small_first.py
+
+  structured-second-fold:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check periodic second-fold families and shortened code cosets
+        run: |
+          c++ -O3 -march=native -std=c++20 -Wall -Wextra -Werror jobs/hadamard-all-orders/exterior_second_fold.cpp -o "$RUNNER_TEMP/exterior_second_fold"
+          python3 -B jobs/hadamard-all-orders/exterior_second_fold.py "$RUNNER_TEMP/exterior_second_fold"
+
+  exact-source-columns:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the pinned CaDiCaL solver and DRAT checker
+        shell: bash
+        run: |
+          cadical="$RUNNER_TEMP/cadical"
+          mkdir "$cadical"
+          curl -fsSL --retry 3 https://codeload.github.com/arminbiere/cadical/tar.gz/146207318796f094dcded87349a64f0c6927309e | tar xz --strip-components=1 -C "$cadical"
+          (cd "$cadical" && ./configure --quiet && make -j2)
+          checker="$RUNNER_TEMP/drat-trim.c"
+          curl -fsSL --retry 3 https://raw.githubusercontent.com/marijnheule/drat-trim/2e3b2dc0ecf938addbd779d42877b6ed69d9a985/drat-trim.c -o "$checker"
+          echo "d834b649f437e091597f5347f259b9f681087f89ca0844d0cee250a1a1a0c2ee  $checker" | sha256sum --check
+          cc -O2 "$checker" -o "$RUNNER_TEMP/drat-trim"
+      - name: Verify that no cyclic block can keep 15 original columns
+        shell: bash
+        run: |
+          input="$RUNNER_TEMP/near64-exact.cnf"
+          proof="$RUNNER_TEMP/near64-exact.drat"
+          python3 -B jobs/hadamard-all-orders/defect12_t599_exact_cnf.py "$input"
+          unsat=0
+          "$RUNNER_TEMP/cadical/build/cadical" "$input" "$proof" || unsat=$?
+          test "$unsat" -eq 20
+          "$RUNNER_TEMP/drat-trim" "$input" "$proof" | tr '\r' '\n' | tee "$RUNNER_TEMP/near64-exact-check.log"
+          grep -qx 's VERIFIED' "$RUNNER_TEMP/near64-exact-check.log"
