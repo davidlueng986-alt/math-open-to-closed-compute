@@ -52,6 +52,19 @@ BRANCH_SELECTED = int(
 BRANCH_DIGEST = "708fc9b784f4fd2b14b11a590e5bed5366be86d95a8fde0ccd724c9d42281186"
 
 
+NEXT_ROOTS = (972, 1013, 1066, 1051, 16)
+NEXT_PIVOTS = (1050, 622, 112, 439, 94)
+NEXT_SELECTED = int(
+    "4c56652570911a160afbf1c2b89d937f9b2da2ef0daea1f66a9e54c2670c5889"
+    "155c7668a6ddbc69f18a877d08aa9726a9a748827e71e4be54fae45e5ed333e3"
+    "9bf151a8170278a3d53e6f04eb9a55d627e67463630126eb6629aa5c27ef7764"
+    "b99f9f26c53569a860012bd9242a8691aa64756bcfa4d6f5902033394d0c3137"
+    "2fb360d26d8764e8fc597c00b7893f1f138e4d30b96",
+    16,
+)
+NEXT_DIGEST = "77f87219f5ffeaa473fa1c80505c3c4a74febf5c89dac226a6e68a69a36d9bae"
+
+
 def verify_rectangle(source, rows, reserves, selected, expected_digest):
     assert len(rows) == len(set(rows)) == len(reserves) == len(set(reserves))
     assert len(selected) == len(set(selected)) == 600
@@ -116,33 +129,42 @@ def verify():
         previous = selected
 
 
-    assert tuple(rows[12:]) == BRANCH_ROOTS[:3]
-    assert set(BRANCH_ROOTS).isdisjoint(centres)
-    assert set(BRANCH_PIVOTS).isdisjoint(reserves[12:])
-    selected = [j for j in range(1196) if BRANCH_SELECTED >> j & 1]
-    assert len(selected) == BRANCH_SELECTED.bit_count() == 600
-    assert profile_counts(selected, first_rows) == original_counts
-    assert profile_counts(previous, first_rows) == original_counts
-    assert len(set(selected).difference(previous)) == 122
-    g0, r0 = first_reserves[0], first_rows[0]
-    for r, g in zip(BRANCH_ROOTS, BRANCH_PIVOTS, strict=True):
-        first_contact = sign(source[g0], r) * sign(source[g0], r0)
-        for j, h in zip(first_rows, first_reserves, strict=True):
-            profile = sign(source[g], j) * sign(source[g], r0)
-            assert profile == first_contact * sign(source[h], r) * sign(source[h], j)
-    for i, j in combinations(range(4), 2):
-        r, s = BRANCH_ROOTS[i], BRANCH_ROOTS[j]
-        g, h = BRANCH_PIVOTS[i], BRANCH_PIVOTS[j]
-        product = sign(source[g], s) * sign(source[g], r0)
-        product *= sign(source[h], r) * sign(source[h], r0)
-        assert product == -sign(source[g0], r) * sign(source[g0], s)
-    width, pairs, digest = verify_rectangle(
-        source, first_rows + list(BRANCH_ROOTS), first_reserves + list(BRANCH_PIVOTS),
-        selected, BRANCH_DIGEST,
+    extra_roots = tuple(rows[12:])
+    extra_reserves = tuple(reserves[12:])
+    joint_branches = (
+        (BRANCH_ROOTS, BRANCH_PIVOTS, BRANCH_SELECTED, BRANCH_DIGEST, 122),
+        (NEXT_ROOTS, NEXT_PIVOTS, NEXT_SELECTED, NEXT_DIGEST, 216),
     )
-    assert width == 1216 and pairs == 738720
-    print(f"Full92 joint pivot branch: 2396 x {width}, all {pairs} pairwise products zero")
-    print(f"Twelve preserved inners, 122 reselected columns, reserve rank 16, SHA256 {digest}")
+    g0, r0 = first_reserves[0], first_rows[0]
+    for new_roots, new_pivots, mask, expected_digest, changes in joint_branches:
+        assert new_roots[:-1] == extra_roots
+        assert set(new_roots).isdisjoint(centres)
+        assert set(new_pivots).isdisjoint(extra_reserves)
+        selected = [j for j in range(1196) if mask >> j & 1]
+        assert len(selected) == mask.bit_count() == 600
+        assert profile_counts(selected, first_rows) == original_counts
+        assert profile_counts(previous, first_rows) == original_counts
+        assert len(set(selected).difference(previous)) == changes
+        for r, g in zip(new_roots, new_pivots, strict=True):
+            first_contact = sign(source[g0], r) * sign(source[g0], r0)
+            for j, h in zip(first_rows, first_reserves, strict=True):
+                profile = sign(source[g], j) * sign(source[g], r0)
+                assert profile == first_contact * sign(source[h], r) * sign(source[h], j)
+        for i, j in combinations(range(len(new_roots)), 2):
+            r, s = new_roots[i], new_roots[j]
+            g, h = new_pivots[i], new_pivots[j]
+            product = sign(source[g], s) * sign(source[g], r0)
+            product *= sign(source[h], r) * sign(source[h], r0)
+            assert product == -sign(source[g0], r) * sign(source[g0], s)
+        width, pairs, digest = verify_rectangle(
+            source, first_rows + list(new_roots), first_reserves + list(new_pivots),
+            selected, expected_digest,
+        )
+        print(f"Full92 joint pivot branch: 2396 x {width}, all {pairs} pairwise products zero")
+        print(f"Twelve preserved inners, {changes} reselected columns, "
+              f"reserve rank {width - 1200}, SHA256 {digest}")
+        previous = selected
+        extra_roots, extra_reserves = new_roots, new_pivots
 
 
 if __name__ == "__main__":

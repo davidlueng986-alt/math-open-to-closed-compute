@@ -1,6 +1,6 @@
-# Sixteen inner columns on the full92 source
+# Seventeen inner columns on the full92 source
 
-The $2396\times1212$ contrast rectangle has twelve inner columns from the full 92-row skew frame. Three successive exterior reselections preserve all existing inner columns and add one unrestricted one-flip inner each. The new roots lie outside the 92-row frame. Joint reselection then adds a fourth unrestricted root, giving a $2396\times1216$ rectangle. It retains the original twelve inner columns and their full signed profile histogram.
+The $2396\times1212$ contrast rectangle has twelve inner columns from the full 92-row skew frame. Three successive exterior reselections preserve all existing inner columns and add one unrestricted one-flip inner each. The new roots lie outside the 92-row frame. Two joint reselections then add a fourth and fifth unrestricted root, giving $2396\times1216$ and $2396\times1217$ rectangles. Each retains the original twelve inner columns and their full signed profile histogram.
 
 | Width | Physical root | Reserve column | Reselected exterior indices | Zero column products | Reserve rank over $\mathbb F_{599}$ |
 | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -25,9 +25,11 @@ $$
 
 These are linear equations in bounded integers. Each feasible count vector gives distinct physical indices by taking the indicated numbers from the two lists. The target accounts for both reserve contacts, including when the new root is outside the skew frame.
 
-## Joint reselection for width 1216
+## Joint reselection for widths 1216 and 1217
 
 The additional roots are $972,1013,1066,1051$, with reserves $935,852,523,1106$ in that order. The reserves of the first three additional roots change from $1027,907,1167$. The first twelve inner columns stay fixed. The 600 exterior indices change in 122 places compared with width 1215.
+
+Width 1217 keeps all sixteen physical roots and adds raw row 16. The five unrestricted roots have reserves 1050, 622, 112, 439, and 94 in the order 972, 1013, 1066, 1051, and 16. All four prior unrestricted reserves change. The original twelve inner columns and their signed profile histogram stay fixed. The exterior reselection replaces 216 of the 600 indices from width 1216.
 
 Encode the binary signs of a source column $c$ by $b_c(i)$ after normalizing at the first old root $r_0$. Set $\epsilon_c(i,j)=b_c(i)+b_c(j)$ and $\beta_i=\sum_{c\in X} b_c(i)$ in $\mathbb F_2$. For a pair of roots, the required exterior Hamming distance is $299+\epsilon_{g_i}(i,j)+\epsilon_{g_j}(i,j)$, using the binary representatives of the two $\epsilon$ values. Its parity is $\beta_i+\beta_j$. All twelve old roots have $\beta_j=0$, since their pair distances against $r_0$ equal 300. Comparing the contact at an old root $r_j$ with the contact at $r_0$ gives
 
@@ -50,4 +52,4 @@ Replay with Python's standard library from this job directory.
 python r_paley_full92_unrestricted.py
 ~~~
 
-The replay checks the successive and joint profile histograms, physical index capacities, every mixed row product, and every rectangle column product. The largest rectangle has 738720 zero products and reserve rank 16 over $\mathbb F_{599}$. Its SHA256 is `708fc9b784f4fd2b14b11a590e5bed5366be86d95a8fde0ccd724c9d42281186`. The construction leaves 1180 columns to reach the square of order 2396.
+The replay checks the successive and joint profile histograms, physical index capacities, every mixed row product, and every rectangle column product. The largest rectangle has 739936 zero products and reserve rank 17 over $\mathbb F_{599}$. Its SHA256 is `77f87219f5ffeaa473fa1c80505c3c4a74febf5c89dac226a6e68a69a36d9bae`. The construction leaves 1179 columns to reach the square of order 2396.

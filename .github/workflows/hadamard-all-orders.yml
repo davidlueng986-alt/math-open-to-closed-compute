@@ -229,7 +229,7 @@ jobs:
         run: python3 -B jobs/hadamard-all-orders/r_paley_cyclic_selector.py
       - name: Check contrast pairs on the 92-row frame
         run: python3 -B jobs/hadamard-all-orders/r_paley_full92_contrast.py
-      - name: Replay the full-92 unrestricted source at widths 1213 to 1216
+      - name: Replay the full-92 unrestricted source at widths 1213 to 1217
         run: python3 -B jobs/hadamard-all-orders/r_paley_full92_unrestricted.py
 
   near64-repair-extent:
