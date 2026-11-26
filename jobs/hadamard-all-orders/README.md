@@ -34,6 +34,12 @@ Let $H(n)$ mean that $n$ mutually orthogonal sign columns of length $n$ exist, a
 
 重選首字後，新增三組各自同時滿足雙商式、全長模 8 與峰值 32 的實體見證，最低原長殘差平方和由 179,200 降到 119,808，該對首字在本原分圓域受質數 6577 的奇估值排除。保有這份幅度分布的其他首字，可用完整本原模 3 加一道 44 維相對跡閉合。另有一份已匹配本原模 3 的見證，固定首字時在 $C_{23}$ 被質數 229 的奇估值排除。[三組新首字](BORDER4_2396_PALEY_RESELECTED_HEADS.md) · [一條相對跡](BORDER4_2396_PALEY_RELATIVE_TRACE_GATE.md) · [模 3 見證的固定首字障礙](BORDER4_2396_PALEY_Q3_HEAD_LIMIT.md)
 
+四對 CRT 行的低維交叉項可用來接合末字交換。新實體見證保持兩個商式、全長模 8 及完整 44 維相對跡，峰值由 88 降至 64。另一條路線保留第一組重選首字的逐位區間及全長模 16 時，任一本原模 3 因子已足以閉合。另驗證八對首字在通過全部頻譜界後，仍各有一個惰性質數的奇估值障礙。[四對行的相對跡](BORDER4_2396_PALEY_TRACE_PAIRS.md) · [單一模 3 因子](BORDER4_2396_PALEY_SINGLE_MOD3.md) · [八份分圓證書](BORDER4_2396_PALEY_INERT_DECK.md)
+
+外層所需的二元 Gram 因子若從既有欄只許刪除再加四欄，當來源階 $m=2t-2\ge44$ 時均不可能。允許新增舊欄位置時，2396 階也至少有 388 個不同原始行需要新增。兩個既有 1,217 欄固定外層依各自已驗證的距離與群組上限，至少需要 5,875 個舊欄新增位置。[普遍編輯下界與 20 階對照](R_PALEY_GRAM_EDIT_BOUND.md)
+
+Yamada–Walsh 的 44 階轉接所需相容三元矩陣，有一個與符號無關的三角形奇偶障礙。標準四元數與 Goethals–Seidel 來源的循環 $T(11)$，所有 42 個可實現的支撐代表與全部 504 個角色配置均被排除。剩餘質數進程仍可使用其他來源或轉接。[完整支撐枚舉](T11_WALSH_TRIANGLE_LIMIT.md)
+
 | 路線 | 已得到甚麼 | 仍缺甚麼 |
 | --- | --- | --- |
 | 已知構造的覆蓋 | 直接 Paley、Scarpis–Đoković、長度 3 區塊乘積，以及原有剩餘等差數列中長度 13、19 區塊乘積與兩個 Golay 構造的四個不相交無限子族 | 覆蓋餘下全部奇數乘數的定理。[Paley 子族](PALEY_PROGRESSION.md) · [Golay 子族](GOLAY_PROGRESSION.md) · [群標籤直接乘積的奇偶障礙](T_PRODUCT_PARITY.md) |

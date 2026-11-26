@@ -63,16 +63,22 @@ def evaluate_root(coefficients, modulus, trace=TRACE):
     return a,b
 
 
+def check_inert_valuation_one(head, prime, trace, expected):
+    modulus = prime**2
+    assert prime % N == N-1
+    assert all(prime % d for d in range(2, isqrt(prime)+1))
+    assert pow((trace*trace-4) % prime, (prime-1)//2, prime) == prime-1
+    assert evaluate_root((0,)*N+(1,), modulus, trace) == (1, 0)
+    assert all(evaluate_root((0,)*q+(1,), prime, trace) != (1, 0) for q in (13, 23))
+    numerator = tuple((1196 if not d else 0)-value for d, value in enumerate(head))
+    assert all(value % 2 == 0 for value in numerator)
+    required = tuple(value//2 for value in numerator)
+    assert evaluate_root(required, modulus, trace) == (expected, 0)
+    assert expected % prime == 0 and expected % modulus != 0
+
+
 def inert_certificate(head):
-    p = PRIME
-    assert all(p%d for d in range(2,isqrt(p)+1))
-    assert pow((TRACE*TRACE-4)%p,(p-1)//2,p) == p-1
-    assert evaluate_root([0]*N+[1],p*p) == (1,0)
-    assert all(evaluate_root([0]*q+[1],p)!=(1,0) for q in (13,23))
-    residual = [(1196 if not j else 0)-value for j,value in enumerate(head)]
-    assert not any(x%2 for x in residual)
-    value = evaluate_root([x//2 for x in residual],p*p)
-    assert value == (20946955540,0) and not value[0]%p and value[0]%(p*p)
+    check_inert_valuation_one(head, PRIME, TRACE, 20946955540)
 
 
 def main():

@@ -1,10 +1,8 @@
 """Check three independent peak-32 heads with exact dual quotients."""
 
-from math import isqrt
-
 from border4_2396_dual_mod5_forest import FACTORS_5, check_factors
 from border4_2396_paley_dual_integer import audit_signs
-from border4_2396_paley_head_obstruction import cosine_bounds, evaluate_root, power_interval
+from border4_2396_paley_head_obstruction import check_inert_valuation_one, cosine_bounds, power_interval
 from border4_2396_paley_negative_norm import N, periodic, sign_word
 from border4_2396_primitive_field import remainder
 
@@ -33,17 +31,7 @@ FIXTURES = (
 
 
 def inert_obstruction(correlation):
-    prime, trace = 6577, 40813587
-    assert prime % N == N-1
-    assert all(prime % d for d in range(2, isqrt(prime)+1))
-    assert pow((trace*trace-4) % prime, (prime-1)//2, prime) == prime-1
-    assert evaluate_root((0,)*N+(1,), prime**2, trace) == (1, 0)
-    assert all(evaluate_root((0,)*q+(1,), prime, trace) != (1, 0) for q in (13, 23))
-    numerator = tuple((1196 if not d else 0)-value for d, value in enumerate(correlation))
-    assert all(value % 2 == 0 for value in numerator)
-    required = tuple(value//2 for value in numerator)
-    assert evaluate_root(required, prime**2, trace) == (2613*prime, 0)
-    assert 2613 % prime
+    check_inert_valuation_one(correlation, 6577, 40813587, 17185701)
     print("Prime 6577 inert obstruction excludes all tails for the minimum-energy fixed heads")
 
 
