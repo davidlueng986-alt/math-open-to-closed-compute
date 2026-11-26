@@ -21,6 +21,8 @@ Let $H(n)$ mean that $n$ mutually orthogonal sign columns of length $n$ exist, a
 
 另一條直接循環路線用兩條重複字及其兩位換號對象，將固定尾字的模三條件化為唯一的反射剖面，並精確判定同時模八的相位方程。實際 599 長見證有全 598 原長模 12、峰值 108，尚須模 11 本原根條件才能歸零。[反射剖面與模十二重播](DIRECT_2396_CYCLIC_MOD12.md)
 
+在同一直循形狀中，固定尾字及模三剖面後，模 11 本原根方程化成一個反不變元素的平方，只需驗證至多兩個相位。公開模十二見證的尾字使右式為固定子域的非零平方，因此其全部 \(2^{118}\) 個反射相位均無法通過模 11。要延續此路線須更換尾字。[模十一的完整相位判準](DIRECT_2396_CYCLIC_MOD11_PHASE.md)
+
 ## What is known about the distance
 
 Write $r(n)=\max\{k:P(n,k)\}$. Unconditionally, for every $\epsilon>0$ and all sufficiently large multiples of four, $r(n)\ge n/2-O_\epsilon(n^{113/132+\epsilon})$. In particular the literature guarantees $(1/2-o(1))n$ orthogonal columns. Verheiden proved that **any** $n-7$ real orthogonal sign columns of length $n$ can be completed to $n$ for the orders used here. The conjecture follows if that threshold can be reached for every required $n$. The lower bound gives neither a rate of proof progress nor an effective finite search for the rest. [Graham–Shparlinski, §3](https://arxiv.org/abs/0709.2704) · [de Launey–Levin, Theorem A](https://arxiv.org/abs/1003.4003) · [Verheiden, thesis §4](https://thesis.caltech.edu/2899/) · [Verheiden, journal article](https://doi.org/10.1016/0097-3165(80)90028-X)
@@ -45,6 +47,8 @@ For \(t\equiv3\pmod4\) and \(t\ge11\), allowing arbitrary lower Hadamard source 
 
 固定 1,215 欄見證有完整的短根整數搜尋化簡。選定端係數通過兩組線性檢查後，預留向量有唯一的模 299 中心代表。精確短根至多需要四個非中心代表，其中樞紐以外至多三個。布林二次秩證書亦擴至一個明列的二十九維預留空間。[完整 CRT 短根化簡](R_PALEY_GAMMA_QUADRATIC.md)
 
+固定 1,215 欄外層選欄即可推出任何個別合格下部字與每條逐區塊週期 13 或 23 符號字至少相差 55 位，與每條逐區塊常數字至少相差 135 位。此界只用投影能量及每個實體纖維的換號約束。[固定選欄的週期距離](R_PALEY_GAMMA_PERIODIC_RADIUS.md)
+
 固定同一 1,215 欄配置，上部新增符號直線與十五條已有上部直線至少相差六位。刪去首樞紐後，新預留半投影在模 13 與二十九軸線性碼的漢明距離至少三，驗算包括所有任取兩個物理預留方向。[預留與上部距離界](R_PALEY_GAMMA_COORDINATE_RADIUS.md)
 
 44 階另有確切 \(D_{20}^+\) 格，但二十條平方範數四的特徵直線都在錯相位，實際最大欄寬為 36。對現有的 483 位週期遠距字，任何兩或三個實體列纖維內的換號都無法產生共用外層的相容第二欄；兩個稱重基底中，任一相容週期第二欄亦各需至少七個非零係數。[錯相位實例](R_PALEY_WRONG_PHASE44.md) · [物理纖維排除](R_PALEY_FAR_PHYSICAL_MIXED.md) · [週期稱重基底](R_PALEY_PERIODIC_WEIGHING.md)
@@ -53,7 +57,9 @@ For \(t\equiv3\pmod4\) and \(t\ge11\), allowing arbitrary lower Hadamard source 
 
 改用長度 23 選擇字與長度 13 Williamson 字組出的 1196 階來源後，已有兩條各距最近帶號來源 483 位的下部字，可在同一外層精確正交。共同合格投影有 736 個，同號異號各 368 個，重建 1,202 欄的全部欄內積精確為零。重選外層同時容納九條一位換號欄後，達到 1,211 欄及全部 732,655 對欄精確正交。[兩條遠距欄的完整重播](R_PALEY_DOUBLE_FAR.md) · [雙遠距混合見證](R_PALEY_DOUBLE_FAR_MIXED.md)
 
-上述雙遠距構造同樣適用於總和為 \((1,s,s,-2)\) 的長度 \(\ell=2s^2+5\) 單支撐字，條件是 \(13\nmid\ell\) 且有所需 \(26\ell+2\) 階會議矩陣。524 階已重建精確 266 欄。固定 2396 階兩條遠距欄及來源時，完整枚舉排除所有不同的純週期 13 第三欄，容許重選全部 600 條來源欄。[條件式雙遠距族](R_PALEY_DOUBLE_FAR_FAMILY.md) · [第三條週期欄排除](R_PALEY_DOUBLE_FAR_PERIODIC.md)
+使用同一來源的另一對遠距字後，兩條各距來源 483 位的下部字可同時保留十條一位換號欄，得到 **1,212 欄**。全部 733,866 個欄對精確正交，預留秩為 12。[雙遠距與十欄混合見證](R_PALEY_DOUBLE_FAR_TEN.md)
+
+上述雙遠距構造同樣適用於總和為 \((1,s,s,-2)\) 的長度 \(\ell=2s^2+5\) 單支撐字，條件是 \(13\nmid\ell\) 且有所需 \(26\ell+2\) 階會議矩陣。524 階已重建精確 266 欄。固定 2396 階兩條遠距欄及來源時，完整枚舉排除所有不同的純週期 13 第三欄，容許重選全部 600 條來源欄。其第三欄亦無法由任何純週期 13 字只換一個實體位元取得。對條件式雙遠距族，所有可用的 \(|s|\ge23\) 參數同樣排除純週期 13 的第三欄。[條件式雙遠距族](R_PALEY_DOUBLE_FAR_FAMILY.md) · [第三條週期欄排除](R_PALEY_DOUBLE_FAR_PERIODIC.md) · [單位換號及參數延伸](R_PALEY_DOUBLE_FAR_EXTENSIONS.md)
 
 對同一 483 位遠距首欄及同一來源，亦排除距任一純週期 23 字一至三個實體位置的候選。它們達不到共同選欄的 600 個投影，即使放寬其餘 Gram 條件亦然。[原長換號的完整排除](R_PALEY_NEAR_PERIODIC_PARTNER.md)
 
@@ -131,7 +137,9 @@ For \(t\equiv3\pmod4\) and \(t\ge11\), allowing arbitrary lower Hadamard source 
 
 另一個實體四邊框見證在精確負半部、精確 (C_{13})、全部序列和及全原長模 8 下，使 (C_{23}) 整數殘差平方和達到最小非零值 64。該符號的 397 個非零原長位移符合模 16，65 個精確，仍須消去商群兩對反向殘差。[最小非零 (C_{23}) 見證](BORDER4_2396_Q23_MINIMAL_RESIDUAL.md)
 
-四邊框已有同一組實體符號同時通過精確 \(C_{13}\)、精確 \(C_{23}\) 與全部 597 個原長模 8 位移。一份見證達 469 個原長模 16 及 105 個整數精確位移。另一份有 349 個模 16、117 個整數精確及殘差峰值 80。在兩個商群精確下，只需 131 個非樹邊的原長對偶位移即可決定全部整數殘差。峰值 80 的見證若再滿足模 11 本原根等式，即得完整四邊框。[雙精確商群及環流判準](BORDER4_2396_DUAL_QUOTIENT.md)
+四邊框已有同一組實體符號同時通過精確 \(C_{13}\)、精確 \(C_{23}\) 與全部 597 個原長模 8 位移。一份見證達 477 個原長模 16 及 65 個整數精確位移。另有 469 個模 16、105 個整數精確的見證，以及 349 個模 16、117 個整數精確且殘差峰值 80 的見證。在兩個商群精確下，只需 131 個非樹邊的原長對偶位移即可決定全部整數殘差。峰值 80 的見證若再滿足模 11 本原根等式，即得完整四邊框。[雙精確商群及環流判準](BORDER4_2396_DUAL_QUOTIENT.md)
+
+固定原雙商群見證中四條字各自的整數纖維邊際後，任何保有全原長模 8 的非平凡相對尾相位變動至少涉及十二位。原有兩組固定邊際各只容許至多 102 維的仿射符號族。另對原有兩份見證，已完整排除只改一條字、保持任一反射偶分量與固定邊際的模 11 本原根解。[相對尾相位的距離及維數](BORDER4_2396_DUAL_RELATIVE_DISTANCE.md) · [單字反射模十一](BORDER4_2396_DUAL_MOD11_REFLECTION.md)
 
 **五欄省略投影。** 改變 148 個行對異或的新折疊保有逐索引模八、行欄重量及全部精確 Gram，得到 39 組精確五維配對。它的索引 313 在任何重配下都無法精確相消，故 136 和 148 兩個固定折疊都需更換。保持參考配置的逐索引模八值時，要從第八個因數切換到其他因數並完成精確相消，必須改動全部五個折疊座標。[Hall 排除與 34 組見證](EXTERIOR_FOLD_HALL.md) · [新折疊及因數切換限制](EXTERIOR_FOLD_COORDINATES.md)
 

@@ -1,4 +1,4 @@
-"""Replay two physical four-border sources with both integer quotients exact."""
+"""Replay physical four-border sources with both integer quotients exact."""
 
 from border4_2396 import periodic
 from border4_2396_joint_q13_mod16 import joint_words
@@ -17,6 +17,12 @@ MORE_MOD16 = (
     0x5C0028141202202081100483C1100891401F04083600006C0920E7220828E082102082601,
     0x7124790813801188041500080440020300000020188404011108408060102028040200C000,
     0x13C491C0000C01008050102018040842220080846010000003010008804002A080462007204,
+)
+CHANGED_C13_MARGINS = (
+    0x317808003C9006183081140102E18024D9441800082A051032A020111008500006104001408,
+    0x102E0838501003D0248140440380130DD1401E0048130400380020070008C88080306003800,
+    0x2F120704849D01008849C6008044006000100006010840621010000006010B028040200D080,
+    0x41C091E8042C01008050342018000002021180842018000200018008804018E48440202E484,
 )
 
 
@@ -91,8 +97,17 @@ def main():
     assert periodic(t) == [599] + [0]*298
     low = replay(dual_words(), t, (349, 117, 80, 507392), 189, 10)
     assert any(remainder(low, primitive_factor(11), 11))
-    replay(dual_words(MORE_MOD16), t, (469, 105, 96, 619520), 233, 12)
-    print("Both exact T, C13, C23 and all 597 raw mod8. Mod16/exact: 349/117 and 469/105.")
+    fixed = dual_words(MORE_MOD16)
+    changed = dual_words(CHANGED_C13_MARGINS)
+    replay(fixed, t, (469, 105, 96, 619520), 233, 12)
+    replay(changed, t, (477, 65, 96, 641536), 281, 12)
+    def head_profiles(words):
+        return [periodic((tuple(sum(w[j::13]) for j in range(13)),)) for w in words[:2]]
+
+    old, new = head_profiles(fixed), head_profiles(changed)
+    assert old[0] != new[0] and old[1] != new[1]
+    assert tuple(map(sum,zip(*old))) == tuple(map(sum,zip(*new)))
+    print("All exact T, C13, C23 and all 597 raw mod8. Mod16/exact: 349/117, 469/105, 477/65.")
 
 
 if __name__ == "__main__":
