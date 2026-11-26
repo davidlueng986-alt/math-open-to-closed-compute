@@ -59,6 +59,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/square_field_t_paley.py
           python3 -B jobs/hadamard-all-orders/odd_transfer_basis_parity.py
           python3 -B jobs/hadamard-all-orders/ito_prime_block.py
+          python3 -B jobs/hadamard-all-orders/unreal_butson_product.py
           python3 -B jobs/hadamard-all-orders/butson_towers_7572.py
           python3 -B jobs/hadamard-all-orders/butson_2396_scalar.py
           python3 -B jobs/hadamard-all-orders/quaternary_599_phase.py
@@ -75,6 +76,9 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_split.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_reflection_kernel.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_q13_mod16.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_dual_integer.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_head_obstruction.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_primitive_traces.py
           python3 -B jobs/hadamard-all-orders/border4_2396_exact_negative.py
           python3 -B jobs/hadamard-all-orders/border4_2396_nested.py
           python3 -B jobs/hadamard-all-orders/border4_2396_transfer.py
@@ -240,6 +244,8 @@ jobs:
         run: |
           python3 -B jobs/hadamard-all-orders/r_paley_affine_circuit.py
           python3 -B jobs/hadamard-all-orders/r_paley_full92_core_capacity.py
+          python3 -B jobs/hadamard-all-orders/r_paley_cooper_wallis.py
+          python3 -B jobs/hadamard-all-orders/r_paley_punctured_fibre.py
 
   near64-repair-extent:
     runs-on: ubuntu-latest
