@@ -53,6 +53,9 @@ jobs:
           python3 -B jobs/hadamard-all-orders/t187_yang.py
           python3 -B jobs/hadamard-all-orders/yang_four_residues.py
           python3 -B jobs/hadamard-all-orders/yang_residue_extension.py
+          python3 -B jobs/hadamard-all-orders/yang_thirteen_residues.py
+          python3 -B jobs/hadamard-all-orders/semiprime_t_paley_slice.py
+          python3 -B jobs/hadamard-all-orders/semiprime_williamson.py
           python3 -B jobs/hadamard-all-orders/t_product_parity.py
           python3 -B jobs/hadamard-all-orders/conference_plus_two.py
           python3 -B jobs/hadamard-all-orders/t599.py
@@ -149,6 +152,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_dual_paired_fibres.py
           python3 -B jobs/hadamard-all-orders/border4_2396_dual_peak40.py --census
           python3 -B jobs/hadamard-all-orders/border4_2396_dual_mod5_forest.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dual_changed_support.py
           python3 -B jobs/hadamard-all-orders/border4_2396_dual_relative_distance.py
           python3 -B jobs/hadamard-all-orders/border4_2396_q23_minimal_residual.py
           python3 -B jobs/hadamard-all-orders/border4_2396_delay_screen.py
@@ -210,6 +214,8 @@ jobs:
         run: python3 -B jobs/hadamard-all-orders/r_paley_full92_skew.py
       - name: Exclude nontrivial additive CRT third words
         run: python3 -B jobs/hadamard-all-orders/r_paley_additive_crt.py
+      - name: Check cross-anchor physical edit limits
+        run: python3 -B jobs/hadamard-all-orders/r_paley_cross_anchor_radius.py
 
   near64-repair-extent:
     runs-on: ubuntu-latest

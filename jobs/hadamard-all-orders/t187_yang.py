@@ -15,13 +15,15 @@ def golay_eight():
     return left, right
 
 
-def yang_selectors(base_signs):
-    """Specialize the Golay–Yang multiplication to a length-eight Golay pair."""
+def yang_selectors(base_signs, golay_pair=None):
+    """Multiply base sequences by a binary Golay pair, using length eight by default."""
     a, b, c, d = tuple(map(signs, base_signs))
     m, n = len(a), len(c)
     assert len(b) == m and len(d) == n
     assert aperiodic((a, b, c, d)) == [2*(m + n)] + [0]*(max(m, n) - 1)
-    f, g = golay_eight()
+    f, g = golay_eight() if golay_pair is None else golay_pair
+    assert len(f) == len(g) and all(value in (-1, 1) for word in (f, g) for value in word)
+    assert aperiodic((f, g)) == [2*len(f)] + [0]*(len(f) - 1)
     zeros = (0,)*(m + n)
 
     def scale(word, sign):
