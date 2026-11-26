@@ -84,6 +84,10 @@ jobs:
           python3 -B jobs/hadamard-all-orders/r_paley_far_periodic.py
           python3 -B jobs/hadamard-all-orders/r_paley_far_family.py
           python3 -B jobs/hadamard-all-orders/r_paley_far_restrictions.py
+          python3 -B jobs/hadamard-all-orders/r_paley_far_physical_mixed.py
+          python3 -B jobs/hadamard-all-orders/r_paley_far_alternative.py
+          python3 -B jobs/hadamard-all-orders/r_paley_lattice_lift.py
+          python3 -B jobs/hadamard-all-orders/r_paley_order44_classifier.py --lattice-roots
           python3 -B jobs/hadamard-all-orders/r_paley_giant_anchored.py
           python3 -B jobs/hadamard-all-orders/r_skew_conference_doubling.py
           python3 -B jobs/hadamard-all-orders/r_near_complement.py
@@ -114,6 +118,8 @@ jobs:
         run: |
           python3 -B jobs/hadamard-all-orders/border4_2396_full_y_expanded.py
           python3 -B jobs/hadamard-all-orders/border4_2396_565.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_raw_mod16_256.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_joint_q13_mod16.py
           python3 -B jobs/hadamard-all-orders/border4_2396_dynamic_tail.py --radius both
       - name: Install pinned Lean 4.36.0
         run: bash jobs/hadamard-2396-399/install_lean.sh
