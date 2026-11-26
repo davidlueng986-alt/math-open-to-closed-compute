@@ -74,6 +74,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_adaptive_forest.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_split.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_reflection_kernel.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_q13_mod16.py
           python3 -B jobs/hadamard-all-orders/border4_2396_exact_negative.py
           python3 -B jobs/hadamard-all-orders/border4_2396_nested.py
           python3 -B jobs/hadamard-all-orders/border4_2396_transfer.py

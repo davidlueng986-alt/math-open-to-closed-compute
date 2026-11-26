@@ -16,6 +16,8 @@ Let $H(n)$ mean that $n$ mutually orthogonal sign columns of length $n$ exist, a
 
 對 2396 階四邊框，固定兩個精確商群、原長模 8 和符合折疊圖界的物理符號後，峰值 48 的一份見證只需要 81 個模 5／25 檢查，現有 71 項仍欠。另一份的分級森林容許以模 3 取代偶分量的模 5。精確 Paley 正半部的另一方向，在 299 個尾字反射軸上各有 151 維實體翻號核，能保持全部原長模 16，整數列和及全模 5 仍須在同一組實體字上取得。[折疊圖閉合條件](BORDER4_2396_ADAPTIVE_FOREST.md) · [Paley 實體反射核](BORDER4_2396_PALEY_REFLECTION_KERNEL.md)
 
+在另一份 $k=8$ Paley 實體見證，精確正半部、負半部整數 $C_{13}$ 及原長 597 項模 16 已在同一組符號成立。保留十個指定零位移及兩個例外之外的幅度界時，一條本原模 7 範數等式便足以閉合。另一份見證的原長峰值為 96，只需本原模 7 及再一個模 7 座標。[共同整數商式與本原閉合條件](BORDER4_2396_PALEY_Q13_MOD16.md)
+
 | 路線 | 已得到甚麼 | 仍缺甚麼 |
 | --- | --- | --- |
 | 已知構造的覆蓋 | 直接 Paley、Scarpis–Đoković、長度 3 區塊乘積，以及原有剩餘等差數列中長度 13、19 區塊乘積與兩個 Golay 構造的四個不相交無限子族 | 覆蓋餘下全部奇數乘數的定理。[Paley 子族](PALEY_PROGRESSION.md) · [Golay 子族](GOLAY_PROGRESSION.md) · [群標籤直接乘積的奇偶障礙](T_PRODUCT_PARITY.md) |
