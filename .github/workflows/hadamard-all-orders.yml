@@ -82,6 +82,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_row_pair_mod5.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_peak32_gates.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_reselected_heads.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_relative_trace_gate.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_q3_head_limit.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_head_obstruction.py
           python3 -B jobs/hadamard-all-orders/border4_2396_primitive_traces.py
@@ -115,6 +116,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/r_paley_far_restrictions.py
           python3 -B jobs/hadamard-all-orders/r_paley_fixed_exterior_saturation.py
           python3 -B jobs/hadamard-all-orders/r_paley_cooper_wallis_growth.py
+          python3 -B jobs/hadamard-all-orders/r_paley_cw_mixed_distance.py
           python3 -B jobs/hadamard-all-orders/r_paley_far_physical_mixed.py
           python3 -B jobs/hadamard-all-orders/r_paley_far_fibre_budget.py
           python3 -B jobs/hadamard-all-orders/r_paley_periodic_weighing.py

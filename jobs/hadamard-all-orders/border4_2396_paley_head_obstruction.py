@@ -56,10 +56,10 @@ def power_interval(correlation, frequency, scale, bounds):
     return lower,upper
 
 
-def evaluate_root(coefficients, modulus):
+def evaluate_root(coefficients, modulus, trace=TRACE):
     a=b=0
     for c in reversed(coefficients):
-        a,b=(c-b)%modulus,(a+TRACE*b)%modulus
+        a,b=(c-b)%modulus,(a+trace*b)%modulus
     return a,b
 
 

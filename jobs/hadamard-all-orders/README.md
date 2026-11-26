@@ -30,9 +30,9 @@ Let $H(n)$ mean that $n$ mutually orthogonal sign columns of length $n$ exist, a
 
 峰值 32 的 Paley 閉合可任選兩個本原模 5 因子，維持 32 個零位移及因子對指定的 19 至 22 個單側區間。另一條閉合路線可用兩對模 3 因子、41 個指定位移的模 16 及有向圖。固定目前首字，整數有限域反推排除第三字只在兩行或兩列保持邊際的交換。另一支四邊框採逐邊 2 進估值森林，峰值 56 見證尚欠 44 個局部同餘。[兩因子閉合](BORDER4_2396_PALEY_PEAK32_GATES.md) · [兩行或兩列障礙](BORDER4_2396_PALEY_ROW_PAIR_MOD5.md) · [三行結式排除](BORDER4_2396_PALEY_THREE_ROWS.md) · [逐邊估值森林](BORDER4_2396_VALUATION_FOREST.md)
 
-含兩條距全部帶號來源 503 位內欄的 Cooper–Wallis 見證現已達 1,211 欄，全部 732,655 個欄對精確。兩組各自達 1,217 欄的 full92 外層則皆已證明至多容納 17 條一位換號內欄，即使重選翻號行和預留欄。[遠距內欄擴充](R_PALEY_COOPER_WALLIS_GROWTH.md) · [固定外層的單翻轉上限](R_PALEY_FIXED_EXTERIOR_SATURATION.md)
+含兩條距全部帶號來源 503 位內欄的 Cooper–Wallis 見證現已達 1,211 欄，全部 732,655 個欄對精確。兩組各自達 1,217 欄的 full92 外層則皆已證明至多容納 17 條一位換號內欄，即使重選翻號行和預留欄。[遠距內欄擴充](R_PALEY_COOPER_WALLIS_GROWTH.md) · [503 位與 9 位的聯合見證](R_PALEY_CW_MIXED_DISTANCE.md) · [固定外層的單翻轉上限](R_PALEY_FIXED_EXTERIOR_SATURATION.md)
 
-重選首字後，新增三組各自同時滿足雙商式、全長模 8 與峰值 32 的實體見證，最低原長殘差平方和由 179,200 降到 119,808。另有一份已匹配本原模 3 的見證，固定首字時在 $C_{23}$ 被質數 229 的奇估值排除。[三組新首字](BORDER4_2396_PALEY_RESELECTED_HEADS.md) · [模 3 見證的固定首字障礙](BORDER4_2396_PALEY_Q3_HEAD_LIMIT.md)
+重選首字後，新增三組各自同時滿足雙商式、全長模 8 與峰值 32 的實體見證，最低原長殘差平方和由 179,200 降到 119,808，該對首字在本原分圓域受質數 6577 的奇估值排除。保有這份幅度分布的其他首字，可用完整本原模 3 加一道 44 維相對跡閉合。另有一份已匹配本原模 3 的見證，固定首字時在 $C_{23}$ 被質數 229 的奇估值排除。[三組新首字](BORDER4_2396_PALEY_RESELECTED_HEADS.md) · [一條相對跡](BORDER4_2396_PALEY_RELATIVE_TRACE_GATE.md) · [模 3 見證的固定首字障礙](BORDER4_2396_PALEY_Q3_HEAD_LIMIT.md)
 
 | 路線 | 已得到甚麼 | 仍缺甚麼 |
 | --- | --- | --- |
