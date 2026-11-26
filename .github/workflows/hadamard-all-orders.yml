@@ -81,6 +81,8 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_directed_gate.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_row_pair_mod5.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_peak32_gates.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_reselected_heads.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_q3_head_limit.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_head_obstruction.py
           python3 -B jobs/hadamard-all-orders/border4_2396_primitive_traces.py
           python3 -B jobs/hadamard-all-orders/border4_2396_exact_negative.py
