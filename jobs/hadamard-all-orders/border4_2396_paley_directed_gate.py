@@ -20,6 +20,8 @@ SPECTRAL_HEAD = (
 )
 SPECTRAL_W_23 = (-5, -3, 1, -3, -3, 1, 1, -7, 5, -3, 3, -3, -3, 1, -1, -5, -3, -1, 7, 1, 1, -1, -1)
 SPECTRAL_FIXTURES = (
+    (5, 0x7BF8CDE76546156D0C8E19A18B38D9DB9178BDBDC5D429314ED993517DF85E7B1C65CA05AFB,
+     tuple(range(19)), (373, 129, 32, 179200), 0),
     (5, 0x7F187B979518F25F9E1D53345D993B08D766B2AF18D54CE333DA43F9B281D1149CDC1EAF4BF,
      (11, 5, 2, 18, 10, 9, 4, 17, 16, 1, 15, 14, 13, 3, 12, 8, 7, 6, 0),
      (309, 61, 88, 396288), 18),
@@ -126,7 +128,9 @@ def main():
     print("New heads: all 150 Fourier bounds pass, with maximum strictly between 1135 and 1136")
     for fixture in SPECTRAL_FIXTURES:
         audit(SPECTRAL_HEAD, SPECTRAL_W_23, *fixture)
-        if fixture[3][2] < 56:
+        if fixture[3][2] < 40:
+            print("Peak below 40: primitive mod 5 would close without a sign envelope")
+        elif fixture[3][2] < 56:
             print("Peak below 56: primitive mod 7 would close without a sign envelope")
 
 
