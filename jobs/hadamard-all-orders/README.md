@@ -15,6 +15,8 @@ Let $H(n)$ mean that $n$ mutually orthogonal sign columns of length $n$ exist, a
 | 直接構造近滿矩陣 | 所有奇數乘數的混合奇偶缺 8 欄可完成；缺 9 至 11 欄可完成或到達缺 8 欄。2396 的缺 12 欄由至多兩個整幺模超格精確判定。完整補欄等價於某個仿射格的最短向量達到門檻。缺 12 欄的 $D_{12}^{+}$ 在 28、44、60 階有精確阻塞例；$t=4r+3$ 的模型通過兩個 Gram 等式模十六，$t=16k+3$ 的另一構造達模三十二 | 統一取得近滿矩陣，且解決無法直接完成的格型。2396 的單位移近來源須翻轉逾四分之一符號才能精確正交，精確構造需要其他來源或整體重建。[整幺模判準](OVERLATTICES.md) · [統一模十六構造](MOD16_DEFECT12_FAMILY.md) · [模三十二構造](MOD32_DEFECT12_CONSTRUCTION.md) · [精確修復下界](NEAR64_EXACT_REPAIR.md) |
 | 2396 階的專用構造 | 原始循環證書、邊框證書，以及長度 599 T 序列的支撐、模四符號與奇係數逐位提升。300／299 分段下，兩區間共至多六個少數比較符號的精確構造已排除 | 任一條路線取得完整二元矩陣；單階成果的構造若可推廣再接回全題。[T 序列](T599.md) · [稀疏比較序列](T599_SPARSE_INTERVALS.md) |
 
+直接循環路線有兩組長度 599 的四字，完整整數重播的原長殘差峰值為 24、20，平方和分別為 42,560、43,392。若峰值至多 20 且同時滿足模 2 與模 3 本原根等式，即可用同一四字組裝完整 2396 階。這些候選尚未滿足本原等式。[直接循環證書和充分條件](DIRECT_2396_CYCLIC.md)
+
 ## What is known about the distance
 
 Write $r(n)=\max\{k:P(n,k)\}$. Unconditionally, for every $\epsilon>0$ and all sufficiently large multiples of four, $r(n)\ge n/2-O_\epsilon(n^{113/132+\epsilon})$. In particular the literature guarantees $(1/2-o(1))n$ orthogonal columns. Verheiden proved that **any** $n-7$ real orthogonal sign columns of length $n$ can be completed to $n$ for the orders used here. The conjecture follows if that threshold can be reached for every required $n$. The lower bound gives neither a rate of proof progress nor an effective finite search for the rest. [Graham–Shparlinski, §3](https://arxiv.org/abs/0709.2704) · [de Launey–Levin, Theorem A](https://arxiv.org/abs/1003.4003) · [Verheiden, thesis §4](https://thesis.caltech.edu/2899/) · [Verheiden, journal article](https://doi.org/10.1016/0097-3165(80)90028-X)
@@ -35,9 +37,13 @@ For \(t\equiv3\pmod4\) and \(t\ge11\), allowing arbitrary lower Hadamard source 
 
 正相位、範數平方四的特徵向量會自動提升為符號內欄。已有一組內欄時，下一欄等價於一個只接觸其中一條特徵軸的範數平方二短根。2396 階固定 1,215 欄見證的短根必須使用十五個已知單位方向以外的預留部分。固定預留碼且已有五條正相位特徵直線時，最大特徵框架要麼全寬、要麼差八條、要麼至少差十二條。44 階已覆蓋全部三個 20 階來源等價類，377,910 種外層中有 78,445 種可完整延伸。[短根整數條件](R_PALEY_ROOT_EXTENSION.md) · [固定碼的缺額界](R_PALEY_ROOT_GAP.md) · [44 階三類完整分類](R_PALEY_ORDER44_MULTICLASS.md)
 
+十五個一位換號樞紐強制分裂出十五個彼此正交的單位軸。新欄在這些軸上的座標由實體行符號直接決定，餘下秩 581 的短根可定向使其預留餘量平方範數至多 290。布林二次方程的滿秩證書進一步排除一個明列的十九軸張成空間。固定 1,215 欄外層及其十五條增欄時，任一相容新下部字與每條舊下部字的帶號漢明距離至少 18。此界結合既有距離下界及對十五條舊來源在距離 13、15 的聯合整數矩完整枚舉。[預留格分裂](R_PALEY_GAMMA_SPLITTING.md) · [二次方程證書](R_PALEY_GAMMA_QUADRATIC.md) · [兩個新排除半徑](R_PALEY_USED_RESERVE_RADIUS.md)
+
 44 階另有確切 \(D_{20}^+\) 格，但二十條平方範數四的特徵直線都在錯相位，實際最大欄寬為 36。對現有的 483 位週期遠距字，任何兩或三個實體列纖維內的換號都無法產生共用外層的相容第二欄；兩個稱重基底中，任一相容週期第二欄亦各需至少七個非零係數。[錯相位實例](R_PALEY_WRONG_PHASE44.md) · [物理纖維排除](R_PALEY_FAR_PHYSICAL_MIXED.md) · [週期稱重基底](R_PALEY_PERIODIC_WEIGHING.md)
 
 固定原 1196 階來源及 483 位遠距字，容許重選全部 600 條來源欄時，仍排除每一條不同的純週期 23 相容內欄。另一個獨立枚舉涵蓋任意纖維配置的十四位換號，使相容第二欄與首欄兩種定向的漢明距離下界提高到 16。[完整週期排除](R_PALEY_PERIODIC_PARTNER.md) · [任意纖維距離界](R_PALEY_FAR_PHYSICAL_MIXED.md)
+
+對同一 483 位遠距首欄及同一來源，亦排除距任一純週期 23 字一至三個實體位置的候選。它們達不到共同選欄的 600 個投影，即使放寬其餘 Gram 條件亦然。[原長換號的完整排除](R_PALEY_NEAR_PERIODIC_PARTNER.md)
 
 斜 conference 倍增把外層供應範圍擴到合成乘數 \(t=2^a(q+1)-1\)，其中 \(q\equiv3\pmod4\) 是奇素數冪。在最小反例假設下，較小的 \(H(2t-2)\) 可用。兩個無限合成族避開三項初始全矩陣構造，其中一族落在原剩餘數列。\(t=455\) 已無條件核查外層設計及 1,820 行、916 欄的部分矩陣。[倍增證明、範圍及重播](R_SKEW_CONFERENCE_DOUBLING.md)
 
@@ -108,6 +114,8 @@ For \(t\equiv3\pmod4\) and \(t\ge11\), allowing arbitrary lower Hadamard source 
 四邊框已有同一份見證保有精確負半部、精確 \(C_{13}\) 及全部 597 個原長模十六位移。原長有 105 個位移精確等於 \(-4\)，其餘 492 個仍待精確相消，最大絕對殘差 80。另有全部原長模十六且商群殘差平方和 256 的見證，原長有 141 個精確位移。[共同見證及精確重播](BORDER4_2396_JOINT_Q13_MOD16.md) · [商群最小正殘差](BORDER4_2396_RAW_MOD16_256.md)
 
 在精確負半部、精確 \(C_{13}\) 及全原長模 16 保留且最大殘差至多 80 時，若再滿足模 11 的本原根等式，可能的整數殘差由 142 維降至 10 維。消去精確 \(C_{23}\) 殘差便給出完整四邊框。現有共同見證仍未通過本原根等式。固定巢狀支撐時，所有採用一條非等向直線延遲及固定斜對合的構造均被排除。[有限域整數判準](BORDER4_2396_PRIMITIVE_FIELD.md) · [巢狀支撐排除](BORDER4_2396_DELAY_SCREEN.md)
+
+固定前兩條的 \(C_{23}\) 商群字時，後兩個相位的模 23 範數可在 \(\tau=z-z^{-1}\) 的截斷多項式環按次展開。除首個二平方等式外，各層為線性，並可用整數流測試候選商群邊際的符號提升。現有共同見證的模 23 目標首項為 \(20\tau^2\)，已有純商群解，仍須由同一份保留精確 \(C_{13}\) 和全原長模 16 的實體符號實現。[\(C_{23}\) 截斷多項式及重播](BORDER4_2396_Q23_TAYLOR.md)
 
 **五欄省略投影。** 改變 148 個行對異或的新折疊保有逐索引模八、行欄重量及全部精確 Gram，得到 39 組精確五維配對。它的索引 313 在任何重配下都無法精確相消，故 136 和 148 兩個固定折疊都需更換。保持參考配置的逐索引模八值時，要從第八個因數切換到其他因數並完成精確相消，必須改動全部五個折疊座標。[Hall 排除與 34 組見證](EXTERIOR_FOLD_HALL.md) · [新折疊及因數切換限制](EXTERIOR_FOLD_COORDINATES.md)
 
