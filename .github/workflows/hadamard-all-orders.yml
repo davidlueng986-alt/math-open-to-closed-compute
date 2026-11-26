@@ -23,6 +23,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/stack_1197_four_channels.py
           python3 -B jobs/hadamard-all-orders/stack_1197_four_channel_gap.py
           python3 -B jobs/hadamard-all-orders/stack_1198_four_channels.py
+          python3 -B jobs/hadamard-all-orders/stack_1198_four_channel_mod16.py
           python3 -B jobs/hadamard-all-orders/stack_1198_joint.py
           python3 -B jobs/hadamard-all-orders/stack_1198_transport.py
           python3 -B jobs/hadamard-all-orders/stack_1198_auxiliary.py
