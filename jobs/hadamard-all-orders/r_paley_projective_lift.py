@@ -99,9 +99,9 @@ def verify():
     assert len(unused) == 596
     unused_rows = rows_from_columns(height, unused)
     distances = [(a ^ b).bit_count() for a, b in combinations(unused_rows, 2)]
-    assert len(distances) == 714610 and min(distances) == 210
+    assert len(distances) == 714610 and (min(distances), max(distances)) == (210, 372)
     assert 2 * t + 2 + len(unused) == 1796
-    print("Fixed lower source: minimum unused-row distance 210; one-flip extension width at most 1796")
+    print("Fixed lower source: unused-row distances 210 to 372; one-flip extension width at most 1796")
 
 
 if __name__ == "__main__":
