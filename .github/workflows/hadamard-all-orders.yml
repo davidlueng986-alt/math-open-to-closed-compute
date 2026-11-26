@@ -56,11 +56,13 @@ jobs:
           python3 -B jobs/hadamard-all-orders/yang_thirteen_residues.py
           python3 -B jobs/hadamard-all-orders/semiprime_t_paley_slice.py
           python3 -B jobs/hadamard-all-orders/semiprime_williamson.py
+          python3 -B jobs/hadamard-all-orders/square_field_t_paley.py
           python3 -B jobs/hadamard-all-orders/odd_transfer_basis_parity.py
           python3 -B jobs/hadamard-all-orders/ito_prime_block.py
           python3 -B jobs/hadamard-all-orders/butson_towers_7572.py
           python3 -B jobs/hadamard-all-orders/butson_2396_scalar.py
           python3 -B jobs/hadamard-all-orders/quaternary_599_phase.py
+          python3 -B jobs/hadamard-all-orders/quaternary_singleton_reverse.py
           python3 -B jobs/hadamard-all-orders/t_product_parity.py
           python3 -B jobs/hadamard-all-orders/conference_plus_two.py
           python3 -B jobs/hadamard-all-orders/t599.py
@@ -69,7 +71,9 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396.py
           python3 -B jobs/hadamard-all-orders/border4_2396_lift.py
           python3 -B jobs/hadamard-all-orders/border4_2396_both.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_adaptive_forest.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_split.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_reflection_kernel.py
           python3 -B jobs/hadamard-all-orders/border4_2396_exact_negative.py
           python3 -B jobs/hadamard-all-orders/border4_2396_nested.py
           python3 -B jobs/hadamard-all-orders/border4_2396_transfer.py
@@ -231,6 +235,10 @@ jobs:
         run: python3 -B jobs/hadamard-all-orders/r_paley_full92_contrast.py
       - name: Replay the full-92 unrestricted source at widths 1213 to 1217
         run: python3 -B jobs/hadamard-all-orders/r_paley_full92_unrestricted.py
+      - name: Verify the affine circuits and fixed-core capacity
+        run: |
+          python3 -B jobs/hadamard-all-orders/r_paley_affine_circuit.py
+          python3 -B jobs/hadamard-all-orders/r_paley_full92_core_capacity.py
 
   near64-repair-extent:
     runs-on: ubuntu-latest
