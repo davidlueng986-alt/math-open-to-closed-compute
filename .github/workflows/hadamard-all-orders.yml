@@ -78,6 +78,12 @@ jobs:
           python3 -B jobs/hadamard-all-orders/r_paley_nonzero_lower.py
           python3 -B jobs/hadamard-all-orders/r_paley_periodic_skew.py
           python3 -B jobs/hadamard-all-orders/r_paley_bucket_extension.py
+          python3 -B jobs/hadamard-all-orders/r_paley_isotropic_code.py
+          python3 -B jobs/hadamard-all-orders/r_paley_uniform_growth.py
+          python3 -B jobs/hadamard-all-orders/r_paley_large_lower.py
+          python3 -B jobs/hadamard-all-orders/r_paley_far_periodic.py
+          python3 -B jobs/hadamard-all-orders/r_paley_giant_anchored.py
+          python3 -B jobs/hadamard-all-orders/r_skew_conference_doubling.py
           python3 -B jobs/hadamard-all-orders/r_near_complement.py
           python3 -B jobs/hadamard-all-orders/r_two_point.py
           python3 -B jobs/hadamard-all-orders/r_embedding.py
@@ -103,7 +109,10 @@ jobs:
           c++ -O3 -std=c++20 -Wall -Wextra -Werror jobs/hadamard-all-orders/paley_omissions.cpp -o "$RUNNER_TEMP/paley_omissions"
           "$RUNNER_TEMP/paley_omissions"
       - name: Replay the four-border fiber exclusions
-        run: python3 -B jobs/hadamard-all-orders/border4_2396_full_y_expanded.py
+        run: |
+          python3 -B jobs/hadamard-all-orders/border4_2396_full_y_expanded.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_565.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_dynamic_tail.py --radius both
       - name: Install pinned Lean 4.36.0
         run: bash jobs/hadamard-2396-399/install_lean.sh
       - name: Check the next-column neighborhood and the lower-channel candidate

@@ -25,6 +25,12 @@ The binary compatibility classes on the 1,211- and mixed 1,212-column sources ex
 
 For \(t\equiv3\pmod4\) and \(t\ge11\), allowing arbitrary lower Hadamard source and choice of \(W\) and normalization, at most \((t+1)/2\) unused source columns can each supply two compatible single-flip columns. At order 2396, the single-flip strategy therefore reaches at most 2,096 total columns and requires at least 293 further columns of other types to reach the completion threshold. More generally, fewer than \( (t-2)/3\) flips around an unused signed source line produce at most two mutually compatible words. At order 2396, a full completion requires at least four lower words at distance 199 or greater from every signed source column. [Adaptive single-flip bound](R_PALEY_PROJECTIVE_LIFT.md#容許重選來源的一位換號上界) · [Distance bound](R_PALEY_NONZERO_LOWER.md)
 
+一條週期 23 的 2396 階內欄與最近帶號來源相距 483 位，有 637 條來源投影的絕對值為 2。從其中選出 600 條來源欄並重播，得到含這條遠距內欄的精確 1,201 欄構造。另一組選欄讓同一條遠距內欄與六條一位換號欄共存，得到 1,207 欄。完整延伸仍須讓至少四條遠距內欄在同一外層上相容。另有 1,208 欄見證，可同時相消一組絕對值 1,192 的下部內積與七組絕對值 4 的內積。[遠距內欄](R_PALEY_FAR_PERIODIC.md) · [大內積相消](R_PALEY_LARGE_LOWER.md) · [共同錨點](R_PALEY_GIANT_ANCHORED.md)
+
+固定外層後，所有各自合格的內欄可以用預留來源的一半投影建立模 \(t\) 的等向碼。完整延伸要求同一碼接納 \(2t-2\) 條合格下部字。選欄在此有實質影響。以同一個 20 階來源建立的三組 44 階外層，其可達欄寬精確為 32、36、44。固定 1,215 欄見證的外層，712,816 條一位換號候選中，只有已用的十五條能相容。另有條件式通用定理。給定 \(t+1\) 階 conference matrix 與任一 \(H(2t-2)\)，每個奇數 \(t\ge7\) 可取得四條增欄，且當 \(2t-2\ge20k2^{k-1}\) 時可取得 \(k\) 條。[等向碼及有限控制](R_PALEY_ISOTROPIC_CODE.md) · [通用下界及張量構造](R_PALEY_UNIFORM_GROWTH.md)
+
+斜 conference 倍增把外層供應範圍擴到合成乘數 \(t=2^a(q+1)-1\)，其中 \(q\equiv3\pmod4\) 是奇素數冪。在最小反例假設下，較小的 \(H(2t-2)\) 可用。兩個無限合成族避開三項初始全矩陣構造，其中一族落在原剩餘數列。\(t=455\) 已無條件核查外層設計及 1,820 行、916 欄的部分矩陣。[倍增證明、範圍及重播](R_SKEW_CONFERENCE_DOUBLING.md)
+
 **另一條疊接路線的第 1,198 欄。** 雙通道重排保有前 1,197 欄的精確正交。最佳整數零計數的配置將最後一欄的非零內積減至 88 個。固定這組新增符號與兩部來源後，保留模八的重配有精確最小上界 16。另一組符號可讓最後一欄的全部內積只取 \(-8,0,8\)。要完成下一欄，全部誤差須在同一組配置歸零。[整數運輸證書](STACK_1198_TRANSPORT.md) · [聯合符號證書](STACK_1198_JOINT.md) · [有界排除與雙通道條件](STACK_1198.md)
 
 固定 1,196 個舊欄及已知首條新增欄後，第二條新增欄等價於四個明列矩陣之一的模 1200 核中存在非常數二元向量。該向量會自動具有重量 600。完整延伸等價於對應的輔助 1200 階矩陣能同時滿足奇數模數碼匹配及模 32 仿射條件。[精確輔助矩陣與同餘](STACK_1198_AUXILIARY.md)
@@ -86,6 +92,8 @@ For \(t\equiv3\pmod4\) and \(t\ge11\), allowing arbitrary lower Hadamard source 
 允許改變 13 階商群邊際後，同一精確負半部及精確商群的見證達到 509／597 個模十六原長位移。另一份同負半部見證達全部原長模十六，商群僅餘零位移的 \(+16\) 與 \(\pm6\) 的 \(-8\)。兩條條件仍須在同一符號配置上達到。[改變邊際的兩份實際見證](BORDER4_2396_CHANGED_MARGINS.md)
 
 固定正半部支撐，並分別保持首兩條與後兩條的原長模四自相關時，共同 \(C_{23}\) 纖維與中心的首兩條換號有 118 個二元自由度。完整計數排除沒有中心且最多三個配對區塊，以及任意合法中心且最多一個額外區塊的兩族。兩族的全原長模十六解皆未能同時滿足精確 \(C_{13}\)。[換號空間與計數重播](BORDER4_2396_FULL_Y_EXPANDED.md)
+
+在精確負半部與精確 \(C_{13}\) 下，新四邊框見證達到 565／597 個非零位移符合原長模十六，其中 113 個精確等於 \(-4\)。另從 509 候選出發，前兩條容許至多兩個指定區塊任意換號，後兩條容許改變相對相位。完整排查在固定序列和兼容原長模四時，證明精確 \(C_{13}\) 最多可同時達 581／597 個原長模十六位移。[565 位移證書](BORDER4_2396_565.md) · [動態相位的有限排除](BORDER4_2396_DYNAMIC_TAIL.md)
 
 **五欄省略投影。** 改變 148 個行對異或的新折疊保有逐索引模八、行欄重量及全部精確 Gram，得到 39 組精確五維配對。它的索引 313 在任何重配下都無法精確相消，故 136 和 148 兩個固定折疊都需更換。保持參考配置的逐索引模八值時，要從第八個因數切換到其他因數並完成精確相消，必須改動全部五個折疊座標。[Hall 排除與 34 組見證](EXTERIOR_FOLD_HALL.md) · [新折疊及因數切換限制](EXTERIOR_FOLD_COORDINATES.md)
 
