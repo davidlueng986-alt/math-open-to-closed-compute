@@ -24,6 +24,12 @@ CHANGED_C13_MARGINS = (
     0x2F120704849D01008849C6008044006000100006010840621010000006010B028040200D080,
     0x41C091E8042C01008050342018000002021180842018000200018008804018E48440202E484,
 )
+LOW_AMPLITUDE_MOD16 = (
+    0x20780800CC8003583001900102A1000909405E00080A01102A2000141048D82086F00003A00,
+    0x101C01180C1043282002D00D03C0110791401602400A04904208004F0208388081A06807C00,
+    0x279A855484DD01188841D0008844006000100006018840421010800806010A808060300DC80,
+    0x5542B3C804EC03018040542018040042021080846018000200018008844002E08446202EC84,
+)
 
 
 def dual_words(masks=MASKS):
@@ -101,13 +107,17 @@ def main():
     changed = dual_words(CHANGED_C13_MARGINS)
     replay(fixed, t, (469, 105, 96, 619520), 233, 12)
     replay(changed, t, (477, 65, 96, 641536), 281, 12)
+    low_more_mod16 = dual_words(LOW_AMPLITUDE_MOD16)
+    e = replay(low_more_mod16, t, (477, 113, 80, 652800), 253, 10)
+    assert 1+2*sum(value % 8 == 0 for value in e[1:]) == 145
+    assert sum(value != 0 for value in remainder(e, primitive_factor(11), 11)) == 124
     def head_profiles(words):
         return [periodic((tuple(sum(w[j::13]) for j in range(13)),)) for w in words[:2]]
 
     old, new = head_profiles(fixed), head_profiles(changed)
     assert old[0] != new[0] and old[1] != new[1]
     assert tuple(map(sum,zip(*old))) == tuple(map(sum,zip(*new)))
-    print("All exact T, C13, C23 and all 597 raw mod8. Mod16/exact: 349/117, 469/105, 477/65.")
+    print("Exact T, C13, C23 and all 597 raw mod8. Mod16/exact: 349/117, 469/105, 477/65, 477/113.")
 
 
 if __name__ == "__main__":
