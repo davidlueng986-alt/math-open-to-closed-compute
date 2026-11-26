@@ -14,7 +14,7 @@ from stack_1198_joint import dot
 from verify import verify_orthogonal
 
 
-def main():
+def verify():
     upper, lower, u, v = sources()
     n, m = len(upper), len(lower)
     x = upper[411] ^ sum(1 << i for i in SHARP_CAP_UPPER)
@@ -67,7 +67,8 @@ def main():
     assert digest == '27af0a94b12256edb4ae1fa79e3ee6bff306d63928fa9c04b0c009dc2f780ae0'
     print('Four-channel E1920 re-pairing: all auxiliary numerator rows pass modulo 16; odd modulus remains')
     print('Four-channel E1920: energy (416, 544, 544, 416), rank bases modulo 3 and 5; packed SHA256', digest)
+    return residues
 
 
 if __name__ == '__main__':
-    main()
+    verify()

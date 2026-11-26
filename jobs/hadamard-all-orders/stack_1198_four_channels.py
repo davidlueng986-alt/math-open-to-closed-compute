@@ -70,12 +70,18 @@ def common_basis(graph, support, omitted, primes):
     return selected
 
 
-def check_channel_support(residues, primes):
+def conference_graph_columns():
     conference = conference_positive_columns(149)
     side = len(conference)
     graph = [[0 if i == j else 2 * (col >> i & 1) - 1 for i in range(side)]
              for j, col in enumerate(conference)]
     graph += [[-int(i == j) for i in range(side)] for j in range(side)]
+    return graph
+
+
+def check_channel_support(residues, primes):
+    graph = conference_graph_columns()
+    side = len(graph[0])
     channel_size = len(graph)
     supports, energies, failures = [], [], []
     for start in range(0, len(residues), channel_size):

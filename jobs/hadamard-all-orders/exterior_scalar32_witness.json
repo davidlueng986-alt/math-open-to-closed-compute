@@ -1,0 +1,75 @@
+{
+  "flip_pairs": [
+    7,
+    31,
+    41,
+    151,
+    160,
+    201,
+    214,
+    270,
+    352,
+    356,
+    406,
+    414,
+    472,
+    491,
+    492,
+    586
+  ],
+  "transition": {
+    "axis": 2,
+    "lower": "vnm78ic4vc9iilojv8c857svvs077ipr7jjlbnugba4mbjub18a5qimb9hnoq5jps9qa95ovj5m7ma30ijeobjpmjfr7ivuvb0q5u7b7g8vmqnjn3nkic7mr918qvq9rvfinuvon81qt8fgaqviv7gvagu08prmnka7g3gvfqpuqkvqrqfvjr0mupvv8vpm53ognqmprnli8k58fvji9vkq7ftmqsj7qfvr7jgqn97n0abuvsgru3og5ajn6irnm0mfvnnmvjqfapligrkurrvv7qrjr9gakv1givn9mrfsnfjfifmqvgginsvk7rnvl59gm88cqujfvrn07kvvr9jq8qvvqrqpndqvnr7rmuv6iiqvf7fp4fvvbfiinci0nlrkpvvk8bpfjnvijv78gfvtirqmnfqk8ggc8rql5i8cmogsn9qv7vupruv3kvgirvp9f8opiqfsvba64opsqjfufsp7nnqlrjkivo9jj7qmsrma7qvtmv3ulvvrm09bp505qlgvnjkfnpnp9jrcm9ngfvn0m8pgul7qi3dvvrrtong5jpfvfvjafpsqv3grrqq61bnji3vjvvljnv9bfvvrv9377vcnsjinkubnv1b37flvm77n77fv5v8vbv95v137qqm0vqbkrgk7gur0rqfvvqi1rfnfp8rjs1kkur8lnjjmjq9a1r2917rvn3mv7bpp8jiv3arrirqgrrqmj1qrn1kr9npr0jvjnqrm9bgr74vjiv5rvv0vfa3lmfml0qv0pfjj3mfbm5ugnq7gvgbjauavr2lv3349v3fj5p8uu1flvfkpj7q7pn8iv8v7favcn3vrjqqr0knmfivc3993jr8rmf0jbmjkrqbr7f3h3u7pmbrq0fq9nqbbrbiu253vrk75ir8v4qqknj2nvfrgbnnv877nl9gupf9nvad1hr81vj7gj07vr2qjn3v38349h9b2f2n7vkg1qk9rr3arrv3fq7ju7v7fqf7av28jqfb59r8q9n8tvmvnv9q7nkjnjfvmf3lp7p3vrig3npqrngvr3vub3b0v7bf37rbmgp9n0jv2r5vjfva3l3nvm7v2jt2rqjpf8p3h7lpi2un77fufjmvjrq3riqrqkvi3lfnqfm9u7v77r7lpurvg1ii3n9vfvqnpfj7r3v1b1nvnrj13vqivur7dlpbvu73vaggf7",
+    "joint_matches": [
+      1193,
+      888,
+      278,
+      32,
+      14
+    ],
+    "special": 3
+  },
+  "growth": {
+    "extra_anchors": [
+      [
+        106,
+        854,
+        199
+      ],
+      [
+        162,
+        809,
+        786
+      ],
+      [
+        302,
+        1086,
+        544
+      ],
+      [
+        323,
+        488,
+        1047
+      ],
+      [
+        379,
+        736,
+        459
+      ],
+      [
+        573,
+        627,
+        1183
+      ]
+    ],
+    "lower": "vnmb4icgv95iilk7v8c85msvvl0qbipn77js7nfgqa8mjquj1gakqimb95n9q97pp9qa55kvm5q7qai03m7obmlqjnr7ivrv70q9ujq7ggvqqfjn3r9iojqfk18qv79rvrinfv9n8gqtgngibvavmgv34f08pu7rkaj138vumpfm9vbrjrvjn0mrpvv8vpq5ik8fbqsnfli8k58uvjikvkqqutjqpj77fvnj74qn5jn0imrvsgfu3o19ajniiunq0qrvnuqv7qniplagfourfvvjqf7uog39vg8avr9jufsnfbfafmqv8gifsvcjffvlk98m8g9qubfvnr0j9vvnomm1qvvqfqprsmvrnqujrvii6qvrjrlguvvjn3ino60udf5svvk8bpnjnviqvm8gnvt3rbqnf7og8gogrjl9ig57cgprkmv7vrpnrv3cvginvp9fg9s6jrpvbii8oppbmfufsljfnmdf7cavo5j7mmqsfqi7qvt7viulvvuq0cbp50kmp8vrjcurprpcjrcmkrgnvn0mgl1fl77i3pvvrrton857prvfvjinlsqv68rnqmigqnjaivjvvpbnvcbrvvnvh377vcnp73n9rqnv1j37npvj77n7jrvkv8v7v95vg3mjqm0vq7kr19j4rf0rqfvvq3grffrd8ujs15kun1lf7q7bqka8r2k4juvr3mv7qpl8j3v3afuarmgnfqmjgmfr15r9nlu0mvjrqnjkq1n7gvjiv5fvv0vu63lbf7l0qv0lu7biqr7q9r1nq71vg7jauivr2lvii89v3fm9p8fu1flvr5pjmb7ln83vgvjravcr3vnmbqr0krmf3v939h3bfgnbu0jb7m9rm7nqri93fbp7jrq0nq9fqm7r7au293vrk7h3ngv17bkfm2nvrr87nnv8m7fl98fpf9rvap15r8gvjbg707vr2qjr3v3831kk9q2r2nbv9g1jkkrf33frv3fqbbujvbfqr7av287qr7kkf8j5r4tvbvnvcq7nkjnbnvbnippbpivfiganlbuf1vr3vujiq0vb7r37rqj8p5n0bv2rcv7rv33pinvjjv2jt2ujjpr8l3h7lp32nnq7nfuj7vmrqifaqfq9v33prfqrj9fmvjqnbpprrvg13i3n9vnvqfpfj7r3vgb4nvrrmg3vqavrumppl7vf7ivig1n7",
+    "joint_matches": [
+      1193,
+      931,
+      290,
+      46,
+      25
+    ],
+    "special": 2
+  }
+}
