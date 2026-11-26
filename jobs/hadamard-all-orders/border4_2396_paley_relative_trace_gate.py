@@ -1,5 +1,6 @@
 """Replay the degree-44 relative trace gate on the reselected Paley heads."""
 
+from border4_2396_dual_mod5_forest import forest
 from border4_2396_paley_dual_integer import audit_signs
 from border4_2396_paley_negative_norm import DIRECTED_PAIRS, N, periodic, sign_word
 from border4_2396_paley_negative_norm import remainder as binary_remainder
@@ -36,6 +37,17 @@ def prove_trace_gate():
     assert pow(multiplier, 3, N) == 1 and multiplier % 13 == 9 and multiplier % 23 == 1
     high = {d for d in range(1, 150) if abs(residual[d]) >= 24}
     assert len(high) == 25
+
+    selected = ((3, 43), (7, 7), (10, 10), (11, 11), (16, 30),
+                (22, 22), (23, 69), (25, 113), (48, 48))
+    for representative, unique in selected:
+        orbit = {inverse_class(representative * pow(multiplier, i, N), N) for i in range(3)}
+        assert representative == min(orbit) and orbit & high == {unique}
+    remainder_lags = high.difference(unique for _, unique in selected)
+    tree, chords = forest(sorted(remainder_lags))
+    assert len(tree) == 16 and not chords
+    assert len(forest(sorted(high))[1]) == len(selected) == 9
+    print("Projected trace: nine selected orbit parities remove nine edges, leaving a 16-edge forest")
     survivors = tuple(d for d in sorted(high)
                       if len({inverse_class(d * pow(multiplier, i, N), N)
                               for i in range(3)} & high) > 1)
