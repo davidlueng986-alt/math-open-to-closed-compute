@@ -66,6 +66,9 @@ jobs:
           python3 -B jobs/hadamard-all-orders/yamada_single_prime_denominator.py
           python3 -B jobs/hadamard-all-orders/parity_denominator_descent.py
           python3 -B jobs/hadamard-all-orders/parity_neighbor_rank_descent.py
+          python3 -B jobs/hadamard-all-orders/level5_marked_frames.py
+          c++ -std=c++20 -O2 -Wall -Wextra -Werror jobs/hadamard-all-orders/level5_cubic.cpp -o "$RUNNER_TEMP/level5-cubic"
+          "$RUNNER_TEMP/level5-cubic"
           python3 -B jobs/hadamard-all-orders/yamada_explicit_pell_factor.py
           python3 -B jobs/hadamard-all-orders/yamada_cyclic_pell_descent_limit.py
           c++ -std=c++20 -O3 -Wall -Wextra -Werror jobs/hadamard-all-orders/t11_walsh_exhaustive.cpp -o "$RUNNER_TEMP/t11-walsh-exhaustive"
@@ -141,6 +144,8 @@ jobs:
           python3 -B jobs/hadamard-all-orders/r_paley_cooper_wallis_growth.py
           python3 -B jobs/hadamard-all-orders/r_paley_cw_four_trade.py
           python3 -B jobs/hadamard-all-orders/r_paley_cw_movement.py
+          python3 -B jobs/hadamard-all-orders/r_paley_cw_short_fibre.py
+          python3 -B jobs/hadamard-all-orders/r_paley_full92_eighteen.py
           python3 -B jobs/hadamard-all-orders/r_paley_cw_mixed_distance.py
           python3 -B jobs/hadamard-all-orders/r_paley_far_physical_mixed.py
           python3 -B jobs/hadamard-all-orders/r_paley_far_fibre_budget.py

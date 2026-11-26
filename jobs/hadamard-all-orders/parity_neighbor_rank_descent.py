@@ -82,10 +82,44 @@ def five_control(original):
     print("P=5 constant-block move: rank 1 -> 0 and integral factor recovered")
 
 
+def second_layer_control(original):
+    seed = ((0, 5, 7), (0, 4, 8), (4, 6, 10), (4, 5, 9), (1, 4, 5), (6, 8, 9))
+    factor = original
+    for group in seed:
+        factor = transform(factor, group)
+    check_factor(factor)
+    scaled = numerator(factor, 243)
+    basis = column_basis(scaled, 3)
+    (pivot, vector), = basis.items()
+    reduced = tuple(x % 3 for x in vector)
+    assert reduced == (0, 1, 0, 0, 1, 1, 2, 0, 2, 2, 0)
+    groups = seed[-2:]
+    for group in groups:
+        assert sum(vector[i] for i in group) % 3 == 0
+        for col in zip(*scaled, strict=True):
+            lifted = tuple(a - (col[pivot] % 3)*b for a, b in zip(col, vector, strict=True))
+            assert all(x % 3 == 0 for x in lifted)
+            assert sum(lifted[i] for i in group) % 9 == 0
+        rotated = transform(factor, group)
+        check_factor(rotated)
+        assert len(column_basis(numerator(rotated, 243), 3)) == 1
+    rotated = transform(transform(factor, groups[0]), groups[1])
+    check_factor(rotated)
+    assert len(column_basis(numerator(rotated, 243), 3)) == 0
+    assert len(column_basis(numerator(rotated, 81), 3)) == 1
+
+    factor = transform(original, (0, 1, 2))
+    assert len(column_basis(numerator(factor, 3), 3)) == 1
+    rotated = transform(factor, (3, 4, 5))
+    assert len(column_basis(numerator(rotated, 3), 3)) == 2
+    print("P=3 weight-6 residual: separate moves keep rank 1, combined exponent 5 -> 4")
+
+
 def main():
     original = [tuple(Fraction(x) for x in row) for row in paley_factor_23()]
     three_control(original)
     five_control(original)
+    second_layer_control(original)
 
 
 if __name__ == '__main__':
