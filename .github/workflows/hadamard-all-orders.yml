@@ -89,6 +89,8 @@ jobs:
           python3 -B jobs/hadamard-all-orders/r_paley_periodic_weighing.py
           python3 -B jobs/hadamard-all-orders/r_paley_far_alternative.py
           python3 -B jobs/hadamard-all-orders/r_paley_lattice_lift.py
+          python3 -B jobs/hadamard-all-orders/r_paley_root_extension.py
+          python3 -B jobs/hadamard-all-orders/r_paley_periodic_partner.py
           python3 -B jobs/hadamard-all-orders/r_paley_order44_classifier.py --lattice-roots
           python3 -B jobs/hadamard-all-orders/r_paley_wrong_phase44.py
           python3 -B jobs/hadamard-all-orders/r_paley_giant_anchored.py
@@ -123,6 +125,8 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_565.py
           python3 -B jobs/hadamard-all-orders/border4_2396_raw_mod16_256.py
           python3 -B jobs/hadamard-all-orders/border4_2396_joint_q13_mod16.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_primitive_field.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_delay_screen.py
           python3 -B jobs/hadamard-all-orders/border4_2396_dynamic_tail.py --radius both
       - name: Install pinned Lean 4.36.0
         run: bash jobs/hadamard-2396-399/install_lean.sh
@@ -143,6 +147,14 @@ jobs:
             lean -DwarningAsError=true -o "$LEAN_PATH/$module.olean" "jobs/hadamard-all-orders/$module.lean" | tee "$RUNNER_TEMP/$module.log"
             if grep -q 'sorryAx' "$RUNNER_TEMP/$module.log"; then exit 1; fi
           done
+
+  paley-finite-classifications:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Classify order-44 exteriors for all three order-20 source classes
+        run: python3 -B jobs/hadamard-all-orders/r_paley_order44_multiclass.py --wrong-phase --root-components
 
   near64-repair-extent:
     runs-on: ubuntu-latest

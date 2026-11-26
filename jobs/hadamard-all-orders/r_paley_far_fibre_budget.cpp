@@ -2,6 +2,7 @@
 #include <array>
 #include <cassert>
 #include <iostream>
+#include <numeric>
 
 constexpr int row_fibres = 92;
 constexpr int column_fibres = 49;
@@ -17,14 +18,13 @@ struct Stats {
     int max_flips = 0;
 };
 
-void check(Stats& stats, const Profile& a, const Profile& b, const Profile& c,
-           int u, int v, int w) {
+template <typename Mean>
+void check(Stats& stats, int d, Mean fibre_mean) {
     ++stats.configurations;
-    int d = u + v + w;
     int mandatory = 0;
     int oppositions = 0;
     for (int j = 0; j < column_fibres; ++j) {
-        int mean = u * a[j] + v * b[j] + w * c[j];
+        int mean = fibre_mean(j);
         int minimum = 0;
         if (mean < 0) {
             minimum = (-mean + d - 1) / d;
@@ -45,6 +45,38 @@ void check(Stats& stats, const Profile& a, const Profile& b, const Profile& c,
     assert(oppositions < 599 - d / 2);
 }
 
+struct CostProfile {
+    Profile coefficient;
+    int cost;
+};
+
+void radius14(Stats& stats, const std::array<CostProfile, row_fibres>& sorted,
+              Profile& accumulated, int start, int remaining, int budget) {
+    if (remaining == 0) {
+        check(stats, 14, [&](int j) { return accumulated[j]; });
+        return;
+    }
+    for (int i = start; i < row_fibres; ++i) {
+        const auto& [coefficient, cost] = sorted[i];
+        if (remaining * cost > budget) {
+            break;
+        }
+        int limit = std::min(remaining, fibre_size);
+        if (cost > 0) {
+            limit = std::min(limit, budget / cost);
+        }
+        for (int count = 1; count <= limit; ++count) {
+            for (int j = 0; j < column_fibres; ++j) {
+                accumulated[j] += coefficient[j];
+            }
+            radius14(stats, sorted, accumulated, i + 1, remaining - count, budget - count * cost);
+        }
+        for (int j = 0; j < column_fibres; ++j) {
+            accumulated[j] -= limit * coefficient[j];
+        }
+    }
+}
+
 int main() {
     std::array<Profile, row_fibres> profiles{};
     for (auto& profile : profiles) {
@@ -58,19 +90,20 @@ int main() {
     }
 
     Stats two, three;
-    const Profile zero{};
     for (int a = 0; a < row_fibres; ++a) {
         for (int b = a + 1; b < row_fibres; ++b) {
             for (int u = 1; u <= fibre_size; ++u) {
                 for (int v = 1 + ((u + 1) & 1); v <= fibre_size; v += 2) {
-                    check(two, profiles[a], profiles[b], zero, u, v, 0);
+                    check(two, u + v, [&](int j) { return u * profiles[a][j] + v * profiles[b][j]; });
                 }
             }
             for (int c = b + 1; c < row_fibres; ++c) {
                 for (int u = 1; u <= fibre_size; ++u) {
                     for (int v = 1; v <= fibre_size; ++v) {
                         for (int w = 1 + ((u + v + 1) & 1); w <= fibre_size; w += 2) {
-                            check(three, profiles[a], profiles[b], profiles[c], u, v, w);
+                            check(three, u + v + w, [&](int j) {
+                                return u * profiles[a][j] + v * profiles[b][j] + w * profiles[c][j];
+                            });
                         }
                     }
                 }
@@ -83,4 +116,20 @@ int main() {
     assert(three.max_oppositions == 378 && three.max_flips == 16);
     std::cout << "Two fibres: 355810 count choices, at most 300 opposed projections.\n";
     std::cout << "Three fibres: 137886840 count choices, at most 378 opposed projections.\n";
+
+    std::array<CostProfile, row_fibres> ordered{};
+    for (int i = 0; i < row_fibres; ++i) {
+        int sum = std::accumulate(profiles[i].begin(), profiles[i].end(), 0);
+        ordered[i] = {profiles[i], 53 - sum};
+    }
+    std::sort(ordered.begin(), ordered.end(), [](const CostProfile& a, const CostProfile& b) {
+        return a.cost < b.cost;
+    });
+    assert(ordered.front().cost == 0);
+    Stats fourteen;
+    Profile accumulated{};
+    radius14(fourteen, ordered, accumulated, 0, 14, 76);
+    assert(fourteen.configurations == 24749232 && fourteen.mean_feasible == 16908524);
+    assert(fourteen.max_oppositions == 589);
+    std::cout << "Fourteen flips across arbitrary fibres: 24749232 count choices, at most 589 opposed projections.\n";
 }
