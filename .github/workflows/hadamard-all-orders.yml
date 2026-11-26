@@ -75,6 +75,8 @@ jobs:
           python3 -B jobs/hadamard-all-orders/r_paley_inner_binary.py
           python3 -B jobs/hadamard-all-orders/r_paley_inner_spectrum.py
           python3 -B jobs/hadamard-all-orders/r_paley_multiflip_inner.py
+          python3 -B jobs/hadamard-all-orders/r_paley_nonzero_lower.py
+          python3 -B jobs/hadamard-all-orders/r_paley_periodic_skew.py
           python3 -B jobs/hadamard-all-orders/r_near_complement.py
           python3 -B jobs/hadamard-all-orders/r_two_point.py
           python3 -B jobs/hadamard-all-orders/r_embedding.py

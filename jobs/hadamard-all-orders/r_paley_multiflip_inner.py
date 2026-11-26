@@ -1,4 +1,5 @@
 """Rebuild compatible outside and inside columns from several raw row flips."""
+from collections import Counter
 from hashlib import sha256
 from itertools import combinations
 import json
@@ -39,6 +40,9 @@ def replay(source, fixture):
         nonflip += len(positions) > 1
 
     assert nonflip == fixture['nonflip']
+    assert Counter(dot(SIDE, a, b) for a, b in combinations(raw, 2)) == {
+        int(value): count for value, count in fixture['raw_lower_products'].items()
+    }
     for (a, u), (b, v) in combinations(zip(raw, selected_projections, strict=True), 2):
         assert dot(SIDE, a, b) + 2 * sum(x * y for x, y in zip(u, v, strict=True)) == 0
 
