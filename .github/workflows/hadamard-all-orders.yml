@@ -65,6 +65,8 @@ jobs:
           python3 -B jobs/hadamard-all-orders/yamada_paley_doubling_reverse_limit.py
           python3 -B jobs/hadamard-all-orders/yamada_single_prime_denominator.py
           python3 -B jobs/hadamard-all-orders/parity_denominator_descent.py
+          python3 -B jobs/hadamard-all-orders/yamada_explicit_pell_factor.py
+          python3 -B jobs/hadamard-all-orders/yamada_cyclic_pell_descent_limit.py
           c++ -std=c++20 -O3 -Wall -Wextra -Werror jobs/hadamard-all-orders/t11_walsh_exhaustive.cpp -o "$RUNNER_TEMP/t11-walsh-exhaustive"
           "$RUNNER_TEMP/t11-walsh-exhaustive"
           python3 -B jobs/hadamard-all-orders/butson_towers_7572.py
@@ -96,6 +98,7 @@ jobs:
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_projected_f3.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_two_f3.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_two_f3_gate.py
+          python3 -B jobs/hadamard-all-orders/border4_2396_paley_three_f3_distance.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_q3_head_limit.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_head_obstruction.py
           python3 -B jobs/hadamard-all-orders/border4_2396_paley_inert_deck.py

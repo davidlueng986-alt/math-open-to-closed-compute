@@ -22,7 +22,7 @@ D_0^{\mathsf T}D_0=G,\qquad D_0\mathbf1=-\mathbf1,
 
 取有限質數集 $B$，包含 $2$、$rn$ 的質因數和 $D_0$ 的所有分母質數。對 $\ell\in B\setminus\{P\}$，令 $\varepsilon_\ell\in\{0,1\}$ 是 $\theta_\ell(U_\ell)$ 的賦值奇偶。設 $s=\prod_{\ell\in B\setminus\{P\}}\ell^{\varepsilon_\ell}>0$。由上述單位調整，可使每個 $\theta_\ell(U_\ell)$ 等於 $s$ 的平方類。
 
-全域亦有 $h\in\mathrm{SO}(V)(\mathbb Q)$ 使 $\theta(h)$ 為 $s$。因 $\dim V=r-1\ge6$，$Q$ 表示每個正有理數 $a$。理由是 $Q\perp\langle-a\rangle$ 在實數域不定，且在每個 $\mathbb Q_\ell$ 的維度至少五，故處處等向。Hasse–Minkowski 定理給出有理等向向量，$Q$ 的正定性迫使最後一個座標非零，從而得到 $Q(u)=a$。分別令 $Q(v)=1$、$Q(w)=s$，便可取 $h=s_v s_w$。當 $r\ge9$ 時，也可用四組互不相交的差分向量和有理四平方定理直接證明表示性。[局部等向性、Hasse–Minkowski 與旋量範數](https://link.springer.com/book/10.1007/978-3-540-45629-1)
+全域亦有 $h\in\mathrm{SO}(V)(\mathbb Q)$ 使 $\theta(h)$ 為 $s$。因 $\dim V=r-1\ge6$，$Q$ 表示每個正有理數 $a$。理由是 $Q\perp\langle-a\rangle$ 在實數域不定，且在每個 $\mathbb Q_\ell$ 的維度至少五，故處處等向。Hasse–Minkowski 定理給出有理等向向量，$Q$ 的正定性迫使最後一個座標非零，從而得到 $Q(u)=a$。分別令 $Q(v)=1$、$Q(w)=s$，便可取 $h=s_v s_w$。當 $r\ge9$ 時，也可用四組互不相交的差分向量和有理四平方定理直接證明表示性。[局部等向性、Hasse–Minkowski 與旋量範數](https://doi.org/10.1090/gsm/067)
 
 ## 自旋群的強逼近
 
