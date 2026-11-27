@@ -15,9 +15,9 @@ echo "Detected LAKE_DIR=$LAKE_DIR"
 
 SRC="jobs/erdos64-wave7-agent10-girth5-detour-rigidity/Erdos64Wave7Agent10.lean"
 cp "$SRC" "$LAKE_DIR/Erdos64Wave7Agent10.lean"
+cp "$SRC" "$LAKE_DIR/AuditWave7Agent10.lean"
 
-cat > "$LAKE_DIR/AuditWave7Agent10.lean" << 'EOF'
-import Erdos64Wave7Agent10
+cat >> "$LAKE_DIR/AuditWave7Agent10.lean" << 'EOF'
 
 #print axioms E64Wave7Agent10.exists_pow2_in_octave
 #print axioms E64Wave7Agent10.unit_step_dyadic_hitting
@@ -68,6 +68,10 @@ for line in text.splitlines():
             if a not in allowed:
                 raise SystemExit(f"FORBIDDEN AXIOM {a} in {name}")
         axioms[name] = sorted(ax_list)
+    elif "does not depend on any axioms" in line:
+        m2 = re.match(r"'([^']+)' does not depend on any axioms", line.strip())
+        if m2:
+            axioms[m2.group(1)] = []
 
 if len(axioms) != 22:
     raise SystemExit(f"Expected 22 audited declarations, got {len(axioms)}")
