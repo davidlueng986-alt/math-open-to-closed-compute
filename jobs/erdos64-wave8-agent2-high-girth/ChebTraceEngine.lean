@@ -7,22 +7,6 @@ import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 
 /-!
 # Wave 8 Agent #2 — Pillar 1: Exact Pure-2-Square Chebyshev Trace Positivity Engine
-
-Extends Wave 5 Agent #6's eigenvalue-free Chebyshev-Hashimoto trace framework over `ℚ`:
-1. `taillessCount_eq_chebMat_trace_odd` & `taillessCount_eq_chebMat_trace_all`:
-   Exact combinatorial identity for ALL `k ≥ 1` (both even and odd):
-   `taillessCount G k = Tr(T_k(A)) + (if k % 2 = 0 then (d - 2) * n else 0)`.
-2. `chebMat_mul_cubic`: Exact product identity for cubic (`d = 3`) Chebyshev matrices:
-   `T_j(A) * T_k(A) = T_{j+k}(A) + 2^{min j k} * T_{|j-k|}(A)`.
-3. `chebComb`, `chebMul3`, `chebAdd`, `chebComb_mul_cubic`:
-   Exact `List ℤ`-indexed Chebyshev linear combinations and multiplication algebra.
-4. `two_square_cheb_trace_lb`:
-   For ANY `p q : List ℤ`, `S = p*p + q*q` satisfies
-   `(eval3 p)^2 + (eval3 q)^2 ≤ Tr(chebComb G 3 S)` unconditionally over `ℚ` (zero eigenvalues!).
-5. `cert_trace_surplus_of_two_square`:
-   Kernel-computable certificate checker `checkCert g L N p q alpha = true` unconditionally
-   implies `∑ k ∈ Finset.range L, lookupAlpha alpha k * taillessCount G k < taillessCount G L`
-   for every power-free cubic graph of girth `≥ g` and order `0 < |V| ≤ N`.
 -/
 
 namespace E64Wave8Agent2
@@ -43,7 +27,7 @@ theorem taillessCount_eq_chebMat_trace_odd (G : SimpleGraph V) [DecidableRel G.A
       (nbClosedCount G (2 * m + 1) : ℚ) -
         ((d - 2 : ℕ) : ℚ) * ∑ j ∈ Finset.Icc 1 m, (nbClosedCount G (2 * m + 1 - 2 * j) : ℚ) := by
     rw [hcheb, trace_sub, trace_smul, nbMat_trace_eq_nbClosedCount,
-        show (2 * m + 1) / 2 = m by omega, map_sum, smul_eq_mul]
+        show (2 * m + 1) / 2 = m by omega, trace_sum, smul_eq_mul]
     congr 2
     refine Finset.sum_congr rfl fun j _ => nbMat_trace_eq_nbClosedCount G (2 * m + 1 - 2 * j)
   rw [htr]
@@ -58,7 +42,8 @@ theorem taillessCount_eq_chebMat_trace_odd (G : SimpleGraph V) [DecidableRel G.A
           unfold nbClosedCount
           refine Finset.sum_eq_zero fun v _ => ?_
           rw [Finset.card_eq_zero, Finset.eq_empty_iff_forall_notMem]
-          rintro ⟨p, hp⟩ _
+          intro p hp
+          simp only [nbWalks, Finset.mem_filter, mem_finsetWalkLength_iff] at hp
           cases p with
           | nil => simp at hp
           | cons h rest =>
@@ -68,8 +53,7 @@ theorem taillessCount_eq_chebMat_trace_odd (G : SimpleGraph V) [DecidableRel G.A
         have ht1 : taillessCount G 1 = 0 := by
           unfold taillessCount
           refine Finset.sum_eq_zero fun v _ => ?_
-          have hle := Finset.card_filter_le (nbWalks G 1 v v)
-            (fun p => IsCyclicallyNonBacktracking p.1)
+          have hle := Finset.card_filter_le (nbWalks G 1 v v) IsCyclicallyNonBacktracking
           have h0 : (nbWalks G 1 v v).card = 0 := by
             have hsum : nbClosedCount G 1 = 0 := hc1
             unfold nbClosedCount at hsum
@@ -78,11 +62,10 @@ theorem taillessCount_eq_chebMat_trace_odd (G : SimpleGraph V) [DecidableRel G.A
         simp [hc1, ht1]
     | succ r ih =>
         have hstrip := one_step_tail_strip G hd hreg (2 * r + 1) (by omega)
+        rw [show (2 * r + 1) + 2 = 2 * (r + 1) + 1 by omega] at hstrip
         have hstrip_q : (nbClosedCount G (2 * (r + 1) + 1) : ℚ) + (taillessCount G (2 * r + 1) : ℚ) =
             (taillessCount G (2 * (r + 1) + 1) : ℚ) +
               ((d - 1 : ℕ) : ℚ) * (nbClosedCount G (2 * r + 1) : ℚ) := by
-          have h1 : 2 * (r + 1) + 1 = (2 * r + 1) + 2 := by omega
-          rw [h1]
           exact_mod_cast hstrip
         have hdq : ((d - 1 : ℕ) : ℚ) = ((d - 2 : ℕ) : ℚ) + 1 := by
           have : d - 1 = (d - 2) + 1 := by omega
@@ -94,14 +77,13 @@ theorem taillessCount_eq_chebMat_trace_odd (G : SimpleGraph V) [DecidableRel G.A
           rw [show Finset.Icc 1 (r + 1) = insert 1 (Finset.Icc 2 (r + 1)) by
                 ext j; simp only [Finset.mem_Icc, Finset.mem_insert]; omega]
           have h1not : 1 ∉ Finset.Icc 2 (r + 1) := by simp
-          rw [Finset.sum_insert h1not]
+          rw [Finset.sum_insert h1not, show 2 * (r + 1) + 1 - 2 * 1 = 2 * r + 1 by omega]
           congr 1
-          · congr 2; omega
-          · refine Finset.sum_bij (fun j _ => j - 1) ?_ ?_ ?_ ?_
-            · intro j hj; simp only [Finset.mem_Icc] at hj ⊢; omega
-            · intro j₁ hj₁ j₂ hj₂ h; simp only [Finset.mem_Icc] at hj₁ hj₂; omega
-            · intro b hb; refine ⟨b + 1, ?_, by omega⟩; simp only [Finset.mem_Icc] at hb ⊢; omega
-            · intro j hj; simp only [Finset.mem_Icc] at hj; congr 2; omega
+          refine Finset.sum_bij (fun j _ => j - 1) ?_ ?_ ?_ ?_
+          · intro j hj; simp only [Finset.mem_Icc] at hj ⊢; omega
+          · intro j₁ hj₁ j₂ hj₂ h; simp only [Finset.mem_Icc] at hj₁ hj₂; omega
+          · intro b hb; refine ⟨b + 1, ?_, by omega⟩; simp only [Finset.mem_Icc] at hb ⊢; omega
+          · intro j hj; simp only [Finset.mem_Icc] at hj; congr 2; omega
         rw [hsum_shift]
         rw [hdq] at hstrip_q
         linarith
@@ -117,12 +99,12 @@ theorem taillessCount_eq_chebMat_trace_all (G : SimpleGraph V) [DecidableRel G.A
   by_cases hev : k % 2 = 0
   · have hkm : k = 2 * (k / 2) := by omega
     have hpos : 1 ≤ k / 2 := by omega
-    rw [if_pos hev]
+    simp only [hev, ↓reduceIte]
     conv_lhs => rw [hkm]
     conv_rhs => rw [hkm]
     exact taillessCount_eq_chebMat_trace G hd hreg (k / 2) hpos
   · have hkm : k = 2 * (k / 2) + 1 := by omega
-    rw [if_neg hev, add_zero]
+    simp only [hev, ↓reduceIte, add_zero]
     conv_lhs => rw [hkm]
     conv_rhs => rw [hkm]
     exact taillessCount_eq_chebMat_trace_odd G hd hreg (k / 2)
@@ -237,13 +219,15 @@ theorem chebComb_add (G : SimpleGraph V) [DecidableRel G.Adj] (d : ℕ) (p q : L
     refine Finset.sum_subset (Finset.range_mono (le_max_left _ _)) fun k _ hk => ?_
     simp only [Finset.mem_range, not_lt] at hk
     have h0 : p.getD k 0 = 0 := by simp [List.getD_eq_getElem?_getD, List.getElem?_eq_none hk]
-    simp [h0]
+    rw [h0]
+    simp
   have hq_ext : (∑ k ∈ Finset.range q.length, ((q.getD k 0 : ℤ) : ℚ) • chebMat G d k) =
       ∑ k ∈ Finset.range (max p.length q.length), ((q.getD k 0 : ℤ) : ℚ) • chebMat G d k := by
     refine Finset.sum_subset (Finset.range_mono (le_max_right _ _)) fun k _ hk => ?_
     simp only [Finset.mem_range, not_lt] at hk
     have h0 : q.getD k 0 = 0 := by simp [List.getD_eq_getElem?_getD, List.getElem?_eq_none hk]
-    simp [h0]
+    rw [h0]
+    simp
   rw [hp_ext, hq_ext, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun k hk => ?_
   have hget : ((List.range (max p.length q.length)).map fun k => p.getD k 0 + q.getD k 0).getD k 0 =
@@ -312,9 +296,10 @@ theorem chebComb_mul_cubic (G : SimpleGraph V) [DecidableRel G.Adj] (p q : List 
     congr 1
     · split_ifs <;> simp
     · split_ifs <;> simp
-  rw [h_rhs, Finset.sum_comm]
+  rw [h_rhs]
+  conv_rhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun j hj => ?_
-  rw [Finset.sum_comm]
+  conv_rhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun k hk => ?_
   simp only [Finset.mem_range] at hj hk
   rw [Finset.sum_add_distrib]
@@ -322,8 +307,9 @@ theorem chebComb_mul_cubic (G : SimpleGraph V) [DecidableRel G.Adj] (p q : List 
     simp only [Finset.mem_range]; omega
   have h2 : max j k - min j k ∈ Finset.range (p.length + q.length) := by
     simp only [Finset.mem_range]; omega
-  rw [Finset.sum_ite_eq (Finset.range (p.length + q.length)) (j + k), if_pos h1]
-  rw [Finset.sum_ite_eq (Finset.range (p.length + q.length)) (max j k - min j k), if_pos h2]
+  rw [Finset.sum_ite_eq (Finset.range (p.length + q.length)) (j + k),
+      Finset.sum_ite_eq (Finset.range (p.length + q.length)) (max j k - min j k)]
+  simp only [h1, h2, ↓reduceIte]
 
 /-- **Pure 2-Square Unconditional Trace Lower Bound (Zero Eigenvalues!)**:
 For EVERY cubic graph `G` on `n > 0` vertices and ANY `p q : List ℤ`,
@@ -337,15 +323,14 @@ theorem two_square_cheb_trace_lb (G : SimpleGraph V) [DecidableRel G.Adj]
     (chebComb_symm G 3 p) (chebComb_mulVec_one G hreg p) hn
   have hq := symm_const_rowSum_sq_trace (chebComb G 3 q) ((chebEval3 q : ℤ) : ℚ)
     (chebComb_symm G 3 q) (chebComb_mulVec_one G hreg q) hn
-  have hnn_p : 0 ≤ ∑ u : V, ∑ v : V,
-      ((chebComb G 3 p - (((chebEval3 p : ℤ) : ℚ) / (Fintype.card V : ℚ)) •
-        Matrix.of (fun _ _ => (1 : ℚ))) u v) ^ 2 :=
-    Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ => sq_nonneg _
-  have hnn_q : 0 ≤ ∑ u : V, ∑ v : V,
-      ((chebComb G 3 q - (((chebEval3 q : ℤ) : ℚ) / (Fintype.card V : ℚ)) •
-        Matrix.of (fun _ _ => (1 : ℚ))) u v) ^ 2 :=
-    Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ => sq_nonneg _
-  rw [hp.1, hq.1]
+  have hp_le : ((chebEval3 p : ℤ) : ℚ) ^ 2 ≤ Matrix.trace (chebComb G 3 p * chebComb G 3 p) := by
+    rw [hp.1]
+    exact le_add_of_nonneg_left
+      (Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ => sq_nonneg _)
+  have hq_le : ((chebEval3 q : ℤ) : ℚ) ^ 2 ≤ Matrix.trace (chebComb G 3 q * chebComb G 3 q) := by
+    rw [hq.1]
+    exact le_add_of_nonneg_left
+      (Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ => sq_nonneg _)
   push_cast
   linarith
 
@@ -422,6 +407,7 @@ theorem cert_trace_surplus_of_two_square (G : SimpleGraph V) [DecidableRel G.Adj
     if 1 ≤ k ∧ k % 2 = 0 then S.getD k 0 else 0).sum with heven_def
   set negSlope := 2 * S.getD 0 0 - evenSum with hns_def
   unfold checkCert at hcert
+  dsimp only at hcert
   rw [← hS_def, ← hlead_def, ← hs3_def, ← heven_def, ← hns_def] at hcert
   simp only [Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true, List.mem_range] at hcert
   rcases hcert with ⟨⟨⟨⟨⟨⟨hL1, hlead_pos⟩, hLlt⟩, hhi_zero⟩, hmid_le⟩, halpha_ok⟩, hord_check⟩
@@ -432,7 +418,7 @@ theorem cert_trace_surplus_of_two_square (G : SimpleGraph V) [DecidableRel G.Adj
         ∑ k ∈ Finset.range S.length,
           if 1 ≤ k then ((S.getD k 0 : ℤ) : ℚ) * (taillessCount G k : ℚ) else 0 := by
     unfold chebComb
-    rw [map_sum]
+    rw [trace_sum]
     have hsplit : (∑ k ∈ Finset.range S.length, Matrix.trace (((S.getD k 0 : ℤ) : ℚ) • chebMat G 3 k)) =
         ∑ k ∈ Finset.range S.length,
           ((if k = 0 then 2 * ((S.getD 0 0 : ℤ) : ℚ) * (Fintype.card V : ℚ) else 0) -
@@ -449,17 +435,18 @@ theorem cert_trace_surplus_of_two_square (G : SimpleGraph V) [DecidableRel G.Adj
           have h32 : ((3 - 2 : ℕ) : ℚ) = 1 := by norm_num
           rw [h32, one_mul] at htk
           by_cases hev : (k' + 1) % 2 = 0
-          · rw [if_pos hev] at htk
+          · simp only [hev, ↓reduceIte] at htk
             simp only [Nat.succ_ne_zero, ↓reduceIte, Nat.one_le_iff_ne_zero, hev, and_self]
             have : Matrix.trace (chebMat G 3 (k' + 1)) = (taillessCount G (k' + 1) : ℚ) - (Fintype.card V : ℚ) := by linarith
             rw [this]; ring
-          · rw [if_neg hev, add_zero] at htk
+          · simp only [hev, ↓reduceIte, add_zero] at htk
             simp only [Nat.succ_ne_zero, ↓reduceIte, Nat.one_le_iff_ne_zero, hev, and_false, sub_zero, zero_add]
             rw [← htk]
     rw [hsplit, Finset.sum_add_distrib, Finset.sum_sub_distrib]
     congr 1
     have h0mem : 0 ∈ Finset.range S.length := by simp only [Finset.mem_range]; omega
-    rw [Finset.sum_ite_eq' (Finset.range S.length) 0, if_pos h0mem]
+    rw [Finset.sum_ite_eq' (Finset.range S.length) 0]
+    simp only [h0mem, ↓reduceIte]
     rw [hns_def, heven_def, list_sum_range_eq_finset_sum]
     push_cast
     rw [sub_mul, Finset.sum_mul]
@@ -488,7 +475,8 @@ theorem cert_trace_surplus_of_two_square (G : SimpleGraph V) [DecidableRel G.Adj
         have hkz := hhi_zero k hk
         simp only [hgt, ↓reduceIte, decide_eq_true_eq] at hkz
         simp [hkz]
-      rw [hhi, Finset.sum_range_succ, if_pos hL1, hlead_def]
+      rw [hhi, Finset.sum_range_succ, hlead_def]
+      simp only [hL1, ↓reduceIte]
     rw [hsplit_L]
     have hlt_le : (∑ k ∈ Finset.range L,
           if 1 ≤ k then ((S.getD k 0 : ℤ) : ℚ) * (taillessCount G k : ℚ) else 0) ≤

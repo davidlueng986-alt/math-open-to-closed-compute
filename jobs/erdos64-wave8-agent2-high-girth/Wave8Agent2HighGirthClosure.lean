@@ -10,20 +10,6 @@ import NonSimpleTheta
 
 /-!
 # Wave 8 Agent #2 — Unconditional High-Girth Closure for Erdős Problem #64
-
-Combines:
-1. `ChebTraceEngine`: Pure-2-square integer Chebyshev-polynomial SOS trace certificates over `ℚ`
-   (zero eigenvalues, zero spectral gap, zero floating-point arithmetic).
-2. `NonSimpleHelpers` / `NonSimpleDecomp` / `NonSimpleBarbell` / `NonSimpleTheta`:
-   Exact trace-coupled non-simple CNB walk upper bound
-   `nonSimpleTaillessCount G (2^k) ≤ ∑ r < 2^k, alphaCoeff g (2^k) r * taillessCount G r`
-   valid for all cubic, power-free graphs of girth `g ≥ 6` and `2^k < 3 * g`.
-
-Closes EVERY previously uncovered high girth `g ∈ {6, 7, 11, 12, 13, 14, 15}` (plus `g = 8` via
-girth-9 upgrade) unconditionally at or strictly above the cubic Moore bound `M(3, g)`, including
-the **first-ever unconditional closures** at `g = 13` (`n ≤ 215`, `1.13x` Moore `190`) and
-`g = 14` (`n ≤ 274`, `1.08x` Moore `254`), and a `2.76x` improvement at `g = 15` (`n ≤ 1483`,
-`3.88x` Moore `382`, vs Wave 5's `537`).
 -/
 
 namespace E64Wave8Agent2
@@ -44,6 +30,7 @@ theorem hasPower_of_cert (G : SimpleGraph V) [DecidableRel G.Adj]
     (hcert : checkCert g (2 ^ k) N p q alpha = true)
     (hdom : (List.range (2 ^ k)).all (fun r => decide (alphaCoeff g (2 ^ k) r ≤ lookupAlpha alpha r)) = true) :
     HasPower G := by
+  classical
   by_contra hnp
   have hsurp := cert_trace_surplus_of_two_square G hreg hn hle hg hnp hcert
   have hns := nonSimpleTaillessCount_le_sum_alpha G hreg hg hg6 hnp hk4 hk6 hLt
@@ -57,22 +44,22 @@ theorem hasPower_of_cert (G : SimpleGraph V) [DecidableRel G.Adj]
     lt_of_le_of_lt (le_trans hns hdom_sum) hsurp
   unfold nonSimpleTaillessCount taillessCount at hlt
   have hex : ∃ v : V,
-      ((nbWalks G (2 ^ k) v v).filter fun w => IsCyclicallyNonBacktracking w.1 ∧ ¬ w.1.IsCycle).card <
-      ((nbWalks G (2 ^ k) v v).filter fun w => IsCyclicallyNonBacktracking w.1).card := by
+      ((nbWalks G (2 ^ k) v v).filter fun w => IsCyclicallyNonBacktracking w ∧ ¬ w.IsCycle).card <
+      ((nbWalks G (2 ^ k) v v).filter IsCyclicallyNonBacktracking).card := by
     by_contra hall
-    push_neg at hall
+    push Not at hall
     have hle_sum := Finset.sum_le_sum fun v (_ : v ∈ Finset.univ) => hall v
     omega
   obtain ⟨v, hv⟩ := hex
-  have hsub : ¬ (((nbWalks G (2 ^ k) v v).filter fun w => IsCyclicallyNonBacktracking w.1) ⊆
-      ((nbWalks G (2 ^ k) v v).filter fun w => IsCyclicallyNonBacktracking w.1 ∧ ¬ w.1.IsCycle)) := by
+  have hsub : ¬ (((nbWalks G (2 ^ k) v v).filter IsCyclicallyNonBacktracking) ⊆
+      ((nbWalks G (2 ^ k) v v).filter fun w => IsCyclicallyNonBacktracking w ∧ ¬ w.IsCycle)) := by
     intro hss
     have := Finset.card_le_card hss
     omega
   rw [Finset.not_subset] at hsub
-  obtain ⟨⟨w, hw⟩, hmem, hnotmem⟩ := hsub
-  simp only [Finset.mem_filter, not_and, not_not] at hmem hnotmem
-  exact hnp ⟨k, v, w, by omega, hnotmem hmem.1 hmem.2, hw⟩
+  obtain ⟨w, hmem, hnotmem⟩ := hsub
+  simp only [nbWalks, Finset.mem_filter, mem_finsetWalkLength_iff, not_and, not_not] at hmem hnotmem
+  exact hnp ⟨k, v, w, by omega, hnotmem hmem.1 hmem.2, hmem.1.1⟩
 
 def certP_g6 : List ℤ := [11331613, 10373866, -4185405, -751550, 8624268, 275790, -1080225, -5000, 10000]
 def certQ_g6 : List ℤ := [11896001, 7487874, 5797807, 7475905, -630944, 4571031, 56012, -146559, 0]

@@ -15,6 +15,62 @@ section WalkSplittingAndBounds
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+/-- Subtype-wrapped Finset of non-backtracking walks of length `k` from `u` to `v`. -/
+def nbWalksSub (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ) (u v : V) :
+    Finset {p : G.Walk u v // p.length = k} :=
+  (nbWalks G k u v).attach.map
+    ⟨fun x => ⟨x.1, (mem_finsetWalkLength_iff.mp (Finset.mem_filter.mp x.2).1)⟩,
+     fun a b h => Subtype.ext (congrArg Subtype.val h)⟩
+
+@[simp] theorem mem_nbWalksSub_iff {G : SimpleGraph V} [DecidableRel G.Adj]
+    {k : ℕ} {u v : V} {p : {q : G.Walk u v // q.length = k}} :
+    p ∈ nbWalksSub G k u v ↔ IsNonBacktracking p.1 := by
+  simp only [nbWalksSub, Finset.mem_map, Finset.mem_attach, Function.Embedding.coeFn_mk,
+    true_and, Subtype.exists]
+  constructor
+  · rintro ⟨q, hq, heq⟩
+    have hqp : q = p.1 := congrArg Subtype.val heq
+    rw [← hqp]
+    exact (Finset.mem_filter.mp hq).2
+  · intro hnb
+    refine ⟨p.1, ?_, rfl⟩
+    simp only [nbWalks, Finset.mem_filter, mem_finsetWalkLength_iff]
+    exact ⟨p.2, hnb⟩
+
+theorem taillessCount_eq_card_sub (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ) :
+    (((Finset.univ : Finset V).sigma fun v => nbWalksSub G k v v).filter
+      fun x => IsCyclicallyNonBacktracking x.2.1).card = taillessCount G k := by
+  simp only [taillessCount, Finset.filter_sigma, Finset.card_sigma]
+  refine Finset.sum_congr rfl fun v _ => ?_
+  refine Finset.card_bij (fun p _ => p.1) (fun p hp => ?_) (fun p₁ _ p₂ _ h => Subtype.ext h) (fun q hq => ?_)
+  · simp only [Finset.mem_filter, mem_nbWalksSub_iff] at hp
+    simp only [nbWalks, Finset.mem_filter, mem_finsetWalkLength_iff]
+    exact ⟨⟨p.2, hp.1⟩, hp.2⟩
+  · simp only [nbWalks, Finset.mem_filter, mem_finsetWalkLength_iff] at hq
+    refine ⟨⟨q, hq.1.1⟩, ?_, rfl⟩
+    simp only [Finset.mem_filter, mem_nbWalksSub_iff]
+    exact ⟨hq.1.2, hq.2⟩
+
+theorem nonSimpleTaillessCount_eq_card_sub (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ) :
+    haveI : DecidablePred (fun x : Σ v : V, {p : G.Walk v v // p.length = k} =>
+      IsCyclicallyNonBacktracking x.2.1 ∧ ¬ x.2.1.IsCycle) := Classical.decPred _
+    (((Finset.univ : Finset V).sigma fun v => nbWalksSub G k v v).filter
+      fun x => IsCyclicallyNonBacktracking x.2.1 ∧ ¬ x.2.1.IsCycle).card =
+      nonSimpleTaillessCount G k := by
+  intro _
+  classical
+  unfold nonSimpleTaillessCount
+  simp only [Finset.filter_sigma, Finset.card_sigma]
+  refine Finset.sum_congr rfl fun v _ => ?_
+  refine Finset.card_bij (fun p _ => p.1) (fun p hp => ?_) (fun p₁ _ p₂ _ h => Subtype.ext h) (fun q hq => ?_)
+  · simp only [Finset.mem_filter, mem_nbWalksSub_iff] at hp
+    simp only [nbWalks, Finset.mem_filter, mem_finsetWalkLength_iff]
+    exact ⟨⟨p.2, hp.1⟩, hp.2⟩
+  · simp only [nbWalks, Finset.mem_filter, mem_finsetWalkLength_iff] at hq
+    refine ⟨⟨q, hq.1.1⟩, ?_, rfl⟩
+    simp only [Finset.mem_filter, mem_nbWalksSub_iff]
+    exact ⟨hq.1.2, hq.2⟩
+
 theorem firstNbr_append_of_pos {G : SimpleGraph V} {u v w : V}
     (p : G.Walk u v) (q : G.Walk v w) (hp : 1 ≤ p.length) :
     firstNbr (p.append q) = firstNbr p := by
@@ -113,7 +169,7 @@ theorem unrotate_append {G : SimpleGraph V} {L : ℕ} {v x : V}
 /-- Finset of all NB walks of length `m` starting at `u` whose first step `≠ prev`. -/
 def nbWalksAvoid (G : SimpleGraph V) [DecidableRel G.Adj] (m : ℕ) (u prev : V) :
     Finset (Σ v : V, {p : G.Walk u v // p.length = m}) :=
-  ((Finset.univ : Finset V).sigma fun v => nbWalks G m u v).filter fun x =>
+  ((Finset.univ : Finset V).sigma fun v => nbWalksSub G m u v).filter fun x =>
     firstNbr x.2.1 ≠ some prev
 
 /-- In a cubic graph, there are at most `2^m` NB walks of length `m` starting at `u` avoiding `prev` (`G.Adj u prev`). -/
@@ -153,17 +209,16 @@ theorem card_nbWalksAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
         | nil => simp at hp
         | cons (v := w) h₁ rest =>
             simp only [nbWalksAvoid, Finset.mem_filter, Finset.mem_sigma, Finset.mem_univ,
-              true_and, nbWalks, firstNbr, ne_eq, Option.some.injEq] at hx
+              true_and, mem_nbWalksSub_iff, firstNbr, ne_eq, Option.some.injEq] at hx
             simp only [T, Finset.mem_sigma, Finset.mem_erase, SimpleGraph.mem_neighborFinset,
-              nbWalksAvoid, Finset.mem_filter, Finset.mem_univ, true_and, nbWalks,
-              mem_finsetWalkLength_iff]
-            refine ⟨⟨hx.2, h₁⟩, ⟨by simpa using hp, ?_⟩, ?_⟩
-            · exact isNonBacktracking_of_append_right (p := .cons h₁ .nil) hx.1.2
+              nbWalksAvoid, Finset.mem_filter, Finset.mem_univ, true_and, mem_nbWalksSub_iff]
+            refine ⟨⟨hx.2, h₁⟩, ?_, ?_⟩
+            · exact isNonBacktracking_of_append_right (p := .cons h₁ .nil) hx.1
             · cases rest with
               | nil => simp [firstNbr]
               | cons h₂ rest₂ =>
                   simp only [firstNbr, ne_eq, Option.some.injEq]
-                  exact Ne.symm hx.1.2.1
+                  exact Ne.symm hx.1.1
       · rintro ⟨v₁, ⟨p₁, hp₁⟩⟩ _ ⟨v₂, ⟨p₂, hp₂⟩⟩ _ heq
         cases p₁ with
         | nil => simp at hp₁
@@ -178,7 +233,7 @@ theorem card_nbWalksAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
 /-- Finset of all NB walks of length `m` from `u` to `v` avoiding `prev` at the first step. -/
 def nbWalksBetweenAvoid (G : SimpleGraph V) [DecidableRel G.Adj] (m : ℕ) (u prev v : V) :
     Finset {p : G.Walk u v // p.length = m} :=
-  (nbWalks G m u v).filter fun p => firstNbr p.1 ≠ some prev
+  (nbWalksSub G m u v).filter fun p => firstNbr p.1 ≠ some prev
 
 /-- **Exact Girth-Ball Fixed-Endpoint Bound**: In a cubic graph of girth `≥ g` (`s = (g - 1) / 2`),
 there are at most `2 ^ (m - s)` NB walks of length `m` from `u` to `v` avoiding `prev` (`G.Adj u prev`). -/
@@ -192,9 +247,9 @@ theorem card_nbWalksBetweenAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
     rw [h0, pow_zero]
     refine Finset.card_le_one.mpr ?_
     rintro ⟨p₁, hp₁⟩ h₁ ⟨p₂, hp₂⟩ h₂
-    simp only [nbWalksBetweenAvoid, Finset.mem_filter, nbWalks] at h₁ h₂
+    simp only [nbWalksBetweenAvoid, Finset.mem_filter, mem_nbWalksSub_iff] at h₁ h₂
     ext
-    exact unique_nonBacktracking_walk_of_half_girth hg p₁ p₂ (by omega) (by omega) h₁.1.2 h₂.1.2
+    exact unique_nonBacktracking_walk_of_half_girth hg p₁ p₂ (by omega) (by omega) h₁.1 h₂.1
   · have hlt : s < m := by omega
     have hle_ms : m - s ≤ m := Nat.sub_le m s
     have hcard_av := card_nbWalksAvoid_le G hreg (m - s) u prev hprev
@@ -205,12 +260,12 @@ theorem card_nbWalksBetweenAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
         ⟨sp.1, sp.2.1⟩)
       ?_ ?_
     · rintro ⟨p, hp⟩ hmem
-      simp only [nbWalksBetweenAvoid, Finset.mem_filter, nbWalks] at hmem
+      simp only [nbWalksBetweenAvoid, Finset.mem_filter, mem_nbWalksSub_iff] at hmem
       set sp := splitWalk (m - s) p (by rw [hp]; exact hle_ms)
       have happ : sp.2.1.1.append sp.2.2.1 = p := splitWalk_append (m - s) p (by rw [hp]; exact hle_ms)
       simp only [nbWalksAvoid, Finset.mem_filter, Finset.mem_sigma, Finset.mem_univ, true_and,
-        nbWalks, mem_finsetWalkLength_iff]
-      refine ⟨⟨sp.2.1.2, isNonBacktracking_of_append_left (happ ▸ hmem.1.2)⟩, ?_⟩
+        mem_nbWalksSub_iff]
+      refine ⟨isNonBacktracking_of_append_left (happ ▸ hmem.1), ?_⟩
       have hpos : 1 ≤ sp.2.1.1.length := by rw [sp.2.1.2]; omega
       have hfn : firstNbr p = firstNbr sp.2.1.1 := by
         rw [← happ]
@@ -218,7 +273,7 @@ theorem card_nbWalksBetweenAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
       rw [← hfn]
       exact hmem.2
     · rintro ⟨p₁, hp₁⟩ h₁ ⟨p₂, hp₂⟩ h₂ heq
-      simp only [nbWalksBetweenAvoid, Finset.mem_filter, nbWalks] at h₁ h₂
+      simp only [nbWalksBetweenAvoid, Finset.mem_filter, mem_nbWalksSub_iff] at h₁ h₂
       set sp₁ := splitWalk (m - s) p₁ (by rw [hp₁]; exact hle_ms)
       set sp₂ := splitWalk (m - s) p₂ (by rw [hp₂]; exact hle_ms)
       have happ₁ : sp₁.2.1.1.append sp₁.2.2.1 = p₁ := splitWalk_append (m - s) p₁ _
@@ -228,8 +283,8 @@ theorem card_nbWalksBetweenAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
       rcases sp₂ with ⟨w₂, ⟨q₂, hq₂⟩, ⟨r₂, hr₂⟩⟩
       dsimp only at heq happ₁ happ₂
       rcases heq with ⟨rfl, rfl⟩
-      have hr₁_nb : IsNonBacktracking r₁ := isNonBacktracking_of_append_right (happ₁ ▸ h₁.1.2)
-      have hr₂_nb : IsNonBacktracking r₂ := isNonBacktracking_of_append_right (happ₂ ▸ h₂.1.2)
+      have hr₁_nb : IsNonBacktracking r₁ := isNonBacktracking_of_append_right (happ₁ ▸ h₁.1)
+      have hr₂_nb : IsNonBacktracking r₂ := isNonBacktracking_of_append_right (happ₂ ▸ h₂.1)
       have hr_eq : r₁ = r₂ :=
         unique_nonBacktracking_walk_of_half_girth hg r₁ r₂ (by omega) (by omega) hr₁_nb hr₂_nb
       ext
