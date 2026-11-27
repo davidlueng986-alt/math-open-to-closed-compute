@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 
 echo "Lean version:"
 lean --version
@@ -18,20 +18,25 @@ for f in Pillar1Menger.lean Pillar2Tutte.lean Pillar3F2Parity.lean Pillar4Triang
   fi
 done
 
-# Compile all 4 modules with -DwarningAsError=true and run axiom audits
 rm -f out/axioms.log
 touch out/axioms.log
+FAIL=0
 
 run_audit() {
   local fname="$1"
   shift
   echo "=== Compiling ${fname} ==="
-  lake --dir="${LAKE_DIR}" env lean -DwarningAsError=true "${JOB_DIR}/${fname}" 2>&1 | tee "out/${fname}.compile.log"
-  cp "${JOB_DIR}/${fname}" "out/Audit_${fname}"
-  for thm in "$@"; do
-    echo "#print axioms ${thm}" >> "out/Audit_${fname}"
-  done
-  lake --dir="${LAKE_DIR}" env lean -DwarningAsError=true "out/Audit_${fname}" 2>&1 | tee -a out/axioms.log
+  if lake --dir="${LAKE_DIR}" env lean -DwarningAsError=true "${JOB_DIR}/${fname}" 2>&1 | tee "out/${fname}.compile.log"; then
+    cp "${JOB_DIR}/${fname}" "out/Audit_${fname}"
+    for thm in "$@"; do
+      echo "#print axioms ${thm}" >> "out/Audit_${fname}"
+    done
+    if ! lake --dir="${LAKE_DIR}" env lean -DwarningAsError=true "out/Audit_${fname}" 2>&1 | tee -a out/axioms.log; then
+      FAIL=1
+    fi
+  else
+    FAIL=1
+  fi
 }
 
 run_audit Pillar1Menger.lean \
@@ -59,6 +64,11 @@ run_audit Pillar4Triangles.lean \
   E64Wave7Agent3P4.minimal_bad2_high_apex_triangle_base_dyadic_plus_one_cycle \
   E64Wave7Agent3P4.minimal_bad2_cubic_triangle_external_not_all_high \
   E64Wave7Agent3P4.minimal_bad2_cubic_triangle_dual_cycle_lifting
+
+if [ "${FAIL}" -ne 0 ]; then
+  echo "One or more Lean modules failed to compile."
+  exit 1
+fi
 
 python3 - << 'PY'
 import json, re, hashlib
