@@ -1,0 +1,55 @@
+name: E64 Wave5 Agent3 Non-Abelian & Abelian Voltage Lifts
+
+on:
+  workflow_dispatch:
+
+jobs:
+  lifts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: theta3_m20_70
+            base_idx: 0
+            m_min: 20
+            m_max: 70
+            samples: 1000000
+          - id: k4_m12_35
+            base_idx: 1
+            m_min: 12
+            m_max: 35
+            samples: 1000000
+          - id: prism_m10_24
+            base_idx: 2
+            m_min: 10
+            m_max: 24
+            samples: 500000
+          - id: k33_m10_24
+            base_idx: 3
+            m_min: 10
+            m_max: 24
+            samples: 500000
+          - id: cubeq3_m10_18
+            base_idx: 4
+            m_min: 10
+            m_max: 18
+            samples: 500000
+          - id: petersen_m8_14
+            base_idx: 5
+            m_min: 8
+            m_max: 14
+            samples: 500000
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and run Voltage Lifts OpenMP hunter
+        run: |
+          g++ -O3 -fopenmp -std=c++20 -march=native jobs/erdos64-wave5-agent3-voltage-lifts/voltage_lifts.cpp -o voltage_lifts
+          mkdir -p out
+          ./voltage_lifts "${{ matrix.base_idx }}" "${{ matrix.m_min }}" "${{ matrix.m_max }}" "${{ matrix.samples }}" 4 | tee "out/lifts_${{ matrix.id }}.log"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: erdos64-w5a3-lifts-${{ matrix.id }}
+          path: out/
+          retention-days: 30

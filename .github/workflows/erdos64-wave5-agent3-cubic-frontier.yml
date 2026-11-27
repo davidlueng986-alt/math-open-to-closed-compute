@@ -1,0 +1,76 @@
+name: E64 Wave5 Agent3 Cubic Frontier Hunter (n=78..140)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  hunt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: n78
+            orders: "78"
+            seeds: 24
+            steps: 800000
+          - id: n80
+            orders: "80"
+            seeds: 24
+            steps: 800000
+          - id: n82
+            orders: "82"
+            seeds: 24
+            steps: 800000
+          - id: n84
+            orders: "84"
+            seeds: 24
+            steps: 800000
+          - id: n86
+            orders: "86"
+            seeds: 24
+            steps: 800000
+          - id: n88
+            orders: "88"
+            seeds: 24
+            steps: 800000
+          - id: n90_92
+            orders: "90 92"
+            seeds: 20
+            steps: 700000
+          - id: n94_96
+            orders: "94 96"
+            seeds: 20
+            steps: 700000
+          - id: n100_104
+            orders: "100 104"
+            seeds: 16
+            steps: 650000
+          - id: n108_112
+            orders: "108 112"
+            seeds: 16
+            steps: 650000
+          - id: n116_120
+            orders: "116 120"
+            seeds: 16
+            steps: 600000
+          - id: n128_136_140
+            orders: "128 136 140"
+            seeds: 16
+            steps: 550000
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and run Cubic Frontier OpenMP hunter
+        run: |
+          g++ -O3 -fopenmp -std=c++20 -march=native jobs/erdos64-wave5-agent3-cubic-frontier/cubic_frontier.cpp -o cubic_frontier
+          mkdir -p out
+          for N in ${{ matrix.orders }}; do
+            echo "=== RUNNING CUBIC FRONTIER n=$N seeds=${{ matrix.seeds }} steps=${{ matrix.steps }} ==="
+            ./cubic_frontier "$N" "${{ matrix.seeds }}" "${{ matrix.steps }}" 400 4 | tee "out/cubic_n${N}.log"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: erdos64-w5a3-cubic-${{ matrix.id }}
+          path: out/
+          retention-days: 30
