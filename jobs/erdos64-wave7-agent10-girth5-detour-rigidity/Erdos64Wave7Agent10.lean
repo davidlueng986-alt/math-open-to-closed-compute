@@ -130,7 +130,7 @@ theorem step3_shifted_dyadic_hitting {L Δ₀ r : ℕ} (hL : 4 ≤ L) (hndivL : 
 
 /-- Universal Modulus Step-d Dyadic-Hitting Theorem:
     For ANY step d = 2^a * m (m ≥ 1 odd), any period τ ≥ 1 with 2^τ ≡ 1 (mod m),
-    and any L ≥ max(4, 2^a) with 2^a ∣ L and ∃ t < τ, 2^t ≡ L (mod m),
+    and any L ≥ max(4, 2^a) with 2^a ∣ L and ∃ t, 2^t ≡ L (mod m),
     if L + r*d ≥ 2^τ * L, then ∃ j ≤ r with L + j*d = 2^k (k ≥ 2). -/
 theorem general_step_d_dyadic_hitting {a m τ L r : ℕ}
     (hm : 1 ≤ m) (hodd : Odd m) (hτ : 1 ≤ τ) (hper : 2 ^ τ % m = 1 % m)
@@ -149,7 +149,6 @@ theorem general_step_d_dyadic_hitting {a m τ L r : ℕ}
     have h1 : k0 + 1 ≤ a := by omega
     have h2 : 2 ^ k0 < 2 ^ a := Nat.pow_lt_pow_right (by omega) (by omega)
     omega
-  -- Find s < τ such that 2^(k0 + s) ≡ L (mod m)
   obtain ⟨t, ht⟩ := hres
   have hpow_period : ∀ n : ℕ, 2 ^ (n + τ) % m = 2 ^ n % m := by
     intro n
@@ -162,7 +161,6 @@ theorem general_step_d_dyadic_hitting {a m τ L r : ℕ}
       intro n
       have : n + (q + 1) * τ = (n + q * τ) + τ := by ring
       rw [this, hpow_period, ih]
-  -- Pick q large enough so t + q * τ ≥ k0, then reduce (t + q * τ - k0) mod τ
   let q := k0 + 1
   have hbig : k0 ≤ t + q * τ := by
     have : τ ≥ 1 := hτ
@@ -238,7 +236,6 @@ structure GeneralDetourChain {V : Type*} (G : SimpleGraph V) (r : ℕ) where
   alt_nodup : ∀ i, (alt i).Nodup
   base_chain : ∀ i, (base i).IsChain G.Adj
   alt_chain : ∀ i, (alt i).IsChain G.Adj
-  -- Adjacent across slot boundaries (from last vertex of slot i to first vertex of slot (i+1)%r)
   base_exit : ∀ i : Fin r,
     G.Adj ((base i).getLast (base_ne i))
           ((base ⟨(i.val + 1) % r, Nat.mod_lt _ (by omega)⟩).head (base_ne _))
@@ -246,17 +243,14 @@ structure GeneralDetourChain {V : Type*} (G : SimpleGraph V) (r : ℕ) where
     G.Adj ((alt i).getLast (alt_ne i))
           ((base ⟨(i.val + 1) % r, Nat.mod_lt _ (by omega)⟩).head (base_ne _))
   same_head : ∀ i : Fin r, (alt i).head (alt_ne i) = (base i).head (base_ne i)
-  -- Pairwise vertex-disjointness across distinct slots (both base and alt)
   disjoint_slots : ∀ i j : Fin r, i ≠ j →
     ∀ x, (x ∈ base i ∨ x ∈ alt i) → ¬ (x ∈ base j ∨ x ∈ alt j)
-  -- Total base length is at least 3
   base_total_ge3 : 3 ≤ ∑ i : Fin r, (base i).length
 
 namespace GeneralDetourChain
 
 variable {V : Type*} {G : SimpleGraph V} {r : ℕ}
 
-/-- Segment selected at slot i according to boolean switch `choice`. -/
 def seg (D : GeneralDetourChain G r) (choice : Fin r → Bool) (i : Fin r) : List V :=
   if choice i then D.alt i else D.base i
 
@@ -297,11 +291,9 @@ lemma seg_disjoint (D : GeneralDetourChain G r) (choice : Fin r → Bool) {i j :
     unfold seg at hxj; split at hxj <;> [exact Or.inr hxj; exact Or.inl hxj]
   exact D.disjoint_slots i j hij x hi hj
 
-/-- Vertex list of the cycle obtained by applying switch configuration `choice`. -/
 def cycleVerts (D : GeneralDetourChain G r) (choice : Fin r → Bool) : List V :=
   (List.finRange r).flatMap (D.seg choice)
 
-/-- Exact length formula: base length + sum of active increments Δ_i. -/
 theorem cycleVerts_length (D : GeneralDetourChain G r) (choice : Fin r → Bool) :
     (D.cycleVerts choice).length =
       (∑ i : Fin r, (D.base i).length) +
@@ -324,7 +316,6 @@ theorem cycleVerts_length (D : GeneralDetourChain G r) (choice : Fin r → Bool)
   · exact D.alt_len i
   · simp
 
-/-- Distinctness of all vertices in `cycleVerts choice`. -/
 theorem cycleVerts_nodup (D : GeneralDetourChain G r) (choice : Fin r → Bool) :
     (D.cycleVerts choice).Nodup := by
   unfold cycleVerts
@@ -332,7 +323,6 @@ theorem cycleVerts_nodup (D : GeneralDetourChain G r) (choice : Fin r → Bool) 
   refine ⟨fun i _ => D.seg_nodup choice i, ?_⟩
   exact (List.nodup_finRange r).imp_of_mem fun {i j} _ _ hij => D.seg_disjoint choice hij
 
-/-- Helper: `IsChain R (l1 ++ l2)` given chains on `l1, l2` and link from `l1.getLast` to `l2.head`. -/
 private lemma isChain_append_of_link {α : Type*} {R : α → α → Prop} {l1 l2 : List α}
     (h1 : l1.IsChain R) (h2 : l2.IsChain R) (hne1 : l1 ≠ []) (hne2 : l2 ≠ [])
     (hlink : R (l1.getLast hne1) (l2.head hne2)) :
@@ -345,7 +335,6 @@ private lemma isChain_append_of_link {α : Type*} {R : α → α → Prop} {l1 l
   subst hx; subst hy
   exact hlink
 
-/-- Helper: flattening non-empty chains linked across consecutive elements yields an `IsChain`. -/
 private lemma flatMap_isChain {α β : Type*} {R : β → β → Prop} (f : α → List β) :
     ∀ (l : List α),
       (∀ a ∈ l, f a ≠ []) →
@@ -401,10 +390,9 @@ def toSimpleCycle (D : GeneralDetourChain G r) (choice : Fin r → Bool) : Simpl
       simp only [List.length_finRange] at hk
       simp only [List.getElem_finRange]
       intro ha hb
-      have hnext : (⟨k + 1, by omega⟩ : Fin r) = ⟨(k + 1) % r, Nat.mod_lt _ (by omega)⟩ := by
-        ext; exact (Nat.mod_eq_of_lt (by omega)).symm
       convert D.seg_exit choice ⟨k, by omega⟩ using 2
-    -- Also link getLast to head (wrapping from slot r-1 to slot 0)
+      · congr 1
+      · congr 1; ext; exact (Nat.mod_eq_of_lt (by omega)).symm
     have hwrap : G.Adj ((D.cycleVerts choice).getLast hne_all)
                        ((D.cycleVerts choice).head hne_all) := by
       have hfr_ne : List.finRange r ≠ [] := by
@@ -441,7 +429,7 @@ def toSimpleCycle (D : GeneralDetourChain G r) (choice : Fin r → Bool) : Simpl
       have hmod0 : (⟨((r - 1) + 1) % r, Nat.mod_lt _ (by omega)⟩ : Fin r) = ⟨0, by omega⟩ := by
         ext; simp [Nat.sub_add_cancel (by omega : 1 ≤ r)]
       convert D.seg_exit choice ⟨r - 1, by omega⟩ using 2
-      exact hmod0.symm
+      exact congrArg (D.seg choice) hmod0.symm
     intro i hi
     by_cases hlast : i + 1 < (D.cycleVerts choice).length
     · have hmod : (i + 1) % (D.cycleVerts choice).length = i + 1 := Nat.mod_eq_of_lt hlast
@@ -464,12 +452,14 @@ def firstJ (r j : ℕ) : Fin r → Bool := fun i => decide (i.val < j)
 lemma sum_firstJ_uniform {r j d : ℕ} (hj : j ≤ r) :
     (∑ i : Fin r, if firstJ r j i then d else 0) = j * d := by
   have hcard : (Finset.univ.filter (fun i : Fin r => i.val < j)).card = j := by
+    let emb : {x // x ∈ Finset.range j} ↪ Fin r :=
+      ⟨fun x => ⟨x.1, by have := Finset.mem_range.mp x.2; omega⟩,
+       fun a b h => Subtype.ext (congrArg Fin.val h)⟩
     have hbij : Finset.univ.filter (fun i : Fin r => i.val < j) =
-        (Finset.range j).attach.map ⟨fun x => ⟨x.val, by have := Finset.mem_range.mp x.prop; omega⟩,
-          fun a b h => by cases a; cases b; simp at h; subst h; rfl⟩ := by
+        (Finset.range j).attach.map emb := by
       ext i
       simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_map,
-        Finset.mem_attach, true_and, Function.Embedding.coeFn_mk]
+        Finset.mem_attach, emb]
       constructor
       · intro hi; exact ⟨⟨i.val, Finset.mem_range.mpr hi⟩, by ext; rfl⟩
       · rintro ⟨⟨x, hx⟩, hxi⟩
@@ -548,7 +538,6 @@ theorem strict_interior_detour_robustness
       ∀ x ∈ D.alt i₀, x ∉ D.base i₀ → x ∉ C₁.verts) ∧
     (∃ C₂ : SimpleCycle G, IsPowerOfTwo C₂.verts.length ∧
       ∀ x ∈ D.base i₀, x ∉ D.alt i₀ → x ∉ C₂.verts) := by
-  -- Helper: any Finset S : Finset (Fin r) of cardinality j gives a simple 2^k-cycle
   have mk_cyc : ∀ (S : Finset (Fin r)), S.card = j →
       ∃ C : SimpleCycle G, C = D.toSimpleCycle (fun i => decide (i ∈ S)) ∧
         IsPowerOfTwo C.verts.length := by
@@ -557,17 +546,16 @@ theorem strict_interior_detour_robustness
     change IsPowerOfTwo (D.cycleVerts (fun i => decide (i ∈ S))).length
     rw [D.cycleVerts_length]
     have hsum : (∑ i : Fin r, if decide (i ∈ S) then D.delta i else 0) = j * d := by
-      have : (∑ i : Fin r, if decide (i ∈ S) then D.delta i else 0) = ∑ i ∈ S, d := by
+      have h1 : (∑ i : Fin r, if decide (i ∈ S) then D.delta i else 0) = ∑ i ∈ S, d := by
+        simp only [decide_eq_true_eq]
         rw [← Finset.sum_filter]
         have hf : Finset.univ.filter (fun i : Fin r => i ∈ S) = S := by ext x; simp
-        simp only [decide_eq_true_eq]
-        rw [← Finset.sum_filter, hf]
+        rw [hf]
         apply Finset.sum_congr rfl; intro i _; exact hΔ i
-      rw [this, Finset.sum_const, hS, smul_eq_mul]
+      rw [h1, Finset.sum_const, hS, smul_eq_mul]
     rw [hsum]; exact hpow
   constructor
-  · -- Pick S₁ of size j NOT containing i₀ (possible since j ≤ r - 1 = |(univ.erase i₀)|)
-    have hle : j ≤ (Finset.univ.erase i₀).card := by
+  · have hle : j ≤ (Finset.univ.erase i₀).card := by
       rw [Finset.card_erase_of_mem (Finset.mem_univ _), Finset.card_univ, Fintype.card_fin]
       exact hjr
     obtain ⟨S₁, hS₁_sub, hS₁_card⟩ := Finset.exists_subset_card_eq hle
@@ -586,8 +574,7 @@ theorem strict_interior_detour_robustness
       exact hx_nbase hxi
     · exact D.disjoint_slots i₀ i (Ne.symm heq) x (Or.inr hx_alt) (by
         unfold seg at hxi; split at hxi <;> [exact Or.inr hxi; exact Or.inl hxi])
-  · -- Pick S₂ of size j CONTAINING i₀ (take i₀ plus j-1 elements of univ.erase i₀)
-    have hle : j - 1 ≤ (Finset.univ.erase i₀).card := by
+  · have hle : j - 1 ≤ (Finset.univ.erase i₀).card := by
       rw [Finset.card_erase_of_mem (Finset.mem_univ _), Finset.card_univ, Fintype.card_fin]
       omega
     obtain ⟨T, hT_sub, hT_card⟩ := Finset.exists_subset_card_eq hle
@@ -613,14 +600,8 @@ theorem strict_interior_detour_robustness
 
 end GeneralDetourChain
 
-/-! ### Part III: Same-Scale (2^k+1)/(2^k+2) Theta-Overlap & Chord-Exclusion Theorems -/
+/-! ### Part III: Same-Scale (2^k+1)/(2^k+2) Theta-Overlap & Attachment-Exclusion Theorems -/
 
-/-- A `ThetaSinglePath` represents two simple cycles C₁, C₂ intersecting in a single shared
-    path P of length p ≥ 1 (endpoints u, v), with internal paths A (length a ≥ 1, |C₁| = p + a + 1)
-    and B (length b ≥ 1, |C₂| = p + b + 1) pairwise disjoint.
-    Here `segA` starts at v and ends at a neighbor of u (length = |C₁| - p ≥ 2? Even cleaner:
-    `pathA` = [u, a₁, ..., a_{L₁-p-1}] of length L₁ - p ≥ 1 with last adj v, and
-    `pathB` = [v, b₁, ..., b_{L₂-p-1}] of length L₂ - p ≥ 1 with last adj u — directly a 2-slot DetourChain!). -/
 structure ThetaOverlap {V : Type*} (G : SimpleGraph V) where
   L₁ : ℕ
   L₂ : ℕ
@@ -628,9 +609,7 @@ structure ThetaOverlap {V : Type*} (G : SimpleGraph V) where
   hp : 1 ≤ p
   hL₁ : p + 2 ≤ L₁
   hL₂ : p + 2 ≤ L₂
-  -- Outer arc of C₁: starts at u, ends at neighbor of v, length = L₁ - p ≥ 2
   arcA : List V
-  -- Outer arc of C₂ (reversed): starts at v, ends at neighbor of u, length = L₂ - p ≥ 2
   arcB : List V
   arcA_len : arcA.length = L₁ - p
   arcB_len : arcB.length = L₂ - p
@@ -707,9 +686,9 @@ theorem same_scale_2k_plus_1_no_single_edge_overlap {V : Type*} {G : SimpleGraph
 
 /-- Theorem (Same-Scale (2^k+1)-Cycle General Forbidden Path Overlaps):
     In any power-free graph, two simple (2^k+1)-cycles cannot intersect in a single path of
-    length p = 2^k + 1 - 2^(r-1) for any 2 ≤ r ≤ k + 1. -/
+    length p = 2^k + 1 - 2^(r-1) for any r ≥ 2. -/
 theorem same_scale_2k_plus_1_forbidden_path_overlaps {V : Type*} {G : SimpleGraph V}
-    (hpf : PowerFree G) {k r : ℕ} (hr2 : 2 ≤ r) (hrk : r ≤ k + 1)
+    (hpf : PowerFree G) {k r : ℕ} (hr2 : 2 ≤ r)
     (T : ThetaOverlap G) (h1 : T.L₁ = 2 ^ k + 1) (h2 : T.L₂ = 2 ^ k + 1)
     (hp : T.p + 2 ^ (r - 1) = 2 ^ k + 1) :
     False := by
@@ -760,21 +739,6 @@ theorem no_c5_single_edge_on_2k_minus_3 {V : Type*} {G : SimpleGraph V}
   have hpow8 : 8 ≤ 2 ^ k := by
     calc 8 = 2 ^ 3 := by norm_num
       _ ≤ 2 ^ k := Nat.pow_le_pow_right (by omega) hk
-  omega
-
-/-- Theorem (Forbidden Chord on (2^k+1)-Cycle):
-    A chord of a simple (2^k+1)-cycle splitting off an arc of length a = 2^r - 1 (2 ≤ r ≤ k)
-    or a = 2 (triangle chord, giving C_{2^k} on the complementary arc) is impossible in a power-free graph.
-    (Modeled as a ThetaOverlap with L₁ = 2^k + 1, L₂ = a + 1, p = a.) -/
-theorem no_distance_2_chord_on_2k_plus_1 {V : Type*} {G : SimpleGraph V}
-    (hpf : PowerFree G) {k : ℕ} (hk : 2 ≤ k)
-    (T : ThetaOverlap G) (h1 : T.L₁ = 2 ^ k + 1) (h2 : T.L₂ = 3) (hp : T.p = 2) :
-    False := by
-  --Wait: for p = 2, hL2 requires p + 2 ≤ L2, so model complementary arc: L1 = 2^k + 1, L2 = 3?
-  -- No, L2 = 3 violates p + 2 ≤ L2 when p = 2; instead, a distance-2 chord has complementary
-  -- arc of length 2^k - 1 plus the 1 chord edge = 2^k! Handled cleanly by direct SimpleCycle length:
-  exfalso
-  have := T.hL₂
   omega
 
 /-! ### Part IV: Exact C5-Intersection Rigidity & C5-Cluster Packing Density Bound -/
