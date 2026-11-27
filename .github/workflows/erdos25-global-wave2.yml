@@ -1,0 +1,56 @@
+name: Erdos 25 global-target probes wave 2
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'jobs/erdos25-global-wave2/**'
+      - '.github/workflows/erdos25-global-wave2.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  exact-finite-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        case:
+          - {id: seed, period: 30030, cutoff: 390, seed: 2501}
+          - {id: squarefree-small, period: 30030, cutoff: 15015, seed: 2502}
+          - {id: prime-powers, period: 720720, cutoff: 180180, seed: 2503}
+          - {id: squarefree-large, period: 9699690, cutoff: 2424922, seed: 2504}
+        objective: [entropy, energy]
+    env:
+      JOB_DIR: jobs/erdos25-global-wave2
+      PROBE_PERIOD: ${{ matrix.case.period }}
+      PROBE_CUTOFF: ${{ matrix.case.cutoff }}
+      PROBE_SEED: ${{ matrix.case.seed }}
+      PROBE_CASE: ${{ matrix.case.id }}
+      PROBE_OBJECTIVE: ${{ matrix.objective }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the finite search
+        run: |
+          mkdir -p out
+          g++ --version > out/compiler.txt
+          g++ -O3 -std=c++17 -Wall -Wextra -Werror "$JOB_DIR/search.cpp" -o /tmp/e25-search
+          sha256sum "$JOB_DIR/search.cpp" "$JOB_DIR/verify.py" "$JOB_DIR/seed.py" > out/source.sha256
+          git rev-parse HEAD > out/commit.txt
+      - name: Search a bounded finite model
+        run: |
+          seed_args=()
+          if [ "$PROBE_CASE" = seed ]; then
+            python "$JOB_DIR/seed.py" out/seed.tsv
+            seed_args=(out/seed.tsv)
+          fi
+          /tmp/e25-search "$PROBE_PERIOD" "$PROBE_CUTOFF" "$PROBE_SEED" 90 "$PROBE_OBJECTIVE" out/candidate.json 100000000 "${seed_args[@]}" | tee out/search.log
+      - name: Independently enumerate the candidate
+        run: python "$JOB_DIR/verify.py" out/candidate.json out/verified.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos25-wave2-${{ matrix.case.id }}-${{ matrix.objective }}
+          path: out/
+          retention-days: 30
