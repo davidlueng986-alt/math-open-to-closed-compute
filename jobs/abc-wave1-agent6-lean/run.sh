@@ -11,5 +11,9 @@ cd /opt/mathlib4
 lean --version | tee "$out_dir/lean-version.txt"
 grep -F 'version 4.36.0' "$out_dir/lean-version.txt"
 git rev-parse HEAD > "$out_dir/mathlib-commit.txt"
-lake env lean -o "$out_dir/Structural.olean" "$job_dir/Structural.lean" 2>&1 | tee "$out_dir/kernel.log"
+lean_source="$(mktemp /opt/mathlib4/ABCWave1Agent6_XXXXXXXX.lean)"
+trap 'rm -f "$lean_source"' EXIT
+cp "$job_dir/Structural.lean" "$lean_source"
+cmp "$job_dir/Structural.lean" "$lean_source"
+lake env lean -o "$out_dir/Structural.olean" "$lean_source" 2>&1 | tee "$out_dir/kernel.log"
 python3 "$job_dir/audit.py" "$job_dir/Structural.lean" "$out_dir"
