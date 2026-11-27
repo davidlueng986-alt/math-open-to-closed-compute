@@ -240,7 +240,8 @@ lemma liftWalk_length {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
   induction p generalizing g with
   | nil => simp [liftWalk]
   | cons h q ih =>
-    simp only [liftWalk, Walk.length_copy, Walk.length_cons, ih]
+    unfold liftWalk
+    rw [Walk.length_copy, Walk.length_cons, Walk.length_cons, ih]
 
 lemma liftWalk_support_map_fst {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
     (α : SkewVoltage V Γ) {u v : V} (p : G.Walk u v) (g : Γ) :
@@ -248,7 +249,8 @@ lemma liftWalk_support_map_fst {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph
   induction p generalizing g with
   | nil => simp [liftWalk]
   | cons h q ih =>
-    simp only [liftWalk, Walk.support_copy, Walk.support_cons, List.map_cons, ih]
+    unfold liftWalk
+    rw [Walk.support_copy, Walk.support_cons, Walk.support_cons, List.map_cons, ih]
 
 lemma liftWalk_support_tail_map_fst {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
     (α : SkewVoltage V Γ) {u v : V} (p : G.Walk u v) (g : Γ) :
@@ -261,7 +263,8 @@ lemma liftWalk_support_shift {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V
   induction p generalizing g with
   | nil => simp [liftWalk]
   | @cons a b c h q ih =>
-    simp only [liftWalk, Walk.support_copy, Walk.support_cons, List.map_cons]
+    unfold liftWalk
+    rw [Walk.support_copy, Walk.support_copy, Walk.support_cons, Walk.support_cons, List.map_cons]
     congr 1
     have hEq : g + δ + α.val a b = (g + α.val a b) + δ := by abel
     rw [hEq, ih]
@@ -874,7 +877,7 @@ theorem abelian_cover_barbell_commutator_simple {V Γ : Type*} [AddCommGroup Γ]
   have cycle_rev_tail_map_fst : ∀ {z : V} (c : G.Walk z z) (g : Γ),
       (liftWalk α c g).reverse.support.tail.map Prod.fst = c.reverse.support.tail := by
     intro z c g
-    rw [List.map_tail, Walk.support_reverse, ← List.map_reverse, liftWalk_support_map_fst,
+    rw [List.map_tail, Walk.support_reverse, List.map_reverse, liftWalk_support_map_fst,
       ← Walk.support_reverse]
   have cycle_rev_tail_nodup : ∀ {z : V} (c : G.Walk z z) (hc : c.IsCycle) (g : Γ),
       (liftWalk α c g).reverse.support.tail.Nodup := by
@@ -1101,8 +1104,9 @@ lemma cycle_of_two_disjoint_paths_bridged {V : Type*} (G : SimpleGraph V)
     · simp only [w, Walk.length_append, Walk.length_cons, Walk.length_reverse, Walk.length_nil]
       omega
     · have htail : w.support.tail = p.support.tail ++ (q.reverse.support ++ [u1]) := by
-        simp only [w, walk_append_support_tail, Walk.support_cons, List.tail_cons,
-          Walk.support_append, Walk.support_nil]
+        dsimp only [w]
+        rw [walk_append_support_tail]
+        simp only [Walk.support_cons, List.tail_cons, Walk.support_append, Walk.support_nil]
       rw [htail]
       have hqr : q.reverse.support.Nodup := by
         rw [Walk.support_reverse]; exact List.nodup_reverse.mpr hq.support_nodup
@@ -1110,9 +1114,8 @@ lemma cycle_of_two_disjoint_paths_bridged {V : Type*} (G : SimpleGraph V)
       · apply nodup_append_of_disjoint hqr (List.nodup_singleton u1)
         intro z hz hzu
         simp only [List.mem_singleton] at hzu
-        subst hzu
         rw [Walk.support_reverse, List.mem_reverse] at hz
-        exact hd u1 p.start_mem_support hz
+        exact hd z (hzu ▸ p.start_mem_support) hz
       · intro z hzp hzq
         simp only [List.mem_append, List.mem_singleton] at hzq
         rcases hzq with hzq | rfl
