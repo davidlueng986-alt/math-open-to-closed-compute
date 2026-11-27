@@ -1,10 +1,11 @@
 {
   "problem": "ABC",
   "wave": 2,
-  "batch": "agent6",
-  "request_id": "abc-wave2-lean-initial-2026-11-27",
+  "batch": "all",
+  "request_id": "abc-wave2-all-six-2026-11-27",
   "authorized_by": "explicit_user_request_2026-11-27",
-  "purpose": "Verify 14 structural and quantified composition declarations; no full abc closure claimed.",
+  "purpose": "Verify five exact finite/symbolic math packages and 14 Lean4.36 declarations after plan checkout correction.",
   "paid_resources": false,
-  "schedule": false
+  "schedule": false,
+  "supersedes_infrastructure_failure": 45970801916
 }
