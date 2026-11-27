@@ -564,9 +564,8 @@ theorem completion_min_deg_three {V : Type u} [Fintype V] [DecidableEq V]
     have ha := degree_add_new_edge_left K a b hab hnadj
     have h3 := hwfree a
     simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at ha hd h3
-    change 3 ≤ Nat.card (H.neighborSet a)
-    rw [ha.trans hd]
-    exact h3
+    have heq : Nat.card (H.neighborSet a) = Nat.card (G.neighborSet a.1) := ha.trans hd
+    exact heq.symm ▸ h3
   by_cases hvb : v = b
   · subst v
     have hd := induce_degree_add_out' G A b
@@ -574,9 +573,8 @@ theorem completion_min_deg_three {V : Type u} [Fintype V] [DecidableEq V]
     have hb := degree_add_new_edge_right K a b hab hnadj
     have h3 := hwfree b
     simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at hb hd h3
-    change 3 ≤ Nat.card (H.neighborSet b)
-    rw [hb.trans hd]
-    exact h3
+    have heq : Nat.card (H.neighborSet b) = Nat.card (G.neighborSet b.1) := hb.trans hd
+    exact heq.symm ▸ h3
   have hout : ((G.neighborFinset v.1).filter (fun z => z ∉ A)) = ∅ := by
     rw [Finset.filter_eq_empty_iff]
     intro z hz hn
@@ -598,9 +596,8 @@ theorem completion_min_deg_three {V : Type u} [Fintype V] [DecidableEq V]
   have heq : Nat.card (H.neighborSet v) = Nat.card (K.neighborSet v) := Nat.card_congr e
   have h3 := hwfree v
   simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at hd h3
-  change 3 ≤ Nat.card (H.neighborSet v)
-  rw [heq.trans hd]
-  exact h3
+  have heq2 : Nat.card (H.neighborSet v) = Nat.card (G.neighborSet v.1) := heq.trans hd
+  exact heq2.symm ▸ h3
 
 /-- Deleting the virtual edge `ab` from `Completion G A a b` recovers `G.induce A`. -/
 theorem completion_sdiff_edge {V : Type u} (G : SimpleGraph V) (A : Set V)
