@@ -36,7 +36,8 @@ theorem signature_rank (k n : ℕ) (h : k + 1 ≤ totalPrimeRank n) :
     totalPrimeRank (signature k n) = (n.primeFactorsList.take (k + 1)).length :=
       hperm.length_eq.symm
     _ = k + 1 := by
-      rw [List.length_take, Nat.min_eq_left h]
+      rw [List.length_take]
+      exact Nat.min_eq_left (by simpa [totalPrimeRank] using h)
 
 theorem totalPrimeRank_mono_of_dvd {a b : ℕ} (h : a ∣ b) (hb : b ≠ 0) :
     totalPrimeRank a ≤ totalPrimeRank b :=
@@ -84,7 +85,8 @@ theorem finite_reciprocal_domination
       · exact_mod_cast hpositive n hn
       · exact_mod_cast hbound n hn
     _ = ∑ d ∈ F.image sig, (1 : ℝ) / ((d * weight d : ℕ) : ℝ) :=
-      (Finset.sum_image hinj).symm
+      (Finset.sum_image
+        (f := fun d : ℕ => (1 : ℝ) / ((d * weight d : ℕ) : ℝ)) hinj).symm
 
 theorem signature_reciprocal_domination
     (F : Finset ℕ) (k : ℕ) (weight : ℕ → ℕ)

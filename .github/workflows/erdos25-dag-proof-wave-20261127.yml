@@ -10,14 +10,46 @@ permissions:
   contents: read
   packages: read
 jobs:
+  changed-proofs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      modules: ${{ steps.plan.outputs.modules }}
+      crt: ${{ steps.plan.outputs.crt }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - id: plan
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          python - <<'PYPLAN' >> "$GITHUB_OUTPUT"
+          import json, os, subprocess
+          all_modules = ['BoundedGcdSignature', 'BoundedQuotient', 'AffineResidues']
+          if os.environ['EVENT_NAME'] == 'workflow_dispatch':
+              modules, crt = all_modules, True
+          else:
+              changed = subprocess.check_output(['git', 'diff', '--name-only', os.environ['BEFORE_SHA'], 'HEAD'], text=True).splitlines()
+              prefix = 'jobs/erdos25-dag-proof-wave-20261127/'
+              modules = [m for m in all_modules if prefix + m + '.lean' in changed]
+              crt = prefix + 'check_two_primes.py' in changed
+              if prefix + 'verify.sh' in changed or not (modules or crt):
+                  modules = all_modules
+          print('modules=' + json.dumps(modules))
+          print('crt=' + str(crt).lower())
+          PYPLAN
   lean:
+    needs: changed-proofs
+    if: needs.changed-proofs.outputs.modules != '[]'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     strategy:
       fail-fast: false
       max-parallel: 3
       matrix:
-        module: [BoundedGcdSignature, BoundedQuotient, AffineResidues]
+        module: ${{ fromJSON(needs.changed-proofs.outputs.modules) }}
     container:
       image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
       credentials:
@@ -37,6 +69,8 @@ jobs:
           path: out/
           retention-days: 30
   crt-replay:
+    needs: changed-proofs
+    if: needs.changed-proofs.outputs.crt == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
