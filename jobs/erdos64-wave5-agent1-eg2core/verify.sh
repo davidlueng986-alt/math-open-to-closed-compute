@@ -8,28 +8,22 @@ mkdir -p "${OUT_DIR}"
 
 git -c safe.directory="*" rev-parse HEAD | tee "${OUT_DIR}/source_commit.txt"
 
-# Locate pre-built Mathlib lake project in the Lean container
 LAKE_DIR=""
-for cand in /opt/mathlib-project /opt/lean-project /opt/mathlib /workspace /root/mathlib-project; do
+for cand in /opt/mathlib4 /opt/mathlib-project /opt/lean-project /opt/mathlib /workspace; do
   if [ -f "${cand}/lakefile.lean" ] || [ -f "${cand}/lakefile.toml" ]; then
     LAKE_DIR="${cand}"
     break
   fi
 done
 if [ -z "${LAKE_DIR}" ]; then
-  LAKE_FILE="$(find /opt /workspace /root -maxdepth 3 \( -name 'lakefile.lean' -o -name 'lakefile.toml' \) 2>/dev/null | head -n 1 || true)"
-  if [ -n "${LAKE_FILE}" ]; then
-    LAKE_DIR="$(dirname "${LAKE_FILE}")"
-  fi
-fi
-
-if [ -z "${LAKE_DIR}" ]; then
   echo "ERROR: Could not locate Mathlib lake project directory" >&2
   exit 1
 fi
 echo "Using LAKE_DIR=${LAKE_DIR}"
 
-if [ -d "${LAKE_DIR}/.lake/packages/mathlib/.git" ]; then
+if [ -d "${LAKE_DIR}/.git" ]; then
+  git -c safe.directory="*" -C "${LAKE_DIR}" rev-parse HEAD | tee "${OUT_DIR}/mathlib_commit.txt"
+elif [ -d "${LAKE_DIR}/.lake/packages/mathlib/.git" ]; then
   git -c safe.directory="*" -C "${LAKE_DIR}/.lake/packages/mathlib" rev-parse HEAD | tee "${OUT_DIR}/mathlib_commit.txt"
 else
   echo "unknown" | tee "${OUT_DIR}/mathlib_commit.txt"
