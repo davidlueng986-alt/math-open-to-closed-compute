@@ -26,7 +26,7 @@ cat << 'EOF' >> out/AuditFile.lean
 #print axioms E64Wave7Agent2.cubic_all_c5_refutation
 #print axioms E64Wave7Agent2.trifree_minimal_bad2_all_c5_refutation
 #print axioms E64Wave7Agent2.minimal_bad2_vge4_dist2_dyadic_path
-#print axioms E64Wave7Agent2.minimal_bad2_trifree_s0_at_most_two_s2
+#print axioms E64Wave7Agent2.minimal_bad2_s0_at_most_two_s2
 #print axioms E64Wave7Agent2.minimal_bad2_trifree_adjacent_s1b_forces_c5_deg4
 #print axioms E64Wave7Agent2.minimal_bad2_girth6_s1b_independent
 #print axioms E64Wave7Agent2.minimal_bad2_girth6_v3_density_20_27

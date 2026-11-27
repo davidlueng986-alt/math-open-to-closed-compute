@@ -189,8 +189,6 @@ lemma minimal_bad2_no_safe_deletion_disjoint_defects {V : Type} [Fintype V] {G :
 
 /-! ## PILLAR 1: General Same-Scale & Mixed-Scale (2^k + 1)-Cycle Overlap Obstructions -/
 
-/-- Helper: gluing two internally vertex-disjoint simple u-v paths of lengths >= 2
-    produces a simple cycle of length p1.length + p2.length. -/
 lemma cycle_of_internally_disjoint_paths {V : Type*} {G : SimpleGraph V} {u v : V}
     (huv : u ≠ v) (p1 p2 : G.Walk u v) (hp1 : p1.IsPath) (hp2 : p2.IsPath)
     (hlen1 : 2 ≤ p1.length) (hlen2 : 2 ≤ p2.length)
@@ -247,18 +245,13 @@ lemma cycle_of_internally_disjoint_paths {V : Type*} {G : SimpleGraph V} {u v : 
     have hy2 : y ∈ p2.support := by
       have := Walk.mem_support_of_mem_edges p2.reverse he2 (by simp)
       rwa [Walk.support_reverse, List.mem_reverse] at this
-    have hxy_ne : x ≠ y := by
-      have hadj : G.Adj x y := by
-        have := Walk.adj_of_mem_edges p1 he1
-        exact this
-      exact G.ne_of_adj hadj
+    have hxy_ne : x ≠ y := G.ne_of_adj (Walk.adj_of_mem_edges p1 he1)
     have hpair : (x = u ∧ y = v) ∨ (x = v ∧ y = u) := by
       rcases hdisj x hx1 hx2 with rfl | rfl <;> rcases hdisj y hy1 hy2 with rfl | rfl
       · exact False.elim (hxy_ne rfl)
       · exact Or.inl ⟨rfl, rfl⟩
       · exact Or.inr ⟨rfl, rfl⟩
       · exact False.elim (hxy_ne rfl)
-    -- If s(u, v) ∈ p1.edges, then since p1 is a path from u to v, p1.length ≤ 1, contradicting hlen1!
     have hsuv : s(u, v) ∈ p1.edges := by
       rcases hpair with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
       · exact he1
@@ -292,9 +285,7 @@ lemma cycle_of_internally_disjoint_paths {V : Type*} {G : SimpleGraph V} {u v : 
   simp only [c, Walk.length_append, Walk.length_reverse] at this
   omega
 
-/-- PILLAR 1.1: General Same-Scale (2^k + 1)-Cycle Single-Edge Overlap Obstruction.
-    In any PowerFree graph, two simple (2^k + 1)-cycles sharing an edge uv cannot have
-    internally vertex-disjoint complementary 2^k-paths (otherwise they form a 2^{k+1}-cycle). -/
+/-- PILLAR 1.1: General Same-Scale (2^k + 1)-Cycle Single-Edge Overlap Obstruction. -/
 theorem same_scale_dyadic_plus_one_no_single_edge_overlap {V : Type*} {G : SimpleGraph V}
     (hpf : PowerFree G) {u v : V} (huv : u ≠ v) {k : ℕ} (hk : 2 ≤ k)
     (p1 p2 : G.Walk u v) (hp1 : p1.IsPath) (hp2 : p2.IsPath)
@@ -311,12 +302,10 @@ theorem same_scale_dyadic_plus_one_no_single_edge_overlap {V : Type*} {G : Simpl
   rw [hclen, hl1, hl2, pow_succ]
   omega
 
-/-- PILLAR 1.2: General Same-Scale (2^k + 1)-Cycle Path-Overlap Spectrum Exclusion.
-    If two simple (2^k + 1)-cycles share a path of length l with internally vertex-disjoint
-    complementary arcs of length 2^k + 1 - l, then l ≠ 2^k - 2^{m-1} + 1 for every 2 ≤ m ≤ k + 1. -/
+/-- PILLAR 1.2: General Same-Scale (2^k + 1)-Cycle Path-Overlap Spectrum Exclusion. -/
 theorem same_scale_dyadic_plus_one_path_overlap_exclusion {V : Type*} {G : SimpleGraph V}
     (hpf : PowerFree G) {u v : V} (huv : u ≠ v) {k l m : ℕ}
-    (hk : 2 ≤ k) (hm_lo : 2 ≤ m) (hm_hi : m ≤ k + 1)
+    (hm_lo : 2 ≤ m)
     (p1 p2 : G.Walk u v) (hp1 : p1.IsPath) (hp2 : p2.IsPath)
     (hl1 : p1.length + l = 2 ^ k + 1) (hl2 : p2.length + l = 2 ^ k + 1)
     (hdisj : ∀ w, w ∈ p1.support → w ∈ p2.support → w = u ∨ w = v)
@@ -336,9 +325,7 @@ theorem same_scale_dyadic_plus_one_path_overlap_exclusion {V : Type*} {G : Simpl
   conv_rhs => rw [hm_eq, pow_succ]
   omega
 
-/-- PILLAR 1.3: General Mixed-Scale (2^{k1}+1, 2^{k2}+1)-Cycle Path-Overlap Exclusion.
-    If a (2^{k1}+1)-cycle and a (2^{k2}+1)-cycle (k1 > k2 >= 2) share a path of length l
-    with internally vertex-disjoint complementary arcs, then l ≠ 2^{k2 - 1} + 1. -/
+/-- PILLAR 1.3: General Mixed-Scale (2^{k1}+1, 2^{k2}+1)-Cycle Path-Overlap Exclusion. -/
 theorem mixed_scale_dyadic_plus_one_path_overlap_exclusion {V : Type*} {G : SimpleGraph V}
     (hpf : PowerFree G) {u v : V} (huv : u ≠ v) {k1 k2 l : ℕ}
     (hk2 : 2 ≤ k2) (hk12 : k2 < k1)
@@ -364,12 +351,10 @@ theorem mixed_scale_dyadic_plus_one_path_overlap_exclusion {V : Type*} {G : Simp
 
 /-! ## PILLAR 2: Exact C5-Overlap Rigidity, Blockades & Unconditional All-C5 Refutation -/
 
-/-- Explicit 4-cycle predicate on 4 vertices. -/
 def IsC4 {V : Type*} (G : SimpleGraph V) (a b c d : V) : Prop :=
   G.Adj a b ∧ G.Adj b c ∧ G.Adj c d ∧ G.Adj d a ∧
   a ≠ b ∧ a ≠ c ∧ a ≠ d ∧ b ≠ c ∧ b ≠ d ∧ c ≠ d
 
-/-- Explicit 5-cycle predicate on 5 vertices. -/
 def IsC5 {V : Type*} (G : SimpleGraph V) (v0 v1 v2 v3 v4 : V) : Prop :=
   G.Adj v0 v1 ∧ G.Adj v1 v2 ∧ G.Adj v2 v3 ∧ G.Adj v3 v4 ∧ G.Adj v4 v0 ∧
   v0 ≠ v1 ∧ v0 ≠ v2 ∧ v0 ≠ v3 ∧ v0 ≠ v4 ∧
@@ -377,7 +362,6 @@ def IsC5 {V : Type*} (G : SimpleGraph V) (v0 v1 v2 v3 v4 : V) : Prop :=
   v2 ≠ v3 ∧ v2 ≠ v4 ∧
   v3 ≠ v4
 
-/-- Explicit 8-cycle predicate on 8 vertices. -/
 def IsC8 {V : Type*} (G : SimpleGraph V) (v0 v1 v2 v3 v4 v5 v6 v7 : V) : Prop :=
   G.Adj v0 v1 ∧ G.Adj v1 v2 ∧ G.Adj v2 v3 ∧ G.Adj v3 v4 ∧
   G.Adj v4 v5 ∧ G.Adj v5 v6 ∧ G.Adj v6 v7 ∧ G.Adj v7 v0 ∧
@@ -446,7 +430,6 @@ theorem powerFree_no_c8 {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
     hdisj with ⟨c, hc, hclen⟩
   exact hpf ⟨v0, c, hc, 3, by norm_num, by simp [hclen, p1, p2]⟩
 
-/-- Helper: in a PowerFree graph, a 5-cycle has no chords. -/
 lemma isC5_no_chord {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
     {v0 v1 v2 v3 v4 : V} (h : IsC5 G v0 v1 v2 v3 v4) :
     ¬ G.Adj v0 v2 ∧ ¬ G.Adj v1 v3 ∧ ¬ G.Adj v2 v4 ∧ ¬ G.Adj v3 v0 ∧ ¬ G.Adj v4 v1 := by
@@ -458,7 +441,6 @@ lemma isC5_no_chord {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
   · intro h30; exact powerFree_no_c4 hpf ⟨h30, h01, h12, h23, h03n.symm, h13n.symm, h23n.symm, h01n, h02n, h12n⟩
   · intro h41; exact powerFree_no_c4 hpf ⟨h41, h12, h23, h34, h14n.symm, h24n.symm, h34n.symm, h12n, h13n, h23n⟩
 
-/-- Helper: common neighbor uniqueness in PowerFree graphs (no C4). -/
 lemma powerFree_common_neighbor_unique {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
     {x y z1 z2 : V} (hxy : x ≠ y)
     (hx1 : G.Adj x z1) (hy1 : G.Adj y z1) (hx2 : G.Adj x z2) (hy2 : G.Adj y z2) :
@@ -467,9 +449,7 @@ lemma powerFree_common_neighbor_unique {V : Type*} {G : SimpleGraph V} (hpf : Po
   exact powerFree_no_c4 hpf ⟨hx1, hy1.symm, hy2, hx2.symm,
     G.ne_of_adj hx1, hxy, G.ne_of_adj hx2, G.ne_of_adj hy1.symm, hne, G.ne_of_adj hy2⟩
 
-/-- PILLAR 2.1: Exact C5-Overlap Rigidity in ANY PowerFree graph (no triangle-free needed!).
-    Two distinct 5-cycles sharing edge u-v must share a 2-path (u-v-a or c-u-v)
-    and be completely vertex-disjoint outside that 2-path (forming Theta(2,3,3)). -/
+/-- PILLAR 2.1: Exact C5-Overlap Rigidity in ANY PowerFree graph (no triangle-free needed!). -/
 theorem c5_overlap_rigidity {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
     {u v a b c a' b' c' : V}
     (h1 : IsC5 G u v a b c) (h2 : IsC5 G u v a' b' c')
@@ -477,7 +457,6 @@ theorem c5_overlap_rigidity {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
     (a = a' ∧ b' ≠ b ∧ b' ≠ c ∧ c' ≠ b ∧ c' ≠ c) ∨
     (c = c' ∧ a' ≠ a ∧ a' ≠ b ∧ b' ≠ a ∧ b' ≠ b) := by
   have hnc1 := isC5_no_chord hpf h1
-  have hnc2 := isC5_no_chord hpf h2
   rcases h1 with ⟨huv, hva, hab, hbc, hcu, huvn, huan, hubn, hucn, hvan, hvbn, hvcn, habn, hacn, hbcn⟩
   rcases h2 with ⟨_, hva', ha'b', hb'c', hc'u, _, hua'n, hub'n, huc'n, hva'n, hvb'n, hvc'n, ha'b'n, ha'c'n, hb'c'n⟩
   by_cases haa' : a = a'
@@ -487,13 +466,10 @@ theorem c5_overlap_rigidity {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
       intro hb_eq; subst hb_eq
       exact hcc' (powerFree_common_neighbor_unique hpf hubn hcu.symm hbc.symm hc'u.symm hb'c'.symm)
     have hb'c : b' ≠ c := by
-      intro heq; subst heq
-      exact hnc1.2.2.2.2 (by exact ha'b'.symm) |> fun h => h -- wait: ha'b' : G.Adj a c, hnc1.2.2 is ¬ G.Adj a c
+      intro heq; subst heq; exact hnc1.2.2.1 ha'b'
     have hc'b : c' ≠ b := by
-      intro heq; subst heq
-      exact hnc1.2.2.2.1 hc'u
-    exact Or.inl ⟨rfl, hbb'.symm, by
-      intro heq; subst heq; exact hnc1.2.2 ha'b', hc'b, hcc'.symm⟩
+      intro heq; subst heq; exact hnc1.2.2.2.1 hc'u
+    exact Or.inl ⟨rfl, hbb'.symm, hb'c, hc'b, hcc'.symm⟩
   · by_cases hcc' : c = c'
     · subst hcc'
       have hbb' : b ≠ b' := by
@@ -502,10 +478,9 @@ theorem c5_overlap_rigidity {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
       have ha'b : a' ≠ b := by
         intro heq; subst heq; exact hnc1.2.1 hva'
       have hb'a : b' ≠ a := by
-        intro heq; subst heq; exact hnc1.2.2 hb'c'
+        intro heq; subst heq; exact hnc1.2.2.1 hb'c'
       exact Or.inr ⟨rfl, fun h => haa' h.symm, ha'b, hb'a, hbb'.symm⟩
-    · -- Both a ≠ a' AND c ≠ c': prove impossible (forces C4 or C8)!
-      have ha'b : a' ≠ b := by
+    · have ha'b : a' ≠ b := by
         intro heq; subst heq; exact hnc1.2.1 hva'
       have ha'c : a' ≠ c := by
         intro heq; subst heq; exact hnc1.2.2.2.2 hva'.symm
@@ -525,7 +500,6 @@ theorem c5_overlap_rigidity {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
         intro heq; subst heq
         exact powerFree_no_c4 hpf ⟨hcu.symm, hb'c'.symm, hc'u, huv,
           hucn, huc'n, huvn, hb'c'n.symm, hcc', G.ne_of_adj hc'u⟩
-      -- Now all 8 vertices [u, c, b, a, v, a', b', c'] are distinct, forming an explicit C8!
       exact False.elim (powerFree_no_c8 hpf (v0 := u) (v1 := c) (v2 := b) (v3 := a)
         (v4 := v) (v5 := a') (v6 := b') (v7 := c') ⟨hcu.symm, hbc.symm, hab.symm, hva.symm,
           hva', ha'b', hb'c', hc'u, by
@@ -548,7 +522,6 @@ theorem c5_star_obstruction {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
   · exact h.1 ha
   · exact h.2 hc
 
-/-- Helper: cyclic rotations and reversal of IsC5. -/
 lemma isC5_rot {V : Type*} {G : SimpleGraph V} {v0 v1 v2 v3 v4 : V}
     (h : IsC5 G v0 v1 v2 v3 v4) : IsC5 G v1 v2 v3 v4 v0 := by
   rcases h with ⟨h01, h12, h23, h34, h40, h01n, h02n, h03n, h04n, h12n, h13n, h14n, h23n, h24n, h34n⟩
@@ -560,8 +533,6 @@ lemma isC5_rev {V : Type*} {G : SimpleGraph V} {v0 v1 v2 v3 v4 : V}
   exact ⟨h40.symm, h34.symm, h23.symm, h12.symm, h01.symm,
     h04n, h03n, h02n, h01n, h34n.symm, h24n.symm, h14n.symm, h23n.symm, h13n.symm, h12n.symm⟩
 
-/-- Helper: if deg(v) = 3 and N(v) contains 3 distinct vertices x, y, z, then every neighbor of v
-    lies in {x, y, z}. -/
 lemma mem_of_degree_three {V : Type*} [Fintype V] {G : SimpleGraph V} {v x y z w : V}
     (hdeg : G.degree v = 3)
     (hvx : G.Adj v x) (hvy : G.Adj v y) (hvz : G.Adj v z)
@@ -581,9 +552,7 @@ lemma mem_of_degree_three {V : Type*} [Fintype V] {G : SimpleGraph V} {v x y z w
     rw [heq, SimpleGraph.mem_neighborFinset]; exact hvw
   simpa using hw
 
-/-- PILLAR 2.3: Strong Spine-Edge C5-Blockade (NO triangle-free needed, ARBITRARY deg(w)!).
-    In any Theta(2,3,3) with shared 2-path u-a-w in a PowerFree graph, if deg(u) = deg(a) = 3
-    and t is the third neighbor of a, then NO 5-cycle contains the edge a-t. -/
+/-- PILLAR 2.3: Strong Spine-Edge C5-Blockade (NO triangle-free needed, ARBITRARY deg(w)!). -/
 theorem theta233_strong_spine_edge_c5_blockade {V : Type*} [Fintype V] {G : SimpleGraph V}
     (hpf : PowerFree G)
     {a u w v2 v3 c1 c2 t p q r : V}
@@ -593,9 +562,6 @@ theorem theta233_strong_spine_edge_c5_blockade {V : Type*} [Fintype V] {G : Simp
     (hat : G.Adj a t) (htu : t ≠ u) (htw : t ≠ w)
     (hC3 : IsC5 G a t p q r) :
     False := by
-  -- Extract Theta(2,3,3) distinctness via c5_overlap_rigidity on edge a-u
-  have hrig := c5_overlap_rigidity hpf (isC5_rot (isC5_rev hC1)) (isC5_rot (isC5_rev hC2))
-  -- Actually simpler: directly use c5_overlap_rigidity on u-a!
   have hrig_ua := c5_overlap_rigidity hpf hC1 hC2 (Or.inr hv23)
   have hdisj_theta : c2 ≠ c1 ∧ c2 ≠ v2 ∧ v3 ≠ c1 ∧ v3 ≠ v2 := by
     rcases hrig_ua with ⟨_, h1, h2, h3, h4⟩ | ⟨heq, _⟩
@@ -607,28 +573,23 @@ theorem theta233_strong_spine_edge_c5_blockade {V : Type*} [Fintype V] {G : Simp
   have hr_nb : r = u ∨ r = w ∨ r = t :=
     mem_of_degree_three hdega hua.symm haw hat huan.symm htu.symm htw.symm hC3.2.2.2.2.1.symm
   rcases hr_nb with rfl | rfl | rfl
-  · -- Case 1: r = u, so hC3 is IsC5 G a t p q u, i.e., C3 uses t-a-u!
-    have hq_nb : q = a ∨ q = v2 ∨ q = v3 :=
+  · have hq_nb : q = a ∨ q = v2 ∨ q = v3 :=
       mem_of_degree_three hdegu hua hv2u.symm hv3u.symm huv2n huv3n hv23 hC3.2.2.2.1.symm
     rcases hq_nb with rfl | rfl | rfl
     · exact hC3.2.2.2.2.2.2.2.1 rfl
-    · -- q = v2: C3 = (a, t, p, v2, u). Check that (t, a, w, c2, v3, u, v2, p) is a C8!
-      rcases hC3 with ⟨_, htp, hpv2, _, _, hatn, hapn, _, _, htpn, htv2n, _, hpv2n, hpun, _⟩
-      have hnc1 := isC5_no_chord hpf ⟨hua, haw, hwc1, hc1v2, hv2u, huan, huwn, huc1n, huv2n, hawn, hac1n, hav2n, hwc1n, hwv2n, hc1v2n⟩
+    · rcases hC3 with ⟨_, htp, hpv2, _, _, hatn, hapn, _, _, htpn, htv2n, _, hpv2n, hpun, _⟩
       have hnc2 := isC5_no_chord hpf ⟨hua, haw, hwc2, hc2v3, hv3u, huan, huwn, huc2n, huv3n, hawn, hac2n, hav3n, hwc2n, hwv3n, hc2v3n⟩
-      have htc2 : t ≠ c2 := by intro heq; subst heq; exact hnc2.2.1.symm |> fun _ => hnc2.2.1 hat
+      have htc2 : t ≠ c2 := by intro heq; subst heq; exact hnc2.2.1 hat
       have htv3 : t ≠ v3 := by intro heq; subst heq; exact hnc2.2.2.2.2 hat.symm
       have hpw : p ≠ w := by
         intro heq; subst heq
         exact powerFree_no_c4 hpf ⟨hua, haw, hpv2, hv2u, huan, huwn, huv2n, hawn, hav2n, hwv2n⟩
       have hpc2 : p ≠ c2 := by
         intro heq; subst heq
-        exact powerFree_no_c4 hpf ⟨hpv2.symm, hv2u, hua, haw, hc2v2, huc2n.symm, hac2n.symm, huv2n, hav2n, hawn⟩ |>
-          fun _ => False.elim (powerFree_no_c4 hpf ⟨hc1v2, hwc1.symm, hwc2, hpv2.symm, hc1v2n.symm, hwv2n.symm, hc2v2.symm, hwc1n.symm, hc21.symm, hwc2n⟩)
+        exact powerFree_no_c4 hpf ⟨hc1v2, hwc1.symm, hwc2, hpv2.symm, hc1v2n.symm, hwv2n.symm, hc2v2.symm, hwc1n.symm, hc21.symm, hwc2n⟩
       have hpv3 : p ≠ v3 := by
         intro heq; subst heq
-        exact powerFree_no_c4 hpf ⟨hpv2, hv2u, hv3u.symm, hpv2.symm, hpv2n, hpun, htpn, huv2n, hv23, huv3n⟩ |>
-          fun _ => False.elim (powerFree_no_c4 hpf ⟨hat, htp, hv3u, hua, hatn, hav3n, huan.symm, htpn, htu, huv3n.symm⟩)
+        exact powerFree_no_c4 hpf ⟨hat, htp, hv3u, hua, hatn, hav3n, huan.symm, htpn, htu, huv3n.symm⟩
       exact powerFree_no_c8 hpf (v0 := t) (v1 := a) (v2 := w) (v3 := c2)
         (v4 := v3) (v5 := u) (v6 := v2) (v7 := p)
         ⟨hat.symm, haw, hwc2, hc2v3, hv3u, hv2u.symm, hpv2.symm, htp.symm, by
@@ -640,8 +601,7 @@ theorem theta233_strong_spine_edge_c5_blockade {V : Type*} [Fintype V] {G : Simp
             ⟨hc2v3n, huc2n.symm, hc2v2, hpc2.symm⟩,
             ⟨huv3n.symm, hv23.symm, hpv3.symm⟩,
             ⟨huv2n, hpun.symm⟩, hpv2n.symm⟩⟩
-    · -- q = v3: symmetric! C3 = (a, t, p, v3, u). Cycle (t, a, w, c1, v2, u, v3, p) is a C8!
-      rcases hC3 with ⟨_, htp, hpv3, _, _, hatn, hapn, _, _, htpn, htv3n, _, hpv3n, hpun, _⟩
+    · rcases hC3 with ⟨_, htp, hpv3, _, _, hatn, hapn, _, _, htpn, htv3n, _, hpv3n, hpun, _⟩
       have hnc1 := isC5_no_chord hpf ⟨hua, haw, hwc1, hc1v2, hv2u, huan, huwn, huc1n, huv2n, hawn, hac1n, hav2n, hwc1n, hwv2n, hc1v2n⟩
       have htc1 : t ≠ c1 := by intro heq; subst heq; exact hnc1.2.1 hat
       have htv2 : t ≠ v2 := by intro heq; subst heq; exact hnc1.2.2.2.2 hat.symm
@@ -665,10 +625,7 @@ theorem theta233_strong_spine_edge_c5_blockade {V : Type*} [Fintype V] {G : Simp
             ⟨hc1v2n, huc1n.symm, hv3c1.symm, hpc1.symm⟩,
             ⟨huv2n.symm, hv23, hpv2.symm⟩,
             ⟨huv3n, hpun.symm⟩, hpv3n.symm⟩⟩
-  · -- Case 2: r = w, so C3 = (a, t, p, q, w) shares edge a-w with BOTH C1 and C2!
-    -- Rotate C1, C2, C3 so edge a-w is first:
-    -- C1_rot = (a, w, c1, v2, u), C2_rot = (a, w, c2, v3, u), C3_rev = (a, w, q, p, t)
-    have hC1_aw : IsC5 G a w c1 v2 u := isC5_rot ⟨hua, haw, hwc1, hc1v2, hv2u, huan, huwn, huc1n, huv2n, hawn, hac1n, hav2n, hwc1n, hwv2n, hc1v2n⟩
+  · have hC1_aw : IsC5 G a w c1 v2 u := isC5_rot ⟨hua, haw, hwc1, hc1v2, hv2u, huan, huwn, huc1n, huv2n, hawn, hac1n, hav2n, hwc1n, hwv2n, hc1v2n⟩
     have hC2_aw : IsC5 G a w c2 v3 u := isC5_rot ⟨hua, haw, hwc2, hc2v3, hv3u, huan, huwn, huc2n, huv3n, hawn, hac2n, hav3n, hwc2n, hwv3n, hc2v3n⟩
     have hC3_aw : IsC5 G a w q p t := isC5_rev hC3
     have hq1 : c1 = q := by
@@ -682,10 +639,7 @@ theorem theta233_strong_spine_edge_c5_blockade {V : Type*} [Fintype V] {G : Simp
     exact hc21 (hq2.trans hq1.symm)
   · exact hC3.2.2.2.2.2.2.2.2.2.2.2.1 rfl
 
-/-- PILLAR 2.4: Rim-Edge C5-Blockade (triangle-free PowerFree, ARBITRARY deg(a) and deg(c1)!).
-    In any Theta(2,3,3) with shared 2-path u-a-w in a triangle-free PowerFree graph,
-    if deg(u) = deg(w) = deg(v2) = 3 and z is the third neighbor of v2, then NO 5-cycle
-    contains the edge v2-z. -/
+/-- PILLAR 2.4: Rim-Edge C5-Blockade (triangle-free PowerFree, ARBITRARY deg(a) and deg(c1)!). -/
 theorem theta233_rim_edge_c5_blockade {V : Type*} [Fintype V] {G : SimpleGraph V}
     (hpf : PowerFree G) (htri : TriangleFree G)
     {a u w v2 v3 c1 c2 z p q r : V}
@@ -706,12 +660,10 @@ theorem theta233_rim_edge_c5_blockade {V : Type*} [Fintype V] {G : SimpleGraph V
   have hr_nb : r = u ∨ r = c1 ∨ r = z :=
     mem_of_degree_three hdegv2 hv2u hc1v2.symm hv2z huc1n hzu.symm hzc1.symm hC3.2.2.2.2.1.symm
   rcases hr_nb with rfl | rfl | rfl
-  · -- Case 1: r = u, so C3 = (v2, z, p, q, u) uses z-v2-u!
-    have hq_nb : q = a ∨ q = v2 ∨ q = v3 :=
+  · have hq_nb : q = a ∨ q = v2 ∨ q = v3 :=
       mem_of_degree_three hdegu hua hv2u.symm hv3u.symm huv2n huv3n hv23 hC3.2.2.2.1.symm
     rcases hq_nb with rfl | rfl | rfl
-    · -- q = a: C3 = (v2, z, p, a, u). Cycle (z, p, a, w, c2, v3, u, v2) is a C8!
-      rcases hC3 with ⟨_, hzp, hpa, _, _, hv2zn, hv2pn, _, _, hzpn, hzan, _, hpan, hpun, _⟩
+    · rcases hC3 with ⟨_, hzp, hpa, _, _, hv2zn, hv2pn, _, _, hzpn, hzan, _, hpan, hpun, _⟩
       have hzw : z ≠ w := by
         intro heq; subst heq
         exact powerFree_no_c4 hpf ⟨hv2u, hua, haw, hv2z.symm, huv2n.symm, hav2n.symm, hwv2n.symm, huan, huwn, hawn⟩
@@ -742,16 +694,12 @@ theorem theta233_rim_edge_c5_blockade {V : Type*} [Fintype V] {G : SimpleGraph V
             ⟨hc2v3n, huc2n.symm, hc2v2⟩,
             ⟨huv3n.symm, hv23.symm⟩, huv2n⟩⟩
     · exact hC3.2.2.2.2.2.2.2.1 rfl
-    · -- q = v3: C3 = (v2, z, p, v3, u) shares edge u-v2 with C1 = (u, a, w, c1, v2),
-      -- differing at u (v3 vs a) AND at v2 (z vs c1) -> violates c5_star_obstruction!
-      have hC1_uv2 : IsC5 G u v2 c1 w a := isC5_rev ⟨hua, haw, hwc1, hc1v2, hv2u, huan, huwn, huc1n, huv2n, hawn, hac1n, hav2n, hwc1n, hwv2n, hc1v2n⟩
+    · have hC1_uv2 : IsC5 G u v2 c1 w a := isC5_rev ⟨hua, haw, hwc1, hc1v2, hv2u, huan, huwn, huc1n, huv2n, hawn, hac1n, hav2n, hwc1n, hwv2n, hc1v2n⟩
       have hC3_uv2 : IsC5 G u v2 z p v3 := isC5_rot (isC5_rot (isC5_rot (isC5_rot hC3)))
       rcases c5_star_obstruction hpf hC1_uv2 hC3_uv2 with h | h
       · exact hzc1 h.symm
       · exact hav3n h
-  · -- Case 2: r = c1, so C3 = (v2, z, p, q, c1) shares edge v2-c1 with C1 = (u, a, w, c1, v2)!
-    -- By c5_star_obstruction on c1-v2, since z ≠ u, C3 must share c1-w, so q = w!
-    have hC1_c1v2 : IsC5 G c1 v2 u a w :=
+  · have hC1_c1v2 : IsC5 G c1 v2 u a w :=
       isC5_rot (isC5_rot (isC5_rot ⟨hua, haw, hwc1, hc1v2, hv2u, huan, huwn, huc1n, huv2n, hawn, hac1n, hav2n, hwc1n, hwv2n, hc1v2n⟩))
     have hC3_c1v2 : IsC5 G c1 v2 z p q := isC5_rot (isC5_rot (isC5_rot (isC5_rot hC3)))
     have hqw : q = w := by
@@ -762,12 +710,10 @@ theorem theta233_rim_edge_c5_blockade {V : Type*} [Fintype V] {G : SimpleGraph V
     have hp_nb : p = a ∨ p = c1 ∨ p = c2 :=
       mem_of_degree_three hdegw haw.symm hwc1 hwc2 hac1n hac2n hc21.symm hC3.2.2.1.symm
     rcases hp_nb with rfl | rfl | rfl
-    · -- p = a: C3 = (v2, z, a, w, c1) gives C4 = (v2, z, a, u)!
-      exact powerFree_no_c4 hpf ⟨hv2z, hC3.2.1, hua.symm, hv2u.symm,
+    · exact powerFree_no_c4 hpf ⟨hv2z, hC3.2.1, hua.symm, hv2u.symm,
         hC3.2.2.2.2.2.1, hav2n.symm, huv2n.symm, hC3.2.2.2.2.2.2.2.2.2.1, hzu, huan.symm⟩
     · exact hC3.2.2.2.2.2.2.2.2.2.2.2.2.1 rfl
-    · -- p = c2: C3 = (v2, z, c2, w, c1). Check that (z, c2, v3, u, a, w, c1, v2) is a C8!
-      rcases hC3 with ⟨_, hzc2, _, _, _, hv2zn, _, _, _, hzc2n, _, _, _, _, _⟩
+    · rcases hC3 with ⟨_, hzc2, _, _, _, hv2zn, _, _, _, hzc2n, _, _, _, _, _⟩
       have hzv3 : z ≠ v3 := by
         intro heq; subst heq; exact htri u v2 v3 hv2u.symm hv2z hv3u.symm
       have hza : z ≠ a := by
@@ -788,8 +734,6 @@ theorem theta233_rim_edge_c5_blockade {V : Type*} [Fintype V] {G : SimpleGraph V
             ⟨hwc1n, hwv2n⟩, hc1v2n⟩⟩
   · exact hC3.2.2.2.2.2.2.2.2.2.2.2.1 rfl
 
-/-- Helper: if every edge incident to a degree-3 vertex u lies on a 5-cycle in a PowerFree graph,
-    then u lies in a Theta(2,3,3) with shared 2-path u-a-w. -/
 lemma degree_three_all_c5_forces_theta233 {V : Type*} [Fintype V] {G : SimpleGraph V}
     (hpf : PowerFree G) {u : V} (hdegu : G.degree u = 3)
     (hc5 : ∀ v, G.Adj u v → ∃ x y z, IsC5 G u v x y z) :
@@ -805,7 +749,6 @@ lemma degree_three_all_c5_forces_theta233 {V : Type*} [Fintype V] {G : SimpleGra
   have hz1_mem : z1 ∈ ({n1, n2, n3} : Finset V) := by
     rw [← hNu, SimpleGraph.mem_neighborFinset]; exact hC1.2.2.2.2.1.symm
   have hz1_ne1 : z1 ≠ n1 := hC1.2.2.2.2.2.2.2.2.2.2.2.1.symm
-  -- WLOG z1 = n2 or z1 = n3; pick the uncovered third neighbor!
   have pick_third : ∀ (p q r : V), G.Adj u p → G.Adj u q → G.Adj u r →
       p ≠ q → p ≠ r → q ≠ r →
       (∀ v, G.Adj u v → v = p ∨ v = q ∨ v = r) →
@@ -815,13 +758,11 @@ lemma degree_three_all_c5_forces_theta233 {V : Type*} [Fintype V] {G : SimpleGra
     rcases hc5 r hr with ⟨xr, yr, zr, hCr⟩
     have hzr : zr = p ∨ zr = q ∨ zr = r := hall zr hCr.2.2.2.2.1.symm
     rcases hzr with rfl | rfl | rfl
-    · -- hCr = (u, r, xr, yr, p), reverse gives (u, p, yr, xr, r)!
-      have hCr' : IsC5 G u p yr xr r := isC5_rev hCr
+    · have hCr' : IsC5 G u p yr xr r := isC5_rev hCr
       rcases c5_overlap_rigidity hpf hCp hCr' (Or.inr hqr) with ⟨hx, _⟩ | ⟨heq, _⟩
       · subst hx; exact ⟨p, x, q, r, y, xr, hCp, hCr', hqr⟩
       · exact False.elim (hqr heq)
-    · -- hCr = (u, r, xr, yr, q), reverse gives (u, q, yr, xr, r); hCp rev gives (u, q, y, x, p)!
-      have hCp' : IsC5 G u q y x p := isC5_rev hCp
+    · have hCp' : IsC5 G u q y x p := isC5_rev hCp
       have hCr' : IsC5 G u q yr xr r := isC5_rev hCr
       rcases c5_overlap_rigidity hpf hCp' hCr' (Or.inr hpr) with ⟨hy, _⟩ | ⟨heq, _⟩
       · subst hy; exact ⟨q, y, p, r, x, xr, hCp', hCr', hpr⟩
@@ -836,9 +777,7 @@ lemma degree_three_all_c5_forces_theta233 {V : Type*} [Fintype V] {G : SimpleGra
   · exact pick_third n1 n3 n2 hn1 hn3 hn2 h13 h12 h23.symm
       (fun v hv => by rcases hall v hv with h | h | h <;> tauto) ⟨x1, y1, hC1⟩
 
-/-- PILLAR 2.5: Unconditional Cubic All-C5 Refutation.
-    No degree-3 vertex u in a PowerFree graph with all neighbors in V3 can have all edges
-    incident to u and to N(u) covered by 5-cycles. -/
+/-- PILLAR 2.5: Unconditional Cubic All-C5 Refutation. -/
 theorem cubic_all_c5_refutation {V : Type*} [Fintype V] {G : SimpleGraph V}
     (hpf : PowerFree G) {u : V} (hdegu : G.degree u = 3)
     (hnb3 : ∀ v, G.Adj u v → G.degree v = 3)
@@ -850,11 +789,6 @@ theorem cubic_all_c5_refutation {V : Type*} [Fintype V] {G : SimpleGraph V}
   have hua : G.Adj u a := hC1.1
   have haw : G.Adj a w := hC1.2.1
   have hdega : G.degree a = 3 := hnb3 a hua
-  -- Extract third neighbor t of a outside {u, w}
-  have hsub : ({u, w} : Finset V) ⊆ G.neighborFinset a := by
-    intro x hx; simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-    rw [SimpleGraph.mem_neighborFinset]
-    rcases hx with rfl | rfl; exact hua.symm; exact haw
   have hcard2 : ({u, w} : Finset V).card = 2 := Finset.card_pair hC1.2.2.2.2.2.2.1
   have hlt : ({u, w} : Finset V).card < (G.neighborFinset a).card := by
     rw [SimpleGraph.card_neighborFinset_eq_degree, hdega, hcard2]; omega
@@ -864,12 +798,10 @@ theorem cubic_all_c5_refutation {V : Type*} [Fintype V] {G : SimpleGraph V}
   rcases hc5_nb a hua t hat with ⟨p, q, r, hC3⟩
   exact theta233_strong_spine_edge_c5_blockade hpf hC1 hC2 hv23 hdega hdegu hat htnot.1 htnot.2 hC3
 
-/-- PILLAR 2.6: Unconditional All-C5 Refutation of Triangle-Free MinimalBad2 / EGRob3ConnCoreSharpTarget.
-    In any triangle-free PowerFree graph G with delta >= 2, |Defects G| <= 2, VGe4 independent,
-    every defect's neighbors in V3, and V3 nonempty, NOT every edge incident to V3 can lie on a C5! -/
+/-- PILLAR 2.6: Unconditional All-C5 Refutation of Triangle-Free MinimalBad2 / EGRob3ConnCoreSharpTarget. -/
 theorem trifree_minimal_bad2_all_c5_refutation {V : Type*} [Fintype V] {G : SimpleGraph V}
     (hpf : PowerFree G) (htri : TriangleFree G)
-    (hmin : MinDegGe G 2) (hdef2 : (Defects G).card ≤ 2)
+    (hmin : MinDegGe G 2)
     (hhigh_ind : ∀ x ∈ VGe4 G, ∀ y ∈ VGe4 G, ¬ G.Adj x y)
     (hdef_nb_v3 : ∀ d ∈ Defects G, ∀ x, G.Adj d x → x ∈ V3 G)
     (hv3_ne : (V3 G).Nonempty)
@@ -881,14 +813,9 @@ theorem trifree_minimal_bad2_all_c5_refutation {V : Type*} [Fintype V] {G : Simp
     ⟨a, w, v2, v3, c1, c2, hC1, hC2, hv23⟩
   have hua : G.Adj u a := hC1.1
   have haw : G.Adj a w := hC1.2.1
-  -- Case split on deg(a): cannot be 3 (Strong Spine-Edge Blockade), so a ∈ Defects G or a ∈ VGe4 G!
   have ha_ne3 : G.degree a ≠ 3 := by
     intro hdega
     have ha3 : a ∈ V3 G := Finset.mem_filter.mpr ⟨Finset.mem_univ _, hdega⟩
-    have hsub : ({u, w} : Finset V) ⊆ G.neighborFinset a := by
-      intro x hx; simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-      rw [SimpleGraph.mem_neighborFinset]
-      rcases hx with rfl | rfl; exact hua.symm; exact haw
     have hlt : ({u, w} : Finset V).card < (G.neighborFinset a).card := by
       rw [Finset.card_pair hC1.2.2.2.2.2.2.1, SimpleGraph.card_neighborFinset_eq_degree, hdega]; omega
     rcases Finset.exists_mem_notMem_of_card_lt_card hlt with ⟨t, htN, htnot⟩
@@ -896,13 +823,11 @@ theorem trifree_minimal_bad2_all_c5_refutation {V : Type*} [Fintype V] {G : Simp
     rcases hall_c5 a ha3 t (SimpleGraph.mem_neighborFinset.mp htN) with ⟨p, q, r, hC3⟩
     exact theta233_strong_spine_edge_c5_blockade hpf hC1 hC2 hv23 hdega hdegu
       (SimpleGraph.mem_neighborFinset.mp htN) htnot.1 htnot.2 hC3
-  -- Extract distinctness of {v2, c1, v3, c2} from c5_overlap_rigidity
   have hrig := c5_overlap_rigidity hpf hC1 hC2 (Or.inr hv23)
   have hdisj : c2 ≠ c1 ∧ c2 ≠ v2 ∧ v3 ≠ c1 ∧ v3 ≠ v2 := by
     rcases hrig with ⟨_, h1, h2, h3, h4⟩ | ⟨heq, _⟩
     · exact ⟨h1, h2, h3, h4⟩
     · exact False.elim (hv23 heq)
-  -- In both remaining cases (a ∈ Defects G or a ∈ VGe4 G), we have w ∈ V3 G!
   have hw_deg3 : G.degree w = 3 := by
     have ha2 := hmin a
     by_cases ha_def : a ∈ Defects G
@@ -917,47 +842,21 @@ theorem trifree_minimal_bad2_all_c5_refutation {V : Type*} [Fintype V] {G : Simp
       have hw2 := hmin w
       simp only [VGe4, Defects, Finset.mem_filter, Finset.mem_univ, true_and] at hw_not4 hw_not2
       omega
-  -- Helper: none of {v2, c1, v3, c2} can lie in V3 G (by Rim-Edge C5-Blockade)!
-  have rim_not_v3 : ∀ {x y : V} (hCa : IsC5 G u a w y x) (hCb : IsC5 G u a w c2 v3)
-      (hxy : x ≠ v3), x ∉ V3 G := by
-    intro x y hCa hCb hxy hx3
-    have hdegx : G.degree x = 3 := (Finset.mem_filter.mp hx3).2
-    have hsub : ({u, y} : Finset V) ⊆ G.neighborFinset x := by
-      intro z hz; simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-      rw [SimpleGraph.mem_neighborFinset]
-      rcases hz with rfl | rfl; exact hCa.2.2.2.2.1; exact hCa.2.2.2.1.symm
-    have hlt : ({u, y} : Finset V).card < (G.neighborFinset x).card := by
-      rw [Finset.card_pair hCa.2.2.2.2.2.2.2.1, SimpleGraph.card_neighborFinset_eq_degree, hdegx]; omega
+  have hv2_not3 : v2 ∉ V3 G := by
+    intro hv23'
+    have hdegv2 : G.degree v2 = 3 := (Finset.mem_filter.mp hv23').2
+    have hlt : ({u, c1} : Finset V).card < (G.neighborFinset v2).card := by
+      rw [Finset.card_pair hC1.2.2.2.2.2.2.2.1, SimpleGraph.card_neighborFinset_eq_degree, hdegv2]; omega
     rcases Finset.exists_mem_notMem_of_card_lt_card hlt with ⟨z, hzN, hznot⟩
     simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hznot
-    rcases hall_c5 x hx3 z (SimpleGraph.mem_neighborFinset.mp hzN) with ⟨p, q, r, hC3⟩
-    exact theta233_rim_edge_c5_blockade hpf htri hCa hCb hxy hdegu hw_deg3 hdegx
-      (SimpleGraph.mem_neighborFinset.mp hzN) hznot.1 hznot.2 hC3
-  have hv2_not3 : v2 ∉ V3 G := rim_not_v3 hC1 hC2 hv23
-  have hv3_not3 : v3 ∉ V3 G := by
-    intro hv33
-    have hdegv3 : G.degree v3 = 3 := (Finset.mem_filter.mp hv33).2
-    have hsub : ({u, c2} : Finset V) ⊆ G.neighborFinset v3 := by
-      intro z hz; simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-      rw [SimpleGraph.mem_neighborFinset]
-      rcases hz with rfl | rfl; exact hC2.2.2.2.2.1; exact hC2.2.2.1.symm
-    have hlt : ({u, c2} : Finset V).card < (G.neighborFinset v3).card := by
-      rw [Finset.card_pair hC2.2.2.2.2.2.2.1, SimpleGraph.card_neighborFinset_eq_degree, hdegv3]; omega
-    rcases Finset.exists_mem_notMem_of_card_lt_card hlt with ⟨z, hzN, hznot⟩
-    simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hznot
-    rcases hall_c5 v3 hv33 z (SimpleGraph.mem_neighborFinset.mp hzN) with ⟨p, q, r, hC3⟩
-    exact theta233_rim_edge_c5_blockade hpf htri hC2 hC1 hv23.symm hdegu hw_deg3 hdegv3
+    rcases hall_c5 v2 hv23' z (SimpleGraph.mem_neighborFinset.mp hzN) with ⟨p, q, r, hC3⟩
+    exact theta233_rim_edge_c5_blockade hpf htri hC1 hC2 hv23 hdegu hw_deg3 hdegv2
       (SimpleGraph.mem_neighborFinset.mp hzN) hznot.1 hznot.2 hC3
   have hc1_not3 : c1 ∉ V3 G := by
     intro hc13
     have hdegc1 : G.degree c1 = 3 := (Finset.mem_filter.mp hc13).2
-    -- Swap u and w: IsC5 G w a u v2 c1 and IsC5 G w a u v3 c2!
     have hC1' : IsC5 G w a u v2 c1 := isC5_rot (isC5_rot (isC5_rev hC1))
     have hC2' : IsC5 G w a u v3 c2 := isC5_rot (isC5_rot (isC5_rev hC2))
-    have hsub : ({w, v2} : Finset V) ⊆ G.neighborFinset c1 := by
-      intro z hz; simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-      rw [SimpleGraph.mem_neighborFinset]
-      rcases hz with rfl | rfl; exact hC1'.2.2.2.2.1; exact hC1'.2.2.2.1.symm
     have hlt : ({w, v2} : Finset V).card < (G.neighborFinset c1).card := by
       rw [Finset.card_pair hC1'.2.2.2.2.2.2.2.1, SimpleGraph.card_neighborFinset_eq_degree, hdegc1]; omega
     rcases Finset.exists_mem_notMem_of_card_lt_card hlt with ⟨z, hzN, hznot⟩
@@ -965,27 +864,6 @@ theorem trifree_minimal_bad2_all_c5_refutation {V : Type*} [Fintype V] {G : Simp
     rcases hall_c5 c1 hc13 z (SimpleGraph.mem_neighborFinset.mp hzN) with ⟨p, q, r, hC3⟩
     exact theta233_rim_edge_c5_blockade hpf htri hC1' hC2' hdisj.1.symm hw_deg3 hdegu hdegc1
       (SimpleGraph.mem_neighborFinset.mp hzN) hznot.1 hznot.2 hC3
-  have hc2_not3 : c2 ∉ V3 G := by
-    intro hc23
-    have hdegc2 : G.degree c2 = 3 := (Finset.mem_filter.mp hc23).2
-    have hC1' : IsC5 G w a u v2 c1 := isC5_rot (isC5_rot (isC5_rev hC1))
-    have hC2' : IsC5 G w a u v3 c2 := isC5_rot (isC5_rot (isC5_rev hC2))
-    have hsub : ({w, v3} : Finset V) ⊆ G.neighborFinset c2 := by
-      intro z hz; simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-      rw [SimpleGraph.mem_neighborFinset]
-      rcases hz with rfl | rfl; exact hC2'.2.2.2.2.1; exact hC2'.2.2.2.1.symm
-    have hlt : ({w, v3} : Finset V).card < (G.neighborFinset c2).card := by
-      rw [Finset.card_pair hC2'.2.2.2.2.2.2.2.1, SimpleGraph.card_neighborFinset_eq_degree, hdegc2]; omega
-    rcases Finset.exists_mem_notMem_of_card_lt_card hlt with ⟨z, hzN, hznot⟩
-    simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hznot
-    rcases hall_c5 c2 hc23 z (SimpleGraph.mem_neighborFinset.mp hzN) with ⟨p, q, r, hC3⟩
-    exact theta233_rim_edge_c5_blockade hpf htri hC2' hC1' hdisj.1 hw_deg3 hdegu hdegc2
-      (SimpleGraph.mem_neighborFinset.mp hzN) hznot.1 hznot.2 hC3
-  -- Every vertex not in V3 is in Defects G ∪ VGe4 G!
-  -- On edge c1-v2: neither is in V3; since VGe4 is independent, at least one is in Defects G.
-  -- Since defects have neighbors ONLY in V3 G, BOTH c1 and v2 are in Defects G? No, even simpler:
-  -- if x ∈ Defects G and G.Adj x y, then y ∈ V3 G, contradicting y ∉ V3 G!
-  -- WAIT: THAT'S EVEN SIMPLER!! NONE of {v2, c1, v3, c2} can be in Defects G either!
   have not_def_of_adj_not_v3 : ∀ {x y : V}, G.Adj x y → y ∉ V3 G → x ∉ Defects G :=
     fun hxy hy3 hxd => hy3 (hdef_nb_v3 x hxd y hxy)
   have hv2_4 : v2 ∈ VGe4 G := by
@@ -1252,8 +1130,6 @@ lemma identGraph_degree_merged {V : Type*} [Fintype V] (G : SimpleGraph V)
     · exact Or.inl h
     · exact Or.inr (Or.inl ⟨rfl, h⟩)
 
-/-- Helper: a simple 2^k-path p between u and v in a PowerFree graph cannot use uw or wv
-    when w is a common neighbor of u and v. -/
 lemma dyadic_path_avoids_common_nb_edges {V : Type*} {G : SimpleGraph V}
     (hpf : PowerFree G) {u v w : V}
     (huw : G.Adj u w) (hwv : G.Adj w v)
@@ -1263,13 +1139,6 @@ lemma dyadic_path_avoids_common_nb_edges {V : Type*} {G : SimpleGraph V}
   have hge4 : 4 ≤ p.length := by
     have : 2 ^ 2 ≤ 2 ^ k := Nat.pow_le_pow_right (by norm_num) hk
     omega
-  have huv : u ≠ v := by
-    intro h; subst h
-    cases p with
-    | nil => simp at hge4
-    | cons _ _ =>
-      have := List.nodup_cons.mp hp.support_nodup
-      exact this.1 (Walk.end_mem_support _)
   constructor
   · intro hmem
     cases p with
@@ -1279,8 +1148,7 @@ lemma dyadic_path_avoids_common_nb_edges {V : Type*} {G : SimpleGraph V}
       rcases hmem with heq | hmem'
       · rw [Sym2.eq_iff] at heq
         rcases heq with ⟨_, rfl⟩ | ⟨hbu, _⟩
-        · -- b = w, so q is a path from w to v of length 2^k - 1 >= 3; closing with wv gives 2^k-cycle!
-          have hq_path : q.IsPath := hp.of_cons
+        · have hq_path : q.IsPath := hp.of_cons
           have hq_len : q.length + 1 = 2 ^ k := by simp only [Walk.length_cons] at hplen; omega
           have hq_ge3 : 3 ≤ q.length := by omega
           let cyc : G.Walk w w := Walk.cons hwv q.reverse
@@ -1319,11 +1187,9 @@ lemma dyadic_path_avoids_common_nb_edges {V : Type*} {G : SimpleGraph V}
         · exact G.ne_of_adj hub hbu.symm
       · have hnd := List.nodup_cons.mp hp.support_nodup
         exact hnd.1 (Walk.mem_support_of_mem_edges q hmem' (by simp))
-  · -- Symmetrically, apply the first half to p.reverse!
-    intro hmem
+  · intro hmem
     have hmem_rev : s(v, w) ∈ p.reverse.edges := by
       rw [Walk.edges_reverse, List.mem_reverse, Sym2.eq_swap]; exact hmem
-    -- Repeat on p.reverse
     have hpr_len : p.reverse.length = 2 ^ k := by rw [Walk.length_reverse, hplen]
     cases hpr : p.reverse with
     | nil => rw [hpr] at hmem_rev; simp at hmem_rev
@@ -1374,9 +1240,7 @@ lemma dyadic_path_avoids_common_nb_edges {V : Type*} {G : SimpleGraph V}
       · have hnd := List.nodup_cons.mp hp_rev.support_nodup
         exact hnd.1 (Walk.mem_support_of_mem_edges q hmem' (by simp))
 
-/-- PILLAR 3.1: Universal V_{>=4}-Mediated Distance-2 Dyadic Path Forcing on MinimalBad2.
-    For any w ∈ VGe4 G and any two distinct non-adjacent neighbors u, v ∈ N(w),
-    there exists a simple u-v path of length 2^k (k >= 2) avoiding both uw and wv! -/
+/-- PILLAR 3.1: Universal V_{>=4}-Mediated Distance-2 Dyadic Path Forcing on MinimalBad2. -/
 theorem minimal_bad2_vge4_dist2_dyadic_path {V : Type} [Fintype V]
     {G : SimpleGraph V} (hG : MinimalBad2 G) {w u v : V}
     (hw4 : w ∈ VGe4 G) (hwu : G.Adj w u) (hwv : G.Adj w v)
@@ -1452,9 +1316,9 @@ theorem minimal_bad2_vge4_dist2_dyadic_path {V : Type} [Fintype V]
 
 /-! ## PILLAR 4: Sharpened Safe-Deletion & Girth >= 6 Cubic Density 20/27 -/
 
-/-- PILLAR 4.1: In triangle-free MinimalBad2, every S0 vertex has <= 2 neighbors in S2. -/
-theorem minimal_bad2_trifree_s0_at_most_two_s2 {V : Type} [Fintype V]
-    {G : SimpleGraph V} (hG : MinimalBad2 G) (htri : TriangleFree G)
+/-- PILLAR 4.1: In ANY MinimalBad2 graph (even WITH triangles!), every V3 vertex has <= 2 neighbors in S2. -/
+theorem minimal_bad2_s0_at_most_two_s2 {V : Type} [Fintype V]
+    {G : SimpleGraph V} (hG : MinimalBad2 G)
     {u x y z : V}
     (hu3 : u ∈ V3 G) (hx3 : x ∈ V3 G) (hy3 : y ∈ V3 G) (hz3 : z ∈ V3 G)
     (hx2 : ((G.neighborFinset x) ∩ VGe4 G).card = 2)
@@ -1565,18 +1429,9 @@ theorem minimal_bad2_trifree_adjacent_s1b_forces_c5_deg4 {V : Type} [Fintype V]
   have huv_ne : u ≠ v := G.ne_of_adj huv
   have hux_ne : u ≠ x := G.ne_of_adj hux
   have hvy_ne : v ≠ y := G.ne_of_adj hvy
-  have hxv_ne : x ≠ v := fun h => htri u v x huv (h ▸ G.loopless v |> fun _ => by exact False.elim (G.loopless v (h ▸ huv))) (by subst h; exact hux)
-  have hyu_ne : y ≠ u := fun h => G.loopless u (by subst h; exact hvy) |> fun _ => by
-    subst h; exact False.elim (G.loopless y (by exact huv))
-  -- Cleanly prove x ≠ v, y ≠ u, x ≠ y using htri:
-  have hx_ne_v : x ≠ v := by
-    intro h; subst h
-    -- Wait: u-v and u-x with x=v is impossible because x has 2 VGe4-nbs while v has 1!
-    omega
-  have hy_ne_u : y ≠ u := by
-    intro h; subst h; omega
-  have hxy_ne : x ≠ y := by
-    intro h; subst h; exact htri u v x huv hvy.symm hux
+  have hx_ne_v : x ≠ v := by intro h; subst h; omega
+  have hy_ne_u : y ≠ u := by intro h; subst h; omega
+  have hxy_ne : x ≠ y := by intro h; subst h; exact htri u v x huv hvy.symm hux
   let K : Finset V := {u, v, x, y}
   have hu_nd : u ∉ Defects G := fun h => by
     have := (Finset.mem_filter.mp hu3).2; have := (Finset.mem_filter.mp h).2; omega
@@ -1649,8 +1504,7 @@ theorem minimal_bad2_trifree_adjacent_s1b_forces_c5_deg4 {V : Type} [Fintype V]
     have hwy_ne : w ≠ y := fun h => hw_notK (by simp [K, h])
     by_cases h0 : ((G.neighborFinset w) ∩ K).card = 0
     · omega
-    · -- w has at least one neighbor in K, hence w ∈ VGe4 G!
-      rcases Finset.card_pos.mp (by omega : 0 < ((G.neighborFinset w) ∩ K).card) with ⟨k, hk⟩
+    · rcases Finset.card_pos.mp (by omega : 0 < ((G.neighborFinset w) ∩ K).card) with ⟨k, hk⟩
       rcases Finset.mem_inter.mp hk with ⟨hkN, hkK⟩
       have hwk : G.Adj w k := SimpleGraph.mem_neighborFinset.mp hkN
       have hw4 : w ∈ VGe4 G := by
@@ -1661,7 +1515,6 @@ theorem minimal_bad2_trifree_adjacent_s1b_forces_c5_deg4 {V : Type} [Fintype V]
         · exact s2_other_ge4 hx3 hx2 hux.symm hu_n4 w hwk.symm hwu_ne
         · exact s2_other_ge4 hy3 hy2 hvy.symm hv_n4 w hwk.symm hwv_ne
       have hdeg4 : 4 ≤ G.degree w := (Finset.mem_filter.mp hw4).2
-      -- Can w have >= 2 neighbors in K? Only {x, y} is possible (triangles & C4 kill all other pairs)!
       by_cases hle1 : ((G.neighborFinset w) ∩ K).card ≤ 1
       · omega
       · push_neg at hle1
@@ -1765,7 +1618,6 @@ theorem minimal_bad2_girth6_v3_density_20_27 {V : Type} [Fintype V]
     (hs1b_ind : ∀ u ∈ V3 G, ((G.neighborFinset u) ∩ VGe4 G).card = 1 →
       ((G.neighborFinset u) ∩ ((V3 G).filter (fun v => ((G.neighborFinset v) ∩ VGe4 G).card = 2))).card = 1 →
       ∀ v ∈ V3 G, ((G.neighborFinset v) ∩ VGe4 G).card = 1 →
-      ((G.neighborFinset v) ∩ ((G.neighborFinset v) ∩ VGe4 G)).card ≤ 1 →
       ((G.neighborFinset v) ∩ ((V3 G).filter (fun w => ((G.neighborFinset w) ∩ VGe4 G).card = 2))).card = 1 →
       ¬ G.Adj u v) :
     20 * Fintype.card V ≤ 27 * (V3 G).card + 52 := by
@@ -1774,7 +1626,6 @@ theorem minimal_bad2_girth6_v3_density_20_27 {V : Type} [Fintype V]
   let S1 := (V3 G).filter (fun v => ((G.neighborFinset v) ∩ VGe4 G).card = 1)
   let S1a := S1.filter (fun v => ((G.neighborFinset v) ∩ S2).card = 0)
   let S1b := S1.filter (fun v => ((G.neighborFinset v) ∩ S2).card = 1)
-  -- Helper: double counting edges between two finsets A and B
   have dc : ∀ (A B : Finset V),
       ∑ a ∈ A, ((G.neighborFinset a) ∩ B).card = ∑ b ∈ B, ((G.neighborFinset b) ∩ A).card := by
     intro A B
@@ -1792,7 +1643,6 @@ theorem minimal_bad2_girth6_v3_density_20_27 {V : Type} [Fintype V]
     apply Finset.sum_congr rfl; intro b _
     apply Finset.sum_congr rfl; intro a _
     simp [SimpleGraph.adj_comm]
-  -- Partition V = Defects ∪ V3 ∪ VGe4
   have hpart : Fintype.card V = (Defects G).card + (V3 G).card + (VGe4 G).card := by
     have hd1 : Disjoint (Defects G) (V3 G) := by
       rw [Finset.disjoint_left]; intro x h1 h2
@@ -1807,7 +1657,6 @@ theorem minimal_bad2_girth6_v3_density_20_27 {V : Type} [Fintype V]
       have := hG.1.2.1 x; omega
     rw [← Finset.card_univ, ← hunion, Finset.card_union_of_disjoint hd2,
         Finset.card_union_of_disjoint hd1]
-  -- Partition V3 = S0 ∪ S1 ∪ S2 and S1 = S1a ∪ S1b
   have hd01 : Disjoint S0 S1 := by
     rw [Finset.disjoint_left]; intro x h1 h2
     have := (Finset.mem_filter.mp h1).2; have := (Finset.mem_filter.mp h2).2; omega
@@ -1833,7 +1682,6 @@ theorem minimal_bad2_girth6_v3_density_20_27 {V : Type} [Fintype V]
   have hv3_card : (V3 G).card = S0.card + S1a.card + S1b.card + S2.card := by
     rw [← hu3, Finset.card_union_of_disjoint hd01_2, Finset.card_union_of_disjoint hd01,
         ← hu1, Finset.card_union_of_disjoint hd_ab]; omega
-  -- 4 * |VGe4| <= |S1a| + |S1b| + 2 * |S2|
   have h4ge4 : 4 * (VGe4 G).card ≤ S1a.card + S1b.card + 2 * S2.card := by
     have hsum_v3 : ∑ v ∈ V3 G, ((G.neighborFinset v) ∩ VGe4 G).card = S1a.card + S1b.card + 2 * S2.card := by
       rw [← hu3, Finset.sum_union hd01_2, Finset.sum_union hd01, ← hu1, Finset.sum_union hd_ab]
@@ -1869,7 +1717,6 @@ theorem minimal_bad2_girth6_v3_density_20_27 {V : Type} [Fintype V]
       calc 4 * (VGe4 G).card = ∑ _h ∈ VGe4 G, 4 := by simp [mul_comm]
         _ ≤ ∑ h ∈ VGe4 G, G.degree h := Finset.sum_le_sum (fun h hh => (Finset.mem_filter.mp hh).2)
     omega
-  -- Edge count out of S2: |S2| = e(S2, S0) + |S1b| + e(S2, Defects)
   let eS0_S2 := ∑ v ∈ S0, ((G.neighborFinset v) ∩ S2).card
   let eD_S2 := ∑ d ∈ Defects G, ((G.neighborFinset d) ∩ S2).card
   have hS2_eq : S2.card = eS0_S2 + S1b.card + eD_S2 := by
@@ -1946,7 +1793,6 @@ theorem minimal_bad2_girth6_v3_density_20_27 {V : Type} [Fintype V]
           = ∑ _v ∈ S1b, 1 := Finset.sum_congr rfl (fun v hv => (Finset.mem_filter.mp hv).2)
         _ = S1b.card := by simp
     omega
-  -- Edge count out of S1b: |S1b| = e(S1b, S0) + e(S1b, S1a) + e(S1b, Defects)
   let eS0_S1b := ∑ v ∈ S0, ((G.neighborFinset v) ∩ S1b).card
   let eS1a_S1b := ∑ v ∈ S1a, ((G.neighborFinset v) ∩ S1b).card
   let eD_S1b := ∑ d ∈ Defects G, ((G.neighborFinset d) ∩ S1b).card
@@ -2007,11 +1853,7 @@ theorem minimal_bad2_girth6_v3_density_20_27 {V : Type} [Fintype V]
                     · have hy1' := (Finset.mem_filter.mp hyb).1
                       have hy_g4 := (Finset.mem_filter.mp hy1').2
                       have hy_s2 := (Finset.mem_filter.mp hyb).2
-                      have htriv : ((G.neighborFinset y) ∩ ((G.neighborFinset y) ∩ VGe4 G)).card ≤ 1 := by
-                        have hsub : (G.neighborFinset y) ∩ ((G.neighborFinset y) ∩ VGe4 G) ⊆ (G.neighborFinset y) ∩ VGe4 G :=
-                          Finset.inter_subset_right
-                        exact le_trans (Finset.card_le_card hsub) (by omega)
-                      exact False.elim (hs1b_ind x hx3 hx_g4 hx_s2 y hy3 hy_g4 htriv hy_s2 hxy)
+                      exact False.elim (hs1b_ind x hx3 hx_g4 hx_s2 y hy3 hy_g4 hy_s2 hxy)
                   · exact False.elim (hyn2 hy2)
             rw [hsplit, Finset.card_sdiff (Finset.union_subset Finset.inter_subset_left Finset.inter_subset_left),
                 Finset.card_union_of_disjoint hdisj_g4_s2,
@@ -2037,7 +1879,6 @@ theorem minimal_bad2_girth6_v3_density_20_27 {V : Type} [Fintype V]
       · exact hd_01a_D.mono (Finset.union_subset (Finset.inter_subset_right.trans Finset.subset_union_left)
           (Finset.inter_subset_right.trans Finset.subset_union_right)) Finset.inter_subset_right
     rw [hsum_split, dc S1b S0, dc S1b S1a, dc S1b (Defects G)]
-  -- Bound eS0_S2 <= 2|S0|, eS0_S1b + eS0_S2 <= 3|S0|, eS1a_S1b <= 2|S1a|, eD_S1b + eD_S2 <= 4
   have heS0_S2_le : eS0_S2 ≤ 2 * S0.card := by
     calc eS0_S2 ≤ ∑ _v ∈ S0, 2 :=
           Finset.sum_le_sum (fun v hv => hs0_le2 v (Finset.mem_filter.mp hv).1 (Finset.mem_filter.mp hv).2)
