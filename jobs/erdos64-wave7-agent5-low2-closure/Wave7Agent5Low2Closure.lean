@@ -79,7 +79,8 @@ theorem select_minimal_wfree_two_cut {V : Type u} [Fintype V]
       apply Set.Subset.antisymm hTA
       intro z hz
       obtain ⟨t, ht⟩ := hs ⟨z, hz⟩
-      exact (congrArg (fun q : A => q.1) ht) ▸ t.2
+      have htz : t.1 = z := congrArg Subtype.val ht
+      exact htz ▸ t.2
     simpa only [Nat.card_eq_fintype_card] using
       Fintype.card_lt_of_injective_not_surjective f hf hns
   omega
@@ -121,7 +122,7 @@ theorem wfree_side_minimal {V : Type u} [Fintype V] [DecidableEq V]
     · intro hv; exact huniq v hv
     · intro hv; exact (show v = z from hv).symm ▸ hz
   rw [hTsing, boundary_singleton_card] at hc
-  have hdz := hwfree ⟨z, hTA hz⟩
+  have hdz : 3 ≤ G.degree z := hwfree ⟨z, hTA hz⟩
   omega
 
 private theorem deg3_third_unique {V : Type u} [Fintype V] [DecidableEq V]
@@ -279,19 +280,23 @@ theorem wfree_completion_degrees {V : Type u} [Fintype V] [DecidableEq V]
       · exact h
     · rintro rfl; exact ⟨hby, hy⟩
   by_cases hza : z = a
-  · subst hza
+  · rw [hza]
     have hd := induce_degree_add_out_local G A a
     rw [hout_a, Finset.card_singleton] at hd
     have ha := degree_add_new_edge_left K a b hab hnadj
-    simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at ha hd
-    exact ha.trans hd
+    have ha' : Nat.card (H.neighborSet a) = K.degree a + 1 := by
+      rw [Nat.card_eq_fintype_card, SimpleGraph.card_neighborSet_eq_degree]
+      exact ha
+    exact ha'.trans hd
   by_cases hzb : z = b
-  · subst hzb
+  · rw [hzb]
     have hd := induce_degree_add_out_local G A b
     rw [hout_b, Finset.card_singleton] at hd
     have hb := degree_add_new_edge_right K a b hab hnadj
-    simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at hb hd
-    exact hb.trans hd
+    have hb' : Nat.card (H.neighborSet b) = K.degree b + 1 := by
+      rw [Nat.card_eq_fintype_card, SimpleGraph.card_neighborSet_eq_degree]
+      exact hb
+    exact hb'.trans hd
   have hout : ((G.neighborFinset z.1).filter (fun t => t ∉ A)) = ∅ := by
     rw [Finset.filter_eq_empty_iff]
     intro t ht hn
@@ -311,8 +316,10 @@ theorem wfree_completion_degrees {V : Type u} [Fintype V] [DecidableEq V]
       left_inv := fun _ => rfl
       right_inv := fun _ => rfl }
   have heq : Nat.card (H.neighborSet z) = Nat.card (K.neighborSet z) := Nat.card_congr e
-  simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at hd
-  exact heq.trans hd
+  have hKdeg : Nat.card (K.neighborSet z) = G.degree z.1 := by
+    rw [Nat.card_eq_fintype_card, SimpleGraph.card_neighborSet_eq_degree]
+    exact hd
+  exact heq.trans hKdeg
 
 /-- **Universal 6-Leaf `*-2` Normal Form** (`C-T-2`, `C-N-2`, `S-T-2`, `S-N-2`, `H-T-2`, `H-N-2`):
 Every `MinimalBad G` with `SmallCut G 2` admits a strictly smaller, 3-edge-connected,
@@ -386,7 +393,6 @@ theorem wfree_minimal_bad_two_cut_normal_form
   -- Prove x ≠ y using 2-connectivity (minimal_bad_no_cut_vertex)
   have hxy : x ≠ y := by
     intro heq
-    subst heq
     let S1 : Finset V := insert x A.toFinset
     let S2 : Finset V := (A.toFinset)ᶜ
     have hcov : S1 ∪ S2 = Finset.univ := by
@@ -424,7 +430,7 @@ theorem wfree_minimal_bad_two_cut_normal_form
     have hvx : v ≠ x := (Finset.mem_erase.mp hv).1
     rcases hcut ⟨u, huA⟩ v hvnotA huv with ⟨_, h⟩ | ⟨_, h⟩
     · exact hvx h
-    · exact hvx h
+    · exact hvx (h.trans heq.symm)
   have hsm : SideMinimal G A := wfree_side_minimal G A hAc hwfree hmin
   have hnadj : ¬G.Adj a.1 b.1 :=
     wfree_minimal_side_ports_nonadjacent G A a b hab x y hx hy hax hby hda hdb hcut hsm
@@ -434,7 +440,7 @@ theorem wfree_minimal_bad_two_cut_normal_form
       3 ≤ Nat.card (Boundary (Completion G A a b) S) :=
     minimal_side_completion_three_edge_connected G A a b hab x y hcut hnadj hsm
   let H := Completion G A a b
-  letI : DecidableRel H.Adj := Classical.decRel _
+  let : DecidableRel H.Adj := Classical.decRel _
   have hdegH : ∀ z : A, 3 ≤ H.degree z := by
     intro z
     have h1 := hdegs z
@@ -466,9 +472,8 @@ theorem wfree_two_cut_high_edge_avoided {V : Type u} [Fintype V] [DecidableEq V]
     HasPower ((Completion G A a b) \ SimpleGraph.edge u v) := by
   classical
   let H := Completion G A a b
-  letI : DecidableRel H.Adj := Classical.decRel _
+  let : DecidableRel H.Adj := Classical.decRel _
   let H' := H \ SimpleGraph.edge u v
-  letI : DecidableRel H'.Adj := Classical.decRel _
   have hHdeg : ∀ z : A, H.degree z = G.degree z.1 := by
     intro z
     have h1 := hdegs z
@@ -485,7 +490,6 @@ theorem wfree_two_cut_high_edge_avoided {V : Type u} [Fintype V] [DecidableEq V]
     apply near_of_except H' v hA2
     intro z hzv
     have hd := erase_edge_degree H u v huv z
-    change H'.degree z + (if z = u ∨ z = v then 1 else 0) = H.degree z at hd
     rw [hHdeg z] at hd
     by_cases hzu : z = u
     · subst hzu; simp at hd; omega
@@ -595,27 +599,30 @@ theorem cycle_using_new_edge_gives_path {W : Type u} {K : SimpleGraph W}
   classical
   let H := K ⊔ SimpleGraph.edge a b
   obtain ⟨k, v0, c, hk, hc, hlen⟩ := hpow
-  have hmem_e : s(a, b) ∈ c.edges := by
+  have mem_edge_of_cycle : ∀ {v : W} (w : H.Walk v v),
+      w.IsCycle → w.length = 2 ^ k → s(a, b) ∈ w.edges := by
+    intro v w hw hwlen
     by_contra hno
-    let cK := liftWalkAvoidEdge c hno
-    have hlenK : cK.length = 2 ^ k := (length_liftWalkAvoidEdge c hno).trans hlen
-    have hsuppK : cK.support = c.support := support_liftWalkAvoidEdge c hno
+    let wK := liftWalkAvoidEdge w hno
+    have hlenK : wK.length = 2 ^ k := (length_liftWalkAvoidEdge w hno).trans hwlen
+    have hsuppK : wK.support = w.support := support_liftWalkAvoidEdge w hno
     have hpow4 : 4 ≤ 2 ^ k := by
       have : 2 ^ 2 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
       simpa using this
-    have hnilK : ¬ cK.Nil := by
+    have hnilK : ¬ wK.Nil := by
       intro h; have := Walk.length_eq_zero_iff.mpr h; omega
-    have hcK : cK.IsCycle := by
+    have hwK : wK.IsCycle := by
       apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
       refine ⟨Walk.IsPath.mk' ?_, by omega⟩
       rw [Walk.support_tail_of_not_nil _ hnilK, hsuppK]
-      exact hc.support_nodup
-    exact hKfree ⟨k, v0, cK, hk, hcK, hlenK⟩
+      exact hw.support_nodup
+    exact hKfree ⟨k, v, wK, hk, hwK, hlenK⟩
+  have hmem_e : s(a, b) ∈ c.edges := mem_edge_of_cycle c hc hlen
   have ha_supp : a ∈ c.support := Walk.fst_mem_support_of_mem_edges c hmem_e
-  let d : H.Walk a a := c.rotate ha_supp
+  let d : H.Walk a a := c.rotate a ha_supp
   have hd : d.IsCycle := hc.rotate ha_supp
-  have hdlen : d.length = 2 ^ k := (Walk.length_rotate c ha_supp).trans hlen
-  have hd_edge : s(a, b) ∈ d.edges := (Walk.edges_rotate c ha_supp).mem_iff.mp hmem_e
+  have hdlen : d.length = 2 ^ k := (Walk.length_rotate c a ha_supp).trans hlen
+  have hd_edge : s(a, b) ∈ d.edges := mem_edge_of_cycle d hd hdlen
   have extract_from_first : ∀ (w : H.Walk a a), w.IsCycle → w.length = 2 ^ k →
       (∃ (hadj : H.Adj a b) (q : H.Walk b a), w = .cons hadj q) →
       ∃ (p : K.Walk a b), p.IsPath ∧ p.length + 1 = 2 ^ k := by
@@ -644,9 +651,9 @@ theorem cycle_using_new_edge_gives_path {W : Type u} {K : SimpleGraph W}
         rw [hd_eq, Walk.edges_cons, List.mem_cons] at hd_edge
         refine hd_edge.resolve_left ?_
         intro heq
-        rcases Sym2.eq_iff.mp heq with ⟨_, h2⟩ | ⟨h1, _⟩
+        rcases Sym2.eq_iff.mp heq with ⟨_, h2⟩ | ⟨_, h2⟩
         · exact hub h2.symm
-        · exact hab h1.symm
+        · exact hab h2.symm
       have hq_nd : q.support.Nodup := by
         have hnd := hd.support_nodup
         rw [hd_eq] at hnd
@@ -685,7 +692,7 @@ theorem wfree_two_cut_ident_dyadic_path {V : Type u} [Fintype V] [DecidableEq V]
     ∃ (k : ℕ) (p : (G.induce A).Walk a b), 2 ≤ k ∧ p.IsPath ∧ p.length = 2 ^ k := by
   classical
   let K := G.induce A
-  letI : DecidableRel K.Adj := Classical.decRel _
+  let : DecidableRel K.Adj := Classical.decRel _
   have hKfree : ¬ HasPower K := fun hp => hm.2.1 (power_induce G A hp)
   have hKa : K.degree a = 2 := by
     have hd := induce_degree_add_out_local G A a
@@ -729,7 +736,7 @@ theorem wfree_two_cut_ident_dyadic_path {V : Type u} [Fintype V] [DecidableEq V]
     rw [hd]; exact hwfree v
   let W := {v : A // v ≠ b}
   let H := identGraph K a b
-  letI : DecidableRel H.Adj := Classical.decRel _
+  let : DecidableRel H.Adj := Classical.decRel _
   let z : W := ⟨a, hab⟩
   have hWcard : Fintype.card W < Fintype.card V := by
     have h1 : Fintype.card W + 1 = Fintype.card A := card_delete_one b
@@ -743,20 +750,20 @@ theorem wfree_two_cut_ident_dyadic_path {V : Type u} [Fintype V] [DecidableEq V]
     have hva : v.1 ≠ a := fun h => hvz (Subtype.ext h)
     let f : K.neighborSet v.1 → H.neighborSet v := fun u =>
       if hub : u.1 = b then
-        ⟨z, ⟨hvz, Or.inr (Or.inr ⟨rfl, hub ▸ u.2⟩)⟩⟩
+        ⟨z, ⟨hvz, Or.inr (Or.inr ⟨rfl, by rw [← hub]; exact u.2⟩)⟩⟩
       else
         ⟨⟨u.1, hub⟩, ⟨fun h => (K.ne_of_adj u.2) (congrArg Subtype.val h), Or.inl u.2⟩⟩
     have hf : Function.Injective f := by
       intro u1 u2 heq
       by_cases h1 : u1.1 = b <;> by_cases h2 : u2.1 = b
       · exact Subtype.ext (h1.trans h2.symm)
-      · simp only [f, dif_pos h1, dif_neg h2] at heq
+      · simp only [f, h1, h2, ↓reduceDIte] at heq
         have h2a : u2.1 = a := (congrArg (fun t => t.1.1) heq).symm
         exact False.elim (hnc ⟨(h2a ▸ u2.2).symm, (h1 ▸ u1.2).symm⟩)
-      · simp only [f, dif_neg h1, dif_pos h2] at heq
+      · simp only [f, h1, h2, ↓reduceDIte] at heq
         have h1a : u1.1 = a := congrArg (fun t => t.1.1) heq
         exact False.elim (hnc ⟨(h1a ▸ u1.2).symm, (h2 ▸ u2.2).symm⟩)
-      · simp only [f, dif_neg h1, dif_neg h2] at heq
+      · simp only [f, h1, h2, ↓reduceDIte] at heq
         exact Subtype.ext (congrArg (fun t => t.1.1) heq)
     have hc := Fintype.card_le_of_injective f hf
     rw [SimpleGraph.card_neighborSet_eq_degree, SimpleGraph.card_neighborSet_eq_degree] at hc
@@ -768,7 +775,7 @@ theorem wfree_two_cut_ident_dyadic_path {V : Type u} [Fintype V] [DecidableEq V]
         rintro c ⟨hac, hbc⟩
         by_contra hne
         exact hKfree (rectangle_power K (K.ne_of_adj hac0) hab (K.ne_of_adj hac)
-          (K.ne_of_adj hbc0).symm hne.symm (K.ne_of_adj hbc).symm hac0 hbc0.symm hbc hac.symm)
+          (K.ne_of_adj hbc0).symm (Ne.symm hne) (K.ne_of_adj hbc).symm hac0 hbc0.symm hbc hac.symm)
       have hc0b : c0 ≠ b := (K.ne_of_adj hbc0).symm
       have hv1_ex : ∃ v1 : A, K.Adj b v1 ∧ v1 ≠ c0 := by
         have hcard2 : (K.neighborFinset b).card = 2 := by
@@ -786,7 +793,9 @@ theorem wfree_two_cut_ident_dyadic_path {V : Type u} [Fintype V] [DecidableEq V]
             (fun u => ⟨⟨u.1, fun h => hnadj (h ▸ u.2)⟩,
               ⟨fun h => (K.ne_of_adj u.2) (congrArg Subtype.val h), Or.inl u.2⟩⟩)
             (fun _ => ⟨⟨v1, (K.ne_of_adj hbv1).symm⟩,
-              ⟨fun h => hnadj ((congrArg Subtype.val h).symm ▸ hbv1).symm,
+              ⟨fun h => hnadj (by
+                have h1 : a = v1 := congrArg Subtype.val h
+                rw [h1]; exact hbv1.symm),
                Or.inr (Or.inl ⟨rfl, hbv1⟩)⟩⟩)
         have hf : Function.Injective f := by
           rintro (u | ⟨⟩) (v | ⟨⟩) heq
@@ -811,7 +820,9 @@ theorem wfree_two_cut_ident_dyadic_path {V : Type u} [Fintype V] [DecidableEq V]
             (fun u => ⟨⟨u.1, fun h => hnadj (h ▸ u.2)⟩,
               ⟨fun h => (K.ne_of_adj u.2) (congrArg Subtype.val h), Or.inl u.2⟩⟩)
             (fun u => ⟨⟨u.1, (K.ne_of_adj u.2).symm⟩,
-              ⟨fun h => hnadj ((congrArg Subtype.val h).symm ▸ u.2).symm,
+              ⟨fun h => hnadj (by
+                have h1 : a = u.1 := congrArg Subtype.val h
+                rw [h1]; exact u.2.symm),
                Or.inr (Or.inl ⟨rfl, u.2⟩)⟩⟩)
         have hf : Function.Injective f := by
           rintro (u | u) (v | v) heq
@@ -870,17 +881,13 @@ theorem two_cut_no_matching_port_sum_pow2 {V : Type u}
     have h1 : cyc.support = p1.support ++ p2.support.tail := Walk.support_append p1 p2
     have h2 : p1.support = pG.support ++ [y.1] := by simp [p1, Walk.support_append]
     have h3 : p2.support = qG.support ++ [a.1] := by simp [p2, Walk.support_append]
-    have h4 : pG.support = a.1 :: pG.support.tail := (pG.cons_tail_support).symm
-    have h5 : qG.support = y.1 :: qG.support.tail := (qG.cons_tail_support).symm
     have h6 : p2.support.tail = qG.support.tail ++ [a.1] := by
-      rw [h3, h5]; rfl
-    calc cyc.support.tail = (p1.support ++ p2.support.tail).tail := by rw [h1]
-      _ = ((a.1 :: pG.support.tail ++ [y.1]) ++ (qG.support.tail ++ [a.1])).tail := by
-          rw [h2, h4, h6]
-      _ = pG.support.tail ++ [y.1] ++ (qG.support.tail ++ [a.1]) := rfl
-      _ = pG.support.tail ++ (y.1 :: qG.support.tail) ++ [a.1] := by
-          simp [List.append_assoc]
-      _ = pG.support.tail ++ qG.support ++ [a.1] := by rw [← h5]
+      rw [h3, ← qG.cons_tail_support]; rfl
+    rw [h1, h2, h6]
+    conv_lhs => rw [← pG.cons_tail_support]
+    simp only [List.cons_append, List.tail_cons, List.append_assoc]
+    conv_rhs => rw [← qG.cons_tail_support]
+    simp only [List.cons_append]
   have hpG_tail_nd : pG.support.tail.Nodup := by
     have h4 : pG.support = a.1 :: pG.support.tail := (pG.cons_tail_support).symm
     rw [h4, List.nodup_cons] at hpG_nd
@@ -963,7 +970,7 @@ theorem exclude_all_six_low2_of_no_cubic_hitting_edge_3ec
       _, _, hnadj, hdegs, hthree, hpower, hfree⟩ :=
       wfree_minimal_bad_two_cut_normal_form G hm hcutG
     let H := Completion G A a b
-    letI : DecidableRel H.Adj := Classical.decRel _
+    let : DecidableRel H.Adj := Classical.decRel _
     have hHdeg : ∀ z : A, H.degree z = G.degree z.1 := by
       intro z
       have h1 := hdegs z
