@@ -120,7 +120,7 @@ theorem exists_pow2_in_octave :
     ∀ L : ℕ, 3 ≤ L → ∃ k : ℕ, 2 ≤ k ∧ L ≤ 2 ^ k ∧ 2 ^ k ≤ 2 * L - 2 := by
   intro L
   induction L using Nat.strong_induction_on with
-  | h L ih =>
+  | ind L ih =>
     intro hL
     by_cases h4 : L ≤ 4
     · exact ⟨2, le_rfl, by omega, by omega⟩
@@ -230,7 +230,9 @@ theorem isCycle_of_dropLast_nodup {V : Type*} {G : SimpleGraph V} {v : V} (p : G
       have hne_q : q.support ≠ [] := SimpleGraph.Walk.support_ne_nil q
       have hlast_q : q.support.getLast hne_q = v := SimpleGraph.Walk.getLast_support q
       have hdecomp : q.support = q.support.dropLast ++ [v] := by
-        rw [← hlast_q, List.dropLast_append_getLast]
+        have h0 := (List.dropLast_append_getLast hne_q).symm
+        rw [hlast_q] at h0
+        exact h0
       have hperm : (v :: q.support).dropLast.Perm (v :: q.support).tail := by
         rw [List.dropLast_cons_of_ne_nil hne_q, List.tail_cons]
         conv_rhs => rw [hdecomp]
@@ -319,21 +321,21 @@ def seg (σ : Fin N.r → Bool) (i : Fin N.r) :
 
 theorem seg_isPath (σ : Fin N.r → Bool) (i : Fin N.r) : (N.seg σ i).IsPath := by
   unfold seg
-  split
-  · exact N.segB_path i
-  · exact N.segA_path i
+  cases h : σ i
+  · simpa [h] using N.segA_path i
+  · simpa [h] using N.segB_path i
 
 theorem seg_pos (σ : Fin N.r → Bool) (i : Fin N.r) : 1 ≤ (N.seg σ i).length := by
   unfold seg
-  split
-  · exact le_trans (N.segA_pos i) (N.segB_ge i)
-  · exact N.segA_pos i
+  cases h : σ i
+  · simpa [h] using N.segA_pos i
+  · simpa [h] using le_trans (N.segA_pos i) (N.segB_ge i)
 
 theorem seg_disjoint (σ : Fin N.r → Bool) {i j : Fin N.r} (hij : i ≠ j) :
     List.Disjoint (N.seg σ i).support.dropLast (N.seg σ j).support.dropLast := by
   have h := N.disjoint_blocks i j hij (σ i) (σ j)
   unfold seg
-  cases h1 : σ i <;> cases h2 : σ j <;> simpa [h1, h2] using h
+  cases h1 : σ i <;> cases h2 : σ j <;> simp only [h1, h2, Bool.false_eq_true, ↓reduceIte] at h ⊢ <;> exact h
 
 /-- Concatenate segments `0, 1, ..., m - 1` along the necklace. -/
 def prefixWalk (σ : Fin N.r → Bool) :
@@ -341,14 +343,13 @@ def prefixWalk (σ : Fin N.r → Bool) :
       G.Walk (N.junction ⟨0, by have := N.hr; omega⟩)
              (N.junction ⟨m % N.r, Nat.mod_lt _ (by have := N.hr; omega)⟩)
   | 0, _ =>
-      SimpleGraph.Walk.copy SimpleGraph.Walk.nil rfl (by
-        congr 1; ext; exact (Nat.zero_mod N.r).symm)
+      SimpleGraph.Walk.copy SimpleGraph.Walk.nil rfl (by simp)
   | m + 1, hm =>
       let idx : Fin N.r := ⟨m, by omega⟩
       have hmod : m % N.r = m := Nat.mod_eq_of_lt (by omega)
       have hcast : N.junction ⟨m % N.r, Nat.mod_lt _ (by have := N.hr; omega)⟩ = N.junction idx := by
         congr 1; ext; exact hmod
-      let wPrev := N.prefixWalk σ m (by omega)
+      let wPrev := prefixWalk σ m (by omega)
       let wSeg := N.seg σ idx
       (SimpleGraph.Walk.copy wPrev rfl hcast).append wSeg
 
@@ -494,12 +495,10 @@ theorem cycleWalk_length_decomp (bs : List Bool) (hbs : bs.length = N.r) :
         rw [ih bs'' hlen'' hget'']
         have hseg : (N.seg σ a).length =
             (N.segA a).length + (if b then (N.segB a).length - (N.segA a).length else 0) := by
-          unfold seg
-          rw [← hb]
           cases b
-          · simp
+          · simp [seg, ← hb]
           · have hle := N.segB_ge a
-            simp only [↓reduceIte]
+            simp [seg, ← hb]
             omega
         omega
   exact hlist (List.finRange N.r) bs (by simp [hbs]) (by
@@ -633,7 +632,7 @@ theorem degree_deleteEdges_singleton {V : Type*} [Fintype V] [DecidableEq V]
         refine ⟨hw, ?_⟩
         rintro (⟨_, h1⟩ | ⟨h1, _⟩)
         · exact hwy h1
-        · exact hne h1.symm
+        · exact hne h1
     rw [← SimpleGraph.card_neighborFinset_eq_degree, ← SimpleGraph.card_neighborFinset_eq_degree,
       hset, Finset.card_erase_of_mem (by simpa using hxy)]
   · by_cases hvy : v = y
