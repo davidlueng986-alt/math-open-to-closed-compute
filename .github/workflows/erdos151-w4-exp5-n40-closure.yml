@@ -1,0 +1,16 @@
+name: erdos151-w4-exp5-n40-closure
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - erdos151-w4-exp5-n40-closure
+
+jobs:
+  verify-n40-closure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and run clean-room n=40 closure verifier
+        run: |
+          g++ -O3 -std=c++17 erdos151-w4-exp5/cleanroom_verify_n40.cpp -o cleanroom_verify_n40
+          ./cleanroom_verify_n40
