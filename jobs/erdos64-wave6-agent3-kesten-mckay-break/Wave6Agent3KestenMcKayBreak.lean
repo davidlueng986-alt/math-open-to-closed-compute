@@ -48,7 +48,7 @@ graph (`d ≥ 3`) of arbitrary unbounded order `n > 0` and arbitrary girth, when
 `2 * n ≤ (d - 1) ^ (2 ^ k)`. -/
 theorem dynamic_k_taillessCount_lb (G : SimpleGraph V) [DecidableRel G.Adj] {d k : ℕ}
     (hd : 3 ≤ d) (hreg : ∀ v : V, G.degree v = d) (hn : 0 < Fintype.card V)
-    (hk : 1 ≤ k) :
+    (_hk : 1 ≤ k) :
     let L := 2 ^ k
     let n : ℚ := (Fintype.card V : ℚ)
     let M : ℚ := ((d - 1 : ℕ) : ℚ) ^ L
@@ -95,14 +95,14 @@ theorem exists_dynamic_k_taillessCount_pos (G : SimpleGraph V) [DecidableRel G.A
   let k := n + 1
   have hk : 1 ≤ k := by omega
   have h2k : 2 * n ≤ 2 ^ k := by
-    have h1 : n + 1 ≤ 2 ^ n := Nat.lt_two_pow_self.le
+    have h1 : n + 1 ≤ 2 ^ n := Nat.lt_two_pow_self
     calc 2 * n ≤ 2 * (n + 1) := by omega
       _ ≤ 2 * 2 ^ n := Nat.mul_le_mul_left 2 h1
       _ = 2 ^ (n + 1) := by ring
   have hdom : 2 * n ≤ (d - 1) ^ (2 ^ k) := by
     have hbase : 2 ≤ d - 1 := by omega
     calc 2 * n ≤ 2 ^ k := h2k
-      _ ≤ 2 ^ (2 ^ k) := Nat.lt_two_pow_self.le
+      _ ≤ 2 ^ (2 ^ k) := Nat.le_of_lt Nat.lt_two_pow_self
       _ ≤ (d - 1) ^ (2 ^ k) := Nat.pow_le_pow_left hbase (2 ^ k)
   exact ⟨k, hk, dynamic_k_taillessCount_pos G hd hreg hn hk hdom⟩
 
@@ -133,7 +133,6 @@ section CycleIntervalForcing
 the contiguous integer interval `[A, B]` contains a power of 2 `2 ^ k` with `k ≥ 2`. -/
 theorem exists_pow2_in_int_interval {A B : ℕ} (hA : 3 ≤ A) (hB : 2 * A - 2 ≤ B) :
     ∃ k : ℕ, 2 ≤ k ∧ A ≤ 2 ^ k ∧ 2 ^ k ≤ B := by
-  -- Let `k` be the smallest integer with `A ≤ 2 ^ k`.
   have hex : ∃ m : ℕ, A ≤ 2 ^ m := ⟨A, Nat.le_of_lt Nat.lt_two_pow_self⟩
   let k := Nat.find hex
   have hk_ge : A ≤ 2 ^ k := Nat.find_spec hex
@@ -264,9 +263,9 @@ def baseWalk {G : SimpleGraph V} : ∀ {a b : V}, BypassChain G a b → G.Walk a
 def realize {G : SimpleGraph V} : ∀ {a b : V}, BypassChain G a b → List Bool → G.Walk a b
   | _, _, .base p, _ => p
   | _, _, .step p huw _ _ _ rest, [] => p.append (Walk.cons huw rest.baseWalk)
-  | _, _, .step p huw z huz hzw rest, false :: bs =>
+  | _, _, .step p huw _ _ _ rest, false :: bs =>
       p.append (Walk.cons huw (rest.realize bs))
-  | _, _, .step p _ z huz hzw rest, true :: bs =>
+  | _, _, .step p _ _ huz hzw rest, true :: bs =>
       p.append (Walk.cons huz (Walk.cons hzw (rest.realize bs)))
 
 /-- Exact length law: realizing `mask` increases the base walk length by `mask.count true`. -/
@@ -280,14 +279,12 @@ theorem realize_length {G : SimpleGraph V} :
   | _, _, .step p huw z huz hzw rest, false :: bs, hlen => by
       simp only [numBypasses, List.length_cons, Nat.add_right_cancel_iff] at hlen
       have ih := realize_length rest bs hlen
-      simp only [realize, baseWalk, Walk.length_append, Walk.length_cons, List.count_cons,
-        beq_self_eq_true, Bool.false_eq_true, ↓reduceIte]
+      simp [realize, baseWalk, Walk.length_append, Walk.length_cons, List.count_cons]
       omega
   | _, _, .step p huw z huz hzw rest, true :: bs, hlen => by
       simp only [numBypasses, List.length_cons, Nat.add_right_cancel_iff] at hlen
       have ih := realize_length rest bs hlen
-      simp only [realize, baseWalk, Walk.length_append, Walk.length_cons, List.count_cons,
-        beq_self_eq_true, ↓reduceIte]
+      simp [realize, baseWalk, Walk.length_append, Walk.length_cons, List.count_cons]
       omega
 
 private theorem mem_support_of_mem_edges {G : SimpleGraph V} :
@@ -319,7 +316,7 @@ private theorem mem_realize_support_tail {G : SimpleGraph V} :
   | _, _, .base p, [], _, x, hx => Or.inl hx
   | _, _, .base _, _ :: _, hlen, _, _ => by simp [numBypasses] at hlen
   | _, _, .step _ _ _ _ _ _, [], hlen, _, _ => by simp [numBypasses] at hlen
-  | _, _, .step p huw z huz hzw rest, false :: bs, hlen, x, hx => by
+  | _, _, .step (w := w) p huw z huz hzw rest, false :: bs, hlen, x, hx => by
       simp only [numBypasses, List.length_cons, Nat.add_right_cancel_iff] at hlen
       simp only [realize, baseWalk, support_append_tail, Walk.support_cons, List.tail_cons,
         List.mem_append, apexes, List.mem_cons] at hx ⊢
@@ -328,7 +325,7 @@ private theorem mem_realize_support_tail {G : SimpleGraph V} :
       · cases hr : (rest.realize bs).support with
         | nil => exact absurd hr (Walk.support_ne_nil _)
         | cons w0 ws =>
-            have hw0 : w0 = _ := by
+            have hw0 : w0 = w := by
               have hstart := Walk.head_support (rest.realize bs)
               rw [hr] at hstart
               simpa using hstart
@@ -341,7 +338,7 @@ private theorem mem_realize_support_tail {G : SimpleGraph V} :
               rcases mem_realize_support_tail rest bs hlen x htail with hbase | hap
               · exact Or.inl (Or.inr (List.mem_of_mem_tail hbase))
               · exact Or.inr (Or.inr hap)
-  | _, _, .step p huw z huz hzw rest, true :: bs, hlen, x, hx => by
+  | _, _, .step (w := w) p huw z huz hzw rest, true :: bs, hlen, x, hx => by
       simp only [numBypasses, List.length_cons, Nat.add_right_cancel_iff] at hlen
       simp only [realize, baseWalk, support_append_tail, Walk.support_cons, List.tail_cons,
         List.mem_append, List.mem_cons, apexes] at hx ⊢
@@ -351,7 +348,7 @@ private theorem mem_realize_support_tail {G : SimpleGraph V} :
       · cases hr : (rest.realize bs).support with
         | nil => exact absurd hr (Walk.support_ne_nil _)
         | cons w0 ws =>
-            have hw0 : w0 = _ := by
+            have hw0 : w0 = w := by
               have hstart := Walk.head_support (rest.realize bs)
               rw [hr] at hstart
               simpa using hstart
@@ -375,7 +372,7 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} :
   | _, _, .base p, [], _, hnd, _, _ => hnd
   | _, _, .base _, _ :: _, hlen, _, _, _ => by simp [numBypasses] at hlen
   | _, _, .step _ _ _ _ _ _, [], hlen, _, _, _ => by simp [numBypasses] at hlen
-  | _, _, .step p huw z huz hzw rest, false :: bs, hlen, hnd, hap_nd, hdisj => by
+  | _, _, .step (w := w) p huw z huz hzw rest, false :: bs, hlen, hnd, hap_nd, hdisj => by
       simp only [numBypasses, List.length_cons, Nat.add_right_cancel_iff] at hlen
       simp only [baseWalk, support_append_tail, Walk.support_cons, List.tail_cons,
         List.nodup_append] at hnd
@@ -391,26 +388,26 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} :
         simp only [baseWalk, support_append_tail, Walk.support_cons, List.tail_cons, List.mem_append]
         exact Or.inr (List.mem_of_mem_tail hmem)
       have ih := realize_support_tail_nodup rest bs hlen hrest_tail_nd hap_nd.2 hrest_disj
-      have hw_not_real : _ ∉ (rest.realize bs).support.tail := by
+      have hw_not_real : w ∉ (rest.realize bs).support.tail := by
         intro hmem
-        rcases mem_realize_support_tail rest bs hlen _ hmem with hbase | hap
+        rcases mem_realize_support_tail rest bs hlen w hmem with hbase | hap
         · cases hrb : rest.baseWalk.support with
           | nil => exact absurd hrb (Walk.support_ne_nil _)
           | cons w0 ws =>
-              have hw0 : w0 = _ := by
+              have hw0 : w0 = w := by
                 have := Walk.head_support rest.baseWalk
                 rw [hrb] at this; simpa using this
               rw [hrb, List.nodup_cons] at hr_nd
               rw [hrb, List.tail_cons] at hbase
               exact hr_nd.1 (hw0 ▸ hbase)
-        · apply hdisj _ (List.mem_cons_of_mem z hap)
+        · apply hdisj w (List.mem_cons_of_mem z hap)
           simp only [baseWalk, support_append_tail, Walk.support_cons, List.tail_cons, List.mem_append]
           exact Or.inr (Walk.start_mem_support rest.baseWalk)
       have hreal_nd : (rest.realize bs).support.Nodup := by
         cases hr : (rest.realize bs).support with
         | nil => exact absurd hr (Walk.support_ne_nil _)
         | cons w0 ws =>
-            have hw0 : w0 = _ := by
+            have hw0 : w0 = w := by
               have := Walk.head_support (rest.realize bs)
               rw [hr] at this; simpa using this
             rw [List.nodup_cons]
@@ -423,12 +420,12 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} :
       cases hr : (rest.realize bs).support with
       | nil => exact absurd hr (Walk.support_ne_nil _)
       | cons w0 ws =>
-          have hw0 : w0 = _ := by
+          have hw0 : w0 = w := by
             have := Walk.head_support (rest.realize bs)
             rw [hr] at this; simpa using this
           rw [hr, List.mem_cons] at hyr
           rcases hyr with rfl | hws
-          · exact hp_disj _ hxp _ (hw0 ▸ Walk.start_mem_support rest.baseWalk) rfl
+          · exact hp_disj w0 hxp w0 (hw0 ▸ Walk.start_mem_support rest.baseWalk) rfl
           · have htail : x ∈ (rest.realize bs).support.tail := by rw [hr]; exact hws
             rcases mem_realize_support_tail rest bs hlen x htail with hbase | hap
             · exact hp_disj x hxp x (List.mem_of_mem_tail hbase) rfl
@@ -436,7 +433,7 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} :
               simp only [baseWalk, support_append_tail, Walk.support_cons, List.tail_cons,
                 List.mem_append]
               exact Or.inl hxp
-  | _, _, .step p huw z huz hzw rest, true :: bs, hlen, hnd, hap_nd, hdisj => by
+  | _, _, .step (w := w) p huw z huz hzw rest, true :: bs, hlen, hnd, hap_nd, hdisj => by
       simp only [numBypasses, List.length_cons, Nat.add_right_cancel_iff] at hlen
       simp only [baseWalk, support_append_tail, Walk.support_cons, List.tail_cons,
         List.nodup_append] at hnd
@@ -452,26 +449,26 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} :
         simp only [baseWalk, support_append_tail, Walk.support_cons, List.tail_cons, List.mem_append]
         exact Or.inr (List.mem_of_mem_tail hmem)
       have ih := realize_support_tail_nodup rest bs hlen hrest_tail_nd hap_nd.2 hrest_disj
-      have hw_not_real : _ ∉ (rest.realize bs).support.tail := by
+      have hw_not_real : w ∉ (rest.realize bs).support.tail := by
         intro hmem
-        rcases mem_realize_support_tail rest bs hlen _ hmem with hbase | hap
+        rcases mem_realize_support_tail rest bs hlen w hmem with hbase | hap
         · cases hrb : rest.baseWalk.support with
           | nil => exact absurd hrb (Walk.support_ne_nil _)
           | cons w0 ws =>
-              have hw0 : w0 = _ := by
+              have hw0 : w0 = w := by
                 have := Walk.head_support rest.baseWalk
                 rw [hrb] at this; simpa using this
               rw [hrb, List.nodup_cons] at hr_nd
               rw [hrb, List.tail_cons] at hbase
               exact hr_nd.1 (hw0 ▸ hbase)
-        · apply hdisj _ (List.mem_cons_of_mem z hap)
+        · apply hdisj w (List.mem_cons_of_mem z hap)
           simp only [baseWalk, support_append_tail, Walk.support_cons, List.tail_cons, List.mem_append]
           exact Or.inr (Walk.start_mem_support rest.baseWalk)
       have hreal_nd : (rest.realize bs).support.Nodup := by
         cases hr : (rest.realize bs).support with
         | nil => exact absurd hr (Walk.support_ne_nil _)
         | cons w0 ws =>
-            have hw0 : w0 = _ := by
+            have hw0 : w0 = w := by
               have := Walk.head_support (rest.realize bs)
               rw [hr] at this; simpa using this
             rw [List.nodup_cons]
@@ -482,7 +479,7 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} :
         cases hr : (rest.realize bs).support with
         | nil => exact absurd hr (Walk.support_ne_nil _)
         | cons w0 ws =>
-            have hw0 : w0 = _ := by
+            have hw0 : w0 = w := by
               have := Walk.head_support (rest.realize bs)
               rw [hr] at this; simpa using this
             rw [hr, List.mem_cons] at hmem
@@ -514,12 +511,12 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} :
       · cases hr : (rest.realize bs).support with
         | nil => exact absurd hr (Walk.support_ne_nil _)
         | cons w0 ws =>
-            have hw0 : w0 = _ := by
+            have hw0 : w0 = w := by
               have := Walk.head_support (rest.realize bs)
               rw [hr] at this; simpa using this
             rw [hr, List.mem_cons] at hyr
             rcases hyr with rfl | hws
-            · exact hp_disj _ hxp _ (hw0 ▸ Walk.start_mem_support rest.baseWalk) rfl
+            · exact hp_disj w0 hxp w0 (hw0 ▸ Walk.start_mem_support rest.baseWalk) rfl
             · have htail : x ∈ (rest.realize bs).support.tail := by rw [hr]; exact hws
               rcases mem_realize_support_tail rest bs hlen x htail with hbase | hap
               · exact hp_disj x hxp x (List.mem_of_mem_tail hbase) rfl
@@ -568,7 +565,7 @@ private theorem realize_edges_nodup {G : SimpleGraph V} :
   | _, _, .base p, [], _, hnd, _, _ => hnd
   | _, _, .base _, _ :: _, hlen, _, _, _ => by simp [numBypasses] at hlen
   | _, _, .step _ _ _ _ _ _, [], hlen, _, _, _ => by simp [numBypasses] at hlen
-  | _, _, .step p huw z huz hzw rest, false :: bs, hlen, hnd, hap_nd, hdisj => by
+  | _, _, .step (u := u) (w := w) p huw z huz hzw rest, false :: bs, hlen, hnd, hap_nd, hdisj => by
       simp only [numBypasses, List.length_cons, Nat.add_right_cancel_iff] at hlen
       simp only [baseWalk, Walk.edges_append, Walk.edges_cons, List.nodup_append,
         List.nodup_cons] at hnd
@@ -580,9 +577,9 @@ private theorem realize_edges_nodup {G : SimpleGraph V} :
         simp only [baseWalk, Walk.support_append, Walk.support_cons, List.tail_cons, List.mem_append]
         exact Or.inr hmem
       have ih := realize_edges_nodup rest bs hlen hr_nd hap_nd.2 hrest_disj
-      have huw_not_real : s(_, _) ∉ (rest.realize bs).edges := by
+      have huw_not_real : s(u, w) ∉ (rest.realize bs).edges := by
         intro hmem
-        rcases mem_realize_edges rest bs hlen _ hmem with hbase | ⟨z', hz', hze⟩
+        rcases mem_realize_edges rest bs hlen s(u, w) hmem with hbase | ⟨z', hz', hze⟩
         · exact huw_not_r hbase
         · apply hdisj z' (List.mem_cons_of_mem z hz')
           simp only [Sym2.mem_iff] at hze
@@ -598,13 +595,13 @@ private theorem realize_edges_nodup {G : SimpleGraph V} :
       subst hee
       simp only [List.mem_cons] at her
       rcases her with rfl | her
-      · exact hp_disj _ hep _ (List.mem_cons_self ..) rfl
+      · exact hp_disj s(u, w) hep s(u, w) (List.mem_cons_self ..) rfl
       · rcases mem_realize_edges rest bs hlen e her with hbase | ⟨z', hz', hze⟩
         · exact hp_disj e hep e (List.mem_cons_of_mem _ hbase) rfl
         · apply hdisj z' (List.mem_cons_of_mem z hz')
           simp only [baseWalk, Walk.support_append, List.mem_append]
           exact Or.inl (mem_support_of_mem_edges hep hze)
-  | _, _, .step p huw z huz hzw rest, true :: bs, hlen, hnd, hap_nd, hdisj => by
+  | _, _, .step (u := u) (w := w) p huw z huz hzw rest, true :: bs, hlen, hnd, hap_nd, hdisj => by
       simp only [numBypasses, List.length_cons, Nat.add_right_cancel_iff] at hlen
       simp only [baseWalk, Walk.edges_append, Walk.edges_cons, List.nodup_append,
         List.nodup_cons] at hnd
@@ -618,44 +615,37 @@ private theorem realize_edges_nodup {G : SimpleGraph V} :
       have ih := realize_edges_nodup rest bs hlen hr_nd hap_nd.2 hrest_disj
       have hz_not_base_edge : ∀ e ∈ (rest.realize bs).edges, z ∉ e := by
         intro e he hze
-        rcases mem_realize_edges rest bs hlen e he with hbase | ⟨z', hz', hze'⟩
-        · apply hdisj z (List.mem_cons_self ..)
-          simp only [baseWalk, Walk.support_append, Walk.support_cons, List.tail_cons, List.mem_append]
-          exact Or.inr (mem_support_of_mem_edges hbase hze)
-        · -- `e` has an endpoint `z' ∈ rest.apexes` and an endpoint `z` (distinct from `z'`).
-          -- Every edge in `rest.realize bs` has at most one endpoint in `rest.apexes`? Wait:
-          -- actually `z` cannot appear in `(rest.realize bs).support` at all!
-          have hz_supp : z ∈ (rest.realize bs).support := mem_support_of_mem_edges he hze
-          cases hr : (rest.realize bs).support with
-          | nil => exact absurd hr (Walk.support_ne_nil _)
-          | cons w0 ws =>
-              have hw0 : w0 = _ := by
-                have := Walk.head_support (rest.realize bs)
-                rw [hr] at this; simpa using this
-              rw [hr, List.mem_cons] at hz_supp
-              rcases hz_supp with rfl | hws
-              · apply hdisj w0 (List.mem_cons_self ..)
+        have hz_supp : z ∈ (rest.realize bs).support := mem_support_of_mem_edges he hze
+        cases hr : (rest.realize bs).support with
+        | nil => exact absurd hr (Walk.support_ne_nil _)
+        | cons w0 ws =>
+            have hw0 : w0 = w := by
+              have := Walk.head_support (rest.realize bs)
+              rw [hr] at this; simpa using this
+            rw [hr, List.mem_cons] at hz_supp
+            rcases hz_supp with rfl | hws
+            · apply hdisj w0 (List.mem_cons_self ..)
+              simp only [baseWalk, Walk.support_append, Walk.support_cons, List.tail_cons,
+                List.mem_append]
+              exact Or.inr (hw0 ▸ Walk.start_mem_support rest.baseWalk)
+            · have htail : z ∈ (rest.realize bs).support.tail := by rw [hr]; exact hws
+              rcases mem_realize_support_tail rest bs hlen z htail with hbase2 | hap2
+              · apply hdisj z (List.mem_cons_self ..)
                 simp only [baseWalk, Walk.support_append, Walk.support_cons, List.tail_cons,
                   List.mem_append]
-                exact Or.inr (hw0 ▸ Walk.start_mem_support rest.baseWalk)
-              · have htail : z ∈ (rest.realize bs).support.tail := by rw [hr]; exact hws
-                rcases mem_realize_support_tail rest bs hlen z htail with hbase2 | hap2
-                · apply hdisj z (List.mem_cons_self ..)
-                  simp only [baseWalk, Walk.support_append, Walk.support_cons, List.tail_cons,
-                    List.mem_append]
-                  exact Or.inr (List.mem_of_mem_tail hbase2)
-                · exact hap_nd.1 hap2
-      have huz_ne_hzw : s(_, z) ≠ s(z, _) := by
+                exact Or.inr (List.mem_of_mem_tail hbase2)
+              · exact hap_nd.1 hap2
+      have huz_ne_hzw : s(u, z) ≠ s(z, w) := by
         intro heq
         rw [Sym2.eq_iff] at heq
-        rcases heq with ⟨h1, h2⟩ | ⟨h1, h2⟩
+        rcases heq with ⟨h1, _⟩ | ⟨h1, _⟩
         · exact huz.ne h1
         · exact huw.ne h1
       simp only [realize, Walk.edges_append, Walk.edges_cons, List.nodup_append, List.nodup_cons]
       refine ⟨hp_nd, ⟨?_, ⟨?_, ih⟩⟩, ?_⟩
       · simp only [List.mem_cons, not_or]
-        exact ⟨huz_ne_hzw, fun hmem => hz_not_base_edge _ hmem (by simp)⟩
-      · exact fun hmem => hz_not_base_edge _ hmem (by simp)
+        exact ⟨huz_ne_hzw, fun hmem => hz_not_base_edge s(u, z) hmem (by simp)⟩
+      · exact fun hmem => hz_not_base_edge s(z, w) hmem (by simp)
       · intro e hep e' her hee
         subst hee
         simp only [List.mem_cons] at her
@@ -752,9 +742,7 @@ theorem interior_edge_saturation {G : SimpleGraph V} {v : V} (c : BypassChain G 
   have hj_pos : 1 ≤ j := by omega
   have hj_lt : j < r := by omega
   constructor
-  · -- Case 1: set `mask[i] = false`, distribute `j` trues among the remaining `r - 1` positions.
-    -- Put `a = min i j` trues before `i`, `false` at `i`, and `j - a` trues after `i`.
-    let a := min i j
+  · let a := min i j
     let b := j - a
     have ha_le_i : a ≤ i := Nat.min_le_left i j
     have hb_le : b ≤ r - 1 - i := by omega
@@ -767,12 +755,11 @@ theorem interior_edge_saturation {G : SimpleGraph V} {v : V} (c : BypassChain G 
     have hget : mask[i]'(by omega) = false := by
       simp [mask, List.getElem_append_right, hpre_len]
     have hcnt : mask.count true = j := by
-      simp [mask, pre, suf, List.count_append, List.count_cons, List.count_replicate]
+      simp [mask, pre, suf, List.count_append, List.count_replicate]
       omega
     refine ⟨mask, hlen, hget, realize_isCycle c hcyc hap hdisj mask hlen, ?_⟩
     rw [realize_length c mask hlen, hcnt]; omega
-  · -- Case 2: set `mask[i] = true`, distribute `j - 1` trues among the remaining `r - 1` positions.
-    let a := min i (j - 1)
+  · let a := min i (j - 1)
     let b := (j - 1) - a
     have ha_le_i : a ≤ i := Nat.min_le_left i (j - 1)
     have hb_le : b ≤ r - 1 - i := by omega
@@ -785,7 +772,7 @@ theorem interior_edge_saturation {G : SimpleGraph V} {v : V} (c : BypassChain G 
     have hget : mask[i]'(by omega) = true := by
       simp [mask, List.getElem_append_right, hpre_len]
     have hcnt : mask.count true = j := by
-      simp [mask, pre, suf, List.count_append, List.count_cons, List.count_replicate]
+      simp [mask, pre, suf, List.count_append, List.count_replicate]
       omega
     refine ⟨mask, hlen, hget, realize_isCycle c hcyc hap hdisj mask hlen, ?_⟩
     rw [realize_length c mask hlen, hcnt]; omega
