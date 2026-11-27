@@ -207,46 +207,47 @@ theorem closedNB_lt_two_girth_isCycle {V : Type*} {G : SimpleGraph V} {g : ℕ}
   cases w with
   | nil => simp at hpos
   | cons h q =>
-    apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
-    refine ⟨Walk.IsPath.mk' ?_, h3⟩
-    simp only [Walk.tail_cons, Walk.support_copy]
-    by_contra hnd
-    obtain ⟨x, p₁, sub, p₂, hsub_pos, hqeq⟩ := split_not_nodup q hnd
-    have hnb_q : LocallyNB q := by
-      cases q with
-      | nil => trivial
-      | cons _ _ => exact hloc.2
-    have hnb_sub : LocallyNB sub := by
-      rw [hqeq] at hnb_q
-      exact locallyNB_append_left sub p₂ (locallyNB_append_right p₁ (sub.append p₂) hnb_q)
-    have hnb_p₂ : LocallyNB p₂ := by
-      rw [hqeq] at hnb_q
-      exact locallyNB_append_right sub p₂ (locallyNB_append_right p₁ (sub.append p₂) hnb_q)
-    have hnb_cons_p₁ : LocallyNB (Walk.cons h p₁) := by
-      have heq' : Walk.cons h q = (Walk.cons h p₁).append (sub.append p₂) := by
-        rw [hqeq]; rfl
-      rw [heq'] at hloc
-      exact locallyNB_append_left (Walk.cons h p₁) (sub.append p₂) hloc
-    let r : G.Walk x x := p₂.append (Walk.cons h p₁)
-    have hr_pos : 1 ≤ r.length := by
-      simp only [r, Walk.length_append, Walk.length_cons]
+    by_cases hnd : q.support.Nodup
+    · apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
+      refine ⟨Walk.IsPath.mk' ?_, h3⟩
+      simpa [Walk.tail_cons] using hnd
+    · exfalso
+      obtain ⟨x, p₁, sub, p₂, hsub_pos, hqeq⟩ := split_not_nodup q hnd
+      have hnb_q : LocallyNB q := by
+        cases q with
+        | nil => trivial
+        | cons _ _ => exact hloc.2
+      have hnb_sub : LocallyNB sub := by
+        rw [hqeq] at hnb_q
+        exact locallyNB_append_left sub p₂ (locallyNB_append_right p₁ (sub.append p₂) hnb_q)
+      have hnb_p₂ : LocallyNB p₂ := by
+        rw [hqeq] at hnb_q
+        exact locallyNB_append_right sub p₂ (locallyNB_append_right p₁ (sub.append p₂) hnb_q)
+      have hnb_cons_p₁ : LocallyNB (Walk.cons h p₁) := by
+        have heq' : Walk.cons h q = (Walk.cons h p₁).append (sub.append p₂) := by
+          rw [hqeq]; rfl
+        rw [heq'] at hloc
+        exact locallyNB_append_left (Walk.cons h p₁) (sub.append p₂) hloc
+      let r : G.Walk x x := p₂.append (Walk.cons h p₁)
+      have hr_pos : 1 ≤ r.length := by
+        simp only [r, Walk.length_append, Walk.length_cons]
+        omega
+      have hr_nb : LocallyNB r := by
+        apply locallyNB_append_of_ne p₂ (Walk.cons h p₁) hnb_p₂ hnb_cons_p₁
+        intro hp2_pos _
+        have hpen : penultVert (Walk.cons h q) = penultVert p₂ := by
+          have heq' : Walk.cons h q = (Walk.cons h (p₁.append sub)).append p₂ := by
+            rw [hqeq, Walk.append_assoc]; rfl
+          rw [heq']
+          exact penultVert_append_of_pos (Walk.cons h (p₁.append sub)) p₂ hp2_pos
+        rw [← hpen]
+        exact hwrap.symm
+      have hg_sub : g ≤ sub.length := locallyNB_closed_ge_girth hg sub hsub_pos hnb_sub
+      have hg_r : g ≤ r.length := locallyNB_closed_ge_girth hg r hr_pos hr_nb
+      have hlen_sum : (Walk.cons h q).length = sub.length + r.length := by
+        simp only [r, hqeq, Walk.length_cons, Walk.length_append]
+        omega
       omega
-    have hr_nb : LocallyNB r := by
-      apply locallyNB_append_of_ne p₂ (Walk.cons h p₁) hnb_p₂ hnb_cons_p₁
-      intro hp2_pos _
-      have hpen : penultVert (Walk.cons h q) = penultVert p₂ := by
-        have heq' : Walk.cons h q = (Walk.cons h (p₁.append sub)).append p₂ := by
-          rw [hqeq, Walk.append_assoc]; rfl
-        rw [heq']
-        exact penultVert_append_of_pos (Walk.cons h (p₁.append sub)) p₂ hp2_pos
-      rw [← hpen]
-      exact hwrap.symm
-    have hg_sub : g ≤ sub.length := locallyNB_closed_ge_girth hg sub hsub_pos hnb_sub
-    have hg_r : g ≤ r.length := locallyNB_closed_ge_girth hg r hr_pos hr_nb
-    have hlen_sum : (Walk.cons h q).length = sub.length + r.length := by
-      simp only [r, hqeq, Walk.length_cons, Walk.length_append]
-      omega
-    omega
 
 /-- **Girth-≥9 Exact `C₁₆` Purity**:
 In ANY simple graph `G` of girth `≥ 9`, EVERY closed non-backtracking walk of length `16`
