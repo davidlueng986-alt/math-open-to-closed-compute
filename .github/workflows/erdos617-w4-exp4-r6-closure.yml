@@ -1,0 +1,39 @@
+name: erdos617-w4-exp4-r6-closure
+on:
+  workflow_dispatch:
+    inputs:
+      time_limit:
+        description: 'CP-SAT time limit per tuple (seconds)'
+        required: false
+        default: '12'
+
+jobs:
+  cadical-vertex-probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install python-sat
+        run: pip install --quiet python-sat
+      - name: Run CaDiCaL195 vertex-level probe
+        run: python3 erdos617_exp4/r6_vertex_sat_probe.py
+
+  macro-audit:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [p6, p7, p8, p9]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install ortools
+        run: pip install --quiet ortools
+      - name: Compile gen_sub_pareto
+        run: g++ -O3 erdos617_exp4/gen_sub_pareto.cpp -o gen_sub_pareto
+      - name: Run macro subset-Pareto audit
+        run: python3 erdos617_exp4/r6_macro_audit.py ${{ matrix.profile }} ${{ github.event.inputs.time_limit || '12' }}
