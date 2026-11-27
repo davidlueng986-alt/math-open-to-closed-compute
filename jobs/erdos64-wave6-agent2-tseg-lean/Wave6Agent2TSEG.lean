@@ -75,14 +75,14 @@ def blowUp {V : Type*} (H : SimpleGraph V) (side : V → V → Bool) : SimpleGra
   Adj x y :=
     (x.1 = y.1 ∧ x.2 ≠ y.2) ∨
     (H.Adj x.1 y.1 ∧ side x.1 y.1 = x.2 ∧ side y.1 x.1 = y.2)
-  symm := by
+  symm := ⟨by
     rintro ⟨u, a⟩ ⟨v, b⟩ (⟨rfl, hne⟩ | ⟨hadj, h1, h2⟩)
     · exact Or.inl ⟨rfl, hne.symm⟩
-    · exact Or.inr ⟨hadj.symm, h2, h1⟩
-  loopless := by
+    · exact Or.inr ⟨hadj.symm, h2, h1⟩⟩
+  loopless := ⟨by
     rintro ⟨u, a⟩ (⟨_, hne⟩ | ⟨hadj, _, _⟩)
     · exact hne rfl
-    · exact H.loopless u hadj
+    · exact H.ne_of_adj hadj rfl⟩
 
 /-- The canonical blow-up of any 4-regular transition system is strictly 3-regular (cubic). -/
 theorem blowUp_cubic {V : Type*} [Fintype V] [DecidableEq V]
@@ -99,10 +99,11 @@ theorem blowUp_cubic {V : Type*} [Fintype V] [DecidableEq V]
     rintro ⟨v, ⟨huv, _⟩, heq⟩
     have hvu : v = u := congrArg Prod.fst heq
     subst hvu
-    exact H.loopless v huv
+    exact H.ne_of_adj huv rfl
   have hnbr : (blowUp H side).neighborFinset (u, a) = insert (u, !a) (S.image f) := by
     ext ⟨v, b⟩
-    simp only [SimpleGraph.mem_neighborFinset, Finset.mem_insert, Finset.mem_image,
+    rw [SimpleGraph.mem_neighborFinset]
+    simp only [Finset.mem_insert, Finset.mem_image,
       Finset.mem_filter, H.mem_neighborFinset, blowUp, f, S, Prod.mk.injEq]
     constructor
     · rintro (⟨rfl, hne⟩ | ⟨huv, h1, h2⟩)
@@ -129,9 +130,9 @@ theorem blowUp_no_matching_triangle {V : Type*} (H : SimpleGraph V) (side : V �
   rcases h1 with ⟨rfl, hne1⟩ | ⟨huv1, hs1, _⟩
   · rcases h2 with ⟨_, hne2⟩ | ⟨huu, _, _⟩
     · cases b <;> simp_all
-    · exact H.loopless u huu
+    · exact H.ne_of_adj huu rfl
   · rcases h2 with ⟨rfl, _⟩ | ⟨_, hs2, _⟩
-    · exact H.loopless u huv1
+    · exact H.ne_of_adj huv1 rfl
     · rw [hs1] at hs2
       exact Bool.false_ne_true hs2
 
@@ -148,23 +149,29 @@ theorem blowUp_triangle_iff_zero_switch {V : Type*} (H : SimpleGraph V) (side : 
     have h1 : H.Adj u v ∧ side u v = a ∧ side v u = b := by
       rcases hxy with ⟨rfl, hne⟩ | h
       · exfalso
-        cases a <;> cases b <;> simp_all
+        cases a <;> cases b
+        · exact hne rfl
         · exact blowUp_no_matching_triangle H side u (w, c) ⟨hzx.symm, hyz⟩
         · exact blowUp_no_matching_triangle H side u (w, c) ⟨hyz, hzx.symm⟩
+        · exact hne rfl
       · exact h
     have h2 : H.Adj v w ∧ side v w = b ∧ side w v = c := by
       rcases hyz with ⟨rfl, hne⟩ | h
       · exfalso
-        cases b <;> cases c <;> simp_all
+        cases b <;> cases c
+        · exact hne rfl
         · exact blowUp_no_matching_triangle H side v (u, a) ⟨hxy.symm, hzx⟩
         · exact blowUp_no_matching_triangle H side v (u, a) ⟨hzx, hxy.symm⟩
+        · exact hne rfl
       · exact h
     have h3 : H.Adj w u ∧ side w u = c ∧ side u w = a := by
       rcases hzx with ⟨rfl, hne⟩ | h
       · exfalso
-        cases c <;> cases a <;> simp_all
+        cases c <;> cases a
+        · exact hne rfl
         · exact blowUp_no_matching_triangle H side w (v, b) ⟨hyz.symm, hxy⟩
         · exact blowUp_no_matching_triangle H side w (v, b) ⟨hxy, hyz.symm⟩
+        · exact hne rfl
       · exact h
     exact ⟨u, v, w, h1.1, h2.1, h3.1, h1.2.1.trans h3.2.2.symm,
       h1.2.2.trans h2.2.1.symm, h3.2.1.trans h2.2.2.symm⟩
@@ -179,7 +186,7 @@ as a chord (between opposite vertices `x` and `z`). -/
 theorem blowUp_c4_no_matching_chord {V : Type*} (H : SimpleGraph V) (side : V → V → Bool)
     {u : V} {y w : V × Bool}
     (h1 : (blowUp H side).Adj (u, false) y) (h2 : (blowUp H side).Adj y (u, true))
-    (h3 : (blowUp H side).Adj (u, true) w) (h4 : (blowUp H side).Adj w (u, false)) : False :=
+    (_h3 : (blowUp H side).Adj (u, true) w) (_h4 : (blowUp H side).Adj w (u, false)) : False :=
   blowUp_no_matching_triangle H side u y ⟨h1, h2.symm⟩
 
 /-! ## Section 2: Exact Signed-Parity Law and Balanced Transition Systems -/
@@ -226,12 +233,12 @@ theorem walk_signed_parity_law {V : Type*} {H : SimpleGraph V} (side : V → V �
   | _, _, .nil, hp => by simp at hp
   | _, _, .cons (u := a) (v := b) _ .nil, _ => by
       simp only [internalSwitches, negEdgeCount, startSide, endSide, zero_add, add_zero]
-      cases side a b <;> cases side b a <;> decide
+      cases h1 : side a b <;> cases h2 : side b a <;> simp
   | _, _, .cons (u := a) (v := b) _ (.cons (v := c) h₂ rest), _ => by
       have ih := walk_signed_parity_law side (.cons h₂ rest) (by simp)
       simp only [internalSwitches, negEdgeCount, startSide, endSide] at ih ⊢
-      cases side a b <;> cases side b a <;> cases side b c <;> cases endSide side (.cons h₂ rest) <;>
-        simp_all <;> omega
+      cases h1 : side a b <;> cases h2 : side b a <;> cases h3 : side b c <;>
+        cases h4 : endSide side (.cons h₂ rest) <;> simp_all <;> omega
 
 /-- **Exact Signed-Parity Law on Closed Walks / Cycles**:
 `totalSwitches side c ≡ negEdgeCount side c (mod 2)`. -/
@@ -286,13 +293,15 @@ private theorem isCycle_append_edge {V : Type*} {G : SimpleGraph V} {u w : V}
     apply Walk.IsPath.mk'
     simp [G.ne_of_adj hwu]
   have hdisj : p.support.tail.Disjoint (Walk.cons hwu Walk.nil : G.Walk w u).support.tail := by
-    simp only [Walk.support_cons, Walk.support_nil, List.tail_cons, List.disjoint_singleton_right]
+    intro x hx hmem
+    simp only [Walk.support_cons, Walk.support_nil, List.tail_cons, List.mem_singleton] at hmem
+    subst hmem
     cases p with
     | nil => simp at hlen
     | cons _ rest =>
         have hnd := hp.support_nodup
-        simp only [Walk.support_cons, List.nodup_cons, List.tail_cons] at hnd ⊢
-        exact hnd.1
+        simp only [Walk.support_cons, List.nodup_cons, List.tail_cons] at hnd hx
+        exact hnd.1 hx
   exact hp.isCycle_append hq hdisj (Or.inl (by omega))
 
 /-- **Exact Girth Chordlessness Threshold Theorem**:
