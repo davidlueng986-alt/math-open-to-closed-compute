@@ -19,10 +19,31 @@ theorem generic_critical_divisor_identity (r s u v : ℂ[X])
       (u + 4 * s * r) * (8 * r ^ 3 + 12 * r * s + 3 * u).derivative -
       3 * (4 * r * (u + 4 * s * r) + 8 * s ^ 2) * (r ^ 2 + s).derivative := by
   have hd := congrArg Polynomial.derivative h
-  simp only [derivative_add, derivative_mul, derivative_pow, derivative_natCast,
+  simp only [derivative_add, derivative_mul, derivative_pow,
     derivative_ofNat, C_eq_natCast] at hd ⊢
   norm_num at hd ⊢
   linear_combination 12 * s * hd
+
+/-- Compact Wronskian formula used to build the higher-degree coefficient systems
+without expanding the square of the second coordinate. -/
+theorem generic_compact_wronskian (r s u v : ℂ[X])
+    (h : s ^ 2 = r * u + v) :
+    2 * (r ^ 2 + s) * (8 * r ^ 3 + 12 * r * s + 3 * u).derivative -
+      3 * (8 * r ^ 3 + 12 * r * s + 3 * u) * (r ^ 2 + s).derivative =
+      24 * v * r.derivative - 6 * r * v.derivative +
+        6 * s * u.derivative - 9 * u * s.derivative := by
+  have hd := congrArg Polynomial.derivative h
+  simp only [derivative_add, derivative_mul, derivative_pow, derivative_ofNat,
+    C_eq_natCast] at hd ⊢
+  norm_num at hd ⊢
+  linear_combination 24 * r.derivative * h - 6 * r * hd
+
+/-- Universal exact remainder formula; used before taking any coefficients. -/
+theorem generic_weierstrass_remainder (r s u v : ℂ[X])
+    (h : s ^ 2 = r * u + v) :
+    (8 * r ^ 3 + 12 * r * s + 3 * u) ^ 2 - 64 * (r ^ 2 + s) ^ 3 =
+      8 * s ^ 3 - 48 * v * r ^ 2 - 72 * v * s + 9 * u ^ 2 := by
+  linear_combination -(48 * r ^ 2 + 72 * s) * h
 
 def R (b c : ℂ) : ℂ[X] :=
   (X + C b) * (X ^ 2 + C b * X + C (2 * c))
@@ -41,7 +62,7 @@ theorem derivative_bezout (b c : ℂ) :
       3 * (4 * R b c * (X + 4 * S b c * R b c) + 8 * S b c ^ 2) *
         (P b c).derivative := by
   have h : S b c ^ 2 = R b c * X + C (c ^ 2) := by
-    simp only [R, S, C_mul, C_pow, C_ofNat, C_eq_natCast]
+    simp only [R, S, C_mul, C_pow, C_ofNat]
     ring
   have hg := generic_critical_divisor_identity (R b c) (S b c) X (C (c ^ 2)) h
   simpa only [P, Q8, derivative_X, derivative_C, mul_one, mul_zero, sub_zero] using hg
@@ -76,8 +97,8 @@ def cuspEquation (b c : ℂ) : ℂ := 4 * b ^ 2 * c + 8 * c ^ 2 + 1
 theorem first_derivative_at_zero (b c : ℂ) :
     (P b c).derivative.eval 0 = b * cuspEquation b c := by
   simp only [P, R, S, derivative_add, derivative_mul, derivative_pow,
-    derivative_natCast, derivative_ofNat, derivative_X, derivative_C,
-    C_mul, C_pow, C_ofNat, C_eq_natCast, eval_add, eval_mul, eval_pow,
+    derivative_ofNat, derivative_X, derivative_C,
+    C_mul, C_ofNat, C_eq_natCast, eval_add, eval_mul, eval_pow,
     eval_X, eval_C, eval_natCast, eval_zero, eval_one, cuspEquation]
   norm_num
   ring
@@ -86,8 +107,8 @@ theorem second_derivative_at_zero (b c : ℂ) :
     (Q8 b c).derivative.eval 0 =
       3 * (8 * b ^ 2 * c + 1) * cuspEquation b c := by
   simp only [Q8, R, S, derivative_add, derivative_mul, derivative_pow,
-    derivative_natCast, derivative_ofNat, derivative_X, derivative_C,
-    C_mul, C_pow, C_ofNat, C_eq_natCast, eval_add, eval_mul, eval_pow,
+    derivative_ofNat, derivative_X, derivative_C,
+    C_mul, C_ofNat, C_eq_natCast, eval_add, eval_mul, eval_pow,
     eval_X, eval_C, eval_natCast, eval_zero, eval_one, cuspEquation]
   norm_num
   ring
@@ -112,7 +133,7 @@ theorem weierstrass_identity (b c : ℂ) :
     Q8 b c ^ 2 - 64 * P b c ^ 3 =
       8 * S b c ^ 3 - 48 * C (c ^ 2) * R b c ^ 2 -
         72 * C (c ^ 2) * S b c + 9 * X ^ 2 := by
-  simp only [P, Q8, R, S, C_mul, C_pow, C_ofNat, C_eq_natCast]
+  simp only [P, Q8, R, S, C_mul, C_pow, C_ofNat]
   ring
 
 -- The quotient of the derivative gcd is handled by `common_derivative_divisor_dvd_X`.
@@ -140,6 +161,8 @@ theorem exceptional_fifth_coefficient_nonzero (c : ℂ) (hF : F c = 0) :
   norm_num at hid
 
 #print axioms generic_critical_divisor_identity
+#print axioms generic_compact_wronskian
+#print axioms generic_weierstrass_remainder
 #print axioms derivative_bezout
 #print axioms common_derivative_divisor_dvd_X
 #print axioms critical_parameter_zero
