@@ -152,6 +152,10 @@ theorem near_quotient {V : Type u} [Fintype V] [DecidableEq V]
         exact Subtype.ext h
       exact (hw x hxw).trans (degree_some_ge G I hpack ⟨x, hx⟩)
 
+theorem adj_some_some {V : Type u} {G : SimpleGraph V} {I : Finset V}
+    {a c : { v : V // v ∉ I }} (h : (quotientGraph G I).Adj (some a) (some c)) :
+    G.Adj a.1 c.1 := h
+
 /-- Lift a walk in `quotientGraph G I` whose support avoids `none` back to `G`. -/
 def liftWalkAvoidNone {V : Type u} {G : SimpleGraph V} {I : Finset V}
     {a b : { v : V // v ∉ I }} :
@@ -160,13 +164,13 @@ def liftWalkAvoidNone {V : Type u} {G : SimpleGraph V} {I : Finset V}
   | .nil, _ => .nil
   | .cons (v := none) _ _, h => absurd (by simp) h
   | .cons (v := some _) hadj q, h =>
-      .cons hadj (liftWalkAvoidNone q (fun hm => h (by simp [hm])))
+      .cons (adj_some_some hadj) (liftWalkAvoidNone q (fun hm => h (by simp [hm])))
 
 theorem length_liftWalkAvoidNone {V : Type u} {G : SimpleGraph V} {I : Finset V}
     {a b : { v : V // v ∉ I }} :
     ∀ (p : (quotientGraph G I).Walk (some a) (some b)) (h : none ∉ p.support),
       (liftWalkAvoidNone p h).length = p.length
-  | .nil, _ => rfl
+  | .nil, _ => by simp [liftWalkAvoidNone]
   | .cons (v := none) _ _, h => absurd (by simp) h
   | .cons (v := some _) _ q, h => by
       simp only [liftWalkAvoidNone, Walk.length_cons]
