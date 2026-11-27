@@ -1,0 +1,31 @@
+name: Erdos 25 wave 5 closure-gate proof verification
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'jobs/erdos25-wave5-verification/**'
+      - '.github/workflows/erdos25-wave5-verification.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: read
+jobs:
+  formal-block-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash jobs/erdos25-wave5-verification/verify.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos25-block-closure-verification
+          path: out/
