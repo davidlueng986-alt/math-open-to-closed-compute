@@ -6,7 +6,7 @@ on:
       batch:
         description: Which independent agent bundles to verify
         type: choice
-        options: [all, math, agent0, agent1, agent2, agent3, agent4, agent5, agent6]
+        options: [all, math, research, agent0, agent1, agent2, agent3, agent4, agent5, agent6]
         default: all
         required: true
 
@@ -45,8 +45,8 @@ jobs:
             assert r['toolbox'] in ('sat','sage','lean')
             assert r['image'].startswith('ghcr.io/davidlueng986-alt/math-compute-'+r['toolbox']+'@sha256:')
           batch=os.environ['BATCH']
-          assert batch in ('all','math',*[f'agent{i}' for i in range(0,7)])
-          selected=[r for r in rows if batch=='all' or (batch=='math' and r['toolbox']!='lean') or batch=='agent'+str(r['agent'])]
+          assert batch in ('all','math','research',*[f'agent{i}' for i in range(0,7)])
+          selected=[r for r in rows if batch=='all' or (batch=='math' and r['toolbox']!='lean') or (batch=='research' and r['agent'] in (1,2,3)) or batch=='agent'+str(r['agent'])]
           assert selected
           print('matrix='+json.dumps({'include':selected},separators=(',',':')))
           PY
@@ -131,7 +131,7 @@ jobs:
           p=pathlib.Path('summary');p.mkdir(exist_ok=True)
           rows=json.load(open('jobs/abc-wave3-orchestrator/matrix.json'))['include']
           batch=os.environ['BATCH']
-          expected=[r['agent'] for r in rows if batch=='all' or (batch=='math' and r['toolbox']!='lean') or batch=='agent'+str(r['agent'])]
+          expected=[r['agent'] for r in rows if batch=='all' or (batch=='math' and r['toolbox']!='lean') or (batch=='research' and r['agent'] in (1,2,3)) or batch=='agent'+str(r['agent'])]
           records={}
           for a in expected:
             folder=p/'agents'/f'abc-wave3-agent{a}'
