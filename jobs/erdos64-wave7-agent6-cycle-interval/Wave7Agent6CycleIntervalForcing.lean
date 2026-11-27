@@ -299,8 +299,10 @@ theorem exists_chord_path_type1 {G : SimpleGraph V} {m r : ℕ} (C : ChordedEven
     p0.copy (by simp [h1]) (by simp [h0])
   let q : G.Walk (C.v ⟨2 * r + 1, by omega⟩) (C.v ⟨2 * (r + b), by omega⟩) :=
     q0.copy (by simp [h2r1]) (by simp [h2])
-  have hp_path : p.IsPath := by simpa [p] using hp0_path
-  have hq_path : q.IsPath := by simpa [q] using hq0_path
+  have hp_path : p.IsPath := by
+    rw [Walk.isPath_def, Walk.support_copy]; exact hp0_path.support_nodup
+  have hq_path : q.IsPath := by
+    rw [Walk.isPath_def, Walk.support_copy]; exact hq0_path.support_nodup
   have hdisj : ∀ x ∈ p.support, x ∉ q.support := by
     intro x hxp hxq
     rw [Walk.support_copy] at hxp hxq
@@ -360,8 +362,10 @@ theorem exists_chord_path_type2 {G : SimpleGraph V} {m r : ℕ} (C : ChordedEven
     p0.copy (by simp [h1]) (by simp [h2])
   let q : G.Walk (C.v ⟨2 * r + 1, by omega⟩) (C.v ⟨2 * (r + 1 - b), by omega⟩) :=
     q0.copy (by simp [h4]) (by simp [h3])
-  have hp_path : p.IsPath := by simpa [p] using hp0_path
-  have hq_path : q.IsPath := by simpa [q] using hq0_path
+  have hp_path : p.IsPath := by
+    rw [Walk.isPath_def, Walk.support_copy]; exact hp0_path.support_nodup
+  have hq_path : q.IsPath := by
+    rw [Walk.isPath_def, Walk.support_copy]; exact hq0_path.support_nodup
   have hdisj : ∀ x ∈ p.support, x ∉ q.support := by
     intro x hxp hxq
     rw [Walk.support_copy] at hxp hxq
@@ -429,8 +433,10 @@ theorem exists_chord_path_type3 {G : SimpleGraph V} {m r : ℕ} (C : ChordedEven
     p0.copy (by simp [h1]) (by simp [h2])
   let q : G.Walk (C.v ⟨2 * r + 1, by omega⟩) (C.v ⟨2 * (r + b), by omega⟩) :=
     q0.copy (by simp [h2r1]) (by simp [h3])
-  have hp_path : p.IsPath := by simpa [p] using hp0_path
-  have hq_path : q.IsPath := by simpa [q] using hq0_path
+  have hp_path : p.IsPath := by
+    rw [Walk.isPath_def, Walk.support_copy]; exact hp0_path.support_nodup
+  have hq_path : q.IsPath := by
+    rw [Walk.isPath_def, Walk.support_copy]; exact hq0_path.support_nodup
   have hdisj : ∀ x ∈ p.support, x ∉ q.support := by
     intro x hxp hxq
     rw [Walk.support_copy] at hxp hxq
@@ -834,7 +840,9 @@ theorem bsv_chorded_cycle_all_even_ab_paths {G : SimpleGraph V} {m r : ℕ}
       let p0 := C'.fwdWalk (2 * i.val) (2 * k)
       let p : G.Walk (C'.v ⟨2 * i.val, by omega⟩) (C'.v ⟨2 * j.val, by omega⟩) :=
         p0.copy (by simp [hstart]) (by simp [hend])
-      have hp_path : p.IsPath := by simpa [p] using C'.fwdWalk_isPath (2 * i.val) (2 * k) (by omega)
+      have hp_path : p.IsPath := by
+        rw [Walk.isPath_def, Walk.support_copy]
+        exact (C'.fwdWalk_isPath (2 * i.val) (2 * k) (by omega)).support_nodup
       have hp_len : p.length = 2 * k := by simp [p, p0, ChordedEvenCycle.fwdWalk_length]
       have hp_mem : ∀ z ∈ p.support, z ∈ Set.range C'.v := by
         intro z hz; rw [Walk.support_copy] at hz
@@ -932,8 +940,9 @@ theorem bsv_chorded_cycle_all_even_ab_paths {G : SimpleGraph V} {m r : ℕ}
       rintro z ⟨idx, rfl⟩; exact ⟨_, rfl⟩
     let p : G.Walk (C.v ⟨2 * (refIdx i').val, by omega⟩) (C.v ⟨2 * (refIdx j').val, by omega⟩) :=
       p'.copy (hv_eq i') (hv_eq j')
-    refine ⟨refIdx i', refIdx j', p, hcol_ne', by simpa [p] using hp',
-      by simpa [p] using hlen', ?_⟩
+    refine ⟨refIdx i', refIdx j', p, hcol_ne',
+      by rw [Walk.isPath_def, Walk.support_copy]; exact hp'.support_nodup,
+      by simp [p, hlen'], ?_⟩
     intro z hz; rw [Walk.support_copy] at hz
     exact hrange_eq z (hmem' z hz)
 
