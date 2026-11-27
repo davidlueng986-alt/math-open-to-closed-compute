@@ -1,0 +1,159 @@
+name: Ramsey R310 V8 Wave 2 — D9-C6 Production Solver (Sharded Proof-First)
+on:
+  workflow_dispatch:
+    inputs:
+      cores_url:
+        description: "URL to 26-vertex (3,8;26) graph6 (.g6 or .g6.gz) core database"
+        required: false
+        default: "https://users.cecs.anu.edu.au/~bdm/data/r38_26.g6.gz"
+        type: string
+      num_shards:
+        description: "Number of parallel shards (1..10)"
+        required: false
+        default: "10"
+        type: string
+      e_t_filter:
+        description: "Optional comma-separated e(T) filter in [73..81] (empty = all)"
+        required: false
+        default: ""
+        type: string
+      per_instance_seconds:
+        description: "Per-instance Kissat solve budget in seconds"
+        required: false
+        default: "1800"
+        type: string
+      wall_budget_seconds:
+        description: "Per-shard wall-time budget in seconds (<= 19800 = 5.5h)"
+        required: false
+        default: "19800"
+        type: string
+      max_instances:
+        description: "Optional max instances cap (0 = all)"
+        required: false
+        default: "0"
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+  actions: read
+
+concurrency:
+  group: ramsey-r310-v8-w2-d9c6
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run D9-C6 selftest, download/verify r38_26 cores, and build shard manifest
+        env:
+          CORES_URL: ${{ inputs.cores_url }}
+          NUM_SHARDS: ${{ inputs.num_shards }}
+          E_T_FILTER: ${{ inputs.e_t_filter }}
+          MAX_INSTANCES: ${{ inputs.max_instances }}
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          python3 jobs/ramsey-r310-v8-w2-d9c6/selftest_d9c6.py
+
+          python3 - <<'PY'
+          import os, urllib.request
+          from pathlib import Path
+          url = os.environ["CORES_URL"].strip()
+          num_shards = int(os.environ["NUM_SHARDS"])
+          assert 1 <= num_shards <= 10, f"num_shards must be in [1, 10], got {num_shards}"
+          fname = "r38_26.g6.gz" if url.endswith(".gz") else "r38_26.g6"
+          dest = Path("out") / fname
+          print(f"Downloading {url} -> {dest}", flush=True)
+          urllib.request.urlretrieve(url, dest)
+          assert dest.stat().st_size > 0, "Downloaded core file is empty"
+          print(f"Downloaded {dest.stat().st_size:,} bytes", flush=True)
+          PY
+
+          G6_PATH="out/r38_26.g6.gz"
+          if [ ! -f "$G6_PATH" ]; then G6_PATH="out/r38_26.g6"; fi
+
+          EXTRA_ARGS=()
+          if [ -n "${E_T_FILTER}" ]; then
+            EXTRA_ARGS+=(--e-t-filter "${E_T_FILTER}")
+          fi
+          if [ "${MAX_INSTANCES}" != "0" ] && [ -n "${MAX_INSTANCES}" ]; then
+            EXTRA_ARGS+=(--max-instances "${MAX_INSTANCES}")
+          fi
+
+          python3 jobs/ramsey-r310-v8-w2-d9c6/d9c6_batch_runner.py \
+            --prepare \
+            --g6-file "$G6_PATH" \
+            --manifest out/manifest.json \
+            "${EXTRA_ARGS[@]}" | tee out/prepare_summary.json
+
+          rm -f "$G6_PATH"
+          cat out/prepare_summary.json >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: d9c6-shard-manifest
+          path: |
+            out/manifest.json
+            out/prepare_summary.json
+          retention-days: 30
+
+  solve:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: d9c6-shard-manifest
+          path: inputs/
+      - name: Run Proof-First Kissat + DRAT/LRAT on D9-C6 shard ${{ matrix.shard }}
+        env:
+          SHARD_IDX: ${{ matrix.shard }}
+          NUM_SHARDS: ${{ inputs.num_shards }}
+          PER_INSTANCE_SECONDS: ${{ inputs.per_instance_seconds }}
+          WALL_BUDGET_SECONDS: ${{ inputs.wall_budget_seconds }}
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          if [ "${SHARD_IDX}" -ge "${NUM_SHARDS}" ]; then
+            echo "Shard ${SHARD_IDX} >= num_shards (${NUM_SHARDS}); skipping cleanly." | tee out/skipped.txt
+            exit 0
+          fi
+          python3 jobs/ramsey-r310-v8-w2-d9c6/d9c6_batch_runner.py \
+            --run \
+            --manifest inputs/manifest.json \
+            --shard-idx "${SHARD_IDX}" \
+            --num-shards "${NUM_SHARDS}" \
+            --out out \
+            --wall-budget-seconds "${WALL_BUDGET_SECONDS}" \
+            --per-instance-seconds "${PER_INSTANCE_SECONDS}"
+          cat "out/shard_${SHARD_IDX}_summary.json" >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: d9c6-shard-${{ matrix.shard }}
+          path: out/
+          retention-days: 30
