@@ -1,0 +1,157 @@
+// Pure-Singular exact Q-proof for DEGREE-135-IV-GCD-SIX!
+// Zero SymPy overhead: builds all polynomials in C++ in <0.1s!
+// Weighted-homogeneous subsystem (l = 1 WLOG since l != 0):
+//   - 2*M*T' - M'*T = 18*A*(A'*r - A*r')  (all degrees 23..0)
+//   - coeff_d(T^2 - 9*p_L*A^2) = 0        (degrees 26..18)
+//   - w * b2 - 1 = 0                      (b2 != 0 from ord_w Delta D = 10)
+// Runs F_32003 check first, then exact Q modStd(I, 1) (with exact Q verification).
+
+LIB "modstd.lib";
+
+// Helper ring with u as first variable to extract u-coefficients cleanly
+ring Ru = 0, (u, p0, t2, t1, t0, a2, a1, a0, w, v6, r0, r1), dp;
+
+poly r = u^2 + r1*u + r0;
+number b9 = 9/2;
+poly b6 = 9/8*(4*v6 - 13);
+poly v3 = 3/500*(500*v6 - 1001);
+poly b3 = 27/500*(377 - 125*v6);
+
+// 1. Construct B(u) with b8=b7=b5=b4=0 and r | B'
+poly numB = b9*r^6 + b6*u*r^4 + b3*u^2*r^2;
+// poly_B = quotient of numB by u^3
+poly polyB = 0;
+int k;
+for (k = 3; k <= 12; k++) {
+  polyB = polyB + coeff(numB, u, k) * u^(k - 3);
+}
+poly dpolyB = diff(polyB, u);
+// Remainder of dpolyB mod r:
+poly remB = reduce(dpolyB, std(r));
+poly c2 = -coeff(remB, u, 1) / 2;
+poly c1 = -coeff(remB, u, 0);
+poly B = polyB + c2*u^2 + c1*u;
+poly dB = diff(B, u);
+poly g = dB / r; // exact division!
+if (g * r != dB) { printf("ERROR: r does not divide B'!"); quit; }
+
+poly b2 = c2;
+poly b1 = c1 - 4/3*r1*b2;
+poly v2 = 2/9*b2;
+poly v1 = 2/9*b1;
+
+// 2. Construct A(u) = r*V(u)
+poly numA = r^7 + v6*u*r^5 + v3*u^2*r^3;
+poly polyA = 0;
+for (k = 6; k <= 14; k++) {
+  polyA = polyA + coeff(numA, u, k) * u^(k - 3);
+}
+poly extraA = r * (v2*(u^2 + 4/3*r1*u) + v1*u);
+for (k = 3; k <= 4; k++) {
+  polyA = polyA + coeff(extraA, u, k) * u^k;
+}
+poly A = polyA + a2*u^2 + a1*u + a0;
+
+// 3. Exact ODE 2*M*T' - M'*T = 18*A*(A'*r - A*r')
+poly M = r^2 + u;
+poly dM = diff(M, u);
+poly RHS = 18 * A * (diff(A, u)*r - A*diff(r, u));
+
+// Solve t[20]..t[3] from top down
+poly tcoeff[21]; // 1-indexed: tcoeff[k+1] is coeff of u^k
+for (k = 1; k <= 21; k++) { tcoeff[k] = 0; }
+int j, ii, d;
+poly mcoeff[5];
+for (j = 0; j <= 4; j++) { mcoeff[j+1] = coeff(M, u, j); }
+
+for (k = 20; k >= 3; k--) {
+  d = k + 3;
+  poly lhs_rest = 0;
+  for (j = 0; j <= 3; j++) {
+    ii = d + 1 - j;
+    if (ii >= 3 && ii <= 20) {
+      lhs_rest = lhs_rest + tcoeff[ii+1] * (2*ii - j) * mcoeff[j+1];
+    }
+  }
+  tcoeff[k+1] = (coeff(RHS, u, d) - lhs_rest) / (2*k - 4);
+}
+tcoeff[3] = t2;
+tcoeff[2] = t1;
+tcoeff[1] = t0;
+
+poly Tfull = 0;
+for (k = 0; k <= 20; k++) { Tfull = Tfull + tcoeff[k+1] * u^k; }
+poly odeDiff = 2*M*diff(Tfull, u) - dM*Tfull - RHS;
+
+// Check that deg >= 6 of odeDiff is identically 0!
+for (k = 6; k <= 23; k++) {
+  if (coeff(odeDiff, u, k) != 0) { printf("ERROR: odeDiff nonzero at %s!", k); quit; }
+}
+poly ode5 = coeff(odeDiff, u, 5);
+poly ode4 = coeff(odeDiff, u, 4);
+poly ode3 = coeff(odeDiff, u, 3);
+poly ode2 = coeff(odeDiff, u, 2);
+poly ode1 = coeff(odeDiff, u, 1);
+poly ode0 = coeff(odeDiff, u, 0);
+
+// 4. Compute pL = int(g*A) + p0 and sqDiff = Tfull^2 - 9*pL*A^2
+poly gA = g * A;
+poly pL = p0;
+for (k = 0; k <= 17; k++) {
+  pL = pL + coeff(gA, u, k) * u^(k+1) / (k+1);
+}
+poly sqDiff = Tfull^2 - 9*pL*A^2;
+// Check that deg >= 27 of sqDiff is identically 0!
+for (k = 27; k <= 40; k++) {
+  if (coeff(sqDiff, u, k) != 0) { printf("ERROR: sqDiff nonzero at %s!", k); quit; }
+}
+
+poly eq26 = coeff(sqDiff, u, 26);
+poly eq25 = coeff(sqDiff, u, 25);
+poly eq24 = coeff(sqDiff, u, 24);
+poly eq23 = coeff(sqDiff, u, 23);
+poly eq22 = coeff(sqDiff, u, 22);
+poly eq21 = coeff(sqDiff, u, 21);
+poly eq20 = coeff(sqDiff, u, 20);
+poly eq19 = coeff(sqDiff, u, 19);
+poly eq18 = coeff(sqDiff, u, 18);
+poly eq17 = coeff(sqDiff, u, 17);
+poly eq16 = coeff(sqDiff, u, 16);
+poly eq15 = coeff(sqDiff, u, 15);
+poly eq14 = coeff(sqDiff, u, 14);
+poly eq13 = coeff(sqDiff, u, 13);
+poly eq12 = coeff(sqDiff, u, 12);
+poly eq11 = coeff(sqDiff, u, 11);
+poly eq10 = coeff(sqDiff, u, 10);
+poly eq9  = coeff(sqDiff, u, 9);
+poly eq8  = coeff(sqDiff, u, 8);
+poly eq7  = coeff(sqDiff, u, 7);
+poly eq6  = coeff(sqDiff, u, 6);
+poly eq5  = coeff(sqDiff, u, 5);
+
+printf("All 28 exact polynomials built in Singular!");
+
+// Map to ring without u!
+ring Rq = 0, (p0, t2, t1, t0, a2, a1, a0, w, v6, r0, r1), dp;
+ideal Iall = imap(Ru, ideal(
+  eq26, eq25, eq24, eq23, eq22, eq21, eq20, eq19, eq18, eq17, eq16, eq15,
+  eq14, eq13, eq12, eq11, eq10, eq9, eq8, eq7, eq6, eq5,
+  ode5, ode4, ode3, ode2, ode1, ode0, w*b2 - 1
+));
+
+// First test over F_32003 (fast sanity check)
+ring Rp = 32003, (p0, t2, t1, t0, a2, a1, a0, w, v6, r0, r1), dp;
+ideal Ip = imap(Rq, Iall);
+printf("=== Running slimgb(Ip) over F_32003 ===");
+ideal Gp = slimgb(Ip);
+printf("F_32003 slimgb(Iall) size = %s, Gp[1] = %s", size(Gp), Gp[1]);
+
+// Now exact Q proof via modStd(Iall, 1) (with exact Q verification)!
+setring Rq;
+printf("=== Running exact modStd(Iall, 1) over Q ===");
+ideal Gq = modStd(Iall, 1);
+printf("Q modStd(Iall, 1) size = %s, Gq[1] = %s", size(Gq), Gq[1]);
+if (size(Gq) == 1 && Gq[1] == 1) {
+  printf("SUCCESS: DEGREE_135_IV_GCD_SIX_PROVED_EMPTY_OVER_Q");
+}
+quit;
