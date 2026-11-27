@@ -78,7 +78,9 @@ theorem even_step_dyadic_hitting {L r : ℕ} (hL : 4 ≤ L) (heven : 2 ∣ L)
     have : 2 ^ k ≤ 2 := by interval_cases k <;> norm_num
     omega
   have h2pow : 2 ∣ 2 ^ k := dvd_pow_self 2 (by omega)
-  have hdiff_even : 2 ∣ (2 ^ k - L) := Nat.dvd_sub' h2pow heven
+  obtain ⟨u, hu⟩ := h2pow
+  obtain ⟨v, hv⟩ := heven
+  have hdiff_even : 2 ∣ (2 ^ k - L) := ⟨u - v, by rw [Nat.mul_sub_left_distrib, ← hu, ← hv]⟩
   obtain ⟨j, hj⟩ := hdiff_even
   refine ⟨j, by omega, k, hk_ge2, by omega⟩
 
@@ -171,8 +173,8 @@ theorem general_step_d_dyadic_hitting {a m τ L r : ℕ}
   have hs_lt : s < τ := Nat.mod_lt diff (by omega)
   have hks_mod : 2 ^ (k0 + s) % m = L % m := by
     have hdecomp : diff = s + (diff / τ) * τ := by
-      have := Nat.mod_add_div diff τ
-      linarith
+      calc diff = diff % τ + τ * (diff / τ) := (Nat.mod_add_div diff τ).symm
+        _ = s + (diff / τ) * τ := by rw [mul_comm]
     have h1 : k0 + diff = t + q * τ := by omega
     have h2 : (k0 + s) + (diff / τ) * τ = t + q * τ := by omega
     calc 2 ^ (k0 + s) % m
@@ -193,15 +195,14 @@ theorem general_step_d_dyadic_hitting {a m τ L r : ℕ}
       _ ≤ 2 ^ τ * L := Nat.mul_le_mul_right L hpow_s
   have hdiv_2a : 2 ^ a ∣ (2 ^ k - L) := by
     have h2ak : 2 ^ a ∣ 2 ^ k := Nat.pow_dvd_pow 2 (by omega)
-    exact Nat.dvd_sub' h2ak hdiv_a
+    obtain ⟨u, hu⟩ := h2ak
+    obtain ⟨v, hv⟩ := hdiv_a
+    exact ⟨u - v, by rw [Nat.mul_sub_left_distrib, ← hu, ← hv]⟩
   have hdiv_m : m ∣ (2 ^ k - L) := by
+    have h1 : 2 ^ k = m * (2 ^ k / m) + 2 ^ k % m := (Nat.div_add_mod (2 ^ k) m).symm
+    have h2 : L = m * (L / m) + L % m := (Nat.div_add_mod L m).symm
     have hmod_eq : 2 ^ k % m = L % m := hks_mod
-    exact (Nat.dvd_iff_mod_eq_zero).mpr (by
-      have h1 : (2 ^ k - L + L) % m = 2 ^ k % m := by rw [Nat.sub_add_cancel hk_geL]
-      rw [Nat.add_mod, hmod_eq] at h1
-      have hlt_m : L % m < m := Nat.mod_lt L (by omega)
-      have hlt_d : (2 ^ k - L) % m < m := Nat.mod_lt _ (by omega)
-      omega)
+    exact ⟨2 ^ k / m - L / m, by rw [Nat.mul_sub_left_distrib]; omega⟩
   have hcop : Nat.Coprime (2 ^ a) m := by
     apply Nat.Coprime.pow_left
     exact (Nat.prime_two.coprime_iff_not_dvd).mpr (fun h => by
