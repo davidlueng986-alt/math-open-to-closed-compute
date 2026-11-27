@@ -47,7 +47,8 @@ open scoped BigOperators
 
 /-! ## Section 1: Non-Backtracking Walk Purity (`L < 2g` Has Zero Non-Simple Contamination) -/
 
-/-- A simple graph `G` has girth at least `g`. -/\ndef GirthAtLeast {V : Type*} (G : SimpleGraph V) (g : ℕ) : Prop :=
+/-- A simple graph `G` has girth at least `g`. -/
+def GirthAtLeast {V : Type*} (G : SimpleGraph V) (g : ℕ) : Prop :=
   ∀ (v : V) (c : G.Walk v v), c.IsCycle → g ≤ c.length
 
 /-- Internally non-backtracking walk: no consecutive steps `a ~ b ~ a`. -/
@@ -316,7 +317,6 @@ theorem nbPoly_add (q x : ℝ) :
   | b + 2, a, h => by
       have h1 : b + 1 ≤ a := by omega
       have h2 : b ≤ a := by omega
-      have h3 : b ≤ a - 1 := by omega
       have ih1 := nbPoly_add q x (b + 1) a h1
       have ih2 := nbPoly_add q x b a h2
       have ha1 : a + (b + 2) = (a + b) + 2 := by omega
