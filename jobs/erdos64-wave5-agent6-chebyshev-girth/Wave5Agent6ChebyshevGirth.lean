@@ -76,7 +76,7 @@ theorem chebMat_comm_adj (G : SimpleGraph V) [DecidableRel G.Adj] (d : ℕ) :
       simp only [chebMat, mul_sub, sub_mul, mul_smul_comm, smul_mul_assoc]
       rw [chebMat_comm_adj G d k]
       congr 1
-      rw [← Matrix.mul_assoc, chebMat_comm_adj G d (k + 1), Matrix.mul_assoc]
+      rw [chebMat_comm_adj G d (k + 1), ← Matrix.mul_assoc, chebMat_comm_adj G d (k + 1)]
 
 theorem chebMat_symm (G : SimpleGraph V) [DecidableRel G.Adj] (d : ℕ) :
     ∀ k : ℕ, (chebMat G d k)ᵀ = chebMat G d k
@@ -184,6 +184,10 @@ theorem chebMat_double (G : SimpleGraph V) [DecidableRel G.Adj] (d L : ℕ) :
   rw [hmul] at h
   exact eq_sub_of_add_eq h
 
+/-- All-ones rational matrix on `V`. -/
+def onesMat (V : Type*) : Matrix V V ℚ :=
+  Matrix.of fun _ _ => 1
+
 omit [DecidableEq V] in
 /-- Elementary eigenvalue-free matrix-squaring trace decomposition for any symmetric matrix
 with constant row sum `μ`. -/
@@ -192,17 +196,17 @@ theorem symm_const_rowSum_sq_trace (M : Matrix V V ℚ) (μ : ℚ)
     (hn : 0 < Fintype.card V) :
     Matrix.trace (M * M) =
       (∑ u : V, ∑ v : V,
-        ((M - (μ / (Fintype.card V : ℚ)) • Matrix.of (fun _ _ => (1 : ℚ))) u v) ^ 2) + μ ^ 2 ∧
-    Matrix.trace (M - (μ / (Fintype.card V : ℚ)) • Matrix.of (fun _ _ => (1 : ℚ))) =
+        ((M - (μ / (Fintype.card V : ℚ)) • onesMat V) u v) ^ 2) + μ ^ 2 ∧
+    Matrix.trace (M - (μ / (Fintype.card V : ℚ)) • onesMat V) =
       Matrix.trace M - μ := by
   set n : ℚ := (Fintype.card V : ℚ)
-  set J : Matrix V V ℚ := Matrix.of fun _ _ => 1
+  set J : Matrix V V ℚ := onesMat V
   set R : Matrix V V ℚ := M - (μ / n) • J
   have hn0 : n ≠ 0 := Nat.cast_ne_zero.mpr (Nat.ne_of_gt hn)
   have hMJ : M * J = μ • J := by
     ext u v
     have hu := congrFun hrow u
-    simpa [Matrix.mul_apply, mulVec, dotProduct, J] using hu
+    simpa [Matrix.mul_apply, mulVec, dotProduct, J, onesMat] using hu
   have hJM : J * M = μ • J := by
     have h1 := congrArg Matrix.transpose hMJ
     rw [transpose_mul, hsym, transpose_smul] at h1
@@ -210,7 +214,7 @@ theorem symm_const_rowSum_sq_trace (M : Matrix V V ℚ) (μ : ℚ)
     simpa [hJt] using h1
   have hJJ : J * J = n • J := by
     ext u v
-    simp [Matrix.mul_apply, J, n]
+    simp [Matrix.mul_apply, J, onesMat, n]
   have hRJ : R * J = 0 := by
     dsimp only [R]
     rw [sub_mul, smul_mul, hMJ, hJJ, smul_smul, div_mul_cancel₀ _ hn0, sub_self]
@@ -237,7 +241,7 @@ theorem symm_const_rowSum_sq_trace (M : Matrix V V ℚ) (μ : ℚ)
           congr 1
           field_simp [hn0]
   have htrJ : Matrix.trace J = n := by
-    simp [Matrix.trace, J, n]
+    simp [Matrix.trace, J, onesMat, n]
   have htrRR : Matrix.trace (R * R) = ∑ u : V, ∑ v : V, (R u v) ^ 2 := by
     simp only [Matrix.trace, Matrix.diag_apply, Matrix.mul_apply]
     refine Finset.sum_congr rfl fun u _ => Finset.sum_congr rfl fun v _ => ?_
@@ -268,8 +272,7 @@ theorem chebMat_sq_trace_sharp (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ
     (Fintype.card V : ℚ) * Matrix.trace (chebMat G d L * chebMat G d L) := by
   set n : ℚ := (Fintype.card V : ℚ)
   set μ : ℚ := ((d - 1 : ℕ) : ℚ) ^ L + 1
-  set J : Matrix V V ℚ := Matrix.of fun _ _ => 1
-  set R : Matrix V V ℚ := chebMat G d L - (μ / n) • J
+  set R : Matrix V V ℚ := chebMat G d L - (μ / n) • onesMat V
   have hn_pos : (0 : ℚ) < n := Nat.cast_pos.mpr hn
   have hdecomp := symm_const_rowSum_sq_trace (chebMat G d L) μ
     (chebMat_symm G d L) (chebMat_mulVec_one G hd hreg L) hn
@@ -384,7 +387,12 @@ theorem nbMat_one (G : SimpleGraph V) [DecidableRel G.Adj] :
       | cons h rest =>
           cases rest with
           | nil => simp [nbWalks, mem_finsetWalkLength_iff, IsNonBacktracking]
-          | cons _ _ => simp [nbWalks, mem_finsetWalkLength_iff]
+          | cons _ _ =>
+              simp only [nbWalks, Finset.mem_filter, mem_finsetWalkLength_iff, Walk.length_cons,
+                Finset.mem_singleton, Walk.cons.injEq]
+              constructor
+              · intro h1; omega
+              · rintro ⟨rfl, h2⟩; cases h2
     simp [huv, hcard]
   · have hcard : (nbWalks G 1 u v).card = 0 := by
       rw [Finset.card_eq_zero, Finset.eq_empty_iff_forall_notMem]
@@ -498,7 +506,7 @@ theorem nbWalks_rec_card (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
   rw [hpart]
   congr 1
   · refine Finset.card_bij
-      (fun x hx => Walk.cons (G.mem_neighborFinset.mp (Finset.mem_sigma.mp (Finset.mem_filter.mp hx).1).1) x.2)
+      (fun x hx => Walk.cons ((G.mem_neighborFinset u x.1).mp (Finset.mem_sigma.mp (Finset.mem_filter.mp hx).1).1) x.2)
       (fun x hx => ?_)
       (fun x₁ hx₁ x₂ hx₂ heq => ?_)
       (fun p hp => ?_)
@@ -535,14 +543,13 @@ theorem nbWalks_rec_card (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
         | nil => simp at hp; omega
         | cons h₁ rest =>
             simp only [Walk.snd_cons]
-            rw [Finset.card_erase_of_mem (G.mem_neighborFinset.mpr h₁),
+            rw [Finset.card_erase_of_mem ((G.mem_neighborFinset u _).mpr h₁),
                 G.card_neighborFinset_eq_degree, hreg u]
       rw [Finset.sum_congr rfl hconst, Finset.sum_const, smul_eq_mul, mul_comm]
     rw [← hT]
-    -- Use the inverse map `T → bad`: `(p, w) ↦ (w, Walk.cons hw p)` (much cleaner, no `cast` needed!)
     symm
     refine Finset.card_bij
-      (fun y hy => ⟨y.2, Walk.cons (G.mem_neighborFinset.mp (Finset.mem_erase.mp (Finset.mem_sigma.mp hy).2).2).symm y.1⟩)
+      (fun y hy => ⟨y.2, Walk.cons ((G.mem_neighborFinset u y.2).mp (Finset.mem_erase.mp (Finset.mem_sigma.mp hy).2).2).symm y.1⟩)
       (fun y hy => ?_)
       (fun y₁ hy₁ y₂ hy₂ heq => ?_)
       (fun x hx => ?_)
@@ -700,6 +707,18 @@ theorem chebMat_eq_nbMat_sub (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
               smul_comm ((d - 1 : ℕ) : ℚ) ((d - 2 : ℕ) : ℚ), ← smul_sub, hgoal]
 
 omit [Fintype V] [DecidableEq V] in
+private theorem reverse_snd_cons_cons {G : SimpleGraph V} {x y z w : V}
+    (h₁ : G.Adj x y) (h₂ : G.Adj y z) (rest : G.Walk z w) :
+    (Walk.cons h₁ (Walk.cons h₂ rest)).reverse.snd = (Walk.cons h₂ rest).reverse.snd := by
+  rw [Walk.reverse_cons]
+  cases hrv : (Walk.cons h₂ rest).reverse with
+  | nil =>
+      have hlen := congrArg Walk.length hrv
+      simp only [Walk.length_reverse, Walk.length_cons, Walk.length_nil] at hlen
+      omega
+  | cons _ _ => simp [Walk.cons_append]
+
+omit [Fintype V] [DecidableEq V] in
 private theorem isCyclicallyNonBacktracking_iff_snd_ne_rev_snd {G : SimpleGraph V} {v : V}
     (p : G.Walk v v) (hnb : IsNonBacktracking p) (hlen : 1 ≤ p.length) :
     IsCyclicallyNonBacktracking p ↔ p.snd ≠ p.reverse.snd := by
@@ -707,41 +726,36 @@ private theorem isCyclicallyNonBacktracking_iff_snd_ne_rev_snd {G : SimpleGraph 
   | nil => simp at hlen
   | cons h₁ rest =>
       rename_i a
-      have hgen : ∀ {x : V} (q : G.Walk x v) (h₂ : G.Adj v a) (r : G.Walk a v),
-          IsNonBacktracking q → IsNonBacktracking (Walk.cons h₂ r) → 1 ≤ q.length →
-          (IsNonBacktracking (q.append (Walk.cons h₂ r)) ↔ a ≠ q.reverse.snd) := by
-        intro x q h₂ r hq hr hqlen
+      have hgen : ∀ {x : V} (q : G.Walk x v),
+          IsNonBacktracking q → 1 ≤ q.length →
+          (IsNonBacktracking (q.append (Walk.cons h₁ rest)) ↔ a ≠ q.reverse.snd) := by
+        intro x q
         induction q with
-        | nil => simp at hqlen
+        | nil => intro _ hqlen; simp at hqlen
         | cons hyz qrest ih =>
+            intro hq _
             cases qrest with
             | nil =>
                 simp only [Walk.cons_append, Walk.nil_append, IsNonBacktracking, Walk.reverse_cons,
                   Walk.reverse_nil, Walk.nil_append, Walk.snd_cons]
-                exact ⟨fun h => Ne.symm h.1, fun h => ⟨Ne.symm h, hr⟩⟩
+                exact ⟨fun h => Ne.symm h.1, fun h => ⟨Ne.symm h, hnb⟩⟩
             | cons hzw qrest₂ =>
                 simp only [Walk.cons_append, IsNonBacktracking] at hq ⊢
                 have ih' := ih hq.2 (by simp)
-                have hrev : (Walk.cons hyz (Walk.cons hzw qrest₂)).reverse.snd =
-                    (Walk.cons hzw qrest₂).reverse.snd := by
-                  simp only [Walk.reverse_cons]
-                  cases hrv : (Walk.cons hzw qrest₂).reverse with
-                  | nil =>
-                      have := congrArg Walk.length hrv; simp at this
-                  | cons _ _ => simp [Walk.cons_append]
-                rw [hrev]
+                rw [reverse_snd_cons_cons hyz hzw qrest₂]
                 exact ⟨fun h => ih'.mp h.2, fun h => ⟨hq.1, ih'.mpr h⟩⟩
-      exact hgen (Walk.cons h₁ rest) h₁ rest hnb hnb hlen
+      simpa [IsCyclicallyNonBacktracking, Walk.snd_cons] using hgen (Walk.cons h₁ rest) hnb hlen
 
 omit [Fintype V] [DecidableEq V] in
 private theorem isNonBacktracking_append_single {G : SimpleGraph V} :
     ∀ {a b c : V} (p : G.Walk a b) (h : G.Adj b c),
       IsNonBacktracking p → 1 ≤ p.length → c ≠ p.reverse.snd →
       IsNonBacktracking (p.append (Walk.cons h Walk.nil)) := by
-  intro a b c p h hp hplen hne
+  intro a b c p
   induction p with
-  | nil => simp at hplen
+  | nil => intro _ _ hplen _; simp at hplen
   | cons hp₁ prest ih =>
+      intro h hp _ hne
       cases prest with
       | nil =>
           simp only [Walk.cons_append, Walk.nil_append, IsNonBacktracking, Walk.reverse_cons,
@@ -749,13 +763,8 @@ private theorem isNonBacktracking_append_single {G : SimpleGraph V} :
           exact ⟨Ne.symm hne, trivial⟩
       | cons hp₂ prest₂ =>
           simp only [Walk.cons_append, IsNonBacktracking] at hp ⊢
-          have hrev : (Walk.cons hp₁ (Walk.cons hp₂ prest₂)).reverse.snd =
-              (Walk.cons hp₂ prest₂).reverse.snd := by
-            simp only [Walk.reverse_cons]
-            cases hrv : (Walk.cons hp₂ prest₂).reverse with
-            | nil => have := congrArg Walk.length hrv; simp at this
-            | cons _ _ => simp [Walk.cons_append]
-          exact ⟨hp.1, ih hp.2 (by simp) (by simpa [hrev] using hne)⟩
+          rw [reverse_snd_cons_cons hp₁ hp₂ prest₂] at hne
+          exact ⟨hp.1, ih h hp.2 (by simp) hne⟩
 
 omit [Fintype V] [DecidableEq V] in
 private theorem isNonBacktracking_reverse {G : SimpleGraph V} :
@@ -809,14 +818,14 @@ theorem one_step_tail_strip (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
       have hsnd_mem : q.snd ∈ G.neighborFinset w := by
         cases q with
         | nil => simp at hqpos
-        | cons h₁ _ => exact G.mem_neighborFinset.mpr h₁
+        | cons h₁ _ => exact (G.mem_neighborFinset w _).mpr h₁
       have hrev_mem : q.reverse.snd ∈ G.neighborFinset w := by
         cases hrv : q.reverse with
         | nil =>
             have h0 := congrArg Walk.length hrv
             simp only [Walk.length_reverse, Walk.length_nil] at h0
             omega
-        | cons h₁ _ => exact G.mem_neighborFinset.mpr h₁
+        | cons h₁ _ => exact (G.mem_neighborFinset w _).mpr h₁
       have hiff := isCyclicallyNonBacktracking_iff_snd_ne_rev_snd q hqnb hqpos
       by_cases hcyc : IsCyclicallyNonBacktracking q
       · have hne : q.snd ≠ q.reverse.snd := hiff.mp hcyc
@@ -834,11 +843,10 @@ theorem one_step_tail_strip (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
         simp only [hcyc, ↓reduceIte]
         omega
     rw [hsplit, Finset.sum_const, smul_eq_mul, mul_comm]
-  -- Bijection `Fibers → Tailed (k + 2)` via `((w, q), u) ↦ (u, (u - w) ++ q ++ (w - u))`
   let fwd : (y : (_ : (v : V) × G.Walk v v) × V) → y ∈ Fibers → (v : V) × G.Walk v v :=
     fun y hy =>
       let huw : G.Adj y.2 y.1.1 :=
-        (G.mem_neighborFinset.mp (Finset.mem_erase.mp (Finset.mem_erase.mp (Finset.mem_sigma.mp hy).2).2).2).symm
+        ((G.mem_neighborFinset y.1.1 y.2).mp (Finset.mem_erase.mp (Finset.mem_erase.mp (Finset.mem_sigma.mp hy).2).2).2).symm
       ⟨y.2, (Walk.cons huw y.1.2).append (Walk.cons huw.symm Walk.nil)⟩
   have hbij : Fibers.card = (Tailed (k + 2)).card := by
     refine Finset.card_bij fwd (fun y hy => ?_) (fun y₁ hy₁ y₂ hy₂ heq => ?_) (fun z hz => ?_)
@@ -854,7 +862,7 @@ theorem one_step_tail_strip (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
         | nil => simp at hqlen; omega
         | cons h₁ rest =>
             simp only [IsNonBacktracking, Walk.snd_cons] at hy' ⊢
-            exact ⟨Ne.symm hy'.2.2.1, hnb_q⟩
+            exact ⟨hy'.2.2.1, hnb_q⟩
       have hnb_all : IsNonBacktracking ((Walk.cons huw q).append (Walk.cons huw.symm Walk.nil)) := by
         refine isNonBacktracking_append_single (Walk.cons huw q) huw.symm hnb_wq (by simp) ?_
         have hrev : (Walk.cons huw q).reverse.snd = q.reverse.snd := by
@@ -905,8 +913,7 @@ theorem one_step_tail_strip (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
         by_contra hne; exact hnotcyc hne
       cases p with
       | nil => simp at hplen
-      | cons huw rest =>
-          rename_i w
+      | @cons _ w _ huw rest =>
           have hrev_len : rest.reverse.length = k + 1 := by
             simp only [Walk.length_reverse]
             simp only [Walk.length_cons] at hplen
@@ -914,8 +921,7 @@ theorem one_step_tail_strip (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
           cases hrv : rest.reverse with
           | nil =>
               rw [hrv] at hrev_len; simp at hrev_len
-          | cons huw' qrev =>
-              rename_i w'
+          | @cons _ w' _ huw' qrev =>
               have hww' : w' = w := by
                 have h1 : (Walk.cons huw rest).reverse.snd = w' := by
                   rw [Walk.reverse_cons, hrv]; simp [Walk.cons_append]
@@ -930,7 +936,8 @@ theorem one_step_tail_strip (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
               have hqlen : q.length = k := by
                 have h0 := congrArg Walk.length hrv
                 simp only [Walk.length_reverse, Walk.length_cons] at h0
-                simp only [q, Walk.length_reverse]
+                change qrev.reverse.length = k
+                rw [Walk.length_reverse]
                 omega
               have hnb_q : IsNonBacktracking q := by
                 have hnb_rest : IsNonBacktracking rest :=
@@ -943,7 +950,6 @@ theorem one_step_tail_strip (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
                 | nil => simp at hqlen; omega
                 | cons h₁ q' =>
                     rw [hp'] at hnb_p
-                    simp only [Walk.cons_append, IsNonBacktracking, Walk.snd_cons] at hnb_p ⊢
                     exact hnb_p.1
               have hne_rev : u ≠ q.reverse.snd := by
                 have hnb_rev := isNonBacktracking_reverse hnb_p
@@ -952,7 +958,8 @@ theorem one_step_tail_strip (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
                   isNonBacktracking_of_append_left hnb_rev
                 cases qrev with
                 | nil =>
-                    simp only [q, Walk.reverse_nil, Walk.length_nil] at hqlen; omega
+                    change Walk.nil.reverse.length = k at hqlen
+                    simp at hqlen; omega
                 | cons h₁ qrev' =>
                     simp only [IsNonBacktracking] at hnb_r2
                     simpa [q, Walk.reverse_reverse, Walk.snd_cons] using hnb_r2.1
@@ -1024,7 +1031,9 @@ theorem taillessCount_eq_chebMat_trace (G : SimpleGraph V) [DecidableRel G.Adj] 
             have hstrip_q : (nbClosedCount G (2 * (r + 2)) : ℚ) + (taillessCount G (2 * (r + 1)) : ℚ) =
                 (taillessCount G (2 * (r + 2)) : ℚ) +
                   ((d - 1 : ℕ) : ℚ) * (nbClosedCount G (2 * (r + 1)) : ℚ) := by
-              exact_mod_cast hstrip
+              have hcast := congrArg (Nat.cast (R := ℚ)) hstrip
+              push_cast at hcast
+              exact hcast
             have hdq : ((d - 1 : ℕ) : ℚ) = ((d - 2 : ℕ) : ℚ) + 1 := by
               have : d - 1 = (d - 2) + 1 := by omega
               exact_mod_cast this
