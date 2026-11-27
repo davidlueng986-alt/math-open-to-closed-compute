@@ -1,0 +1,2936 @@
+{
+  "candidates": [
+    {
+      "a": "2",
+      "b": "6436341",
+      "c": "6436343",
+      "factors": [
+        [
+          [
+            "2",
+            1
+          ]
+        ],
+        [
+          [
+            "3",
+            10
+          ],
+          [
+            "109",
+            1
+          ]
+        ],
+        [
+          [
+            "23",
+            5
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "2",
+          "59049",
+          "6436343"
+        ],
+        "coefficients": [
+          "-1",
+          "-109",
+          "1"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "known_reyssat_replay",
+        "seed_index": 0
+      },
+      "quality_display": 1.6299116841270482,
+      "quality_gt_8_over_5": true,
+      "quality_interval_256": "1.6299116841270481846308600545356048822587010667362909878631667121778680233715?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": true
+      },
+      "radical": "15042",
+      "seen_exploratory": false
+    },
+    {
+      "a": "338",
+      "b": "390625",
+      "c": "390963",
+      "factors": [
+        [
+          [
+            "2",
+            1
+          ],
+          [
+            "13",
+            2
+          ]
+        ],
+        [
+          [
+            "5",
+            8
+          ]
+        ],
+        [
+          [
+            "3",
+            1
+          ],
+          [
+            "19",
+            4
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1953125",
+          "28561",
+          "130321"
+        ],
+        "coefficients": [
+          "169",
+          "10",
+          "-2535"
+        ],
+        "combination": [
+          1,
+          1
+        ],
+        "kind": "exploratory",
+        "seed_index": 239
+      },
+      "quality_display": 1.445064175624668,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.4450641756246681051466523732890685651211868273640225919205140163264377360322?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "7410",
+      "seen_exploratory": true
+    },
+    {
+      "a": "61731",
+      "b": "48828125",
+      "c": "48889856",
+      "factors": [
+        [
+          [
+            "3",
+            2
+          ],
+          [
+            "19",
+            3
+          ]
+        ],
+        [
+          [
+            "5",
+            11
+          ]
+        ],
+        [
+          [
+            "2",
+            17
+          ],
+          [
+            "373",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1048576",
+          "1953125",
+          "6859"
+        ],
+        "coefficients": [
+          "-373",
+          "200",
+          "72"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 48
+      },
+      "quality_display": 1.443284462366042,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.4432844623660418050908953643997209567273880263393059902517432751689867572883?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "212610",
+      "seen_exploratory": true
+    },
+    {
+      "a": "10460353203",
+      "b": "17274491311",
+      "c": "27734844514",
+      "factors": [
+        [
+          [
+            "3",
+            21
+          ]
+        ],
+        [
+          [
+            "7",
+            2
+          ],
+          [
+            "11",
+            6
+          ],
+          [
+            "199",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            1
+          ],
+          [
+            "13",
+            8
+          ],
+          [
+            "17",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "3486784401",
+          "2357947691",
+          "815730721"
+        ],
+        "coefficients": [
+          "-3993",
+          "-9751",
+          "45254"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 493
+      },
+      "quality_display": 1.429007491514211,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.4290074915142109235531453453903798347479366110718138071422748705851442611884?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "20318298",
+      "seen_exploratory": true
+    },
+    {
+      "a": "3906250",
+      "b": "4782969",
+      "c": "8689219",
+      "factors": [
+        [
+          [
+            "2",
+            1
+          ],
+          [
+            "5",
+            9
+          ]
+        ],
+        [
+          [
+            "3",
+            14
+          ]
+        ],
+        [
+          [
+            "7",
+            5
+          ],
+          [
+            "11",
+            1
+          ],
+          [
+            "47",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "531441",
+          "390625",
+          "823543"
+        ],
+        "coefficients": [
+          "441",
+          "490",
+          "-517"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 113
+      },
+      "quality_display": 1.3779548398599422,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.3779548398599421767375698906960366930263540171671699739830300580077731110775?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "108570",
+      "seen_exploratory": true
+    },
+    {
+      "a": "23059204",
+      "b": "265513259",
+      "c": "288572463",
+      "factors": [
+        [
+          [
+            "2",
+            2
+          ],
+          [
+            "7",
+            8
+          ]
+        ],
+        [
+          [
+            "11",
+            1
+          ],
+          [
+            "17",
+            6
+          ]
+        ],
+        [
+          [
+            "3",
+            13
+          ],
+          [
+            "181",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "177147",
+          "823543",
+          "1419857"
+        ],
+        "coefficients": [
+          "1629",
+          "-28",
+          "-187"
+        ],
+        "combination": [
+          0,
+          1
+        ],
+        "kind": "exploratory",
+        "seed_index": 146
+      },
+      "quality_display": 1.3750319957534198,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.3750319957534197306349741958178702339356895324827281881909600271545922433464?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "1421574",
+      "seen_exploratory": true
+    },
+    {
+      "a": "1127357",
+      "b": "5688387",
+      "c": "6815744",
+      "factors": [
+        [
+          [
+            "7",
+            1
+          ],
+          [
+            "11",
+            5
+          ]
+        ],
+        [
+          [
+            "3",
+            9
+          ],
+          [
+            "17",
+            2
+          ]
+        ],
+        [
+          [
+            "2",
+            19
+          ],
+          [
+            "13",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1048576",
+          "531441",
+          "161051"
+        ],
+        "coefficients": [
+          "351",
+          "-578",
+          "-378"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 9
+      },
+      "quality_display": 1.364237681336999,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.3642376813369989720310712298043523378506629823627818281134324273733389529758?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "102102",
+      "seen_exploratory": true
+    },
+    {
+      "a": "21474836480",
+      "b": "7555307666893",
+      "c": "7576782503373",
+      "factors": [
+        [
+          [
+            "2",
+            32
+          ],
+          [
+            "5",
+            1
+          ]
+        ],
+        [
+          [
+            "7",
+            1
+          ],
+          [
+            "23",
+            7
+          ],
+          [
+            "317",
+            1
+          ]
+        ],
+        [
+          [
+            "3",
+            20
+          ],
+          [
+            "41",
+            1
+          ],
+          [
+            "53",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "4294967296",
+          "3486784401",
+          "3404825447"
+        ],
+        "coefficients": [
+          "5",
+          "-2173",
+          "2219"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 361
+      },
+      "quality_display": 1.35259350852674,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.3525935085267399068774232252094078328502152938556617186891419617816657397719?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "3327102030",
+      "seen_exploratory": true
+    },
+    {
+      "a": "1244485",
+      "b": "2097152",
+      "c": "3341637",
+      "factors": [
+        [
+          [
+            "5",
+            1
+          ],
+          [
+            "11",
+            4
+          ],
+          [
+            "17",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            21
+          ]
+        ],
+        [
+          [
+            "3",
+            2
+          ],
+          [
+            "13",
+            5
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1048576",
+          "161051",
+          "371293"
+        ],
+        "coefficients": [
+          "22",
+          "85",
+          "-99"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 73
+      },
+      "quality_display": 1.3415762065856243,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.3415762065856242668254507067304783620781299943890563745909273238750992021663?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "72930",
+      "seen_exploratory": true
+    },
+    {
+      "a": "1953125",
+      "b": "10367643",
+      "c": "12320768",
+      "factors": [
+        [
+          [
+            "5",
+            9
+          ]
+        ],
+        [
+          [
+            "3",
+            1
+          ],
+          [
+            "11",
+            2
+          ],
+          [
+            "13",
+            4
+          ]
+        ],
+        [
+          [
+            "2",
+            18
+          ],
+          [
+            "47",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1048576",
+          "390625",
+          "371293"
+        ],
+        "coefficients": [
+          "-611",
+          "260",
+          "1452"
+        ],
+        "combination": [
+          0,
+          1
+        ],
+        "kind": "exploratory",
+        "seed_index": 37
+      },
+      "quality_display": 1.3367073353410952,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.3367073353410952205476841402654148176418161666549455804009752722438660616700?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "201630",
+      "seen_exploratory": true
+    },
+    {
+      "a": "16105100",
+      "b": "26941621",
+      "c": "43046721",
+      "factors": [
+        [
+          [
+            "2",
+            2
+          ],
+          [
+            "5",
+            2
+          ],
+          [
+            "11",
+            5
+          ]
+        ],
+        [
+          [
+            "7",
+            6
+          ],
+          [
+            "229",
+            1
+          ]
+        ],
+        [
+          [
+            "3",
+            16
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "531441",
+          "823543",
+          "161051"
+        ],
+        "coefficients": [
+          "567",
+          "-229",
+          "-700"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 137
+      },
+      "quality_display": 1.3338010221792989,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.3338010221792989132453257634408117237755641130625925870965977697564319189183?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "528990",
+      "seen_exploratory": true
+    },
+    {
+      "a": "12265625",
+      "b": "39617584",
+      "c": "51883209",
+      "factors": [
+        [
+          [
+            "5",
+            7
+          ],
+          [
+            "157",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            4
+          ],
+          [
+            "19",
+            5
+          ]
+        ],
+        [
+          [
+            "3",
+            2
+          ],
+          [
+            "7",
+            8
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "390625",
+          "823543",
+          "130321"
+        ],
+        "coefficients": [
+          "157",
+          "-315",
+          "1520"
+        ],
+        "combination": [
+          1,
+          -1
+        ],
+        "kind": "exploratory",
+        "seed_index": 209
+      },
+      "quality_display": 1.3308946790778464,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.3308946790778463794586352913947984742635611666307797003212777685159562139350?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "626430",
+      "seen_exploratory": true
+    },
+    {
+      "a": "678223072849",
+      "b": "1133204930325",
+      "c": "1811428003174",
+      "factors": [
+        [
+          [
+            "7",
+            14
+          ]
+        ],
+        [
+          [
+            "3",
+            20
+          ],
+          [
+            "5",
+            2
+          ],
+          [
+            "13",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            1
+          ],
+          [
+            "17",
+            6
+          ],
+          [
+            "157",
+            1
+          ],
+          [
+            "239",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "3486784401",
+          "1977326743",
+          "410338673"
+        ],
+        "coefficients": [
+          "5525",
+          "5831",
+          "-75046"
+        ],
+        "combination": [
+          0,
+          1
+        ],
+        "kind": "exploratory",
+        "seed_index": 481
+      },
+      "quality_display": 1.3264951441200419,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.3264951441200417707027957310201204679153223286556377662982674926854308821115?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "1741442430",
+      "seen_exploratory": true
+    },
+    {
+      "a": "1953125",
+      "b": "280600848",
+      "c": "282553973",
+      "factors": [
+        [
+          [
+            "5",
+            9
+          ]
+        ],
+        [
+          [
+            "2",
+            4
+          ],
+          [
+            "3",
+            13
+          ],
+          [
+            "11",
+            1
+          ]
+        ],
+        [
+          [
+            "13",
+            5
+          ],
+          [
+            "761",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "531441",
+          "390625",
+          "371293"
+        ],
+        "coefficients": [
+          "528",
+          "5",
+          "-761"
+        ],
+        "combination": [
+          0,
+          1
+        ],
+        "kind": "exploratory",
+        "seed_index": 121
+      },
+      "quality_display": 1.2974065819420382,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2974065819420382352476601525345140492929919578839858867098750694239030355880?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "3264690",
+      "seen_exploratory": true
+    },
+    {
+      "a": "207499396808",
+      "b": "3726769870575",
+      "c": "3934269267383",
+      "factors": [
+        [
+          [
+            "2",
+            3
+          ],
+          [
+            "11",
+            10
+          ]
+        ],
+        [
+          [
+            "3",
+            16
+          ],
+          [
+            "5",
+            2
+          ],
+          [
+            "3463",
+            1
+          ]
+        ],
+        [
+          [
+            "7",
+            1
+          ],
+          [
+            "13",
+            9
+          ],
+          [
+            "53",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1162261467",
+          "2357947691",
+          "10604499373"
+        ],
+        "coefficients": [
+          "-86575",
+          "-2376",
+          "10017"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 494
+      },
+      "quality_display": 1.2929367911721532,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2929367911721532951950733261015718200063200501282090099389353844989459254732?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "5511676170",
+      "seen_exploratory": true
+    },
+    {
+      "a": "31587766648644483",
+      "b": "2812521904351372402",
+      "c": "2844109671000016885",
+      "factors": [
+        [
+          [
+            "3",
+            26
+          ],
+          [
+            "17",
+            2
+          ],
+          [
+            "43",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            1
+          ],
+          [
+            "7",
+            15
+          ],
+          [
+            "67",
+            1
+          ],
+          [
+            "4421",
+            1
+          ]
+        ],
+        [
+          [
+            "5",
+            1
+          ],
+          [
+            "19",
+            12
+          ],
+          [
+            "257",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "68630377364883",
+          "232630513987207",
+          "2213314919066161"
+        ],
+        "coefficients": [
+          "-608923",
+          "-15995178",
+          "1700055"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 822
+      },
+      "quality_display": 1.2863103125262765,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2863103125262765207219820809885162581109548446086948345378737614932145826334?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "222033606671310",
+      "seen_exploratory": true
+    },
+    {
+      "a": "84035",
+      "b": "2392064",
+      "c": "2476099",
+      "factors": [
+        [
+          [
+            "5",
+            1
+          ],
+          [
+            "7",
+            5
+          ]
+        ],
+        [
+          [
+            "2",
+            15
+          ],
+          [
+            "73",
+            1
+          ]
+        ],
+        [
+          [
+            "19",
+            5
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "524288",
+          "823543",
+          "2476099"
+        ],
+        "coefficients": [
+          "-3577",
+          "-80",
+          "784"
+        ],
+        "combination": [
+          2,
+          1
+        ],
+        "kind": "exploratory",
+        "seed_index": 66
+      },
+      "quality_display": 1.2820421670366398,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2820421670366397843972038619282652355873103013643056370877027600237764228822?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "97090",
+      "seen_exploratory": true
+    },
+    {
+      "a": "75429",
+      "b": "126877696",
+      "c": "126953125",
+      "factors": [
+        [
+          [
+            "3",
+            2
+          ],
+          [
+            "17",
+            2
+          ],
+          [
+            "29",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            20
+          ],
+          [
+            "11",
+            2
+          ]
+        ],
+        [
+          [
+            "5",
+            10
+          ],
+          [
+            "13",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1048576",
+          "1953125",
+          "4913"
+        ],
+        "coefficients": [
+          "-2057",
+          "1105",
+          "-261"
+        ],
+        "combination": [
+          1,
+          -1
+        ],
+        "kind": "exploratory",
+        "seed_index": 44
+      },
+      "quality_display": 1.2811468231018168,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2811468231018167515688048874104221205496429887108916268724782584366890682106?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "2114970",
+      "seen_exploratory": true
+    },
+    {
+      "a": "132651",
+      "b": "588245",
+      "c": "720896",
+      "factors": [
+        [
+          [
+            "3",
+            3
+          ],
+          [
+            "17",
+            3
+          ]
+        ],
+        [
+          [
+            "5",
+            1
+          ],
+          [
+            "7",
+            6
+          ]
+        ],
+        [
+          [
+            "2",
+            16
+          ],
+          [
+            "11",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "2097152",
+          "117649",
+          "83521"
+        ],
+        "coefficients": [
+          "187",
+          "-2720",
+          "-864"
+        ],
+        "combination": [
+          1,
+          -1
+        ],
+        "kind": "exploratory",
+        "seed_index": 63
+      },
+      "quality_display": 1.2750968569358796,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2750968569358795097378474689108263221658077176823781376125452499086152045732?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "39270",
+      "seen_exploratory": true
+    },
+    {
+      "a": "28561",
+      "b": "783984375",
+      "c": "784012936",
+      "factors": [
+        [
+          [
+            "13",
+            4
+          ]
+        ],
+        [
+          [
+            "3",
+            2
+          ],
+          [
+            "5",
+            8
+          ],
+          [
+            "223",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            3
+          ],
+          [
+            "7",
+            8
+          ],
+          [
+            "17",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "390625",
+          "5764801",
+          "28561"
+        ],
+        "coefficients": [
+          "2007",
+          "-136",
+          "1"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 204
+      },
+      "quality_display": 1.2679157785239643,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2679157785239642545959575094737774112640374371061886598046490004289423035552?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "10349430",
+      "seen_exploratory": true
+    },
+    {
+      "a": "114697265625",
+      "b": "9532679913472",
+      "c": "9647377179097",
+      "factors": [
+        [
+          [
+            "3",
+            4
+          ],
+          [
+            "5",
+            11
+          ],
+          [
+            "29",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            31
+          ],
+          [
+            "23",
+            1
+          ],
+          [
+            "193",
+            1
+          ]
+        ],
+        [
+          [
+            "7",
+            12
+          ],
+          [
+            "17",
+            1
+          ],
+          [
+            "41",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "2147483648",
+          "1220703125",
+          "13841287201"
+        ],
+        "coefficients": [
+          "-110975",
+          "-2349",
+          "17425"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 366
+      },
+      "quality_display": 1.2636728359893838,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2636728359893838163641869106035043323482089144182573877690046725718601050073?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "18842356470",
+      "seen_exploratory": true
+    },
+    {
+      "a": "129140163",
+      "b": "277707325",
+      "c": "406847488",
+      "factors": [
+        [
+          [
+            "3",
+            17
+          ]
+        ],
+        [
+          [
+            "5",
+            2
+          ],
+          [
+            "7",
+            1
+          ],
+          [
+            "17",
+            4
+          ],
+          [
+            "19",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            22
+          ],
+          [
+            "97",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "2097152",
+          "177147",
+          "83521"
+        ],
+        "coefficients": [
+          "194",
+          "-729",
+          "-3325"
+        ],
+        "combination": [
+          1,
+          2
+        ],
+        "kind": "exploratory",
+        "seed_index": 19
+      },
+      "quality_display": 1.26271446741092,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2627144674109201598038060408343886610633408010858681118084950860927786214000?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "6579510",
+      "seen_exploratory": true
+    },
+    {
+      "a": "296875",
+      "b": "371293",
+      "c": "668168",
+      "factors": [
+        [
+          [
+            "5",
+            6
+          ],
+          [
+            "19",
+            1
+          ]
+        ],
+        [
+          [
+            "13",
+            5
+          ]
+        ],
+        [
+          [
+            "2",
+            3
+          ],
+          [
+            "17",
+            4
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "390625",
+          "371293",
+          "83521"
+        ],
+        "coefficients": [
+          "-19",
+          "-25",
+          "200"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 233
+      },
+      "quality_display": 1.2599398397657555,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2599398397657555089520936524039965942512428260754147397455038079346636630307?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "41990",
+      "seen_exploratory": true
+    },
+    {
+      "a": "31823",
+      "b": "1562500",
+      "c": "1594323",
+      "factors": [
+        [
+          [
+            "11",
+            2
+          ],
+          [
+            "263",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            2
+          ],
+          [
+            "5",
+            8
+          ]
+        ],
+        [
+          [
+            "3",
+            13
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "531441",
+          "1953125",
+          "14641"
+        ],
+        "coefficients": [
+          "1815",
+          "-484",
+          "-1315"
+        ],
+        "combination": [
+          1,
+          -1
+        ],
+        "kind": "exploratory",
+        "seed_index": 120
+      },
+      "quality_display": 1.2559713236603467,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2559713236603467579498230499961895680870051080685796445213921104877085672264?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "86790",
+      "seen_exploratory": true
+    },
+    {
+      "a": "202948680152",
+      "b": "37432419594625",
+      "c": "37635368274777",
+      "factors": [
+        [
+          [
+            "2",
+            3
+          ],
+          [
+            "17",
+            6
+          ],
+          [
+            "1051",
+            1
+          ]
+        ],
+        [
+          [
+            "5",
+            3
+          ],
+          [
+            "11",
+            9
+          ],
+          [
+            "127",
+            1
+          ]
+        ],
+        [
+          [
+            "3",
+            1
+          ],
+          [
+            "7",
+            1
+          ],
+          [
+            "13",
+            11
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "2357947691",
+          "10604499373",
+          "24137569"
+        ],
+        "coefficients": [
+          "15875",
+          "-3549",
+          "8408"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 636
+      },
+      "quality_display": 1.2531230060295584,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2531230060295584244322790433558986623767285196956379965681143737151972343235?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "68141343270",
+      "seen_exploratory": true
+    },
+    {
+      "a": "34471157",
+      "b": "123731968",
+      "c": "158203125",
+      "factors": [
+        [
+          [
+            "7",
+            6
+          ],
+          [
+            "293",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            21
+          ],
+          [
+            "59",
+            1
+          ]
+        ],
+        [
+          [
+            "3",
+            4
+          ],
+          [
+            "5",
+            9
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1048576",
+          "1953125",
+          "117649"
+        ],
+        "coefficients": [
+          "118",
+          "-81",
+          "293"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 32
+      },
+      "quality_display": 1.249891980623934,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2498919806239338945241170460178983389545616441803771229946259065565375024807?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "3630270",
+      "seen_exploratory": true
+    },
+    {
+      "a": "9765625",
+      "b": "63241479",
+      "c": "73007104",
+      "factors": [
+        [
+          [
+            "5",
+            10
+          ]
+        ],
+        [
+          [
+            "3",
+            12
+          ],
+          [
+            "7",
+            1
+          ],
+          [
+            "17",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            17
+          ],
+          [
+            "557",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1048576",
+          "531441",
+          "390625"
+        ],
+        "coefficients": [
+          "557",
+          "-952",
+          "-200"
+        ],
+        "combination": [
+          0,
+          1
+        ],
+        "kind": "exploratory",
+        "seed_index": 1
+      },
+      "quality_display": 1.2484458035627124,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2484458035627123553677810173689238870457629043449726678903755322751288125792?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "1988490",
+      "seen_exploratory": true
+    },
+    {
+      "a": "1310720",
+      "b": "39042887",
+      "c": "40353607",
+      "factors": [
+        [
+          [
+            "2",
+            18
+          ],
+          [
+            "5",
+            1
+          ]
+        ],
+        [
+          [
+            "13",
+            4
+          ],
+          [
+            "1367",
+            1
+          ]
+        ],
+        [
+          [
+            "7",
+            9
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1048576",
+          "5764801",
+          "28561"
+        ],
+        "coefficients": [
+          "-5",
+          "28",
+          "-5468"
+        ],
+        "combination": [
+          1,
+          -2
+        ],
+        "kind": "exploratory",
+        "seed_index": 60
+      },
+      "quality_display": 1.2479277411968899,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2479277411968898725409533350064587008554121797742034627742857904003495442409?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "1243970",
+      "seen_exploratory": true
+    },
+    {
+      "a": "40353607",
+      "b": "1320312500",
+      "c": "1360666107",
+      "factors": [
+        [
+          [
+            "7",
+            9
+          ]
+        ],
+        [
+          [
+            "2",
+            2
+          ],
+          [
+            "5",
+            9
+          ],
+          [
+            "13",
+            2
+          ]
+        ],
+        [
+          [
+            "3",
+            11
+          ],
+          [
+            "7681",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "177147",
+          "390625",
+          "5764801"
+        ],
+        "coefficients": [
+          "7681",
+          "-3380",
+          "-7"
+        ],
+        "combination": [
+          2,
+          -1
+        ],
+        "kind": "exploratory",
+        "seed_index": 114
+      },
+      "quality_display": 1.247510926994376,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2475109269943759941455769586511248642253403572162739745054367308245387492525?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "20969130",
+      "seen_exploratory": true
+    },
+    {
+      "a": "8503056",
+      "b": "24137569",
+      "c": "32640625",
+      "factors": [
+        [
+          [
+            "2",
+            4
+          ],
+          [
+            "3",
+            12
+          ]
+        ],
+        [
+          [
+            "17",
+            6
+          ]
+        ],
+        [
+          [
+            "5",
+            6
+          ],
+          [
+            "2089",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "177147",
+          "390625",
+          "1419857"
+        ],
+        "coefficients": [
+          "1200",
+          "-2089",
+          "425"
+        ],
+        "combination": [
+          2,
+          -1
+        ],
+        "kind": "exploratory",
+        "seed_index": 126
+      },
+      "quality_display": 1.2465778059534645,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2465778059534644381377535795973022535928394836960413090383252996327615755105?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "1065390",
+      "seen_exploratory": true
+    },
+    {
+      "a": "2637109919744",
+      "b": "5156831600217",
+      "c": "7793941519961",
+      "factors": [
+        [
+          [
+            "2",
+            33
+          ],
+          [
+            "307",
+            1
+          ]
+        ],
+        [
+          [
+            "3",
+            7
+          ],
+          [
+            "11",
+            9
+          ]
+        ],
+        [
+          [
+            "17",
+            1
+          ],
+          [
+            "19",
+            1
+          ],
+          [
+            "23",
+            6
+          ],
+          [
+            "163",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "4294967296",
+          "2357947691",
+          "3404825447"
+        ],
+        "coefficients": [
+          "14122",
+          "50301",
+          "-52649"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 421
+      },
+      "quality_display": 1.2408089475391473,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2408089475391472588454840253415120891042216650134758687563485638933546481793?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "24535802874",
+      "seen_exploratory": true
+    },
+    {
+      "a": "7153",
+      "b": "524288",
+      "c": "531441",
+      "factors": [
+        [
+          [
+            "23",
+            1
+          ],
+          [
+            "311",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            19
+          ]
+        ],
+        [
+          [
+            "3",
+            12
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1048576",
+          "1594323",
+          "12167"
+        ],
+        "coefficients": [
+          "1587",
+          "-1058",
+          "1866"
+        ],
+        "combination": [
+          2,
+          1
+        ],
+        "kind": "exploratory",
+        "seed_index": 28
+      },
+      "quality_display": 1.2358948040321862,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2358948040321861640821719185705408816009464453105468874518290057219810022997?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "42918",
+      "seen_exploratory": true
+    },
+    {
+      "a": "80931849",
+      "b": "83984375",
+      "c": "164916224",
+      "factors": [
+        [
+          [
+            "3",
+            1
+          ],
+          [
+            "17",
+            5
+          ],
+          [
+            "19",
+            1
+          ]
+        ],
+        [
+          [
+            "5",
+            9
+          ],
+          [
+            "43",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            10
+          ],
+          [
+            "11",
+            5
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "390625",
+          "161051",
+          "83521"
+        ],
+        "coefficients": [
+          "-215",
+          "1024",
+          "-969"
+        ],
+        "combination": [
+          2,
+          -1
+        ],
+        "kind": "exploratory",
+        "seed_index": 221
+      },
+      "quality_display": 1.2336038533455032,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2336038533455031631485443674612796499770851342222430622720369153355714523185?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "4583370",
+      "seen_exploratory": true
+    },
+    {
+      "a": "16194277",
+      "b": "248046875",
+      "c": "264241152",
+      "factors": [
+        [
+          [
+            "11",
+            3
+          ],
+          [
+            "23",
+            3
+          ]
+        ],
+        [
+          [
+            "5",
+            9
+          ],
+          [
+            "127",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            22
+          ],
+          [
+            "3",
+            2
+          ],
+          [
+            "7",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1048576",
+          "1953125",
+          "12167"
+        ],
+        "coefficients": [
+          "252",
+          "-127",
+          "-1331"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 52
+      },
+      "quality_display": 1.2332440237339823,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2332440237339823258550221687380881062751751507361595218654315784698147973434?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "6747510",
+      "seen_exploratory": true
+    },
+    {
+      "a": "57482663264070902308",
+      "b": "154867159260424962017",
+      "c": "212349822524495864325",
+      "factors": [
+        [
+          [
+            "2",
+            2
+          ],
+          [
+            "11",
+            13
+          ],
+          [
+            "547",
+            1
+          ],
+          [
+            "761",
+            1
+          ]
+        ],
+        [
+          [
+            "19",
+            11
+          ],
+          [
+            "443",
+            1
+          ],
+          [
+            "3001",
+            1
+          ]
+        ],
+        [
+          [
+            "3",
+            28
+          ],
+          [
+            "5",
+            2
+          ],
+          [
+            "13",
+            5
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "205891132094649",
+          "34522712143931",
+          "116490258898219"
+        ],
+        "coefficients": [
+          "9282325",
+          "-14985612",
+          "-11964987"
+        ],
+        "combination": [
+          0,
+          1
+        ],
+        "kind": "exploratory",
+        "seed_index": 837
+      },
+      "quality_display": 1.2205322203971332,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2205322203971331976647738676742622894860920805232065767300780336507250304093?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "45107898848894310",
+      "seen_exploratory": true
+    },
+    {
+      "a": "3173828125",
+      "b": "3389467394048",
+      "c": "3392641222173",
+      "factors": [
+        [
+          [
+            "5",
+            12
+          ],
+          [
+            "13",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            26
+          ],
+          [
+            "17",
+            1
+          ],
+          [
+            "2971",
+            1
+          ]
+        ],
+        [
+          [
+            "3",
+            20
+          ],
+          [
+            "7",
+            1
+          ],
+          [
+            "139",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "4294967296",
+          "10460353203",
+          "244140625"
+        ],
+        "coefficients": [
+          "-151521",
+          "62272",
+          "-2496"
+        ],
+        "combination": [
+          1,
+          -1
+        ],
+        "kind": "exploratory",
+        "seed_index": 340
+      },
+      "quality_display": 1.2186241254177927,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2186241254177927876256428486873340299156782822105872387162092059190537402414?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "19165891290",
+      "seen_exploratory": true
+    },
+    {
+      "a": "7150973912",
+      "b": "18761806583",
+      "c": "25912780495",
+      "factors": [
+        [
+          [
+            "2",
+            3
+          ],
+          [
+            "19",
+            7
+          ]
+        ],
+        [
+          [
+            "13",
+            8
+          ],
+          [
+            "23",
+            1
+          ]
+        ],
+        [
+          [
+            "5",
+            1
+          ],
+          [
+            "7",
+            8
+          ],
+          [
+            "29",
+            1
+          ],
+          [
+            "31",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1977326743",
+          "815730721",
+          "893871739"
+        ],
+        "coefficients": [
+          "4495",
+          "-7889",
+          "-2744"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 613
+      },
+      "quality_display": 1.2174874372015587,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2174874372015586150337369498778167263605766371269249376690353992807655738370?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "357505330",
+      "seen_exploratory": true
+    },
+    {
+      "a": "2737867",
+      "b": "750926133",
+      "c": "753664000",
+      "factors": [
+        [
+          [
+            "11",
+            5
+          ],
+          [
+            "17",
+            1
+          ]
+        ],
+        [
+          [
+            "3",
+            14
+          ],
+          [
+            "157",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            18
+          ],
+          [
+            "5",
+            3
+          ],
+          [
+            "23",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1048576",
+          "1594323",
+          "14641"
+        ],
+        "coefficients": [
+          "-2875",
+          "1884",
+          "748"
+        ],
+        "combination": [
+          1,
+          -2
+        ],
+        "kind": "exploratory",
+        "seed_index": 12
+      },
+      "quality_display": 1.2149549031940001,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2149549031940002033719314347885731382523693141617700760785227322005495049253?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "20257710",
+      "seen_exploratory": true
+    },
+    {
+      "a": "262144",
+      "b": "1960855883",
+      "c": "1961118027",
+      "factors": [
+        [
+          [
+            "2",
+            18
+          ]
+        ],
+        [
+          [
+            "7",
+            7
+          ],
+          [
+            "2381",
+            1
+          ]
+        ],
+        [
+          [
+            "3",
+            3
+          ],
+          [
+            "11",
+            6
+          ],
+          [
+            "41",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "524288",
+          "823543",
+          "1771561"
+        ],
+        "coefficients": [
+          "1",
+          "4762",
+          "-2214"
+        ],
+        "combination": [
+          2,
+          -1
+        ],
+        "kind": "exploratory",
+        "seed_index": 54
+      },
+      "quality_display": 1.2140421815534965,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2140421815534965142672341866776477199811096328481608417703377012597863557285?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "45100902",
+      "seen_exploratory": true
+    },
+    {
+      "a": "169857",
+      "b": "1250000",
+      "c": "1419857",
+      "factors": [
+        [
+          [
+            "3",
+            6
+          ],
+          [
+            "233",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            4
+          ],
+          [
+            "5",
+            7
+          ]
+        ],
+        [
+          [
+            "17",
+            5
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "177147",
+          "390625",
+          "1419857"
+        ],
+        "coefficients": [
+          "1165",
+          "3888",
+          "-1215"
+        ],
+        "combination": [
+          1,
+          2
+        ],
+        "kind": "exploratory",
+        "seed_index": 126
+      },
+      "quality_display": 1.212282600603376,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.2122826006033759870852432869240983193369349634757299635275697711030806361676?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "118830",
+      "seen_exploratory": true
+    }
+  ],
+  "finite_search_constant_witnesses": [
+    {
+      "bracket": {
+        "denominator": 10000,
+        "epsilon_denominator": 100,
+        "epsilon_numerator": 1,
+        "exact_lower_check": true,
+        "exact_upper_check": true,
+        "interpretation": "Any global K_epsilon is greater than the certified lower endpoint. The upper endpoint bounds this one ratio only, not global K_epsilon.",
+        "lower_numerator": "92058403",
+        "upper_numerator": "92058404"
+      },
+      "source_triple": [
+        "31587766648644483",
+        "2812521904351372402",
+        "2844109671000016885"
+      ]
+    },
+    {
+      "bracket": {
+        "denominator": 10000,
+        "epsilon_denominator": 10,
+        "epsilon_numerator": 1,
+        "exact_lower_check": true,
+        "exact_upper_check": true,
+        "interpretation": "Any global K_epsilon is greater than the certified lower endpoint. The upper endpoint bounds this one ratio only, not global K_epsilon.",
+        "lower_numerator": "4708534",
+        "upper_numerator": "4708535"
+      },
+      "source_triple": [
+        "31587766648644483",
+        "2812521904351372402",
+        "2844109671000016885"
+      ]
+    },
+    {
+      "bracket": {
+        "denominator": 10000,
+        "epsilon_denominator": 2,
+        "epsilon_numerator": 1,
+        "exact_lower_check": true,
+        "exact_upper_check": true,
+        "interpretation": "Any global K_epsilon is greater than the certified lower endpoint. The upper endpoint bounds this one ratio only, not global K_epsilon.",
+        "lower_numerator": "34888",
+        "upper_numerator": "34889"
+      },
+      "source_triple": [
+        "2",
+        "6436341",
+        "6436343"
+      ]
+    }
+  ],
+  "record_constant_brackets": [
+    {
+      "denominator": 10000,
+      "epsilon_denominator": 100,
+      "epsilon_numerator": 1,
+      "exact_lower_check": true,
+      "exact_upper_check": true,
+      "interpretation": "Any global K_epsilon is greater than the certified lower endpoint. The upper endpoint bounds this one ratio only, not global K_epsilon.",
+      "lower_numerator": "3886516",
+      "upper_numerator": "3886517"
+    },
+    {
+      "denominator": 10000,
+      "epsilon_denominator": 10,
+      "epsilon_numerator": 1,
+      "exact_lower_check": true,
+      "exact_upper_check": true,
+      "interpretation": "Any global K_epsilon is greater than the certified lower endpoint. The upper endpoint bounds this one ratio only, not global K_epsilon.",
+      "lower_numerator": "1635321",
+      "upper_numerator": "1635322"
+    },
+    {
+      "denominator": 10000,
+      "epsilon_denominator": 2,
+      "epsilon_numerator": 1,
+      "exact_lower_check": true,
+      "exact_upper_check": true,
+      "interpretation": "Any global K_epsilon is greater than the certified lower endpoint. The upper endpoint bounds this one ratio only, not global K_epsilon.",
+      "lower_numerator": "34888",
+      "upper_numerator": "34889"
+    }
+  ],
+  "reference": {
+    "a": "2",
+    "b": "6436341",
+    "c": "6436343",
+    "factors": [
+      [
+        [
+          "2",
+          1
+        ]
+      ],
+      [
+        [
+          "3",
+          10
+        ],
+        [
+          "109",
+          1
+        ]
+      ],
+      [
+        [
+          "23",
+          5
+        ]
+      ]
+    ],
+    "origin": {
+      "kind": "independent_reference"
+    },
+    "quality_display": 1.6299116841270482,
+    "quality_gt_8_over_5": true,
+    "quality_interval_256": "1.6299116841270481846308600545356048822587010667362909878631667121778680233715?",
+    "quality_test": {
+      "denominator": 5,
+      "lhs": "c^5",
+      "numerator": 8,
+      "rhs": "radical^8",
+      "strict_gt": true
+    },
+    "radical": "15042"
+  }
+}

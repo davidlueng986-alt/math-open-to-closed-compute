@@ -1,0 +1,804 @@
+{
+  "agent": 4,
+  "bkz_block_size": 2,
+  "bkz_calls": 43,
+  "certificate_sha256": "465a04fd24c97233bef72efaf6b4ae4ce5009d435ede63a40207b605a4e55fd2",
+  "coefficient_combination_box": [
+    -2,
+    2
+  ],
+  "elapsed_seconds": 3.431,
+  "environment": {
+    "proof_all": true,
+    "python": "3.12.5",
+    "sage": "10.6"
+  },
+  "finite_search_constant_witnesses": [
+    {
+      "bracket": {
+        "denominator": 10000,
+        "epsilon_denominator": 100,
+        "epsilon_numerator": 1,
+        "exact_lower_check": true,
+        "exact_upper_check": true,
+        "interpretation": "Any global K_epsilon is greater than the certified lower endpoint. The upper endpoint bounds this one ratio only, not global K_epsilon.",
+        "lower_numerator": "92058403",
+        "upper_numerator": "92058404"
+      },
+      "source_triple": [
+        "31587766648644483",
+        "2812521904351372402",
+        "2844109671000016885"
+      ]
+    },
+    {
+      "bracket": {
+        "denominator": 10000,
+        "epsilon_denominator": 10,
+        "epsilon_numerator": 1,
+        "exact_lower_check": true,
+        "exact_upper_check": true,
+        "interpretation": "Any global K_epsilon is greater than the certified lower endpoint. The upper endpoint bounds this one ratio only, not global K_epsilon.",
+        "lower_numerator": "4708534",
+        "upper_numerator": "4708535"
+      },
+      "source_triple": [
+        "31587766648644483",
+        "2812521904351372402",
+        "2844109671000016885"
+      ]
+    },
+    {
+      "bracket": {
+        "denominator": 10000,
+        "epsilon_denominator": 2,
+        "epsilon_numerator": 1,
+        "exact_lower_check": true,
+        "exact_upper_check": true,
+        "interpretation": "Any global K_epsilon is greater than the certified lower endpoint. The upper endpoint bounds this one ratio only, not global K_epsilon.",
+        "lower_numerator": "34888",
+        "upper_numerator": "34889"
+      },
+      "source_triple": [
+        "2",
+        "6436341",
+        "6436343"
+      ]
+    }
+  ],
+  "high_quality_gt_8_over_5": [
+    {
+      "a": "2",
+      "b": "6436341",
+      "c": "6436343",
+      "quality": 1.6299116841270482,
+      "seen_exploratory": false
+    }
+  ],
+  "lll_calls": 1345,
+  "problem": "ABC",
+  "processed_seeds": 1345,
+  "record_constant_brackets": [
+    {
+      "denominator": 10000,
+      "epsilon_denominator": 100,
+      "epsilon_numerator": 1,
+      "exact_lower_check": true,
+      "exact_upper_check": true,
+      "interpretation": "Any global K_epsilon is greater than the certified lower endpoint. The upper endpoint bounds this one ratio only, not global K_epsilon.",
+      "lower_numerator": "3886516",
+      "upper_numerator": "3886517"
+    },
+    {
+      "denominator": 10000,
+      "epsilon_denominator": 10,
+      "epsilon_numerator": 1,
+      "exact_lower_check": true,
+      "exact_upper_check": true,
+      "interpretation": "Any global K_epsilon is greater than the certified lower endpoint. The upper endpoint bounds this one ratio only, not global K_epsilon.",
+      "lower_numerator": "1635321",
+      "upper_numerator": "1635322"
+    },
+    {
+      "denominator": 10000,
+      "epsilon_denominator": 2,
+      "epsilon_numerator": 1,
+      "exact_lower_check": true,
+      "exact_upper_check": true,
+      "interpretation": "Any global K_epsilon is greater than the certified lower endpoint. The upper endpoint bounds this one ratio only, not global K_epsilon.",
+      "lower_numerator": "34888",
+      "upper_numerator": "34889"
+    }
+  ],
+  "relations_tested": 16656,
+  "resolution": "unknown",
+  "scope": "Bounded heuristic lattice search and exact finite certificates only; not an exhaustive abc search, not an infinite family, not a global K upper bound.",
+  "seeded_replay_included": true,
+  "shard": 0,
+  "shards": 1,
+  "status": "CHECKED",
+  "strictly_above_reference": [],
+  "top": [
+    {
+      "a": "2",
+      "b": "6436341",
+      "c": "6436343",
+      "factors": [
+        [
+          [
+            "2",
+            1
+          ]
+        ],
+        [
+          [
+            "3",
+            10
+          ],
+          [
+            "109",
+            1
+          ]
+        ],
+        [
+          [
+            "23",
+            5
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "2",
+          "59049",
+          "6436343"
+        ],
+        "coefficients": [
+          "-1",
+          "-109",
+          "1"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "known_reyssat_replay",
+        "seed_index": 0
+      },
+      "quality_display": 1.6299116841270482,
+      "quality_gt_8_over_5": true,
+      "quality_interval_256": "1.6299116841270481846308600545356048822587010667362909878631667121778680233715?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": true
+      },
+      "radical": "15042",
+      "seen_exploratory": false
+    },
+    {
+      "a": "338",
+      "b": "390625",
+      "c": "390963",
+      "factors": [
+        [
+          [
+            "2",
+            1
+          ],
+          [
+            "13",
+            2
+          ]
+        ],
+        [
+          [
+            "5",
+            8
+          ]
+        ],
+        [
+          [
+            "3",
+            1
+          ],
+          [
+            "19",
+            4
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1953125",
+          "28561",
+          "130321"
+        ],
+        "coefficients": [
+          "169",
+          "10",
+          "-2535"
+        ],
+        "combination": [
+          1,
+          1
+        ],
+        "kind": "exploratory",
+        "seed_index": 239
+      },
+      "quality_display": 1.445064175624668,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.4450641756246681051466523732890685651211868273640225919205140163264377360322?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "7410",
+      "seen_exploratory": true
+    },
+    {
+      "a": "61731",
+      "b": "48828125",
+      "c": "48889856",
+      "factors": [
+        [
+          [
+            "3",
+            2
+          ],
+          [
+            "19",
+            3
+          ]
+        ],
+        [
+          [
+            "5",
+            11
+          ]
+        ],
+        [
+          [
+            "2",
+            17
+          ],
+          [
+            "373",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1048576",
+          "1953125",
+          "6859"
+        ],
+        "coefficients": [
+          "-373",
+          "200",
+          "72"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 48
+      },
+      "quality_display": 1.443284462366042,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.4432844623660418050908953643997209567273880263393059902517432751689867572883?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "212610",
+      "seen_exploratory": true
+    },
+    {
+      "a": "10460353203",
+      "b": "17274491311",
+      "c": "27734844514",
+      "factors": [
+        [
+          [
+            "3",
+            21
+          ]
+        ],
+        [
+          [
+            "7",
+            2
+          ],
+          [
+            "11",
+            6
+          ],
+          [
+            "199",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            1
+          ],
+          [
+            "13",
+            8
+          ],
+          [
+            "17",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "3486784401",
+          "2357947691",
+          "815730721"
+        ],
+        "coefficients": [
+          "-3993",
+          "-9751",
+          "45254"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 493
+      },
+      "quality_display": 1.429007491514211,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.4290074915142109235531453453903798347479366110718138071422748705851442611884?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "20318298",
+      "seen_exploratory": true
+    },
+    {
+      "a": "3906250",
+      "b": "4782969",
+      "c": "8689219",
+      "factors": [
+        [
+          [
+            "2",
+            1
+          ],
+          [
+            "5",
+            9
+          ]
+        ],
+        [
+          [
+            "3",
+            14
+          ]
+        ],
+        [
+          [
+            "7",
+            5
+          ],
+          [
+            "11",
+            1
+          ],
+          [
+            "47",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "531441",
+          "390625",
+          "823543"
+        ],
+        "coefficients": [
+          "441",
+          "490",
+          "-517"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 113
+      },
+      "quality_display": 1.3779548398599422,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.3779548398599421767375698906960366930263540171671699739830300580077731110775?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "108570",
+      "seen_exploratory": true
+    },
+    {
+      "a": "23059204",
+      "b": "265513259",
+      "c": "288572463",
+      "factors": [
+        [
+          [
+            "2",
+            2
+          ],
+          [
+            "7",
+            8
+          ]
+        ],
+        [
+          [
+            "11",
+            1
+          ],
+          [
+            "17",
+            6
+          ]
+        ],
+        [
+          [
+            "3",
+            13
+          ],
+          [
+            "181",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "177147",
+          "823543",
+          "1419857"
+        ],
+        "coefficients": [
+          "1629",
+          "-28",
+          "-187"
+        ],
+        "combination": [
+          0,
+          1
+        ],
+        "kind": "exploratory",
+        "seed_index": 146
+      },
+      "quality_display": 1.3750319957534198,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.3750319957534197306349741958178702339356895324827281881909600271545922433464?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "1421574",
+      "seen_exploratory": true
+    },
+    {
+      "a": "1127357",
+      "b": "5688387",
+      "c": "6815744",
+      "factors": [
+        [
+          [
+            "7",
+            1
+          ],
+          [
+            "11",
+            5
+          ]
+        ],
+        [
+          [
+            "3",
+            9
+          ],
+          [
+            "17",
+            2
+          ]
+        ],
+        [
+          [
+            "2",
+            19
+          ],
+          [
+            "13",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1048576",
+          "531441",
+          "161051"
+        ],
+        "coefficients": [
+          "351",
+          "-578",
+          "-378"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 9
+      },
+      "quality_display": 1.364237681336999,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.3642376813369989720310712298043523378506629823627818281134324273733389529758?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "102102",
+      "seen_exploratory": true
+    },
+    {
+      "a": "21474836480",
+      "b": "7555307666893",
+      "c": "7576782503373",
+      "factors": [
+        [
+          [
+            "2",
+            32
+          ],
+          [
+            "5",
+            1
+          ]
+        ],
+        [
+          [
+            "7",
+            1
+          ],
+          [
+            "23",
+            7
+          ],
+          [
+            "317",
+            1
+          ]
+        ],
+        [
+          [
+            "3",
+            20
+          ],
+          [
+            "41",
+            1
+          ],
+          [
+            "53",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "4294967296",
+          "3486784401",
+          "3404825447"
+        ],
+        "coefficients": [
+          "5",
+          "-2173",
+          "2219"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 361
+      },
+      "quality_display": 1.35259350852674,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.3525935085267399068774232252094078328502152938556617186891419617816657397719?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "3327102030",
+      "seen_exploratory": true
+    },
+    {
+      "a": "1244485",
+      "b": "2097152",
+      "c": "3341637",
+      "factors": [
+        [
+          [
+            "5",
+            1
+          ],
+          [
+            "11",
+            4
+          ],
+          [
+            "17",
+            1
+          ]
+        ],
+        [
+          [
+            "2",
+            21
+          ]
+        ],
+        [
+          [
+            "3",
+            2
+          ],
+          [
+            "13",
+            5
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1048576",
+          "161051",
+          "371293"
+        ],
+        "coefficients": [
+          "22",
+          "85",
+          "-99"
+        ],
+        "combination": [
+          1,
+          0
+        ],
+        "kind": "exploratory",
+        "seed_index": 73
+      },
+      "quality_display": 1.3415762065856243,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.3415762065856242668254507067304783620781299943890563745909273238750992021663?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "72930",
+      "seen_exploratory": true
+    },
+    {
+      "a": "1953125",
+      "b": "10367643",
+      "c": "12320768",
+      "factors": [
+        [
+          [
+            "5",
+            9
+          ]
+        ],
+        [
+          [
+            "3",
+            1
+          ],
+          [
+            "11",
+            2
+          ],
+          [
+            "13",
+            4
+          ]
+        ],
+        [
+          [
+            "2",
+            18
+          ],
+          [
+            "47",
+            1
+          ]
+        ]
+      ],
+      "origin": {
+        "algorithm": "LLL",
+        "bases": [
+          "1048576",
+          "390625",
+          "371293"
+        ],
+        "coefficients": [
+          "-611",
+          "260",
+          "1452"
+        ],
+        "combination": [
+          0,
+          1
+        ],
+        "kind": "exploratory",
+        "seed_index": 37
+      },
+      "quality_display": 1.3367073353410952,
+      "quality_gt_8_over_5": false,
+      "quality_interval_256": "1.3367073353410952205476841402654148176418161666549455804009752722438660616700?",
+      "quality_test": {
+        "denominator": 5,
+        "lhs": "c^5",
+        "numerator": 8,
+        "rhs": "radical^8",
+        "strict_gt": false
+      },
+      "radical": "201630",
+      "seen_exploratory": true
+    }
+  ],
+  "total_manifest_seeds": 1345,
+  "unique_primitive_triples": 9951,
+  "unique_triples_sha256": "8c3bd1cdb270d2b1008e250f6f43abb0defd5b1ce901f9dfb6a22a5e37bbf6c8",
+  "unresolved_reference_comparisons": 0,
+  "zero_relations": 0
+}

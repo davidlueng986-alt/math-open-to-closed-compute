@@ -1,0 +1,14 @@
+{
+  "status": "CHECKED",
+  "scope": "Listed finite integer/factorization/quality/constant certificates only",
+  "reference": [
+    2,
+    6436341,
+    6436343,
+    15042
+  ],
+  "candidate_certificates": 40,
+  "prime_tests": 51,
+  "record_constant_brackets": 3,
+  "passed": true
+}

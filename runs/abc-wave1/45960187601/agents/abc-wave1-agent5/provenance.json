@@ -1,0 +1,15 @@
+{
+  "agent": 5,
+  "job": "abc-wave1-agent5-families",
+  "toolbox": "sage",
+  "source_commit": "8b0182a7b89c3bacf9011b34747a2296b1a93d8e",
+  "run_id": "45960187601",
+  "run_attempt": "1",
+  "python": "3.10.12",
+  "file_sha256": {
+    "jobs/abc-wave1-agent5-families/README.md": "26b2648f01f064a935f00b7974cc52f2642335a10479e2e3c05b633c49e1ed7c",
+    "jobs/abc-wave1-agent5-families/run.sh": "1eec4d07b8773ef53ed884fa75b187a00dd463e0d94573a56992603c980d0b73",
+    "jobs/abc-wave1-agent5-families/setup.sh": "21b23583ae6db055ff41b44127e87bd4171d4a3d7f075c4e362fc0bd2d35d3f7",
+    "jobs/abc-wave1-agent5-families/verify.py": "ddecb2aead6c2a282a3a6dddce378bac74f37808885237347dcaaa7b07c75aa2"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "problem": "ABC",
+  "agent": 5,
+  "status": "CHECKED",
+  "resolution": "unknown",
+  "scope": "Finite exact orbit invariants, radical recurrence, prime-order congruences, quality threshold certificates; no infinite prime-power-defect estimate.",
+  "seed_count": 179,
+  "seed_domain": "all 1<=a<=b, a+b=c odd<=41, gcd(a,b)=1, plus (2,3^10*109,23^5)",
+  "integer_orbit_states_checked": 1253,
+  "factorized_orbit_states": 923,
+  "coprimality_checks": 6265,
+  "prime_order_certificates": 1176,
+  "rational_quality_threshold_checks": 2769,
+  "known_seed_orbit": [
+    {
+      "seed": [
+        2,
+        6436341,
+        6436343
+      ],
+      "step": 0,
+      "a": 2,
+      "b": 6436341,
+      "c": 6436343,
+      "radical": 15042,
+      "Q_defect": 1,
+      "difference_product": 1,
+      "quality_display": 1.6299116841270482,
+      "q_gt_8_over_5": true
+    },
+    {
+      "seed": [
+        2,
+        6436341,
+        6436343
+      ],
+      "step": 1,
+      "a": 41426459722921,
+      "b": 51490728,
+      "c": 41426511213649,
+      "radical": 96815411238,
+      "Q_defect": 1,
+      "difference_product": 6436339,
+      "quality_display": 1.2395182195721213,
+      "q_gt_8_over_5": false
+    },
+    {
+      "seed": [
+        2,
+        6436341,
+        6436343
+      ],
+      "step": 2,
+      "a": 1716147299020307959401589249,
+      "b": 8532314278383522305952,
+      "c": 1716155831334586342923895201,
+      "radical": 4010714749113033885584934,
+      "Q_defect": 1,
+      "difference_product": 266634406934784861427,
+      "quality_display": 1.1069508282007794,
+      "q_gt_8_over_5": false
+    }
+  ],
+  "factorization_limit": "each new difference < 2^64; later states have exact algebra/gcd checks only",
+  "backend": "SageMath proof=True",
+  "backend_version": "10.6",
+  "python": "3.12.5",
+  "certificate_sha256": "df4f4fd472e9a95a7af0940903cfbc4cf4c665cffa5fb6dc1d4fda69d4b4f651",
+  "source_sha256": "ddecb2aead6c2a282a3a6dddce378bac74f37808885237347dcaaa7b07c75aa2",
+  "github_run_id": "45960187601",
+  "github_sha": "8b0182a7b89c3bacf9011b34747a2296b1a93d8e",
+  "elapsed_seconds": 0.0574
+}

@@ -1,0 +1,15 @@
+{
+  "agent": 4,
+  "job": "abc-wave1-agent4-triples",
+  "toolbox": "sage",
+  "source_commit": "8b0182a7b89c3bacf9011b34747a2296b1a93d8e",
+  "run_id": "45960187601",
+  "run_attempt": "1",
+  "python": "3.10.12",
+  "file_sha256": {
+    "jobs/abc-wave1-agent4-triples/README.md": "5fd1d350d60d709de73a92374c27f70653b9505ed00e264c7de510045b9161bc",
+    "jobs/abc-wave1-agent4-triples/run.sh": "baf942c6c12dfd96ea4661fff848f16e9a71999287538d98094b6523c793a098",
+    "jobs/abc-wave1-agent4-triples/search.py": "02fdfc958df91ea8dc429bb27a26729e83c3c9023d4092433ebee928433eae39",
+    "jobs/abc-wave1-agent4-triples/verify_certificates.py": "9a76a899e85533f67e7a74a5ecd5c150c24bce1ecb924b74fb5abb2aa01bd60f"
+  }
+}

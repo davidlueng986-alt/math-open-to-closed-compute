@@ -1,0 +1,147 @@
+{"progress_seed": 0, "total_seeds": 1345, "unique_triples": 8}
+{"progress_seed": 200, "total_seeds": 1345, "unique_triples": 1453}
+{"progress_seed": 400, "total_seeds": 1345, "unique_triples": 2930}
+{"progress_seed": 600, "total_seeds": 1345, "unique_triples": 4421}
+{"progress_seed": 800, "total_seeds": 1345, "unique_triples": 5887}
+{"progress_seed": 1000, "total_seeds": 1345, "unique_triples": 7390}
+{"progress_seed": 1200, "total_seeds": 1345, "unique_triples": 8842}
+{
+  "problem": "ABC",
+  "agent": 4,
+  "status": "CHECKED",
+  "resolution": "unknown",
+  "scope": "Bounded heuristic lattice search and exact finite certificates only; not an exhaustive abc search, not an infinite family, not a global K upper bound.",
+  "environment": {
+    "sage": "10.6",
+    "python": "3.12.5",
+    "proof_all": true
+  },
+  "shard": 0,
+  "shards": 1,
+  "total_manifest_seeds": 1345,
+  "processed_seeds": 1345,
+  "lll_calls": 1345,
+  "bkz_calls": 43,
+  "bkz_block_size": 2,
+  "coefficient_combination_box": [
+    -2,
+    2
+  ],
+  "relations_tested": 16656,
+  "zero_relations": 0,
+  "unique_primitive_triples": 9951,
+  "unique_triples_sha256": "8c3bd1cdb270d2b1008e250f6f43abb0defd5b1ce901f9dfb6a22a5e37bbf6c8",
+  "seeded_replay_included": true,
+  "high_quality_gt_8_over_5": [
+    {
+      "a": "2",
+      "b": "6436341",
+      "c": "6436343",
+      "quality": 1.6299116841270482,
+      "seen_exploratory": false
+    }
+  ],
+  "strictly_above_reference": [],
+  "unresolved_reference_comparisons": 0,
+  "record_constant_brackets": [
+    {
+      "epsilon_numerator": 1,
+      "epsilon_denominator": 100,
+      "lower_numerator": "3886516",
+      "upper_numerator": "3886517",
+      "denominator": 10000,
+      "exact_lower_check": true,
+      "exact_upper_check": true,
+      "interpretation": "Any global K_epsilon is greater than the certified lower endpoint. The upper endpoint bounds this one ratio only, not global K_epsilon."
+    },
+    {
+      "epsilon_numerator": 1,
+      "epsilon_denominator": 10,
+      "lower_numerator": "1635321",
+      "upper_numerator": "1635322",
+      "denominator": 10000,
+      "exact_lower_check": true,
+      "exact_upper_check": true,
+      "interpretation": "Any global K_epsilon is greater than the certified lower endpoint. The upper endpoint bounds this one ratio only, not global K_epsilon."
+    },
+    {
+      "epsilon_numerator": 1,
+      "epsilon_denominator": 2,
+      "lower_numerator": "34888",
+      "upper_numerator": "34889",
+      "denominator": 10000,
+      "exact_lower_check": true,
+      "exact_upper_check": true,
+      "interpretation": "Any global K_epsilon is greater than the certified lower endpoint. The upper endpoint bounds this one ratio only, not global K_epsilon."
+    }
+  ],
+  "finite_search_constant_witnesses": [
+    {
+      "source_triple": [
+        "31587766648644483",
+        "2812521904351372402",
+        "2844109671000016885"
+      ],
+      "bracket": {
+        "epsilon_numerator": 1,
+        "epsilon_denominator": 100,
+        "lower_numerator": "92058403",
+        "upper_numerator": "92058404",
+        "denominator": 10000,
+        "exact_lower_check": true,
+        "exact_upper_check": true,
+        "interpretation": "Any global K_epsilon is greater than the certified lower endpoint. The upper endpoint bounds this one ratio only, not global K_epsilon."
+      }
+    },
+    {
+      "source_triple": [
+        "31587766648644483",
+        "2812521904351372402",
+        "2844109671000016885"
+      ],
+      "bracket": {
+        "epsilon_numerator": 1,
+        "epsilon_denominator": 10,
+        "lower_numerator": "4708534",
+        "upper_numerator": "4708535",
+        "denominator": 10000,
+        "exact_lower_check": true,
+        "exact_upper_check": true,
+        "interpretation": "Any global K_epsilon is greater than the certified lower endpoint. The upper endpoint bounds this one ratio only, not global K_epsilon."
+      }
+    },
+    {
+      "source_triple": [
+        "2",
+        "6436341",
+        "6436343"
+      ],
+      "bracket": {
+        "epsilon_numerator": 1,
+        "epsilon_denominator": 2,
+        "lower_numerator": "34888",
+        "upper_numerator": "34889",
+        "denominator": 10000,
+        "exact_lower_check": true,
+        "exact_upper_check": true,
+        "interpretation": "Any global K_epsilon is greater than the certified lower endpoint. The upper endpoint bounds this one ratio only, not global K_epsilon."
+      }
+    }
+  ],
+  "certificate_sha256": "465a04fd24c97233bef72efaf6b4ae4ce5009d435ede63a40207b605a4e55fd2",
+  "elapsed_seconds": 3.431
+}
+{
+  "status": "CHECKED",
+  "scope": "Listed finite integer/factorization/quality/constant certificates only",
+  "reference": [
+    2,
+    6436341,
+    6436343,
+    15042
+  ],
+  "candidate_certificates": 40,
+  "prime_tests": 51,
+  "record_constant_brackets": 3,
+  "passed": true
+}
