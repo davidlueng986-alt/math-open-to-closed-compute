@@ -5,6 +5,12 @@
       "job": "abc-wave3-agent0-curves",
       "toolbox": "sage",
       "image": "ghcr.io/davidlueng986-alt/math-compute-sage@sha256:9b252d8fef6ebbfc47c0158c435395d7e39a73384d4113ebe6e54cd3ba7690cb"
+    },
+    {
+      "agent": 4,
+      "job": "abc-wave3-agent4-lean",
+      "toolbox": "lean",
+      "image": "ghcr.io/davidlueng986-alt/math-compute-lean@sha256:44c699d748a9ff12ed4567acc24ce4f8c33ef6c41df3648d3404a362349b497b"
     }
   ]
 }
