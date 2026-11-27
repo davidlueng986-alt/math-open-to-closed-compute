@@ -111,13 +111,13 @@ lemma degree_induce_eq {V : Type*} [Fintype V] (G : SimpleGraph V) (S : Finset V
   apply Finset.card_bij (fun v _ => v.1)
   · intro v hv
     rw [Finset.mem_inter, mem_nb]
-    have h1 : (G.induce (S : Set V)).Adj u v := mem_nb.mp hv
+    have h1 : (G.induce (S : Set V)).Adj u v := SimpleGraph.mem_neighborFinset.mp hv
     exact ⟨h1, v.2⟩
   · intro _ _ _ _ h
     exact Subtype.ext h
   · intro w hw
     rw [Finset.mem_inter, mem_nb] at hw
-    exact ⟨⟨w, hw.2⟩, mem_nb.mpr hw.1, rfl⟩
+    exact ⟨⟨w, hw.2⟩, SimpleGraph.mem_neighborFinset.mpr hw.1, rfl⟩
 
 lemma minimal_bad2_no_safe_deletion {V : Type} [Fintype V] {G : SimpleGraph V}
     (hG : MinimalBad2 G) (K : Finset V) (hKne : K.Nonempty)
