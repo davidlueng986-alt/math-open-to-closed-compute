@@ -1,0 +1,66 @@
+name: erdos617-w4-exp5-r6-v2-coupling
+
+on:
+  workflow_dispatch:
+    inputs:
+      max_time:
+        description: "Max seconds per job"
+        required: false
+        default: "900"
+
+jobs:
+  k19-5color:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install PySAT
+        run: pip install -q python-sat
+      - name: Test K_19 (H_19 alpha<=3, delta>=6, e<=66 + 5 colors alpha<=6)
+        run: |
+          python3 jobs/erdos617-w4-exp5-r6/solve_k19_and_vdc.py \
+            --mode k19 \
+            --max-time "${{ github.event.inputs.max_time || '900' }}" \
+            --out result_k19.json
+          cat result_k19.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r6-k19-5color
+          path: result_k19.json
+
+  vdc-cegar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        ordering:
+          - "6,6,6,7,7,5"
+          - "6,6,7,6,7,5"
+          - "6,6,7,7,5,6"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install PySAT and compile C++ 7-IS oracle
+        run: |
+          pip install -q python-sat
+          g++ -O3 -march=native -shared -fPIC jobs/erdos617-w4-exp5-r6/find_is7.cpp -o jobs/erdos617-w4-exp5-r6/libfind_is7.so
+      - name: Run VDC-CEGAR for ${{ matrix.ordering }}
+        run: |
+          python3 jobs/erdos617-w4-exp5-r6/solve_k19_and_vdc.py \
+            --mode vdc \
+            --ordering "${{ matrix.ordering }}" \
+            --max-time "${{ github.event.inputs.max_time || '900' }}" \
+            --out "result_vdc_${{ matrix.ordering }}.json"
+          cat "result_vdc_${{ matrix.ordering }}.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r6-vdc-${{ matrix.ordering }}
+          path: result_vdc_*.json
