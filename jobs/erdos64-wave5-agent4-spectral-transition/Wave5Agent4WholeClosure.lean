@@ -352,15 +352,16 @@ theorem erdos64_of_two_window_nonBacktracking
 def twoFactorSubgraph {V : Type*} (G : SimpleGraph V) (m : V → V)
     (hm_inv : ∀ v, m (m v) = v) : SimpleGraph V where
   Adj u v := G.Adj u v ∧ v ≠ m u
-  symm _ _ h := ⟨h.1.symm, fun heq => h.2 (by rw [heq, hm_inv])⟩
-  loopless _ h := G.loopless _ h.1
+  symm := ⟨fun _ _ h => ⟨h.1.symm, fun heq => h.2 (by rw [heq, hm_inv])⟩⟩
+  loopless := ⟨fun _ h => G.ne_of_adj h.1 rfl⟩
 
 /-- In any power-free graph `G` with perfect matching `m`, the 2-factor `G \ m` contains
 no `2^k`-cycle (`0`-switching exclusion). -/
 theorem no_pow2_cycle_in_twoFactor {V : Type*} (G : SimpleGraph V) (m : V → V)
     (hm_inv : ∀ v, m (m v) = v) (hnp : ¬ HasPower G) :
-    ¬ HasPower (twoFactorSubgraph G m hm_inv) :=
-  fun hp => hnp (power_mono (fun _ _ h => h.1) hp)
+    ¬ HasPower (twoFactorSubgraph G m hm_inv) := by
+  have hle : twoFactorSubgraph G m hm_inv ≤ G := fun _ _ h => h.1
+  exact fun hp => hnp (power_mono hle hp)
 
 /-- Adjacent vertex chain predicate on a list. -/
 def AdjChain {V : Type*} (G : SimpleGraph V) : List V → Prop
