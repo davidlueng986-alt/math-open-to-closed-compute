@@ -1,1 +1,1 @@
-2026-11-27 (attempt 2): Controlled V8 PoC benchmark (9 parallel jobs max, 20-min solve cap): 4 McKay D9-C7 cores (Proof-First Kissat + DRAT/LRAT) + 3 hard D678 Lean-CNF Kissat + 2 SMS probes. Fixed verify_agent1.py --dir flag.
+2026-11-27 (attempt 3): Fix backtick shell quoting for D9-C7 4 McKay cores (read from cores.json by index, 25m solve cap) + full Lean-CNF CEGAR + Proof-First Kissat on D6-N9-B3-P002-T01 & P000-T01 (6 parallel jobs max).
