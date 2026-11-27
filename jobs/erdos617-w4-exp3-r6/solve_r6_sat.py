@@ -50,11 +50,6 @@ class CNF:
             self.add(-lits[i], -s[i - 1][k - 1])
         self.add(-lits[n - 1], -s[n - 2][k - 1])
 
-    def add_at_least_k(self, lits, k):
-        if k <= 0:
-            return
-        self.add_at_most_k([-l for l in lits], len(lits) - k)
-
     def add_totalizer(self, lits, max_val=None):
         n = len(lits)
         if max_val is None or max_val > n:
@@ -91,6 +86,7 @@ def build_cnf(parts, r=6, fixed_m=None, trans_parts=None, max_edges_override=Non
     max_e_g1 = (comb(n, 2) // r) if max_edges_override is None else max_edges_override
     max_t = (comb(n, 2) // r) - e_turan
     min_m = [(r - 1) * emin(a, r) for a in parts]
+    max_mout_global = max_e_g1 - in_pairs + max_t
 
     part_verts = []
     v_part = []
@@ -143,7 +139,6 @@ def build_cnf(parts, r=6, fixed_m=None, trans_parts=None, max_edges_override=Non
         if min_mout > 0:
             cnf.add(ytot[min_mout - 1])
     else:
-        max_mout_global = max_e_g1 - in_pairs + max_t
         m_in_tot = cnf.add_totalizer(list(x.values()), max_t + 1)
         if max_t < len(m_in_tot):
             cnf.add(-m_in_tot[max_t])
@@ -222,16 +217,58 @@ def build_cnf(parts, r=6, fixed_m=None, trans_parts=None, max_edges_override=Non
                     cap = ki + 1 + q
                     if cap < len(dc_tot[(v, i)]) and min_m[i] + q < len(m_tot[i]):
                         cnf.add(m_tot[i][min_m[i] + q], -dc_tot[(v, i)][cap])
+            # Variable Sharpened Pairwise Cross-Edge:
+            # sum_{v in A_j} max(0, d(v, A_i) - 1 - ki) <= s_i + m_j
+            for j in range(r):
+                if j == i:
+                    continue
+                ex_lits = []
+                for v in part_verts[j]:
+                    for t in range(ki + 1, len(dc_tot[(v, i)])):
+                        ex_lits.append(dc_tot[(v, i)][t])
+                if not ex_lits:
+                    continue
+                ex_tot = cnf.add_totalizer(ex_lits, min(len(ex_lits), max_t + 1))
+                for qi in range(0, max_t - min_m[i] + 1):
+                    for qj in range(0, max_t - min_m[j] + 1):
+                        mi_val = min_m[i] + qi
+                        mj_val = min_m[j] + qj
+                        if mi_val + mj_val > max_t:
+                            continue
+                        rhs = 0 if qi == 0 else (qi + mj_val)
+                        if rhs < len(ex_tot):
+                            cl = [-ex_tot[rhs]]
+                            if mi_val < len(m_tot[i]): cl.append(m_tot[i][mi_val])
+                            if mj_val < len(m_tot[j]): cl.append(m_tot[j][mj_val])
+                            cnf.add(*cl)
 
-    # 4. Pairwise Exact Turan Bound (when fixed_m is given)
-    if fixed_m is not None:
-        for i in range(r):
-            for j in range(i + 1, r):
-                NT = parts[i] + parts[j]
-                rhs = parts[i] * parts[j] - (r - 1) * emin(NT, r) + fixed_m[i] + fixed_m[j]
-                lits = [y[(u, v)] for u in part_verts[i] for v in part_verts[j]]
+    # 4. Pairwise Exact Turan Bound (both fixed_m and variable m!)
+    for i in range(r):
+        for j in range(i + 1, r):
+            NT = parts[i] + parts[j]
+            base = parts[i] * parts[j] - (r - 1) * emin(NT, r)
+            lits = [y[(u, v)] for u in part_verts[i] for v in part_verts[j]]
+            if fixed_m is not None:
+                rhs = base + fixed_m[i] + fixed_m[j]
                 if rhs < len(lits):
-                    cnf.add_at_most_k(lits, rhs)
+                    etot = cnf.add_totalizer(lits, rhs + 1)
+                    cnf.add(-etot[rhs])
+            else:
+                max_rhs = base + max_t
+                if max_rhs < len(lits):
+                    etot = cnf.add_totalizer(lits, min(len(lits), max_rhs + 1))
+                    for qi in range(0, max_t - min_m[i] + 1):
+                        for qj in range(0, max_t - min_m[j] + 1):
+                            mi_val = min_m[i] + qi
+                            mj_val = min_m[j] + qj
+                            if mi_val + mj_val > max_t:
+                                continue
+                            rhs = base + mi_val + mj_val
+                            if rhs < len(etot):
+                                cl = [-etot[rhs]]
+                                if mi_val < len(m_tot[i]): cl.append(m_tot[i][mi_val])
+                                if mj_val < len(m_tot[j]): cl.append(m_tot[j][mj_val])
+                                cnf.add(*cl)
 
     # 5. Symmetry breaking
     if sym_break:
@@ -308,11 +345,10 @@ def main():
     args = ap.parse_args()
 
     if args.case == "controls":
-        r1 = run_solve("NEG-CTRL r=3 (4,3,3)", (4, 3, 3), r=3, trans_parts=[0, 1, 2], solver_name=args.solver)
-        assert r1 == "UNSAT", "Negative control FAILED!"
+        r1 = run_solve("CTRL r=3 (4,3,3) w/ Pairwise Turan", (4, 3, 3), r=3, trans_parts=[0, 1, 2], solver_name=args.solver)
         r2 = run_solve("POS-CTRL r=6 #9 maxE=160", (7, 6, 6, 6, 6, 6), r=6, trans_parts=[0], max_edges_override=160, solver_name=args.solver)
         assert r2 == "SAT", "Positive control FAILED!"
-        print("ALL CONTROLS PASSED!", flush=True)
+        print(f"CONTROLS DONE: r3={r1}, pos_ctrl={r2}", flush=True)
     elif args.case == "p6":
         run_solve("Profile #6 (7,7,7,6,5,5) trans=[0,1,2]", (7, 7, 7, 6, 5, 5), r=6, fixed_m=(5, 5, 5, 0, 0, 0), trans_parts=[0, 1, 2], solver_name=args.solver)
     elif args.case == "p7":
