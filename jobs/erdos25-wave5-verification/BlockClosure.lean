@@ -3,7 +3,7 @@ import Mathlib
 /-!
 Erdős #25: machine-check the exact activation, weighted finite-block
 inequality and one-block closure reduction. The weights may be the normalized
-harmonic weights 1/(n H_X). Finite-prefix convergence and finite Haar footprint
+harmonic weights 1/(n H_X). Finite-rulePrefix convergence and finite Haar footprint
 monotonicity are explicit hypotheses (established in the ordinary paper);
 the uniform conditioned bound is still an UNPROVED hypothesis. This does
 not assert Erdős #25.
@@ -11,7 +11,7 @@ not assert Erdős #25.
 namespace Erdos25Block
 open scoped BigOperators
 
-def prefix (D : ℕ → Prop) (Y : ℕ) : ℕ → Prop :=
+def rulePrefix (D : ℕ → Prop) (Y : ℕ) : ℕ → Prop :=
   fun q => D q ∧ q ≤ Y
 
 def block (D : ℕ → Prop) (Y X : ℕ) : ℕ → Prop :=
@@ -24,14 +24,14 @@ def full (D : ℕ → Prop) (a : ℕ → ℕ) (n : ℕ) : Prop :=
   ∃ q, D q ∧ 0 < q ∧ n % q = a q
 
 def conditioned (D : ℕ → Prop) (a : ℕ → ℕ) (P Y X n : ℕ) : Prop :=
-  active (block D Y X) a n ∧ ¬ full (prefix D P) a n
+  active (block D Y X) a n ∧ ¬ full (rulePrefix D P) a n
 
 /-- All old rules are active at a new hit. The new witness cannot
-come from the old prefix. No change of residue or activation threshold. -/
+come from the old rulePrefix. No change of residue or activation threshold. -/
 theorem late_hit_in_block
     (D : ℕ → Prop) (a : ℕ → ℕ) (P Y X n : ℕ)
     (hPY : P ≤ Y) (hnX : n ≤ X)
-    (hit : active D a n) (notOld : ¬ active (prefix D Y) a n) :
+    (hit : active D a n) (notOld : ¬ active (rulePrefix D Y) a n) :
     conditioned D a P Y X n := by
   obtain ⟨q, hq, hqpos, hqn, ha⟩ := hit
   have hYq : Y < q := by
@@ -52,7 +52,7 @@ In particular it applies to normalized harmonic weights. -/
 theorem weighted_block_inequality
     (D : ℕ → Prop) (a : ℕ → ℕ) (w : ℕ → ℕ → ℝ)
     (hw : ∀ X n, 0 ≤ w X n) (P Y X : ℕ) (hPY : P ≤ Y) :
-    mass w X (active D a) ≤ mass w X (active (prefix D Y) a) +
+    mass w X (active D a) ≤ mass w X (active (rulePrefix D Y) a) +
       mass w X (conditioned D a P Y X) := by
   classical
   unfold mass
@@ -61,26 +61,26 @@ theorem weighted_block_inequality
   intro n hn
   have hnX : n ≤ X := (Finset.mem_Icc.mp hn).2
   by_cases hD : active D a n
-  · by_cases hOld : active (prefix D Y) a n
+  · by_cases hOld : active (rulePrefix D Y) a n
     · by_cases hC : conditioned D a P Y X n
       · simp only [if_pos hD, if_pos hOld, if_pos hC]
         linarith [hw X n]
       · simp [hD, hOld, hC]
     · have hC := late_hit_in_block D a P Y X n hPY hnX hD hOld
       simp [hD, hOld, hC]
-  · by_cases hOld : active (prefix D Y) a n <;>
+  · by_cases hOld : active (rulePrefix D Y) a n <;>
       by_cases hC : conditioned D a P Y X n <;>
       simp [hD, hOld, hC, hw X n, add_nonneg (hw X n) (hw X n)]
 
 /-- Extract a single bad block above ANY prescribed old cutoff.
 Only the two actual analytic premises (arbitrarily late peaks and convergence
-of each fixed prefix) are assumed. This avoids a recursion across blocks. -/
+of each fixed rulePrefix) are assumed. This avoids a recursion across blocks. -/
 theorem one_block_from_gap
     (D : ℕ → Prop) (a : ℕ → ℕ) (w : ℕ → ℕ → ℝ)
     (hw : ∀ X n, 0 ≤ w X n) (β Δ η : ℝ) (hη : 0 < η)
     (peaks : ∀ N : ℕ, ∃ X : ℕ, N ≤ X ∧ β + Δ ≤ mass w X (active D a))
     (prefixUpper : ∀ Y : ℕ, ∀ e : ℝ, 0 < e →
-      ∃ N : ℕ, ∀ X : ℕ, N ≤ X → mass w X (active (prefix D Y) a) ≤ β + e)
+      ∃ N : ℕ, ∀ X : ℕ, N ≤ X → mass w X (active (rulePrefix D Y) a) ≤ β + e)
     (P Y : ℕ) (hPY : P ≤ Y) :
     ∃ X : ℕ, Y < X ∧ Δ - η ≤ mass w X (conditioned D a P Y X) := by
   obtain ⟨N, hN⟩ := prefixUpper Y η hη
@@ -99,9 +99,9 @@ theorem increment_bound
     (D : ℕ → Prop) (footprint : (ℕ → Prop) → ℝ)
     (mono : ∀ U V : ℕ → Prop, (∀ q, U q → V q) → footprint U ≤ footprint V)
     (P Y X : ℕ) :
-    footprint (fun q => prefix D P q ∨ block D Y X q) - footprint (prefix D P)
-      ≤ footprint D - footprint (prefix D P) := by
-  have h := mono (fun q => prefix D P q ∨ block D Y X q) D (by
+    footprint (fun q => rulePrefix D P q ∨ block D Y X q) - footprint (rulePrefix D P)
+      ≤ footprint D - footprint (rulePrefix D P) := by
+  have h := mono (fun q => rulePrefix D P q ∨ block D Y X q) D (by
     intro q hq
     rcases hq with hp | hb
     · exact hp.1
@@ -110,7 +110,7 @@ theorem increment_bound
 
 /-- The single-block closure gate, in epsilon-delta form.
 The only NEW analytic premise is gate. Its epsilon must be uniform in the
-old prefix, but its separation threshold Q may depend on that prefix.
+old rulePrefix, but its separation threshold Q may depend on that rulePrefix.
 This theorem rules out any positive gap under that premise. -/
 theorem uniform_gate_excludes_gap
     (D : ℕ → Prop) (a : ℕ → ℕ) (w : ℕ → ℕ → ℝ)
@@ -120,11 +120,11 @@ theorem uniform_gate_excludes_gap
     (β Δ : ℝ) (hβ : footprint D = β) (hΔ : 0 < Δ)
     (peaks : ∀ N : ℕ, ∃ X : ℕ, N ≤ X ∧ β + Δ ≤ mass w X (active D a))
     (prefixUpper : ∀ Y : ℕ, ∀ e : ℝ, 0 < e →
-      ∃ N : ℕ, ∀ X : ℕ, N ≤ X → mass w X (active (prefix D Y) a) ≤ β + e)
-    (approx : ∀ d : ℝ, 0 < d → ∃ P : ℕ, β - footprint (prefix D P) ≤ d)
+      ∃ N : ℕ, ∀ X : ℕ, N ≤ X → mass w X (active (rulePrefix D Y) a) ≤ β + e)
+    (approx : ∀ d : ℝ, 0 < d → ∃ P : ℕ, β - footprint (rulePrefix D P) ≤ d)
     (gate : ∀ e : ℝ, 0 < e → ∃ d : ℝ, 0 < d ∧
       ∀ P : ℕ, ∃ Q : ℕ, ∀ Y X : ℕ, Q ≤ Y → P ≤ Y → Y < X →
-      footprint (fun q => prefix D P q ∨ block D Y X q) - footprint (prefix D P) ≤ d →
+      footprint (fun q => rulePrefix D P q ∨ block D Y X q) - footprint (rulePrefix D P) ≤ d →
       mass w X (conditioned D a P Y X) ≤ e) :
     False := by
   obtain ⟨d, hd, hgate⟩ := gate (Δ / 3) (by linarith)
@@ -136,8 +136,8 @@ theorem uniform_gate_excludes_gap
   obtain ⟨X, hYX, hmass⟩ := one_block_from_gap D a w hw β Δ (Δ / 3)
     (by linarith) peaks prefixUpper P Y hPY
   have hinc := increment_bound D footprint mono P Y X
-  have hsmall : footprint (fun q => prefix D P q ∨ block D Y X q) -
-      footprint (prefix D P) ≤ d := by linarith
+  have hsmall : footprint (fun q => rulePrefix D P q ∨ block D Y X q) -
+      footprint (rulePrefix D P) ≤ d := by linarith
   have hbound := hQ Y X hQY hPY hYX hsmall
   linarith
 
@@ -160,7 +160,8 @@ theorem injective_transport
       exact (div_le_div_iff₀ hnpos hmpos).mpr (by simpa [mul_comm] using hd n hn)
     _ = C * ∑ r ∈ V.image m, (1 : ℝ) / (r : ℝ) := by
       rw [← Finset.mul_sum]
-      exact (Finset.sum_image (f := fun r : ℕ => C * ((1 : ℝ) / (r : ℝ))) hinj).symm
+      congr 1
+      exact (Finset.sum_image (f := fun r : ℕ => (1 : ℝ) / (r : ℝ)) hinj).symm
 
 #print axioms late_hit_in_block
 #print axioms weighted_block_inequality

@@ -12,7 +12,7 @@ python3 - "$root/out/block-closure.log" <<'PY'
 import re,sys,pathlib
 s=pathlib.Path(sys.argv[1]).read_text()
 assert 'sorryAx' not in s
-a=re.findall(r"'([^']+)' depends on axioms: \[([^]]*)\]",s,re.S)
+a=re.findall(r"'([^']+)' (?:depends on axioms: \[([^]]*)\]|does not depend on any axioms)",s,re.S)
 assert len(a)==6,a
 assert all({x.strip() for x in v.split(',') if x.strip()} <= {'propext','Classical.choice','Quot.sound'} for _,v in a),a
 print('PASS six transitive axiom audits; standard axioms only')
