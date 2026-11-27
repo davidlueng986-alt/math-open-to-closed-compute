@@ -1055,6 +1055,23 @@
         "../first-match/README.md#a-fixed-outside-design-that-stops-at-one-column",
         "../first-match/verify_designs.py"
       ]
+    },
+    {
+      "id": "STAR1195-EXCLUDED",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "t=599, every valid outside design",
+      "statement": "No common-point star has 1195, 1196 or 1197 neighbors. At degree 1194 the three exceptional points admit exactly three residual-word orbits under relabeling and complementation.",
+      "all_of": [
+        "STAR-CRITERION"
+      ],
+      "any_of": [],
+      "composition": "A full or one-short star would require a conference graph. With two missing points the integer determinant forces one of 149 nonsquares to be a square. With three missing points a separate finite enumeration classifies only the exceptional words.",
+      "evidence": [
+        "../first-match/README.md#excluding-degree-1195-at-order-2396",
+        "../first-match/Star1195.lean",
+        "../first-match/verify_designs.py"
+      ]
     }
   ],
   "tasks": [
@@ -1512,7 +1529,11 @@
       "node": "CERTIFICATE-SUPPLY",
       "mode": "research",
       "priority": "P1",
-      "claim": null,
+      "claim": {
+        "owner": "Codex",
+        "branch": "hadamard/first-match-atlas",
+        "claimed_at": "2026-11-27"
+      },
       "title": "Build enough distinct universally compatible columns",
       "needs": [
         "UNIVERSAL-CERTIFICATE",
@@ -1522,10 +1543,11 @@
         "STAR-CRITERION",
         "POWER45-COVER",
         "ONE-COLUMN-28",
-        "ASSEMBLY"
+        "ASSEMBLY",
+        "STAR1195-EXCLUDED"
       ],
-      "inputs": "At one t in D outside the 45-power family use integral c of sum two and Z(c)=(YYᵀ−tI)c−(t−1)1. For t=599 the sufficient degree is 1190. A full or one-short star is impossible. For r missing star exchanges, first quotient by equal-half incidence words on the 2r leftover rows and use the binary rank bound 2r−2.",
-      "deliverable": "Resolve a residual case, starting with the two allowed exceptional-word patterns for degree 1195 at t=599, or construct distinct binary images from more general c on one verified design. A parametric construction may target any uncovered subfamily.",
+      "inputs": "At one t in D outside the 45-power family use integral c of sum two and Z(c)=(YYᵀ−tI)c−(t−1)1. For t=599 the sufficient star degree is 1190. Degrees 1195–1197 are excluded. With r missing star exchanges the binary asymmetry rank is at most 2r−2 and the determinant test has size 2r+1.",
+      "deliverable": "The degree-1195 exclusion and the three degree-1194 exceptional-word orbits are complete. Resolve one degree-1194 orbit or construct distinct binary images from more general c on a common verified design. A parametric construction may target any uncovered subfamily.",
       "acceptance": "Verify the outside Gram, integrality, coefficient sums, all output bits and distinct images on a common Y. For complete order coverage reach h=2t−8 and cite completion. For the global node cover every t in its stated remainder.",
       "fallback": "An exclusion must name its degree, coefficient support or family of designs. Record the exact residual cases and a reusable obstruction."
     }

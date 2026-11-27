@@ -44,7 +44,7 @@ $2(A^{\mathsf T}A)_{ij}+A_{ij}+A_{ji}=k$ for $i\ne j$. Its parity forces $A_{ij}
 
 **One missing exchange is forced.** If a star has at least $b-1$ neighbors, take $b-1$ pairs and call the missing point $e$. There are just two leftover rows. Exactly one contains the center by its point degree $b$. At each paired point $i$ the used rows contribute an odd degree, so the two leftover rows agree at $i$. At $e$ the used rows contribute an even degree, so the leftovers differ at $e$. Equal row sizes force an exchange of $\infty$ and $e$. This completes a full star.
 
-At order **2396**, $t=599$, $b=1197$ and $h=1190$. A conference graph requires its vertex count to be a sum of two squares. Here $1197=3^2\cdot7\cdot19$ has primes congruent to 3 modulo 4 with odd exponent. Hence degrees 1196 and 1197 are impossible for this star. The six degrees **1190 through 1195** still meet the completion threshold if realized. General integer certificates and other Hadamard constructions are also available. [Published necessary condition, Theorem 1.1](https://doi.org/10.4153/CJM-1978-029-1) · [Arithmetic replay](verify_designs.py)
+At order **2396**, $t=599$, $b=1197$ and $h=1190$. A conference graph requires its vertex count to be a sum of two squares. Here $1197=3^2\cdot7\cdot19$ has primes congruent to 3 modulo 4 with odd exponent. Hence degrees 1196 and 1197 are impossible for this star. The determinant argument below also excludes degree 1195. The five degrees **1190 through 1194** still meet the completion threshold if realized. General integer certificates and other Hadamard constructions are also available. [Published necessary condition, Theorem 1.1](https://doi.org/10.4153/CJM-1978-029-1) · [Arithmetic replay](verify_designs.py)
 
 ### The unpaired rows when the star misses at most seven points
 
@@ -55,6 +55,41 @@ $$|u_j|=k-s_j,\qquad |v_j|=|u_j|+\mathbf1_{j\in E}.$$
 For $i,j\in I$ with $i\ne j$, let $A_{ij}=\mathbf1_{j\in S_i}$ and $w_i=(u_i,v_i)$. Reducing the pair codegree modulo two gives $(A+A^{\mathsf T})_{ij}=w_i\cdot w_j$ over $\mathbb F_2$. This also holds on the diagonal since each $w_i$ has even weight. The even-weight subspace in dimension $2r$ has radical spanned by the all-ones word. Hence the asymmetry matrix of the known $d\times d$ block has **binary rank at most $2r-2$**. Its entries depend on at most $\binom{2r}{r}/2$ classes of words, since a paired point has equally many ones in the two halves and complementary words have identical dot products with even words.
 
 For $e\in E$, the words $w_e$ have odd weight and distinct ones are orthogonal modulo two. The paired rows contribute an even codegree to any two missing points. For **two missing points**, each exceptional word is either one lower singleton or both lower entries and one upper singleton. The two words must both be of the first type on different lower rows, or both of the second on different upper rows. A mixed pair has odd intersection. On the 1,195 paired points of a hypothetical star at order 2396, the rank bound is then two. The three complement classes are zero or all four, a matched upper/lower pair, and a crossed upper/lower pair. An asymmetric entry occurs exactly between the last two classes. At the other five candidate degrees the rank bounds are 4, 6, 8, 10 and 12. These restrictions give finite local data for a search even though the missing outside design has 2,394 rows. [Enumeration of residual word types and rank checks](verify_designs.py)
+
+## Excluding degree 1195 at order 2396
+
+For $r$ missing exchanges write $d=b-r$, let $W$ be the $2r\times d$ matrix of the ordinary residual words $w_i$, and let $A$ be the $d\times d$ hollow binary matrix $A_{ij}=\mathbf1_{j\in S_i}$ on the paired points. For $i\ne j$ the exact codegree is $2(A^{\mathsf T}A)_{ij}+A_{ij}+A_{ji}+w_i\cdot w_j=k$. The column sum of $A$ at $i$ is $k-|w_i|/2$. Combining the diagonal and off-diagonal identities yields
+
+$$K^{\mathsf T}K=bI_d+(b-1)J_d-2W^{\mathsf T}W,\qquad K=2A+I_d.$$
+
+The determinant of the right hand side must be a square in $\mathbb Z$. If $d\ge2r+1$, put $P=[\mathbf1,W^{\mathsf T}]$ and $D_0=\operatorname{diag}(b-1,-2,\ldots,-2)$. The determinant lemma reduces this test to $b^{d-2r-1}\det(bI_{2r+1}+D_0P^{\mathsf T}P)$. Even at order 2396 and seven missing exchanges the last matrix has dimension just 15.
+
+Take $r=2$. Complementing every outside block preserves its size, degrees and codegrees, exchanges the two residual halves and interchanges the two exceptional-word cases. Choose the representative where the two missing points $e,f$ are distinct lower singletons. At each ordinary $i$, the parity of its codegree with $e$ and $f$ forces $A_{i,e}$ and $A_{i,f}$ in the extended neighbor table to equal the two lower bits of $w_i$. The codegree of $e,f$ is therefore twice the number of all-four words. There are exactly $k/2$ all-four words. The four residual rows each contain $k$ ordinary points, since their other point is the center or their singleton exception.
+
+Label the upper rows $1,2$ and the lower rows $3,4$. Let $u$ count words of supports $\{1,3\}$ or $\{2,4\}$, and $v$ count those of supports $\{1,4\}$ or $\{2,3\}$. Equal row sizes imply that the two orientations within each class occur equally often. Consequently $u,v$ are even, $u+v=k$, and there are $k/2-1$ empty words. If either active class is absent one can pair upper and lower rows agreeing at **every** ordinary point. Each of these pairs exchanges the center and a different missing point. This forces a full star, already excluded at 2396. We may therefore take $0<u\le v$.
+
+For completeness, the four orthogonal sign vectors $(1,1,1,1),(1,1,-1,-1),(1,-1,1,-1),(1,-1,-1,1)$ are eigenvectors of $WW^{\mathsf T}$ with eigenvalues $3k,0,u,v$. This follows by adding the six word types with their stated multiplicities. In $bI_5+D_0P^{\mathsf T}P$, the last three directions contribute $b$, $b-2u$ and $b-2v$. Using the first coordinate and one half of $(1,1,1,1)$ as the remaining basis, their block is
+
+$$\begin{pmatrix}4k^2+1&4k^2\\-4k&1-4k\end{pmatrix},\qquad
+\det=(2k-1)^2=d^2.$$
+
+Thus the full determinant is $b^{d-5}d^2\,b(2u+1)(2v+1)$. The first two factors are a square. At $b=1197$, $k=598$, write $u=2i$. The remaining necessary condition is that
+
+$$1197(4i+1)(1197-4i)\ \text{is a square for some }1\le i\le149.$$
+
+**None of the 149 values is a square.** A short independent calculation uses the primes 7 and 19 in $1197$. The necessary residues are $i\equiv0,5\bmod7$ and $i\equiv0,14\bmod19$, leaving $14,19,33,133,147$. At each of these values respectively, $163,11,5,5,31$ divides the product to an odd power. The replay also builds the actual $5\times5$ integer determinant independently for every class size and tests its square factor with integer square roots. This excludes the 1,195-neighbor star for every outside design at order 2396. It places no restriction on Hadamard constructions without such a star. [Exact determinant replay](verify_designs.py) · [Lean finite nonsquare check](Star1195.lean)
+
+### Three missing exchanges
+
+At degree 1194, label the three upper residual rows $U_1,U_2,U_3$ and the lower rows $L_1,L_2,L_3$. Each missing point has an odd word with one more lower bit than upper bits. Distinct missing points have even intersection. Among the 15 possible words, exactly 26 unordered triples pass this test. Up to independent row permutations in each half, relabeling the missing points, and complementing the whole design (which also swaps halves), there are three cases.
+
+| Residual supports of the three missing points | Unordered triples in orbit |
+| --- | ---: |
+| $\{L_1\},\{L_2\},\{L_3\}$ | 2 |
+| $\{L_1\},\{U_1,L_2,L_3\},\{U_2,L_2,L_3\}$ | 18 |
+| $\{U_1,L_1,L_2\},\{U_2,L_1,L_2\},\{U_3,L_1,L_2\}$ | 6 |
+
+The checker enumerates all $\binom{15}{3}$ triples and verifies the three disjoint orbits. This classifies only the missing-point patterns. The 1,194 paired points and their Gram equations must still be realized on the same design. For each residual-word profile the compressed determinant above now has size seven. [Complete orbit replay](verify_designs.py)
 
 ## An infinite subfamily inside D
 

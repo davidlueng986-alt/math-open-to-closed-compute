@@ -41,7 +41,7 @@ jobs:
           lean -DwarningAsError=true -o "$LEAN_PATH/Triples.olean" jobs/hadamard-2396-projections/Triples.lean
           proof_dir=jobs/hadamard-all-orders
           for source in "$proof_dir"/{Assembly,Reductions,Constructions,OuterEnergy,Rounding}.lean \
-            "$proof_dir"/first-match/{Lattice,PairDefect,SwitchParity,Coverage45}.lean; do
+            "$proof_dir"/first-match/{Lattice,PairDefect,SwitchParity,Coverage45,Star1195}.lean; do
             module=${source##*/}
             module=${module%.lean}
             lean -DwarningAsError=true -o "$LEAN_PATH/$module.olean" "$source" | tee "$RUNNER_TEMP/$module.log"

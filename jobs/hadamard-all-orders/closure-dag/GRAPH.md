@@ -909,13 +909,16 @@ flowchart BT
     N_52["TERMINAL-TYPES"]
     N_53["TERMINAL-RANK"]
     N_61["EXCHANGE-NINE"]
+    N_65["STAR-CRITERION"]
+    N_70["STAR1195-EXCLUDED"]
     N_10 --> N_51
     N_19 --> N_51
     N_52 --> N_53
     N_8 --> N_53
     N_27 --> N_61
+    N_65 --> N_70
     classDef external stroke-dasharray:4 3;
-    class N_8,N_10,N_19,N_27,N_52 external;
+    class N_8,N_10,N_19,N_27,N_52,N_65 external;
 ~~~
 
 ### FRACTIONAL
@@ -977,6 +980,18 @@ At most 256 sign patterns modulo negation enumerate all extending directions. Tw
 - **Evidence** · [lemmas.md#one-column-replacement](<lemmas.md#one-column-replacement>)
 
 Repeat the eight-dimensional coordinate argument in dimension nine and compare every pair. When applied after deleting one of n−8 columns this exactly tests two-column replacements over that retained prefix.
+
+### STAR1195-EXCLUDED
+
+**PROVED** · lemma · t=599, every valid outside design
+
+No common-point star has 1195, 1196 or 1197 neighbors. At degree 1194 the three exceptional points admit exactly three residual-word orbits under relabeling and complementation.
+
+- **Required** · [STAR-CRITERION](#star-criterion)
+- **Alternatives** · None
+- **Evidence** · [../first-match/README.md#excluding-degree-1195-at-order-2396](<../first-match/README.md#excluding-degree-1195-at-order-2396>), [../first-match/Star1195.lean](<../first-match/Star1195.lean>), [../first-match/verify_designs.py](<../first-match/verify_designs.py>)
+
+A full or one-short star would require a conference graph. With two missing points the integer determinant forces one of 149 nonsquares to be a square. With three missing points a separate finite enumeration classifies only the exceptional words.
 
 ## Research diagnostics
 

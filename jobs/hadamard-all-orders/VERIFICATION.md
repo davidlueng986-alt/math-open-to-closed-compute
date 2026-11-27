@@ -25,7 +25,7 @@ for module in Assembly Reductions Constructions OuterEnergy Rounding
 do
   lean -DwarningAsError=true -o "$LEAN_PATH/$module.olean" "jobs/hadamard-all-orders/$module.lean"
 done
-for module in Lattice PairDefect SwitchParity Coverage45
+for module in Lattice PairDefect SwitchParity Coverage45 Star1195
 do
   lean -DwarningAsError=true -o "$LEAN_PATH/$module.olean" "jobs/hadamard-all-orders/first-match/$module.lean"
 done
@@ -49,7 +49,7 @@ Each stage implication permits both witness families to change. Its reverse dire
 ## First-column certificates and the 45-power family
 
 - Lean verifies exact signed counts, the two-row defect, binary existence at overlap $t-1$, and universal compatibility for any binary certificate with integral coefficients summing to two. A separate Lean arithmetic proof excludes both direct Paley tests and every consecutive-product order throughout the unbounded 45-power progression. The conference-matrix existence theorems and the star construction are cited and proved in the research record. [Lattice](first-match/Lattice.lean) · [Binary columns](first-match/PairDefect.lean) · [Family arithmetic](first-match/Coverage45.lean) · [Written proofs and primary sources](first-match/README.md)
-- The independent H44 checker reconstructs both archives and every shared vector. The design replay builds H92 and checks every column pair, exhausts the switched order-28 designs, and enumerates the possible residual word classes for one through seven missing star pairs. [Atlas verifier](first-match/verify_first_match.py) · [Design verifier](first-match/verify_designs.py)
+- The independent H44 checker reconstructs both archives and every shared vector. The design replay builds H92 and checks every column pair, exhausts the switched order-28 designs, and enumerates residual word classes, the three orbits at degree 1194 and all 149 compressed Gram determinants at degree 1195. Lean checks the latter square obstructions. [Finite Lean exclusion](first-match/Star1195.lean) [Atlas verifier](first-match/verify_first_match.py) · [Design verifier](first-match/verify_designs.py)
 
 ## Written reductions and finite controls
 

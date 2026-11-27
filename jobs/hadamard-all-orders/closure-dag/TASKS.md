@@ -14,7 +14,7 @@ A card is ready when its target is open, it has no claimant, and its listed prer
 | P0 | [T-SIGNATURE-ATLAS](#t-signature-atlas) | Checked | [SIGNATURE-ATLAS](GRAPH.md#signature-atlas) |
 | P0 | [T-TYPE-ATLAS](#t-type-atlas) | Ready | [TYPE-ATLAS](GRAPH.md#type-atlas) |
 | P0 | [T-YES](#t-yes) | Blocked | [YES](GRAPH.md#yes) |
-| P1 | [T-CERTIFICATE-SUPPLY](#t-certificate-supply) | Ready | [CERTIFICATE-SUPPLY](GRAPH.md#certificate-supply) |
+| P1 | [T-CERTIFICATE-SUPPLY](#t-certificate-supply) | Claimed | [CERTIFICATE-SUPPLY](GRAPH.md#certificate-supply) |
 | P1 | [T-CLIQUE](#t-clique) | Ready | [UNIFORM-CLIQUE](GRAPH.md#uniform-clique) |
 | P1 | [T-COMMUTING](#t-commuting) | Ready | [ALGEBRAIC-COVER](GRAPH.md#algebraic-cover) |
 | P1 | [T-EARLY](#t-early) | Ready | [EARLY](GRAPH.md#early) |
@@ -222,19 +222,19 @@ List any uncovered domain explicitly and return the proof to its relevant gate; 
 
 **Build enough distinct universally compatible columns**
 
-P1 · research · Ready · Unclaimed
+P1 · research · Claimed · Codex · `hadamard/first-match-atlas` · 2026-11-27
 
 - **Target** · [CERTIFICATE-SUPPLY](GRAPH.md#certificate-supply)
 - **Prerequisites** · [UNIVERSAL-CERTIFICATE](GRAPH.md#universal-certificate), [PAIR-DEFECT](GRAPH.md#pair-defect)
-- **Related results** · [STAR-CRITERION](GRAPH.md#star-criterion), [POWER45-COVER](GRAPH.md#power45-cover), [ONE-COLUMN-28](GRAPH.md#one-column-28), [ASSEMBLY](GRAPH.md#assembly)
+- **Related results** · [STAR-CRITERION](GRAPH.md#star-criterion), [POWER45-COVER](GRAPH.md#power45-cover), [ONE-COLUMN-28](GRAPH.md#one-column-28), [ASSEMBLY](GRAPH.md#assembly), [STAR1195-EXCLUDED](GRAPH.md#star1195-excluded)
 
 **Inputs**
 
-At one t in D outside the 45-power family use integral c of sum two and Z(c)=(YYᵀ−tI)c−(t−1)1. For t=599 the sufficient degree is 1190. A full or one-short star is impossible. For r missing star exchanges, first quotient by equal-half incidence words on the 2r leftover rows and use the binary rank bound 2r−2.
+At one t in D outside the 45-power family use integral c of sum two and Z(c)=(YYᵀ−tI)c−(t−1)1. For t=599 the sufficient star degree is 1190. Degrees 1195–1197 are excluded. With r missing star exchanges the binary asymmetry rank is at most 2r−2 and the determinant test has size 2r+1.
 
 **Deliverable**
 
-Resolve a residual case, starting with the two allowed exceptional-word patterns for degree 1195 at t=599, or construct distinct binary images from more general c on one verified design. A parametric construction may target any uncovered subfamily.
+The degree-1195 exclusion and the three degree-1194 exceptional-word orbits are complete. Resolve one degree-1194 orbit or construct distinct binary images from more general c on a common verified design. A parametric construction may target any uncovered subfamily.
 
 **Acceptance**
 

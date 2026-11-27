@@ -1,14 +1,14 @@
 """Replay the row-pair construction at H92 and an exact one-column obstruction at H28."""
 
 from collections import defaultdict
-from itertools import combinations, product
+from itertools import combinations, permutations, product
 from math import comb, isqrt
 from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "closure-dag"))
 from verify_pivot import fixed_size_masks, intersections, pivot_matrices, scatter
-from verify import check_marginals, require, verify_orthogonal
+from verify import check_marginals, determinant, require, verify_orthogonal
 
 
 def point_columns(blocks, t):
@@ -76,11 +76,32 @@ def check_residual_words():
     require(permitted == {(4,8),(13,14)}, "two missing points must have the same residual type")
 
 
+def check_three_missing():
+    # Bit labels U1,U2,U3,L1,L2,L3. The three missing point labels are interchangeable.
+    exceptional = [w for w in range(64) if (w >> 3).bit_count() == (w & 7).bit_count()+1]
+    triples = {e for e in combinations(exceptional, 3)
+               if all((a & b).bit_count() % 2 == 0 for a,b in combinations(e, 2))}
+    require(len(triples) == 26, "all admissible exceptional triples before relabelling")
+    coordinates = list(permutations(range(3)))
+    orbits = set()
+    for representative, size in [((8,16,32),2), ((8,49,50),18), ((25,26,28),6)]:
+        orbit = set()
+        for upper, lower in product(coordinates, repeat=2):
+            order = upper + tuple(i+3 for i in lower)
+            words = [sum((w >> i & 1) << j for j,i in enumerate(order)) for w in representative]
+            orbit.add(tuple(sorted(words)))
+            orbit.add(tuple(sorted(63 ^ ((w >> 3) | ((w & 7) << 3)) for w in words)))
+        require(len(orbit) == size and not (orbits & orbit), "residual triple orbit")
+        orbits.update(orbit)
+    require(triples == orbits, "all exceptional triples are covered by the three representatives")
+
+
 def check_partial_star(neighbors, outside, r):
     b = len(neighbors)
     d = b-r
     residual = [y >> (2*d) for y in outside[:b]]
     upper = sum(1 << (2*i) for i in range(r))
+    known = (1 << d)-1
     for j, word in enumerate(residual):
         require((word & ~upper).bit_count() == (word & upper).bit_count() + (j >= d), "half counts")
         for i in range(j):
@@ -89,6 +110,12 @@ def check_partial_star(neighbors, outside, r):
                 require(asymmetry == (word & residual[i]).bit_count() % 2, "paired word Gram")
             elif i >= d:
                 require((word & residual[i]).bit_count() % 2 == 0, "exceptional word Gram")
+    for i in range(d):
+        for j in range(i+1):
+            common = (neighbors[i] & neighbors[j] & known).bit_count()
+            gram = 4*common + 2*((neighbors[i] >> j & 1) + (neighbors[j] >> i & 1)) + (i == j)
+            target = b*(i == j) + b-1 - 2*(residual[i] & residual[j]).bit_count()
+            require(gram == target, "near-star determinant Gram")
 
 
 def check_order92():
@@ -166,11 +193,28 @@ def check_order2396():
     b = 1197
     require(3**2 * 7 * 19 == b, "factorization")
     require(all(isqrt(b-i*i)**2 != b-i*i for i in range(isqrt(b)+1)), "sum of two squares")
-    print("H2396: 1197 is not a sum of two squares, excluding a full 1197-edge star")
+    k, d = 598, b-2
+    cases = 0
+    for matched in range(2, k//2+1, 2):
+        crossed = k-matched
+        counts = {0: k//2-1, 15: k//2, 5: matched//2, 10: matched//2,
+                  6: crossed//2, 9: crossed//2}
+        require(sum(counts.values()) == d, "ordinary point totals")
+        words = [(n, [1] + [w >> j & 1 for j in range(4)]) for w,n in counts.items()]
+        scale = [b-1,-2,-2,-2,-2]
+        small = [[b*(i==j) + scale[i]*sum(n*w[i]*w[j] for n,w in words)
+                  for j in range(5)] for i in range(5)]
+        target = b*(2*matched+1)*(2*crossed+1)
+        require(determinant(small) == d*d*target, "exact compressed determinant")
+        require(isqrt(target)**2 != target, "squared determinant obstruction")
+        cases += 1
+    require(cases == 149, "all unordered active class sizes")
+    print("H2396: all 149 degree-1195 determinants fail; star degrees 1195, 1196 and 1197 excluded")
 
 
 if __name__ == "__main__":
     check_residual_words()
+    check_three_missing()
     check_order28()
     check_order92()
     check_order2396()
