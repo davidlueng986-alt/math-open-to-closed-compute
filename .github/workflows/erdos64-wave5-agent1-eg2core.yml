@@ -1,0 +1,28 @@
+name: E64 Wave 5 Agent 1 EG2-CORE Siege
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Wave5Agent1EG2Core and transitive axioms
+        run: bash jobs/erdos64-wave5-agent1-eg2core/verify.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos64-wave5-agent1-eg2core
+          path: out/
+          retention-days: 90
