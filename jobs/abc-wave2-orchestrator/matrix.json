@@ -1,0 +1,40 @@
+{
+  "include": [
+    {
+      "agent": 1,
+      "job": "abc-wave2-agent1-orbit-local",
+      "toolbox": "sat",
+      "image": "ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc"
+    },
+    {
+      "agent": 2,
+      "job": "abc-wave2-agent2-cover",
+      "toolbox": "sat",
+      "image": "ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc"
+    },
+    {
+      "agent": 3,
+      "job": "abc-wave2-agent3-valuations",
+      "toolbox": "sat",
+      "image": "ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc"
+    },
+    {
+      "agent": 4,
+      "job": "abc-wave2-agent4-lattice",
+      "toolbox": "sat",
+      "image": "ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc"
+    },
+    {
+      "agent": 5,
+      "job": "abc-wave2-agent5-height",
+      "toolbox": "sage",
+      "image": "ghcr.io/davidlueng986-alt/math-compute-sage@sha256:9b252d8fef6ebbfc47c0158c435395d7e39a73384d4113ebe6e54cd3ba7690cb"
+    },
+    {
+      "agent": 6,
+      "job": "abc-wave2-agent6-lean",
+      "toolbox": "lean",
+      "image": "ghcr.io/davidlueng986-alt/math-compute-lean@sha256:44c699d748a9ff12ed4567acc24ce4f8c33ef6c41df3648d3404a362349b497b"
+    }
+  ]
+}
