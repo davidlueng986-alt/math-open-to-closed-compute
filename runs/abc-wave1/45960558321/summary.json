@@ -1,0 +1,158 @@
+{
+  "problem": "ABC",
+  "resolution": "unknown",
+  "batch": "agent6",
+  "workflow_result": "success",
+  "source_commit": "d6bb84b3d382ef3412a1e7e7a4ff540d4c1fe87a",
+  "run_id": "45960558321",
+  "agents": {
+    "6": {
+      "result": {
+        "agent": 6,
+        "status": "LEAN_VERIFIED",
+        "problem_resolution": "unknown",
+        "lean_version": "Lean (version 4.36.0, x86_64-unknown-linux-gnu, commit 611c117bfaf7b7ae1cfcf246ce6fba31e8f509e9, Release)",
+        "mathlib_commit": "fc4f59e577feb1a4956671bc04ac18aaaf8cd842",
+        "source_sha256": "7a37b2715a931a983cd056c2b679dc285b3f0ac3cde62526174bc05ce154feb9",
+        "kernel_log_sha256": "72a317032c7b5d7e72ea70f9b52ead261be9087daf211f87d25474c220f11c34",
+        "theorem_count": 24,
+        "axioms": {
+          "ABCWave1.frey_discriminant_identity": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.minimal_invariants_identity": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.doubling_identity": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.c4_sum_of_squares": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.c4_dominates_a": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.c4_dominates_b": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.c4_dominates_sum": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.frey_epsilon_equation": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.frey_epsilon_choice": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.reverse_epsilon_equation": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.reverse_epsilon_choice": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.balanced_factorization": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.balanced_cube_excess_step": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.exponent_tail": [
+            "propext",
+            "Quot.sound"
+          ],
+          "ABCWave1.normalization_error_iff": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.positive_scaling_needs_error": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.reyssat_sum": [
+            "propext"
+          ],
+          "ABCWave1.reyssat_prime_support": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.reyssat_coprime": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.reyssat_radical_product": [
+            "propext"
+          ],
+          "ABCWave1.reyssat_exact_quality_test": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.radical_support_iff": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.radical_positive": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave1.unbounded_ratio_refutes_abc": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ]
+        },
+        "github_run_id": "45960558321",
+        "github_sha": "d6bb84b3d382ef3412a1e7e7a4ff540d4c1fe87a",
+        "scope": "24 exact algebraic, arithmetic, inequality, radical-support and quantifier lemmas only. No proof of conductor/minimality, full abc equivalence, new abc bound, IUT premise or infinite counterexample sequence. The balanced lemma assumes a*b*c<=R^3*U; it does not silently identify arbitrary R with the radical. Reyssat integer quality comparison uses a separately certified radical value."
+      },
+      "provenance": {
+        "agent": 6,
+        "job": "abc-wave1-agent6-lean",
+        "toolbox": "lean",
+        "source_commit": "d6bb84b3d382ef3412a1e7e7a4ff540d4c1fe87a",
+        "run_id": "45960558321",
+        "run_attempt": "1",
+        "python": "3.10.12",
+        "file_sha256": {
+          "jobs/abc-wave1-agent6-lean/README.md": "02c0059f05145cacadb7778b35166636c147549db3ea2a179b48d543800a3f3a",
+          "jobs/abc-wave1-agent6-lean/Structural.lean": "7a37b2715a931a983cd056c2b679dc285b3f0ac3cde62526174bc05ce154feb9",
+          "jobs/abc-wave1-agent6-lean/audit.py": "b8a8148ea174738ba1a27349f203d770ca40b48dfecf1f55782e025f5d1249e3",
+          "jobs/abc-wave1-agent6-lean/run.sh": "94d8bca14fda5c8ccf6dc3fc168f07d50338a48c2dee94c5242e198c18ad854e"
+        }
+      }
+    }
+  },
+  "scope": "Successful jobs verify only their exact structural lemmas or bounded searches, never the original abc conjecture."
+}

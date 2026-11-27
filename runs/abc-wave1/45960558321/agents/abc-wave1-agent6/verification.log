@@ -1,0 +1,156 @@
+Lean (version 4.36.0, x86_64-unknown-linux-gnu, commit 611c117bfaf7b7ae1cfcf246ce6fba31e8f509e9, Release)
+Lean (version 4.36.0, x86_64-unknown-linux-gnu, commit 611c117bfaf7b7ae1cfcf246ce6fba31e8f509e9, Release)
+'ABCWave1.frey_discriminant_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.minimal_invariants_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.doubling_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.c4_sum_of_squares' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.c4_dominates_a' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.c4_dominates_b' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.c4_dominates_sum' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.frey_epsilon_equation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.frey_epsilon_choice' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.reverse_epsilon_equation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.reverse_epsilon_choice' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.balanced_factorization' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.balanced_cube_excess_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.exponent_tail' depends on axioms: [propext, Quot.sound]
+'ABCWave1.normalization_error_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.positive_scaling_needs_error' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.reyssat_sum' depends on axioms: [propext]
+'ABCWave1.reyssat_prime_support' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.reyssat_coprime' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.reyssat_radical_product' depends on axioms: [propext]
+'ABCWave1.reyssat_exact_quality_test' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.radical_support_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.radical_positive' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave1.unbounded_ratio_refutes_abc' depends on axioms: [propext, Classical.choice, Quot.sound]
+{
+  "agent": 6,
+  "status": "LEAN_VERIFIED",
+  "problem_resolution": "unknown",
+  "lean_version": "Lean (version 4.36.0, x86_64-unknown-linux-gnu, commit 611c117bfaf7b7ae1cfcf246ce6fba31e8f509e9, Release)",
+  "mathlib_commit": "fc4f59e577feb1a4956671bc04ac18aaaf8cd842",
+  "source_sha256": "7a37b2715a931a983cd056c2b679dc285b3f0ac3cde62526174bc05ce154feb9",
+  "kernel_log_sha256": "72a317032c7b5d7e72ea70f9b52ead261be9087daf211f87d25474c220f11c34",
+  "theorem_count": 24,
+  "axioms": {
+    "ABCWave1.frey_discriminant_identity": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.minimal_invariants_identity": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.doubling_identity": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.c4_sum_of_squares": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.c4_dominates_a": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.c4_dominates_b": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.c4_dominates_sum": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.frey_epsilon_equation": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.frey_epsilon_choice": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.reverse_epsilon_equation": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.reverse_epsilon_choice": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.balanced_factorization": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.balanced_cube_excess_step": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.exponent_tail": [
+      "propext",
+      "Quot.sound"
+    ],
+    "ABCWave1.normalization_error_iff": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.positive_scaling_needs_error": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.reyssat_sum": [
+      "propext"
+    ],
+    "ABCWave1.reyssat_prime_support": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.reyssat_coprime": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.reyssat_radical_product": [
+      "propext"
+    ],
+    "ABCWave1.reyssat_exact_quality_test": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.radical_support_iff": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.radical_positive": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave1.unbounded_ratio_refutes_abc": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  "github_run_id": "45960558321",
+  "github_sha": "d6bb84b3d382ef3412a1e7e7a4ff540d4c1fe87a",
+  "scope": "24 exact algebraic, arithmetic, inequality, radical-support and quantifier lemmas only. No proof of conductor/minimality, full abc equivalence, new abc bound, IUT premise or infinite counterexample sequence. The balanced lemma assumes a*b*c<=R^3*U; it does not silently identify arbitrary R with the radical. Reyssat integer quality comparison uses a separately certified radical value."
+}

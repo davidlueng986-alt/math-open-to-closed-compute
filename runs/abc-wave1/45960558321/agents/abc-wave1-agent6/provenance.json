@@ -1,0 +1,15 @@
+{
+  "agent": 6,
+  "job": "abc-wave1-agent6-lean",
+  "toolbox": "lean",
+  "source_commit": "d6bb84b3d382ef3412a1e7e7a4ff540d4c1fe87a",
+  "run_id": "45960558321",
+  "run_attempt": "1",
+  "python": "3.10.12",
+  "file_sha256": {
+    "jobs/abc-wave1-agent6-lean/README.md": "02c0059f05145cacadb7778b35166636c147549db3ea2a179b48d543800a3f3a",
+    "jobs/abc-wave1-agent6-lean/Structural.lean": "7a37b2715a931a983cd056c2b679dc285b3f0ac3cde62526174bc05ce154feb9",
+    "jobs/abc-wave1-agent6-lean/audit.py": "b8a8148ea174738ba1a27349f203d770ca40b48dfecf1f55782e025f5d1249e3",
+    "jobs/abc-wave1-agent6-lean/run.sh": "94d8bca14fda5c8ccf6dc3fc168f07d50338a48c2dee94c5242e198c18ad854e"
+  }
+}
