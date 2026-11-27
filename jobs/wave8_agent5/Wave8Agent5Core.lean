@@ -40,7 +40,26 @@ def HasPower {V : Type*} (G : SimpleGraph V) : Prop :=
 def GirthGe {V : Type*} (G : SimpleGraph V) (g : ℕ) : Prop :=
   ∀ (v : V) (c : G.Walk v v), c.IsCycle → g ≤ c.length
 
-/-! ### Section 0: Walk & Cycle Helper Lemmas -/
+/-! ### Section 0: List, Walk & Cycle Helper Lemmas -/
+
+lemma nodup_append_of_disjoint {α : Type*} {l₁ l₂ : List α}
+    (h1 : l₁.Nodup) (h2 : l₂.Nodup) (hd : ∀ x ∈ l₁, x ∉ l₂) :
+    (l₁ ++ l₂).Nodup :=
+  List.nodup_append.mpr ⟨h1, h2, fun a ha b hb hab => hd a ha (hab ▸ hb)⟩
+
+lemma eq_of_mem_of_map_nodup {α β : Type*} {f : α → β} {l : List α}
+    (hn : (l.map f).Nodup) {x y : α} (hx : x ∈ l) (hy : y ∈ l) (heq : f x = f y) :
+    x = y := by
+  induction l with
+  | nil => simp at hx
+  | cons a t ih =>
+    simp only [List.map_cons, List.nodup_cons] at hn
+    simp only [List.mem_cons] at hx hy
+    rcases hx with rfl | hxt <;> rcases hy with rfl | hyt
+    · rfl
+    · exact (hn.1 (heq ▸ List.mem_map_of_mem hyt)).elim
+    · exact (hn.1 (heq.symm ▸ List.mem_map_of_mem hxt)).elim
+    · exact ih hn.2 hxt hyt
 
 /-- A closed walk of length `≥ 3` whose `support.tail` is `Nodup` is a simple cycle. -/
 lemma isCycle_of_length_ge_three_nodup {V : Type*} {G : SimpleGraph V} {u : V}
@@ -62,9 +81,9 @@ lemma isCycle_of_length_ge_three_nodup {V : Type*} {G : SimpleGraph V} {u : V}
         simp only [Walk.edges_cons, List.mem_cons] at hmem
         rcases hmem with heq | hmem_r
         · rw [Sym2.eq_iff] at heq
-          rcases heq with ⟨huv, _⟩ | ⟨_, hwu⟩
+          rcases heq with ⟨huv, _⟩ | ⟨huw, _⟩
           · exact G.ne_of_adj h huv
-          · subst hwu
+          · subst huw
             have hnodup_q : (v :: u :: r.support.tail).Nodup := by
               simpa [Walk.support_cons] using hnodup
             cases r with
@@ -79,7 +98,7 @@ lemma isCycle_of_length_ge_three_nodup {V : Type*} {G : SimpleGraph V} {u : V}
                 have := r'.end_mem_support
                 simpa [Walk.support_cons] using this
               exact (List.nodup_cons.mp hnodup_u).1 hu_end
-        · have hv_mem_r : v ∈ r.support := Walk.fst_mem_support_of_mem_edges r hmem_r
+        · have hv_mem_r : v ∈ r.support := Walk.snd_mem_support_of_mem_edges r hmem_r
           have hnodup_q : (v :: r.support).Nodup := by
             simpa [Walk.support_cons] using hnodup
           exact (List.nodup_cons.mp hnodup_q).1 hv_mem_r
@@ -99,8 +118,7 @@ lemma cycle_of_two_disjoint_paths {V : Type*} {G : SimpleGraph V} {u v : V}
   apply isCycle_of_length_ge_three_nodup
   · rw [Walk.length_append, Walk.length_reverse]; exact hlen
   · rw [Walk.support_append, List.tail_append_of_ne_nil (Walk.support_ne_nil p)]
-    rw [List.nodup_append]
-    refine ⟨hp.support_nodup.tail, ?_, ?_⟩
+    apply nodup_append_of_disjoint hp.support_nodup.tail
     · have hrev : q.reverse.support.Nodup := by
         rw [Walk.support_reverse]
         exact List.nodup_reverse.mpr hq.support_nodup
@@ -112,27 +130,25 @@ lemma cycle_of_two_disjoint_paths {V : Type*} {G : SimpleGraph V} {u v : V}
         exact this
       have hx_ne_v : x ≠ v := by
         intro hxv
-        subst hxv
+        have hv_q : v ∈ q.reverse.support.tail := hxv ▸ hx_q
         have hrev : q.reverse.support.Nodup := by
           rw [Walk.support_reverse]
           exact List.nodup_reverse.mpr hq.support_nodup
         have hhead : q.reverse.support = v :: q.reverse.support.tail := by
-          cases hqr : q.reverse with
-          | nil =>
-            rw [hqr] at hx_q
-            simp at hx_q
+          cases q.reverse with
+          | nil => simp [Walk.support_nil] at hv_q
           | cons _ _ => simp [Walk.support_cons]
         rw [hhead, List.nodup_cons] at hrev
-        exact hrev.1 hx_q
+        exact hrev.1 hv_q
       have hx_ne_u : x ≠ u := by
         intro hxu
-        subst hxu
+        have hu_p : u ∈ p.support.tail := hxu ▸ hx_p
         have hp_nodup := hp.support_nodup
         cases p with
-        | nil => simp at hx_p
+        | nil => simp at hu_p
         | cons _ _ =>
           simp only [Walk.support_cons, List.nodup_cons] at hp_nodup
-          exact hp_nodup.1 hx_p
+          exact hp_nodup.1 hu_p
       have hx_q_tail : x ∈ q.support.tail := by
         cases q with
         | nil =>
@@ -145,13 +161,11 @@ lemma cycle_of_two_disjoint_paths {V : Type*} {G : SimpleGraph V} {u v : V}
           · exact htail
       exact hx_ne_v (hdisj x hx_p hx_q_tail)
 
-/-- Support tail of an appended walk equals the append of support tails. -/
 lemma walk_append_support_tail {V : Type*} {G : SimpleGraph V} {u v w : V}
     (p : G.Walk u v) (q : G.Walk v w) :
     (p.append q).support.tail = p.support.tail ++ q.support.tail := by
   rw [Walk.support_append, List.tail_append_of_ne_nil (Walk.support_ne_nil p)]
 
-/-- In a simple path `p : G.Walk u v`, `u ∉ p.support.tail`. -/
 lemma start_not_mem_support_tail_of_isPath {V : Type*} {G : SimpleGraph V} {u v : V}
     {p : G.Walk u v} (hp : p.IsPath) : u ∉ p.support.tail := by
   cases p with
@@ -161,17 +175,14 @@ lemma start_not_mem_support_tail_of_isPath {V : Type*} {G : SimpleGraph V} {u v 
     simp only [Walk.support_cons, List.nodup_cons] at h
     exact h.1
 
-/-- In a simple path `p : G.Walk u v`, `v ∉ p.reverse.support.tail`. -/
 lemma end_not_mem_reverse_support_tail_of_isPath {V : Type*} {G : SimpleGraph V} {u v : V}
-    {p : G.Walk u v} (hp : p.IsPath) : v ∉ p.reverse.support.tail := by
-  exact start_not_mem_support_tail_of_isPath hp.reverse
+    {p : G.Walk u v} (hp : p.IsPath) : v ∉ p.reverse.support.tail :=
+  start_not_mem_support_tail_of_isPath hp.reverse
 
-/-- Any element of `p.support.tail` lies in `p.support`. -/
 lemma mem_support_of_mem_tail {V : Type*} {G : SimpleGraph V} {u v : V}
     {p : G.Walk u v} {x : V} (hx : x ∈ p.support.tail) : x ∈ p.support :=
   List.mem_of_mem_tail hx
 
-/-- Any element of `p.reverse.support.tail` lies in `p.support`. -/
 lemma mem_support_of_mem_reverse_tail {V : Type*} {G : SimpleGraph V} {u v : V}
     {p : G.Walk u v} {x : V} (hx : x ∈ p.reverse.support.tail) : x ∈ p.support := by
   have h := List.mem_of_mem_tail hx
@@ -188,11 +199,11 @@ structure SkewVoltage (V : Type*) (Γ : Type*) [AddCommGroup Γ] where
 def VoltageLift {V Γ : Type*} [AddCommGroup Γ] (G : SimpleGraph V) (α : SkewVoltage V Γ) :
     SimpleGraph (V × Γ) where
   Adj x y := G.Adj x.1 y.1 ∧ y.2 = x.2 + α.val x.1 y.1
-  symm := by
+  symm := ⟨by
     rintro ⟨u, g⟩ ⟨v, h⟩ ⟨hadj, rfl⟩
     refine ⟨hadj.symm, ?_⟩
     rw [α.skew u v]
-    abel
+    abel⟩
   loopless := ⟨by rintro ⟨u, g⟩ ⟨hadj, _⟩; exact G.loopless.irrefl u hadj⟩
 
 /-- Total voltage accumulated along a walk in the base graph `G`. -/
@@ -228,29 +239,31 @@ lemma liftWalk_length {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
     (liftWalk α p g).length = p.length := by
   induction p generalizing g with
   | nil => simp [liftWalk]
-  | cons h q ih => simp [liftWalk, ih]
+  | cons h q ih =>
+    simp only [liftWalk, Walk.length_copy, Walk.length_cons, ih]
 
 lemma liftWalk_support_map_fst {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
     (α : SkewVoltage V Γ) {u v : V} (p : G.Walk u v) (g : Γ) :
     (liftWalk α p g).support.map Prod.fst = p.support := by
   induction p generalizing g with
   | nil => simp [liftWalk]
-  | cons h q ih => simp [liftWalk, ih]
+  | cons h q ih =>
+    simp only [liftWalk, Walk.support_copy, Walk.support_cons, List.map_cons, ih]
 
 lemma liftWalk_support_tail_map_fst {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
     (α : SkewVoltage V Γ) {u v : V} (p : G.Walk u v) (g : Γ) :
     (liftWalk α p g).support.tail.map Prod.fst = p.support.tail := by
-  rw [← List.map_tail, liftWalk_support_map_fst]
+  rw [List.map_tail, liftWalk_support_map_fst]
 
 lemma liftWalk_support_shift {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
     (α : SkewVoltage V Γ) {u v : V} (p : G.Walk u v) (g δ : Γ) :
     (liftWalk α p (g + δ)).support = (liftWalk α p g).support.map (fun x => (x.1, x.2 + δ)) := by
   induction p generalizing g with
   | nil => simp [liftWalk]
-  | cons h q ih =>
+  | @cons a b c h q ih =>
     simp only [liftWalk, Walk.support_copy, Walk.support_cons, List.map_cons]
     congr 1
-    have hEq : g + δ + α.val _ _ = (g + α.val _ _) + δ := by abel
+    have hEq : g + δ + α.val a b = (g + α.val a b) + δ := by abel
     rw [hEq, ih]
 
 lemma liftWalk_isPath {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
@@ -269,21 +282,19 @@ lemma liftWalk_support_disjoint_of_ne {V Γ : Type*} [AddCommGroup Γ] {G : Simp
     {g₁ g₂ : Γ} (hne : g₁ ≠ g₂) :
     ∀ x, x ∈ (liftWalk α p g₁).support → x ∉ (liftWalk α p g₂).support := by
   rintro ⟨z, s⟩ hx1 hx2
-  have h1 : (z, s) ∈ (liftWalk α p (0 + g₁)).support := by simpa using hx1
-  have h2 : (z, s) ∈ (liftWalk α p (0 + g₂)).support := by simpa using hx2
-  rw [liftWalk_support_shift] at h1 h2
-  rw [List.mem_map] at h1 h2
+  have h1 : (z, s) ∈ (liftWalk α p (0 + g₁)).support := by rwa [zero_add]
+  have h2 : (z, s) ∈ (liftWalk α p (0 + g₂)).support := by rwa [zero_add]
+  rw [liftWalk_support_shift, List.mem_map] at h1 h2
   rcases h1 with ⟨⟨z₁, t₁⟩, hm1, heq1⟩
   rcases h2 with ⟨⟨z₂, t₂⟩, hm2, heq2⟩
   have hz1 : z₁ = z := congrArg Prod.fst heq1
   have hz2 : z₂ = z := congrArg Prod.fst heq2
   have hs1 : t₁ + g₁ = s := congrArg Prod.snd heq1
   have hs2 : t₂ + g₂ = s := congrArg Prod.snd heq2
-  subst hz1; subst hz2
   have hnodup : ((liftWalk α p 0).support.map Prod.fst).Nodup := by
     rw [liftWalk_support_map_fst]
     exact hp.support_nodup
-  have ht : (z, t₁) = (z, t₂) := List.Nodup.eq_of_mem_of_map_eq hnodup hm1 hm2 rfl
+  have ht : (z₁, t₁) = (z₂, t₂) := eq_of_mem_of_map_nodup hnodup hm1 hm2 (hz1.trans hz2.symm)
   have ht_eq : t₁ = t₂ := congrArg Prod.snd ht
   subst ht_eq
   exact hne (add_left_cancel (hs1.trans hs2.symm))
@@ -296,12 +307,12 @@ lemma liftWalk_cycle_tail_disjoint_of_ne {V Γ : Type*} [AddCommGroup Γ] {G : S
   rintro ⟨z, s⟩ hx1 hx2
   have hshift1 : (liftWalk α c (0 + g₁)).support.tail =
       (liftWalk α c 0).support.tail.map (fun x => (x.1, x.2 + g₁)) := by
-    rw [liftWalk_support_shift, List.map_tail]
+    rw [liftWalk_support_shift, ← List.map_tail]
   have hshift2 : (liftWalk α c (0 + g₂)).support.tail =
       (liftWalk α c 0).support.tail.map (fun x => (x.1, x.2 + g₂)) := by
-    rw [liftWalk_support_shift, List.map_tail]
-  have h1 : (z, s) ∈ (liftWalk α c (0 + g₁)).support.tail := by simpa using hx1
-  have h2 : (z, s) ∈ (liftWalk α c (0 + g₂)).support.tail := by simpa using hx2
+    rw [liftWalk_support_shift, ← List.map_tail]
+  have h1 : (z, s) ∈ (liftWalk α c (0 + g₁)).support.tail := by rwa [zero_add]
+  have h2 : (z, s) ∈ (liftWalk α c (0 + g₂)).support.tail := by rwa [zero_add]
   rw [hshift1, List.mem_map] at h1
   rw [hshift2, List.mem_map] at h2
   rcases h1 with ⟨⟨z₁, t₁⟩, hm1, heq1⟩
@@ -310,11 +321,10 @@ lemma liftWalk_cycle_tail_disjoint_of_ne {V Γ : Type*} [AddCommGroup Γ] {G : S
   have hz2 : z₂ = z := congrArg Prod.fst heq2
   have hs1 : t₁ + g₁ = s := congrArg Prod.snd heq1
   have hs2 : t₂ + g₂ = s := congrArg Prod.snd heq2
-  subst hz1; subst hz2
   have hnodup : ((liftWalk α c 0).support.tail.map Prod.fst).Nodup := by
     rw [liftWalk_support_tail_map_fst]
     exact hc.support_nodup
-  have ht : (z, t₁) = (z, t₂) := List.Nodup.eq_of_mem_of_map_eq hnodup hm1 hm2 rfl
+  have ht : (z₁, t₁) = (z₂, t₂) := eq_of_mem_of_map_nodup hnodup hm1 hm2 (hz1.trans hz2.symm)
   have ht_eq : t₁ = t₂ := congrArg Prod.snd ht
   subst ht_eq
   exact hne (add_left_cancel (hs1.trans hs2.symm))
@@ -356,7 +366,7 @@ lemma snd_eq_start_of_fst_eq_start {V Γ : Type*} [AddCommGroup Γ] {G : SimpleG
   have hnodup : ((liftWalk α p g).support.map Prod.fst).Nodup := by
     rw [liftWalk_support_map_fst]; exact hp.support_nodup
   have hstart : (u, g) ∈ (liftWalk α p g).support := Walk.start_mem_support _
-  have heq : x = (u, g) := List.Nodup.eq_of_mem_of_map_eq hnodup hx hstart hxf
+  have heq : x = (u, g) := eq_of_mem_of_map_nodup hnodup hx hstart hxf
   exact congrArg Prod.snd heq
 
 lemma snd_eq_end_of_fst_eq_end {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
@@ -366,7 +376,7 @@ lemma snd_eq_end_of_fst_eq_end {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph
   have hnodup : ((liftWalk α p g).support.map Prod.fst).Nodup := by
     rw [liftWalk_support_map_fst]; exact hp.support_nodup
   have hend : (v, g + walkVoltage α p) ∈ (liftWalk α p g).support := Walk.end_mem_support _
-  have heq : x = (v, g + walkVoltage α p) := List.Nodup.eq_of_mem_of_map_eq hnodup hx hend hxf
+  have heq : x = (v, g + walkVoltage α p) := eq_of_mem_of_map_nodup hnodup hx hend hxf
   exact congrArg Prod.snd heq
 
 lemma fst_ne_start_of_mem_liftWalk_tail {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
@@ -433,13 +443,12 @@ theorem abelian_cover_theta_commutator_simple {V Γ : Type*} [AddCommGroup Γ]
   apply isCycle_of_length_ge_three_nodup (by omega)
   have htail : w.support.tail =
       (liftWalk α p1 0).support.tail ++
-      (liftWalk α p2 (a - b)).reverse.support.tail ++
-      (liftWalk α p3 (a - b)).support.tail ++
-      (liftWalk α p1 (c - b)).reverse.support.tail ++
-      (liftWalk α p2 (c - b)).support.tail ++
-      (liftWalk α p3 0).reverse.support.tail := by
-    simp only [w, s1, s2, s3, s4, s5, s6, walk_append_support_tail, Walk.support_copy,
-      List.append_assoc]
+      ((liftWalk α p2 (a - b)).reverse.support.tail ++
+      ((liftWalk α p3 (a - b)).support.tail ++
+      ((liftWalk α p1 (c - b)).reverse.support.tail ++
+      ((liftWalk α p2 (c - b)).support.tail ++
+      (liftWalk α p3 0).reverse.support.tail)))) := by
+    simp only [w, s1, s2, s3, s4, s5, s6, walk_append_support_tail, Walk.support_copy]
   rw [htail]
   have hn1 : (liftWalk α p1 0).support.tail.Nodup := (liftWalk_isPath α hp1 0).support_nodup.tail
   have hn2 : (liftWalk α p2 (a - b)).reverse.support.tail.Nodup :=
@@ -477,8 +486,7 @@ theorem abelian_cover_theta_commutator_simple {V Γ : Type*} [AddCommGroup Γ]
   have d14 : ∀ x ∈ (liftWalk α p1 0).support.tail,
       x ∉ (liftWalk α p1 (c - b)).reverse.support.tail := by
     intro x h1 h4
-    have hne : (0 : Γ) ≠ c - b := by
-      intro h; exact hbc (sub_eq_zero.mp h.symm).symm
+    have hne : (0 : Γ) ≠ c - b := fun h => hbc (sub_eq_zero.mp h.symm).symm
     exact liftWalk_support_disjoint_of_ne α p1 hp1 hne x
       (mem_support_of_mem_tail h1) (mem_support_of_mem_reverse_tail h4)
   have d15 : ∀ x ∈ (liftWalk α p1 0).support.tail,
@@ -520,8 +528,7 @@ theorem abelian_cover_theta_commutator_simple {V Γ : Type*} [AddCommGroup Γ]
         (fst_mem_of_mem_liftWalk_support α p2 (a - b) hm2) with hxu | hxv
     · have s2s := snd_eq_start_of_fst_eq_start α p2 hp2 (a - b) hm2 hxu
       have s4s := snd_eq_start_of_fst_eq_start α p1 hp1 (c - b) hm4 hxu
-      have heq : a - b = c - b := s2s.symm.trans s4s
-      exact hac (sub_left_inj.mp heq)
+      exact hac (sub_left_inj.mp (s2s.symm.trans s4s))
     · exact fst_ne_end_of_mem_liftWalk_reverse_tail α p2 hp2 (a - b) h2 hxv
   have d25 : ∀ x ∈ (liftWalk α p2 (a - b)).reverse.support.tail,
       x ∉ (liftWalk α p2 (c - b)).support.tail := by
@@ -560,8 +567,8 @@ theorem abelian_cover_theta_commutator_simple {V Γ : Type*} [AddCommGroup Γ]
     · have s3e := snd_eq_end_of_fst_eq_end α p3 hp3 (a - b) hm3 hxv
       have s5e := snd_eq_end_of_fst_eq_end α p2 hp2 (c - b) hm5 hxv
       have heq : a - b + c = c - b + b := s3e.symm.trans s5e
-      have heq2 : a - b + c = c := by simpa [sub_add_cancel] using heq
-      exact hab (sub_eq_zero.mp (add_right_cancel (by simpa [zero_add] using heq2)))
+      exact hab (eq_of_sub_eq_zero (by have h0 := sub_eq_zero.mpr heq; calc a - b = (a - b + c) - (c - b + b) := by abel
+        _ = 0 := h0))
   have d36 : ∀ x ∈ (liftWalk α p3 (a - b)).support.tail,
       x ∉ (liftWalk α p3 0).reverse.support.tail := by
     intro x h3 h6
@@ -597,21 +604,28 @@ theorem abelian_cover_theta_commutator_simple {V Γ : Type*} [AddCommGroup Γ]
         (fst_mem_of_mem_liftWalk_support α p3 0 hm6) with hxu | hxv
     · exact fst_ne_start_of_mem_liftWalk_tail α p2 hp2 (c - b) h5 hxu
     · exact fst_ne_end_of_mem_liftWalk_reverse_tail α p3 hp3 0 h6 hxv
-  simp only [List.nodup_append, List.mem_append]
-  refine ⟨hn1, ⟨hn2, ⟨hn3, ⟨hn4, ⟨hn5, hn6, d56⟩, ?_⟩, ?_⟩, ?_⟩, ?_⟩
-  · intro x hx4 h56; rcases h56 with h5 | h6
-    · exact d45 x hx4 h5
-    · exact d46 x hx4 h6
-  · intro x hx3 h456; rcases h456 with h4 | h5 | h6
-    · exact d34 x hx3 h4
-    · exact d35 x hx3 h5
-    · exact d36 x hx3 h6
-  · intro x hx2 h3456; rcases h3456 with h3 | h4 | h5 | h6
-    · exact d23 x hx2 h3
-    · exact d24 x hx2 h4
-    · exact d25 x hx2 h5
-    · exact d26 x hx2 h6
-  · intro x hx1 h23456; rcases h23456 with h2 | h3 | h4 | h5 | h6
+  apply nodup_append_of_disjoint hn1
+  · apply nodup_append_of_disjoint hn2
+    · apply nodup_append_of_disjoint hn3
+      · apply nodup_append_of_disjoint hn4
+        · exact nodup_append_of_disjoint hn5 hn6 d56
+        · intro x hx4 h56; simp only [List.mem_append] at h56
+          rcases h56 with h5 | h6
+          · exact d45 x hx4 h5
+          · exact d46 x hx4 h6
+      · intro x hx3 h456; simp only [List.mem_append] at h456
+        rcases h456 with h4 | h5 | h6
+        · exact d34 x hx3 h4
+        · exact d35 x hx3 h5
+        · exact d36 x hx3 h6
+    · intro x hx2 h3456; simp only [List.mem_append] at h3456
+      rcases h3456 with h3 | h4 | h5 | h6
+      · exact d23 x hx2 h3
+      · exact d24 x hx2 h4
+      · exact d25 x hx2 h5
+      · exact d26 x hx2 h6
+  · intro x hx1 h23456; simp only [List.mem_append] at h23456
+    rcases h23456 with h2 | h3 | h4 | h5 | h6
     · exact d12 x hx1 h2
     · exact d13 x hx1 h3
     · exact d14 x hx1 h4
@@ -642,9 +656,9 @@ theorem abelian_cover_theta_dichotomy {V Γ : Type*} [AddCommGroup Γ]
       (liftWalk α p1 0).append (Walk.copy (liftWalk α p2 0).reverse (by simp [h12]) rfl)
     refine ⟨w, ?_, Or.inl (by simp [w, liftWalk_length])⟩
     apply isCycle_of_length_ge_three_nodup (by simp [w, liftWalk_length, h12_len])
-    rw [walk_append_support_tail, Walk.support_copy, List.nodup_append]
-    refine ⟨(liftWalk_isPath α hp1 0).support_nodup.tail,
-            (liftWalk_isPath α hp2 0).reverse.support_nodup.tail, ?_⟩
+    rw [walk_append_support_tail, Walk.support_copy]
+    apply nodup_append_of_disjoint (liftWalk_isPath α hp1 0).support_nodup.tail
+      (liftWalk_isPath α hp2 0).reverse.support_nodup.tail
     intro x hx1 hx2
     have hm1 := mem_support_of_mem_tail hx1
     have hm2 := mem_support_of_mem_reverse_tail hx2
@@ -657,9 +671,9 @@ theorem abelian_cover_theta_dichotomy {V Γ : Type*} [AddCommGroup Γ]
         (liftWalk α p2 0).append (Walk.copy (liftWalk α p3 0).reverse (by simp [h23]) rfl)
       refine ⟨w, ?_, Or.inr (Or.inl (by simp [w, liftWalk_length]))⟩
       apply isCycle_of_length_ge_three_nodup (by simp [w, liftWalk_length, h23_len])
-      rw [walk_append_support_tail, Walk.support_copy, List.nodup_append]
-      refine ⟨(liftWalk_isPath α hp2 0).support_nodup.tail,
-              (liftWalk_isPath α hp3 0).reverse.support_nodup.tail, ?_⟩
+      rw [walk_append_support_tail, Walk.support_copy]
+      apply nodup_append_of_disjoint (liftWalk_isPath α hp2 0).support_nodup.tail
+        (liftWalk_isPath α hp3 0).reverse.support_nodup.tail
       intro x hx2 hx3
       have hm2 := mem_support_of_mem_tail hx2
       have hm3 := mem_support_of_mem_reverse_tail hx3
@@ -672,9 +686,9 @@ theorem abelian_cover_theta_dichotomy {V Γ : Type*} [AddCommGroup Γ]
           (liftWalk α p1 0).append (Walk.copy (liftWalk α p3 0).reverse (by simp [h13]) rfl)
         refine ⟨w, ?_, Or.inr (Or.inr (Or.inl (by simp [w, liftWalk_length])))⟩
         apply isCycle_of_length_ge_three_nodup (by simp [w, liftWalk_length, h13_len])
-        rw [walk_append_support_tail, Walk.support_copy, List.nodup_append]
-        refine ⟨(liftWalk_isPath α hp1 0).support_nodup.tail,
-                (liftWalk_isPath α hp3 0).reverse.support_nodup.tail, ?_⟩
+        rw [walk_append_support_tail, Walk.support_copy]
+        apply nodup_append_of_disjoint (liftWalk_isPath α hp1 0).support_nodup.tail
+          (liftWalk_isPath α hp3 0).reverse.support_nodup.tail
         intro x hx1 hx3
         have hm1 := mem_support_of_mem_tail hx1
         have hm3 := mem_support_of_mem_reverse_tail hx3
@@ -771,6 +785,28 @@ theorem abelian_cover_theta556_girth12_hasPower {V Γ : Type*} [AddCommGroup Γ]
   have := hgirth x c hc
   omega
 
+/-- Helper: for a non-nil walk `w : G.Walk a b`, its endpoint `b` lies in `w.support.tail`. -/
+lemma end_mem_support_tail_of_pos {V : Type*} {G : SimpleGraph V} {a b : V}
+    (w : G.Walk a b) (hpos : 1 ≤ w.length) : b ∈ w.support.tail := by
+  cases w with
+  | nil => simp at hpos
+  | cons _ q =>
+    simp only [Walk.support_cons, List.tail_cons]
+    exact q.end_mem_support
+
+/-- Helper: for any walk `w : G.Walk a b` and `x ∈ w.support`, if `x ≠ a` then `x ∈ w.support.tail`. -/
+lemma mem_support_tail_of_ne_start {V : Type*} {G : SimpleGraph V} {a b : V}
+    (w : G.Walk a b) {x : V} (hx : x ∈ w.support) (hne : x ≠ a) : x ∈ w.support.tail := by
+  cases w with
+  | nil =>
+    simp at hx
+    exact (hne hx).elim
+  | cons _ _ =>
+    simp only [Walk.support_cons, List.mem_cons] at hx
+    rcases hx with rfl | ht
+    · exact (hne rfl).elim
+    · exact ht
+
 /-- Theorem 8 (Universal Abelian-Cover Barbell-Commutator Theorem):
 For ANY barbell consisting of two vertex-disjoint simple cycles `c1 : G.Walk u u`, `c2 : G.Walk v v`
 joined by an internally disjoint simple path `p : G.Walk u v` (`p.length ≥ 1`), if the cycle
@@ -820,15 +856,14 @@ theorem abelian_cover_barbell_commutator_simple {V Γ : Type*} [AddCommGroup Γ]
   apply isCycle_of_length_ge_three_nodup (by omega)
   have htail : w.support.tail =
       (liftWalk α c1 0).support.tail ++
-      (liftWalk α p w1).support.tail ++
-      (liftWalk α c2 (w1 + wP)).support.tail ++
-      (liftWalk α p (w1 + w2)).reverse.support.tail ++
-      (liftWalk α c1 w2).reverse.support.tail ++
-      (liftWalk α p w2).support.tail ++
-      (liftWalk α c2 wP).reverse.support.tail ++
-      (liftWalk α p 0).reverse.support.tail := by
-    simp only [w, b1, b2, b3, b4, b5, b6, b7, b8, walk_append_support_tail, Walk.support_copy,
-      List.append_assoc]
+      ((liftWalk α p w1).support.tail ++
+      ((liftWalk α c2 (w1 + wP)).support.tail ++
+      ((liftWalk α p (w1 + w2)).reverse.support.tail ++
+      ((liftWalk α c1 w2).reverse.support.tail ++
+      ((liftWalk α p w2).support.tail ++
+      ((liftWalk α c2 wP).reverse.support.tail ++
+      (liftWalk α p 0).reverse.support.tail)))))) := by
+    simp only [w, b1, b2, b3, b4, b5, b6, b7, b8, walk_append_support_tail, Walk.support_copy]
   rw [htail]
   have cycle_tail_nodup : ∀ {z : V} (c : G.Walk z z) (hc : c.IsCycle) (g : Γ),
       (liftWalk α c g).support.tail.Nodup := by
@@ -836,64 +871,34 @@ theorem abelian_cover_barbell_commutator_simple {V Γ : Type*} [AddCommGroup Γ]
     have hmap : ((liftWalk α c g).support.tail.map Prod.fst).Nodup := by
       rw [liftWalk_support_tail_map_fst]; exact hc.support_nodup
     exact List.Nodup.of_map Prod.fst hmap
+  have cycle_rev_tail_map_fst : ∀ {z : V} (c : G.Walk z z) (g : Γ),
+      (liftWalk α c g).reverse.support.tail.map Prod.fst = c.reverse.support.tail := by
+    intro z c g
+    rw [List.map_tail, Walk.support_reverse, ← List.map_reverse, liftWalk_support_map_fst,
+      ← Walk.support_reverse]
   have cycle_rev_tail_nodup : ∀ {z : V} (c : G.Walk z z) (hc : c.IsCycle) (g : Γ),
       (liftWalk α c g).reverse.support.tail.Nodup := by
     intro z c hc g
-    have h2 : (liftWalk α c g).support.dropLast.Nodup := by
-      have hmap : ((liftWalk α c g).support.dropLast.map Prod.fst).Nodup := by
-        rw [← List.map_dropLast, liftWalk_support_map_fst]
-        have hc_rev : c.reverse.support.tail.Nodup := hc.reverse.support_nodup
-        rw [Walk.support_reverse] at hc_rev
-        have htr : c.support.reverse.tail = c.support.dropLast.reverse := by
-          cases hs : c.support using List.reverseRecOn with
-          | nil => exact (Walk.support_ne_nil c hs).elim
-          | append_singleton l a => simp
-        rw [htr, List.nodup_reverse] at hc_rev
-        exact hc_rev
-      exact List.Nodup.of_map Prod.fst hmap
-    rw [Walk.support_reverse]
-    have htr : (liftWalk α c g).support.reverse.tail = (liftWalk α c g).support.dropLast.reverse := by
-      cases hs : (liftWalk α c g).support using List.reverseRecOn with
-      | nil => exact (Walk.support_ne_nil _ hs).elim
-      | append_singleton l a => simp
-    rw [htr, List.nodup_reverse]
-    exact h2
+    have hmap : ((liftWalk α c g).reverse.support.tail.map Prod.fst).Nodup := by
+      rw [cycle_rev_tail_map_fst]; exact hc.reverse.support_nodup
+    exact List.Nodup.of_map Prod.fst hmap
   have cycle_tail_at_base : ∀ {z : V} (c : G.Walk z z) (hc : c.IsCycle) (g : Γ) {x : V × Γ},
       x ∈ (liftWalk α c g).support.tail → x.1 = z → x.2 = g + walkVoltage α c := by
     intro z c hc g x hx hxz
     have hnodup : ((liftWalk α c g).support.tail.map Prod.fst).Nodup := by
       rw [liftWalk_support_tail_map_fst]; exact hc.support_nodup
-    have hend : (z, g + walkVoltage α c) ∈ (liftWalk α c g).support.tail := by
-      cases hlw : liftWalk α c g with
-      | nil =>
-        have hlen0 : (liftWalk α c g).length = 0 := by rw [hlw]; rfl
-        rw [liftWalk_length] at hlen0
-        have := hc.three_le_length
-        omega
-      | cons _ q =>
-        simp only [Walk.support_cons, List.tail_cons]
-        exact q.end_mem_support
-    have heq := List.Nodup.eq_of_mem_of_map_eq hnodup hx hend hxz
-    exact congrArg Prod.snd heq
+    have hend : (z, g + walkVoltage α c) ∈ (liftWalk α c g).support.tail :=
+      end_mem_support_tail_of_pos (liftWalk α c g) (by rw [liftWalk_length]; have := hc.three_le_length; omega)
+    exact congrArg Prod.snd (eq_of_mem_of_map_nodup hnodup hx hend hxz)
   have cycle_rev_tail_at_base : ∀ {z : V} (c : G.Walk z z) (hc : c.IsCycle) (g : Γ) {x : V × Γ},
       x ∈ (liftWalk α c g).reverse.support.tail → x.1 = z → x.2 = g := by
     intro z c hc g x hx hxz
     have hnodup : ((liftWalk α c g).reverse.support.tail.map Prod.fst).Nodup := by
-      rw [← List.map_tail, Walk.support_reverse, ← List.map_reverse, liftWalk_support_map_fst,
-        ← Walk.support_reverse]
-      exact hc.reverse.support_nodup
-    have hend : (z, g) ∈ (liftWalk α c g).reverse.support.tail := by
-      cases hlw : (liftWalk α c g).reverse with
-      | nil =>
-        have hlen0 : (liftWalk α c g).reverse.length = 0 := by rw [hlw]; rfl
-        rw [Walk.length_reverse, liftWalk_length] at hlen0
-        have := hc.three_le_length
-        omega
-      | cons _ q =>
-        simp only [Walk.support_cons, List.tail_cons]
-        exact q.end_mem_support
-    have heq := List.Nodup.eq_of_mem_of_map_eq hnodup hx hend hxz
-    exact congrArg Prod.snd heq
+      rw [cycle_rev_tail_map_fst]; exact hc.reverse.support_nodup
+    have hend : (z, g) ∈ (liftWalk α c g).reverse.support.tail :=
+      end_mem_support_tail_of_pos (liftWalk α c g).reverse
+        (by rw [Walk.length_reverse, liftWalk_length]; have := hc.three_le_length; omega)
+    exact congrArg Prod.snd (eq_of_mem_of_map_nodup hnodup hx hend hxz)
   have cycle_tail_rev_disj : ∀ {z : V} (c : G.Walk z z) (hc : c.IsCycle) {g₁ g₂ : Γ},
       g₁ ≠ g₂ → g₁ + walkVoltage α c ≠ g₂ →
       ∀ x ∈ (liftWalk α c g₁).support.tail, x ∉ (liftWalk α c g₂).reverse.support.tail := by
@@ -903,17 +908,8 @@ theorem abelian_cover_barbell_commutator_simple {V Γ : Type*} [AddCommGroup Γ]
       have s2 := cycle_rev_tail_at_base c hc g₂ hx2 hxz
       exact hne2 (s1.symm.trans s2)
     · have hx2_supp : x ∈ (liftWalk α c g₂).support := mem_support_of_mem_reverse_tail hx2
-      have hx2_tail : x ∈ (liftWalk α c g₂).support.tail := by
-        cases hlw : liftWalk α c g₂ with
-        | nil =>
-          rw [hlw] at hx2_supp; simp at hx2_supp
-          exact (hxz (congrArg Prod.fst hx2_supp)).elim
-        | cons _ q =>
-          rw [hlw] at hx2_supp
-          simp only [Walk.support_cons, List.mem_cons] at hx2_supp
-          rcases hx2_supp with rfl | ht
-          · exact (hxz rfl).elim
-          · exact ht
+      have hx2_tail : x ∈ (liftWalk α c g₂).support.tail :=
+        mem_support_tail_of_ne_start (liftWalk α c g₂) hx2_supp (fun h => hxz (congrArg Prod.fst h))
       exact liftWalk_cycle_tail_disjoint_of_ne α c hc hne1 x hx1 hx2_tail
   have hn1 := cycle_tail_nodup c1 hc1 0
   have hn2 := (liftWalk_isPath α hp w1).support_nodup.tail
@@ -984,52 +980,62 @@ theorem abelian_cover_barbell_commutator_simple {V Γ : Type*} [AddCommGroup Γ]
     intro x g1 g2 h1 h2
     exact hd12 x.1 (fst_mem_of_mem_liftWalk_support α c1 g1 h1)
       (fst_mem_of_mem_liftWalk_support α c2 g2 h2)
-  simp only [List.nodup_append, List.mem_append]
-  refine ⟨hn1, ⟨hn2, ⟨hn3, ⟨hn4, ⟨hn5, ⟨hn6, ⟨hn7, hn8, ?_⟩, ?_⟩, ?_⟩, ?_⟩, ?_⟩, ?_⟩, ?_⟩
-  · intro x h7 h8; exact c2r_pr_disj wP 0 h7 h8
-  · intro x h6 h78; rcases h78 with h7 | h8
-    · exact c2r_p_disj (by intro h; exact hw2 (by have h0 := sub_eq_zero.mpr h; calc w2 = -(wP - (w2 + wP)) := by abel
-        _ = 0 := by rw [h0]; abel)) h7 h6
-    · exact liftWalk_support_disjoint_of_ne α p hp hw2 x
-        (mem_support_of_mem_tail h6) (mem_support_of_mem_reverse_tail h8)
-  · intro x h5 h678; rcases h678 with h6 | h7 | h8
-    · exact c1r_p_disj w2 w2 h5 h6
-    · exact c1_c2_disj (mem_support_of_mem_reverse_tail h5) (mem_support_of_mem_reverse_tail h7)
-    · exact c1r_pr_disj hw2 h5 h8
-  · intro x h4 h5678; rcases h5678 with h5 | h6 | h7 | h8
-    · exact c1r_pr_disj (by intro h; exact hw1 (by have h0 := sub_eq_zero.mpr h; calc w1 = -(w2 - (w1 + w2)) := by abel
-        _ = 0 := by rw [h0]; abel)) h5 h4
-    · exact liftWalk_support_disjoint_of_ne α p hp (by intro h; exact hw1 (by have h0 := sub_eq_zero.mpr h; calc w1 = (w1 + w2) - w2 := by abel
-        _ = 0 := h0)) x
-        (mem_support_of_mem_reverse_tail h4) (mem_support_of_mem_tail h6)
-    · exact c2r_pr_disj wP (w1 + w2) h7 h4
-    · exact liftWalk_support_disjoint_of_ne α p hp hwsum x
-        (mem_support_of_mem_reverse_tail h4) (mem_support_of_mem_reverse_tail h8)
-  · intro x h3 h45678; rcases h45678 with h4 | h5 | h6 | h7 | h8
-    · exact c2_pr_disj (w1 + wP) (w1 + w2) h3 h4
-    · exact c1_c2_disj (mem_support_of_mem_reverse_tail h5) (mem_support_of_mem_tail h3)
-    · exact c2_p_disj (by intro h; exact hw1 (by have h0 := sub_eq_zero.mpr h; calc w1 = (w1 + wP + w2) - (w2 + wP) := by abel
-        _ = 0 := h0)) h3 h6
-    · exact cycle_tail_rev_disj c2 hc2
-        (by intro h; exact hw1 (by have h0 := sub_eq_zero.mpr h; calc w1 = (w1 + wP) - wP := by abel
-        _ = 0 := h0))
-        (by intro h; exact hwsum (by have h0 := sub_eq_zero.mpr h; calc w1 + w2 = (w1 + wP + w2) - wP := by abel
-        _ = 0 := h0)) x h3 h7
-    · exact c2_pr_disj (w1 + wP) 0 h3 h8
-  · intro x h2 h345678; rcases h345678 with h3 | h4 | h5 | h6 | h7 | h8
-    · exact c2_p_disj (by intro h; exact hw2 (by have h0 := sub_eq_zero.mpr h; calc w2 = (w1 + wP + w2) - (w1 + wP) := by abel
-        _ = 0 := h0)) h3 h2
-    · exact liftWalk_support_disjoint_of_ne α p hp (by intro h; exact hw2 (by have h0 := sub_eq_zero.mpr h; calc w2 = -(w1 - (w1 + w2)) := by abel
-        _ = 0 := by rw [h0]; abel)) x
-        (mem_support_of_mem_tail h2) (mem_support_of_mem_reverse_tail h4)
-    · exact c1r_p_disj w2 w1 h5 h2
-    · exact liftWalk_support_disjoint_of_ne α p hp hw12 x
-        (mem_support_of_mem_tail h2) (mem_support_of_mem_tail h6)
-    · exact c2r_p_disj (by intro h; exact hw1 (by have h0 := sub_eq_zero.mpr h; calc w1 = -(wP - (w1 + wP)) := by abel
-        _ = 0 := by rw [h0]; abel)) h7 h2
-    · exact liftWalk_support_disjoint_of_ne α p hp hw1 x
-        (mem_support_of_mem_tail h2) (mem_support_of_mem_reverse_tail h8)
-  · intro x h1 h2345678; rcases h2345678 with h2 | h3 | h4 | h5 | h6 | h7 | h8
+  apply nodup_append_of_disjoint hn1
+  · apply nodup_append_of_disjoint hn2
+    · apply nodup_append_of_disjoint hn3
+      · apply nodup_append_of_disjoint hn4
+        · apply nodup_append_of_disjoint hn5
+          · apply nodup_append_of_disjoint hn6
+            · exact nodup_append_of_disjoint hn7 hn8 (fun x h7 h8 => c2r_pr_disj wP 0 h7 h8)
+            · intro x h6 h78; simp only [List.mem_append] at h78
+              rcases h78 with h7 | h8
+              · exact c2r_p_disj (by intro h; exact hw2 (by have h0 := sub_eq_zero.mpr h; calc w2 = -(wP - (w2 + wP)) := by abel
+                  _ = 0 := by rw [h0]; abel)) h7 h6
+              · exact liftWalk_support_disjoint_of_ne α p hp hw2 x
+                  (mem_support_of_mem_tail h6) (mem_support_of_mem_reverse_tail h8)
+          · intro x h5 h678; simp only [List.mem_append] at h678
+            rcases h678 with h6 | h7 | h8
+            · exact c1r_p_disj w2 w2 h5 h6
+            · exact c1_c2_disj (mem_support_of_mem_reverse_tail h5) (mem_support_of_mem_reverse_tail h7)
+            · exact c1r_pr_disj hw2 h5 h8
+        · intro x h4 h5678; simp only [List.mem_append] at h5678
+          rcases h5678 with h5 | h6 | h7 | h8
+          · exact c1r_pr_disj (by intro h; exact hw1 (by have h0 := sub_eq_zero.mpr h; calc w1 = -(w2 - (w1 + w2)) := by abel
+              _ = 0 := by rw [h0]; abel)) h5 h4
+          · exact liftWalk_support_disjoint_of_ne α p hp (by intro h; exact hw1 (by have h0 := sub_eq_zero.mpr h; calc w1 = (w1 + w2) - w2 := by abel
+              _ = 0 := h0)) x
+              (mem_support_of_mem_reverse_tail h4) (mem_support_of_mem_tail h6)
+          · exact c2r_pr_disj wP (w1 + w2) h7 h4
+          · exact liftWalk_support_disjoint_of_ne α p hp hwsum x
+              (mem_support_of_mem_reverse_tail h4) (mem_support_of_mem_reverse_tail h8)
+      · intro x h3 h45678; simp only [List.mem_append] at h45678
+        rcases h45678 with h4 | h5 | h6 | h7 | h8
+        · exact c2_pr_disj (w1 + wP) (w1 + w2) h3 h4
+        · exact c1_c2_disj (mem_support_of_mem_reverse_tail h5) (mem_support_of_mem_tail h3)
+        · exact c2_p_disj (by intro h; exact hw1 (by have h0 := sub_eq_zero.mpr h; calc w1 = (w1 + wP + w2) - (w2 + wP) := by abel
+            _ = 0 := h0)) h3 h6
+        · exact cycle_tail_rev_disj c2 hc2
+            (by intro h; exact hw1 (by have h0 := sub_eq_zero.mpr h; calc w1 = (w1 + wP) - wP := by abel
+            _ = 0 := h0))
+            (by intro h; exact hwsum (by have h0 := sub_eq_zero.mpr h; calc w1 + w2 = (w1 + wP + w2) - wP := by abel
+            _ = 0 := h0)) x h3 h7
+        · exact c2_pr_disj (w1 + wP) 0 h3 h8
+    · intro x h2 h345678; simp only [List.mem_append] at h345678
+      rcases h345678 with h3 | h4 | h5 | h6 | h7 | h8
+      · exact c2_p_disj (by intro h; exact hw2 (by have h0 := sub_eq_zero.mpr h; calc w2 = (w1 + wP + w2) - (w1 + wP) := by abel
+          _ = 0 := h0)) h3 h2
+      · exact liftWalk_support_disjoint_of_ne α p hp (by intro h; exact hw2 (by have h0 := sub_eq_zero.mpr h; calc w2 = -(w1 - (w1 + w2)) := by abel
+          _ = 0 := by rw [h0]; abel)) x
+          (mem_support_of_mem_tail h2) (mem_support_of_mem_reverse_tail h4)
+      · exact c1r_p_disj w2 w1 h5 h2
+      · exact liftWalk_support_disjoint_of_ne α p hp hw12 x
+          (mem_support_of_mem_tail h2) (mem_support_of_mem_tail h6)
+      · exact c2r_p_disj (by intro h; exact hw1 (by have h0 := sub_eq_zero.mpr h; calc w1 = -(wP - (w1 + wP)) := by abel
+          _ = 0 := by rw [h0]; abel)) h7 h2
+      · exact liftWalk_support_disjoint_of_ne α p hp hw1 x
+          (mem_support_of_mem_tail h2) (mem_support_of_mem_reverse_tail h8)
+  · intro x h1 h2345678; simp only [List.mem_append] at h2345678
+    rcases h2345678 with h2 | h3 | h4 | h5 | h6 | h7 | h8
     · exact c1_p_disj 0 w1 h1 h2
     · exact c1_c2_disj (mem_support_of_mem_tail h1) (mem_support_of_mem_tail h3)
     · exact c1_pr_disj (by intro h; exact hw2 (by have h0 := sub_eq_zero.mpr h; calc w2 = -(0 + w1 - (w1 + w2)) := by abel
@@ -1080,6 +1086,42 @@ lemma chord_creates_two_cycles {V : Type*} {G : SimpleGraph V} {u v : V}
     · intro x _ hx2; simpa using hx2
     · simp; omega
 
+/-- Helper: bridging two vertex-disjoint simple paths `p : u1 → u2` and `q : v1 → v2` by two
+edges `u1 ~ v1` and `u2 ~ v2` produces a simple cycle of length `p.length + q.length + 2`. -/
+lemma cycle_of_two_disjoint_paths_bridged {V : Type*} (G : SimpleGraph V)
+    {u1 u2 v1 v2 : V} (p : G.Walk u1 u2) (q : G.Walk v1 v2)
+    (hp : p.IsPath) (hq : q.IsPath)
+    (hlp : 1 ≤ p.length) (hlq : 1 ≤ q.length)
+    (hd : ∀ z, z ∈ p.support → z ∉ q.support)
+    (he1 : G.Adj u1 v1) (he2 : G.Adj u2 v2) :
+    ∃ c : G.Walk u1 u1, c.IsCycle ∧ c.length = p.length + q.length + 2 := by
+  let w : G.Walk u1 u1 := p.append (Walk.cons he2 (q.reverse.append (Walk.cons he1.symm Walk.nil)))
+  refine ⟨w, ?_, ?_⟩
+  · apply isCycle_of_length_ge_three_nodup
+    · simp only [w, Walk.length_append, Walk.length_cons, Walk.length_reverse, Walk.length_nil]
+      omega
+    · have htail : w.support.tail = p.support.tail ++ (q.reverse.support ++ [u1]) := by
+        simp only [w, walk_append_support_tail, Walk.support_cons, List.tail_cons,
+          Walk.support_append, Walk.support_nil]
+      rw [htail]
+      have hqr : q.reverse.support.Nodup := by
+        rw [Walk.support_reverse]; exact List.nodup_reverse.mpr hq.support_nodup
+      apply nodup_append_of_disjoint hp.support_nodup.tail
+      · apply nodup_append_of_disjoint hqr (List.nodup_singleton u1)
+        intro z hz hzu
+        simp only [List.mem_singleton] at hzu
+        subst hzu
+        rw [Walk.support_reverse, List.mem_reverse] at hz
+        exact hd u1 p.start_mem_support hz
+      · intro z hzp hzq
+        simp only [List.mem_append, List.mem_singleton] at hzq
+        rcases hzq with hzq | rfl
+        · rw [Walk.support_reverse, List.mem_reverse] at hzq
+          exact hd z (mem_support_of_mem_tail hzp) hzq
+        · exact start_not_mem_support_tail_of_isPath hp hzp
+  · simp only [w, Walk.length_append, Walk.length_cons, Walk.length_reverse, Walk.length_nil]
+    omega
+
 /-- Theorem 10: In any power-free graph, no `C₆` has an antipodal (distance-3) chord. -/
 theorem c6_no_antipodal_chord_of_no_pow2 {V : Type*} (G : SimpleGraph V) (hno : ¬HasPower G)
     {u v : V} (p q : G.Walk u v) (hp : p.IsPath) (hq : q.IsPath)
@@ -1115,52 +1157,9 @@ theorem crossing_chords_six_cycles {V : Type*} (G : SimpleGraph V) {u x v y : V}
     (hdisj_bd : ∀ z, z ∈ pb.support → z ∉ pd.support)
     (huv : G.Adj u v) (hxy : G.Adj x y) :
     (∃ c1 : G.Walk u u, c1.IsCycle ∧ c1.length = pa.length + pc.length + 2) ∧
-    (∃ c2 : G.Walk x x, c2.IsCycle ∧ c2.length = pb.length + pd.length + 2) := by
-  constructor
-  · let w : G.Walk u u := pa.append (Walk.cons hxy (pc.reverse.append (Walk.cons huv.symm Walk.nil)))
-    refine ⟨w, ?_, ?_⟩
-    · apply isCycle_of_length_ge_three_nodup
-      · simp only [w, Walk.length_append, Walk.length_cons, Walk.length_reverse, Walk.length_nil]
-        omega
-      · simp only [w, walk_append_support_tail, Walk.support_cons, List.tail_cons, Walk.support_nil,
-          List.nodup_append, List.nodup_cons, List.mem_append, List.mem_cons, List.not_mem_nil,
-          or_false]
-        have hpc_rev : pc.reverse.support.Nodup := by
-          rw [Walk.support_reverse]; exact List.nodup_reverse.mpr hc.support_nodup
-        refine ⟨ha.support_nodup.tail, ⟨hpc_rev, by simp, ?_⟩, ?_⟩
-        · intro z hz hzu
-          subst hzu
-          rw [Walk.support_reverse, List.mem_reverse] at hz
-          exact hdisj_ac u pa.start_mem_support hz
-        · intro z hza hzc
-          rcases hzc with hzc | rfl
-          · rw [Walk.support_reverse, List.mem_reverse] at hzc
-            exact hdisj_ac z (mem_support_of_mem_tail hza) hzc
-          · exact start_not_mem_support_tail_of_isPath ha hza
-    · simp only [w, Walk.length_append, Walk.length_cons, Walk.length_reverse, Walk.length_nil]
-      omega
-  · let w : G.Walk x x := pb.append (Walk.cons huv.symm (pd.reverse.append (Walk.cons hxy.symm Walk.nil)))
-    refine ⟨w, ?_, ?_⟩
-    · apply isCycle_of_length_ge_three_nodup
-      · simp only [w, Walk.length_append, Walk.length_cons, Walk.length_reverse, Walk.length_nil]
-        omega
-      · simp only [w, walk_append_support_tail, Walk.support_cons, List.tail_cons, Walk.support_nil,
-          List.nodup_append, List.nodup_cons, List.mem_append, List.mem_cons, List.not_mem_nil,
-          or_false]
-        have hpd_rev : pd.reverse.support.Nodup := by
-          rw [Walk.support_reverse]; exact List.nodup_reverse.mpr hd.support_nodup
-        refine ⟨hb.support_nodup.tail, ⟨hpd_rev, by simp, ?_⟩, ?_⟩
-        · intro z hz hzx
-          subst hzx
-          rw [Walk.support_reverse, List.mem_reverse] at hz
-          exact hdisj_bd x pb.start_mem_support hz
-        · intro z hzb hzd
-          rcases hzd with hzd | rfl
-          · rw [Walk.support_reverse, List.mem_reverse] at hzd
-            exact hdisj_bd z (mem_support_of_mem_tail hzb) hzd
-          · exact start_not_mem_support_tail_of_isPath hb hzb
-    · simp only [w, Walk.length_append, Walk.length_cons, Walk.length_reverse, Walk.length_nil]
-      omega
+    (∃ c2 : G.Walk x x, c2.IsCycle ∧ c2.length = pb.length + pd.length + 2) :=
+  ⟨cycle_of_two_disjoint_paths_bridged G pa pc ha hc hla hlc hdisj_ac huv hxy,
+   cycle_of_two_disjoint_paths_bridged G pb pd hb hd hlb hld hdisj_bd hxy huv.symm⟩
 
 /-- Theorem 13 (Exact `C₁₀` Crossing-Chord Exclusion):
 In any power-free graph, two antipodal (crossing) chords on a `C₁₀` are impossible (`C₄` or `C₈`). -/
@@ -1194,38 +1193,11 @@ lemma two_bridges_four_cycles {V : Type*} (G : SimpleGraph V)
     (∃ c : G.Walk u1 u1, c.IsCycle ∧ c.length = p1.length + q1.length + 2) ∧
     (∃ c : G.Walk u1 u1, c.IsCycle ∧ c.length = p1'.length + q1.length + 2) ∧
     (∃ c : G.Walk u1 u1, c.IsCycle ∧ c.length = p1.length + q1'.length + 2) ∧
-    (∃ c : G.Walk u1 u1, c.IsCycle ∧ c.length = p1'.length + q1'.length + 2) := by
-  have mk_cyc : ∀ (p : G.Walk u1 u2) (q : G.Walk v1 v2),
-      p.IsPath → q.IsPath → 1 ≤ p.length → 1 ≤ q.length →
-      (∀ z, z ∈ p.support → z ∉ q.support) →
-      ∃ c : G.Walk u1 u1, c.IsCycle ∧ c.length = p.length + q.length + 2 := by
-    intro p q hp hq hlp hlq hd
-    let w : G.Walk u1 u1 := p.append (Walk.cons he2 (q.reverse.append (Walk.cons he1.symm Walk.nil)))
-    refine ⟨w, ?_, ?_⟩
-    · apply isCycle_of_length_ge_three_nodup
-      · simp only [w, Walk.length_append, Walk.length_cons, Walk.length_reverse, Walk.length_nil]
-        omega
-      · simp only [w, walk_append_support_tail, Walk.support_cons, List.tail_cons, Walk.support_nil,
-          List.nodup_append, List.nodup_cons, List.mem_append, List.mem_cons, List.not_mem_nil,
-          or_false]
-        have hqr : q.reverse.support.Nodup := by
-          rw [Walk.support_reverse]; exact List.nodup_reverse.mpr hq.support_nodup
-        refine ⟨hp.support_nodup.tail, ⟨hqr, by simp, ?_⟩, ?_⟩
-        · intro z hz hzu
-          subst hzu
-          rw [Walk.support_reverse, List.mem_reverse] at hz
-          exact hd u1 p.start_mem_support hz
-        · intro z hzp hzq
-          rcases hzq with hzq | rfl
-          · rw [Walk.support_reverse, List.mem_reverse] at hzq
-            exact hd z (mem_support_of_mem_tail hzp) hzq
-          · exact start_not_mem_support_tail_of_isPath hp hzp
-    · simp only [w, Walk.length_append, Walk.length_cons, Walk.length_reverse, Walk.length_nil]
-      omega
-  refine ⟨mk_cyc p1 q1 hp1 hq1 hlp1 hlq1 (fun z hz => (hdisj z (Or.inl hz)).1),
-          mk_cyc p1' q1 hp1' hq1 hlp1' hlq1 (fun z hz => (hdisj z (Or.inr hz)).1),
-          mk_cyc p1 q1' hp1 hq1' hlp1 hlq1' (fun z hz => (hdisj z (Or.inl hz)).2),
-          mk_cyc p1' q1' hp1' hq1' hlp1' hlq1' (fun z hz => (hdisj z (Or.inr hz)).2)⟩
+    (∃ c : G.Walk u1 u1, c.IsCycle ∧ c.length = p1'.length + q1'.length + 2) :=
+  ⟨cycle_of_two_disjoint_paths_bridged G p1 q1 hp1 hq1 hlp1 hlq1 (fun z hz => (hdisj z (Or.inl hz)).1) he1 he2,
+   cycle_of_two_disjoint_paths_bridged G p1' q1 hp1' hq1 hlp1' hlq1 (fun z hz => (hdisj z (Or.inr hz)).1) he1 he2,
+   cycle_of_two_disjoint_paths_bridged G p1 q1' hp1 hq1' hlp1 hlq1' (fun z hz => (hdisj z (Or.inl hz)).2) he1 he2,
+   cycle_of_two_disjoint_paths_bridged G p1' q1' hp1' hq1' hlp1' hlq1' (fun z hz => (hdisj z (Or.inr hz)).2) he1 he2⟩
 
 /-- Theorem 14 (Universal `C₅ ↔ C₅` Single-Bridge Theorem):
 In ANY power-free graph, two vertex-disjoint `C₅`'s cannot have TWO independent bridge edges. -/
@@ -1310,22 +1282,16 @@ theorem two_disjoint_c6_bipartite_at_most_two_bridges
   have hcol_dist2 : ∀ (col : Fin 6 → Bool), (∀ i : Fin 6, col i ≠ col (i + 1)) →
       ∀ x y : Fin 6, x ≠ y → col x = col y → (x - y).val = 2 ∨ (y - x).val = 2 := by
     intro col hpr x y hne hce
-    have hstep : ∀ i : Fin 6, col (i + 2) = col i := by
-      intro i
-      have h1 := hpr i
-      have h2 := hpr (i + 1)
-      have heq : i + 1 + 1 = i + 2 := by ring
-      rw [heq] at h2
-      cases hc0 : col i <;> cases hc1 : col (i + 1) <;> cases hc2 : col (i + 2) <;> simp_all
-    have hstep3 : ∀ i : Fin 6, col (i + 3) ≠ col i := by
-      intro i
-      have h1 := hstep i
-      have h2 := hpr (i + 2)
-      have heq : i + 2 + 1 = i + 3 := by ring
-      rw [heq] at h2
-      rw [h1] at h2
-      exact h2.symm
-    fin_cases x <;> fin_cases y <;> simp_all
+    have p0 : col 0 ≠ col 1 := hpr 0
+    have p1 : col 1 ≠ col 2 := hpr 1
+    have p2 : col 2 ≠ col 3 := hpr 2
+    have p3 : col 3 ≠ col 4 := hpr 3
+    have p4 : col 4 ≠ col 5 := hpr 4
+    have e2 : col 2 = col 0 := by cases h0 : col 0 <;> cases h1 : col 1 <;> cases h2 : col 2 <;> simp_all
+    have e3 : col 3 = col 1 := by cases h1 : col 1 <;> cases h2 : col 2 <;> cases h3 : col 3 <;> simp_all
+    have e4 : col 4 = col 0 := by cases h0 : col 0 <;> cases h3 : col 3 <;> cases h4 : col 4 <;> simp_all
+    have e5 : col 5 = col 1 := by cases h0 : col 0 <;> cases h1 : col 1 <;> cases h4 : col 4 <;> cases h5 : col 5 <;> simp_all
+    fin_cases x <;> fin_cases y <;> simp_all <;> decide
   by_cases h12 : col1 u1 = col1 u2
   · refine ⟨u1, u2, v1, v2, Or.inl ⟨rfl, rfl, rfl, rfl⟩,
       hcol_dist2 col1 hproper1 u1 u2 hu12 h12,
