@@ -681,9 +681,9 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} :
             simp only [baseWalk, support_append_tail', List.mem_append]
             exact Or.inr (Or.inr hbase)
           · exact hp1_rest_alt x hint x halt rfl
-        · rcases mem_realize_support_tail rest bs hlen w hyr with hbase | halt
-          · exact hp0_rb w hw_mem_p0 w hbase rfl
-          · apply hdisj w (by simp [altVertices, halt])
+        · rcases mem_realize_support_tail rest bs hlen x hyr with hbase | halt
+          · exact hp0_rb x hw_mem_p0 x hbase rfl
+          · apply hdisj x (by simp [altVertices, halt])
             simp only [baseWalk, support_append_tail', List.mem_append]
             exact Or.inr (Or.inl hw_mem_p0)
       · intro x hxs y hyr hxy; subst hxy
@@ -695,7 +695,7 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} :
           · apply hdisj x (by simp [altVertices, hint])
             simp only [baseWalk, support_append_tail', List.mem_append]
             exact Or.inl hxs
-          · exact hseg_rest x hxs w (List.mem_append.mpr (Or.inl hw_mem_p0)) rfl
+          · exact hseg_rest x hxs x (List.mem_append.mpr (Or.inl hw_mem_p0)) rfl
         · rcases mem_realize_support_tail rest bs hlen x hxr with hbase | halt
           · exact hseg_rest x hxs x (List.mem_append.mpr (Or.inr hbase)) rfl
           · apply hdisj x (by simp [altVertices, halt])
