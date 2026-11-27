@@ -43,6 +43,7 @@ def MinimalCounterexample {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
   MinDegAtLeast3 G ∧ PowerFree G ∧
     ∀ (t : ℕ), t < n → ∀ (H : SimpleGraph (Fin t)), MinDegAtLeast3 H → HasPow2Cycle H
 
+
 private lemma ite_pos {α : Sort*} {p : Prop} [inst : Decidable p] {a b : α} (h : p) :
     (if p then a else b) = a := by
   cases inst with
@@ -183,7 +184,7 @@ lemma two_paths_form_simple_cycle {V : Type*} {G : SimpleGraph V}
         exact hQ_not_x ⟨a + b - j.val, by omega⟩ (by dsimp only; omega) hij.symm
       · by_cases hja : j.val = a
         · have hqj : Q.vert ⟨a + b - j.val, by omega⟩ = y := by
-            convert Q.end_eq using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+            convert Q.end_eq using 2; exact Fin.ext (by dsimp only; omega)
           rw [hqj] at hij
           exact hP_not_y ⟨i.val, by omega⟩ hi hij
         · exact hint ⟨i.val, by omega⟩ ⟨a + b - j.val, by omega⟩
@@ -196,13 +197,13 @@ lemma two_paths_form_simple_cycle {V : Type*} {G : SimpleGraph V}
         exact hQ_not_x ⟨a + b - i.val, by omega⟩ (by dsimp only; omega) hij
       · by_cases hia : i.val = a
         · have hqi : Q.vert ⟨a + b - i.val, by omega⟩ = y := by
-            convert Q.end_eq using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+            convert Q.end_eq using 2; exact Fin.ext (by dsimp only; omega)
           rw [hqi] at hij
           exact hP_not_y ⟨j.val, by omega⟩ hj hij.symm
         · exact hint ⟨j.val, by omega⟩ ⟨a + b - i.val, by omega⟩
             (by dsimp only; omega) (by dsimp only; exact hj) (by dsimp only; omega) (by dsimp only; omega) hij.symm
     · have hv : a + b - i.val = a + b - j.val := congrArg Fin.val (Q.inj hij)
-      exact Fin.ext (by first | (dsimp only; omega) | omega)
+      exact Fin.ext (by omega)
   have hadj : ∀ k : Fin (a + b),
       G.Adj (f k) (f ⟨(k.val + 1) % (a + b), Nat.mod_lt _ (by omega)⟩) := by
     intro k
@@ -225,7 +226,7 @@ lemma two_paths_form_simple_cycle {V : Type*} {G : SimpleGraph V}
         have hpend : P.vert ⟨k.val + 1, by omega⟩ = y := by
           convert P.end_eq using 2; exact Fin.ext hka
         have hqend : Q.vert ⟨a + b - (k.val + 1) % (a + b), by omega⟩ = y := by
-          convert Q.end_eq using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+          convert Q.end_eq using 2; exact Fin.ext (by dsimp only; omega)
         rw [hpend] at hpa
         rw [hqend]
         exact hpa
@@ -236,9 +237,9 @@ lemma two_paths_form_simple_cycle {V : Type*} {G : SimpleGraph V}
           simp only [hk2, hc2, ↓reduceDIte]
           have hq := (Q.adj ⟨a + b - k.val - 1, by omega⟩).symm
           have h1 : Q.vert ⟨a + b - k.val, by omega⟩ = Q.vert ⟨a + b - k.val - 1 + 1, by omega⟩ := by
-            congr 1; exact Fin.ext (by first | (dsimp only; omega) | omega)
+            congr 1; exact Fin.ext (by dsimp only; omega)
           have h2 : Q.vert ⟨a + b - (k.val + 1) % (a + b), by omega⟩ = Q.vert ⟨a + b - k.val - 1, by omega⟩ := by
-            congr 1; exact Fin.ext (by first | (dsimp only; omega) | omega)
+            congr 1; exact Fin.ext (by dsimp only; omega)
           rw [h1, h2]
           exact hq
         · have hklast : k.val + 1 = a + b := by omega
@@ -252,7 +253,7 @@ lemma two_paths_form_simple_cycle {V : Type*} {G : SimpleGraph V}
           have hpstart : P.vert ⟨(k.val + 1) % (a + b), by omega⟩ = x := by
             convert P.start_eq using 2; exact Fin.ext hm
           have hq1 : Q.vert ⟨a + b - k.val, by omega⟩ = Q.vert ⟨1, by omega⟩ := by
-            congr 1; exact Fin.ext (by first | (dsimp only; omega) | omega)
+            congr 1; exact Fin.ext (by dsimp only; omega)
           rw [hpstart, hq1]
           exact hq0
   exact ⟨⟨hab, f, hinj, hadj⟩⟩
@@ -384,7 +385,7 @@ def cycleArcFwd {V : Type*} {G : SimpleGraph V} {L : ℕ} (C : SimpleCycle G L)
         conv_lhs => rw [h2]
         rw [Nat.add_mod_right, Nat.mod_eq_of_lt h1]
     rw [hmod i.val hi, hmod j.val hj] at h
-    split_ifs at h <;> exact Fin.ext (by first | (dsimp only; omega) | omega)
+    split_ifs at h <;> (dsimp only at h; exact Fin.ext (by omega))
   start_eq := by
     congr 1; apply Fin.ext; dsimp only; simp [Nat.mod_eq_of_lt a.isLt]
   end_eq := rfl
@@ -404,7 +405,7 @@ def SimplePath.rev {V : Type*} {G : SimpleGraph V} {len : ℕ} {x y : V}
   inj := by
     intro i j hij
     have hv : len - i.val = len - j.val := congrArg Fin.val (P.inj hij)
-    exact Fin.ext (by first | (dsimp only; omega) | omega)
+    exact Fin.ext (by omega)
   start_eq := by simpa using P.end_eq
   end_eq := by simpa using P.start_eq
   adj := by
@@ -460,7 +461,7 @@ def SimplePath.concat {V : Type*} {G : SimpleGraph V} {a b : ℕ} {x y z : V}
         omega
       · exact hdisj ⟨j.val, by omega⟩ ⟨i.val - a, by omega⟩ (by dsimp only; omega) (by dsimp only; omega) hij.symm
     · have hv : i.val - a = j.val - a := congrArg Fin.val (Q.inj hij)
-      exact Fin.ext (by first | (dsimp only; omega) | omega)
+      exact Fin.ext (by omega)
   start_eq := by
     dsimp only
     have h0 : (0 : ℕ) ≤ a := Nat.zero_le a
@@ -471,7 +472,7 @@ def SimplePath.concat {V : Type*} {G : SimpleGraph V} {a b : ℕ} {x y z : V}
     have hb : 1 ≤ b := Q.hlen
     have hne : ¬ (a + b ≤ a) := by omega
     simp only [hne, ↓reduceDIte]
-    convert Q.end_eq using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+    convert Q.end_eq using 2; exact Fin.ext (by dsimp only; omega)
   adj := by
     intro k
     dsimp only
@@ -487,14 +488,14 @@ def SimplePath.concat {V : Type*} {G : SimpleGraph V} {a b : ℕ} {x y z : V}
         have hq0 := Q.adj ⟨0, Q.hlen⟩
         rw [Q.start_eq] at hq0
         have hq1 : Q.vert ⟨k.val + 1 - a, by omega⟩ = Q.vert ⟨1, by omega⟩ := by
-          congr 1; exact Fin.ext (by first | (dsimp only; omega) | omega)
+          congr 1; exact Fin.ext (by dsimp only; omega)
         rw [hpa, hq1]
         exact hq0
       · have hk3 : ¬ (k.val + 1 ≤ a) := by omega
         simp only [hk2, hk3, ↓reduceDIte]
         have hq := Q.adj ⟨k.val - a, by omega⟩
         have hq1 : Q.vert ⟨k.val + 1 - a, by omega⟩ = Q.vert ⟨k.val - a + 1, by omega⟩ := by
-          congr 1; exact Fin.ext (by first | (dsimp only; omega) | omega)
+          congr 1; exact Fin.ext (by dsimp only; omega)
         rw [hq1]
         exact hq
 
@@ -856,10 +857,10 @@ lemma C5Ring.arcList_nodup {V : Type*} {G : SimpleGraph V} {k : ℕ}
   split_ifs at hab with hcw
   · have h : ((R.entry i).val + a.val) % 5 = ((R.entry i).val + b.val) % 5 :=
       congrArg Fin.val ((R.cyc i).inj hab)
-    exact Fin.ext (by first | (dsimp only; omega) | omega)
+    exact Fin.ext (by omega)
   · have h : ((R.entry i).val + 5 - a.val) % 5 = ((R.entry i).val + 5 - b.val) % 5 :=
       congrArg Fin.val ((R.cyc i).inj hab)
-    exact Fin.ext (by first | (dsimp only; omega) | omega)
+    exact Fin.ext (by omega)
 
 lemma C5Ring.arcList_head {V : Type*} {G : SimpleGraph V} {k : ℕ}
     (R : C5Ring G k) (i : Fin k) (useLong : Bool) :
@@ -1398,7 +1399,7 @@ theorem c5_factor_minimal_counterexample_impossible {n t : ℕ}
         rw [hEq, hveq]
       have h2 : G.Adj ((F.cyc (nbrC a₁)).vert (nbrV a₁)) ((F.cyc i).vert a₂) := by
         rw [heq_v]; exact (hnbrAdj a₂).symm
-      -- A cubic vertex on C_j cannot have 2 neighbors in C_i!
+      -- Wait: a cubic vertex on C_j cannot have 2 neighbors in C_i!
       have heq_a := cubic_c5_unique_external_neighbor (F.cyc (nbrC a₁)) (nbrV a₁)
         (F.cubic (nbrC a₁) (nbrV a₁))
         (fun x => F.disj i (nbrC a₁) (hnbrNe a₁).symm a₁ x)
@@ -1442,15 +1443,15 @@ lemma path_chord_simple_cycle {V : Type*} {G : SimpleGraph V} {ℓ : ℕ}
       dsimp [f]
       have h := hpath ⟨lo + i.val, by omega⟩
       convert h using 2
-      exact Fin.ext (by first | (dsimp only; omega) | omega)
+      exact Fin.ext (by dsimp only; omega)
     · have hlast : i.val = L - 1 := by omega
       have hm : (i.val + 1) % L = 0 := by
         have : i.val + 1 = L := by omega
         rw [this, Nat.mod_self]
       dsimp [f]
       convert hchord.symm using 2
-      · exact Fin.ext (by first | (dsimp only; omega) | omega)
-      · exact Fin.ext (by first | (dsimp only; omega) | omega)
+      · exact Fin.ext (by dsimp only; omega)
+      · exact Fin.ext (by dsimp only; omega)
   exact ⟨⟨by omega, f, hinj, hadj⟩⟩
 
 /-- Theorem 12: Endpoint-Chord Three-Cycle Theorem — on ANY simple path `v₀, ..., v_ℓ`
@@ -1478,15 +1479,16 @@ theorem endpoint_chords_three_cycles {V : Type*} {G : SimpleGraph V} {ℓ a b : 
       intro i j hij
       dsimp only [f] at hij
       split_ifs at hij with hi hj hj
-      · exact Fin.ext (by first | (dsimp only; omega) | omega)
+      · exact Fin.ext (by omega)
       · have h := congrArg Fin.val (hv hij); dsimp only at h; omega
       · have h := congrArg Fin.val (hv hij); dsimp only at h; omega
-      · have h := congrArg Fin.val (hv hij); dsimp only at h; exact Fin.ext (by first | (dsimp only; omega) | omega)
+      · have h := congrArg Fin.val (hv hij); dsimp only at h; exact Fin.ext (by omega)
     have hadj : ∀ i : Fin L, G.Adj (f i) (f ⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩) := by
       intro i
       by_cases hi0 : i.val = 0
       · have hm : (i.val + 1) % L = 1 := by rw [hi0]; exact Nat.mod_eq_of_lt (by omega)
-        dsimp only [f]; simp only [hm, hi0, Nat.one_ne_zero, ↓reduceDIte]
+        have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨1, by omega⟩ := Fin.ext hm
+        rw [hidx]; dsimp only [f]; simp only [hi0, Nat.one_ne_zero, ↓reduceDIte]
         have heq : (⟨a + 1 - 1, by omega⟩ : Fin (ℓ + 1)) = ⟨a, by omega⟩ := Fin.ext (by dsimp only; omega)
         rw [heq]; exact hca
       · by_cases hlt : i.val + 1 < L
@@ -1494,13 +1496,14 @@ theorem endpoint_chords_three_cycles {V : Type*} {G : SimpleGraph V} {ℓ a b : 
           have hc2 : (i.val + 1) % L ≠ 0 := by omega
           dsimp only [f]; simp only [hi0, hc2, ↓reduceDIte]
           have h := hpath ⟨a + i.val - 1, by omega⟩
-          convert h using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+          convert h using 2; exact Fin.ext (by dsimp only; omega)
         · have hlast : i.val = L - 1 := by omega
           have hm : (i.val + 1) % L = 0 := by
             have : i.val + 1 = L := by omega
             rw [this, Nat.mod_self]
-          dsimp only [f]; simp only [hi0, hm, ↓reduceDIte]
-          convert hcb.symm using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+          have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨0, by omega⟩ := Fin.ext hm
+          rw [hidx]; dsimp only [f]; simp only [hi0, ↓reduceDIte]
+          convert hcb.symm using 2; exact Fin.ext (by dsimp only; omega)
     exact ⟨⟨by omega, f, hinj, hadj⟩⟩
 
 /-- Theorem 13: In any power-free graph, endpoint chords of a path cannot have dyadic gap
@@ -1544,7 +1547,7 @@ theorem posa_pivot_common_neighbor_c4 {V : Type*} {G : SimpleGraph V} {ℓ a b :
     fin_cases i <;> simp only [f]
     · exact hca
     · have h := (hpath ⟨a - 1, by omega⟩).symm
-      convert h using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+      convert h using 2; exact Fin.ext (by dsimp only; omega)
     · exact hpb
     · exact hcb.symm
 
@@ -1584,27 +1587,31 @@ theorem posa_pivot_inner_cycles {V : Type*} {G : SimpleGraph V} {ℓ a b c : ℕ
     · intro i j hij
       have h := congrArg Fin.val hij
       dsimp [idx] at h
-      split_ifs at h <;> (simp only [Fin.val_mk, Fin.val_zero] at h; exact Fin.ext (by omega))
+      split_ifs at h <;> (dsimp only at h; exact Fin.ext (by omega))
     · intro i
       by_cases h1 : i.val < c
       · have hm : (i.val + 1) % L = i.val + 1 := Nat.mod_eq_of_lt (by omega)
-        dsimp only [idx]; rw [hm]; rw [ite_pos (by omega), ite_pos (by omega)]
+        have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨i.val + 1, by omega⟩ := Fin.ext hm
+        rw [hidx]; dsimp only [idx]; rw [ite_pos (by omega), ite_pos (by omega)]
         have h := hpath ⟨i.val, by omega⟩
-        convert h using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+        convert h using 2; exact Fin.ext (by dsimp only; omega)
       · by_cases h2 : i.val = c
         · have hm : (i.val + 1) % L = c + 1 := by rw [h2]; exact Nat.mod_eq_of_lt (by omega)
-          dsimp only [idx]; rw [hm]; rw [ite_pos (by omega), ite_neg (by omega), ite_pos rfl]
+          have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨c + 1, by omega⟩ := Fin.ext hm
+          rw [hidx]; dsimp only [idx]; rw [ite_pos (by omega), ite_neg (by omega), ite_pos rfl]
           convert hpc.symm using 2; exact Fin.ext h2
         · by_cases h3 : i.val = c + 1
           · have hm : (i.val + 1) % L = c + 2 := by rw [h3]; exact Nat.mod_eq_of_lt (by omega)
-            dsimp only [idx]; rw [hm]; rw [ite_neg (by omega), ite_pos h3, ite_neg (by omega), ite_neg (by omega)]
+            have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨c + 2, by omega⟩ := Fin.ext hm
+            rw [hidx]; dsimp only [idx]; rw [ite_neg (by omega), ite_pos h3, ite_neg (by omega), ite_neg (by omega)]
             have h := hpath ⟨a - 1, by omega⟩
-            convert h using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+            convert h using 2; exact Fin.ext (by dsimp only; omega)
           · have hlast : i.val = c + 2 := by omega
             have hm : (i.val + 1) % L = 0 := by
               have : i.val + 1 = L := by omega
               rw [this, Nat.mod_self]
-            dsimp only [idx]; rw [hm]; rw [ite_neg (by omega), ite_neg (by omega), ite_pos (by omega)]
+            have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨0, by omega⟩ := Fin.ext hm
+            rw [hidx]; dsimp only [idx]; rw [ite_neg (by omega), ite_neg (by omega), ite_pos (by omega)]
             convert hca.symm using 2
   · -- Cycle 3: v_0 → ... → v_c → v_{a-1} → v_a → ... → v_b → v_0 (length b - a + c + 3)
     let L := b - a + c + 3
@@ -1615,31 +1622,35 @@ theorem posa_pivot_inner_cycles {V : Type*} {G : SimpleGraph V} {ℓ a b c : ℕ
     · intro i j hij
       have h := congrArg Fin.val hij
       dsimp [idx] at h
-      split_ifs at h <;> (simp only [Fin.val_mk, Fin.val_zero] at h; exact Fin.ext (by omega))
+      split_ifs at h <;> (dsimp only at h; exact Fin.ext (by omega))
     · intro i
       by_cases h1 : i.val < c
       · have hm : (i.val + 1) % L = i.val + 1 := Nat.mod_eq_of_lt (by omega)
-        dsimp only [idx]; rw [hm]; rw [ite_pos (by omega), ite_pos (by omega)]
+        have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨i.val + 1, by omega⟩ := Fin.ext hm
+        rw [hidx]; dsimp only [idx]; rw [ite_pos (by omega), ite_pos (by omega)]
         have h := hpath ⟨i.val, by omega⟩
-        convert h using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+        convert h using 2; exact Fin.ext (by dsimp only; omega)
       · by_cases h2 : i.val = c
         · have hm : (i.val + 1) % L = c + 1 := by rw [h2]; exact Nat.mod_eq_of_lt (by omega)
-          dsimp only [idx]; rw [hm]; rw [ite_pos (by omega), ite_neg (by omega)]
+          have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨c + 1, by omega⟩ := Fin.ext hm
+          rw [hidx]; dsimp only [idx]; rw [ite_pos (by omega), ite_neg (by omega)]
           convert hpc.symm using 2
           · exact Fin.ext h2
-          · exact Fin.ext (by first | (dsimp only; omega) | omega)
+          · exact Fin.ext (by dsimp only; omega)
         · by_cases h3 : i.val + 1 < L
           · have hm : (i.val + 1) % L = i.val + 1 := Nat.mod_eq_of_lt h3
-            dsimp only [idx]; rw [hm]; rw [ite_neg (by omega), ite_neg (by omega)]
+            have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨i.val + 1, by omega⟩ := Fin.ext hm
+            rw [hidx]; dsimp only [idx]; rw [ite_neg (by omega), ite_neg (by omega)]
             have h := hpath ⟨a - 1 + (i.val - (c + 1)), by omega⟩
-            convert h using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+            convert h using 2; exact Fin.ext (by dsimp only; omega)
           · have hlast : i.val = L - 1 := by omega
             have hm : (i.val + 1) % L = 0 := by
               have : i.val + 1 = L := by omega
               rw [this, Nat.mod_self]
-            dsimp only [idx]; rw [hm]; rw [ite_neg (by omega), ite_pos (by omega)]
+            have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨0, by omega⟩ := Fin.ext hm
+            rw [hidx]; dsimp only [idx]; rw [ite_neg (by omega), ite_pos (by omega)]
             convert hcb.symm using 2
-            exact Fin.ext (by first | (dsimp only; omega) | omega)
+            exact Fin.ext (by dsimp only; omega)
 
 /-- Theorem 16: 1-Step Pósa Pivot Between Spectrum (`a < c < b`) — forces FOUR simple cycles
     of lengths `c - a + 2`, `c + 1`, `a + b - c + 1`, and `b - c + 4`. -/
@@ -1668,36 +1679,40 @@ theorem posa_pivot_between_cycles {V : Type*} {G : SimpleGraph V} {ℓ a b c : �
     · intro i j hij
       have h := congrArg Fin.val hij
       dsimp [idx] at h
-      split_ifs at h <;> (simp only [Fin.val_mk, Fin.val_zero] at h; exact Fin.ext (by omega))
+      split_ifs at h <;> (dsimp only at h; exact Fin.ext (by omega))
     · intro i
       by_cases h1 : i.val + 1 < a
       · have hm : (i.val + 1) % L = i.val + 1 := Nat.mod_eq_of_lt (by omega)
-        dsimp only [idx]; rw [hm]; rw [ite_pos (by omega), ite_pos (by omega)]
+        have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨i.val + 1, by omega⟩ := Fin.ext hm
+        rw [hidx]; dsimp only [idx]; rw [ite_pos (by omega), ite_pos (by omega)]
         have h := hpath ⟨i.val, by omega⟩
-        convert h using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+        convert h using 2; exact Fin.ext (by dsimp only; omega)
       · by_cases h2 : i.val < a
         · have hia : i.val = a - 1 := by omega
           have hm : (i.val + 1) % L = a := by
             have : i.val + 1 = a := by omega
             rw [this]; exact Nat.mod_eq_of_lt (by omega)
-          dsimp only [idx]; rw [hm]; rw [ite_pos h2, ite_neg (by omega)]
+          have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨a, by omega⟩ := Fin.ext hm
+          rw [hidx]; dsimp only [idx]; rw [ite_pos h2, ite_neg (by omega)]
           convert hpc using 2
           · exact Fin.ext hia
-          · exact Fin.ext (by first | (dsimp only; omega) | omega)
+          · exact Fin.ext (by dsimp only; omega)
         · by_cases h3 : i.val + 1 < L
           · have hm : (i.val + 1) % L = i.val + 1 := Nat.mod_eq_of_lt h3
-            dsimp only [idx]; rw [hm]; rw [ite_neg h2, ite_neg (by omega)]
+            have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨i.val + 1, by omega⟩ := Fin.ext hm
+            rw [hidx]; dsimp only [idx]; rw [ite_neg h2, ite_neg (by omega)]
             have h := (hpath ⟨c - (i.val - a) - 1, by omega⟩).symm
             convert h using 2
-            · exact Fin.ext (by first | (dsimp only; omega) | omega)
-            · exact Fin.ext (by first | (dsimp only; omega) | omega)
+            · exact Fin.ext (by dsimp only; omega)
+            · exact Fin.ext (by dsimp only; omega)
           · have hlast : i.val = c := by omega
             have hm : (i.val + 1) % L = 0 := by
               have : i.val + 1 = L := by omega
               rw [this, Nat.mod_self]
-            dsimp only [idx]; rw [hm]; rw [ite_neg h2, ite_pos (by omega)]
+            have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨0, by omega⟩ := Fin.ext hm
+            rw [hidx]; dsimp only [idx]; rw [ite_neg h2, ite_pos (by omega)]
             convert hca.symm using 2
-            exact Fin.ext (by first | (dsimp only; omega) | omega)
+            exact Fin.ext (by dsimp only; omega)
   · -- Cycle 3: v_0 → ... → v_{a-1} → v_c → v_{c+1} → ... → v_b → v_0 (length a + b - c + 1)
     let L := a + b - c + 1
     let idx : Fin L → Fin (ℓ + 1) := fun i =>
@@ -1707,34 +1722,38 @@ theorem posa_pivot_between_cycles {V : Type*} {G : SimpleGraph V} {ℓ a b c : �
     · intro i j hij
       have h := congrArg Fin.val hij
       dsimp [idx] at h
-      split_ifs at h <;> (simp only [Fin.val_mk, Fin.val_zero] at h; exact Fin.ext (by omega))
+      split_ifs at h <;> (dsimp only at h; exact Fin.ext (by omega))
     · intro i
       by_cases h1 : i.val + 1 < a
       · have hm : (i.val + 1) % L = i.val + 1 := Nat.mod_eq_of_lt (by omega)
-        dsimp only [idx]; rw [hm]; rw [ite_pos (by omega), ite_pos (by omega)]
+        have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨i.val + 1, by omega⟩ := Fin.ext hm
+        rw [hidx]; dsimp only [idx]; rw [ite_pos (by omega), ite_pos (by omega)]
         have h := hpath ⟨i.val, by omega⟩
-        convert h using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+        convert h using 2; exact Fin.ext (by dsimp only; omega)
       · by_cases h2 : i.val < a
         · have hia : i.val = a - 1 := by omega
           have hm : (i.val + 1) % L = a := by
             have : i.val + 1 = a := by omega
             rw [this]; exact Nat.mod_eq_of_lt (by omega)
-          dsimp only [idx]; rw [hm]; rw [ite_pos h2, ite_neg (by omega)]
+          have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨a, by omega⟩ := Fin.ext hm
+          rw [hidx]; dsimp only [idx]; rw [ite_pos h2, ite_neg (by omega)]
           convert hpc using 2
           · exact Fin.ext hia
-          · exact Fin.ext (by first | (dsimp only; omega) | omega)
+          · exact Fin.ext (by dsimp only; omega)
         · by_cases h3 : i.val + 1 < L
           · have hm : (i.val + 1) % L = i.val + 1 := Nat.mod_eq_of_lt h3
-            dsimp only [idx]; rw [hm]; rw [ite_neg h2, ite_neg (by omega)]
+            have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨i.val + 1, by omega⟩ := Fin.ext hm
+            rw [hidx]; dsimp only [idx]; rw [ite_neg h2, ite_neg (by omega)]
             have h := hpath ⟨c + (i.val - a), by omega⟩
-            convert h using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+            convert h using 2; exact Fin.ext (by dsimp only; omega)
           · have hlast : i.val = L - 1 := by omega
             have hm : (i.val + 1) % L = 0 := by
               have : i.val + 1 = L := by omega
               rw [this, Nat.mod_self]
-            dsimp only [idx]; rw [hm]; rw [ite_neg h2, ite_pos (by omega)]
+            have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨0, by omega⟩ := Fin.ext hm
+            rw [hidx]; dsimp only [idx]; rw [ite_neg h2, ite_pos (by omega)]
             convert hcb.symm using 2
-            exact Fin.ext (by first | (dsimp only; omega) | omega)
+            exact Fin.ext (by dsimp only; omega)
   · -- Cycle 4: v_0 → v_a → v_{a-1} → v_c → v_{c+1} → ... → v_b → v_0 (length b - c + 4)
     let L := b - c + 4
     let idx : Fin L → Fin (ℓ + 1) := fun i =>
@@ -1746,32 +1765,37 @@ theorem posa_pivot_between_cycles {V : Type*} {G : SimpleGraph V} {ℓ a b c : �
     · intro i j hij
       have h := congrArg Fin.val hij
       dsimp [idx] at h
-      split_ifs at h <;> (simp only [Fin.val_mk, Fin.val_zero] at h; exact Fin.ext (by omega))
+      split_ifs at h <;> (dsimp only at h; exact Fin.ext (by omega))
     · intro i
       by_cases h0 : i.val = 0
       · have hm : (i.val + 1) % L = 1 := by rw [h0]; exact Nat.mod_eq_of_lt (by omega)
-        dsimp only [idx]; rw [hm]; rw [ite_pos h0, ite_neg (by omega), ite_pos rfl]
+        have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨1, by omega⟩ := Fin.ext hm
+        rw [hidx]; dsimp only [idx]; rw [ite_pos h0, ite_neg (by omega), ite_pos rfl]
         exact hca
       · by_cases h1 : i.val = 1
         · have hm : (i.val + 1) % L = 2 := by rw [h1]; exact Nat.mod_eq_of_lt (by omega)
-          dsimp only [idx]; rw [hm]; rw [ite_neg h0, ite_pos h1, ite_neg (by omega), ite_neg (by omega), ite_pos rfl]
+          have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨2, by omega⟩ := Fin.ext hm
+          rw [hidx]; dsimp only [idx]; rw [ite_neg h0, ite_pos h1, ite_neg (by omega), ite_neg (by omega), ite_pos rfl]
           have h := (hpath ⟨a - 1, by omega⟩).symm
-          convert h using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+          convert h using 2; exact Fin.ext (by dsimp only; omega)
         · by_cases h2 : i.val = 2
           · have hm : (i.val + 1) % L = 3 := by rw [h2]; exact Nat.mod_eq_of_lt (by omega)
-            dsimp only [idx]; rw [hm]; rw [ite_neg h0, ite_neg h1, ite_pos h2, ite_neg (by omega), ite_neg (by omega), ite_neg (by omega)]
-            convert hpc using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+            have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨3, by omega⟩ := Fin.ext hm
+            rw [hidx]; dsimp only [idx]; rw [ite_neg h0, ite_neg h1, ite_pos h2, ite_neg (by omega), ite_neg (by omega), ite_neg (by omega)]
+            convert hpc using 2; exact Fin.ext (by dsimp only; omega)
           · by_cases h3 : i.val + 1 < L
             · have hm : (i.val + 1) % L = i.val + 1 := Nat.mod_eq_of_lt h3
-              dsimp only [idx]; rw [hm]; rw [ite_neg h0, ite_neg h1, ite_neg h2, ite_neg (by omega), ite_neg (by omega), ite_neg (by omega)]
+              have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨i.val + 1, by omega⟩ := Fin.ext hm
+              rw [hidx]; dsimp only [idx]; rw [ite_neg h0, ite_neg h1, ite_neg h2, ite_neg (by omega), ite_neg (by omega), ite_neg (by omega)]
               have h := hpath ⟨c + (i.val - 3), by omega⟩
-              convert h using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+              convert h using 2; exact Fin.ext (by dsimp only; omega)
             · have hlast : i.val = L - 1 := by omega
               have hm : (i.val + 1) % L = 0 := by
                 have : i.val + 1 = L := by omega
                 rw [this, Nat.mod_self]
-              dsimp only [idx]; rw [hm]; rw [ite_neg h0, ite_neg h1, ite_neg h2, ite_pos rfl]
-              convert hcb.symm using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+              have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨0, by omega⟩ := Fin.ext hm
+              rw [hidx]; dsimp only [idx]; rw [ite_neg h0, ite_neg h1, ite_neg h2, ite_pos rfl]
+              convert hcb.symm using 2; exact Fin.ext (by dsimp only; omega)
 
 /-- Theorem 17: 1-Step Pósa Pivot Beyond Spectrum (`a < b < c`) — forces FOUR simple cycles
     of lengths `c - a + 2`, `c + 1`, `a + c - b + 1`, and `c - b + 4`. -/
@@ -1800,36 +1824,40 @@ theorem posa_pivot_beyond_cycles {V : Type*} {G : SimpleGraph V} {ℓ a b c : �
     · intro i j hij
       have h := congrArg Fin.val hij
       dsimp [idx] at h
-      split_ifs at h <;> (simp only [Fin.val_mk, Fin.val_zero] at h; exact Fin.ext (by omega))
+      split_ifs at h <;> (dsimp only at h; exact Fin.ext (by omega))
     · intro i
       by_cases h1 : i.val + 1 < a
       · have hm : (i.val + 1) % L = i.val + 1 := Nat.mod_eq_of_lt (by omega)
-        dsimp only [idx]; rw [hm]; rw [ite_pos (by omega), ite_pos (by omega)]
+        have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨i.val + 1, by omega⟩ := Fin.ext hm
+        rw [hidx]; dsimp only [idx]; rw [ite_pos (by omega), ite_pos (by omega)]
         have h := hpath ⟨i.val, by omega⟩
-        convert h using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+        convert h using 2; exact Fin.ext (by dsimp only; omega)
       · by_cases h2 : i.val < a
         · have hia : i.val = a - 1 := by omega
           have hm : (i.val + 1) % L = a := by
             have : i.val + 1 = a := by omega
             rw [this]; exact Nat.mod_eq_of_lt (by omega)
-          dsimp only [idx]; rw [hm]; rw [ite_pos h2, ite_neg (by omega)]
+          have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨a, by omega⟩ := Fin.ext hm
+          rw [hidx]; dsimp only [idx]; rw [ite_pos h2, ite_neg (by omega)]
           convert hpc using 2
           · exact Fin.ext hia
-          · exact Fin.ext (by first | (dsimp only; omega) | omega)
+          · exact Fin.ext (by dsimp only; omega)
         · by_cases h3 : i.val + 1 < L
           · have hm : (i.val + 1) % L = i.val + 1 := Nat.mod_eq_of_lt h3
-            dsimp only [idx]; rw [hm]; rw [ite_neg h2, ite_neg (by omega)]
+            have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨i.val + 1, by omega⟩ := Fin.ext hm
+            rw [hidx]; dsimp only [idx]; rw [ite_neg h2, ite_neg (by omega)]
             have h := (hpath ⟨c - (i.val - a) - 1, by omega⟩).symm
             convert h using 2
-            · exact Fin.ext (by first | (dsimp only; omega) | omega)
-            · exact Fin.ext (by first | (dsimp only; omega) | omega)
+            · exact Fin.ext (by dsimp only; omega)
+            · exact Fin.ext (by dsimp only; omega)
           · have hlast : i.val = c := by omega
             have hm : (i.val + 1) % L = 0 := by
               have : i.val + 1 = L := by omega
               rw [this, Nat.mod_self]
-            dsimp only [idx]; rw [hm]; rw [ite_neg h2, ite_pos (by omega)]
+            have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨0, by omega⟩ := Fin.ext hm
+            rw [hidx]; dsimp only [idx]; rw [ite_neg h2, ite_pos (by omega)]
             convert hca.symm using 2
-            exact Fin.ext (by first | (dsimp only; omega) | omega)
+            exact Fin.ext (by dsimp only; omega)
   · -- Cycle 3: v_0 → ... → v_{a-1} → v_c → v_{c-1} → ... → v_b → v_0 (length a + c - b + 1)
     let L := a + c - b + 1
     let idx : Fin L → Fin (ℓ + 1) := fun i =>
@@ -1839,36 +1867,40 @@ theorem posa_pivot_beyond_cycles {V : Type*} {G : SimpleGraph V} {ℓ a b c : �
     · intro i j hij
       have h := congrArg Fin.val hij
       dsimp [idx] at h
-      split_ifs at h <;> (simp only [Fin.val_mk, Fin.val_zero] at h; exact Fin.ext (by omega))
+      split_ifs at h <;> (dsimp only at h; exact Fin.ext (by omega))
     · intro i
       by_cases h1 : i.val + 1 < a
       · have hm : (i.val + 1) % L = i.val + 1 := Nat.mod_eq_of_lt (by omega)
-        dsimp only [idx]; rw [hm]; rw [ite_pos (by omega), ite_pos (by omega)]
+        have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨i.val + 1, by omega⟩ := Fin.ext hm
+        rw [hidx]; dsimp only [idx]; rw [ite_pos (by omega), ite_pos (by omega)]
         have h := hpath ⟨i.val, by omega⟩
-        convert h using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+        convert h using 2; exact Fin.ext (by dsimp only; omega)
       · by_cases h2 : i.val < a
         · have hia : i.val = a - 1 := by omega
           have hm : (i.val + 1) % L = a := by
             have : i.val + 1 = a := by omega
             rw [this]; exact Nat.mod_eq_of_lt (by omega)
-          dsimp only [idx]; rw [hm]; rw [ite_pos h2, ite_neg (by omega)]
+          have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨a, by omega⟩ := Fin.ext hm
+          rw [hidx]; dsimp only [idx]; rw [ite_pos h2, ite_neg (by omega)]
           convert hpc using 2
           · exact Fin.ext hia
-          · exact Fin.ext (by first | (dsimp only; omega) | omega)
+          · exact Fin.ext (by dsimp only; omega)
         · by_cases h3 : i.val + 1 < L
           · have hm : (i.val + 1) % L = i.val + 1 := Nat.mod_eq_of_lt h3
-            dsimp only [idx]; rw [hm]; rw [ite_neg h2, ite_neg (by omega)]
+            have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨i.val + 1, by omega⟩ := Fin.ext hm
+            rw [hidx]; dsimp only [idx]; rw [ite_neg h2, ite_neg (by omega)]
             have h := (hpath ⟨c - (i.val - a) - 1, by omega⟩).symm
             convert h using 2
-            · exact Fin.ext (by first | (dsimp only; omega) | omega)
-            · exact Fin.ext (by first | (dsimp only; omega) | omega)
+            · exact Fin.ext (by dsimp only; omega)
+            · exact Fin.ext (by dsimp only; omega)
           · have hlast : i.val = L - 1 := by omega
             have hm : (i.val + 1) % L = 0 := by
               have : i.val + 1 = L := by omega
               rw [this, Nat.mod_self]
-            dsimp only [idx]; rw [hm]; rw [ite_neg h2, ite_pos (by omega)]
+            have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨0, by omega⟩ := Fin.ext hm
+            rw [hidx]; dsimp only [idx]; rw [ite_neg h2, ite_pos (by omega)]
             convert hcb.symm using 2
-            exact Fin.ext (by first | (dsimp only; omega) | omega)
+            exact Fin.ext (by dsimp only; omega)
   · -- Cycle 4: v_0 → v_a → v_{a-1} → v_c → v_{c-1} → ... → v_b → v_0 (length c - b + 4)
     let L := c - b + 4
     let idx : Fin L → Fin (ℓ + 1) := fun i =>
@@ -1880,34 +1912,39 @@ theorem posa_pivot_beyond_cycles {V : Type*} {G : SimpleGraph V} {ℓ a b c : �
     · intro i j hij
       have h := congrArg Fin.val hij
       dsimp [idx] at h
-      split_ifs at h <;> (simp only [Fin.val_mk, Fin.val_zero] at h; exact Fin.ext (by omega))
+      split_ifs at h <;> (dsimp only at h; exact Fin.ext (by omega))
     · intro i
       by_cases h0 : i.val = 0
       · have hm : (i.val + 1) % L = 1 := by rw [h0]; exact Nat.mod_eq_of_lt (by omega)
-        dsimp only [idx]; rw [hm]; rw [ite_pos h0, ite_neg (by omega), ite_pos rfl]
+        have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨1, by omega⟩ := Fin.ext hm
+        rw [hidx]; dsimp only [idx]; rw [ite_pos h0, ite_neg (by omega), ite_pos rfl]
         exact hca
       · by_cases h1 : i.val = 1
         · have hm : (i.val + 1) % L = 2 := by rw [h1]; exact Nat.mod_eq_of_lt (by omega)
-          dsimp only [idx]; rw [hm]; rw [ite_neg h0, ite_pos h1, ite_neg (by omega), ite_neg (by omega), ite_pos rfl]
+          have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨2, by omega⟩ := Fin.ext hm
+          rw [hidx]; dsimp only [idx]; rw [ite_neg h0, ite_pos h1, ite_neg (by omega), ite_neg (by omega), ite_pos rfl]
           have h := (hpath ⟨a - 1, by omega⟩).symm
-          convert h using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+          convert h using 2; exact Fin.ext (by dsimp only; omega)
         · by_cases h2 : i.val = 2
           · have hm : (i.val + 1) % L = 3 := by rw [h2]; exact Nat.mod_eq_of_lt (by omega)
-            dsimp only [idx]; rw [hm]; rw [ite_neg h0, ite_neg h1, ite_pos h2, ite_neg (by omega), ite_neg (by omega), ite_neg (by omega)]
-            convert hpc using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+            have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨3, by omega⟩ := Fin.ext hm
+            rw [hidx]; dsimp only [idx]; rw [ite_neg h0, ite_neg h1, ite_pos h2, ite_neg (by omega), ite_neg (by omega), ite_neg (by omega)]
+            convert hpc using 2; exact Fin.ext (by dsimp only; omega)
           · by_cases h3 : i.val + 1 < L
             · have hm : (i.val + 1) % L = i.val + 1 := Nat.mod_eq_of_lt h3
-              dsimp only [idx]; rw [hm]; rw [ite_neg h0, ite_neg h1, ite_neg h2, ite_neg (by omega), ite_neg (by omega), ite_neg (by omega)]
+              have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨i.val + 1, by omega⟩ := Fin.ext hm
+              rw [hidx]; dsimp only [idx]; rw [ite_neg h0, ite_neg h1, ite_neg h2, ite_neg (by omega), ite_neg (by omega), ite_neg (by omega)]
               have h := (hpath ⟨c - (i.val - 3) - 1, by omega⟩).symm
               convert h using 2
-              · exact Fin.ext (by first | (dsimp only; omega) | omega)
-              · exact Fin.ext (by first | (dsimp only; omega) | omega)
+              · exact Fin.ext (by dsimp only; omega)
+              · exact Fin.ext (by dsimp only; omega)
             · have hlast : i.val = L - 1 := by omega
               have hm : (i.val + 1) % L = 0 := by
                 have : i.val + 1 = L := by omega
                 rw [this, Nat.mod_self]
-              dsimp only [idx]; rw [hm]; rw [ite_neg h0, ite_neg h1, ite_neg h2, ite_pos rfl]
-              convert hcb.symm using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+              have hidx : (⟨(i.val + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L) = ⟨0, by omega⟩ := Fin.ext hm
+              rw [hidx]; dsimp only [idx]; rw [ite_neg h0, ite_neg h1, ite_neg h2, ite_pos rfl]
+              convert hcb.symm using 2; exact Fin.ext (by dsimp only; omega)
 
 /-! ============================================================================
     PILLAR III: CROSSING-CHORD SPECTRUM, CUBIC CYCLE-SPACE & GIRTH-9 SIMPLICITY
@@ -1971,82 +2008,91 @@ theorem crossing_chords_six_cycle_spectrum {V : Type*} {G : SimpleGraph V}
       intro i j hij
       have h := congrArg Fin.val (C.inj hij)
       dsimp [idx] at h
-      split_ifs at h <;> (simp only [Fin.val_mk, Fin.val_zero] at h; exact Fin.ext (by omega))
+      split_ifs at h <;> (dsimp only at h; exact Fin.ext (by omega))
     have hadj : ∀ i : Fin M,
         G.Adj (C.vert (idx i)) (C.vert (idx ⟨(i.val + 1) % M, Nat.mod_lt _ (by omega)⟩)) := by
       intro i
       by_cases hlt1 : i.val < s₁
       · have hm : (i.val + 1) % M = i.val + 1 := Nat.mod_eq_of_lt (by omega)
-        dsimp only [idx]; rw [hm]; rw [ite_pos (by omega), ite_pos (by omega)]
+        have hidx : (⟨(i.val + 1) % M, Nat.mod_lt _ (by omega)⟩ : Fin M) = ⟨i.val + 1, by omega⟩ := Fin.ext hm
+        rw [hidx]; dsimp only [idx]; rw [ite_pos (by omega), ite_pos (by omega)]
         have h := C.adj ⟨i.val, by omega⟩
         convert h using 2; apply Fin.ext; dsimp only; rw [Nat.mod_eq_of_lt (by omega)]
       · by_cases heq1 : i.val = s₁
         · have hm : (i.val + 1) % M = s₁ + 1 := by rw [heq1]; exact Nat.mod_eq_of_lt (by omega)
-          dsimp only [idx]; rw [hm]; rw [ite_pos (by omega), ite_neg (by omega)]
+          have hidx : (⟨(i.val + 1) % M, Nat.mod_lt _ (by omega)⟩ : Fin M) = ⟨s₁ + 1, by omega⟩ := Fin.ext hm
+          rw [hidx]; dsimp only [idx]; rw [ite_pos (by omega), ite_neg (by omega)]
           convert hc2 using 2
           · exact Fin.ext heq1
-          · exact Fin.ext (by first | (dsimp only; omega) | omega)
+          · exact Fin.ext (by dsimp only; omega)
         · by_cases hlt2 : i.val + 1 < M
           · have hm : (i.val + 1) % M = i.val + 1 := Nat.mod_eq_of_lt hlt2
-            dsimp only [idx]; rw [hm]; rw [ite_neg (by omega), ite_neg (by omega)]
+            have hidx : (⟨(i.val + 1) % M, Nat.mod_lt _ (by omega)⟩ : Fin M) = ⟨i.val + 1, by omega⟩ := Fin.ext hm
+            rw [hidx]; dsimp only [idx]; rw [ite_neg (by omega), ite_neg (by omega)]
             have h := (C.adj ⟨s₁ + s₂ + s₃ - (i.val - (s₁ + 1)) - 1, by omega⟩).symm
             convert h using 2
             · apply Fin.ext; dsimp only; rw [Nat.mod_eq_of_lt (by omega)]; omega
-            · exact Fin.ext (by first | (dsimp only; omega) | omega)
+            · exact Fin.ext (by dsimp only; omega)
           · have hlast : i.val = M - 1 := by omega
             have hm : (i.val + 1) % M = 0 := by
               have : i.val + 1 = M := by omega
               rw [this, Nat.mod_self]
-            dsimp only [idx]; rw [hm]; rw [ite_neg (by omega), ite_pos (by omega)]
+            have hidx : (⟨(i.val + 1) % M, Nat.mod_lt _ (by omega)⟩ : Fin M) = ⟨0, by omega⟩ := Fin.ext hm
+            rw [hidx]; dsimp only [idx]; rw [ite_neg (by omega), ite_pos (by omega)]
             convert hc1.symm using 2
-            exact Fin.ext (by first | (dsimp only; omega) | omega)
+            exact Fin.ext (by dsimp only; omega)
     exact ⟨⟨by omega, fun i => C.vert (idx i), hinj, hadj⟩⟩
   -- 2-chord crossing cycle 2: s₁ → ... → s₁+s₂ (arc s₂) --hc1--> 0 → L-1 → ... → s₁+s₂+s₃ (rev arc s₄) --hc2--> s₁
   have h6 : Nonempty (SimpleCycle G (s₂ + s₄ + 2)) := by
     let M := s₂ + s₄ + 2
     let idx : Fin M → Fin L := fun i =>
-      if i.val ≤ s₂ then ⟨s₁ + i.val, by omega⟩
-      else if i.val = s₂ + 1 then ⟨0, by omega⟩
+      if h1 : i.val ≤ s₂ then ⟨s₁ + i.val, by omega⟩
+      else if h2 : i.val = s₂ + 1 then ⟨0, by omega⟩
       else ⟨L - (i.val - (s₂ + 1)), by omega⟩
     have hinj : Function.Injective (fun i => C.vert (idx i)) := by
       intro i j hij
       have h := congrArg Fin.val (C.inj hij)
       dsimp [idx] at h
-      split_ifs at h <;> (simp only [Fin.val_mk, Fin.val_zero] at h; exact Fin.ext (by omega))
+      split_ifs at h <;> (dsimp only at h; exact Fin.ext (by omega))
     have hadj : ∀ i : Fin M,
         G.Adj (C.vert (idx i)) (C.vert (idx ⟨(i.val + 1) % M, Nat.mod_lt _ (by omega)⟩)) := by
       intro i
       by_cases hlt1 : i.val < s₂
       · have hm : (i.val + 1) % M = i.val + 1 := Nat.mod_eq_of_lt (by omega)
-        dsimp only [idx]; rw [hm]; rw [ite_pos (by omega), ite_pos (by omega)]
+        have hidx : (⟨(i.val + 1) % M, Nat.mod_lt _ (by omega)⟩ : Fin M) = ⟨i.val + 1, by omega⟩ := Fin.ext hm
+        rw [hidx]; dsimp only [idx]; rw [dif_pos (by omega), dif_pos (by omega)]
         have h := C.adj ⟨s₁ + i.val, by omega⟩
         convert h using 2; apply Fin.ext; dsimp only; rw [Nat.mod_eq_of_lt (by omega)]
       · by_cases heq1 : i.val = s₂
         · have hm : (i.val + 1) % M = s₂ + 1 := by rw [heq1]; exact Nat.mod_eq_of_lt (by omega)
-          dsimp only [idx]; rw [hm]; rw [ite_pos (by omega), ite_neg (by omega), ite_pos rfl]
-          convert hc1.symm using 2; exact Fin.ext (by first | (dsimp only; omega) | omega)
+          have hidx : (⟨(i.val + 1) % M, Nat.mod_lt _ (by omega)⟩ : Fin M) = ⟨s₂ + 1, by omega⟩ := Fin.ext hm
+          rw [hidx]; dsimp only [idx]; rw [dif_pos (by omega), dif_neg (by omega), dif_pos rfl]
+          convert hc1.symm using 2; exact Fin.ext (by dsimp only; omega)
         · by_cases heq2 : i.val = s₂ + 1
           · have hm : (i.val + 1) % M = s₂ + 2 := by rw [heq2]; exact Nat.mod_eq_of_lt (by omega)
-            dsimp only [idx]; rw [hm]; rw [ite_neg (by omega), ite_pos heq2, ite_neg (by omega), ite_neg (by omega)]
+            have hidx : (⟨(i.val + 1) % M, Nat.mod_lt _ (by omega)⟩ : Fin M) = ⟨s₂ + 2, by omega⟩ := Fin.ext hm
+            rw [hidx]; dsimp only [idx]; rw [dif_neg (by omega), dif_pos heq2, dif_neg (by omega), dif_neg (by omega)]
             have h := (C.adj ⟨L - 1, by omega⟩).symm
             convert h using 2
             · apply Fin.ext; dsimp only; have : L - 1 + 1 = L := by omega; rw [this, Nat.mod_self]
-            · exact Fin.ext (by first | (dsimp only; omega) | omega)
+            · exact Fin.ext (by dsimp only; omega)
           · by_cases hlt2 : i.val + 1 < M
             · have hm : (i.val + 1) % M = i.val + 1 := Nat.mod_eq_of_lt hlt2
-              dsimp only [idx]; rw [hm]; rw [ite_neg (by omega), ite_neg heq2, ite_neg (by omega), ite_neg (by omega)]
+              have hidx : (⟨(i.val + 1) % M, Nat.mod_lt _ (by omega)⟩ : Fin M) = ⟨i.val + 1, by omega⟩ := Fin.ext hm
+              rw [hidx]; dsimp only [idx]; rw [dif_neg (by omega), dif_neg heq2, dif_neg (by omega), dif_neg (by omega)]
               have h := (C.adj ⟨L - (i.val - (s₂ + 1)) - 1, by omega⟩).symm
               convert h using 2
               · apply Fin.ext; dsimp only; rw [Nat.mod_eq_of_lt (by omega)]; omega
-              · exact Fin.ext (by first | (dsimp only; omega) | omega)
+              · exact Fin.ext (by dsimp only; omega)
             · have hlast : i.val = M - 1 := by omega
               have hm : (i.val + 1) % M = 0 := by
                 have : i.val + 1 = M := by omega
                 rw [this, Nat.mod_self]
-              dsimp only [idx]; rw [hm]; rw [ite_neg (by omega), ite_neg heq2, ite_pos (by omega)]
+              have hidx : (⟨(i.val + 1) % M, Nat.mod_lt _ (by omega)⟩ : Fin M) = ⟨0, by omega⟩ := Fin.ext hm
+              rw [hidx]; dsimp only [idx]; rw [dif_neg (by omega), dif_neg heq2, dif_pos (by omega)]
               convert hc2.symm using 2
-              · exact Fin.ext (by first | (dsimp only; omega) | omega)
-              · exact Fin.ext (by first | (dsimp only; omega) | omega)
+              · exact Fin.ext (by dsimp only; omega)
+              · exact Fin.ext (by dsimp only; omega)
     exact ⟨⟨by omega, fun i => C.vert (idx i), hinj, hadj⟩⟩
   exact ⟨h1, h2, h3, h4, h5, h6⟩
 
