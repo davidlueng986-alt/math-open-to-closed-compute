@@ -1,0 +1,54 @@
+{
+  "node_count": 185,
+  "route_count": 16,
+  "closed_route_count": 0,
+  "resolution": "unknown",
+  "root_frontier": [
+    "W2-A2-ROOT-BOUND"
+  ],
+  "baseline_core_statuses_preserved": true,
+  "failed_live_transitive_dependencies": 0,
+  "proof_dependency_cycles": 0,
+  "new_global_core_estimates_closed": 0,
+  "active_five_route_frontier": [
+    "W2-A1-POSITIVE-MASS",
+    "W2-A2-ROOT-BOUND",
+    "W2-A3-PRODUCT-BOUND",
+    "W2-A3-THIN-BOUND",
+    "W2-A4-FIXED-SEQUENCE",
+    "W2-A5-CUSP",
+    "W2-A5-LOW"
+  ],
+  "active_five_route_distinct_targets": 7,
+  "distinct_lean_declarations": 47,
+  "wave3_distinct_lean_declarations": 9,
+  "status_counts": {
+    "BLOCKED": 31,
+    "CHECKED": 26,
+    "CONDITIONAL": 6,
+    "FAILED": 16,
+    "LEAN_VERIFIED": 19,
+    "PROVED": 87
+  },
+  "wave3_status_counts": {
+    "BLOCKED": 2,
+    "CHECKED": 5,
+    "CONDITIONAL": 1,
+    "FAILED": 3,
+    "LEAN_VERIFIED": 4,
+    "PROVED": 19
+  },
+  "mathematical_projection": {
+    "definition": "{'nodes': d['nodes'], 'routes': d['routes'], 'refinement_rules': d['refinement_rules']}",
+    "serialization": "json.dumps(projection, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode('utf-8')",
+    "sha256": "0ff2cf84d4332f6d8fa422fe89c7f1db1a69d99f722738b8ee817d8ce86b792a",
+    "bytes": 219187
+  },
+  "status": "CHECKED",
+  "scope": "Frozen-source metadata and logical-interface audit only; not a mathematical proof checker or Lean verification.",
+  "source_sha256": "75ac9ac8493b12c02ca94f1425676e18dafea61d075d19157975ac6efb6e47b1",
+  "reviewed_source_count": 31,
+  "independent_frontier_agrees": true,
+  "run_id": "46042906033",
+  "compute_commit": "bb8bc8fa0e082876460ef436241e3dc98f06f20f"
+}

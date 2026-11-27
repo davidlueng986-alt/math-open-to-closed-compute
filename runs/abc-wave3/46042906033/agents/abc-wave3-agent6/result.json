@@ -1,0 +1,294 @@
+{
+  "node_count": 185,
+  "route_count": 16,
+  "closed_route_count": 0,
+  "resolution": "unknown",
+  "routes": [
+    {
+      "id": "TRUE-VIA-MODIFIED-SZPIRO",
+      "conclusion": "ABC-TRUE",
+      "frontiers": [
+        [
+          "W2-A5-CUSP",
+          "W2-A5-LOW"
+        ]
+      ],
+      "closed": false,
+      "live_dependency_count": 10,
+      "conditional_antecedents_preserved": true
+    },
+    {
+      "id": "TRUE-VIA-FALTINGS",
+      "conclusion": "ABC-TRUE",
+      "frontiers": [
+        [
+          "ABC-T1-FH-OPEN"
+        ]
+      ],
+      "closed": false,
+      "live_dependency_count": 8,
+      "conditional_antecedents_preserved": true
+    },
+    {
+      "id": "TRUE-VIA-TRUNCATED-VOJTA",
+      "conclusion": "ABC-TRUE",
+      "frontiers": [
+        [
+          "ABC-T1-VOJTA-OPEN"
+        ]
+      ],
+      "closed": false,
+      "live_dependency_count": 3,
+      "conditional_antecedents_preserved": true
+    },
+    {
+      "id": "TRUE-VIA-UNIFORM-LOG",
+      "conclusion": "ABC-TRUE",
+      "frontiers": [
+        [
+          "GLOBAL-LOG-BOUND"
+        ]
+      ],
+      "closed": false,
+      "live_dependency_count": 1,
+      "conditional_antecedents_preserved": true
+    },
+    {
+      "id": "TRUE-VIA-BALANCED-SPLIT",
+      "conclusion": "ABC-TRUE",
+      "frontiers": [
+        [
+          "T2-BALANCED-JOINT-BOUND",
+          "T2-UNBALANCED-SHARP"
+        ]
+      ],
+      "closed": false,
+      "live_dependency_count": 3,
+      "conditional_antecedents_preserved": true
+    },
+    {
+      "id": "TRUE-VIA-IUT",
+      "conclusion": "ABC-TRUE",
+      "frontiers": [
+        [
+          "ABC-T3-C312",
+          "ABC-T3-DOWNSTREAM",
+          "ABC-T3-FAITHFUL"
+        ]
+      ],
+      "closed": false,
+      "live_dependency_count": 8,
+      "conditional_antecedents_preserved": true
+    },
+    {
+      "id": "TRUE-VIA-ARITHMETIC-TRANSFER",
+      "conclusion": "ABC-TRUE",
+      "frontiers": [
+        [
+          "ABC-T3-UNIFORMITY",
+          "ABC-T3-WEAK-TRANSFER"
+        ]
+      ],
+      "closed": false,
+      "live_dependency_count": 3,
+      "conditional_antecedents_preserved": true
+    },
+    {
+      "id": "FALSE-VIA-ORBIT",
+      "conclusion": "ABC-FALSE",
+      "frontiers": [
+        [
+          "W2-A1-POSITIVE-MASS"
+        ]
+      ],
+      "closed": false,
+      "live_dependency_count": 14,
+      "conditional_antecedents_preserved": true
+    },
+    {
+      "id": "FALSE-VIA-LATTICE-RELATIONS",
+      "conclusion": "ABC-FALSE",
+      "frontiers": [
+        [
+          "A4-SEQUENCE-CONSTRUCTION"
+        ]
+      ],
+      "closed": false,
+      "live_dependency_count": 4,
+      "conditional_antecedents_preserved": true
+    },
+    {
+      "id": "FALSE-VIA-UNBOUNDED-RATIO",
+      "conclusion": "ABC-FALSE",
+      "frontiers": [
+        [
+          "A6-UNBOUNDED-PREMISE"
+        ]
+      ],
+      "closed": false,
+      "live_dependency_count": 2,
+      "conditional_antecedents_preserved": true
+    },
+    {
+      "id": "W2-FALSE-VIA-LOCAL-LIFTING-MASS",
+      "conclusion": "ABC-FALSE",
+      "frontiers": [
+        [
+          "W2-A1-POSITIVE-MASS"
+        ]
+      ],
+      "closed": false,
+      "live_dependency_count": 7,
+      "conditional_antecedents_preserved": true
+    },
+    {
+      "id": "W2-TRUE-VIA-ROOT-ORBIT",
+      "conclusion": "ABC-TRUE",
+      "frontiers": [
+        [
+          "W2-A2-ROOT-BOUND"
+        ]
+      ],
+      "closed": false,
+      "live_dependency_count": 17,
+      "conditional_antecedents_preserved": true
+    },
+    {
+      "id": "TRUE-VIA-W2-VALUATION-COMPENSATION",
+      "conclusion": "ABC-TRUE",
+      "frontiers": [
+        [
+          "W2-A3-PRODUCT-BOUND",
+          "W2-A3-THIN-BOUND"
+        ]
+      ],
+      "closed": false,
+      "live_dependency_count": 6,
+      "conditional_antecedents_preserved": true
+    },
+    {
+      "id": "W2-FALSE-VIA-FIXED-LATTICE",
+      "conclusion": "ABC-FALSE",
+      "frontiers": [
+        [
+          "W2-A4-FIXED-SEQUENCE"
+        ]
+      ],
+      "closed": false,
+      "live_dependency_count": 4,
+      "conditional_antecedents_preserved": true
+    },
+    {
+      "id": "W2-TRUE-VIA-JOINT-HEIGHT-REGIMES",
+      "conclusion": "ABC-TRUE",
+      "frontiers": [
+        [
+          "W2-A5-CUSP",
+          "W2-A5-LOW"
+        ]
+      ],
+      "closed": false,
+      "live_dependency_count": 9,
+      "conditional_antecedents_preserved": true
+    },
+    {
+      "id": "W3-TRUE-VIA-ROOT-ONLY",
+      "conclusion": "ABC-TRUE",
+      "frontiers": [
+        [
+          "W2-A2-ROOT-BOUND"
+        ]
+      ],
+      "closed": false,
+      "live_dependency_count": 7,
+      "conditional_antecedents_preserved": true
+    }
+  ],
+  "root_frontier": [
+    "W2-A2-ROOT-BOUND"
+  ],
+  "baseline_core_statuses_preserved": true,
+  "failed_live_transitive_dependencies": 0,
+  "proof_dependency_cycles": 0,
+  "new_global_core_estimates_closed": 0,
+  "active_five_route_frontier": [
+    "W2-A1-POSITIVE-MASS",
+    "W2-A2-ROOT-BOUND",
+    "W2-A3-PRODUCT-BOUND",
+    "W2-A3-THIN-BOUND",
+    "W2-A4-FIXED-SEQUENCE",
+    "W2-A5-CUSP",
+    "W2-A5-LOW"
+  ],
+  "active_five_route_distinct_targets": 7,
+  "distinct_lean_declarations": 47,
+  "wave3_distinct_lean_declarations": 9,
+  "status_counts": {
+    "BLOCKED": 31,
+    "CHECKED": 26,
+    "CONDITIONAL": 6,
+    "FAILED": 16,
+    "LEAN_VERIFIED": 19,
+    "PROVED": 87
+  },
+  "wave3_status_counts": {
+    "BLOCKED": 2,
+    "CHECKED": 5,
+    "CONDITIONAL": 1,
+    "FAILED": 3,
+    "LEAN_VERIFIED": 4,
+    "PROVED": 19
+  },
+  "mathematical_projection": {
+    "definition": "{'nodes': d['nodes'], 'routes': d['routes'], 'refinement_rules': d['refinement_rules']}",
+    "serialization": "json.dumps(projection, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode('utf-8')",
+    "sha256": "0ff2cf84d4332f6d8fa422fe89c7f1db1a69d99f722738b8ee817d8ce86b792a",
+    "bytes": 219187
+  },
+  "status": "CHECKED",
+  "scope": "Frozen-source metadata and logical-interface audit only; not a mathematical proof checker or Lean verification.",
+  "source_sha256": "75ac9ac8493b12c02ca94f1425676e18dafea61d075d19157975ac6efb6e47b1",
+  "snapshot_sha256": {
+    "research/ABC/closure-dag/obligations.json": "5a7956ffd2079b8ba7020aa4e920c494f6e655ad4db9a55683504eb7bf97170a",
+    "research/ABC/closure-dag/frontier.json": "c3bc4236f1eea489511c9ce4f2467e4454f3a97dc75444484b2c34cb2d0af3c7",
+    "research/ABC/wave3_agent6/constraints.json": "30b8ecb202246054e7d443e69c626f56d48862e7f7640db056e8cb23408e156f",
+    "research/ABC/wave3_agent6/reviewed-files.json": "5cf0c0554d83c31ffe1727c90cec421d8af815287ffa2b1e80f7572fd56d0f5a"
+  },
+  "reviewed_source_count": 31,
+  "reviewed_source_sha256": {
+    "research/ABC/wave3_agent1/REPORT.md": "1244580095eb6da6a8b30719be12336d0b5d7e47080fac37b7158c9367f646e7",
+    "research/ABC/wave3_agent1/claims.json": "300e4c0ff5bfa3c2d915223ca909247ead7d5009e11c219ec215a30f6316b046",
+    "research/ABC/wave3_agent1/verify.py": "885bbb77b5209675d0d0fd4df3e086d3c0258fec02eb6bae5ace0b329d9820fc",
+    "research/ABC/wave3_agent2/REPORT.md": "ace8f05b878950978a10be7369a21ab1a4d5c9cee0358ed4c27a6ae9792abdaf",
+    "research/ABC/wave3_agent2/claims.json": "f223d4d408a7830397c358d3099b89ffb3132f53a4ed8f97cb5ab2dd6e2d45fa",
+    "research/ABC/wave3_agent2/verify.py": "57a5ffb11d6d2476a35ead07278cbbf5e5c70a905136dedf24adce3eac6a2da5",
+    "research/ABC/wave3_agent2/Structural.lean": "be37b3150e94a73fd0fb77b8582bf55f09601157bf0b737549239fe514fff15f",
+    "research/ABC/wave3_agent3/REPORT.md": "aebca4842057186bf85140e6986b6ddd189f7b11ab04e17fb1b5d7e5f2ae45d8",
+    "research/ABC/wave3_agent3/obligations.json": "cc7435c0d320a3a19954ba3e8a3e406803c94470b1753b13cd90923b66b716ca",
+    "research/ABC/wave3_agent3/verify.py": "47b223cfb7d0ec835ac5dec578b227ab713ccb774798d6d89bd846f45942e1bf",
+    "research/ABC/wave3_agent4/REPORT.md": "d55e08c9cd60c1d7ea6d01b1c052a12b8c0bbb0667552a98771d0b9da2897242",
+    "research/ABC/wave3_agent4/claims.json": "be33816f8a0c3185dd30c217850a618b82fc934eeebf8031d3178ad8e472a4f9",
+    "research/ABC/wave3_agent4/FermatSquareArea.lean": "e97ea98a8feb82460a48bb63f6b1db94528f3ed30cf761b5945d83ff54d5bdef",
+    "research/ABC/wave3_agent5/REPORT.md": "496fca9f6727bacdc5884c307176ea1e902dfbd833940a17fda7f222443beeb8",
+    "research/ABC/wave3_agent5/claims.json": "7ec59ef7e0c3ee628132ab7b618932b1bd59cbe73f3b9cca181286271e3885ca",
+    "research/ABC/wave3_agent5/verify.py": "5e2f7d982ed3ef1cc3315f24f2f70def542cd9b5e65de0e88c2e21d9ac1b465c",
+    "research/ABC/wave3/verification/curves/result.json": "05ae19425af0bbeb71ee30a21b31d6a75a46a6dc5c9d3f1a6bd0c30185a6c8fc",
+    "research/ABC/wave3/verification/curves/provenance.json": "ff6291bf58e3f9fd59f4d1a128aa2498f5e4df183fe102ee6bfc3995718b305f",
+    "research/ABC/wave3/verification/46040760555/abc-wave3-agent1/result.json": "f25e8d96959981d552e1c493fdeb30517e8fbf74cc5ea7a06596ee30d9028bf9",
+    "research/ABC/wave3/verification/46040760555/abc-wave3-agent1/provenance.json": "97b7117702801b942ccd7add0504975a9b9ce1c7515f9a4852d6cc0c36151f54",
+    "research/ABC/wave3/verification/46040760555/abc-wave3-agent2/result.json": "bde6bbca1031a07adeae61385d235290f4b5d2d70878cf4f6339970c9a779349",
+    "research/ABC/wave3/verification/46040760555/abc-wave3-agent2/provenance.json": "c5692122de0b4d0182936f9f8403231bc774687c7d673207b007233cf80746ab",
+    "research/ABC/wave3/verification/46040760555/abc-wave3-agent2/kernel.log": "0cae0f3c53b1b9a6ea20bbe51f9490d2d12d456473ec6e020e958b21ee42a06b",
+    "research/ABC/wave3/verification/46040760555/abc-wave3-agent3/result.json": "750e8f45551f31140f4a9581820da45c582a5b8fee1dff21f59acccd371722ab",
+    "research/ABC/wave3/verification/46040760555/abc-wave3-agent3/provenance.json": "e9d3ac0fd580607ce05d909ed59adc6d4020e0ac17ceb1d333fbda68d06e6ad8",
+    "research/ABC/wave3/verification/46041248187/abc-wave3-agent4/result.json": "05e1b1cc6e45aaad9a53ab2b54ca79c6838be9937f778268ca269d2c0f8923fc",
+    "research/ABC/wave3/verification/46041248187/abc-wave3-agent4/provenance.json": "425a76dc477e7bf2271146aee9daf04e434f1dadcca91fd50c8c15688d2ba2a5",
+    "research/ABC/wave3/verification/46041248187/abc-wave3-agent4/kernel.log": "6c51e52638a5a727bb9dceec6859f7702129a524ef1dbd6022abbc741c08a0f5",
+    "research/ABC/wave3/verification/46041841448/abc-wave3-agent5/result.json": "512acff844ed9d45bcf87b0897558027e20876b8f8ebbac00bc06587412d61e7",
+    "research/ABC/wave3/verification/46041841448/abc-wave3-agent5/provenance.json": "52e1cf0654830de580b26cb929813b6e597c86fa332c765bbed1f30ff50716f4",
+    "research/ABC/wave3_agent6/audit.py": "75ac9ac8493b12c02ca94f1425676e18dafea61d075d19157975ac6efb6e47b1"
+  },
+  "independent_frontier_agrees": true,
+  "run_id": "46042906033",
+  "compute_commit": "bb8bc8fa0e082876460ef436241e3dc98f06f20f"
+}
