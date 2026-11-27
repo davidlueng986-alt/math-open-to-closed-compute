@@ -1,0 +1,33 @@
+name: JC2 critical algebra November 28
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'jobs/jc2-critical-nov28/**'
+      - '.github/workflows/jc2-critical-nov28.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact algebra and transitive axioms
+        run: bash jobs/jc2-critical-nov28/verify.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jc2-critical-nov28
+          path: out/
+          retention-days: 90
