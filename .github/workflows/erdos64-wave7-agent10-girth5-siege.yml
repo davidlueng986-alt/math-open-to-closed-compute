@@ -1,0 +1,23 @@
+name: E64 Wave 7 Agent 10 Girth-5 Cubic C16 & C5-Cluster OpenMP Siege
+
+on:
+  workflow_dispatch:
+
+jobs:
+  siege:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Compile and run OpenMP C++20 Girth-5 Cubic Siege
+        run: |
+          mkdir -p out
+          g++ -O3 -fopenmp -std=c++20 jobs/erdos64-wave7-agent10-girth5-siege/girth5_siege_omp.cpp -o girth5_siege_omp
+          ./girth5_siege_omp | tee out/girth5_siege_results.txt
+      - name: Upload siege artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: erdos64-wave7-agent10-girth5-siege
+          path: out/
+          retention-days: 90

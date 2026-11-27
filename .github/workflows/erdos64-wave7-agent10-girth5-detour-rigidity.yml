@@ -1,0 +1,25 @@
+name: E64 Wave 7 Agent 10 Girth-5 Detour Chains & C5 Rigidity (Lean 4.36.0)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Verify Erdos64Wave7Agent10 in Lean 4.36.0
+        run: bash jobs/erdos64-wave7-agent10-girth5-detour-rigidity/verify.sh
+      - name: Upload verification artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: erdos64-wave7-agent10-girth5-detour-rigidity
+          path: out/
+          retention-days: 90
