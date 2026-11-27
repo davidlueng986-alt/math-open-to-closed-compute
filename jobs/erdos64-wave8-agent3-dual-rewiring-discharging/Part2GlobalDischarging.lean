@@ -119,7 +119,8 @@ theorem minimal_bad2_vge4_independent.{u} {V : Type u} [Fintype V] [DecidableEq 
         intro z hz
         have hzv : z ≠ v := (Finset.mem_erase.mp hz).1
         have huz : G.Adj u z := (mem_neighborFinset G u z).mp (Finset.mem_erase.mp hz).2
-        refine (mem_neighborFinset H u z).mpr ⟨huz, ?_⟩
+        rw [mem_neighborFinset, deleteEdges_adj]
+        refine ⟨huz, ?_⟩
         simp only [Set.mem_singleton_iff, Sym2.eq_iff]
         rintro (⟨_, rfl⟩ | ⟨rfl, _⟩)
         · exact hzv rfl
@@ -134,7 +135,8 @@ theorem minimal_bad2_vge4_independent.{u} {V : Type u} [Fintype V] [DecidableEq 
         intro z hz
         have hzu : z ≠ u := (Finset.mem_erase.mp hz).1
         have hvz : G.Adj v z := (mem_neighborFinset G v z).mp (Finset.mem_erase.mp hz).2
-        refine (mem_neighborFinset H v z).mpr ⟨hvz, ?_⟩
+        rw [mem_neighborFinset, deleteEdges_adj]
+        refine ⟨hvz, ?_⟩
         simp only [Set.mem_singleton_iff, Sym2.eq_iff]
         rintro (⟨rfl, _⟩ | ⟨_, rfl⟩)
         · exact G.ne_of_adj huv.symm rfl
@@ -155,9 +157,9 @@ theorem minimal_bad2_vge4_independent.{u} {V : Type u} [Fintype V] [DecidableEq 
     intro w hw
     simp only [Defects, Finset.mem_filter, Finset.mem_univ, true_and] at hw ⊢
     by_cases hwu : w = u
-    · rw [hwu]; have := (hdeg_ge u).2.1 rfl; omega
+    · rw [hwu] at hw ⊢; have := (hdeg_ge u).2.1 rfl; omega
     · by_cases hwv : w = v
-      · rw [hwv]; have := (hdeg_ge v).2.2 rfl; omega
+      · rw [hwv] at hw ⊢; have := (hdeg_ge v).2.2 rfl; omega
       · rw [← (hdeg_ge w).1 ⟨hwu, hwv⟩]; exact hw
   have hpow := hmb.edge_minimal H hle ⟨u, v, huv, hnot_adj⟩ hH_min2
     (le_trans hH_def hmb.defects_le_two)
@@ -573,7 +575,10 @@ theorem minimal_bad2_girth_g_v3_density_universal.{u} {V : Type u} [Fintype V] [
           | @cons a₁ a₂ a₃ h₁₂ r ihr =>
             intro ha1
             have ha2 : compOf a₂ = K := (ConnectedComponent.eq.mpr h₁₂.reachable).symm.trans ha1
-            exact Reachable.trans (Adj.reachable h₁₂) (ihr ha2)
+            have hadjS : (G.induce (S : Set V)).Adj
+                ⟨a₁.1, Finset.mem_map.mpr ⟨a₁, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ha1⟩, rfl⟩⟩
+                ⟨a₂.1, Finset.mem_map.mpr ⟨a₂, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ha2⟩, rfl⟩⟩ := h₁₂
+            exact Reachable.trans (Adj.reachable hadjS) (ihr ha2)
         have hux_eq : compOf ux = K := (Finset.mem_filter.mp hux).2
         have hres := hlift w hux_eq
         exact hres
@@ -881,8 +886,11 @@ theorem minimal_bad2_girth_g_v3_internal_degree_bound.{u} {V : Type u} [Fintype 
           | nil => intro _; exact Reachable.refl _
           | @cons a₁ a₂ a₃ h₁₂ r ihr =>
             intro ha1
-            exact Reachable.trans (Adj.reachable h₁₂)
-              (ihr ((ConnectedComponent.eq.mpr h₁₂.reachable).symm.trans ha1))
+            have ha2 : compOf a₂ = K := (ConnectedComponent.eq.mpr h₁₂.reachable).symm.trans ha1
+            have hadjS : (G.induce (S : Set V)).Adj
+                ⟨a₁.1, Finset.mem_map.mpr ⟨a₁, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ha1⟩, rfl⟩⟩
+                ⟨a₂.1, Finset.mem_map.mpr ⟨a₂, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ha2⟩, rfl⟩⟩ := h₁₂
+            exact Reachable.trans (Adj.reachable hadjS) (ihr ha2)
         exact hlift w (Finset.mem_filter.mp hux).2
       have hsub_deg : ∑ v ∈ S, (G.neighborFinset v ∩ S).card ≤
           ∑ v ∈ S, (G.neighborFinset v ∩ V3 G).card :=
