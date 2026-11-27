@@ -1,0 +1,40 @@
+name: Erdos 617 W4 Exp2 r=6 DC-PTB + Ramsey-Turan Sweep
+
+on:
+  push:
+    branches: [erdos617-w4-exp2-r6]
+  workflow_dispatch:
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { profile: "7", shard: 0, total: 4 }
+          - { profile: "7", shard: 1, total: 4 }
+          - { profile: "7", shard: 2, total: 4 }
+          - { profile: "7", shard: 3, total: 4 }
+          - { profile: "8", shard: 0, total: 4 }
+          - { profile: "8", shard: 1, total: 4 }
+          - { profile: "8", shard: 2, total: 4 }
+          - { profile: "8", shard: 3, total: 4 }
+          - { profile: "9", shard: 0, total: 8 }
+          - { profile: "9", shard: 1, total: 8 }
+          - { profile: "9", shard: 2, total: 8 }
+          - { profile: "9", shard: 3, total: 8 }
+          - { profile: "9", shard: 4, total: 8 }
+          - { profile: "9", shard: 5, total: 8 }
+          - { profile: "9", shard: 6, total: 8 }
+          - { profile: "9", shard: 7, total: 8 }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install --quiet ortools scipy numpy
+      - name: Run DC-PTB + RT sweep
+        run: python3 scripts/erdos617_exp2_sweep.py ${{ matrix.profile }} ${{ matrix.shard }} ${{ matrix.total }} 10 35
