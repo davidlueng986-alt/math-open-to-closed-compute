@@ -997,7 +997,8 @@ private lemma card_bay_filter {r i m : ℕ} (him : i + m < r) :
       Finset.mem_attach, true_and, f]
     constructor
     · rintro ⟨h1, h2⟩
-      exact ⟨⟨t.val - i, Finset.mem_range.mpr (by omega)⟩, by ext; omega⟩
+      exact ⟨⟨t.val - i, Finset.mem_range.mpr (by omega)⟩, by
+        ext; change i + (t.val - i) = t.val; omega⟩
     · rintro ⟨⟨x, hx⟩, hxt⟩
       have hv : i + x = t.val := congrArg Fin.val hxt
       have hxlt := Finset.mem_range.mp hx
