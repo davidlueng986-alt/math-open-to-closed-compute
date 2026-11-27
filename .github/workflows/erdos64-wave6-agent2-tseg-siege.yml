@@ -1,0 +1,22 @@
+name: E64 Wave 6 Agent 2 TS-EG Adversarial OpenMP Siege
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  siege:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and run OpenMP C++20 TS-EG adversarial siege
+        run: |
+          mkdir -p out
+          g++ -O3 -fopenmp -std=c++20 jobs/erdos64-wave6-agent2-tseg-siege/tseg_siege.cpp -o tseg_siege
+          ./tseg_siege --full out/tseg_siege_results.json | tee out/tseg_siege.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos64-wave6-agent2-tseg-siege
+          path: out/
+          retention-days: 90
