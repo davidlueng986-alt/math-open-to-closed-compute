@@ -38,23 +38,26 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 /-- Subtype-wrapped Finset of non-backtracking walks of length `k` from `u` to `v`. -/
 def nbWalksSub (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ) (u v : V) :
     Finset {p : G.Walk u v // p.length = k} :=
-  (nbWalks G k u v).attach.map
-    ⟨fun x => ⟨x.1, (mem_finsetWalkLength_iff.mp (Finset.mem_filter.mp x.2).1)⟩,
-     fun a b h => Subtype.ext (congrArg (Subtype.val : {p : G.Walk u v // p.length = k} → _) h)⟩
+  let emb : {x : G.Walk u v // x ∈ nbWalks G k u v} ↪ {p : G.Walk u v // p.length = k} :=
+    ⟨fun x => ⟨x.1, mem_finsetWalkLength_iff.mp (Finset.mem_filter.mp x.2).1⟩,
+     fun a b h => Subtype.ext (show a.1 = b.1 from congrArg Subtype.val h)⟩
+  (nbWalks G k u v).attach.map emb
 
 @[simp] theorem mem_nbWalksSub_iff {G : SimpleGraph V} [DecidableRel G.Adj]
     {k : ℕ} {u v : V} {p : {q : G.Walk u v // q.length = k}} :
     p ∈ nbWalksSub G k u v ↔ IsNonBacktracking p.1 := by
-  simp only [nbWalksSub, Finset.mem_map, Finset.mem_attach, true_and, Subtype.exists]
+  unfold nbWalksSub
+  rw [Finset.mem_map]
   constructor
-  · rintro ⟨q, hq, heq⟩
+  · rintro ⟨⟨q, hq⟩, _, heq⟩
     have hqp : q = p.1 := congrArg Subtype.val heq
     rw [← hqp]
     exact (Finset.mem_filter.mp hq).2
   · intro hnb
-    refine ⟨p.1, ?_, rfl⟩
-    simp only [nbWalks, Finset.mem_filter, mem_finsetWalkLength_iff]
-    exact ⟨p.2, hnb⟩
+    have hmem : p.1 ∈ nbWalks G k u v := by
+      simp only [nbWalks, Finset.mem_filter, mem_finsetWalkLength_iff]
+      exact ⟨p.2, hnb⟩
+    exact ⟨⟨p.1, hmem⟩, Finset.mem_attach _ _, Subtype.ext rfl⟩
 
 theorem taillessCount_eq_card_sub (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ) :
     (((Finset.univ : Finset V).sigma fun v => nbWalksSub G k v v).filter

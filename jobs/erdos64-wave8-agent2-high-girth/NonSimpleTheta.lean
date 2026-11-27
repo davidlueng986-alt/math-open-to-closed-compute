@@ -29,7 +29,7 @@ theorem nonSimple_theta_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
     haveI : DecidablePred (isBarbellElem G g L) := Classical.decPred _
     (NS.filter fun x => ¬ isBarbellElem G g L x).card ≤
       ∑ r ∈ Finset.range L, thetaTerm g L r * taillessCount G r := by
-  intro L _ NS _
+  intro L NS
   set s := (g - 1) / 2
   have hL1 : 1 ≤ L := Nat.one_le_two_pow
   have hL_even : L = 2 * 2 ^ (k - 1) := by
@@ -300,6 +300,7 @@ theorem nonSimple_theta_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
     refine Finset.sum_le_sum fun b hb => ?_
     simp only [Finset.mem_filter, Finset.mem_range] at hb
     let S_rb := NS_th.filter (isThRB r₁ b)
+    have hc_ge2 : 2 ≤ r₂ - b := by omega
     let v3Set (c1 : Σ u : V, {q : G.Walk u u // q.length = r₁}) : Finset V :=
       let sp := splitWalk b c1.2.1 (by rw [c1.2.2]; omega)
       ((G.neighborFinset sp.1).erase sp.2.1.1.reverse.snd).erase sp.2.2.1.snd
@@ -347,10 +348,10 @@ theorem nonSimple_theta_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
               | cons _ _ => rfl
             exact ((isNonBacktracking_append_iff sp.2.1.1 sp.2.2.1).mp (happ ▸ hc1_mem.1)).2.2 _ _ hln hfn
           have hm : sp.2.2.1.snd ∈ (G.neighborFinset sp.1).erase sp.2.1.1.reverse.snd :=
-            Finset.mem_erase.mpr ⟨hne.symm, SimpleGraph.mem_neighborFinset.mpr h2⟩
+            Finset.mem_erase.mpr ⟨hne.symm, (G.mem_neighborFinset _ _).mpr h2⟩
           dsimp only [v3Set]
           rw [Finset.card_erase_of_mem hm,
-              Finset.card_erase_of_mem (SimpleGraph.mem_neighborFinset.mpr h1),
+              Finset.card_erase_of_mem ((G.mem_neighborFinset _ _).mpr h1),
               G.card_neighborFinset_eq_degree, hreg sp.1]
         have hu3_card : (u3Set c1).card ≤ 1 := by
           have h1 : G.Adj c1.1 c1.2.1.snd := by
@@ -373,16 +374,16 @@ theorem nonSimple_theta_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
               | cons _ _ => rfl
             exact ((isNonBacktracking_append_iff c1.2.1 c1.2.1).mp hc1_mem.2).2.2 _ _ hl hf |>.symm
           have hm : c1.2.1.reverse.snd ∈ (G.neighborFinset c1.1).erase c1.2.1.snd :=
-            Finset.mem_erase.mpr ⟨hne.symm, SimpleGraph.mem_neighborFinset.mpr h2⟩
+            Finset.mem_erase.mpr ⟨hne.symm, (G.mem_neighborFinset _ _).mpr h2⟩
           dsimp only [u3Set]
           rw [Finset.card_erase_of_mem hm,
-              Finset.card_erase_of_mem (SimpleGraph.mem_neighborFinset.mpr h1),
+              Finset.card_erase_of_mem ((G.mem_neighborFinset _ _).mpr h1),
               G.card_neighborFinset_eq_degree, hreg c1.1]
         have hv3_each : ∀ v3 ∈ v3Set c1,
             (∑ u3 ∈ u3Set c1, (nbWalksBetweenAvoid G (r₂ - b - 2) v3 sp.1 u3).card) ≤ 2 ^ (r₂ - b - 2 - s) := by
           intro v3 hv3
           have hv3_adj : G.Adj sp.1 v3 :=
-            SimpleGraph.mem_neighborFinset.mp (Finset.mem_erase.mp (Finset.mem_erase.mp hv3).2).2
+            (G.mem_neighborFinset _ _).mp (Finset.mem_erase.mp (Finset.mem_erase.mp hv3).2).2
           have hu3_each : ∀ u3 ∈ u3Set c1,
               (nbWalksBetweenAvoid G (r₂ - b - 2) v3 sp.1 u3).card ≤ 2 ^ (r₂ - b - 2 - s) :=
             fun u3 _ => card_nbWalksBetweenAvoid_le G hg hreg (r₂ - b - 2) v3 sp.1 u3 hv3_adj.symm
@@ -426,7 +427,7 @@ theorem nonSimple_theta_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
           | cons _ r ih => intro ht; cases r with
             | nil => trivial
             | cons _ _ =>
-                have hnd := ht.edges_nodup; simp only [Walk.edges_cons, List.nodup_cons] at hnd
+                have hnd := ht.edges_nodup; rw [Walk.edges_cons, List.nodup_cons] at hnd
                 exact ⟨fun h => by subst h; exact hnd.1 (by simp [Sym2.eq_swap]), ih (Walk.IsTrail.mk hnd.2)⟩
         exact aux _ hPQ1.isTrail
       have hnb_PQ2 : IsNonBacktracking (Pb.append Q₂) := by
@@ -436,7 +437,7 @@ theorem nonSimple_theta_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
           | cons _ r ih => intro ht; cases r with
             | nil => trivial
             | cons _ _ =>
-                have hnd := ht.edges_nodup; simp only [Walk.edges_cons, List.nodup_cons] at hnd
+                have hnd := ht.edges_nodup; rw [Walk.edges_cons, List.nodup_cons] at hnd
                 exact ⟨fun h => by subst h; exact hnd.1 (by simp [Sym2.eq_swap]), ih (Walk.IsTrail.mk hnd.2)⟩
         exact aux _ hPQ2.isTrail
       have hPQ1_cnb : IsCyclicallyNonBacktracking (Pb.append Q₁) := by
@@ -509,7 +510,7 @@ theorem nonSimple_theta_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
       refine ⟨y, ?_, ?_⟩
       · simp only [Param, Finset.mem_sigma, Finset.mem_univ, true_and, TL, Finset.mem_filter,
           mem_nbWalksSub_iff, v3Set, u3Set, Finset.mem_erase,
-          SimpleGraph.mem_neighborFinset, nbWalksBetweenAvoid]
+          G.mem_neighborFinset, nbWalksBetweenAvoid]
         rw [hsp]
         exact ⟨⟨hnb_PQ1, hPQ1_cnb⟩, ⟨hv3_ne_Q1, hv3_ne_Pb, hv3⟩,
           ⟨hu3_ne_Q1, hu3_ne_Pb, hu3.symm⟩, ⟨hmid_nb, hmid_fn⟩⟩
@@ -526,8 +527,9 @@ theorem nonSimple_theta_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
         if h : x ∈ S_rb then Classical.choose (hpre_th x h) else y0
       have hle1 : S_rb.card ≤ Param.card := by
         refine Finset.card_le_card_of_injOn f' ?_ ?_
-        · intro x hx; dsimp only [f']; simp only [hx, ↓reduceDIte]; exact (Classical.choose_spec (hpre_th x hx)).1
+        · intro x hx; rw [Finset.mem_coe] at hx ⊢; dsimp only [f']; simp only [hx, ↓reduceDIte]; exact (Classical.choose_spec (hpre_th x hx)).1
         · intro x₁ h₁ x₂ h₂ heq
+          rw [Finset.mem_coe] at h₁ h₂
           have hev1 : evalTh (f' x₁) = some x₁ := by
             dsimp only [f']; simp only [h₁, ↓reduceDIte]; exact (Classical.choose_spec (hpre_th x₁ h₁)).2
           have hev2 : evalTh (f' x₂) = some x₂ := by
