@@ -1,0 +1,72 @@
+name: Erdos 617 W4 Exp3 r=6 Sharded SAT v2
+
+on:
+  workflow_dispatch:
+    inputs:
+      solver:
+        description: 'PySAT solver (cadical195, glucose42, maplechrono)'
+        required: false
+        default: 'cadical195'
+
+jobs:
+  controls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install python-sat
+      - run: python3 jobs/erdos617-w4-exp3-r6/solve_r6_v2.py --profile controls --solver ${{ github.event.inputs.solver || 'cadical195' }}
+
+  p9_shards:
+    needs: controls
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install python-sat
+      - name: Run p9 shard ${{ matrix.shard }}/6
+        run: python3 jobs/erdos617-w4-exp3-r6/solve_r6_v2.py --profile p9 --shard-idx ${{ matrix.shard }} --num-shards 6 --workers 4 --solver ${{ github.event.inputs.solver || 'cadical195' }}
+
+  p8_shards:
+    needs: controls
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install python-sat
+      - name: Run p8 shard ${{ matrix.shard }}/3
+        run: python3 jobs/erdos617-w4-exp3-r6/solve_r6_v2.py --profile p8 --shard-idx ${{ matrix.shard }} --num-shards 3 --workers 4 --solver ${{ github.event.inputs.solver || 'cadical195' }}
+
+  p7_shards:
+    needs: controls
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install python-sat
+      - name: Run p7 shard ${{ matrix.shard }}/3
+        run: python3 jobs/erdos617-w4-exp3-r6/solve_r6_v2.py --profile p7 --shard-idx ${{ matrix.shard }} --num-shards 3 --workers 4 --solver ${{ github.event.inputs.solver || 'cadical195' }}
