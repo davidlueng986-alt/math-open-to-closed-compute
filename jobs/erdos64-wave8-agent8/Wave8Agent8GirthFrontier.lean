@@ -116,6 +116,7 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-- Theorem 1: Every closed non-backtracking walk of length `L ≥ 1` contains a simple cycle
     of length `m ≤ L`. -/
+omit [Fintype V] in
 theorem closed_nb_seq_has_simple_cycle_le (G : SimpleGraph V) :
     ∀ L : ℕ, ∀ f : Fin (L + 1) → V, IsClosedNBSeq G L f →
       ∃ m : ℕ, m ≤ L ∧ HasSimpleCycle G m := by
@@ -606,7 +607,7 @@ lemma tailedCount_step (G : SimpleGraph V) [DecidableRel G.Adj]
           have hs2 : (⟨i.1 + 1, by omega⟩ : Fin (k + 2)).succ = ⟨i.succ.1 + 1, by omega⟩ := by ext; simp
           rw [hs1, hs2] at hstep; exact hstep
         · have hstep := hnb (i + 1) (by omega)
-          have hs2 : (⟨i + 1 + 2, by omega⟩ : Fin (k + 3)) = ⟨i + 2 + 1, by omega⟩ := by ext; simp; omega
+          have hs2 : (⟨i + 1 + 2, by omega⟩ : Fin (k + 3)) = ⟨i + 2 + 1, by omega⟩ := by ext; simp
           rw [hs2] at hstep; exact hstep
       · simp only [Finset.mem_filter, Finset.mem_univ, true_and]
         refine ⟨?_, ?_, ?_⟩
@@ -1622,10 +1623,10 @@ theorem four_layer_annulus_telescoping_peak (D : ℕ) (hD : 1 ≤ D) (a : ℕ �
             rw [hcongr]
             have hfalse : ¬ (k + 2 ≤ k + 1) := by omega
             simp [hfalse, add_assoc]
-          rw [hsplit]; ring
+          rw [hsplit]
         rw [Finset.sum_range_succ, hshift]
         by_cases hk0 : k = 0
-        · subst hk0; simp
+        · subst hk0; simp; ring
         · have hne1 : k + 1 ≠ 1 := by omega
           have hne2 : k + 2 ≠ 1 := by omega
           simp only [hne1, hne2, ite_false] at hih ⊢
