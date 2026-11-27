@@ -59,7 +59,7 @@ structure PrimitiveSquareArea (x y z : ℤ) : Prop where
 private theorem odd_square_root {u : ℤ} (h : u ^ 2 % 2 = 1) :
     u % 2 = 1 := by
   rcases Int.emod_two_eq_zero_or_one u with hu | hu
-  · norm_num [Int.pow_emod, hu] at h
+  · norm_num [pow_two, Int.mul_emod, hu] at h
   · exact hu
 
 /-- The complete descending construction, for an odd first leg. -/
@@ -146,7 +146,7 @@ theorem primitive_square_area_descent_odd {x y z : ℤ}
     rcases Int.emod_two_eq_zero_or_one t with hh | hh
     · exact hh
     · have hh2 := congrArg (fun k : ℤ => k % 2) harea
-      norm_num [Int.mul_emod, Int.pow_emod, hh] at hh2
+      norm_num [Int.mul_emod, pow_two, Int.mul_emod, hh] at hh2
   have htdiv : t = 2 * (t / 2) := by omega
   have htdiv2 := congrArg (fun k : ℤ => k ^ 2) htdiv
   have hsquare : p * q = 2 * (t / 2) ^ 2 := by nlinarith only [harea, htdiv2]
@@ -187,7 +187,7 @@ theorem no_primitive_square_area (x y z : ℤ) : ¬ PrimitiveSquareArea x y z :=
       PrimitiveSquareArea x y z → False := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro x y z hz h
       obtain ⟨p, q, r, hnew, hlt⟩ := primitive_square_area_descent h
       have habs : r.natAbs < z.natAbs := by
@@ -224,8 +224,8 @@ theorem fourth_difference_not_square (b c w : ℤ)
     · ring
     · exact Int.isCoprime_iff_gcd_eq_one.mp
         (Int.isCoprime_iff_gcd_eq_one.mpr hcp).pow
-    · norm_num [Int.pow_emod, hcodd]
-    · norm_num [Int.pow_emod, hbeven]
+    · norm_num [pow_two, Int.mul_emod, hcodd]
+    · norm_num [pow_two, Int.mul_emod, hbeven]
   apply no_primitive_square_area (c ^ 4 - b ^ 4) (2 * c ^ 2 * b ^ 2)
     (c ^ 4 + b ^ 4)
   refine ⟨sub_pos.mpr hbc4, by positivity, by positivity, hparam.1, hparam.2,

@@ -11,6 +11,7 @@ source = Path(sys.argv[1])
 out = Path(sys.argv[2])
 text = source.read_text()
 log = (out / 'kernel.log').read_text()
+assert (out / 'mathlib-commit.txt').read_text().strip() == 'fc4f59e577feb1a4956671bc04ac18aaaf8cd842'
 assert not re.search(r'\b(sorry|admit|native_decide)\b', text)
 assert not re.search(r'^\s*(axiom|unsafe)\b', text, re.M)
 assert 'sorryAx' not in log
