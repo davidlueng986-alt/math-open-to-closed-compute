@@ -75,7 +75,7 @@ private lemma isChain_append_of_link {α : Type*} {R : α → α → Prop} {l1 l
 /-- Helper: `Nodup (A ++ B)` from `Nodup A`, `Nodup B`, and `List.Disjoint A B`. -/
 private lemma nodup_append_of_disjoint {α : Type*} {A B : List α}
     (hA : A.Nodup) (hB : B.Nodup) (hd : List.Disjoint A B) : (A ++ B).Nodup :=
-  List.nodup_append.mpr ⟨hA, hB, fun a ha b hb hab => hd ha (hab ▸ hb)⟩
+  List.nodup_append.mpr ⟨hA, hB, fun _a ha _b hb hab => hd ha (hab ▸ hb)⟩
 
 /-- Helper: reversing an `IsChain G.Adj` preserves `IsChain G.Adj` by symmetry of `G.Adj`. -/
 private lemma isChain_reverse_adj {V : Type*} {G : SimpleGraph V} {l : List V}
@@ -994,10 +994,10 @@ private lemma card_bay_filter {r i m : ℕ} (him : i + m < r) :
       (Finset.range m).attach.map f := by
     ext t
     simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_map,
-      Finset.mem_attach, true_and, f, Function.Embedding.coeFn_mk]
+      Finset.mem_attach, true_and, f]
     constructor
     · rintro ⟨h1, h2⟩
-      exact ⟨⟨t.val - i, Finset.mem_range.mpr (by omega)⟩, by ext; dsimp; omega⟩
+      exact ⟨⟨t.val - i, Finset.mem_range.mpr (by omega)⟩, by ext; omega⟩
     · rintro ⟨⟨x, hx⟩, hxt⟩
       have hv : i + x = t.val := congrArg Fin.val hxt
       have hxlt := Finset.mem_range.mp hx
@@ -1123,9 +1123,9 @@ theorem twisted_ladder_breaks_mod4_two_barrier {V : Type*} {G : SimpleGraph V} {
     dsimp; omega
   rcases hw0 with h6 | h14
   · refine ⟨L.windowCycle 0 1 (by omega) (by omega), 3, by omega, ?_⟩
-    rw [L.windowCycle_len 0 1 (by omega) (by omega), hf, Finset.sum_singleton, h6]
+    rw [L.windowCycle_len 0 1 (by omega) (by omega), hf, Finset.sum_singleton, h6]; norm_num
   · refine ⟨L.windowCycle 0 1 (by omega) (by omega), 4, by omega, ?_⟩
-    rw [L.windowCycle_len 0 1 (by omega) (by omega), hf, Finset.sum_singleton, h14]
+    rw [L.windowCycle_len 0 1 (by omega) (by omega), hf, Finset.sum_singleton, h14]; norm_num
 
 /-! ### Part IV: Ihara–Chebyshev `B^16` Cage Thresholds & `EGRob` 2-Copy Gluing Spectrum -/
 
