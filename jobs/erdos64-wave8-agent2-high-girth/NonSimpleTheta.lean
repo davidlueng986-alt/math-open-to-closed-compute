@@ -22,12 +22,14 @@ theorem nonSimple_theta_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
     {g k : ℕ} (hreg : ∀ v : V, G.degree v = 3) (hg : GirthAtLeast G g) (hg6 : 6 ≤ g)
     (hnp : ¬ HasPower G) (hk4 : 4 ≤ k) (hk6 : k ≤ 6) (hLt : 2 ^ k < 3 * g) :
     let L := 2 ^ k
-    let NS := ((Finset.univ : Finset V).sigma fun v => nbWalks G L v v).filter
+    haveI : DecidablePred (fun x : Σ v : V, {p : G.Walk v v // p.length = L} =>
+      IsCyclicallyNonBacktracking x.2.1 ∧ ¬ x.2.1.IsCycle) := Classical.decPred _
+    let NS := ((Finset.univ : Finset V).sigma fun v => nbWalksSub G L v v).filter
       fun x => IsCyclicallyNonBacktracking x.2.1 ∧ ¬ x.2.1.IsCycle
     haveI : DecidablePred (isBarbellElem G g L) := Classical.decPred _
     (NS.filter fun x => ¬ isBarbellElem G g L x).card ≤
       ∑ r ∈ Finset.range L, thetaTerm g L r * taillessCount G r := by
-  intro L NS _
+  intro L _ NS _
   set s := (g - 1) / 2
   have hL1 : 1 ≤ L := Nat.one_le_two_pow
   have hL_even : L = 2 * 2 ^ (k - 1) := by
@@ -40,10 +42,10 @@ theorem nonSimple_theta_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
   have hhalf_pow2 : isPow2Small (2 ^ (k - 1)) = true := by
     have : k = 4 ∨ k = 5 ∨ k = 6 := by omega
     rcases this with rfl | rfl | rfl <;> decide
-  let TL (r : ℕ) := ((Finset.univ : Finset V).sigma fun v => nbWalks G r v v).filter
+  let TL (r : ℕ) := ((Finset.univ : Finset V).sigma fun v => nbWalksSub G r v v).filter
     fun x => IsCyclicallyNonBacktracking x.2.1
-  have hTL_card : ∀ r, (TL r).card = taillessCount G r := fun r => by
-    simp only [TL, taillessCount, Finset.filter_sigma, Finset.card_sigma]
+  have hTL_card : ∀ r, (TL r).card = taillessCount G r := fun r =>
+    taillessCount_eq_card_sub G r
   let NS_th := NS.filter fun x => ¬ isBarbellElem G g L x
   change NS_th.card ≤ _
   let isThRB (r₁ b : ℕ) (x : Σ v : V, {q : G.Walk v v // q.length = L}) : Prop :=
@@ -63,7 +65,7 @@ theorem nonSimple_theta_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
         1 ≤ b ∧ g ≤ L - 2 * b ∧ ¬ (isPow2Small (L - 2 * b) && decide (L - 2 * b < 2 * g))).biUnion fun b =>
         NS_th.filter (isThRB r₁ b) := by
     intro x hx
-    simp only [NS_th, NS, Finset.mem_filter, Finset.mem_sigma, Finset.mem_univ, true_and, nbWalks] at hx
+    simp only [NS_th, NS, Finset.mem_filter, Finset.mem_sigma, Finset.mem_univ, true_and, mem_nbWalksSub_iff] at hx
     rcases x with ⟨v, ⟨p, hp⟩⟩
     obtain ⟨j, u, w, c₁, P, c₂, hc₁, hc₂, hg₁, hg₂, hlen, hrc, hunr⟩ :=
       tailless_nonSimple_rotation_decomp hg hLt p hx.1.2.1 hx.1.2.2 hp hL1
@@ -256,8 +258,8 @@ theorem nonSimple_theta_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
         simp only [Finset.mem_biUnion, Finset.mem_range, Finset.mem_filter]
         refine ⟨d₁.length, by omega, Pb.length, ⟨hPblt, hPb1, hg_Q12, hnp_Q12⟩, ?_, ?_⟩
         · simp only [NS_th, NS, Finset.mem_filter, Finset.mem_sigma, Finset.mem_univ, true_and,
-            nbWalks, mem_finsetWalkLength_iff]
-          exact ⟨⟨⟨hp, hx.1.1.2⟩, hx.1.2.1, hx.1.2.2⟩, hx.2⟩
+            mem_nbWalksSub_iff]
+          exact ⟨⟨hx.1.1, hx.1.2.1, hx.1.2.2⟩, hx.2⟩
         · exact ⟨j_tot, u', w', Pb, Q₁, Q₂, rfl, hlen1, hPb1, hPblt, hgd₁, by omega,
             hnot_pow2_cycle d₁ hd₁, (show d₂.length = L - d₁.length by omega) ▸ hnot_pow2_cycle d₂ hd₂,
             hg_Q12, hnp_Q12, hPQ1, hPQ2, by omega, hfnQ, hlnQ, hj_tot⟩
@@ -268,7 +270,7 @@ theorem nonSimple_theta_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
   unfold thetaTerm
   set r₂ := L - r₁
   by_cases hcond : g ≤ r₁ ∧ r₁ < r₂ ∧ ¬ isPow2Small r₁ ∧ ¬ isPow2Small r₂
-  · rw [if_pos hcond]
+  · simp only [hcond, ↓reduceIte]
     have hlist_filt : ∀ (n : ℕ) (pred : ℕ → Bool) (f : ℕ → ℕ),
         (((List.range n).filter pred).map f).sum =
           ∑ b ∈ (Finset.range n).filter (fun b => pred b = true), f b := by
@@ -319,7 +321,7 @@ theorem nonSimple_theta_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
              (nbWalksBetweenAvoid G (r₂ - b - 2) v3 w u3).card) ≤ 2 ^ (r₂ - b - 2 - s) := by
         intro c1 hc1_mem
         dsimp only
-        simp only [TL, Finset.mem_filter, Finset.mem_sigma, Finset.mem_univ, true_and, nbWalks] at hc1_mem
+        simp only [TL, Finset.mem_filter, Finset.mem_sigma, Finset.mem_univ, true_and, mem_nbWalksSub_iff] at hc1_mem
         set sp := splitWalk b c1.2.1 (by rw [c1.2.2]; omega)
         have happ : sp.2.1.1.append sp.2.2.1 = c1.2.1 := splitWalk_append b c1.2.1 _
         have hPb_pos : 1 ≤ sp.2.1.1.length := by rw [sp.2.1.2]; omega
@@ -343,7 +345,7 @@ theorem nonSimple_theta_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
               cases hq : sp.2.2.1 with
               | nil => simp [hq] at hQ1_pos
               | cons _ _ => rfl
-            exact ((isNonBacktracking_append_iff sp.2.1.1 sp.2.2.1).mp (happ ▸ hc1_mem.1.2)).2.2 _ _ hln hfn
+            exact ((isNonBacktracking_append_iff sp.2.1.1 sp.2.2.1).mp (happ ▸ hc1_mem.1)).2.2 _ _ hln hfn
           have hm : sp.2.2.1.snd ∈ (G.neighborFinset sp.1).erase sp.2.1.1.reverse.snd :=
             Finset.mem_erase.mpr ⟨hne.symm, SimpleGraph.mem_neighborFinset.mpr h2⟩
           dsimp only [v3Set]
@@ -506,13 +508,15 @@ theorem nonSimple_theta_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
         ⟨j, ⟨u, ⟨Pb.append Q₁, hc1len⟩⟩, v3, u3, ⟨mid, by omega⟩⟩
       refine ⟨y, ?_, ?_⟩
       · simp only [Param, Finset.mem_sigma, Finset.mem_univ, true_and, TL, Finset.mem_filter,
-          nbWalks, mem_finsetWalkLength_iff, v3Set, u3Set, Finset.mem_erase,
+          mem_nbWalksSub_iff, v3Set, u3Set, Finset.mem_erase,
           SimpleGraph.mem_neighborFinset, nbWalksBetweenAvoid]
         rw [hsp]
-        exact ⟨⟨⟨hc1len, hnb_PQ1⟩, hPQ1_cnb⟩, ⟨hv3_ne_Q1, hv3_ne_Pb, hv3⟩,
-          ⟨hu3_ne_Q1, hu3_ne_Pb, hu3.symm⟩, ⟨⟨by omega, hmid_nb⟩, hmid_fn⟩⟩
+        exact ⟨⟨hnb_PQ1, hPQ1_cnb⟩, ⟨hv3_ne_Q1, hv3_ne_Pb, hv3⟩,
+          ⟨hu3_ne_Q1, hu3_ne_Pb, hu3.symm⟩, ⟨hmid_nb, hmid_fn⟩⟩
       · dsimp only [evalTh, y]
-        rw [hsp, dif_pos ⟨hv3, hu3⟩]
+        rw [hsp]
+        have hcond_e : G.Adj w v3 ∧ G.Adj u3 u := ⟨hv3, hu3⟩
+        simp only [hcond_e, ↓reduceDIte]
         congr 1
         simpa only [← hQ₂_eq] using hunr
     by_cases hne : S_rb.Nonempty
@@ -522,16 +526,16 @@ theorem nonSimple_theta_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
         if h : x ∈ S_rb then Classical.choose (hpre_th x h) else y0
       have hle1 : S_rb.card ≤ Param.card := by
         refine Finset.card_le_card_of_injOn f' ?_ ?_
-        · intro x hx; dsimp only [f']; rw [dif_pos hx]; exact (Classical.choose_spec (hpre_th x hx)).1
+        · intro x hx; dsimp only [f']; simp only [hx, ↓reduceDIte]; exact (Classical.choose_spec (hpre_th x hx)).1
         · intro x₁ h₁ x₂ h₂ heq
           have hev1 : evalTh (f' x₁) = some x₁ := by
-            dsimp only [f']; rw [dif_pos h₁]; exact (Classical.choose_spec (hpre_th x₁ h₁)).2
+            dsimp only [f']; simp only [h₁, ↓reduceDIte]; exact (Classical.choose_spec (hpre_th x₁ h₁)).2
           have hev2 : evalTh (f' x₂) = some x₂ := by
-            dsimp only [f']; rw [dif_pos h₂]; exact (Classical.choose_spec (hpre_th x₂ h₂)).2
+            dsimp only [f']; simp only [h₂, ↓reduceDIte]; exact (Classical.choose_spec (hpre_th x₂ h₂)).2
           exact Option.some.inj (hev1.symm.trans (congrArg evalTh heq |>.trans hev2))
       exact le_trans hle1 hParam_card
     · rw [Finset.not_nonempty_iff_eq_empty] at hne; simp [hne]
-  · rw [if_neg hcond, zero_mul]
+  · simp only [hcond, ↓reduceIte, zero_mul]
     have hemp : ∀ b, NS_th.filter (isThRB r₁ b) = ∅ := fun b => by
       rw [Finset.eq_empty_iff_forall_notMem]
       intro x hx
@@ -550,12 +554,14 @@ theorem nonSimpleTaillessCount_le_sum_alpha (G : SimpleGraph V) [DecidableRel G.
     nonSimpleTaillessCount G (2 ^ k) ≤
       ∑ r ∈ Finset.range (2 ^ k), alphaCoeff g (2 ^ k) r * taillessCount G r := by
   set L := 2 ^ k
-  let NS := ((Finset.univ : Finset V).sigma fun v => nbWalks G L v v).filter
+  haveI : DecidablePred (fun x : Σ v : V, {p : G.Walk v v // p.length = L} =>
+    IsCyclicallyNonBacktracking x.2.1 ∧ ¬ x.2.1.IsCycle) := Classical.decPred _
+  let NS := ((Finset.univ : Finset V).sigma fun v => nbWalksSub G L v v).filter
     fun x => IsCyclicallyNonBacktracking x.2.1 ∧ ¬ x.2.1.IsCycle
-  have hNS_card : NS.card = nonSimpleTaillessCount G L := by
-    simp only [NS, nonSimpleTaillessCount, Finset.filter_sigma, Finset.card_sigma]
+  have hNS_card : NS.card = nonSimpleTaillessCount G L :=
+    nonSimpleTaillessCount_eq_card_sub G L
   rw [← hNS_card]
-  classical
+  haveI : DecidablePred (isBarbellElem G g L) := Classical.decPred _
   have hpart : NS.card =
       (NS.filter (isBarbellElem G g L)).card +
       (NS.filter fun x => ¬ isBarbellElem G g L x).card :=
