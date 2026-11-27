@@ -1,0 +1,38 @@
+name: finite-sat-dags-validation-v1
+on:
+  push:
+    branches: [main]
+    paths: [jobs/finite-sat-dags-v1/launch.txt]
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: read
+jobs:
+  bounded-controls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+    defaults:
+      run:
+        shell: bash
+        working-directory: jobs/finite-sat-dags-v1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Semantic controls and real SAT and UNSAT proof replay
+        run: |
+          mkdir -p out
+          PYTHONPATH=scripts python3 -m finite_sat.controls --with-solvers --out out > out/validation.stdout.json
+          cat out/validation.json
+      - name: Exhaustive Latin controls and independent Hoffman Singleton graph
+        run: |
+          python3 research/MOLS10-3/finite-sat-dag/check_reference.py > out/mols-exhaustive.json
+          python3 research/MOORE-57/finite-sat-dag/hs_control.py > out/moore-hs-control.json
+          PYTHONPATH=scripts python3 -m finite_sat.reference manifest --out out/manifest.json
+      - name: Preserve every control instance and checked certificate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: finite-sat-dags-validation-v1
+          path: jobs/finite-sat-dags-v1/out
+          retention-days: 90

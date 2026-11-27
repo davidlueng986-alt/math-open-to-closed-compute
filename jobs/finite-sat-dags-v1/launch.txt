@@ -1,0 +1,3 @@
+2026-11-27: bounded software validation of complete finite SAT reference encodings and partitions.
+Nine known tiny SAT/UNSAT controls; sixteen replayed R(3,3)=6 UNSAT leaves.
+No original-target solving and no recurrence. Original problems remain OPEN.
