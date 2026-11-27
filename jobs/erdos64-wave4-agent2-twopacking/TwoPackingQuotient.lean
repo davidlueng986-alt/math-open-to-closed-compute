@@ -177,6 +177,7 @@ theorem support_liftWalkAvoidNone {V : Type u} {G : SimpleGraph V} {I : Finset V
     (p : (quotientGraph G I).Walk (some a) (some b)) (h : none ∉ p.support) :
     (liftWalkAvoidNone p h).support.map (fun v => if hv : v ∈ I then none else some ⟨v, hv⟩) =
       p.support := by
+  classical
   induction p with
   | nil => simp [liftWalkAvoidNone, a.2]
   | @cons x y z hadj q ih =>
@@ -208,6 +209,7 @@ theorem nodup_liftWalkAvoidNone {V : Type u} {G : SimpleGraph V} {I : Finset V}
     {a b : { v : V // v ∉ I }}
     (p : (quotientGraph G I).Walk (some a) (some b)) (h : none ∉ p.support)
     (hnd : p.support.Nodup) : (liftWalkAvoidNone p h).support.Nodup := by
+  classical
   have hmap := support_liftWalkAvoidNone p h
   rw [← hmap] at hnd
   exact List.Nodup.of_map _ hnd
@@ -216,6 +218,7 @@ theorem nodup_tail_liftWalkAvoidNone {V : Type u} {G : SimpleGraph V} {I : Finse
     {a b : { v : V // v ∉ I }}
     (p : (quotientGraph G I).Walk (some a) (some b)) (h : none ∉ p.support)
     (hnd : p.support.tail.Nodup) : (liftWalkAvoidNone p h).support.tail.Nodup := by
+  classical
   have hmap := congrArg List.tail (support_liftWalkAvoidNone p h)
   rw [List.map_tail] at hmap
   rw [← hmap] at hnd
@@ -228,7 +231,8 @@ theorem split_walk_to_none {V : Type u} {G : SimpleGraph V} {I : Finset V}
     (q : (quotientGraph G I).Walk (some a) none) (hnd : q.support.Nodup) :
     ∃ (b : { v : V // v ∉ I }) (q' : (quotientGraph G I).Walk (some a) (some b))
       (hlast : (quotientGraph G I).Adj (some b) none),
-      none ∉ q'.support ∧ q'.support.Nodup ∧ q'.length + 1 = q.length := by
+      none ∉ q'.support ∧ q'.support.Nodup ∧
+      (∀ v ∈ q'.support, v ∈ q.support) ∧ q'.length + 1 = q.length := by
   generalize hsrc : (some a : QVert I) = s at q hnd
   induction q generalizing a with
   | nil => cases hsrc
@@ -238,29 +242,147 @@ theorem split_walk_to_none {V : Type u} {G : SimpleGraph V} {I : Finset V}
     | none =>
       cases r with
       | nil =>
-        exact ⟨a, .nil, hadj, by simp, by simp, by simp⟩
+        exact ⟨a, .nil, hadj, by simp, by simp, fun v hv => by simp at hv; simp [hv], by simp⟩
       | cons hadj' r' =>
         simp only [Walk.support_cons, List.nodup_cons] at hnd
-        have hmem : (none : QVert I) ∈ (Walk.cons hadj' r').support :=
-          Walk.end_mem_support (Walk.cons hadj' r')
         have hnd2 := hnd.2
         simp only [Walk.support_cons, List.nodup_cons] at hnd2
         exact absurd (Walk.end_mem_support r') hnd2.1
     | some c =>
       simp only [Walk.support_cons, List.nodup_cons] at hnd
-      obtain ⟨b, q', hlast, hno, hnd', hlen⟩ := ih hnd.2 rfl
-      refine ⟨b, .cons hadj q', hlast, ?_, ?_, ?_⟩
+      obtain ⟨b, q', hlast, hno, hnd', hsub, hlen⟩ := ih hnd.2 rfl
+      refine ⟨b, .cons hadj q', hlast, ?_, ?_, ?_, ?_⟩
       · simp [hno]
       · simp only [Walk.support_cons, List.nodup_cons]
-        refine ⟨?_, hnd'⟩
-        intro hmem
-        apply hnd.1
-        -- Every vertex in q'.support is in r.support
-        have hsub : ∀ v ∈ q'.support, v ∈ r.support := by
-          -- We prove this by noting we don't even need q' from ih without knowing support ⊆ r.support!
-          sorry
-        exact hsub _ hmem
+        exact ⟨fun hmem => hnd.1 (hsub _ hmem), hnd'⟩
+      · intro v hv
+        simp only [Walk.support_cons, List.mem_cons] at hv ⊢
+        rcases hv with rfl | hv'
+        · exact Or.inl rfl
+        · exact Or.inr (hsub v hv')
       · simp only [Walk.length_cons]
         omega
+
+/-- Universal 2-Packing Internally-Disjoint Dyadic-Path Theorem across all 13 open leaves
+of `MinimalBad`: for any 2-packing `I` of size at least 2, there exist distinct `x, y ∈ I`
+and a simple `x`–`y` path of length `2^k` (`k ≥ 2`) whose internal vertices lie outside `I`. -/
+theorem minimal_bad_two_packing_dyadic_path
+    {V : Type u} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (hm : MinimalBad G) (I : Finset V) (hI : 2 ≤ I.card) (hpack : IsTwoPacking G I) :
+    ∃ (x y : V) (k : ℕ) (p : G.Walk x y),
+      x ∈ I ∧ y ∈ I ∧ x ≠ y ∧ 2 ≤ k ∧ p.IsPath ∧ p.length = 2 ^ k ∧
+      ∀ v ∈ p.support, v ∈ I → v = x ∨ v = y := by
+  classical
+  let H := quotientGraph G I
+  have hpow : HasPower H :=
+    hm.2.2.1 (QVert I) H (card_qvert_lt I hI) (near_quotient G hm.1 I hI hpack)
+  obtain ⟨k, v₀, c, hk, hcyc, hlen⟩ := hpow
+  by_cases hnone : none ∈ c.support
+  · let c' := c.rotate hnone
+    have hcyc' : c'.IsCycle := hcyc.rotate hnone
+    have hlen' : c'.length = 2 ^ k := by simp [c', hlen]
+    have hge3 : 3 ≤ c'.length := hcyc'.three_le_length
+    cases hc' : c' with
+    | nil =>
+      rw [hc'] at hge3
+      simp at hge3
+    | @cons _ y _ h₁ q =>
+      cases y with
+      | none =>
+        exact absurd h₁ (H.loopless none)
+      | some a =>
+        have hnd_q : q.support.Nodup := by
+          have ht := hcyc'.support_nodup
+          rw [hc'] at ht
+          simpa [Walk.support_cons] using ht
+        obtain ⟨b, q', hlast, hno, hnd', _, hlen_q'⟩ := split_walk_to_none q hnd_q
+        obtain ⟨x, hxI, hxadj⟩ := h₁
+        obtain ⟨y, hyI, hyadj⟩ := hlast
+        let p' : G.Walk a.1 b.1 := liftWalkAvoidNone q' hno
+        have hp'_len : p'.length = q'.length := length_liftWalkAvoidNone q' hno
+        have hp'_nd : p'.support.Nodup := nodup_liftWalkAvoidNone q' hno hnd'
+        have hp'_out : ∀ v ∈ p'.support, v ∉ I :=
+          fun v hv => mem_support_liftWalkAvoidNone_not_mem q' hno hv
+        let p : G.Walk x y := Walk.cons hxadj (p'.concat hyadj)
+        have hp_len : p.length = 2 ^ k := by
+          have hcl : q.length + 1 = 2 ^ k := by
+            rw [hc', Walk.length_cons] at hlen'
+            omega
+          simp only [p, Walk.length_cons, Walk.length_concat, hp'_len]
+          omega
+        have hp_supp : p.support = x :: (p'.support ++ [y]) := by
+          simp [p, Walk.support_cons, Walk.support_concat]
+        have hxy : x ≠ y := by
+          intro hEq
+          subst hEq
+          have hp_nil : ¬ p.Nil := by
+            intro hnil
+            have hz := Walk.length_eq_zero_iff.mpr hnil
+            have hpow4 : 4 ≤ 2 ^ k := by
+              calc 4 = 2 ^ 2 := by decide
+                _ ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
+            omega
+          have hp_tail_nd : p.support.tail.Nodup := by
+            rw [hp_supp, List.tail_cons, List.nodup_append]
+            refine ⟨hp'_nd, List.nodup_singleton x, ?_⟩
+            intro u hu v hv huv
+            simp only [List.mem_singleton] at hv
+            subst hv
+            exact hp'_out u hu (huv ▸ hxI)
+          have hp_cyc : p.IsCycle := by
+            apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
+            refine ⟨Walk.IsPath.mk' ?_, ?_⟩
+            · rwa [Walk.support_tail_of_not_nil _ hp_nil]
+            · have hpow4 : 4 ≤ 2 ^ k := by
+                calc 4 = 2 ^ 2 := by decide
+                  _ ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) hk
+              omega
+          exact hm.2.1 ⟨k, x, p, hk, hp_cyc, hp_len⟩
+        have hp_nd : p.support.Nodup := by
+          rw [hp_supp, List.nodup_cons, List.nodup_append]
+          refine ⟨?_, hp'_nd, List.nodup_singleton y, ?_⟩
+          · intro hmem
+            rw [List.mem_append, List.mem_singleton] at hmem
+            rcases hmem with hx' | hEq
+            · exact hp'_out x hx' hxI
+            · exact hxy hEq
+          · intro u hu v hv huv
+            simp only [List.mem_singleton] at hv
+            subst hv
+            exact hp'_out u hu (huv ▸ hyI)
+        refine ⟨x, y, k, p, hxI, hyI, hxy, hk, Walk.IsPath.mk' hp_nd, hp_len, ?_⟩
+        intro v hv hvI
+        rw [hp_supp, List.mem_cons, List.mem_append, List.mem_singleton] at hv
+        rcases hv with rfl | (hv' | rfl)
+        · exact Or.inl rfl
+        · exact absurd hvI (hp'_out v hv')
+        · exact Or.inr rfl
+  · cases hv₀ : v₀ with
+    | none =>
+      exact absurd (hv₀ ▸ Walk.start_mem_support c) hnone
+    | some a =>
+      subst hv₀
+      let cl : G.Walk a.1 a.1 := liftWalkAvoidNone c hnone
+      have hcl_len : cl.length = 2 ^ k := by
+        rw [length_liftWalkAvoidNone, hlen]
+      have hcl_ge3 : 3 ≤ cl.length := by
+        rw [length_liftWalkAvoidNone]
+        exact hcyc.three_le_length
+      have hcl_nil : ¬ cl.Nil := by
+        intro hnil
+        have hz := Walk.length_eq_zero_iff.mpr hnil
+        omega
+      have hcl_tail_nd : cl.support.tail.Nodup :=
+        nodup_tail_liftWalkAvoidNone c hnone hcyc.support_nodup
+      have hcl_cyc : cl.IsCycle := by
+        apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
+        refine ⟨Walk.IsPath.mk' ?_, hcl_ge3⟩
+        rwa [Walk.support_tail_of_not_nil _ hcl_nil]
+      exact False.elim (hm.2.1 ⟨k, a.1, cl, hk, hcl_cyc, hcl_len⟩)
+
+#print axioms minimal_bad_two_packing_dyadic_path
+#print axioms near_quotient
+#print axioms card_qvert_lt
 
 end E64Wave4Agent2
