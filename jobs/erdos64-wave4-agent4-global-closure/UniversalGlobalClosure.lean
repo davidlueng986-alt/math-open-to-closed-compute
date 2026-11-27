@@ -49,6 +49,10 @@ def ContractSet {V : Type u} (G : SimpleGraph V) (S : Set V) :
     | none => exact h
     | some x => exact G.loopless.irrefl x.1 h⟩
 
+theorem contractSet_adj_some_some {V : Type u} {G : SimpleGraph V} {S : Set V}
+    {x y : {v : V // v ∉ S}} (h : (ContractSet G S).Adj (some x) (some y)) :
+    G.Adj x.1 y.1 := h
+
 /-- Contracting any set of size at least 2 strictly decreases the vertex count. -/
 theorem contractSet_card_lt {V : Type u} [Fintype V] [DecidableEq V]
     (S : Set V) [DecidablePred (· ∈ S)] (hS : 2 ≤ Nat.card S) :
@@ -71,19 +75,21 @@ theorem contractSet_degree_some {V : Type u} [Fintype V] [DecidableEq V]
     (hnm : NoMultiAttach G S) (x : {v : V // v ∉ S}) :
     (ContractSet G S).degree (some x) = G.degree x.1 := by
   classical
+  let toF : (ContractSet G S).neighborSet (some x) → G.neighborSet x.1 := fun p =>
+    match hp : p.1 with
+    | none =>
+      have h : ∃ u ∈ S, G.Adj u x.1 := by simpa [ContractSet, hp] using p.2
+      ⟨Classical.choose h, (Classical.choose_spec h).2.symm⟩
+    | some y =>
+      ⟨y.1, by simpa [ContractSet, hp] using p.2⟩
+  let invF : G.neighborSet x.1 → (ContractSet G S).neighborSet (some x) := fun q =>
+    if hq : q.1 ∈ S then
+      ⟨none, by exact ⟨q.1, hq, q.2.symm⟩⟩
+    else
+      ⟨some ⟨q.1, hq⟩, by exact q.2⟩
   let e : (ContractSet G S).neighborSet (some x) ≃ G.neighborSet x.1 :=
-    { toFun := fun p =>
-        match hp : p.1 with
-        | none =>
-          have h : ∃ u ∈ S, G.Adj u x.1 := by simpa [ContractSet, hp] using p.2
-          ⟨Classical.choose h, (Classical.choose_spec h).2.symm⟩
-        | some y =>
-          ⟨y.1, by simpa [ContractSet, hp] using p.2⟩
-      invFun := fun q =>
-        if hq : q.1 ∈ S then
-          ⟨none, by exact ⟨q.1, hq, q.2.symm⟩⟩
-        else
-          ⟨some ⟨q.1, hq⟩, by exact q.2⟩
+    { toFun := toF
+      invFun := invF
       left_inv := by
         intro p
         rcases p with ⟨a, ha⟩
@@ -91,19 +97,22 @@ theorem contractSet_degree_some {V : Type u} [Fintype V] [DecidableEq V]
         | none =>
           have h : ∃ u ∈ S, G.Adj u x.1 := ha
           have huS : Classical.choose h ∈ S := (Classical.choose_spec h).1
-          simp [huS]
+          simp [toF, invF, huS]
         | some y =>
-          simp [y.2]
+          simp [toF, invF, y.2]
       right_inv := by
         intro q
         rcases q with ⟨w, hw⟩
-        dsimp only
-        split_ifs with hwS
-        · apply Subtype.ext
+        by_cases hwS : w ∈ S
+        · have hinv : invF ⟨w, hw⟩ = ⟨none, ⟨w, hwS, hw.symm⟩⟩ := by simp [invF, hwS]
+          rw [hinv]
+          apply Subtype.ext
           have h : ∃ u ∈ S, G.Adj u x.1 := ⟨w, hwS, hw.symm⟩
           have hspec := Classical.choose_spec h
           exact hnm x.1 x.2 (Classical.choose h) hspec.1 w hwS hspec.2.symm hw
-        · rfl }
+        · have hinv : invF ⟨w, hw⟩ = ⟨some ⟨w, hwS⟩, hw⟩ := by simp [invF, hwS]
+          rw [hinv]
+          rfl }
   calc
     (ContractSet G S).degree (some x)
         = Nat.card ((ContractSet G S).neighborSet (some x)) := by
@@ -162,7 +171,7 @@ def liftWalkAvoiding {V : Type u} {G : SimpleGraph V} {S : Set V} :
   | _, _, .nil, _ => .nil
   | _, _, .cons (v := none) _ _, h => absurd (by simp) h
   | _, _, .cons (v := some _) hadj q, h =>
-      .cons hadj (liftWalkAvoiding q (fun hm => h (by simp [hm])))
+      .cons (contractSet_adj_some_some hadj) (liftWalkAvoiding q (fun hm => h (by simp [hm])))
 
 theorem liftWalkAvoiding_length {V : Type u} {G : SimpleGraph V} {S : Set V} :
     ∀ {x y : {v : V // v ∉ S}} (p : (ContractSet G S).Walk (some x) (some y))
@@ -171,9 +180,8 @@ theorem liftWalkAvoiding_length {V : Type u} {G : SimpleGraph V} {S : Set V} :
   | _, _, .nil, _ => by simp [liftWalkAvoiding]
   | _, _, .cons (v := none) _ _, h => absurd (by simp) h
   | _, _, .cons (v := some _) _ q, h => by
-      unfold liftWalkAvoiding
-      rw [Walk.length_cons, Walk.length_cons,
-          liftWalkAvoiding_length q (fun hm => h (by simp [hm]))]
+      simp only [liftWalkAvoiding, Walk.length_cons]
+      rw [liftWalkAvoiding_length q (fun hm => h (by simp [hm]))]
 
 theorem liftWalkAvoiding_support_map {V : Type u} {G : SimpleGraph V} {S : Set V} :
     ∀ {x y : {v : V // v ∉ S}} (p : (ContractSet G S).Walk (some x) (some y))
@@ -190,23 +198,19 @@ theorem liftWalkAvoiding_support_map {V : Type u} {G : SimpleGraph V} {S : Set V
         cases o with
         | none => exact absurd ho hq
         | some t => rfl
-      unfold liftWalkAvoiding
-      rw [Walk.support_cons, Walk.support_cons, List.map_cons, hmap,
-          liftWalkAvoiding_support_map q hq]
-      rfl
+      simp only [liftWalkAvoiding, Walk.support_cons, List.map_cons, Option.elim_some]
+      rw [hmap, liftWalkAvoiding_support_map q hq]
 
 theorem liftWalkAvoiding_mem_compl {V : Type u} {G : SimpleGraph V} {S : Set V} :
     ∀ {x y : {v : V // v ∉ S}} (p : (ContractSet G S).Walk (some x) (some y))
       (h : none ∉ p.support),
       ∀ v ∈ (liftWalkAvoiding p h).support, v ∉ S
   | x, _, .nil, _, v, hv => by
-      unfold liftWalkAvoiding at hv
-      rw [Walk.support_nil, List.mem_singleton] at hv
+      simp only [liftWalkAvoiding, Walk.support_nil, List.mem_singleton] at hv
       exact hv ▸ x.2
   | _, _, .cons (v := none) _ _, h, _, _ => absurd (by simp) h
   | x, _, .cons (v := some _) _ q, h, v, hv => by
-      unfold liftWalkAvoiding at hv
-      rw [Walk.support_cons, List.mem_cons] at hv
+      simp only [liftWalkAvoiding, Walk.support_cons, List.mem_cons] at hv
       rcases hv with rfl | hv
       · exact x.2
       · exact liftWalkAvoiding_mem_compl q (fun hm => h (by simp [hm])) v hv
