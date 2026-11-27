@@ -1,0 +1,59 @@
+name: erdos617-w4-exp5-r6-cegar
+
+on:
+  push:
+    branches:
+      - erdos617-w4-exp5-r6-cegar
+  workflow_dispatch:
+    inputs:
+      max_time:
+        description: "Max seconds per ordering"
+        required: false
+        default: "1200"
+
+jobs:
+  cegar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        ordering:
+          - "6,6,6,7,6,6"
+          - "6,6,7,6,6,6"
+          - "6,7,6,6,6,6"
+          - "5,6,7,7,6,6"
+          - "5,7,6,7,6,6"
+          - "5,7,7,6,6,6"
+          - "6,5,7,7,6,6"
+          - "6,6,6,7,7,5"
+          - "6,6,7,6,7,5"
+          - "6,6,7,7,5,6"
+          - "6,6,7,7,6,5"
+          - "6,7,5,7,6,6"
+          - "6,7,6,6,7,5"
+          - "6,7,6,7,5,6"
+          - "6,7,6,7,6,5"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install PySAT and compile C++ 7-IS oracle
+        run: |
+          pip install -q python-sat
+          g++ -O3 -march=native -shared -fPIC jobs/erdos617-w4-exp5-r6/find_is7.cpp -o jobs/erdos617-w4-exp5-r6/libfind_is7.so
+      - name: Run incremental CaDiCaL CEGAR for ${{ matrix.ordering }}
+        run: |
+          MAX_T="${{ github.event.inputs.max_time || '1200' }}"
+          python3 jobs/erdos617-w4-exp5-r6/solve_cegar.py \
+            --ordering "${{ matrix.ordering }}" \
+            --max-time "$MAX_T" \
+            --out "result_${{ matrix.ordering }}.json"
+          cat "result_${{ matrix.ordering }}.json"
+      - name: Upload result artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r6-cegar-${{ matrix.ordering }}
+          path: result_*.json
