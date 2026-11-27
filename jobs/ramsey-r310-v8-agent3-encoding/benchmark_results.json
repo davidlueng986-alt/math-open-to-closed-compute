@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-27",
+  "agent": "Agent 3 (SAT Encoding, CP-SAT & SMS Redesign)",
+  "v5_v7_bloat_audit": {
+    "D6-N9-B3-P000-T01": {"free_edges": 665, "base_vars": 380302, "base_clauses": 1010879, "seed_i10": 12961, "total_clauses": 1023840, "top_bloat_vars": {"9_HB_neighborhood_patterns": 194819, "7_codegrees_and_saturation": 109127, "6_dual_internal_degrees": 60721, "5_edge_counts": 7652}},
+    "D6-N9-B3-P002-T01": {"free_edges": 665, "base_vars": 380268, "base_clauses": 1010675, "seed_i10": 12961, "total_clauses": 1023636, "top_bloat_vars": {"9_HB_neighborhood_patterns": 194819, "7_codegrees_and_saturation": 109127, "6_dual_internal_degrees": 60721, "5_edge_counts": 7652}},
+    "D8-N8-B0-P000-T01": {"free_edges": 661, "base_vars": 425961, "base_clauses": 1179254, "seed_i10": 1553, "total_clauses": 1180807, "top_bloat_vars": {"9_HB_neighborhood_patterns": 223290, "7_codegrees_and_saturation": 107834, "6_dual_internal_degrees": 58058, "8_deficit_eps_sums": 21190, "5_edge_counts": 7428}}
+  },
+  "lean_cnf_v8_comparison": {
+    "D6-N9-B3-P000-T01": {"lean_static_lex": {"vars": 15605, "clauses": 73326}, "lean_sms_xycodeg": {"vars": 14478, "clauses": 66599}, "ultra_lean_sms": {"vars": 9142, "clauses": 51455}, "sms_partition": [1, 1, 5, 8, 25]},
+    "D6-N9-B3-P002-T01": {"lean_static_lex": {"vars": 15496, "clauses": 72681}, "lean_sms_xycodeg": {"vars": 14369, "clauses": 65954}, "ultra_lean_sms": {"vars": 9033, "clauses": 51000}, "sms_partition": [1, 1, 5, 8, 25]},
+    "D8-N8-B0-P000-T01": {"lean_static_lex": {"vars": 28389, "clauses": 110962}, "lean_sms_xycodeg": {"vars": 27196, "clauses": 103839}, "ultra_lean_sms": {"vars": 21274, "clauses": 86997}, "sms_partition": [1, 1, 7, 7, 24]}
+  },
+  "local_cpsat_benchmarks_2core": [
+    {"task_id": "D6-N9-B3-P002-T01", "mode": "lazy", "vars": 2441, "ctrs": 10848, "wall_s": 44.97, "models": 6, "lazy_codegs": 202, "i10_cuts": 1536, "status": "STOPPED_UNKNOWN"},
+    {"task_id": "D6-N9-B3-P002-T01", "mode": "all", "vars": 24041, "ctrs": 55378, "wall_s": 45.13, "models": 0, "lazy_codegs": 0, "i10_cuts": 0, "status": "STOPPED_UNKNOWN"},
+    {"task_id": "D6-N9-B3-P000-T01", "mode": "lazy", "vars": 2475, "ctrs": 10914, "wall_s": 45.05, "models": 9, "lazy_codegs": 239, "i10_cuts": 2304, "status": "STOPPED_UNKNOWN"},
+    {"task_id": "D6-N9-B3-P000-T01", "mode": "all", "vars": 24075, "ctrs": 55444, "wall_s": 45.13, "models": 0, "lazy_codegs": 0, "i10_cuts": 0, "status": "STOPPED_UNKNOWN"},
+    {"task_id": "D8-N8-B0-P000-T01", "mode": "lazy", "vars": 4051, "ctrs": 14048, "wall_s": 45.05, "models": 0, "lazy_codegs": 0, "i10_cuts": 0, "status": "STOPPED_UNKNOWN"}
+  ],
+  "global_v8_konig_279_tasks": {
+    "v6_pairs": 99862,
+    "v8_pairs": 79026,
+    "v8_konig_pairs": 65563,
+    "reduction_pct": 34.35,
+    "empty_tasks_v8": 8,
+    "empty_tasks_v8_konig": 12,
+    "konig_eliminated_tasks": ["D6-N9-B3-P000-T00", "D6-N9-B3-P001-T00", "D6-N9-B3-P002-T00", "D6-N9-B3-P003-T00"]
+  }
+}
