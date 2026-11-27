@@ -103,8 +103,8 @@ private theorem length_eq_one_of_isPath_mem_edges_endpoints {G : SimpleGraph V} 
               have hnd2 := hnd.2
               rw [Walk.support_cons, List.nodup_cons] at hnd2
               exact hnd2.1 (Walk.end_mem_support rest2)
-        · subst huv
-          exact absurd (Walk.end_mem_support rest) hnd.1
+        · exfalso
+          exact hnd.1 (by rw [huv]; exact Walk.end_mem_support rest)
       · exfalso
         exact hnd.1 (mem_support_of_mem_edges hmem (by simp))
 
@@ -219,15 +219,14 @@ theorem fwdWalk_support {G : SimpleGraph V} {m r : ℕ} (C : ChordedEvenCycle G 
       simp only [fwdWalk, Walk.support_cons, Walk.support_copy]
       rw [fwdWalk_support C (start + 1) len]
       conv_rhs => rw [List.range_succ_eq_map, List.map_cons, List.map_map]
+      apply congrArg (C.v ⟨start % (2 * m), _⟩ :: ·)
+      apply List.map_congr_left
+      intro t _
+      simp only [Function.comp_apply]
       congr 1
-      · simp
-      · apply List.map_congr_left
-        intro t _
-        simp only [Function.comp_apply]
-        congr 1
-        apply Fin.ext
-        dsimp only
-        congr 1; omega
+      apply Fin.ext
+      dsimp only
+      congr 1; omega
 
 theorem fwdWalk_isPath {G : SimpleGraph V} {m r : ℕ} (C : ChordedEvenCycle G m r)
     (start len : ℕ) (hlen : len < 2 * m) :
@@ -287,8 +286,9 @@ theorem exists_chord_path_type1 {G : SimpleGraph V} {m r : ℕ} (C : ChordedEven
   have hm := C.hm; have hr1 := C.hr_lo; have hrh := C.hr_hi
   have h1 : (0 + 2 * a) % (2 * m) = 2 * a := Nat.mod_eq_of_lt (by omega)
   have h2 : (2 * r + 1 + (2 * b - 1)) % (2 * m) = 2 * (r + b) := by
-    have : 2 * r + 1 + (2 * b - 1) = 2 * (r + b) := by omega
-    rw [this, Nat.mod_eq_of_lt (by omega)]
+    have heq : 2 * r + 1 + (2 * b - 1) = 2 * (r + b) := by omega
+    rw [heq]
+    exact Nat.mod_eq_of_lt (by omega)
   have h0 : 0 % (2 * m) = 0 := Nat.zero_mod _
   have h2r1 : (2 * r + 1) % (2 * m) = 2 * r + 1 := Nat.mod_eq_of_lt (by omega)
   let p0 := (C.fwdWalk 0 (2 * a)).reverse
@@ -349,8 +349,9 @@ theorem exists_chord_path_type2 {G : SimpleGraph V} {m r : ℕ} (C : ChordedEven
     rw [this, Nat.mod_self]
   have h3 : (2 * (r + 1 - b)) % (2 * m) = 2 * (r + 1 - b) := Nat.mod_eq_of_lt (by omega)
   have h4 : (2 * (r + 1 - b) + (2 * b - 1)) % (2 * m) = 2 * r + 1 := by
-    have : 2 * (r + 1 - b) + (2 * b - 1) = 2 * r + 1 := by omega
-    rw [this, Nat.mod_eq_of_lt (by omega)]
+    have heq : 2 * (r + 1 - b) + (2 * b - 1) = 2 * r + 1 := by omega
+    rw [heq]
+    exact Nat.mod_eq_of_lt (by omega)
   let p0 := C.fwdWalk (2 * m - 2 * a) (2 * a)
   let q0 := (C.fwdWalk (2 * (r + 1 - b)) (2 * b - 1)).reverse
   have hp0_path : p0.IsPath := C.fwdWalk_isPath (2 * m - 2 * a) (2 * a) (by omega)
@@ -417,8 +418,9 @@ theorem exists_chord_path_type3 {G : SimpleGraph V} {m r : ℕ} (C : ChordedEven
     rw [this, Nat.mod_self]
   have h2r1 : (2 * r + 1) % (2 * m) = 2 * r + 1 := Nat.mod_eq_of_lt (by omega)
   have h3 : (2 * r + 1 + (2 * b - 1)) % (2 * m) = 2 * (r + b) := by
-    have : 2 * r + 1 + (2 * b - 1) = 2 * (r + b) := by omega
-    rw [this, Nat.mod_eq_of_lt (by omega)]
+    have heq : 2 * r + 1 + (2 * b - 1) = 2 * (r + b) := by omega
+    rw [heq]
+    exact Nat.mod_eq_of_lt (by omega)
   let p0 := C.fwdWalk (2 * m - 2 * a) (2 * a)
   let q0 := C.fwdWalk (2 * r + 1) (2 * b - 1)
   have hp0_path : p0.IsPath := C.fwdWalk_isPath (2 * m - 2 * a) (2 * a) (by omega)
@@ -506,8 +508,9 @@ def reflect {G : SimpleGraph V} {m r : ℕ} (C : ChordedEvenCycle G m r) :
     have hm := C.hm; have hr1 := C.hr_lo; have hrh := C.hr_hi
     have h0 : (2 * m - 0) % (2 * m) = 0 := by simp
     have h1 : (2 * m - (2 * (m - 1 - r) + 1)) % (2 * m) = 2 * r + 1 := by
-      have : 2 * m - (2 * (m - 1 - r) + 1) = 2 * r + 1 := by omega
-      rw [this, Nat.mod_eq_of_lt (by omega)]
+      have heq : 2 * m - (2 * (m - 1 - r) + 1) = 2 * r + 1 := by omega
+      rw [heq]
+      exact Nat.mod_eq_of_lt (by omega)
     simpa only [h0, h1] using C.hadj_chord
 
 private theorem mod_add_cancel_right {d u v w : ℕ} (hd : 0 < d) (hu : u < d) (hv : v < d)
@@ -552,7 +555,7 @@ private theorem add_neg_mod_eq_zero {d x : ℕ} (hd : 0 < d) :
 /-- Algebraic heart of Bondy–Simonovits–Verstraëte: if a `d`-periodic coloring `f : ℕ → Bool`
 (`d ∣ m`, `d ∣ k`, `1 ≤ k < m`, `1 ≤ r ≤ m - r - 1`) satisfies the Type 1, Type 2, and (when
 `k ≤ m - r - 1`) Type 3 chord invariances, then `f` is constant! -/
-private theorem bsv_periodic_coloring_const {m r k : ℕ} (hm : 3 ≤ m)
+private theorem bsv_periodic_coloring_const {m r k : ℕ} (_hm : 3 ≤ m)
     (hr1 : 1 ≤ r) (hr_half : r ≤ m - r - 1) (hk1 : 1 ≤ k) (hkm : k < m)
     (f : ℕ → Bool)
     (hper_m : ∀ x, f (x + m) = f x)
