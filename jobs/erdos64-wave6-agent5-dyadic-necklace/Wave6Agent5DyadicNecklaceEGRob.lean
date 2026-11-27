@@ -312,11 +312,8 @@ namespace BypassNecklace
 
 variable {V : Type*} {G : SimpleGraph V} (N : BypassNecklace G)
 
-def nextIdx (i : Fin N.r) : Fin N.r :=
-  ⟨(i.val + 1) % N.r, Nat.mod_lt _ (by have := N.hr; omega)⟩
-
 def seg (σ : Fin N.r → Bool) (i : Fin N.r) :
-    G.Walk (N.junction i) (N.junction (N.nextIdx i)) :=
+    G.Walk (N.junction i) (N.junction ⟨(i.val + 1) % N.r, Nat.mod_lt _ (by have := N.hr; omega)⟩) :=
   if σ i then N.segB i else N.segA i
 
 theorem seg_isPath (σ : Fin N.r → Bool) (i : Fin N.r) : (N.seg σ i).IsPath := by
@@ -495,10 +492,12 @@ theorem cycleWalk_length_decomp (bs : List Bool) (hbs : bs.length = N.r) :
         rw [ih bs'' hlen'' hget'']
         have hseg : (N.seg σ a).length =
             (N.segA a).length + (if b then (N.segB a).length - (N.segA a).length else 0) := by
+          unfold seg
+          rw [← hb]
           cases b
-          · simp [seg, ← hb]
-          · have hle := N.segB_ge a
-            simp [seg, ← hb]
+          · simp
+          · simp only [↓reduceIte]
+            have hle := N.segB_ge a
             omega
         omega
   exact hlist (List.finRange N.r) bs (by simp [hbs]) (by
