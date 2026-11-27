@@ -472,7 +472,8 @@ private lemma card_neighborFinset_ge_of_replace {V : Type*} [Fintype V] [Decidab
         constructor
         · intro hwu; exact hw_ne_del (hdel_only w hw_adj (Or.inl hwu))
         · intro hwv; exact hw_ne_del (hdel_only w hw_adj (Or.inr hwv))
-      rw [dite_cond_eq_true (eq_true hne_uv), Finset.mem_coe, Finset.mem_erase,
+      dsimp only
+      rw [dite_eq_left_of_eq_true (eq_true hne_uv), Finset.mem_coe, Finset.mem_erase,
         mem_neighborFinset]
       refine ⟨?_, ?_⟩
       · intro heq
@@ -491,7 +492,8 @@ private lemma card_neighborFinset_ge_of_replace {V : Type*} [Fintype V] [Decidab
         have hw_adj : G.Adj x.1 w₂ := (mem_neighborFinset G x.1 w₂).mp (Finset.mem_erase.mp hw₂).2
         exact ⟨fun h => hw_ne_del (hdel_only w₂ hw_adj (Or.inl h)),
                fun h => hw_ne_del (hdel_only w₂ hw_adj (Or.inr h))⟩
-      rw [dite_cond_eq_true (eq_true hne1), dite_cond_eq_true (eq_true hne2)] at heq
+      dsimp only at heq
+      rw [dite_eq_left_of_eq_true (eq_true hne1), dite_eq_left_of_eq_true (eq_true hne2)] at heq
       exact congrArg Subtype.val heq
   have hadd_mem : add ∈ H.neighborFinset x := (mem_neighborFinset H x add).mpr hadd_adj
   have hHcard : ((H.neighborFinset x).erase add).card + 1 = (H.neighborFinset x).card :=
@@ -589,7 +591,8 @@ theorem cross_rewiring_min_degree_three {V : Type*} [Fintype V] [DecidableEq V]
                   · exact x.2.1 h
                   · exact hxv₁ h
                   · exact hxv₂ h
-              rw [dite_cond_eq_true (eq_true hne), Finset.mem_coe, mem_neighborFinset, hH]
+              dsimp only
+              rw [dite_eq_left_of_eq_true (eq_true hne), Finset.mem_coe, mem_neighborFinset, hH]
               exact Or.inl hxw
             · intro w₁ hw₁ w₂ hw₂ heq
               have hne1 : w₁ ≠ u ∧ w₁ ≠ v := by
@@ -612,7 +615,8 @@ theorem cross_rewiring_min_degree_three {V : Type*} [Fintype V] [DecidableEq V]
                                    · exact x.2.1 h'
                                    · exact hxv₁ h'
                                    · exact hxv₂ h'⟩
-              rw [dite_cond_eq_true (eq_true hne1), dite_cond_eq_true (eq_true hne2)] at heq
+              dsimp only at heq
+              rw [dite_eq_left_of_eq_true (eq_true hne1), dite_eq_left_of_eq_true (eq_true hne2)] at heq
               exact congrArg Subtype.val heq
   exact le_trans (hmin x.1) hdeg_ge
 
