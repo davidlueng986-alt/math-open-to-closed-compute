@@ -1,0 +1,19 @@
+name: Erdős 25 wave 3 rectangle localization
+on:
+  push:
+    paths:
+      - 'research/erdos25-wave3-20261128/**'
+      - '.github/workflows/erdos25-wave3-20261128.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  rectangle-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python research/erdos25-wave3-20261128/check_rectangles.py
