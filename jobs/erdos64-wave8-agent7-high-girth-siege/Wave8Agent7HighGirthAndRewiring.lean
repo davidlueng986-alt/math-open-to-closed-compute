@@ -14,7 +14,7 @@ Unconditional All-Order Lean 4.36.0 Formalization (18 Audited Theorems):
 - Pillar 3 (Theorems 13–18): Universal High-Girth (`g in {9..14}`) Odd/Even Antipodal &
   Coprime-Shift Frobenius Unbounded-n Closures
 
-Zero `sorry`, zero `admit`, zero `native_decide`, zero custom axioms (`-DwarningAsError=true`).
+Compiled with `-DwarningAsError=true`; standard Lean foundations only.
 -/
 
 section CoreDefinitions
@@ -148,12 +148,10 @@ theorem parallel_rewiring_min_degree_three
     rw [← SimpleGraph.card_neighborFinset_eq_degree]
     exact le_trans hdegx hle
   by_cases hxu : G.Adj u x.1
-  · -- x.1 ∈ {u₁, u₂}
-    have hxv : ¬ G.Adj v x.1 := fun h => hTri u v x.1 huv h hxu
+  · have hxv : ¬ G.Adj v x.1 := fun h => hTri u v x.1 huv h hxu
     rcases hNu x.1 hxu with rfl | hEq1 | hEq2
     · exact absurd rfl x.2.2
-    · -- x.1 = u₁: map u ↦ u₂, every other neighbor w ↦ w
-      let u₂' : { y : V // y ≠ u ∧ y ≠ v } := ⟨u₂, hu₂u, hu₂v⟩
+    · let u₂' : { y : V // y ≠ u ∧ y ≠ v } := ⟨u₂, hu₂u, hu₂v⟩
       let f : V → { y : V // y ≠ u ∧ y ≠ v } := fun w =>
         if hw : w ≠ u ∧ w ≠ v then ⟨w, hw⟩ else u₂'
       apply Finset.card_le_card_of_injOn f
@@ -195,8 +193,7 @@ theorem parallel_rewiring_min_degree_three
           change dite (w₁ ≠ u ∧ w₁ ≠ v) _ _ = dite (w₂ ≠ u ∧ w₂ ≠ v) _ _ at hfeq
           rw [dif_pos hc1, dif_pos hc2] at hfeq
           exact congrArg Subtype.val hfeq
-    · -- x.1 = u₂: map u ↦ u₁, every other neighbor w ↦ w
-      let u₁' : { y : V // y ≠ u ∧ y ≠ v } := ⟨u₁, hu₁u, hu₁v⟩
+    · let u₁' : { y : V // y ≠ u ∧ y ≠ v } := ⟨u₁, hu₁u, hu₁v⟩
       let f : V → { y : V // y ≠ u ∧ y ≠ v } := fun w =>
         if hw : w ≠ u ∧ w ≠ v then ⟨w, hw⟩ else u₁'
       apply Finset.card_le_card_of_injOn f
@@ -238,11 +235,9 @@ theorem parallel_rewiring_min_degree_three
           rw [dif_pos hc1, dif_pos hc2] at hfeq
           exact congrArg Subtype.val hfeq
   · by_cases hxv : G.Adj v x.1
-    · -- x.1 ∈ {v₁, v₂}
-      rcases hNv x.1 hxv with rfl | hEq1 | hEq2
+    · rcases hNv x.1 hxv with rfl | hEq1 | hEq2
       · exact absurd rfl x.2.1
-      · -- x.1 = v₁: map v ↦ v₂
-        let v₂' : { y : V // y ≠ u ∧ y ≠ v } := ⟨v₂, hv₂u, hv₂v⟩
+      · let v₂' : { y : V // y ≠ u ∧ y ≠ v } := ⟨v₂, hv₂u, hv₂v⟩
         let f : V → { y : V // y ≠ u ∧ y ≠ v } := fun w =>
           if hw : w ≠ u ∧ w ≠ v then ⟨w, hw⟩ else v₂'
         apply Finset.card_le_card_of_injOn f
@@ -283,8 +278,7 @@ theorem parallel_rewiring_min_degree_three
             change dite (w₁ ≠ u ∧ w₁ ≠ v) _ _ = dite (w₂ ≠ u ∧ w₂ ≠ v) _ _ at hfeq
             rw [dif_pos hc1, dif_pos hc2] at hfeq
             exact congrArg Subtype.val hfeq
-      · -- x.1 = v₂: map v ↦ v₁
-        let v₁' : { y : V // y ≠ u ∧ y ≠ v } := ⟨v₁, hv₁u, hv₁v⟩
+      · let v₁' : { y : V // y ≠ u ∧ y ≠ v } := ⟨v₁, hv₁u, hv₁v⟩
         let f : V → { y : V // y ≠ u ∧ y ≠ v } := fun w =>
           if hw : w ≠ u ∧ w ≠ v then ⟨w, hw⟩ else v₁'
         apply Finset.card_le_card_of_injOn f
@@ -325,8 +319,7 @@ theorem parallel_rewiring_min_degree_three
             change dite (w₁ ≠ u ∧ w₁ ≠ v) _ _ = dite (w₂ ≠ u ∧ w₂ ≠ v) _ _ at hfeq
             rw [dif_pos hc1, dif_pos hc2] at hfeq
             exact congrArg Subtype.val hfeq
-    · -- x.1 is adjacent to neither u nor v: every neighbor maps to itself
-      let f : V → { y : V // y ≠ u ∧ y ≠ v } := fun w =>
+    · let f : V → { y : V // y ≠ u ∧ y ≠ v } := fun w =>
         if hw : w ≠ u ∧ w ≠ v then ⟨w, hw⟩ else x
       apply Finset.card_le_card_of_injOn f
       · intro w hw
@@ -541,7 +534,7 @@ theorem cubic_barbell_walk_boundary_rigidity
     omega
 
 /-- **Theorem 12**: Exact Moore-tree layer cardinality recurrence bound for cubic graphs:
-if `L 0 = 1`, `L 1 ≤ 3`, and `L (k + 2) ≤ 2 * L (k + 1)` for all `k`, then
+if `L 1 ≤ 3` and `L (k + 2) ≤ 2 * L (k + 1)` for all `k`, then
 `L h ≤ 3 * 2 ^ (h - 1)` for all `h ≥ 1` (in particular, at girth `15`, `h = 7`, `L 7 ≤ 192`). -/
 theorem cubic_moore_layer_card_bound (L : ℕ → ℕ)
     (h1 : L 1 ≤ 3) (hstep : ∀ k : ℕ, L (k + 2) ≤ 2 * L (k + 1)) :
@@ -673,7 +666,6 @@ lemma frobenius_two_coprime_representation
   set a : ℕ := aZ.toNat
   have ha_cast : (a : ℤ) = aZ := Int.toNat_of_nonneg haZ_nn
   have ha_le : a ≤ s₂ - 1 := by omega
-  -- Show s₂ ∣ (N - a * s₁) in ℤ
   have hdvd : (s₂ : ℤ) ∣ (N : ℤ) - (a : ℤ) * (s₁ : ℤ) := by
     refine ⟨y + (x / (s₂ : ℤ)) * (s₁ : ℤ), ?_⟩
     have hdivmod : (s₂ : ℤ) * (x / (s₂ : ℤ)) + aZ = x := Int.ediv_add_emod x (s₂ : ℤ)
@@ -707,7 +699,7 @@ lemma frobenius_two_coprime_representation
 Adjuster Needed, Zero Divisibility Hypothesis!):
 For any two coprime shifts `s₁, s₂ ≥ 2` (e.g., `Δ = 3` and `Δ = 5` on `C_9, C_11, C_13`),
 any finite simple graph `G` with a backbone cycle of ANY length `L₀ ≥ 1` and realizable
-`s₁`-shifts up to `A ≥ s₂ - 1` and `s₂`-shifts up to `B ≥ (2 * max (L₀ + (s₁ - 1) * (s₂ - 1)) 4) / s₂`
+`s₁`-shifts up to `A ≥ s₂ - 1` and `s₂`-shifts up to `B ≥ (2 * max (L₀ + (s₁ - 1) * (s₂ - 1)) 4 - L₀) / s₂`
 unconditionally satisfies `HasPow2Cycle G`. -/
 theorem coprime_shift_frobenius_unbounded_closure
     (G : SimpleGraph V) {s₁ s₂ L₀ A B : ℕ}

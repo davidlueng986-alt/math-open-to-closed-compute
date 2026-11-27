@@ -436,11 +436,11 @@ struct SAStats {
     int girth9_reached;
     int best_girth;
     int min_c16_at_g9;
+    int zero_c16_count;
     int has_c32_count;
 };
 
 int count_short_cycles_le8(const vector<array<int,3>>& adj, int n) {
-    // Count vertices whose local girth <= 8 (fast proxy to drive girth >= 9)
     int bad = 0;
     vector<int> dist(n), par(n);
     for (int s = 0; s < n; ++s) {
@@ -476,14 +476,15 @@ int global_girth(const vector<array<int,3>>& adj, int n) {
     return g;
 }
 
-int count_c16_capped(const vector<array<int,3>>& adj, int n, int cap = 200) {
-    // Count simple C16 cycles (up to cap) across starting vertices s with min-vertex symmetry breaking
+int count_c16_capped(const vector<array<int,3>>& adj, int n, int undirected_cap = 200) {
+    // Each undirected simple C16 is counted exactly twice (once per orientation)
+    int dir_cap = 2 * undirected_cap;
     int total = 0;
     vector<uint8_t> vis(n, 0);
-    for (int s = 0; s < n && total < cap; ++s) {
+    for (int s = 0; s < n && total < dir_cap; ++s) {
         vis[s] = 1;
         auto dfs = [&](auto& self, int u, int rem) -> void {
-            if (total >= cap) return;
+            if (total >= dir_cap) return;
             if (rem == 1) {
                 for (int v : adj[u]) if (v == s) { total++; return; }
                 return;
@@ -493,7 +494,7 @@ int count_c16_capped(const vector<array<int,3>>& adj, int n, int cap = 200) {
                     vis[v] = 1;
                     self(self, v, rem - 1);
                     vis[v] = 0;
-                    if (total >= cap) return;
+                    if (total >= dir_cap) return;
                 }
             }
         };
@@ -502,7 +503,7 @@ int count_c16_capped(const vector<array<int,3>>& adj, int n, int cap = 200) {
                 vis[v] = 1;
                 dfs(dfs, v, 15);
                 vis[v] = 0;
-                if (total >= cap) break;
+                if (total >= dir_cap) break;
             }
         }
         vis[s] = 0;
@@ -519,11 +520,10 @@ void replace_nbr(vector<array<int,3>>& adj, int u, int old_v, int new_v) {
 }
 
 SAStats run_girth9_sa(int n, int restarts, int steps_phase1, int steps_phase2, uint64_t seed) {
-    SAStats st{n, restarts, 0, 0, 1000000, 0};
+    SAStats st{n, restarts, 0, 0, 1000000, 0, 0};
     #pragma omp parallel for schedule(dynamic)
     for (int r = 0; r < restarts; ++r) {
         mt19937_64 rng(seed + 10007ULL * r + 97ULL * n);
-        // Generate random simple cubic graph
         vector<array<int,3>> adj(n);
         vector<pair<int,int>> edges;
         while (true) {
@@ -578,8 +578,7 @@ SAStats run_girth9_sa(int n, int restarts, int steps_phase1, int steps_phase2, u
         int c16 = -1;
         bool has32 = false;
         if (g >= 9) {
-            c16 = count_c16_capped(adj, n, 200);
-            // Phase 2: minimize C16 while strictly maintaining girth >= 9
+            c16 = count_c16_capped(adj, n, 5000);
             for (int step = 0; step < steps_phase2 && c16 > 0; ++step) {
                 int i = rng() % m, j = rng() % m;
                 if (i == j) continue;
@@ -616,6 +615,7 @@ SAStats run_girth9_sa(int n, int restarts, int steps_phase1, int steps_phase2, u
             if (g >= 9) {
                 st.girth9_reached++;
                 if (c16 < st.min_c16_at_g9) st.min_c16_at_g9 = c16;
+                if (c16 == 0) st.zero_c16_count++;
                 if (has32) st.has_c32_count++;
             }
         }
@@ -696,11 +696,11 @@ int main(int argc, char** argv) {
     vector<int> sa_orders = {132, 140, 150, 160, 180, 200};
     vector<SAStats> sa_results;
     for (int n : sa_orders) {
-        auto st = run_girth9_sa(n, 8, 8000, 1500, 777001ULL + n * 131ULL);
+        auto st = run_girth9_sa(n, 8, 8000, 4000, 777001ULL + n * 131ULL);
         sa_results.push_back(st);
         cout << "[Girth>=9 SA n=" << st.n << "] restarts=" << st.restarts
              << " g>=9_reached=" << st.girth9_reached << " best_g=" << st.best_girth
-             << " min_C16_at_g9=" << st.min_c16_at_g9
+             << " min_C16_at_g9=" << st.min_c16_at_g9 << " zero_C16=" << st.zero_c16_count
              << " has_C32=" << st.has_c32_count << "/" << st.girth9_reached << "\n" << flush;
     }
 
@@ -733,7 +733,7 @@ int main(int argc, char** argv) {
         auto& s = sa_results[i];
         jf << "    {\"n\": " << s.n << ", \"restarts\": " << s.restarts
            << ", \"girth9_reached\": " << s.girth9_reached << ", \"best_girth\": " << s.best_girth
-           << ", \"min_c16_at_g9\": " << s.min_c16_at_g9
+           << ", \"min_c16_at_g9\": " << s.min_c16_at_g9 << ", \"zero_c16_count\": " << s.zero_c16_count
            << ", \"has_c32_count\": " << s.has_c32_count << "}" << (i + 1 < sa_results.size() ? "," : "") << "\n";
     }
     jf << "  ]\n}\n";
