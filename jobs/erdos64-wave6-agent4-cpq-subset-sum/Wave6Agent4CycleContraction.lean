@@ -204,6 +204,20 @@ theorem even_brown_dyadic_octave_pow2 (L₀ : ℕ) (ds : List ℕ)
 
 /-! ### Part 3: Universal Cycle-Contraction Subset-Sum Lifting Theorem (ALL Simple Graphs!) -/
 
+theorem mem_support_of_mem_edges_sym2 {V : Type*} {G : SimpleGraph V} {u v x : V}
+    (w : G.Walk u v) {e : Sym2 V} (he : e ∈ w.edges) (hx : x ∈ e) : x ∈ w.support := by
+  induction w with
+  | nil => simp at he
+  | @cons a b c _ w' ih =>
+    simp only [Walk.edges_cons, List.mem_cons] at he
+    simp only [Walk.support_cons, List.mem_cons]
+    rcases he with rfl | he'
+    · simp only [Sym2.mem_iff] at hx
+      rcases hx with rfl | rfl
+      · exact Or.inl rfl
+      · exact Or.inr (Walk.start_mem_support w')
+    · exact Or.inr (ih he')
+
 /-- Helper: any closed walk of length ≥ 3 whose `support.tail` is `Nodup` is a simple cycle. -/
 theorem isCycle_of_support_tail_nodup {V : Type*} {G : SimpleGraph V} {v : V}
     (w : G.Walk v v) (hlen : 3 ≤ w.length) (hnodup : w.support.tail.Nodup) :
@@ -231,7 +245,8 @@ theorem isCycle_of_support_tail_nodup {V : Type*} {G : SimpleGraph V} {v : V}
           subst hvx
           have hlen'' : 1 ≤ w''.length := by simpa [Walk.length_cons] using hlen'
           have hsup'' : w''.support.Nodup := by
-            simpa [Walk.support_cons] using hsup'
+            have := (List.nodup_cons.mp hsup').2
+            simpa [Walk.support_cons] using this
           cases w'' with
           | nil => simp at hlen''
           | @cons _ y _ h2 w''' =>
@@ -243,10 +258,8 @@ theorem isCycle_of_support_tail_nodup {V : Type*} {G : SimpleGraph V} {v : V}
               exact Walk.end_mem_support w'''
             exact hhead_not hend
         · intro hmem
-          have hu_in : u ∈ w''.support := by
-            have : u ∈ (s(v, u) : Sym2 V) := by simp
-            exact Walk.fst_mem_support_of_mem_edges w'' hmem |> fun _ =>
-              Walk.mem_support_of_mem_edges w'' hmem this
+          have hu_in : u ∈ w''.support :=
+            mem_support_of_mem_edges_sym2 w'' hmem (by simp)
           have hu_not : u ∉ w''.support := by
             have := (List.nodup_cons.mp hsup').1
             simpa [Walk.support_cons] using this
@@ -293,17 +306,6 @@ theorem SwitchSegment.choose_mem_tailSet {V : Type*} {G : SimpleGraph V} {u v : 
   cases b
   · exact Or.inl hx
   · exact Or.inr hx
-
-/-- A chain of switchable cluster segments from `u` to `v` whose tail vertex sets are pairwise
-    disjoint — modeling a simple path or simple cycle in `G / F` for ANY cycle packing `F`. -/
-inductive SwitchChain {V : Type*} (G : SimpleGraph V) : V → V → List ℕ → ℕ → Prop
-  | nil (v : V) : SwitchChain G v v [] 0
-  | cons {u w v : V} {ds : List ℕ} {base : ℕ}
-      (seg : SwitchSegment G u w)
-      (rest : SwitchChain G w v ds base)
-      (S : Set V) :
-      -- We track the union of tail sets cleanly in a data-carrying inductive below!
-      SwitchChain G u v (seg.delta :: ds) (seg.shortWalk.length + base)
 
 /-- Data-carrying chain of switchable segments with explicit disjointness of tail vertex sets. -/
 inductive DisjointSwitchChain {V : Type*} (G : SimpleGraph V) : V → V → Set V → List ℕ → ℕ → Type _
@@ -366,7 +368,7 @@ theorem DisjointSwitchChain.realize {V : Type*} {G : SimpleGraph V}
         refine ⟨seg.choose_nodup true, hnodup, ?_⟩
         intro x hx1 y hy2 hxy
         subst hxy
-        exact Set.disjoint_left.mp hdisj (seg.choose_mem_tailSet true hx1) (hmem x hy2)
+        exact Set.disjoint_left.mp hdisj (seg.choose_mem_tailSet true hx1) (hmem x hx2)
       · intro x hx
         rw [support_tail_append, List.mem_append] at hx
         rcases hx with hx1 | hx2
@@ -438,7 +440,7 @@ theorem truncated_cubic_window_pow2 {V : Type*} {G : SimpleGraph V}
   obtain ⟨c, hcyc, hlen⟩ := triangle_packing_interval_lift ch (by omega) (2 ^ k) hlo (by omega)
   exact ⟨v, c, hcyc, ⟨k, hk, hlen⟩⟩
 
-/-- Concrete verification of forbidden window coverage for small lengths `t ∈ {2,3,4,6,7,8,11..16}`. -/
+/-- Concrete verification of forbidden window coverage for small lengths `t ∈ {2,3,4,6,7,8,11,16}`. -/
 theorem inTruncWindow_small_examples :
     InTruncWindow 2 ∧ InTruncWindow 3 ∧ InTruncWindow 4 ∧
     InTruncWindow 6 ∧ InTruncWindow 7 ∧ InTruncWindow 8 ∧
@@ -468,16 +470,12 @@ theorem two_cycle_c3_c3_pow2 {V : Type*} {G : SimpleGraph V}
 theorem c5_c5_bridge_arith (a₁ a₂ : ℕ) (h1 : a₁ = 1 ∨ a₁ = 2) (h2 : a₂ = 1 ∨ a₂ = 2) :
     ∃ s : ℕ, IsSubsetSum [5 - 2 * a₁, 5 - 2 * a₂] s ∧ IsPow2 (2 + a₁ + a₂ + s) := by
   rcases h1 with rfl | rfl <;> rcases h2 with rfl | rfl
-  · -- a1=1, a2=1: base=4 -> C_4
-    exact ⟨0, isSubsetSum_zero _, ⟨2, le_rfl, by norm_num⟩⟩
-  · -- a1=1, a2=2: base=5, ds=[3, 1] -> 5 + 3 = 8 (C_8)
-    refine ⟨3, ?_, ⟨3, by norm_num, by norm_num⟩⟩
+  · exact ⟨0, isSubsetSum_zero _, ⟨2, le_rfl, by norm_num⟩⟩
+  · refine ⟨3, ?_, ⟨3, by norm_num, by norm_num⟩⟩
     simpa using IsSubsetSum.take (d := 3) (IsSubsetSum.skip (d := 1) IsSubsetSum.nil)
-  · -- a1=2, a2=1: base=5, ds=[1, 3] -> 5 + 3 = 8 (C_8)
-    refine ⟨3, ?_, ⟨3, by norm_num, by norm_num⟩⟩
+  · refine ⟨3, ?_, ⟨3, by norm_num, by norm_num⟩⟩
     simpa using IsSubsetSum.skip (d := 1) (IsSubsetSum.take (d := 3) IsSubsetSum.nil)
-  · -- a1=2, a2=2: base=6, ds=[1, 1] -> 6 + 2 = 8 (C_8)
-    refine ⟨2, ?_, ⟨3, by norm_num, by norm_num⟩⟩
+  · refine ⟨2, ?_, ⟨3, by norm_num, by norm_num⟩⟩
     simpa using IsSubsetSum.take (d := 1) (IsSubsetSum.take (d := 1) IsSubsetSum.nil)
 
 /-- **Two-Pentagon Bridge Theorem**: Any two disjoint 5-cycles joined by 2 vertex-disjoint edges

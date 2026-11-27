@@ -4,19 +4,20 @@ set -euo pipefail
 mkdir -p out
 SRC="jobs/erdos64-wave6-agent4-cpq-subset-sum/Wave6Agent4CycleContraction.lean"
 
-git rev-parse HEAD
+git config --global --add safe.directory "$(pwd)" || true
+git rev-parse HEAD || true
 lean --version
 
 # Locate prebuilt Mathlib project inside container
 MATHLIB_PROJ=""
-for cand in /opt/mathlib /opt/lean-project /workspace/mathlib /root/mathlib /opt/mathlib4; do
+for cand in /opt/mathlib /opt/lean-project /workspace/mathlib /root/mathlib /opt/mathlib4 /opt/lean; do
   if [ -d "$cand" ] && { [ -f "$cand/lakefile.toml" ] || [ -f "$cand/lakefile.lean" ]; }; then
     MATHLIB_PROJ="$cand"
     break
   fi
 done
 if [ -z "$MATHLIB_PROJ" ]; then
-  FOUND=$(find /opt /workspace /root -maxdepth 3 \( -name "lakefile.toml" -o -name "lakefile.lean" \) 2>/dev/null | head -n 1 || true)
+  FOUND=$(find /opt /workspace /root /usr/local -maxdepth 4 \( -name "lakefile.toml" -o -name "lakefile.lean" \) 2>/dev/null | head -n 1 || true)
   if [ -n "$FOUND" ]; then
     MATHLIB_PROJ="$(dirname "$FOUND")"
   fi
