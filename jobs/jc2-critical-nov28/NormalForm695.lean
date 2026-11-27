@@ -11,6 +11,19 @@ namespace JacobianC2.NormalForm695
 
 open Polynomial
 
+/-- A general derivative ideal certificate, including the nonconstant remainder case.
+It is used for the degree-seven H in the complete strict-III coefficient target. -/
+theorem generic_critical_divisor_identity (r s u v : ℂ[X])
+    (h : s ^ 2 = r * u + v) :
+    3 * (u * u.derivative - 4 * s * v.derivative) =
+      (u + 4 * s * r) * (8 * r ^ 3 + 12 * r * s + 3 * u).derivative -
+      3 * (4 * r * (u + 4 * s * r) + 8 * s ^ 2) * (r ^ 2 + s).derivative := by
+  have hd := congrArg Polynomial.derivative h
+  simp only [derivative_add, derivative_mul, derivative_pow, derivative_natCast,
+    derivative_ofNat, C_eq_natCast] at hd ⊢
+  norm_num at hd ⊢
+  linear_combination 12 * s * hd
+
 def R (b c : ℂ) : ℂ[X] :=
   (X + C b) * (X ^ 2 + C b * X + C (2 * c))
 
@@ -27,10 +40,12 @@ theorem derivative_bezout (b c : ℂ) :
     3 * X = (X + 4 * S b c * R b c) * (Q8 b c).derivative -
       3 * (4 * R b c * (X + 4 * S b c * R b c) + 8 * S b c ^ 2) *
         (P b c).derivative := by
-  simp only [P, Q8, R, S, derivative_add, derivative_mul, derivative_pow,
-    derivative_X, derivative_C]
-  push_cast
-  ring
+  have h : S b c ^ 2 = R b c * X + C (c ^ 2) := by
+    simp only [R, S, C_mul, C_pow, C_ofNat, C_eq_natCast]
+    ring
+  have hg := generic_critical_divisor_identity (R b c) (S b c) X (C (c ^ 2)) h
+  simpa only [P, Q8, derivative_X, derivative_C, mul_one, mul_zero, sub_zero] using hg
+
 
 /-- Any polynomial dividing both actual derivatives divides the parameter. -/
 theorem common_derivative_divisor_dvd_X (b c : ℂ) (D : ℂ[X])
@@ -40,8 +55,13 @@ theorem common_derivative_divisor_dvd_X (b c : ℂ) (D : ℂ[X])
     exact dvd_sub (dvd_mul_of_dvd_right hQ _) (dvd_mul_of_dvd_right hP _)
   have h := dvd_mul_of_dvd_right h3 (C (1 / 3 : ℂ))
   have hi : C (1 / 3 : ℂ) * (3 : ℂ[X]) = 1 := by
-    norm_num [← map_ofNat C, ← map_mul]
-  simpa [← mul_assoc, hi] using h
+    calc
+      C (1 / 3 : ℂ) * (3 : ℂ[X]) = C (1 / 3 : ℂ) * C (3 : ℂ) := by
+        rw [C_ofNat]
+      _ = C ((1 / 3 : ℂ) * 3) := by rw [C_mul]
+      _ = 1 := by norm_num
+  rw [← mul_assoc, hi, one_mul] at h
+  exact h
 
 /-- Every simultaneous zero of the derivatives is the parameter zero. -/
 theorem critical_parameter_zero (b c t : ℂ)
@@ -55,13 +75,21 @@ def cuspEquation (b c : ℂ) : ℂ := 4 * b ^ 2 * c + 8 * c ^ 2 + 1
 
 theorem first_derivative_at_zero (b c : ℂ) :
     (P b c).derivative.eval 0 = b * cuspEquation b c := by
-  simp [P, R, S, cuspEquation]
+  simp only [P, R, S, derivative_add, derivative_mul, derivative_pow,
+    derivative_natCast, derivative_ofNat, derivative_X, derivative_C,
+    C_mul, C_pow, C_ofNat, C_eq_natCast, eval_add, eval_mul, eval_pow,
+    eval_X, eval_C, eval_natCast, eval_zero, eval_one, cuspEquation]
+  norm_num
   ring
 
 theorem second_derivative_at_zero (b c : ℂ) :
     (Q8 b c).derivative.eval 0 =
       3 * (8 * b ^ 2 * c + 1) * cuspEquation b c := by
-  simp [Q8, R, S, cuspEquation]
+  simp only [Q8, R, S, derivative_add, derivative_mul, derivative_pow,
+    derivative_natCast, derivative_ofNat, derivative_X, derivative_C,
+    C_mul, C_pow, C_ofNat, C_eq_natCast, eval_add, eval_mul, eval_pow,
+    eval_X, eval_C, eval_natCast, eval_zero, eval_one, cuspEquation]
+  norm_num
   ring
 
 /-- Exact critical locus, with no assumptions on the complex parameters. -/
@@ -84,8 +112,7 @@ theorem weierstrass_identity (b c : ℂ) :
     Q8 b c ^ 2 - 64 * P b c ^ 3 =
       8 * S b c ^ 3 - 48 * C (c ^ 2) * R b c ^ 2 -
         72 * C (c ^ 2) * S b c + 9 * X ^ 2 := by
-  simp only [P, Q8, R, S]
-  push_cast
+  simp only [P, Q8, R, S, C_mul, C_pow, C_ofNat, C_eq_natCast]
   ring
 
 -- The quotient of the derivative gcd is handled by `common_derivative_divisor_dvd_X`.
@@ -112,6 +139,7 @@ theorem exceptional_fifth_coefficient_nonzero (c : ℂ) (hF : F c = 0) :
   rw [hF, h] at hid
   norm_num at hid
 
+#print axioms generic_critical_divisor_identity
 #print axioms derivative_bezout
 #print axioms common_derivative_divisor_dvd_X
 #print axioms critical_parameter_zero
