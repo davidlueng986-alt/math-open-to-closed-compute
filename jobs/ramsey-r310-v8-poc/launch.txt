@@ -1,1 +1,1 @@
-2026-11-27: Controlled V8 PoC benchmark (9 parallel jobs max, 20-min solve budget): 4 McKay D9-C7 cores (Proof-First Kissat + DRAT/LRAT) + 3 hard D678 Lean-CNF Kissat + 2 SMS probes.
+2026-11-27 (attempt 2): Controlled V8 PoC benchmark (9 parallel jobs max, 20-min solve cap): 4 McKay D9-C7 cores (Proof-First Kissat + DRAT/LRAT) + 3 hard D678 Lean-CNF Kissat + 2 SMS probes. Fixed verify_agent1.py --dir flag.

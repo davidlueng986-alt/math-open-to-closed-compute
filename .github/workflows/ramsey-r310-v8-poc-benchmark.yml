@@ -33,7 +33,7 @@ jobs:
           set -euo pipefail
           mkdir -p out
           python3 jobs/ramsey-r310-v8-agent1-pruning/verify_agent1.py \
-            --cert jobs/ramsey-r310-v8-agent1-pruning/agent1_closed_tasks_certificates.json
+            --dir jobs/ramsey-r310-v8-agent1-pruning
           python3 jobs/ramsey-r310-v8-agent6-d9-proof/d9c7_compact_cnf.py --selftest
           python3 jobs/ramsey-r310-v8-agent3-encoding/reconstruct_tasks.py
           mv all_tasks.json out/all_tasks.json
