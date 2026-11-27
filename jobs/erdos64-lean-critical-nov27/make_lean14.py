@@ -86,6 +86,8 @@ s+='''theorem first_checked : ∀ u v : V, u ≠ v →
     (pathAt (firstIndex u v)).start = u ∧ (pathAt (firstIndex u v)).stop = v := by
   decide
 
+#print axioms first_checked
+
 theorem all_pairs_dyadic : ∀ u v : V, u ≠ v → DyadicPath G u v := by
   intro u v h
   obtain ⟨hs,ht⟩ := first_checked u v h
@@ -105,6 +107,8 @@ theorem exits_checked : ∀ u v : V, u ≠ v → ¬G.Adj u v →
     (pathAt (secondIndex u v)).start = u ∧
     (pathAt (secondIndex u v)).stop = v ∧
     (pathAt (firstIndex u v)).exit ≠ (pathAt (secondIndex u v)).exit := by decide
+
+#print axioms exits_checked
 
 theorem two_path_certs (A B : PathCert) (u v : V)
     (hs : A.start = u) (ht : A.stop = v)
@@ -177,11 +181,15 @@ s+='''theorem fermat_checked : ∀ x a b : V, a ≠ b → G.Adj x a → G.Adj x 
     s(x,a) ∈ (cycleAt (fermatIndex x a b)).walk.edges ∧
     s(x,b) ∈ (cycleAt (fermatIndex x a b)).walk.edges := by decide
 
+#print axioms fermat_checked
+
 theorem plus_two_checked : ∀ x a b : V, a ≠ b → G.Adj x a → G.Adj x b →
     ((cycleAt (plusTwoIndex x a b)).length = 6 ∨
       (cycleAt (plusTwoIndex x a b)).length = 10) ∧
     s(x,a) ∈ (cycleAt (plusTwoIndex x a b)).walk.edges ∧
     s(x,b) ∈ (cycleAt (plusTwoIndex x a b)).walk.edges := by decide
+
+#print axioms plus_two_checked
 
 def P3FermatProperty : Prop :=
   ∀ x a b : V, a ≠ b → G.Adj x a → G.Adj x b →
@@ -209,18 +217,88 @@ theorem p3_plus_two : P3PlusTwoProperty := by
   · exact Or.inl ((cycleAt (plusTwoIndex x a b)).len.trans hlen)
   · exact Or.inr ((cycleAt (plusTwoIndex x a b)).len.trans hlen)
 
-/-- Finite checks over every length-four/eight closed walk. -/
-theorem no_four : ∀ (v : V) (p : G.Walk v v), p.length = 4 → ¬p.IsCycle := by
-  have checked : ∀ v : V, ∀ p ∈ G.finsetWalkLength 4 v v,
-      ¬p.support.tail.Nodup := by decide
-  intro v p hlen hc
-  exact checked v p (mem_finsetWalkLength_iff.mpr hlen) hc.support_nodup
+def neighbors (v : V) : List V :=
+  match v.val with
+  | 0 => [3, 6, 11]
+  | 1 => [4, 7, 10]
+  | 2 => [4, 11, 13]
+  | 3 => [0, 7, 12]
+  | 4 => [1, 2]
+  | 5 => [10, 12]
+  | 6 => [0, 9, 10]
+  | 7 => [1, 3, 8]
+  | 8 => [7, 13]
+  | 9 => [6, 13]
+  | 10 => [1, 5, 6]
+  | 11 => [0, 2]
+  | 12 => [3, 5]
+  | _ => [2, 8, 9]
 
-theorem no_eight : ∀ (v : V) (p : G.Walk v v), p.length = 8 → ¬p.IsCycle := by
-  have checked : ∀ v : V, ∀ p ∈ G.finsetWalkLength 8 v v,
-      ¬p.support.tail.Nodup := by decide
-  intro v p hlen hc
-  exact checked v p (mem_finsetWalkLength_iff.mpr hlen) hc.support_nodup
+theorem neighbors_correct : ∀ u v : V, v ∈ neighbors u ↔ G.Adj u v := by decide
+
+def simpleReach : ℕ → V → V → List V → Bool
+  | 0, u, v, seen => decide (u = v ∧ u ∉ seen)
+  | n+1, u, v, seen =>
+      if u ∈ seen then false
+      else (neighbors u).any fun w => simpleReach n w v (u::seen)
+
+/-- Every genuine simple walk avoiding the already-used vertices is
+accepted by the explicit adjacency-list search. -/
+theorem simpleReach_of_path {u v : V} (p : G.Walk u v) :
+    p.IsPath → ∀ (seen : List V), (∀ x ∈ p.support, x ∉ seen) →
+      simpleReach p.length u v seen = true := by
+  induction p with
+  | nil =>
+    intro _ seen havoid
+    have hnot : u ∉ seen := havoid u (by simp)
+    simp [simpleReach,hnot]
+  | @cons a b c hab q ih =>
+    intro hp seen havoid
+    have hanot : a ∉ seen := havoid a (by simp)
+    change (if a ∈ seen then false else
+      (neighbors a).any fun w => simpleReach q.length w c (a::seen)) = true
+    rw [if_neg hanot]
+    apply List.any_eq_true.mpr
+    refine ⟨b, (neighbors_correct a b).mpr hab, ?_⟩
+    apply ih (Walk.IsPath.of_cons hp) (a::seen)
+    intro x hx
+    simp only [List.mem_cons, not_or]
+    constructor
+    · intro hxa
+      subst x
+      exact ((Walk.cons_isPath_iff hab q).mp hp).2 hx
+    · exact havoid x (by simp [hx])
+
+def cycleSearch (n : ℕ) (u : V) : Bool :=
+  (neighbors u).any fun v => simpleReach (n-1) v u []
+
+theorem no_cycle_of_search (n : ℕ) (hcheck : ∀ v : V, cycleSearch n v = false)
+    (v : V) (p : G.Walk v v) (hlen : p.length = n) : ¬p.IsCycle := by
+  intro hc
+  cases p with
+  | nil => exact hc.ne_nil rfl
+  | cons hab q =>
+    have hqpath : q.IsPath := Walk.IsPath.mk' (by simpa using hc.support_nodup)
+    have hq := simpleReach_of_path q hqpath [] (by simp)
+    have hqn : q.length = n-1 := by simp only [Walk.length_cons] at hlen; omega
+    rw [hqn] at hq
+    have hcsearch : cycleSearch n v = true := by
+      unfold cycleSearch
+      apply List.any_eq_true.mpr
+      exact ⟨_, (neighbors_correct _ _).mpr hab, hq⟩
+    have := hcheck v
+    rw [hcsearch] at this
+    contradiction
+
+theorem no_four : ∀ (v : V) (p : G.Walk v v), p.length = 4 → ¬p.IsCycle :=
+  no_cycle_of_search 4 (by decide)
+
+#print axioms no_four
+
+theorem no_eight : ∀ (v : V) (p : G.Walk v v), p.length = 8 → ¬p.IsCycle :=
+  no_cycle_of_search 8 (by decide)
+
+#print axioms no_eight
 
 /-- Exact original power predicate: the graph order bounds all simple
 cycle lengths, so there are no unexamined larger exponents. -/

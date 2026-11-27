@@ -128,7 +128,7 @@ theorem cubic_minimal_bad_two_cut_normal_form
   have hxy : x ≠ y := by
     have hab' :=
       (E64CutBoundary.wfree_2cut_matching_and_cubic_boundary G hm (Aᶜ : Set V)
-        hAc2 ⟨a.1, by simpa using a.2⟩ (fun z => (hG z.1).ge) a' b' a.1 b.1 hcutc).1
+        hAc2 ⟨a.1, fun h => h a.2⟩ (fun z => (hG z.1).ge) a' b' a.1 b.1 hcutc).1
     intro h
     exact hab' (Subtype.ext h)
   have hsm : SideMinimal G A := side_minimal_of_nontrivial_minimal G hG A hAc hmin
