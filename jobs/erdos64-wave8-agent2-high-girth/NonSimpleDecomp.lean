@@ -73,7 +73,8 @@ theorem tailless_nonSimple_rotation_decomp {G : SimpleGraph V}
     intro a b w
     induction w with
     | nil => intro h; simp at h
-    | cons (v := c) h rest ih =>
+    | cons h rest ih =>
+        rename_i c
         intro hnd'
         have hnd'' : ¬ rest.support.Nodup := by simpa [Walk.support_cons] using hnd'
         cases rest with
@@ -190,10 +191,12 @@ theorem exists_maximal_shared_prefix {G : SimpleGraph V} [DecidableRel G.Adj]
         intro a b₁ b₂ p₁ p₂ hp₁ hlt'
         cases p₁ with
         | nil => simp at hp₁
-        | cons (v := y₁) h₁ r₁ =>
+        | cons h₁ r₁ =>
+            rename_i y₁
             cases p₂ with
             | nil => simp at hlt'
-            | cons (v := y₂) h₂ r₂ =>
+            | cons h₂ r₂ =>
+                rename_i y₂
                 by_cases hy : y₁ = y₂
                 · subst hy
                   obtain ⟨w, pre, q₁, q₂, heq₁, heq₂, hdiv⟩ :=

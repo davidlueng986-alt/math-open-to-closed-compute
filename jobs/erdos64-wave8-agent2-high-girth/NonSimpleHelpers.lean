@@ -164,7 +164,13 @@ theorem unrotate_append {G : SimpleGraph V} {L : ℕ} {v x : V}
             simp only [Walk.cons_append, splitWalk]
             rw [hrec]
   have hs := hsplit b a (L - a.length) hb_len.symm
-  rw [hs]
+  dsimp only
+  generalize_proofs h1 h2
+  have hs' : splitWalk (L - a.length) (b.append a) h1 =
+      ⟨v, ⟨b, hb_len⟩, ⟨a, by rw [Walk.length_append]; omega⟩⟩ := hs
+  refine Sigma.ext (congrArg Sigma.fst hs') ?_
+  refine heq_of_eqRec_eq ?_ rfl
+  simp only [hs']
 
 /-- Finset of all NB walks of length `m` starting at `u` whose first step `≠ prev`. -/
 def nbWalksAvoid (G : SimpleGraph V) [DecidableRel G.Adj] (m : ℕ) (u prev : V) :
@@ -189,28 +195,31 @@ theorem card_nbWalksAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
         rw [Finset.card_sigma]
         have hstep : ∀ w ∈ (G.neighborFinset u).erase prev, (nbWalksAvoid G m w u).card ≤ 2 ^ m := by
           intro w hw
-          have huw : G.Adj u w := SimpleGraph.mem_neighborFinset.mp (Finset.mem_erase.mp hw).2
+          have huw : G.Adj u w := G.mem_neighborFinset.mp (Finset.mem_erase.mp hw).2
           exact card_nbWalksAvoid_le G hreg m w u huw.symm
         have hsum := Finset.sum_le_sum hstep
         rw [Finset.sum_const, smul_eq_mul] at hsum
         have herase : ((G.neighborFinset u).erase prev).card = 2 := by
-          rw [Finset.card_erase_of_mem (SimpleGraph.mem_neighborFinset.mpr hprev),
+          rw [Finset.card_erase_of_mem (G.mem_neighborFinset.mpr hprev),
               G.card_neighborFinset_eq_degree, hreg u]
         rw [herase] at hsum
         simpa [pow_succ, mul_comm] using hsum
       refine le_trans ?_ hcard_T
-      refine Finset.card_le_card_of_injOn
-        (fun x => match x with
-          | ⟨v, ⟨.cons (v := w) _ rest, hp⟩⟩ => ⟨w, ⟨v, ⟨rest, by simpa using hp⟩⟩⟩
-          | ⟨_, ⟨.nil, hp⟩⟩ => absurd hp (by simp))
-        ?_ ?_
+      let peel : (Σ v : V, {p : G.Walk u v // p.length = m + 1}) →
+          (Σ w : V, Σ v : V, {p : G.Walk w v // p.length = m}) := fun x =>
+        match x with
+        | ⟨v, ⟨.cons _ rest, hp⟩⟩ => ⟨_, ⟨v, ⟨rest, by simpa using hp⟩⟩⟩
+        | ⟨_, ⟨.nil, hp⟩⟩ => absurd hp (by simp)
+      refine Finset.card_le_card_of_injOn peel ?_ ?_
       · rintro ⟨v, ⟨p, hp⟩⟩ hx
+        simp only [Finset.mem_coe] at hx ⊢
         cases p with
         | nil => simp at hp
-        | cons (v := w) h₁ rest =>
+        | cons h₁ rest =>
+            rename_i w
             simp only [nbWalksAvoid, Finset.mem_filter, Finset.mem_sigma, Finset.mem_univ,
               true_and, mem_nbWalksSub_iff, firstNbr, ne_eq, Option.some.injEq] at hx
-            simp only [T, Finset.mem_sigma, Finset.mem_erase, SimpleGraph.mem_neighborFinset,
+            simp only [peel, T, Finset.mem_sigma, Finset.mem_erase, G.mem_neighborFinset,
               nbWalksAvoid, Finset.mem_filter, Finset.mem_univ, true_and, mem_nbWalksSub_iff]
             refine ⟨⟨hx.2, h₁⟩, ?_, ?_⟩
             · exact isNonBacktracking_of_append_right (p := .cons h₁ .nil) hx.1
@@ -226,7 +235,7 @@ theorem card_nbWalksAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
             cases p₂ with
             | nil => simp at hp₂
             | cons h₂ rest₂ =>
-                simp only [Sigma.mk.inj_iff, Subtype.mk.injEq, heq_eq_eq] at heq
+                simp only [peel, Sigma.mk.inj_iff, Subtype.mk.injEq, heq_eq_eq] at heq
                 rcases heq with ⟨rfl, rfl, rfl⟩
                 rfl
 
@@ -260,11 +269,11 @@ theorem card_nbWalksBetweenAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
         ⟨sp.1, sp.2.1⟩)
       ?_ ?_
     · rintro ⟨p, hp⟩ hmem
-      simp only [nbWalksBetweenAvoid, Finset.mem_filter, mem_nbWalksSub_iff] at hmem
+      simp only [Finset.mem_coe, nbWalksBetweenAvoid, Finset.mem_filter, mem_nbWalksSub_iff] at hmem
       set sp := splitWalk (m - s) p (by rw [hp]; exact hle_ms)
       have happ : sp.2.1.1.append sp.2.2.1 = p := splitWalk_append (m - s) p (by rw [hp]; exact hle_ms)
-      simp only [nbWalksAvoid, Finset.mem_filter, Finset.mem_sigma, Finset.mem_univ, true_and,
-        mem_nbWalksSub_iff]
+      simp only [Finset.mem_coe, nbWalksAvoid, Finset.mem_filter, Finset.mem_sigma, Finset.mem_univ,
+        true_and, mem_nbWalksSub_iff]
       refine ⟨isNonBacktracking_of_append_left (happ ▸ hmem.1), ?_⟩
       have hpos : 1 ≤ sp.2.1.1.length := by rw [sp.2.1.2]; omega
       have hfn : firstNbr p = firstNbr sp.2.1.1 := by
@@ -273,16 +282,17 @@ theorem card_nbWalksBetweenAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
       rw [← hfn]
       exact hmem.2
     · rintro ⟨p₁, hp₁⟩ h₁ ⟨p₂, hp₂⟩ h₂ heq
-      simp only [nbWalksBetweenAvoid, Finset.mem_filter, mem_nbWalksSub_iff] at h₁ h₂
-      set sp₁ := splitWalk (m - s) p₁ (by rw [hp₁]; exact hle_ms)
-      set sp₂ := splitWalk (m - s) p₂ (by rw [hp₂]; exact hle_ms)
-      have happ₁ : sp₁.2.1.1.append sp₁.2.2.1 = p₁ := splitWalk_append (m - s) p₁ _
-      have happ₂ : sp₂.2.1.1.append sp₂.2.2.1 = p₂ := splitWalk_append (m - s) p₂ _
-      simp only [Sigma.mk.inj_iff, Subtype.mk.injEq, heq_eq_eq] at heq
-      rcases sp₁ with ⟨w₁, ⟨q₁, hq₁⟩, ⟨r₁, hr₁⟩⟩
-      rcases sp₂ with ⟨w₂, ⟨q₂, hq₂⟩, ⟨r₂, hr₂⟩⟩
-      dsimp only at heq happ₁ happ₂
-      rcases heq with ⟨rfl, rfl⟩
+      simp only [Finset.mem_coe, nbWalksBetweenAvoid, Finset.mem_filter, mem_nbWalksSub_iff] at h₁ h₂
+      have happ₁ := splitWalk_append (m - s) p₁ (by rw [hp₁]; exact hle_ms)
+      have happ₂ := splitWalk_append (m - s) p₂ (by rw [hp₂]; exact hle_ms)
+      rcases hsp₁ : splitWalk (m - s) p₁ (by rw [hp₁]; exact hle_ms) with ⟨w₁, ⟨q₁, hq₁⟩, ⟨r₁, hr₁⟩⟩
+      rcases hsp₂ : splitWalk (m - s) p₂ (by rw [hp₂]; exact hle_ms) with ⟨w₂, ⟨q₂, hq₂⟩, ⟨r₂, hr₂⟩⟩
+      dsimp only at heq
+      rw [hsp₁, hsp₂] at heq happ₁ happ₂
+      simp only [Sigma.mk.inj_iff] at heq
+      rcases heq with ⟨rfl, hq_heq⟩
+      have hq_eq : q₁ = q₂ := congrArg Subtype.val (eq_of_heq hq_heq)
+      subst hq_eq
       have hr₁_nb : IsNonBacktracking r₁ := isNonBacktracking_of_append_right (happ₁ ▸ h₁.1)
       have hr₂_nb : IsNonBacktracking r₂ := isNonBacktracking_of_append_right (happ₂ ▸ h₂.1)
       have hr_eq : r₁ = r₂ :=
@@ -296,18 +306,18 @@ theorem exists_unique_third_nbr (G : SimpleGraph V) [DecidableRel G.Adj]
     ∃! c : V, G.Adj u c ∧ c ≠ a ∧ c ≠ b := by
   have hcard : (((G.neighborFinset u).erase a).erase b).card = 1 := by
     have hb_mem : b ∈ (G.neighborFinset u).erase a :=
-      Finset.mem_erase.mpr ⟨hab.symm, SimpleGraph.mem_neighborFinset.mpr hb⟩
+      Finset.mem_erase.mpr ⟨hab.symm, G.mem_neighborFinset.mpr hb⟩
     rw [Finset.card_erase_of_mem hb_mem,
-        Finset.card_erase_of_mem (SimpleGraph.mem_neighborFinset.mpr ha),
+        Finset.card_erase_of_mem (G.mem_neighborFinset.mpr ha),
         G.card_neighborFinset_eq_degree, hdeg]
   obtain ⟨c, hc⟩ := Finset.card_eq_one.mp hcard
   refine ⟨c, ?_, ?_⟩
   · have hmem : c ∈ ((G.neighborFinset u).erase a).erase b := by rw [hc]; exact Finset.mem_singleton_self c
-    simp only [Finset.mem_erase, SimpleGraph.mem_neighborFinset] at hmem
+    simp only [Finset.mem_erase, G.mem_neighborFinset] at hmem
     exact ⟨hmem.2.2, hmem.2.1, hmem.1⟩
   · rintro y ⟨hy, hya, hyb⟩
     have hmem : y ∈ ((G.neighborFinset u).erase a).erase b := by
-      simp only [Finset.mem_erase, SimpleGraph.mem_neighborFinset]
+      simp only [Finset.mem_erase, G.mem_neighborFinset]
       exact ⟨hyb, hya, hy⟩
     rw [hc, Finset.mem_singleton] at hmem
     exact hmem
@@ -378,7 +388,8 @@ theorem strip_cycle_ends {G : SimpleGraph V} {v : V} (c : G.Walk v v)
       mid.length = c.length - 2 ∧ IsNonBacktracking mid ∧ firstNbr mid ≠ some v := by
   cases c with
   | nil => simp at h3
-  | cons (v := v₁) h₁ rest =>
+  | cons h₁ rest =>
+      rename_i v₁
       have hrest_pos : 2 ≤ rest.length := by simp at h3; omega
       have hsplit : ∀ {a b : V} (q : G.Walk a b), 1 ≤ q.length →
           ∃ (x : V) (mid : G.Walk a x) (hx : G.Adj x b), q = mid.append (.cons hx .nil) := by
@@ -402,12 +413,12 @@ theorem strip_cycle_ends {G : SimpleGraph V} {v : V} (c : G.Walk v v)
               intro ht
               cases r with
               | nil => trivial
-              | cons (v := c') hb r' =>
+              | cons hb r' =>
                   have hnd := ht.edges_nodup
                   simp only [Walk.edges_cons, List.nodup_cons] at hnd
                   refine ⟨fun heq => ?_, ih (Walk.IsTrail.mk hnd.2)⟩
                   subst heq
-                  exact hnd.1 (List.mem_cons_self _ _ |> fun _ => by simp [Sym2.eq_swap])
+                  exact hnd.1 (by simp [Sym2.eq_swap])
         have hnb := aux _ htr
         rw [IsCyclicallyNonBacktracking, isNonBacktracking_append_iff]
         refine ⟨hnb, hnb, ?_⟩
@@ -463,7 +474,8 @@ theorem strip_walk_ends {G : SimpleGraph V} {v u : V} (q : G.Walk v u)
       mid.length = q.length - 2 ∧ IsNonBacktracking mid ∧ firstNbr mid ≠ some v := by
   cases q with
   | nil => simp at h2
-  | cons (v := v₁) h₁ rest =>
+  | cons h₁ rest =>
+      rename_i v₁
       have hsplit : ∀ {a b : V} (r : G.Walk a b), 1 ≤ r.length →
           ∃ (x : V) (mid : G.Walk a x) (hx : G.Adj x b), r = mid.append (.cons hx .nil) := by
         intro a b r hr
