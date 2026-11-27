@@ -6,7 +6,7 @@ JOB_DIR="${REPO_ROOT}/jobs/erdos64-wave5-agent1-eg2core"
 OUT_DIR="${REPO_ROOT}/out"
 mkdir -p "${OUT_DIR}"
 
-git rev-parse HEAD | tee "${OUT_DIR}/source_commit.txt"
+git -c safe.directory="*" rev-parse HEAD | tee "${OUT_DIR}/source_commit.txt"
 
 # Locate pre-built Mathlib lake project in the Lean container
 LAKE_DIR=""
@@ -30,7 +30,7 @@ fi
 echo "Using LAKE_DIR=${LAKE_DIR}"
 
 if [ -d "${LAKE_DIR}/.lake/packages/mathlib/.git" ]; then
-  git -C "${LAKE_DIR}/.lake/packages/mathlib" rev-parse HEAD | tee "${OUT_DIR}/mathlib_commit.txt"
+  git -c safe.directory="*" -C "${LAKE_DIR}/.lake/packages/mathlib" rev-parse HEAD | tee "${OUT_DIR}/mathlib_commit.txt"
 else
   echo "unknown" | tee "${OUT_DIR}/mathlib_commit.txt"
 fi
