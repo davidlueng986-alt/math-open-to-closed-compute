@@ -1,0 +1,151 @@
+name: Ramsey R310 V8 Wave 2 SMS + Cube-Split PoC (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      smsg_seconds:
+        description: "smsg symmetry-breaking harvest budget (seconds)"
+        required: false
+        default: "240"
+      kissat_seconds:
+        description: "Kissat + DRAT/LRAT budget per job (seconds)"
+        required: false
+        default: "900"
+      frequency:
+        description: "smsg minimality check frequency"
+        required: false
+        default: "30"
+      cutoff:
+        description: "smsg minimality cutoff"
+        required: false
+        default: "200000"
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run selftest, reconstruct V8 tasks, probe smsg, and build 4-cube split
+        run: |
+          set -euo pipefail
+          mkdir -p out/cubes_P002_T01
+          python3 jobs/ramsey-r310-v8-w2-sms-solver/selftest_sms_solver.py
+          python3 jobs/ramsey-r310-v8-agent3-encoding/reconstruct_tasks.py
+          mv all_tasks.json out/all_tasks.json
+          smsg --help > out/smsg_help.txt 2>&1 || true
+
+          # Build Lean-CNF (static_lex) for D6-N9-B3-P002-T01 and split into 4 certified disjoint cubes
+          python3 - <<'PY'
+          import json, sys
+          from pathlib import Path
+          sys.path.insert(0, "jobs/ramsey-r310-v8-agent3-encoding")
+          import lean_cnf_sms as lc
+          all_tasks = json.loads(Path("out/all_tasks.json").read_text())
+          for tid in ("D6-N9-B3-P002-T01", "D6-N9-B3-P000-T01"):
+              z_sms, m_sms = lc.build_lean_cnf(all_tasks[tid], sym_mode="sms")
+              z_sms.write_dimacs(Path(f"out/{tid}.sms.cnf"))
+              Path(f"out/{tid}.sms.meta.json").write_text(json.dumps(m_sms, indent=2) + "\n")
+              print(f"Built {tid}.sms.cnf: vars={m_sms['total_vars']} clauses={m_sms['total_clauses']}", flush=True)
+          z_lex, m_lex = lc.build_lean_cnf(all_tasks["D6-N9-B3-P002-T01"], sym_mode="static_lex")
+          z_lex.write_dimacs(Path("out/D6-N9-B3-P002-T01.static_lex.cnf"))
+          Path("out/D6-N9-B3-P002-T01.static_lex.meta.json").write_text(json.dumps(m_lex, indent=2) + "\n")
+          print(f"Built D6-N9-B3-P002-T01.static_lex.cnf: vars={m_lex['total_vars']} clauses={m_lex['total_clauses']}", flush=True)
+          PY
+
+          python3 jobs/ramsey-r310-v8-w2-sms-solver/cube_splitter.py split \
+            --dimacs out/D6-N9-B3-P002-T01.static_lex.cnf \
+            --out out/cubes_P002_T01 \
+            --mode uniform \
+            --depth 2 \
+            --d 6 --q 9 --vertices 40
+      - uses: actions/upload-artifact@v4
+        with:
+          name: w2-sms-poc-inputs
+          path: out/
+          retention-days: 14
+
+  sms-harvest-certify:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        task: [D6-N9-B3-P002-T01, D6-N9-B3-P000-T01]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: w2-sms-poc-inputs
+          path: inputs/
+      - name: Run smsg --sym-break-clauses + Kissat + DRAT/LRAT on ${{ matrix.task }}
+        run: |
+          set -euo pipefail
+          python3 jobs/ramsey-r310-v8-w2-sms-solver/sms_partition_driver.py \
+            --tasks-json inputs/all_tasks.json \
+            --task "${{ matrix.task }}" \
+            --mode harvest-and-certify \
+            --frequency "${{ inputs.frequency || '30' }}" \
+            --cutoff "${{ inputs.cutoff || '200000' }}" \
+            --smsg-seconds "${{ inputs.smsg_seconds || '240' }}" \
+            --kissat-seconds "${{ inputs.kissat_seconds || '900' }}" \
+            --out out
+          cat out/summary.json >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: w2-sms-poc-${{ matrix.task }}
+          path: out/
+          retention-days: 14
+
+  cube-split-poc:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        cube_idx: [0, 1, 2, 3]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: w2-sms-poc-inputs
+          path: inputs/
+      - name: Solve & LRAT-certify D6-N9-B3-P002-T01 cube ${{ matrix.cube_idx }}
+        run: |
+          set -euo pipefail
+          python3 jobs/ramsey-r310-v8-w2-sms-solver/cube_splitter.py solve-cube \
+            --manifest inputs/cubes_P002_T01/manifest.json \
+            --cube-idx "${{ matrix.cube_idx }}" \
+            --seconds "${{ inputs.kissat_seconds || '900' }}" \
+            --out out
+          cat "out/cube_00${{ matrix.cube_idx }}_result.json" >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: w2-sms-cube-P002-T01-c${{ matrix.cube_idx }}
+          path: out/
+          retention-days: 14
