@@ -209,13 +209,12 @@ theorem general_step_d_dyadic_hitting {a m τ L r : ℕ}
       omega)
   have hdiv_d : (2 ^ a * m) ∣ (2 ^ k - L) := hcop.mul_dvd_of_dvd_of_dvd hdiv_2a hdiv_m
   obtain ⟨j, hj⟩ := hdiv_d
+  have hEq : L + j * (2 ^ a * m) = 2 ^ k := by
+    rw [mul_comm j, ← hj, add_comm, Nat.sub_add_cancel hk_geL]
   have hj_le : j ≤ r := by
     have hpos : 0 < 2 ^ a * m := Nat.mul_pos (Nat.pow_pos (by omega)) (by omega)
-    have h1 : (2 ^ a * m) * j < (2 ^ a * m) * r + 1 := by
-      have : L + (2 ^ a * m) * j = 2 ^ k := by omega
-      nlinarith
     nlinarith
-  refine ⟨j, hj_le, k, by omega, by linarith⟩
+  exact ⟨j, hj_le, k, by omega, hEq⟩
 
 /-! ### Part II: General Girth-Independent Ear-Detour Chain on SimpleGraph -/
 
@@ -300,14 +299,17 @@ theorem cycleVerts_length (D : GeneralDetourChain G r) (choice : Fin r → Bool)
       (∑ i : Fin r, if choice i then D.delta i else 0) := by
   unfold cycleVerts
   rw [List.length_flatMap]
-  have hsum : ∀ f : Fin r → ℕ, ((List.finRange r).map f).sum = ∑ i : Fin r, f i := by
-    intro f
-    rw [← Finset.sum_toList]
-    have h1 : (Finset.univ : Finset (Fin r)).toList.Perm (List.finRange r) := by
-      apply List.perm_of_nodup_nodup_toFinset_eq (Finset.nodup_toList _) (List.nodup_finRange r)
-      ext x; simp
-    exact (h1.map f).sum_eq
-  rw [hsum]
+  have hsum_nodup : ∀ (f : Fin r → ℕ) (l : List (Fin r)), l.Nodup →
+      (l.map f).sum = ∑ i ∈ l.toFinset, f i := by
+    intro f l hl
+    induction l with
+    | nil => simp
+    | cons a tl ih =>
+      rw [List.nodup_cons] at hl
+      simp only [List.map_cons, List.sum_cons, List.toFinset_cons]
+      rw [Finset.sum_insert (by simpa using hl.1), ih hl.2]
+  have htoFin : (List.finRange r).toFinset = Finset.univ := by ext x; simp
+  rw [hsum_nodup _ (List.finRange r) (List.nodup_finRange r), htoFin]
   rw [← Finset.sum_add_distrib]
   apply Finset.sum_congr rfl
   intro i _
@@ -361,7 +363,7 @@ private lemma flatMap_isChain {α β : Type*} {R : β → β → Prop} (f : α �
     apply isChain_append_of_link (hch a (by simp)) htail_chain ha_ne hrest_ne
     rw [hhead_eq]
     have hab : ∀ (ha : f a ≠ []) (hb : f b ≠ []), R ((f a).getLast ha) ((f b).head hb) :=
-      List.IsChain.rel_head hlink
+      List.IsChain.rel hlink
     exact hab ha_ne (hne b (by simp))
 
 /-- Every `choice : Fin r → Bool` produces a valid `SimpleCycle G` of exact subset-sum length! -/
@@ -378,6 +380,7 @@ def toSimpleCycle (D : GeneralDetourChain G r) (choice : Fin r → Bool) : Simpl
       intro h
       have hlen := D.cycleVerts_length choice
       rw [h] at hlen
+      simp only [List.length_nil] at hlen
       have := D.base_total_ge3
       omega
     have hchain : (D.cycleVerts choice).IsChain G.Adj := by
