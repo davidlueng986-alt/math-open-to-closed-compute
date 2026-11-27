@@ -1,0 +1,36 @@
+name: Erdos 617 W4 Exp3 r=6 SAT Closure
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - erdos617-w4-exp3-r6
+
+jobs:
+  controls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install python-sat
+      - run: python3 jobs/erdos617-w4-exp3-r6/solve_r6_sat.py --case controls --solver cadical195
+
+  profiles:
+    needs: controls
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        case: [p6, p7, p8, p9]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install python-sat
+      - name: Run CaDiCaL 1.9.5 on ${{ matrix.case }}
+        run: python3 jobs/erdos617-w4-exp3-r6/solve_r6_sat.py --case ${{ matrix.case }} --solver cadical195
