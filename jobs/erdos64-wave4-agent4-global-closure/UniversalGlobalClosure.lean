@@ -111,8 +111,7 @@ theorem contractSet_degree_some {V : Type u} [Fintype V] [DecidableEq V]
           have hspec := Classical.choose_spec h
           exact hnm x.1 x.2 (Classical.choose h) hspec.1 w hwS hspec.2.symm hw
         · have hinv : invF ⟨w, hw⟩ = ⟨some ⟨w, hwS⟩, hw⟩ := by simp [invF, hwS]
-          rw [hinv]
-          rfl }
+          rw [hinv] }
   calc
     (ContractSet G S).degree (some x)
         = Nat.card ((ContractSet G S).neighborSet (some x)) := by
