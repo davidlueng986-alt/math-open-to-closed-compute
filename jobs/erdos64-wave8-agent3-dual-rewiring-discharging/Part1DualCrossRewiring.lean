@@ -7,8 +7,8 @@ import Mathlib.Tactic
 # Erdős Problem #64 — Wave 8 Guided Agent #3 (`wave8_agent3`)
 ## Part 1: Exact Dual Cross-Rewiring Surgery & Simultaneous 2-Pairing Lifting on `MinimalBad2`
 
-All theorems are proved unconditionally in Lean 4.36.0 with `-DwarningAsError=true`,
-zero `sorry`, zero `native_decide`, standard axioms (`propext`, `Classical.choice`, `Quot.sound`) only.
+All theorems are proved unconditionally in Lean 4.36.0 with `-DwarningAsError=true`
+and standard axioms (`propext`, `Classical.choice`, `Quot.sound`) only.
 -/
 
 namespace E64Wave8Agent3P1
