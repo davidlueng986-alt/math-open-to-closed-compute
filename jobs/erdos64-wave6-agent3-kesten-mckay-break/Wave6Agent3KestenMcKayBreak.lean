@@ -279,12 +279,12 @@ theorem realize_length {G : SimpleGraph V} :
   | _, _, .step p huw z huz hzw rest, false :: bs, hlen => by
       simp only [numBypasses, List.length_cons, Nat.add_right_cancel_iff] at hlen
       have ih := realize_length rest bs hlen
-      simp [realize, baseWalk, Walk.length_append, Walk.length_cons, List.count_cons]
+      simp [realize, baseWalk, Walk.length_append, Walk.length_cons]
       omega
   | _, _, .step p huw z huz hzw rest, true :: bs, hlen => by
       simp only [numBypasses, List.length_cons, Nat.add_right_cancel_iff] at hlen
       have ih := realize_length rest bs hlen
-      simp [realize, baseWalk, Walk.length_append, Walk.length_cons, List.count_cons]
+      simp [realize, baseWalk, Walk.length_append, Walk.length_cons]
       omega
 
 private theorem support_eq_cons_start {G : SimpleGraph V} {u v : V} (q : G.Walk u v) :
@@ -383,7 +383,7 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} :
       subst hxy
       rw [support_eq_cons_start (rest.realize bs), List.mem_cons] at hyr
       rcases hyr with rfl | htail
-      · exact hp_disj w hxp w (Walk.start_mem_support rest.baseWalk) rfl
+      · exact hp_disj x hxp x (Walk.start_mem_support rest.baseWalk) rfl
       · rcases mem_realize_support_tail rest bs hlen x htail with hbase | hap
         · exact hp_disj x hxp x (List.mem_of_mem_tail hbase) rfl
         · apply hdisj x (List.mem_cons_of_mem z hap)
@@ -417,7 +417,7 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} :
         intro hmem
         rw [support_eq_cons_start (rest.realize bs), List.mem_cons] at hmem
         rcases hmem with rfl | htail
-        · apply hdisj w (List.mem_cons_self ..)
+        · apply hdisj z (List.mem_cons_self ..)
           simp only [baseWalk, support_append_tail, Walk.support_cons, List.tail_cons,
             List.mem_append]
           exact Or.inr (Walk.start_mem_support rest.baseWalk)
@@ -442,7 +442,7 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} :
       · exact hz_not_p hxp
       · rw [support_eq_cons_start (rest.realize bs), List.mem_cons] at hyr
         rcases hyr with rfl | htail
-        · exact hp_disj w hxp w (Walk.start_mem_support rest.baseWalk) rfl
+        · exact hp_disj x hxp x (Walk.start_mem_support rest.baseWalk) rfl
         · rcases mem_realize_support_tail rest bs hlen x htail with hbase | hap
           · exact hp_disj x hxp x (List.mem_of_mem_tail hbase) rfl
           · apply hdisj x (List.mem_cons_of_mem z hap)
@@ -543,7 +543,7 @@ private theorem realize_edges_nodup {G : SimpleGraph V} :
         have hz_supp : z ∈ (rest.realize bs).support := mem_support_of_mem_edges he hze
         rw [support_eq_cons_start (rest.realize bs), List.mem_cons] at hz_supp
         rcases hz_supp with rfl | htail
-        · apply hdisj w (List.mem_cons_self ..)
+        · apply hdisj z (List.mem_cons_self ..)
           simp only [baseWalk, Walk.support_append, Walk.support_cons, List.tail_cons,
             List.mem_append]
           exact Or.inr (Walk.start_mem_support rest.baseWalk)
