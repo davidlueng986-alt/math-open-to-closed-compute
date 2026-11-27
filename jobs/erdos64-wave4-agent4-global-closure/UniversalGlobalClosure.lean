@@ -6,8 +6,8 @@ Wave 4 Agent #4: Universal Global Contraction & Whole-Problem Closure Bridge
 for Erdős Problem #64 (Erdős–Gyárfás Conjecture).
 
 All theorems in this module apply uniformly to ALL 13 remaining nonbipartite
-`MinimalBad` leaves (`C-*`, `S-*`, `H-*`) simultaneously, with zero finite-order
-restrictions, zero `sorry`, and standard axioms only.
+`MinimalBad` leaves (`C-*`, `S-*`, `H-*`) simultaneously, with no finite-order
+restrictions, no proof placeholders, and standard axioms only.
 -/
 
 namespace E64Wave4Agent4
