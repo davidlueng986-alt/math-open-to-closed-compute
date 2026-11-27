@@ -1,0 +1,97 @@
+{
+  "problem": "ABC",
+  "wave": 3,
+  "agent": 1,
+  "task": "VALUATION-CORE",
+  "original_abc_closed": false,
+  "new_global_core_estimates_proved": 0,
+  "root_route_frontier_before": [
+    "W2-A2-ROOT-BOUND",
+    "W2-A2-GROWTH-BOUND"
+  ],
+  "root_route_frontier_after": [
+    "W2-A2-ROOT-BOUND"
+  ],
+  "claims": [
+    {
+      "id": "W3-A1-SQUARE-AREA-DESCENT",
+      "status": "PROVED",
+      "statement": "No positive integer right triangle has nonzero square area; hence c^4-b^4 is not a square for integers0<b<c.",
+      "dependencies": [],
+      "proof": "REPORT.md section2",
+      "novelty": "classical theorem; self-contained proof supplied"
+    },
+    {
+      "id": "W3-A1-QUARTIC-ROOT-MAP",
+      "status": "PROVED",
+      "statement": "Every primitive odd-c triple, with even summand b, maps to the T-root(c^4-b^4,b^4,c^4), with no exceptions or normalization, and Rnew<=4R c^3.",
+      "dependencies": [
+        "W3-A1-SQUARE-AREA-DESCENT",
+        "W2-A2-IMAGE"
+      ],
+      "proof": "REPORT.md section3"
+    },
+    {
+      "id": "W3-A1-ROOT-ONLY-CLOSURE",
+      "status": "PROVED",
+      "statement": "W2-A2-ROOT-BOUND implies the full abc conjecture. Given epsilon>0 choose delta=epsilon/[8(1+epsilon)] and K=1+exp((1+epsilon)(A_delta+log4)).",
+      "dependencies": [
+        "W3-A1-QUARTIC-ROOT-MAP"
+      ],
+      "assumptions": [
+        "W2-A2-ROOT-BOUND"
+      ],
+      "logical_role": "proved conditional implication; original arithmetic premise remains BLOCKED",
+      "proof": "REPORT.md section4"
+    },
+    {
+      "id": "W3-A1-ROOT-IMPLIES-GROWTH",
+      "status": "PROVED",
+      "statement": "W2-A2-ROOT-BOUND implies W2-A2-GROWTH-BOUND via the full abc implication and the exact orbit budget identity.",
+      "dependencies": [
+        "W3-A1-ROOT-ONLY-CLOSURE"
+      ],
+      "assumptions": [
+        "W2-A2-ROOT-BOUND"
+      ],
+      "logical_role": "proved conditional implication; neither estimate is established unconditionally",
+      "proof": "REPORT.md section4.3"
+    },
+    {
+      "id": "W3-A1-PRODUCT-CUSP-BARRIER",
+      "status": "PROVED",
+      "statement": "For a fixed tripod-preserving degree-d Belyi map with cusp ramification e>=1, applying PRODUCT solely through the standard new-radical degree bound yields r>=1-e(1-alpha)/3, no stronger than the original PRODUCT cusp budget.",
+      "dependencies": [],
+      "scope": "Limited inference scheme; not a logical nonimplication between PRODUCT and abc.",
+      "proof": "REPORT.md section6"
+    },
+    {
+      "id": "W3-A1-FINITE-VERIFIER",
+      "status": "CHECKED",
+      "statement": "Exact finite verifier for quartic root mapping, all-parity transport, support factorization, and parameter identities.",
+      "dependencies": [],
+      "scope": "Local and hosted exact finite checks completed successfully. These checks do not prove ROOT.",
+      "evidence": [
+        "research/ABC/wave3/verification/46040760555/abc-wave3-agent1/result.json",
+        "research/ABC/wave3/verification/46040760555/abc-wave3-agent1/provenance.json"
+      ],
+      "hosted_execution": {
+        "run_id": 46040760555,
+        "job_id": 140647642797,
+        "source_commit": "03cbd0a1991144457cc014443cd4d9cf4b2520dd",
+        "conclusion": "success",
+        "url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/46040760555/job/140647642797",
+        "scope": "The observed job verifies only its declared finite or exact kernel statements; it does not establish any open global estimate."
+      },
+      "verification_scope": "Actual exact finite/symbolic verification succeeded; no proof of an infinite arithmetic estimate."
+    }
+  ],
+  "final_hosted_receipt": {
+    "run_id": 46040760555,
+    "job_id": 140647642797,
+    "source_commit": "03cbd0a1991144457cc014443cd4d9cf4b2520dd",
+    "conclusion": "success",
+    "url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/46040760555/job/140647642797",
+    "scope": "The observed job verifies only its declared finite or exact kernel statements; it does not establish any open global estimate."
+  }
+}

@@ -35,6 +35,12 @@
       "job": "abc-wave3-agent5-root-kernel",
       "toolbox": "sat",
       "image": "ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc"
+    },
+    {
+      "agent": 6,
+      "job": "abc-wave3-agent6-audit",
+      "toolbox": "sat",
+      "image": "ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc"
     }
   ]
 }

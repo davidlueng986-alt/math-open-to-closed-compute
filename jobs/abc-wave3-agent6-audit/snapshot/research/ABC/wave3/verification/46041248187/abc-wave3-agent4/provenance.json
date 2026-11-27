@@ -1,0 +1,15 @@
+{
+  "agent": 4,
+  "job": "abc-wave3-agent4-lean",
+  "toolbox": "lean",
+  "source_commit": "e2a47a835201e7be2c50fa14e86317da52cc6df4",
+  "run_id": "46041248187",
+  "run_attempt": "1",
+  "python": "3.10.12",
+  "file_sha256": {
+    "jobs/abc-wave3-agent4-lean/FermatSquareArea.lean": "e97ea98a8feb82460a48bb63f6b1db94528f3ed30cf761b5945d83ff54d5bdef",
+    "jobs/abc-wave3-agent4-lean/README.md": "cb3c67ebc848087b0146fec669fb5856cf9ff4dafce1482878d0605f5b80b0a1",
+    "jobs/abc-wave3-agent4-lean/audit.py": "960a9377c1ec021cebbfb020fe7d8d0d6ca8c26f11142c481fb3ef8baede1947",
+    "jobs/abc-wave3-agent4-lean/run.sh": "783133be6bf4ca7f860845bfb472a265fb391f22931cee3d5510471a0bd2cd92"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "agent": 3,
+  "job": "abc-wave3-agent3-root-escape",
+  "toolbox": "sage",
+  "source_commit": "03cbd0a1991144457cc014443cd4d9cf4b2520dd",
+  "run_id": "46040760555",
+  "run_attempt": "1",
+  "python": "3.10.12",
+  "file_sha256": {
+    "jobs/abc-wave3-agent3-root-escape/README.md": "ae0a011e2ae5592ec03cefd1cc20568c05a521de8eeac501db4183c308031cd8",
+    "jobs/abc-wave3-agent3-root-escape/run.sh": "78b0dd38ff42ae76b2e3f846a8b290865783c1118c03e68951af8b30112687c6",
+    "jobs/abc-wave3-agent3-root-escape/verify.py": "47b223cfb7d0ec835ac5dec578b227ab713ccb774798d6d89bd846f45942e1bf"
+  }
+}

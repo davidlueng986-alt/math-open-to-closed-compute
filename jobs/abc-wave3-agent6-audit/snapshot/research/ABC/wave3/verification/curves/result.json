@@ -1,0 +1,159 @@
+{
+  "status": "CHECKED",
+  "problem_resolution": "unknown",
+  "sage_version": "10.6",
+  "scope": "Exact genus/discriminant/Bezout identities and certified rank-zero/torsion computations for the fixed escape quotient and its 2-isogenous curve; not a global abc estimate.",
+  "genus2_polynomial": "-6*x^6 + 25*x^4 - 36*x^2 + 18",
+  "genus2_discriminant": "35831808",
+  "curves": [
+    {
+      "name": "escape_quotient",
+      "ainvs": [
+        0,
+        -2,
+        0,
+        9,
+        0
+      ],
+      "rank": 0,
+      "rank_method": "mwrank_lib, proof=True, use_database=False",
+      "torsion": [
+        [
+          "0",
+          "1",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "1"
+        ],
+        [
+          "3",
+          "-6",
+          "1"
+        ],
+        [
+          "3",
+          "6",
+          "1"
+        ]
+      ],
+      "discriminant": "-41472",
+      "conductor": 96,
+      "reduction_counts": {
+        "5": 4,
+        "7": 12,
+        "11": 8
+      }
+    },
+    {
+      "name": "escape_isogenous",
+      "ainvs": [
+        0,
+        4,
+        0,
+        -32,
+        0
+      ],
+      "rank": 0,
+      "rank_method": "mwrank_lib, proof=True, use_database=False",
+      "torsion": [
+        [
+          "0",
+          "1",
+          "0"
+        ],
+        [
+          "-8",
+          "0",
+          "1"
+        ],
+        [
+          "0",
+          "0",
+          "1"
+        ],
+        [
+          "4",
+          "0",
+          "1"
+        ]
+      ],
+      "discriminant": "2359296",
+      "conductor": 96,
+      "reduction_counts": {
+        "5": 4,
+        "7": 12,
+        "11": 8
+      }
+    }
+  ],
+  "mod3_exclusions": [
+    {
+      "u": 0,
+      "v": 1,
+      "quartic_residues": [
+        2,
+        2
+      ]
+    },
+    {
+      "u": 0,
+      "v": 2,
+      "quartic_residues": [
+        2,
+        2
+      ]
+    },
+    {
+      "u": 1,
+      "v": 0,
+      "quartic_residues": [
+        2,
+        2
+      ]
+    },
+    {
+      "u": 1,
+      "v": 1,
+      "quartic_residues": [
+        2,
+        2
+      ]
+    },
+    {
+      "u": 1,
+      "v": 2,
+      "quartic_residues": [
+        2,
+        2
+      ]
+    },
+    {
+      "u": 2,
+      "v": 0,
+      "quartic_residues": [
+        2,
+        2
+      ]
+    },
+    {
+      "u": 2,
+      "v": 1,
+      "quartic_residues": [
+        2,
+        2
+      ]
+    },
+    {
+      "u": 2,
+      "v": 2,
+      "quartic_residues": [
+        2,
+        2
+      ]
+    }
+  ],
+  "rational_points_consequence": "Using the written degree-two quotient map, the genus2 affine rational points are (x,y)=(+/-1,+/-1). No rational x lies strictly between0 and1."
+}

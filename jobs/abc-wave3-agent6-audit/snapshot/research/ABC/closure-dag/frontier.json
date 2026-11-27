@@ -1,0 +1,401 @@
+{
+  "problem": "ABC",
+  "resolution": "unknown",
+  "node_count": 185,
+  "route_count": 16,
+  "closed_route_count": 0,
+  "counts_are_difficulty_percentages": false,
+  "scope": "Unresolved sets for the explicitly supplied mathematical decompositions only; no assertion that these are the fewest lemmas in any possible proof.",
+  "routes": [
+    {
+      "id": "TRUE-VIA-MODIFIED-SZPIRO",
+      "conclusion": "ABC-TRUE",
+      "closed": false,
+      "invalid_due_to_failed_premise": false,
+      "minimal_declared_frontiers": [
+        {
+          "ids": [
+            "W2-A5-CUSP",
+            "W2-A5-LOW"
+          ],
+          "total": 2,
+          "by_category": {
+            "mathematical": [
+              "W2-A5-CUSP",
+              "W2-A5-LOW"
+            ]
+          },
+          "core_bottlenecks": [
+            "W2-A5-CUSP",
+            "W2-A5-LOW"
+          ]
+        }
+      ],
+      "scope": "All semistable E/Q; exact epsilon conversion and all-parity construction are proved."
+    },
+    {
+      "id": "TRUE-VIA-FALTINGS",
+      "conclusion": "ABC-TRUE",
+      "closed": false,
+      "invalid_due_to_failed_premise": false,
+      "minimal_declared_frontiers": [
+        {
+          "ids": [
+            "ABC-T1-FH-OPEN"
+          ],
+          "total": 1,
+          "by_category": {
+            "mathematical": [
+              "ABC-T1-FH-OPEN"
+            ]
+          },
+          "core_bottlenecks": [
+            "ABC-T1-FH-OPEN"
+          ]
+        }
+      ],
+      "scope": "Sharp coefficient1/2+epsilon; ordinary unspecified height bounds do not suffice."
+    },
+    {
+      "id": "TRUE-VIA-TRUNCATED-VOJTA",
+      "conclusion": "ABC-TRUE",
+      "closed": false,
+      "invalid_due_to_failed_premise": false,
+      "minimal_declared_frontiers": [
+        {
+          "ids": [
+            "ABC-T1-VOJTA-OPEN"
+          ],
+          "total": 1,
+          "by_category": {
+            "mathematical": [
+              "ABC-T1-VOJTA-OPEN"
+            ]
+          },
+          "core_bottlenecks": [
+            "ABC-T1-VOJTA-OPEN"
+          ]
+        }
+      ],
+      "scope": "P1 over Q, divisor0+1+infinity, truncated counting and finite exceptional set."
+    },
+    {
+      "id": "TRUE-VIA-UNIFORM-LOG",
+      "conclusion": "ABC-TRUE",
+      "closed": false,
+      "invalid_due_to_failed_premise": false,
+      "minimal_declared_frontiers": [
+        {
+          "ids": [
+            "GLOBAL-LOG-BOUND"
+          ],
+          "total": 1,
+          "by_category": {
+            "mathematical": [
+              "GLOBAL-LOG-BOUND"
+            ]
+          },
+          "core_bottlenecks": [
+            "GLOBAL-LOG-BOUND"
+          ]
+        }
+      ],
+      "scope": "This route is an exact reformulation, not a reduction in known difficulty."
+    },
+    {
+      "id": "TRUE-VIA-BALANCED-SPLIT",
+      "conclusion": "ABC-TRUE",
+      "closed": false,
+      "invalid_due_to_failed_premise": false,
+      "minimal_declared_frontiers": [
+        {
+          "ids": [
+            "T2-BALANCED-JOINT-BOUND",
+            "T2-UNBALANCED-SHARP"
+          ],
+          "total": 2,
+          "by_category": {
+            "mathematical": [
+              "T2-BALANCED-JOINT-BOUND",
+              "T2-UNBALANCED-SHARP"
+            ]
+          },
+          "core_bottlenecks": [
+            "T2-BALANCED-JOINT-BOUND",
+            "T2-UNBALANCED-SHARP"
+          ]
+        }
+      ],
+      "scope": "Same epsilon and uniform constants on the two exhaustive ordered-triple regimes; absorb finite exceptions."
+    },
+    {
+      "id": "TRUE-VIA-IUT",
+      "conclusion": "ABC-TRUE",
+      "closed": false,
+      "invalid_due_to_failed_premise": false,
+      "minimal_declared_frontiers": [
+        {
+          "ids": [
+            "ABC-T3-C312",
+            "ABC-T3-DOWNSTREAM",
+            "ABC-T3-FAITHFUL"
+          ],
+          "total": 3,
+          "by_category": {
+            "mathematical": [
+              "ABC-T3-C312",
+              "ABC-T3-FAITHFUL"
+            ],
+            "verification": [
+              "ABC-T3-DOWNSTREAM"
+            ]
+          },
+          "core_bottlenecks": [
+            "ABC-T3-C312",
+            "ABC-T3-FAITHFUL"
+          ]
+        }
+      ],
+      "scope": "Faithful genuine-data comparison and the literal/variant bridge must both be proved; external conditional source was not rebuilt in this wave. Its direct frontier includes a compound C312 obligation; internal faithful-model gaps are listed and not treated as solved."
+    },
+    {
+      "id": "TRUE-VIA-ARITHMETIC-TRANSFER",
+      "conclusion": "ABC-TRUE",
+      "closed": false,
+      "invalid_due_to_failed_premise": false,
+      "minimal_declared_frontiers": [
+        {
+          "ids": [
+            "ABC-T3-UNIFORMITY",
+            "ABC-T3-WEAK-TRANSFER"
+          ],
+          "total": 2,
+          "by_category": {
+            "mathematical": [
+              "ABC-T3-UNIFORMITY",
+              "ABC-T3-WEAK-TRANSFER"
+            ]
+          },
+          "core_bottlenecks": [
+            "ABC-T3-UNIFORMITY",
+            "ABC-T3-WEAK-TRANSFER"
+          ]
+        }
+      ],
+      "scope": "The refuted degree-preserving specialization shortcut is excluded."
+    },
+    {
+      "id": "FALSE-VIA-ORBIT",
+      "conclusion": "ABC-FALSE",
+      "closed": false,
+      "invalid_due_to_failed_premise": false,
+      "minimal_declared_frontiers": [
+        {
+          "ids": [
+            "W2-A1-POSITIVE-MASS"
+          ],
+          "total": 1,
+          "by_category": {
+            "mathematical": [
+              "W2-A1-POSITIVE-MASS"
+            ]
+          },
+          "core_bottlenecks": [
+            "W2-A1-POSITIVE-MASS"
+          ]
+        }
+      ],
+      "scope": "One permitted fixed seed with positive normalized repeated-power deficit would suffice; no such seed is established."
+    },
+    {
+      "id": "FALSE-VIA-LATTICE-RELATIONS",
+      "conclusion": "ABC-FALSE",
+      "closed": false,
+      "invalid_due_to_failed_premise": false,
+      "minimal_declared_frontiers": [
+        {
+          "ids": [
+            "A4-SEQUENCE-CONSTRUCTION"
+          ],
+          "total": 1,
+          "by_category": {
+            "mathematical": [
+              "A4-SEQUENCE-CONSTRUCTION"
+            ]
+          },
+          "core_bottlenecks": [
+            "A4-SEQUENCE-CONSTRUCTION"
+          ]
+        }
+      ],
+      "scope": "Coefficient radical and normalization gcd must obey one uniform exponent budget on an unbounded sequence."
+    },
+    {
+      "id": "FALSE-VIA-UNBOUNDED-RATIO",
+      "conclusion": "ABC-FALSE",
+      "closed": false,
+      "invalid_due_to_failed_premise": false,
+      "minimal_declared_frontiers": [
+        {
+          "ids": [
+            "A6-UNBOUNDED-PREMISE"
+          ],
+          "total": 1,
+          "by_category": {
+            "mathematical": [
+              "A6-UNBOUNDED-PREMISE"
+            ]
+          },
+          "core_bottlenecks": [
+            "A6-UNBOUNDED-PREMISE"
+          ]
+        }
+      ],
+      "scope": "The formal contradiction interface is verified; its quantified arithmetic premise is still open."
+    },
+    {
+      "id": "W2-FALSE-VIA-LOCAL-LIFTING-MASS",
+      "conclusion": "ABC-FALSE",
+      "closed": false,
+      "invalid_due_to_failed_premise": false,
+      "minimal_declared_frontiers": [
+        {
+          "ids": [
+            "W2-A1-POSITIVE-MASS"
+          ],
+          "total": 1,
+          "by_category": {
+            "mathematical": [
+              "W2-A1-POSITIVE-MASS"
+            ]
+          },
+          "core_bottlenecks": [
+            "W2-A1-POSITIVE-MASS"
+          ]
+        }
+      ],
+      "scope": "One fixed seed; forward sufficient route needs no Baker theorem. The one remaining lemma is a core infinite estimate, not a small finishing step."
+    },
+    {
+      "id": "W2-TRUE-VIA-ROOT-ORBIT",
+      "conclusion": "ABC-TRUE",
+      "closed": false,
+      "invalid_due_to_failed_premise": false,
+      "minimal_declared_frontiers": [
+        {
+          "ids": [
+            "W2-A2-ROOT-BOUND"
+          ],
+          "total": 1,
+          "by_category": {
+            "mathematical": [
+              "W2-A2-ROOT-BOUND"
+            ]
+          },
+          "core_bottlenecks": [
+            "W2-A2-ROOT-BOUND"
+          ]
+        }
+      ],
+      "scope": "Historical two-budget route, refined in Wave3 using ROOT=>GROWTH. The shared ROOT premise is counted once. ROOT remains equivalent in difficulty to full abc; no global estimate is solved."
+    },
+    {
+      "id": "TRUE-VIA-W2-VALUATION-COMPENSATION",
+      "conclusion": "ABC-TRUE",
+      "closed": false,
+      "invalid_due_to_failed_premise": false,
+      "minimal_declared_frontiers": [
+        {
+          "ids": [
+            "W2-A3-PRODUCT-BOUND",
+            "W2-A3-THIN-BOUND"
+          ],
+          "total": 2,
+          "by_category": {
+            "mathematical": [
+              "W2-A3-PRODUCT-BOUND",
+              "W2-A3-THIN-BOUND"
+            ]
+          },
+          "core_bottlenecks": [
+            "W2-A3-PRODUCT-BOUND",
+            "W2-A3-THIN-BOUND"
+          ]
+        }
+      ],
+      "scope": "All ordered primitive positive triples, then exchange summands. Constants depend only on the fixed epsilon. This is an exact decomposition, not a difficulty percentage."
+    },
+    {
+      "id": "W2-FALSE-VIA-FIXED-LATTICE",
+      "conclusion": "ABC-FALSE",
+      "closed": false,
+      "invalid_due_to_failed_premise": false,
+      "minimal_declared_frontiers": [
+        {
+          "ids": [
+            "W2-A4-FIXED-SEQUENCE"
+          ],
+          "total": 1,
+          "by_category": {
+            "mathematical": [
+              "W2-A4-FIXED-SEQUENCE"
+            ]
+          },
+          "core_bottlenecks": [
+            "W2-A4-FIXED-SEQUENCE"
+          ]
+        }
+      ],
+      "scope": "Fixed bases (2,3,5), primitive coefficients, same sequence and constants. The one remaining core assertion is equivalent to abc failure; no global core estimate has been closed."
+    },
+    {
+      "id": "W2-TRUE-VIA-JOINT-HEIGHT-REGIMES",
+      "conclusion": "ABC-TRUE",
+      "closed": false,
+      "invalid_due_to_failed_premise": false,
+      "minimal_declared_frontiers": [
+        {
+          "ids": [
+            "W2-A5-CUSP",
+            "W2-A5-LOW"
+          ],
+          "total": 2,
+          "by_category": {
+            "mathematical": [
+              "W2-A5-CUSP",
+              "W2-A5-LOW"
+            ]
+          },
+          "core_bottlenecks": [
+            "W2-A5-CUSP",
+            "W2-A5-LOW"
+          ]
+        }
+      ],
+      "scope": "Two same-parameter uniform estimates together equivalent to semistable modified Szpiro, with proved all-parity reduction to full abc. The count is not a difficulty percentage."
+    },
+    {
+      "id": "W3-TRUE-VIA-ROOT-ONLY",
+      "conclusion": "ABC-TRUE",
+      "closed": false,
+      "invalid_due_to_failed_premise": false,
+      "minimal_declared_frontiers": [
+        {
+          "ids": [
+            "W2-A2-ROOT-BOUND"
+          ],
+          "total": 1,
+          "by_category": {
+            "mathematical": [
+              "W2-A2-ROOT-BOUND"
+            ]
+          },
+          "core_bottlenecks": [
+            "W2-A2-ROOT-BOUND"
+          ]
+        }
+      ],
+      "scope": "All primitive positive triples, both parity cases. Exact quartic support and epsilon transport are proved; the one remaining uniform arithmetic estimate is equivalent to full abc."
+    }
+  ]
+}

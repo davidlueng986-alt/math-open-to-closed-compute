@@ -1,0 +1,5 @@
+'ABCWave3Orbit.triple_composition' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave3Orbit.squarefree_certificate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave3Orbit.no_common_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave3Orbit.homogeneous_triple' depends on axioms: [propext, Quot.sound]
+'ABCWave3Orbit.square_part_exponent_budget' depends on axioms: [propext, Classical.choice, Quot.sound]

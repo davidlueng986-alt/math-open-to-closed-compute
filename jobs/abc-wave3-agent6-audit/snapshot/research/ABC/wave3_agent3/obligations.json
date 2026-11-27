@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "problem": "ABC",
+  "wave": 3,
+  "agent": "/root/abc_wave3_agent3",
+  "self_claimed_task": "HEIGHT-CORE",
+  "date": "2026-11-28",
+  "classification": "external exploratory work",
+  "original_resolution": "unknown",
+  "closed_global_core_estimates": 0,
+  "unchanged_open_targets": [
+    "W2-A5-LOW",
+    "W2-A5-CUSP",
+    "W2-A2-ROOT-BOUND"
+  ],
+  "dependency_change": {
+    "route": "root-orbit",
+    "previous_independent_core_premises": [
+      "W2-A2-ROOT-BOUND",
+      "W2-A2-GROWTH-BOUND"
+    ],
+    "new_sufficient_core_premises": [
+      "W2-A2-ROOT-BOUND"
+    ],
+    "note": "This alternative proof uses classical 2-isogeny descent; canonical main route should prefer Agent 1 simpler Fermat map. GROWTH is not marked unconditionally proved."
+  },
+  "nodes": [
+    {
+      "id": "W3-A3-MAPS",
+      "title": "Primitive degree3/4 maps with bounded quartic normalization",
+      "status": "PROVED",
+      "statement": "For positive primitive odd-c triples with odd first summand, M3 is primitive, gcd of raw M4 divides81, both preserve positivity and parity, and height/radical bounds c3=c^3,R3<=4Rc^2,c4>=c^4/81,R4<=24Rc^3 hold.",
+      "proof_dependencies": [],
+      "evidence": "REPORT.md#2-two-homogeneous-maps-and-exact-arithmetic-control"
+    },
+    {
+      "id": "W3-A3-RANK-ZERO",
+      "title": "Exact rational points on Y²=X³−2X²+9X",
+      "status": "PROVED",
+      "statement": "E(Q)={O,(0,0),(3,6),(3,-6)}. Rank zero follows from image square classes {1,3} and {1,-2}; class2 obstruction modulo3 is exhaustive. Torsion order4 follows from good reductions5 and7.",
+      "proof_dependencies": [],
+      "imports": [
+        "Mordell-Weil finite generation",
+        "Standard rational2-isogeny descent maps, quartic model, and rank formula",
+        "Prime-to-p torsion injection at good reduction"
+      ],
+      "evidence": "REPORT.md#3-a-complete-rank-zero-calculation"
+    },
+    {
+      "id": "W3-A3-SEXTIC",
+      "title": "Exact rational points on the fixed genus2 obstruction curve",
+      "status": "PROVED",
+      "statement": "The affine curve y²=-6x^6+25x^4-36x²+18 has precisely (x,y)=(±1,±1), via X=9-6x²,Y=6y and the rank-zero elliptic quotient.",
+      "proof_dependencies": [
+        "W3-A3-RANK-ZERO"
+      ],
+      "evidence": "REPORT.md#4-resolving-the-genus-two-obstruction-exactly"
+    },
+    {
+      "id": "W3-A3-ESCAPE",
+      "title": "Universal degree≤4 escape to a squaring-orbit root",
+      "status": "PROVED",
+      "statement": "Every positive primitive odd-c triple is itself a root or at least one of M3,M4 is a root. If both fail, square ratios give a forbidden rational point with0<x<1 on the fixed sextic.",
+      "proof_dependencies": [
+        "W3-A3-MAPS",
+        "W3-A3-SEXTIC",
+        "W2-A2-IMAGE"
+      ],
+      "evidence": "REPORT.md#5-universal-two-map-root-escape"
+    },
+    {
+      "id": "W3-A3-ROOT-SUFFICES",
+      "title": "ROOT alone implies full abc through effective fixed-degree transport",
+      "status": "PROVED",
+      "logical_role": "proved conditional implication; premise remains open",
+      "statement": "The existing uniform ROOT family implies odd-c ABC via delta=epsilon/(4+3epsilon), then full ABC by parity. Conversely ABC implies ROOT. Thus ROOT implies GROWTH using the already proved ABC=>GROWTH direction.",
+      "proof_dependencies": [
+        "W3-A3-ESCAPE",
+        "W2-A2-PARITY"
+      ],
+      "conditional_hypotheses": [
+        "W2-A2-ROOT-BOUND"
+      ],
+      "does_not_prove_hypotheses": true,
+      "evidence": "REPORT.md#6-quantified-consequence-for-the-closure-dag"
+    },
+    {
+      "id": "W3-A3-BOUNDED-ISOGENY-OBSTRUCTION",
+      "title": "A fixed2-isogeny depth cannot remove all cusps uniformly in epsilon",
+      "status": "PROVED",
+      "statement": "For every fixed m, eta in(0,2^(2-m)), and the semistable Frey family B=2^n, every rational2-isogeny chain of length<=m has J/(1728N^(eta/2))->infinity. This does not exclude depth depending on eta.",
+      "proof_dependencies": [],
+      "imports": [
+        "Classical degree2 modular polynomial relation",
+        "Conductor invariance under rational isogeny",
+        "Wave1 explicit semistable Frey family"
+      ],
+      "evidence": "REPORT.md#72-a-fixed-depth2-isogeny-bypass-cannot-uniformly-remove-the-cusp"
+    },
+    {
+      "id": "W3-A3-CERTIFICATE-CHECK",
+      "title": "Exact algebraic certificates and independent certified Sage rank",
+      "status": "CHECKED",
+      "statement": "Local8 polynomial identities, complete mod3 obstruction, finite-field counts,3283 map regressions. Independent hosted Sage10.6 proof=True mwrank ranks/torsion and genus computations succeeded.",
+      "proof_dependencies": [],
+      "evidence": [
+        "research/ABC/wave3/verification/46040760555/abc-wave3-agent3/result.json",
+        "research/ABC/wave3/verification/46040760555/abc-wave3-agent3/provenance.json"
+      ],
+      "hosted_run_id": 46039036660,
+      "hosted_job_id": 140641767556,
+      "hosted_execution": {
+        "run_id": 46040760555,
+        "job_id": 140647642833,
+        "source_commit": "03cbd0a1991144457cc014443cd4d9cf4b2520dd",
+        "conclusion": "success",
+        "url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/46040760555/job/140647642833",
+        "scope": "The observed job verifies only its declared finite or exact kernel statements; it does not establish any open global estimate."
+      },
+      "verification_scope": "Actual exact finite/symbolic verification succeeded; no proof of an infinite arithmetic estimate."
+    }
+  ],
+  "verification": {
+    "local_source_sha256": "47b223cfb7d0ec835ac5dec578b227ab713ccb774798d6d89bd846f45942e1bf",
+    "report_sha256": "46e5b10d9476f32ea15dbab5eb09f3d9360300af56ea145a135841792d496080",
+    "hosted_scope": "Independent root-authored curves verifier; this agent optional Sage script has not yet been hosted.",
+    "hosted_source_commit": "3b2425e4d6006b7e1f71ec0814272ab029794612",
+    "hosted_run_id": 46039036660,
+    "hosted_job_id": 140641767556,
+    "artifact_sha256": "642ed83ac5b84d9e78ea63e3d19349b3bde2d4025bb1c5810908ff0108e887e0"
+  },
+  "final_hosted_receipt": {
+    "run_id": 46040760555,
+    "job_id": 140647642833,
+    "source_commit": "03cbd0a1991144457cc014443cd4d9cf4b2520dd",
+    "conclusion": "success",
+    "url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/46040760555/job/140647642833",
+    "scope": "The observed job verifies only its declared finite or exact kernel statements; it does not establish any open global estimate."
+  }
+}

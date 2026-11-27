@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "problem": "ABC",
+  "wave": 3,
+  "agent": 4,
+  "task": "FERMAT-FORMAL",
+  "classification": "external supporting formal work",
+  "original_abc_closed": false,
+  "new_global_core_estimates_proved": 0,
+  "verification": {
+    "status": "LEAN_VERIFIED",
+    "lean_version": "Lean (version 4.36.0, x86_64-unknown-linux-gnu, commit 611c117bfaf7b7ae1cfcf246ce6fba31e8f509e9, Release)",
+    "mathlib_commit": "fc4f59e577feb1a4956671bc04ac18aaaf8cd842",
+    "first_source_sha256": "d349b129b4a797f46a3da4243cf7a8020ddda0556c3d2aad14dc5abf349d7c69",
+    "hosted_run_id": 46041248187,
+    "hosted_job_id": 140649315040,
+    "note": "Root and author independently checked exact source and compute-bundle hashes against the downloaded provenance, exact Mathlib pin, compiled artifact presence and all four standard-axiom lists. This certifies the stated arithmetic scope only.",
+    "current_source_sha256": "e97ea98a8feb82460a48bb63f6b1db94528f3ed30cf761b5945d83ff54d5bdef",
+    "compile_attempts": [
+      {
+        "run_id": 46040627898,
+        "job_id": 140647230441,
+        "status": "FAILED",
+        "source_sha256": "d349b129b4a797f46a3da4243cf7a8020ddda0556c3d2aad14dc5abf349d7c69",
+        "reason": "Four unknown Int.pow_emod references and incorrect strong-induction branch name h instead of ind; no kernel certificate accepted from the failed file.",
+        "source_commit": "cc05ee1fa5ea1d2c6ca2a2551da03873f2066f0f",
+        "evidence": "../wave3/verification/46040627898/abc-wave3-agent4/kernel.log"
+      },
+      {
+        "run_id": 46041248187,
+        "job_id": 140649315040,
+        "status": "LEAN_VERIFIED",
+        "source_commit": "e2a47a835201e7be2c50fa14e86317da52cc6df4",
+        "source_sha256": "e97ea98a8feb82460a48bb63f6b1db94528f3ed30cf761b5945d83ff54d5bdef",
+        "evidence": "../wave3/verification/46041248187/abc-wave3-agent4/result.json"
+      }
+    ],
+    "source_sha256": "e97ea98a8feb82460a48bb63f6b1db94528f3ed30cf761b5945d83ff54d5bdef",
+    "kernel_log_sha256": "6c51e52638a5a727bb9dceec6859f7702129a524ef1dbd6022abbc741c08a0f5",
+    "source_commit": "e2a47a835201e7be2c50fa14e86317da52cc6df4",
+    "summary_artifact_id": 15221375280,
+    "summary_artifact_sha256": "e35a9521f1608cbaa83f3651fe16cb0dd2d40aac929bec32299378dc7d095ffc",
+    "theorem_count": 4,
+    "axioms": {
+      "ABCWave3Fermat.primitive_square_area_descent_odd": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "ABCWave3Fermat.primitive_square_area_descent": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "ABCWave3Fermat.no_primitive_square_area": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "ABCWave3Fermat.fourth_difference_not_square": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ]
+    },
+    "receipt": "../wave3/verification/46041248187/abc-wave3-agent4/result.json",
+    "provenance": "../wave3/verification/46041248187/abc-wave3-agent4/provenance.json",
+    "kernel_log": "../wave3/verification/46041248187/abc-wave3-agent4/kernel.log"
+  },
+  "claims": [
+    {
+      "id": "W3-A4-SQUARE-AREA",
+      "status": "LEAN_VERIFIED",
+      "statement": "No positive primitive integer right triangle has square area. The proof constructs a smaller primitive square-area triangle and then uses strong induction on the natural absolute value of the hypotenuse.",
+      "logical_role": "kernel-verified classical arithmetic theorem and complete descending construction",
+      "dependencies": [],
+      "lean_theorems": [
+        "ABCWave3Fermat.primitive_square_area_descent_odd",
+        "ABCWave3Fermat.primitive_square_area_descent",
+        "ABCWave3Fermat.no_primitive_square_area"
+      ],
+      "scope": "Integers x,y,z>0, x^2+y^2=z^2, gcd(x,y)=1, and exists integer s with x*y=2*s^2. No normalization of arbitrary nonprimitive triangles is claimed.",
+      "source": "FermatSquareArea.lean",
+      "evidence": [
+        "REPORT.md",
+        "../wave3/verification/46041248187/abc-wave3-agent4/result.json",
+        "../wave3/verification/46041248187/abc-wave3-agent4/kernel.log",
+        "../wave3/verification/46041248187/abc-wave3-agent4/provenance.json"
+      ]
+    },
+    {
+      "id": "W3-A4-QUARTIC-NONSQUARE",
+      "status": "LEAN_VERIFIED",
+      "statement": "For integers 0<b<c, gcd(c,b)=1, c%2=1 and b%2=0, c^4-b^4 is not w^2 for any integer w.",
+      "logical_role": "kernel-verified arithmetic input for the exact quartic ROOT escape",
+      "dependencies": [
+        "W3-A4-SQUARE-AREA"
+      ],
+      "lean_theorems": [
+        "ABCWave3Fermat.fourth_difference_not_square"
+      ],
+      "scope": "Coprime odd c/even b only. This is the minus-sign theorem, not Mathlib not_fermat_42. The stated hypotheses are sufficient for the ROOT escape.",
+      "source": "FermatSquareArea.lean",
+      "evidence": [
+        "REPORT.md",
+        "../wave3/verification/46041248187/abc-wave3-agent4/result.json",
+        "../wave3/verification/46041248187/abc-wave3-agent4/kernel.log",
+        "../wave3/verification/46041248187/abc-wave3-agent4/provenance.json"
+      ]
+    },
+    {
+      "id": "W3-A4-KERNEL",
+      "status": "LEAN_VERIFIED",
+      "statement": "Pinned Lean kernel verifies all four public declarations with only propext, Classical.choice and Quot.sound, without proof escape constructs.",
+      "logical_role": "verification receipt only; not an additional mathematical lemma",
+      "dependencies": [
+        "W3-A4-SQUARE-AREA",
+        "W3-A4-QUARTIC-NONSQUARE"
+      ],
+      "lean_theorems": [
+        "ABCWave3Fermat.primitive_square_area_descent_odd",
+        "ABCWave3Fermat.primitive_square_area_descent",
+        "ABCWave3Fermat.no_primitive_square_area",
+        "ABCWave3Fermat.fourth_difference_not_square"
+      ],
+      "source": "FermatSquareArea.lean",
+      "evidence": [
+        "REPORT.md",
+        "../wave3/verification/46041248187/abc-wave3-agent4/result.json",
+        "../wave3/verification/46041248187/abc-wave3-agent4/kernel.log",
+        "../wave3/verification/46041248187/abc-wave3-agent4/provenance.json"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "0d4a6c7bce5e2a8c2dbac4cfca6eeae2830dff99",
+  "baseline_core_statuses": {
+    "GLOBAL-LOG-BOUND": "BLOCKED",
+    "ORDINARY-SZPIRO": "BLOCKED",
+    "ABC-T1-MS-OPEN": "BLOCKED",
+    "ABC-T1-FH-OPEN": "BLOCKED",
+    "ABC-T1-VOJTA-OPEN": "BLOCKED",
+    "T2-BALANCED-JOINT-BOUND": "BLOCKED",
+    "T2-UNBALANCED-SHARP": "BLOCKED",
+    "T2-FULL-CLOSURE": "CONDITIONAL",
+    "ABC-T3-REP": "CONDITIONAL",
+    "ABC-T3-NORM": "BLOCKED",
+    "ABC-T3-ETA": "BLOCKED",
+    "ABC-T3-HULL": "CONDITIONAL",
+    "ABC-T3-C312": "CONDITIONAL",
+    "ABC-T3-FAITHFUL": "BLOCKED",
+    "ABC-T3-WEAK-TRANSFER": "BLOCKED",
+    "ABC-T3-UNIFORMITY": "BLOCKED",
+    "A4-SEQUENCE-CONSTRUCTION": "BLOCKED",
+    "A4-GLOBAL-K": "BLOCKED",
+    "A5-POSITIVE-DEFICIT": "BLOCKED",
+    "A5-SUBLINEAR-DEFICIT": "BLOCKED",
+    "A5-COVERAGE-UNIFORMITY": "BLOCKED",
+    "A6-UNBOUNDED-PREMISE": "BLOCKED",
+    "W2-A1-POSITIVE-MASS": "BLOCKED",
+    "W2-A1-ZERO-MASS": "BLOCKED",
+    "W2-A2-ROOT-BOUND": "BLOCKED",
+    "W2-A2-GROWTH-BOUND": "BLOCKED",
+    "W2-A3-PRODUCT-BOUND": "BLOCKED",
+    "W2-A3-THIN-BOUND": "BLOCKED",
+    "W2-A4-FIXED-SEQUENCE": "BLOCKED",
+    "W2-A5-LOW": "BLOCKED",
+    "W2-A5-CUSP": "BLOCKED"
+  },
+  "required_open": [
+    "ABC-TRUE",
+    "ABC-FALSE",
+    "W2-A2-ROOT-BOUND",
+    "W2-A2-GROWTH-BOUND",
+    "W2-A3-PRODUCT-BOUND",
+    "W2-A3-THIN-BOUND",
+    "W2-A5-LOW",
+    "W2-A5-CUSP",
+    "W2-A1-POSITIVE-MASS",
+    "W2-A1-ZERO-MASS",
+    "W2-A4-FIXED-SEQUENCE"
+  ],
+  "expected_root_frontier": [
+    "W2-A2-ROOT-BOUND"
+  ],
+  "required_root_route": "W3-TRUE-VIA-ROOT-ONLY",
+  "required_conditional_antecedents": {
+    "W3-A1-ROOT-ONLY-CLOSURE": [
+      "W2-A2-ROOT-BOUND"
+    ],
+    "W3-A1-ROOT-IMPLIES-GROWTH": [
+      "W2-A2-ROOT-BOUND"
+    ],
+    "W3-A3-ROOT-SUFFICES": [
+      "W2-A2-ROOT-BOUND"
+    ]
+  },
+  "reviewed_implicit_bridges": [
+    {
+      "proof": "ABC-T1-FH-EQUIV",
+      "all_of": [
+        "ABC-T1-FH-OPEN"
+      ],
+      "conclusion": "ABC-T1-MS-OPEN"
+    }
+  ],
+  "active_five_routes": [
+    "W3-TRUE-VIA-ROOT-ONLY",
+    "TRUE-VIA-W2-VALUATION-COMPENSATION",
+    "W2-TRUE-VIA-JOINT-HEIGHT-REGIMES",
+    "W2-FALSE-VIA-LOCAL-LIFTING-MASS",
+    "W2-FALSE-VIA-FIXED-LATTICE"
+  ],
+  "forbidden_new_frontier": [
+    "W3-A5-GAUSSIAN-RADICAL-LIMIT",
+    "W3-A2-CORE-MASS"
+  ]
+}

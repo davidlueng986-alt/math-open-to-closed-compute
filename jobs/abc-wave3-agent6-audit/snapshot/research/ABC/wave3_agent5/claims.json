@@ -1,0 +1,167 @@
+{
+  "package": "ABC Wave3 Agent5 ROOT-CORE",
+  "claim_statuses": [
+    "PROVED",
+    "LEAN_VERIFIED",
+    "CHECKED",
+    "CONDITIONAL",
+    "BLOCKED",
+    "FAILED"
+  ],
+  "original_abc_closed": false,
+  "new_global_core_estimates_proved": 0,
+  "nodes": [
+    {
+      "track": 4,
+      "owner": "wave3_agent5",
+      "wave": 3,
+      "core_bottleneck": false,
+      "kind": "research",
+      "dependency_logic": "AND",
+      "assumptions": [],
+      "verification_scope": "Complete written proof, no Lean claim; finite verifier is a separate CHECKED node.",
+      "evidence": [
+        {
+          "path": "research/ABC/wave3_agent5/REPORT.md"
+        }
+      ],
+      "id": "W3-A5-GAUSSIAN-ROOT-FAMILY",
+      "title": "Infinite roots with all three squarefree kernels fixed",
+      "status": "PROVED",
+      "statement": "For every odd k>=1, if (1+2i)^k=u_k+i v_k, then (u_k^2,v_k^2,5^k) is primitive positive and a root; K_2 of its coordinates is (1,1,5), rad(abc)=5 rad(abs(u_k v_k)), and T maps index k to 2k.",
+      "depends_on": [
+        "W2-A2-IMAGE"
+      ]
+    },
+    {
+      "track": 4,
+      "owner": "wave3_agent5",
+      "wave": 3,
+      "core_bottleneck": false,
+      "kind": "research",
+      "dependency_logic": "AND",
+      "assumptions": [],
+      "verification_scope": "Complete written proof, no Lean claim; finite verifier is a separate CHECKED node.",
+      "evidence": [
+        {
+          "path": "research/ABC/wave3_agent5/REPORT.md"
+        }
+      ],
+      "id": "W3-A5-KERNEL-SURROGATE",
+      "title": "Height control using only coordinate squarefree kernels",
+      "status": "FAILED",
+      "statement": "Rejected candidate: there exists a finite-valued function F such that c<=F(K_2(a),K_2(b),K_2(c)) for every root. Infinite counterfamily W3-A5-GAUSSIAN-ROOT-FAMILY has c=5^k and fixed tuple (1,1,5).",
+      "depends_on": [
+        "W3-A5-GAUSSIAN-ROOT-FAMILY"
+      ]
+    },
+    {
+      "track": 4,
+      "owner": "wave3_agent5",
+      "wave": 3,
+      "core_bottleneck": false,
+      "kind": "research",
+      "dependency_logic": "AND",
+      "assumptions": [],
+      "verification_scope": "Complete written proof, no Lean claim; finite verifier is a separate CHECKED node.",
+      "evidence": [
+        {
+          "path": "research/ABC/wave3_agent5/REPORT.md"
+        }
+      ],
+      "id": "W3-A5-FAMILY-FRONTIER",
+      "title": "Exact restricted-ROOT limit and current bound comparison",
+      "status": "PROVED",
+      "statement": "On the odd-index Gaussian root family, restricted ROOT is equivalent to log R_k/(k log5)->1 and to e_k+g_k=o(k), where e_k=log(abs(u_k v_k)/rad(abs(u_k v_k))) and g_k=log(5^k/(2abs(u_k v_k))). Pasten Theorem1.4(2) yields log R_k >= c0(log k)^2/loglog k for sufficiently large odd k; this lower-bound scale is o(k).",
+      "depends_on": [
+        "W3-A5-GAUSSIAN-ROOT-FAMILY"
+      ],
+      "external_imports": [
+        "Classical imported theorem: Pasten arXiv2312.03566v1 Theorem1.4(2). This is an established unconditional input, not the open ROOT premise."
+      ]
+    },
+    {
+      "track": 4,
+      "owner": "wave3_agent5",
+      "wave": 3,
+      "core_bottleneck": false,
+      "kind": "necessary-diagnostic",
+      "dependency_logic": "AND",
+      "assumptions": [],
+      "verification_scope": "OPEN. No limiting radical estimate or infinite positive-quality-margin subsequence was obtained.",
+      "evidence": [
+        {
+          "path": "research/ABC/wave3_agent5/REPORT.md"
+        }
+      ],
+      "id": "W3-A5-GAUSSIAN-RADICAL-LIMIT",
+      "title": "Sharp radical growth for odd Gaussian roots",
+      "status": "BLOCKED",
+      "statement": "Prove or refute lim_{odd k->infinity} log(5 rad(abs(u_k v_k)))/(k log5)=1, with u_k+i v_k=(1+2i)^k. This is a necessary special case of ROOT, not an extra independent prerequisite on the canonical route.",
+      "depends_on": [
+        "W3-A5-GAUSSIAN-ROOT-FAMILY"
+      ]
+    },
+    {
+      "track": 4,
+      "owner": "wave3_agent5",
+      "wave": 3,
+      "core_bottleneck": false,
+      "kind": "research",
+      "dependency_logic": "AND",
+      "assumptions": [],
+      "verification_scope": "Complete written proof, no Lean claim; finite verifier is a separate CHECKED node.",
+      "evidence": [
+        {
+          "path": "research/ABC/wave3_agent5/REPORT.md"
+        }
+      ],
+      "id": "W3-A5-NONINTEGRAL-J",
+      "title": "Integral-j height improvement excluded on the root test family",
+      "status": "PROVED",
+      "statement": "For the Frey curve y^2=x(x-a_k)(x+b_k) of every odd-index Gaussian root, v_5(j)=-2k. Thus the integral-j hypothesis of Pasten arXiv2608.23559 Theorem1.6 fails on every member.",
+      "depends_on": [
+        "W3-A5-GAUSSIAN-ROOT-FAMILY"
+      ]
+    },
+    {
+      "track": 4,
+      "owner": "wave3_agent5",
+      "wave": 3,
+      "core_bottleneck": false,
+      "kind": "research",
+      "dependency_logic": "AND",
+      "assumptions": [],
+      "verification_scope": "Actual local and hosted finite exact checks passed. Universal structural claims use the written proof, not the finite sample.",
+      "evidence": [
+        {
+          "path": "research/ABC/wave3_agent5/REPORT.md"
+        },
+        {
+          "path": "research/ABC/wave3/verification/46041841448/abc-wave3-agent5/result.json"
+        }
+      ],
+      "id": "W3-A5-FINITE-CHECK",
+      "title": "Exact finite Gaussian family and valuation audit",
+      "status": "CHECKED",
+      "statement": "Standard-library Python exact checks pass 501 odd indices through k=1001, 1001 norm/parity/gcd/congruence checks, 501 exact j-valuation checks, 200 doubling identities, and 11 complete small-sample factorizations through k=21.",
+      "depends_on": [],
+      "hosted_execution": {
+        "run_id": 46041841448,
+        "job_id": 140651292050,
+        "source_commit": "a4639f950f2acf69ecf27e0d8eb73ce28b6ad9d7",
+        "conclusion": "success",
+        "url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/46041841448/job/140651292050",
+        "scope": "Exact finite family/valuation checks only; global ROOT estimate remains BLOCKED."
+      }
+    }
+  ],
+  "final_hosted_receipt": {
+    "run_id": 46041841448,
+    "job_id": 140651292050,
+    "source_commit": "a4639f950f2acf69ecf27e0d8eb73ce28b6ad9d7",
+    "conclusion": "success",
+    "url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/46041841448/job/140651292050",
+    "scope": "Exact finite family/valuation checks only; global ROOT estimate remains BLOCKED."
+  }
+}

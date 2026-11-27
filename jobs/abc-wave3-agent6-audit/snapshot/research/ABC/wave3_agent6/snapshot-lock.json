@@ -1,0 +1,11 @@
+{
+  "scope": "Exact hosted-input snapshot. Final top-level receipt metadata may differ; nodes/routes/refinement_rules projection must remain identical.",
+  "created_at": "2026-11-27T17:32:29.545445+00:00",
+  "sha256": {
+    "research/ABC/closure-dag/obligations.json": "5a7956ffd2079b8ba7020aa4e920c494f6e655ad4db9a55683504eb7bf97170a",
+    "research/ABC/closure-dag/frontier.json": "c3bc4236f1eea489511c9ce4f2467e4454f3a97dc75444484b2c34cb2d0af3c7",
+    "research/ABC/wave3_agent6/constraints.json": "30b8ecb202246054e7d443e69c626f56d48862e7f7640db056e8cb23408e156f",
+    "research/ABC/wave3_agent6/reviewed-files.json": "5cf0c0554d83c31ffe1727c90cec421d8af815287ffa2b1e80f7572fd56d0f5a"
+  },
+  "expected_mathematical_projection_sha256": "0ff2cf84d4332f6d8fa422fe89c7f1db1a69d99f722738b8ee817d8ce86b792a"
+}

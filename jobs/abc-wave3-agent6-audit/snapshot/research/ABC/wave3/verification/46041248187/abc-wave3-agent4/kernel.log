@@ -1,0 +1,4 @@
+'ABCWave3Fermat.primitive_square_area_descent_odd' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave3Fermat.primitive_square_area_descent' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave3Fermat.no_primitive_square_area' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave3Fermat.fourth_difference_not_square' depends on axioms: [propext, Classical.choice, Quot.sound]

@@ -1,0 +1,154 @@
+{
+  "problem": "ABC",
+  "wave": 3,
+  "agent": "abc_wave3_agent2",
+  "task": "ORBIT-CORE",
+  "original_problem_status": "BLOCKED",
+  "global_core_estimates_closed": 0,
+  "claims": [
+    {
+      "id": "W3-A2-EIGHTH-FORM",
+      "status": "PROVED",
+      "statement": "For j>=3, d_j=F(d_(j-3),c_(j-3)), where F is the displayed homogeneous degree8 form with8 distinct projective roots.",
+      "depends_on": [
+        "A5-PRIMITIVE",
+        "A5-RADICAL"
+      ],
+      "evidence": "REPORT.md sections2-3; verify.py; Structural.lean has five exact polynomial/exponent interfaces verified in run46040760555; full theorem uses the written argument."
+    },
+    {
+      "id": "W3-A2-DG-IMPORT",
+      "status": "PROVED",
+      "role": "classical external import, not a new proof",
+      "statement": "Darmon-Granville1995 Theorem1: a fixed binary form with8 simple roots has finitely many distinct projective primitive integral ratios for fixed power m>=2 and fixed nonzero coefficient.",
+      "source": "https://www.math.mcgill.ca/darmon/pub/Articles/Research/12.Granville/pub12.pdf"
+    },
+    {
+      "id": "W3-A2-UNIFORM-KERNEL-ESCAPE",
+      "status": "PROVED",
+      "statement": "For every integer m>=2 and B>=1 exists J(m,B) such that for every permitted seed and all j>=J, K_m(D_j)>B. Stronger finite(seed,j>=3) statement for fixed finite coefficient sets.",
+      "depends_on": [
+        "W3-A2-EIGHTH-FORM",
+        "W3-A2-DG-IMPORT"
+      ],
+      "limitations": [
+        "Ineffective bound.",
+        "K_m is exponent-mod-m kernel, not radical.",
+        "No bound at the 2^j scale."
+      ],
+      "evidence": "REPORT.md section3"
+    },
+    {
+      "id": "W3-A2-BOUNDED-KERNEL-MECHANISM",
+      "status": "FAILED",
+      "statement": "A fixed m>=2 and bounded m-free kernel can produce events at arbitrarily late orbit levels, even allowing changing seeds.",
+      "refuted_by": "W3-A2-UNIFORM-KERNEL-ESCAPE"
+    },
+    {
+      "id": "W3-A2-SQUARE-KERNEL-MASS",
+      "status": "PROVED",
+      "statement": "For D>=1, (1/2)log(D/K2(D))<=log(D/rad(D))<=log(D/K2(D)). Thus zero normalized mass iff logD-logK2=o(2^j).",
+      "depends_on": [],
+      "evidence": "REPORT.md section4"
+    },
+    {
+      "id": "W3-A2-LUCAS-EMBED",
+      "status": "PROVED",
+      "statement": "Parameters u=2d0,v=c0^2 yield V_(2^j)=2d_j and U_(2^(j+1))=2^(j+1)product_(i<=j)d_i. For j>=1 the first-occurrence primitive part at index2^(j+1) is D_j.",
+      "depends_on": [
+        "A5-NONTORSION",
+        "A5-ORDER",
+        "A5-RADICAL"
+      ],
+      "evidence": "REPORT.md section5; verify.py"
+    },
+    {
+      "id": "W3-A2-RIASAT-CONDITIONAL",
+      "status": "CONDITIONAL",
+      "statement": "Riasat2026 Theorem1.1 would establish negligible repeated primitive mass at these dyadic indices under rational abc.",
+      "assumptions": [
+        "The full rational abc conjecture."
+      ],
+      "source": "https://arxiv.org/html/2611.20650v1",
+      "closure_usable": false
+    },
+    {
+      "id": "W3-A2-CORE-MASS",
+      "status": "BLOCKED",
+      "statement": "Construct one fixed seed with positive limsup e_j/2^j, or prove sharp logK2(D_j)=logD_j-o(2^j) for orbit exclusion.",
+      "same_open_targets": [
+        "W2-A1-POSITIVE-MASS",
+        "W2-A1-ZERO-MASS"
+      ],
+      "new_separate_global_obligation": false
+    },
+    {
+      "id": "W3-A2-NO-INDEX2-SQUARES",
+      "status": "FAILED",
+      "statement": "D_j is never a perfect square for any permitted seed at j>=2.",
+      "counterexample": {
+        "seed": [
+          233930115,
+          10478411804,
+          10712341919
+        ],
+        "index": 2,
+        "D": 4936424930851777122654982737863450361601
+      },
+      "evidence": "local-evidence/certificates.json"
+    },
+    {
+      "id": "W3-A2-FINITE-AUDIT",
+      "status": "CHECKED",
+      "statement": "Exact polynomial certificate, Lucas ranks and index2 square witness.",
+      "evidence": [
+        "research/ABC/wave3/verification/46040760555/abc-wave3-agent2/result.json",
+        "research/ABC/wave3/verification/46040760555/abc-wave3-agent2/provenance.json"
+      ],
+      "hosted_execution": {
+        "run_id": 46040760555,
+        "job_id": 140647642827,
+        "source_commit": "03cbd0a1991144457cc014443cd4d9cf4b2520dd",
+        "conclusion": "success",
+        "url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/46040760555/job/140647642827",
+        "scope": "The observed job verifies only its declared finite or exact kernel statements; it does not establish any open global estimate."
+      },
+      "verification_scope": "Actual exact finite/symbolic verification succeeded; no proof of an infinite arithmetic estimate."
+    },
+    {
+      "id": "W3-A2-LEAN-GATE",
+      "status": "LEAN_VERIFIED",
+      "role": "verification gate",
+      "statement": "Actual Lean 4.36.0 kernel compilation verified the five named polynomial/exponent declarations; all printed axiom sets are standard.",
+      "evidence": [
+        "research/ABC/wave3/verification/46040760555/abc-wave3-agent2/result.json",
+        "research/ABC/wave3/verification/46040760555/abc-wave3-agent2/kernel.log"
+      ],
+      "lean_theorems": [
+        "ABCWave3Orbit.triple_composition",
+        "ABCWave3Orbit.squarefree_certificate",
+        "ABCWave3Orbit.no_common_zero",
+        "ABCWave3Orbit.homogeneous_triple",
+        "ABCWave3Orbit.square_part_exponent_budget"
+      ],
+      "hosted_execution": {
+        "run_id": 46040760555,
+        "job_id": 140647642827,
+        "source_commit": "03cbd0a1991144457cc014443cd4d9cf4b2520dd",
+        "conclusion": "success",
+        "url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/46040760555/job/140647642827",
+        "scope": "The observed job verifies only its declared finite or exact kernel statements; it does not establish any open global estimate."
+      },
+      "verification_scope": "Five exact complex-polynomial, integer-polynomial and valuation-exponent declarations. No kernel proof of Darmon-Granville, rational-point finiteness, all orbit identities, the global ROOT estimate, or abc is claimed. The separate finite Python checks are CHECKED only.",
+      "kernel_source_sha256": "be37b3150e94a73fd0fb77b8582bf55f09601157bf0b737549239fe514fff15f"
+    }
+  ],
+  "final_hosted_receipt": {
+    "run_id": 46040760555,
+    "job_id": 140647642827,
+    "source_commit": "03cbd0a1991144457cc014443cd4d9cf4b2520dd",
+    "conclusion": "success",
+    "url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/46040760555/job/140647642827",
+    "scope": "The observed job verifies only its declared finite or exact kernel statements; it does not establish any open global estimate."
+  }
+}
