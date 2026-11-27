@@ -1,5 +1,8 @@
 name: erdos617-w4-exp4-r6-closure
 on:
+  push:
+    branches:
+      - 'erdos617-w4-exp4-*'
   workflow_dispatch:
     inputs:
       time_limit:
