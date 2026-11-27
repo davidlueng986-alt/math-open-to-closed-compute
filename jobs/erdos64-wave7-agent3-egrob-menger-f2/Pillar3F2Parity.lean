@@ -1,5 +1,7 @@
 import Mathlib
 
+noncomputable section
+
 open Classical
 open SimpleGraph
 
@@ -70,7 +72,7 @@ lemma isPath_mem_edges_endpoints_length_one {V : Type*} {G : SimpleGraph V} {u v
         | @cons _ z _ hvz q' =>
           have hnd := List.nodup_cons.mp (List.nodup_cons.mp hp.support_nodup).2
           exact False.elim (hnd.1 (Walk.end_mem_support q'))
-      · exact False.elim (G.ne_of_adj huw hvu.symm)
+      · exact False.elim (G.ne_of_adj huw hvu)
     · have hu_in : u ∈ q.support := mem_support_of_edge q hmem' (by simp)
       exact False.elim ((List.nodup_cons.mp hp.support_nodup).1 hu_in)
 
@@ -207,10 +209,7 @@ theorem powerfree_chord_arc_exclusion {V : Type*} {G : SimpleGraph V}
     (hl1 : 2 ≤ a1.length) (hl2 : 2 ≤ a2.length) :
     ¬ IsPowerOfTwo (a1.length + 1) ∧ ¬ IsPowerOfTwo (a2.length + 1) := by
   let e : G.Walk u v := Walk.cons huv Walk.nil
-  have he_path : e.IsPath := Walk.IsPath.mk' (by
-    simp only [e, Walk.support_cons, Walk.support_nil, List.nodup_cons, List.mem_singleton,
-      List.nodup_nil, and_true]
-    exact G.ne_of_adj huv)
+  have he_path : e.IsPath := Walk.IsPath.mk' (by simp [e, G.ne_of_adj huv])
   have kill : ∀ (p : G.Walk u v), p.IsPath → 2 ≤ p.length → ¬ IsPowerOfTwo (p.length + 1) := by
     intro p hp hpl ⟨k, hk, hlen⟩
     have hdisj : ∀ w, w ∈ p.support → w ∈ e.support → w = u ∨ w = v := by
@@ -231,10 +230,7 @@ theorem powerfree_triangle_fermat_edge_exclusion {V : Type*} {G : SimpleGraph V}
   have hge4 : 4 ≤ 2 ^ k := calc 4 = 2 ^ 2 := by norm_num
     _ ≤ 2 ^ k := Nat.pow_le_pow_right (by norm_num) hk
   let q : G.Walk u v := Walk.cons huw (Walk.cons hwv Walk.nil)
-  have hq_path : q.IsPath := Walk.IsPath.mk' (by
-    simp only [q, Walk.support_cons, Walk.support_nil, List.nodup_cons, List.mem_cons,
-      List.not_mem_nil, or_false, not_or, List.nodup_nil, and_true]
-    exact ⟨⟨G.ne_of_adj huw, huv_ne⟩, G.ne_of_adj hwv⟩)
+  have hq_path : q.IsPath := Walk.IsPath.mk' (by simp [q, G.ne_of_adj huw, huv_ne, G.ne_of_adj hwv])
   have hdisj : ∀ z, z ∈ p.support → z ∈ q.support → z = u ∨ z = v := by
     intro z hzp hzq
     simp only [q, Walk.support_cons, Walk.support_nil, List.mem_cons, List.not_mem_nil,
@@ -269,11 +265,11 @@ theorem minimal_bad2_f2_cycle_space_dim_lower_bound {V : Type} [Fintype V]
       (∑ v ∈ Defects G, G.degree v) + (∑ v ∈ (Defects G)ᶜ, G.degree v) := by
     rw [Finset.sum_add_sum_compl]
   have hdef_sum : 2 * (Defects G).card ≤ ∑ v ∈ Defects G, G.degree v := by
-    calc 2 * (Defects G).card = ∑ _v ∈ Defects G, 2 := by simp
+    calc 2 * (Defects G).card = ∑ _v ∈ Defects G, 2 := by simp [mul_comm]
       _ ≤ ∑ v ∈ Defects G, G.degree v :=
           Finset.sum_le_sum (fun v hv => by have := (Finset.mem_filter.mp hv).2; omega)
   have hrest_sum : 3 * (Defects G)ᶜ.card ≤ ∑ v ∈ (Defects G)ᶜ, G.degree v := by
-    calc 3 * (Defects G)ᶜ.card = ∑ _v ∈ (Defects G)ᶜ, 3 := by simp
+    calc 3 * (Defects G)ᶜ.card = ∑ _v ∈ (Defects G)ᶜ, 3 := by simp [mul_comm]
       _ ≤ ∑ v ∈ (Defects G)ᶜ, G.degree v := Finset.sum_le_sum (fun v hv => by
           have h2 := hG.1.2.1 v
           have hne2 : G.degree v ≠ 2 := fun h =>

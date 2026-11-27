@@ -1,5 +1,7 @@
 import Mathlib
 
+noncomputable section
+
 open Classical
 open SimpleGraph
 
@@ -18,14 +20,14 @@ def PowerFree {V : Type*} (G : SimpleGraph V) : Prop := ¬ HasPowerCycle G
 
 def addEdge {V : Type*} (G : SimpleGraph V) (a b : V) : SimpleGraph V where
   Adj u v := u ≠ v ∧ (G.Adj u v ∨ (u = a ∧ v = b) ∨ (u = b ∧ v = a))
-  symm := by
+  symm := ⟨by
     intro u v ⟨hne, h⟩
     refine ⟨hne.symm, ?_⟩
     rcases h with h | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
     · exact Or.inl h.symm
     · exact Or.inr (Or.inr ⟨rfl, rfl⟩)
-    · exact Or.inr (Or.inl ⟨rfl, rfl⟩)
-  loopless := fun _ ⟨hne, _⟩ => hne rfl
+    · exact Or.inr (Or.inl ⟨rfl, rfl⟩)⟩
+  loopless := ⟨fun _ ⟨hne, _⟩ => hne rfl⟩
 
 def IsThreeConnected {V : Type*} [Fintype V] (H : SimpleGraph V) : Prop :=
   4 ≤ Fintype.card V ∧
@@ -71,7 +73,7 @@ lemma isPath_mem_edges_endpoints_length_one {V : Type*} {G : SimpleGraph V} {u v
         | @cons _ z _ hvz q' =>
           have hnd := List.nodup_cons.mp (List.nodup_cons.mp hp.support_nodup).2
           exact False.elim (hnd.1 (Walk.end_mem_support q'))
-      · exact False.elim (G.ne_of_adj huw hvu.symm)
+      · exact False.elim (G.ne_of_adj huw hvu)
     · have hu_in : u ∈ q.support := mem_support_of_edge q hmem' (by simp)
       exact False.elim ((List.nodup_cons.mp hp.support_nodup).1 hu_in)
 
