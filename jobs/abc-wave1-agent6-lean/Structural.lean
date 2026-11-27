@@ -105,6 +105,22 @@ theorem reyssat_exact_quality_test : (6436343 : ℕ) ^ 5 > 15042 ^ 8 := by
 def radical (n : ℕ) : ℕ :=
   ((Finset.range (n + 1)).filter (fun p => Nat.Prime p ∧ p ∣ n)).prod (fun p => p)
 
+theorem radical_support_iff (n p : ℕ) (hn : 0 < n) :
+    p ∈ (Finset.range (n + 1)).filter (fun r => Nat.Prime r ∧ r ∣ n) ↔
+      Nat.Prime p ∧ p ∣ n := by
+  simp only [Finset.mem_filter, Finset.mem_range]
+  constructor
+  · intro h
+    exact h.2
+  · intro h
+    exact ⟨Nat.lt_succ_iff.mpr (Nat.le_of_dvd hn h.2), h⟩
+
+theorem radical_positive (n : ℕ) : 0 < radical n := by
+  unfold radical
+  apply Finset.prod_pos
+  intro p hp
+  exact ((Finset.mem_filter.mp hp).2).1.pos
+
 def PrimitiveTriple (a b c : ℕ) : Prop :=
   0 < a ∧ 0 < b ∧ 0 < c ∧ a + b = c ∧ Nat.Coprime a b
 
@@ -147,4 +163,6 @@ end ABCWave1
 #print axioms ABCWave1.reyssat_coprime
 #print axioms ABCWave1.reyssat_radical_product
 #print axioms ABCWave1.reyssat_exact_quality_test
+#print axioms ABCWave1.radical_support_iff
+#print axioms ABCWave1.radical_positive
 #print axioms ABCWave1.unbounded_ratio_refutes_abc

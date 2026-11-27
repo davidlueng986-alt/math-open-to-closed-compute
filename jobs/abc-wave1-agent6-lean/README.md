@@ -6,7 +6,7 @@ Run with the repository's Lean toolbox, whose cached Mathlib checkout is `/opt/m
 bash jobs/abc-wave1-agent6-lean/run.sh 0 1 /tmp/abc-agent6
 ```
 
-The 22 named declarations cover Frey polynomial identities, the squaring transform, height lower-bound algebra, both epsilon conversions in cross-multiplied form, the balanced cube-excess algebraic step, the scalar normalization budget, exact Reyssat arithmetic and the exact quantified condition sufficient to refute abc.
+The 24 named declarations cover Frey polynomial identities, the squaring transform, height lower-bound algebra, both epsilon conversions in cross-multiplied form, the balanced cube-excess algebraic step, the scalar normalization budget, exact Reyssat arithmetic, actual radical support/positivity, and the exact quantified condition sufficient to refute abc.
 
 `ArithmeticABC` uses an actual finite-prime-product definition of the radical of a positive natural number. It is not an abstract unconstrained parameter. The countersequence theorem leaves `UnboundedRatioAt e` explicit. There is no asserted proof of that hypothesis.
 
