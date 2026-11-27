@@ -37,7 +37,7 @@ Upgrades Wave 4 Agent #6 (`E64Wave4Agent6.MContract`) with exact cycle lifting b
 -/
 
 namespace E64Wave5Agent4
-open SimpleGraph Erdos64Closure E64NonBacktrackingGirth E64Wave4Agent6
+open SimpleGraph Erdos64Closure E64Core E64NonBacktrackingGirth E64Wave4Agent6
 open scoped Sym2
 
 /-! ## Pillar 1: Second-Window Non-Backtracking Theory (`2g ≤ L < 3g`) -/
@@ -51,37 +51,23 @@ private theorem walk_eq_append_last {V : Type*} {G : SimpleGraph V} :
       obtain ⟨w, r, hlast, heq⟩ := walk_eq_append_last (.cons h₂ rest) (by simp)
       exact ⟨w, .cons h₁ r, hlast, by rw [Walk.cons_append, ← heq]⟩
 
-private theorem isNonBacktracking_append_of_adj {V : Type*} {G : SimpleGraph V} :
-    ∀ {u v w x : V} {p : G.Walk u v} {q : G.Walk v x}
-      (hnbp : IsNonBacktracking p) (hnbq : IsNonBacktracking q)
-      (hlast : ∃ (r : G.Walk u w) (h₁ : G.Adj w v), p = r.append (.cons h₁ .nil))
-      (hfirst : ∃ (y : V) (h₂ : G.Adj v y) (s : G.Walk y x), q = .cons h₂ s ∧ w ≠ y),
-      IsNonBacktracking (p.append q)
-  | _, _, _, _, .nil, _, _, _, ⟨r, _, hnil⟩, _ => by
-      have hlen := congrArg Walk.length hnil
-      simp at hlen
-  | _, _, _, _, .cons h₁ .nil, q, _, hnbq, ⟨r, h₁', heq⟩, ⟨y, h₂, s, hq, hwy⟩ => by
-      have hr0 : r.length = 0 := by
-        have hlen := congrArg Walk.length heq
-        simp at hlen
-        omega
-      cases r with
+private theorem isNonBacktracking_append_last_cons {V : Type*} {G : SimpleGraph V} :
+    ∀ {u w v y x : V} (r : G.Walk u w) (h₁ : G.Adj w v) (h₂ : G.Adj v y) (s : G.Walk y x),
+      IsNonBacktracking (r.append (.cons h₁ .nil)) →
+      IsNonBacktracking (.cons h₂ s) →
+      w ≠ y →
+      IsNonBacktracking ((r.append (.cons h₁ .nil)).append (.cons h₂ s))
+  | _, _, _, _, _, .nil, _, _, _, _, hnbq, hwy => by
+      simp only [Walk.nil_append, Walk.cons_append, IsNonBacktracking]
+      exact ⟨hwy, hnbq⟩
+  | _, _, _, _, _, .cons h₀ r', h₁, h₂, s, hnbp, hnbq, hwy => by
+      cases r' with
       | nil =>
-          simp only [Walk.nil_append] at heq
-          cases heq
-          subst hq
-          exact ⟨hwy, hnbq⟩
-      | cons _ _ => simp at hr0
-  | _, _, _, _, .cons h₁ (.cons h₂ rest), q, hnbp, hnbq, ⟨r, hlast, heq⟩, hfirst => by
-      cases r with
-      | nil =>
-          have hlen := congrArg Walk.length heq
-          simp at hlen
-      | cons h₁' r' =>
-          simp only [Walk.cons_append] at heq
-          cases heq
-          simp only [Walk.cons_append, IsNonBacktracking]
-          exact ⟨hnbp.1, isNonBacktracking_append_of_adj hnbp.2 hnbq ⟨r', hlast, rfl⟩ hfirst⟩
+          simp only [Walk.cons_append, Walk.nil_append, IsNonBacktracking] at hnbp ⊢
+          exact ⟨hnbp.1, hwy, hnbq⟩
+      | cons h₀' r'' =>
+          simp only [Walk.cons_append, IsNonBacktracking] at hnbp ⊢
+          exact ⟨hnbp.1, isNonBacktracking_append_last_cons (.cons h₀' r'') h₁ h₂ s hnbp.2 hnbq hwy⟩
 
 /-- In any graph of girth `≥ g`, every nonempty non-backtracking closed walk of length
 `< g + 2` is automatically cyclically non-backtracking (tailless): no lollipops exist
@@ -90,12 +76,12 @@ theorem nonBacktracking_lt_girth_add_two_isCyclicallyNonBacktracking {V : Type*}
     {g : ℕ} (hg : GirthAtLeast G g) {v : V} (p : G.Walk v v)
     (hnb : IsNonBacktracking p) (hpos : 1 ≤ p.length) (hlt : p.length < g + 2) :
     IsCyclicallyNonBacktracking p := by
-  cases p with
-  | nil => simp at hpos
-  | cons (v := u) h₁ rest =>
-      cases rest with
-      | nil => exact False.elim (G.loopless v h₁)
-      | cons h₂ rest₂ =>
+  match p with
+  | .nil => simp at hpos
+  | @Walk.cons _ _ _ u _ h₁ rest =>
+      match rest with
+      | .nil => exact False.elim (G.ne_of_adj h₁ rfl)
+      | .cons h₂ rest₂ =>
           obtain ⟨w, r, hlast, heq⟩ := walk_eq_append_last (.cons h₂ rest₂) (by simp)
           have hpuw : u ≠ w := by
             intro huw
@@ -118,9 +104,12 @@ theorem nonBacktracking_lt_girth_add_two_isCyclicallyNonBacktracking {V : Type*}
                   simp
                   omega
                 omega
-          refine isNonBacktracking_append_of_adj hnb hnb ?_ ?_
-          · exact ⟨.cons h₁ r, hlast, by rw [Walk.cons_append, ← heq]⟩
-          · exact ⟨u, h₁, .cons h₂ rest₂, rfl, hpuw.symm⟩
+          have hp_eq : Walk.cons h₁ (.cons h₂ rest₂) = (Walk.cons h₁ r).append (.cons hlast .nil) := by
+            rw [Walk.cons_append, ← heq]
+          unfold IsCyclicallyNonBacktracking
+          conv_lhs => rw [hp_eq]
+          exact isNonBacktracking_append_last_cons (.cons h₁ r) hlast h₁ (.cons h₂ rest₂)
+            (hp_eq ▸ hnb) hnb hpuw.symm
 
 /-- Every nonempty non-backtracking closed walk (even without assuming taillessness)
 of length `< g + 2` in a graph of girth `≥ g ≥ 3` is a simple cycle. -/
@@ -188,12 +177,12 @@ private theorem closed_nodup_support_eq_nil' {V : Type*} {G : SimpleGraph V}
 private theorem isCycle_of_nb_nodup_tail' {V : Type*} {G : SimpleGraph V}
     {v : V} (p : G.Walk v v) (hnb : IsNonBacktracking p) (hlen : 1 ≤ p.length)
     (hnd : p.support.tail.Nodup) : p.IsCycle := by
-  cases p with
-  | nil => simp at hlen
-  | cons h rest =>
+  match p with
+  | .nil => simp at hlen
+  | @Walk.cons _ _ _ u _ h rest =>
       have hrest_nd : rest.support.Nodup := by simpa [Walk.support_cons] using hnd
       have hrest_path : rest.IsPath := Walk.IsPath.mk' hrest_nd
-      have hnotmem : s(v, _) ∉ rest.edges := by
+      have hnotmem : s(v, u) ∉ rest.edges := by
         intro hmem
         cases rest with
         | nil => simp at hmem
@@ -257,7 +246,7 @@ private theorem exists_split_of_not_nodup_tail' {V : Type*} {G : SimpleGraph V} 
               simpa [Walk.support_cons] using hnd₂
             obtain ⟨x, w₁, w₂, w₃, heq, hw₁, hw₂⟩ :=
               exists_split_of_not_nodup_tail' (.cons h₂ rest₂) hnd₂'
-            exact ⟨x, .cons h w₁, w₂, w₃, by simp [heq], by simp; omega, hw₂⟩
+            exact ⟨x, .cons h w₁, w₂, w₃, by simp [heq], by simp, hw₂⟩
 
 /-- **Second-Window Repeated-Vertex Split Theorem**:
 Every nonempty cyclically non-backtracking closed walk `p` that is NOT a simple cycle
@@ -269,7 +258,8 @@ theorem nonSimple_tailless_exists_split_ge_girth {V : Type*} {G : SimpleGraph V}
     ∃ (x : V) (q₁ q₂ : G.Walk x x),
       IsNonBacktracking q₁ ∧ IsNonBacktracking q₂ ∧
       g ≤ q₁.length ∧ g ≤ q₂.length ∧ q₁.length + q₂.length = p.length := by
-  have hnb : IsNonBacktracking p := isNonBacktracking_of_append_left hcyc
+  have hcyc' : IsNonBacktracking (p.append p) := hcyc
+  have hnb : IsNonBacktracking p := isNonBacktracking_of_append_left hcyc'
   have hnd : ¬ p.support.tail.Nodup := fun hnd => hns (isCycle_of_nb_nodup_tail' p hnb hpos hnd)
   obtain ⟨x, p₁, p₂, p₃, heq, hp₁, hp₂⟩ := exists_split_of_not_nodup_tail' p hnd
   have hnb₂ : IsNonBacktracking p₂ :=
@@ -280,7 +270,7 @@ theorem nonSimple_tailless_exists_split_ge_girth {V : Type*} {G : SimpleGraph V}
   have hnb₃₁ : IsNonBacktracking (p₃.append p₁) :=
     isNonBacktracking_of_append_left
       (isNonBacktracking_of_append_right
-        (isNonBacktracking_of_append_right (hpp ▸ hcyc)))
+        (isNonBacktracking_of_append_right (hpp ▸ hcyc')))
   have hg₂ : g ≤ p₂.length :=
     girth_le_length_of_nonBacktracking_closed hg p₂.length p₂ rfl hp₂ hnb₂
   have hpos₃₁ : 1 ≤ (p₃.append p₁).length := by rw [Walk.length_append]; omega
@@ -362,8 +352,8 @@ theorem erdos64_of_two_window_nonBacktracking
 def twoFactorSubgraph {V : Type*} (G : SimpleGraph V) (m : V → V)
     (hm_inv : ∀ v, m (m v) = v) : SimpleGraph V where
   Adj u v := G.Adj u v ∧ v ≠ m u
-  symm u v h := ⟨h.1.symm, fun heq => h.2 (by rw [heq, hm_inv])⟩
-  loopless v h := G.loopless v h.1
+  symm := ⟨fun _ _ h => ⟨h.1.symm, fun heq => h.2 (by rw [heq, hm_inv])⟩⟩
+  loopless := ⟨fun _ h => G.ne_of_adj h.1 rfl⟩
 
 /-- In any power-free graph `G` with perfect matching `m`, the 2-factor `G \ m` contains
 no `2^k`-cycle (`0`-switching exclusion). -/
@@ -406,9 +396,11 @@ private theorem isNonBacktracking_of_nodup_support {V : Type*} {G : SimpleGraph 
   | _, _, .nil, _ => trivial
   | _, _, .cons _ .nil, _ => trivial
   | _, _, .cons (u := a) _ (.cons (v := c) h₂ rest), hnd => by
-      simp only [Walk.support_cons, List.nodup_cons, List.mem_cons] at hnd
-      refine ⟨fun hac => hnd.1 (Or.inr (hac ▸ Walk.start_mem_support rest)), ?_⟩
-      exact isNonBacktracking_of_nodup_support (.cons h₂ rest) hnd.2
+      have hnd' : a ∉ (Walk.cons h₂ rest).support ∧ (Walk.cons h₂ rest).support.Nodup := by
+        simpa only [Walk.support_cons, List.nodup_cons] using hnd
+      refine ⟨fun hac => hnd'.1 ?_, isNonBacktracking_of_nodup_support (.cons h₂ rest) hnd'.2⟩
+      rw [Walk.support_cons, List.mem_cons]
+      exact Or.inr (hac ▸ Walk.start_mem_support rest)
 
 private theorem cycle_of_adjChain {V : Type*} {G : SimpleGraph V}
     (u : V) (rest : List V) (hnd : (u :: rest).Nodup) (hlen : 2 ≤ rest.length)
@@ -422,7 +414,7 @@ private theorem cycle_of_adjChain {V : Type*} {G : SimpleGraph V}
     simp only [List.nodup_cons] at hnd
     rw [List.nodup_append]
     exact ⟨hnd.2, List.nodup_singleton u, fun x hx y hy hxy =>
-      hnd.1 (by simp only [List.mem_singleton] at hy; rwa [hy, ← hxy] at hx)⟩
+      hnd.1 (by simp only [List.mem_singleton] at hy; rw [hxy, hy] at hx; exact hx)⟩
   have hnb : IsNonBacktracking w := by
     cases rest with
     | nil => simp at hlen
@@ -439,7 +431,7 @@ private theorem cycle_of_adjChain {V : Type*} {G : SimpleGraph V}
             have huc : u ≠ c := by
               simp only [List.nodup_cons, List.mem_cons] at hnd
               intro h
-              exact hnd.1 (Or.inr (Or.inl h.symm))
+              exact hnd.1 (Or.inr (Or.inl h))
             exact ⟨huc, isNonBacktracking_of_nodup_support _ hrest_nd⟩
   exact ⟨w, isCycle_of_nb_nodup_tail' w hnb (by omega) hnd_tail, hwlen⟩
 
@@ -447,8 +439,8 @@ private theorem adjChain_append {V : Type*} {G : SimpleGraph V} :
     ∀ (l₁ : List V) (x : V) (l₂ : List V),
       AdjChain G (l₁ ++ [x]) → AdjChain G (x :: l₂) → AdjChain G (l₁ ++ x :: l₂)
   | [], _, _, _, h₂ => h₂
-  | [a], x, l₂, h₁, h₂ => ⟨h₁.1, h₂⟩
-  | a :: b :: rest, x, l₂, h₁, h₂ =>
+  | [_], _, _, h₁, h₂ => ⟨h₁.1, h₂⟩
+  | _ :: b :: rest, x, l₂, h₁, h₂ =>
       ⟨h₁.1, adjChain_append (b :: rest) x l₂ h₁.2 h₂⟩
 
 private theorem adj_of_same_matchSetoid_ne {V : Type*} {G : SimpleGraph V}
@@ -458,6 +450,15 @@ private theorem adj_of_same_matchSetoid_ne {V : Type*} {G : SimpleGraph V}
   rcases Quotient.exact hq with rfl | rfl
   · exact False.elim (hne rfl)
   · exact hm_adj x
+
+private theorem sum_map_finRange_eq {L : ℕ} (f : Fin L → ℕ) :
+    ((List.finRange L).map f).sum = ∑ i : Fin L, f i := by
+  have h1 : ((List.finRange L).map f).sum = ∑ i ∈ (List.finRange L).toFinset, f i :=
+    (List.sum_toFinset f (List.nodup_finRange L)).symm
+  rw [h1]
+  congr 1
+  ext x
+  simp
 
 /-- **Exact Switching-Count Lift Theorem** for 4-regular perfect-matching contractions:
 Every simple cycle of length `L ≥ 3` in `MContract G m` (given by `L` distinct quotient
@@ -481,29 +482,22 @@ theorem mcontract_general_switching_lift {V : Type*} [DecidableEq V]
   let s := matchSetoid m hm_inv
   let prev : Fin L → Fin L := fun i => ⟨(i.1 + L - 1) % L, Nat.mod_lt _ (by omega)⟩
   let next : Fin L → Fin L := fun i => ⟨(i.1 + 1) % L, Nat.mod_lt _ (by omega)⟩
-  have hprev_next : ∀ i : Fin L, prev (next i) = i := by
-    intro i
-    apply Fin.ext
-    change ((i.1 + 1) % L + L - 1) % L = i.1
-    by_cases h : i.1 + 1 < L
-    · rw [Nat.mod_eq_of_lt h]
-      have : i.1 + 1 + L - 1 = i.1 + L := by omega
-      rw [this, Nat.add_mod_right, Nat.mod_eq_of_lt i.2]
-    · have hi : i.1 + 1 = L := by omega
-      rw [hi, Nat.mod_self, zero_add, Nat.mod_eq_of_lt (by omega)]
-      omega
   have hnext_prev : ∀ i : Fin L, next (prev i) = i := by
     intro i
     apply Fin.ext
     change ((i.1 + L - 1) % L + 1) % L = i.1
     by_cases h0 : i.1 = 0
-    · rw [h0, zero_add, Nat.mod_eq_of_lt (by omega)]
-      have : L - 1 + 1 = L := by omega
-      rw [this, Nat.mod_self]
-    · have : i.1 + L - 1 = (i.1 - 1) + L := by omega
-      rw [this, Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]
-      have : i.1 - 1 + 1 = i.1 := by omega
-      rw [this, Nat.mod_eq_of_lt i.2]
+    · rw [h0, zero_add]
+      have hlt : L - 1 < L := by omega
+      rw [Nat.mod_eq_of_lt hlt]
+      have hadd : L - 1 + 1 = L := by omega
+      rw [hadd, Nat.mod_self]
+    · have hsub : i.1 + L - 1 = (i.1 - 1) + L := by omega
+      rw [hsub, Nat.add_mod_right]
+      have hlt : i.1 - 1 < L := by omega
+      rw [Nat.mod_eq_of_lt hlt]
+      have hadd : i.1 - 1 + 1 = i.1 := by omega
+      rw [hadd, Nat.mod_eq_of_lt i.2]
   have hb_prev_q : ∀ i : Fin L, Quotient.mk s (b (prev i)) = q i := by
     intro i
     have h1 := hb (prev i)
@@ -520,9 +514,9 @@ theorem mcontract_general_switching_lift {V : Type*} [DecidableEq V]
   have hblock_mem_q : ∀ (i : Fin L) (x : V), x ∈ block i → Quotient.mk s x = q i := by
     intro i x hx
     by_cases h : b (prev i) = a i
-    · simp only [block, if_pos h, List.mem_singleton] at hx
+    · simp only [block, h, ↓reduceIte, List.mem_singleton] at hx
       subst hx; exact ha i
-    · simp only [block, if_neg h, List.mem_cons, List.mem_singleton] at hx
+    · simp only [block, h, ↓reduceIte, List.mem_cons, List.not_mem_nil, or_false] at hx
       rcases hx with rfl | rfl
       · exact hb_prev_q i
       · exact ha i
@@ -534,9 +528,9 @@ theorem mcontract_general_switching_lift {V : Type*} [DecidableEq V]
   have hblock_chain : ∀ i : Fin L, AdjChain G (block i ++ [b i]) := by
     intro i
     by_cases h : b (prev i) = a i
-    · simp only [block, if_pos h, List.singleton_append, AdjChain]
+    · simp only [block, h, ↓reduceIte, List.singleton_append, AdjChain]
       exact ⟨hab i, trivial⟩
-    · simp only [block, if_neg h, List.cons_append, List.singleton_append, AdjChain]
+    · simp only [block, h, ↓reduceIte, List.cons_append, List.nil_append, AdjChain]
       refine ⟨adj_of_same_matchSetoid_ne hm_adj hm_inv ((hb_prev_q i).trans (ha i).symm) h, hab i, trivial⟩
   have hblock_len : ∀ i : Fin L, (block i).length = 1 + if b (prev i) ≠ a i then 1 else 0 := by
     intro i
@@ -544,7 +538,6 @@ theorem mcontract_general_switching_lift {V : Type*} [DecidableEq V]
     · simp [block, h]
     · simp [block, h]
   let idx0 : Fin L := ⟨0, by omega⟩
-  -- Build the concatenated vertex list across `i = 0, 1, ..., L - 1`
   let l : List V := (List.finRange L).flatMap block
   have hl_len : l.length = L + ((Finset.univ : Finset (Fin L)).filter (fun i => b (prev i) ≠ a i)).card := by
     have h1 : l.length = ((List.finRange L).map (fun i => (block i).length)).sum := by
@@ -553,25 +546,14 @@ theorem mcontract_general_switching_lift {V : Type*} [DecidableEq V]
     have h2 : (List.finRange L).map (fun i => (block i).length) =
         (List.finRange L).map (fun i => 1 + if b (prev i) ≠ a i then 1 else 0) :=
       List.map_congr_left (fun i _ => hblock_len i)
-    rw [h2]
-    have hsum_eq : ((List.finRange L).map (fun i => 1 + if b (prev i) ≠ a i then 1 else 0)).sum =
-        ∑ i : Fin L, (1 + if b (prev i) ≠ a i then 1 else 0) := by
-      rw [← Finset.sum_toList]
-      congr 1
-      have hperm : (Finset.univ : Finset (Fin L)).toList.Perm (List.finRange L) := by
-        refine (List.perm_ext_iff_of_nodup (Finset.nodup_toList _) (List.nodup_finRange L)).mpr ?_
-        intro x
-        simp
-      exact hperm.symm.map _ |>.sum_eq
-    rw [hsum_eq, Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
-      smul_eq_mul, mul_one, Finset.sum_boole]
+    rw [h2, sum_map_finRange_eq, Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ,
+      Fintype.card_fin, smul_eq_mul, mul_one, Finset.sum_boole]
     simp
   have hl_nodup : l.Nodup := by
     rw [List.nodup_flatMap]
     refine ⟨fun i _ => hblock_nodup i, ?_⟩
     exact (List.nodup_finRange L).imp_of_mem (fun {i j} _ _ hij x hxi hxj =>
       hij (hq_inj ((hblock_mem_q i x hxi).symm.trans (hblock_mem_q j x hxj))))
-  -- Prove `AdjChain G (l ++ [b (prev idx0)])` by induction on prefixes `0 .. k`
   have hprefix_chain : ∀ k (hk : k ≤ L) (hkpos : 1 ≤ k),
       AdjChain G (((List.finRange L).take k).flatMap block ++ [b ⟨k - 1, by omega⟩]) := by
     intro k
@@ -600,7 +582,7 @@ theorem mcontract_general_switching_lift {V : Type*} [DecidableEq V]
               simp only [List.getElem_take, List.getElem_finRange]
               by_cases hnk : n < k
               · rw [List.getElem_append_left (by simp [List.length_take]; omega)]
-                simp [List.getElem_take]
+                simp
               · have hneq : n = k := by simp [List.length_take] at hn1; omega
                 subst hneq
                 rw [List.getElem_append_right (by simp [List.length_take]; omega)]
@@ -628,7 +610,6 @@ theorem mcontract_general_switching_lift {V : Type*} [DecidableEq V]
       rw [zero_add, Nat.mod_eq_of_lt (by omega)]
     rw [htakeL, hlast_eq] at h1
     exact h1
-  -- Extract head `b (prev idx0)` of `l`
   have hl_cons : ∃ rest : List V, l = b (prev idx0) :: rest := by
     have hfr : List.finRange L = idx0 :: (List.finRange L).tail := by
       cases h : List.finRange L with
@@ -638,13 +619,14 @@ theorem mcontract_general_switching_lift {V : Type*} [DecidableEq V]
       | cons hd tl =>
           have hhd : hd = idx0 := by
             have := congrArg (fun xs => xs[0]?) h
-            simp [idx0, Nat.zero_lt_of_lt (by omega : 0 < L)] at this
+            simp [Nat.zero_lt_of_lt (by omega : 0 < L)] at this
             exact this.symm
           rw [hhd]; rfl
     obtain ⟨t, ht⟩ := hblock_head idx0
     refine ⟨t ++ (List.finRange L).tail.flatMap block, ?_⟩
-    simp only [l]
-    rw [hfr, List.flatMap_cons, ht, List.cons_append]
+    dsimp only [l]
+    conv_lhs => rw [hfr]
+    rw [List.flatMap_cons, ht, List.cons_append]
   obtain ⟨rest, hrest⟩ := hl_cons
   rw [hrest] at hl_len hl_nodup hfull_chain
   have hrest_ge : 2 ≤ rest.length := by
@@ -653,6 +635,7 @@ theorem mcontract_general_switching_lift {V : Type*} [DecidableEq V]
   obtain ⟨c, hcyc, hclen⟩ := cycle_of_adjChain (b (prev idx0)) rest hl_nodup hrest_ge hfull_chain
   refine ⟨b (prev idx0), c, hcyc, ?_⟩
   simp only [List.length_cons] at hl_len
+  dsimp only [prev] at hl_len ⊢
   omega
 
 /-- In any power-free graph `G` with perfect matching `m`, EVERY simple cycle of length
