@@ -170,7 +170,7 @@ theorem exists_pow2_mod_odd_in_window {a u o r L₀ t : ℕ}
         2 ^ (a + r') = 2 ^ r' * 2 ^ a := by rw [pow_add, mul_comm]
         _ ≤ 2 ^ o * M := Nat.mul_le_mul h2r_le h2a_le_M
     · have hprev_lt : 2 ^ (a + r' + (q₀ - 1) * o) < M := by
-        have hnot := Nat.find_min hex (Nat.sub_lt hqpos (by decide))
+        have hnot := Nat.find_min hex (Nat.sub_lt hqpos Nat.zero_lt_one)
         exact Nat.lt_of_not_le hnot
       have hk_eq : k = a + r' + (q₀ - 1) * o + o := by
         have : q₀ = (q₀ - 1) + 1 := (Nat.sub_add_cancel hqpos).symm
@@ -180,7 +180,7 @@ theorem exists_pow2_mod_odd_in_window {a u o r L₀ t : ℕ}
       rw [hk_eq, pow_add, mul_comm]
       exact Nat.mul_le_mul_left (2 ^ o) (Nat.le_of_lt hprev_lt)
   have hk_mod_u : 2 ^ (r' + q₀ * o) ≡ L₀ / 2 ^ a [MOD u] := by
-    rw [pow_add, pow_mul]
+    rw [pow_add, mul_comm q₀ o, pow_mul]
     have h1 : (2 ^ o) ^ q₀ ≡ 1 ^ q₀ [MOD u] := hper.pow q₀
     rw [one_pow] at h1
     have h2 := h1.mul_left (2 ^ r')
@@ -252,7 +252,7 @@ theorem hexagon_pure_shift4_closure {L₀ t : ℕ}
     (hbound : 2 * max L₀ 4 ≤ L₀ + t * 4) :
     ∃ j ≤ t, IsPow2 (L₀ + j * 4) := by
   have hper : 2 ^ 1 ≡ 1 [MOD 1] := by decide
-  have hcong : 2 ^ 0 ≡ L₀ / 2 ^ 2 [MOD 1] := by simp [Nat.ModEq]
+  have hcong : 2 ^ 0 ≡ L₀ / 2 ^ 2 [MOD 1] := by simp [Nat.ModEq, Nat.mod_one]
   have h := exists_pow2_mod_odd_in_window (a := 2) (u := 1) (o := 1) (r := 0)
     (by decide) hper hLpos (by simpa using hdvd) hcong (by simpa using hbound)
   simpa using h
@@ -432,22 +432,22 @@ def crossRewire {V : Type*} (G : SimpleGraph V) (u v u₁ u₂ v₁ v₂ : V)
     G.Adj x.1 y.1 ∨
     (x.1 = u₁ ∧ y.1 = v₁) ∨ (x.1 = v₁ ∧ y.1 = u₁) ∨
     (x.1 = u₂ ∧ y.1 = v₂) ∨ (x.1 = v₂ ∧ y.1 = u₂)
-  symm := by
+  symm := ⟨by
     intro x y h
     rcases h with h | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
     · exact Or.inl h.symm
     · exact Or.inr (Or.inr (Or.inl ⟨rfl, rfl⟩))
     · exact Or.inr (Or.inl ⟨rfl, rfl⟩)
     · exact Or.inr (Or.inr (Or.inr (Or.inr ⟨rfl, rfl⟩)))
-    · exact Or.inr (Or.inr (Or.inr (Or.inl ⟨rfl, rfl⟩)))
-  loopless := by
+    · exact Or.inr (Or.inr (Or.inr (Or.inl ⟨rfl, rfl⟩)))⟩
+  loopless := ⟨by
     intro x h
     rcases h with h | ⟨hxa, hxb⟩ | ⟨hxa, hxb⟩ | ⟨hxa, hxb⟩ | ⟨hxa, hxb⟩
     · exact G.loopless x.1 h
     · exact h1 (hxa.symm.trans hxb)
     · exact h1 (hxb.symm.trans hxa)
     · exact h2 (hxa.symm.trans hxb)
-    · exact h2 (hxb.symm.trans hxa)
+    · exact h2 (hxb.symm.trans hxa)⟩
 
 private lemma card_neighborFinset_ge_of_replace {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -462,7 +462,7 @@ private lemma card_neighborFinset_ge_of_replace {V : Type*} [Fintype V] [Decidab
     G.degree x.1 ≤ H.degree x := by
   classical
   have hsub :
-      (G.neighborFinset x.1).erase del |>.card ≤ ((H.neighborFinset x).erase add).card := by
+      ((G.neighborFinset x.1).erase del).card ≤ ((H.neighborFinset x).erase add).card := by
     refine Finset.card_le_card_of_injOn
       (fun w => if hw : w ≠ u ∧ w ≠ v then ⟨w, hw⟩ else add) ?_ ?_
     · intro w hw
@@ -518,12 +518,12 @@ theorem cross_rewiring_min_degree_three {V : Type*} [Fintype V] [DecidableEq V]
     (hu_nb : ∀ w : V, G.Adj u w ↔ w = v ∨ w = u₁ ∨ w = u₂)
     (hv_nb : ∀ w : V, G.Adj v w ↔ w = u ∨ w = v₁ ∨ w = v₂)
     (hu₁v : u₁ ≠ v) (hu₂v : u₂ ≠ v) (hv₁u : v₁ ≠ u) (hv₂u : v₂ ≠ u)
-    (h1 : u₁ ≠ v₁) (h2 : u₂ ≠ v₂) :
-    let H := crossRewire G u v u₁ u₂ v₁ v₂ h1 h2
-    letI : DecidableRel H.Adj := Classical.decRel H.Adj
+    (h1 : u₁ ≠ v₁) (h2 : u₂ ≠ v₂)
+    (H : SimpleGraph {w : V // w ≠ u ∧ w ≠ v}) [DecidableRel H.Adj]
+    (hH : H = crossRewire G u v u₁ u₂ v₁ v₂ h1 h2) :
     ∀ x : {w : V // w ≠ u ∧ w ≠ v}, 3 ≤ H.degree x := by
   classical
-  intro H _ x
+  intro x
   have hu₁_adj : G.Adj u u₁ := (hu_nb u₁).mpr (Or.inr (Or.inl rfl))
   have hu₂_adj : G.Adj u u₂ := (hu_nb u₂).mpr (Or.inr (Or.inr rfl))
   have hv₁_adj : G.Adj v v₁ := (hv_nb v₁).mpr (Or.inr (Or.inl rfl))
@@ -536,37 +536,37 @@ theorem cross_rewiring_min_degree_three {V : Type*} [Fintype V] [DecidableEq V]
   have h22 := cross_rewiring_neighbors_disjoint_and_nonadj G hc4 huv hnotri hu₂_adj hu₂v hv₂_adj hv₂u
   have hdeg_ge : G.degree x.1 ≤ H.degree x := by
     by_cases hxu₁ : x.1 = u₁
-    · refine card_neighborFinset_ge_of_replace G h1 h2 H rfl x u ⟨v₁, hv₁u, hv₁_ne_v⟩ ?_ ?_ ?_
+    · refine card_neighborFinset_ge_of_replace G h1 h2 H hH x u ⟨v₁, hv₁u, hv₁_ne_v⟩ ?_ ?_ ?_
       · intro w hw hwu
         rcases hwu with rfl | rfl
         · rfl
         · exfalso; exact hnotri u₁ ⟨hu₁_adj, hxu₁ ▸ hw⟩
       · rw [hxu₁]; exact h11.2
-      · exact Or.inr (Or.inl ⟨hxu₁, rfl⟩)
+      · rw [hH]; exact Or.inr (Or.inl ⟨hxu₁, rfl⟩)
     · by_cases hxu₂ : x.1 = u₂
-      · refine card_neighborFinset_ge_of_replace G h1 h2 H rfl x u ⟨v₂, hv₂u, hv₂_ne_v⟩ ?_ ?_ ?_
+      · refine card_neighborFinset_ge_of_replace G h1 h2 H hH x u ⟨v₂, hv₂u, hv₂_ne_v⟩ ?_ ?_ ?_
         · intro w hw hwu
           rcases hwu with rfl | rfl
           · rfl
           · exfalso; exact hnotri u₂ ⟨hu₂_adj, hxu₂ ▸ hw⟩
         · rw [hxu₂]; exact h22.2
-        · exact Or.inr (Or.inr (Or.inr (Or.inl ⟨hxu₂, rfl⟩)))
+        · rw [hH]; exact Or.inr (Or.inr (Or.inr (Or.inl ⟨hxu₂, rfl⟩)))
       · by_cases hxv₁ : x.1 = v₁
-        · refine card_neighborFinset_ge_of_replace G h1 h2 H rfl x v ⟨u₁, hu₁_ne_u, hu₁v⟩ ?_ ?_ ?_
+        · refine card_neighborFinset_ge_of_replace G h1 h2 H hH x v ⟨u₁, hu₁_ne_u, hu₁v⟩ ?_ ?_ ?_
           · intro w hw hwu
             rcases hwu with rfl | rfl
             · exfalso; exact hnotri v₁ ⟨(hxv₁ ▸ hw).symm, hv₁_adj.symm⟩
             · rfl
           · rw [hxv₁]; intro hadj; exact h11.2 hadj.symm
-          · exact Or.inr (Or.inr (Or.inl ⟨hxv₁, rfl⟩))
+          · rw [hH]; exact Or.inr (Or.inr (Or.inl ⟨hxv₁, rfl⟩))
         · by_cases hxv₂ : x.1 = v₂
-          · refine card_neighborFinset_ge_of_replace G h1 h2 H rfl x v ⟨u₂, hu₂_ne_u, hu₂v⟩ ?_ ?_ ?_
+          · refine card_neighborFinset_ge_of_replace G h1 h2 H hH x v ⟨u₂, hu₂_ne_u, hu₂v⟩ ?_ ?_ ?_
             · intro w hw hwu
               rcases hwu with rfl | rfl
               · exfalso; exact hnotri v₂ ⟨(hxv₂ ▸ hw).symm, hv₂_adj.symm⟩
               · rfl
             · rw [hxv₂]; intro hadj; exact h22.2 hadj.symm
-            · exact Or.inr (Or.inr (Or.inr (Or.inr ⟨hxv₂, rfl⟩)))
+            · rw [hH]; exact Or.inr (Or.inr (Or.inr (Or.inr ⟨hxv₂, rfl⟩)))
           · rw [← card_neighborFinset_eq_degree, ← card_neighborFinset_eq_degree]
             refine Finset.card_le_card_of_injOn
               (fun w => if hw : w ≠ u ∧ w ≠ v then ⟨w, hw⟩ else x) ?_ ?_
@@ -589,6 +589,7 @@ theorem cross_rewiring_min_degree_three {V : Type*} [Fintype V] [DecidableEq V]
                   · exact hxv₁ h
                   · exact hxv₂ h
               simp only [dif_pos hne, mem_neighborFinset]
+              rw [hH]
               exact Or.inl hxw
             · intro w₁ hw₁ w₂ hw₂ heq
               have hne1 : w₁ ≠ u ∧ w₁ ≠ v := by
@@ -655,11 +656,17 @@ theorem no_repeated_cycle_pow2 {V : Type*} (G : SimpleGraph V) (hno : ¬ HasPow2
     omega
   exact hno ⟨v, p, hp, ⟨k, hk2, hk⟩⟩
 
+private lemma walk_head_edge_mem {V : Type*} {G : SimpleGraph V} {u v : V}
+    (w : G.Walk u v) (hpos : 0 < w.edges.length) :
+    u ∈ w.edges.head (List.ne_nil_of_length_pos hpos) := by
+  cases w with
+  | nil => simp at hpos
+  | cons _ _ => simp
+
 /-- Helper: every simple cycle `p : G.Walk v v` contains two distinct edges incident to `v`. -/
 private lemma cycle_two_distinct_incident_edges {V : Type*} (G : SimpleGraph V)
     {v : V} (p : G.Walk v v) (hp : p.IsCycle) :
     ∃ e₁ e₂ : Sym2 V, e₁ ≠ e₂ ∧ e₁ ∈ p.edges ∧ e₂ ∈ p.edges ∧ v ∈ e₁ ∧ v ∈ e₂ := by
-  have hne_nil : ¬ p.Nil := hp.ne_nil
   have hlen3 : 3 ≤ p.length := hp.three_le_length
   have hnodup : p.edges.Nodup := hp.edges_nodup
   have hlen_edges : p.edges.length = p.length := p.length_edges
@@ -671,32 +678,21 @@ private lemma cycle_two_distinct_incident_edges {V : Type*} (G : SimpleGraph V)
   have hne : e₁ ≠ e₂ := by
     intro heq
     have h0 : p.edges[0]'hpos = e₁ := (List.head_eq_getElem_zero _).symm
-    have hlast : p.edges[p.edges.length - 1]'(Nat.sub_lt hpos (by decide)) = e₂ :=
+    have hlast : p.edges[p.edges.length - 1]'(Nat.sub_lt hpos Nat.zero_lt_one) = e₂ :=
       (List.getLast_eq_getElem _).symm
     have hidx : (0 : ℕ) = p.edges.length - 1 := by
       have := (List.Nodup.getElem_inj_iff hnodup).mp (h0.trans (heq.trans hlast.symm))
       exact this
     omega
-  have hv₁ : v ∈ e₁ := by
-    cases p with
-    | nil => exact absurd rfl hne_nil
-    | cons h q =>
-      simp [e₁, Walk.edges_cons]
+  have hv₁ : v ∈ e₁ := walk_head_edge_mem p hpos
   have hv₂ : v ∈ e₂ := by
     have hrev : p.reverse.edges = p.edges.reverse := Walk.edges_reverse p
-    have hne_rev : ¬ p.reverse.Nil := by
-      intro hr
-      exact hne_nil (by simpa using congrArg Walk.reverse hr)
     have hpos_rev : 0 < p.reverse.edges.length := by
       rw [hrev, List.length_reverse]; exact hpos
-    have hhead_rev : v ∈ p.reverse.edges.head (List.ne_nil_of_length_pos hpos_rev) := by
-      cases hp_rev : p.reverse with
-      | nil => exact absurd hp_rev (by simpa [Walk.nil_iff_eq_nil] using hne_rev)
-      | cons h q => simp [Walk.edges_cons]
+    have hhead_rev : v ∈ p.reverse.edges.head (List.ne_nil_of_length_pos hpos_rev) :=
+      walk_head_edge_mem p.reverse hpos_rev
     have hhead_eq : p.reverse.edges.head (List.ne_nil_of_length_pos hpos_rev) = e₂ := by
-      have h1 : p.edges.reverse.head (by rw [List.ne_nil_iff_length_pos, List.length_reverse]; exact hpos) =
-          p.edges.getLast (List.ne_nil_of_length_pos hpos) := List.head_reverse _
-      simpa [e₂, hrev] using h1
+      simp [e₂, hrev]
     exact hhead_eq ▸ hhead_rev
   exact ⟨e₁, e₂, hne, he₁_mem, he₂_mem, hv₁, hv₂⟩
 

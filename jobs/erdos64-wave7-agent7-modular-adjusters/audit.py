@@ -55,16 +55,15 @@ if proc.stderr:
 if proc.returncode != 0:
     sys.exit(proc.returncode)
 
+# Collapse wrapped multi-line #print axioms output
+normalized = re.sub(r"\n\s+", " ", proc.stdout)
 axioms = {}
-for line in proc.stdout.splitlines():
-    m = re.match(r"'([^']+)' depends on axioms: \[([^\]]*)\]", line.strip())
-    if m:
-        name = m.group(1)
-        ax = sorted(a.strip() for a in m.group(2).split(",") if a.strip())
-        axioms[name] = ax
-    m0 = re.match(r"'([^']+)' does not depend on any axioms", line.strip())
-    if m0:
-        axioms[m0.group(1)] = []
+for m in re.finditer(r"'([^']+)' depends on axioms: \[([^\]]*)\]", normalized):
+    name = m.group(1)
+    ax = sorted(a.strip() for a in m.group(2).split(",") if a.strip())
+    axioms[name] = ax
+for m in re.finditer(r"'([^']+)' does not depend on any axioms", normalized):
+    axioms[m.group(1)] = []
 
 for t in THEOREMS:
     if t not in axioms:
