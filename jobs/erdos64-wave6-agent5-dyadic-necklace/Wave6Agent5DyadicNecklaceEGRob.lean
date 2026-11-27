@@ -182,6 +182,19 @@ private theorem list_sum_map_ge_length {α : Type*} (l : List α) (f : α → �
     have hl : l.length ≤ (l.map f).sum := ih (fun x hx => hf x (List.mem_cons_of_mem a hx))
     omega
 
+private theorem finRange_take_succ (r m : ℕ) (hm : m < r) :
+    (List.finRange r).take (m + 1) = (List.finRange r).take m ++ [⟨m, hm⟩] := by
+  apply List.ext_getElem
+  · simp; omega
+  · intro i hi1 hi2
+    by_cases h : i < m
+    · rw [List.getElem_append_left (by simp; omega)]
+      simp
+    · have him : i = m := by simp at hi1; omega
+      subst him
+      rw [List.getElem_append_right (by simp; omega)]
+      simp
+
 private theorem walk_edges_getElem {V : Type*} {G : SimpleGraph V} {u w : V}
     (q : G.Walk u w) (k : ℕ) (hk : k < q.length) :
     q.edges[k]'(by rw [SimpleGraph.Walk.length_edges]; exact hk) =
@@ -375,18 +388,8 @@ theorem prefixWalk_length (σ : Fin N.r → Bool) :
     simp [prefixWalk]
   | succ m ih =>
     simp only [prefixWalk, SimpleGraph.Walk.length_append, SimpleGraph.Walk.length_copy]
-    rw [ih (by omega)]
-    have htake : (List.finRange N.r).take (m + 1) =
-        (List.finRange N.r).take m ++ [⟨m, by omega⟩] := by
-      apply List.ext_getElem
-      · simp; omega
-      · intro i hi1 hi2
-        by_cases h : i < m
-        · simp [List.getElem_append_left, h]
-        · have him : i = m := by simp at hi1; omega
-          subst him
-          simp [List.getElem_append_right]
-    rw [htake, List.map_append, List.sum_append, List.map_singleton, List.sum_singleton]
+    rw [ih (by omega), finRange_take_succ N.r m (by omega),
+      List.map_append, List.sum_append, List.map_singleton, List.sum_singleton]
 
 theorem prefixWalk_support_dropLast (σ : Fin N.r → Bool) :
     ∀ m (hm : m ≤ N.r),
@@ -398,18 +401,8 @@ theorem prefixWalk_support_dropLast (σ : Fin N.r → Bool) :
     simp [prefixWalk]
   | succ m ih =>
     simp only [prefixWalk, support_dropLast_append, SimpleGraph.Walk.support_copy]
-    rw [ih (by omega)]
-    have htake : (List.finRange N.r).take (m + 1) =
-        (List.finRange N.r).take m ++ [⟨m, by omega⟩] := by
-      apply List.ext_getElem
-      · simp; omega
-      · intro i hi1 hi2
-        by_cases h : i < m
-        · simp [List.getElem_append_left, h]
-        · have him : i = m := by simp at hi1; omega
-          subst him
-          simp [List.getElem_append_right]
-    rw [htake, List.flatMap_append, List.flatMap_singleton]
+    rw [ih (by omega), finRange_take_succ N.r m (by omega),
+      List.flatMap_append, List.flatMap_singleton]
 
 theorem cycleWalk_support_dropLast_nodup (σ : Fin N.r → Bool) :
     (N.cycleWalk σ).support.dropLast.Nodup := by
