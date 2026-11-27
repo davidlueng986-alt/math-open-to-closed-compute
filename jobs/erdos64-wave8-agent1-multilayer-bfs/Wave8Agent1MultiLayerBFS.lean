@@ -235,8 +235,8 @@ theorem cubic_three_layer_bipartite_chorded_forces_sink [Fintype V] [DecidableEq
   let u0 := C.v ⟨0, by omega⟩
   let u1 := C.v ⟨2 * r + 1, by omega⟩
   have hdeg := chord_endpoints_deg_ge_three G (fun x => i ≤ L x ∧ L x ≤ i + 2) C hshell
-  have h0_bd := hshell ⟨0, by omega⟩
-  have h1_bd := hshell ⟨2 * r + 1, by omega⟩
+  have h0_bd : i ≤ L u0 ∧ L u0 ≤ i + 2 := hshell ⟨0, by omega⟩
+  have h1_bd : i ≤ L u1 ∧ L u1 ≤ i + 2 := hshell ⟨2 * r + 1, by omega⟩
   have h0_ne_i : L u0 ≠ i := by
     intro hEq
     have hle2 := cubic_bfs_top_layer_deg_le_two G hcubic L (i := i) (r := 3) hi (hparent u0 hEq)
@@ -303,7 +303,13 @@ theorem cubic_bfs_shell_degree_cut_identity [Fintype V] [DecidableEq V]
       ((G.neighborFinset u).filter (fun x => x ∈ S)).card +
       ((G.neighborFinset u).filter (fun x => x ∉ S)).card = 3 := by
     intro u _
-    rw [Finset.filter_card_add_filter_neg_card_eq_card,
+    have hdisj : Disjoint ((G.neighborFinset u).filter (fun x => x ∈ S))
+        ((G.neighborFinset u).filter (fun x => x ∉ S)) :=
+      Finset.disjoint_filter.mpr (fun _ _ hx hnx => hnx hx)
+    have hunion : ((G.neighborFinset u).filter (fun x => x ∈ S)) ∪
+        ((G.neighborFinset u).filter (fun x => x ∉ S)) = G.neighborFinset u := by
+      ext x; simp only [Finset.mem_union, Finset.mem_filter]; tauto
+    rw [← Finset.card_union_of_disjoint hdisj, hunion,
         SimpleGraph.card_neighborFinset_eq_degree, hcubic u]
   rw [Finset.sum_congr rfl hpoint, Finset.sum_const, smul_eq_mul, mul_comm]
 
@@ -380,21 +386,23 @@ theorem chorded_even_cycle_girth_lower_bound {G : SimpleGraph V} {m r g : ℕ}
   let q_chord : G.Walk (C.v ⟨0, by omega⟩) (C.v ⟨2 * r + 1, by omega⟩) :=
     Walk.cons C.hadj_chord Walk.nil
   have hp1_path : p1.IsPath := by
-    simpa [p1, p1_raw] using C.fwdWalk_isPath 0 (2 * r + 1) (by omega)
+    rw [Walk.isPath_def, Walk.support_copy]
+    exact (C.fwdWalk_isPath 0 (2 * r + 1) (by omega)).support_nodup
+  have hp1_len : p1.length = 2 * r + 1 := by
+    simp only [p1, Walk.length_copy, p1_raw, ChordedEvenCycle.fwdWalk_length]
+  have hq_len : q_chord.length = 1 := rfl
   have hq_path : q_chord.IsPath := by
     rw [Walk.isPath_def]
     simp only [q_chord, Walk.support_cons, Walk.support_nil, List.nodup_cons, List.mem_singleton,
       List.nodup_nil, and_true]
-    exact G.ne_of_adj C.hadj_chord
+    exact ⟨G.ne_of_adj C.hadj_chord, by simp⟩
   have hc1_cyc : (p1.append q_chord.reverse).IsCycle := by
-    apply isCycle_append_reverse_of_internally_disjoint p1 q_chord hp1_path hq_path
-    · simp [p1, p1_raw, q_chord, ChordedEvenCycle.fwdWalk_length]; omega
-    · intro x _ hxq
-      simp [q_chord] at hxq
-      exact hxq
+    apply isCycle_append_reverse_of_internally_disjoint p1 q_chord hp1_path hq_path (by omega)
+    intro x _ hxq
+    simp [q_chord] at hxq
+    exact hxq
   have hc1_len : (p1.append q_chord.reverse).length = 2 * r + 2 := by
-    simp [p1, p1_raw, q_chord, Walk.length_append, Walk.length_reverse,
-      ChordedEvenCycle.fwdWalk_length]
+    rw [Walk.length_append, Walk.length_reverse, hp1_len, hq_len]
   have hg1 : g ≤ 2 * r + 2 := by
     have := hgirth _ _ hc1_cyc
     omega
@@ -407,22 +415,23 @@ theorem chorded_even_cycle_girth_lower_bound {G : SimpleGraph V} {m r g : ℕ}
   let q_chord2 : G.Walk (C.v ⟨2 * r + 1, by omega⟩) (C.v ⟨0, by omega⟩) :=
     Walk.cons C.hadj_chord.symm Walk.nil
   have hp2_path : p2.IsPath := by
-    simpa [p2, p2_raw] using C.fwdWalk_isPath (2 * r + 1) (2 * m - 2 * r - 1) (by omega)
+    rw [Walk.isPath_def, Walk.support_copy]
+    exact (C.fwdWalk_isPath (2 * r + 1) (2 * m - 2 * r - 1) (by omega)).support_nodup
+  have hp2_len : p2.length = 2 * m - 2 * r - 1 := by
+    simp only [p2, Walk.length_copy, p2_raw, ChordedEvenCycle.fwdWalk_length]
+  have hq2_len : q_chord2.length = 1 := rfl
   have hq2_path : q_chord2.IsPath := by
     rw [Walk.isPath_def]
     simp only [q_chord2, Walk.support_cons, Walk.support_nil, List.nodup_cons, List.mem_singleton,
       List.nodup_nil, and_true]
-    exact G.ne_of_adj C.hadj_chord.symm
+    exact ⟨G.ne_of_adj C.hadj_chord.symm, by simp⟩
   have hc2_cyc : (p2.append q_chord2.reverse).IsCycle := by
-    apply isCycle_append_reverse_of_internally_disjoint p2 q_chord2 hp2_path hq2_path
-    · simp [p2, p2_raw, q_chord2, ChordedEvenCycle.fwdWalk_length]; omega
-    · intro x _ hxq
-      simp [q_chord2] at hxq
-      exact hxq
+    apply isCycle_append_reverse_of_internally_disjoint p2 q_chord2 hp2_path hq2_path (by omega)
+    intro x _ hxq
+    simp [q_chord2] at hxq
+    exact hxq
   have hc2_len : (p2.append q_chord2.reverse).length = 2 * m - 2 * r := by
-    simp [p2, p2_raw, q_chord2, Walk.length_append, Walk.length_reverse,
-      ChordedEvenCycle.fwdWalk_length]
-    omega
+    rw [Walk.length_append, Walk.length_reverse, hp2_len, hq2_len]; omega
   have hg2 : g ≤ 2 * m - 2 * r := by
     have := hgirth _ _ hc2_cyc
     omega
@@ -483,12 +492,8 @@ private theorem support_tail_eq_internals_append_end' {G : SimpleGraph V} :
   | a, b, .cons h1 (.cons h2 rest), _ => by
       have ih := support_tail_eq_internals_append_end' (.cons h2 rest) (by simp)
       simp only [walkInternals, Walk.support_cons, List.tail_cons] at ih ⊢
-      have hne : (Walk.cons h2 rest).support ≠ [] := Walk.support_ne_nil _
-      rw [Walk.support_cons] at hne ⊢
-      simp only [List.dropLast_cons_of_ne_nil (Walk.support_ne_nil rest)]
-      rw [List.cons_append]
+      rw [List.dropLast_cons_of_ne_nil (Walk.support_ne_nil rest), List.cons_append]
       congr 1
-      simpa [walkInternals] using ih
 
 private theorem mem_internals_of_mem_edges_ge2' {G : SimpleGraph V} :
     ∀ {a b : V} (p : G.Walk a b), 2 ≤ p.length →
@@ -498,9 +503,9 @@ private theorem mem_internals_of_mem_edges_ge2' {G : SimpleGraph V} :
   | a, b, .cons (v := u) h1 (.cons (v := w) h2 rest), _, e, he => by
       simp only [Walk.edges_cons, List.mem_cons] at he
       have hu_int : u ∈ walkInternals (Walk.cons h1 (Walk.cons h2 rest)) := by
-        simp only [walkInternals, Walk.support_cons, List.tail_cons,
-          List.dropLast_cons_of_ne_nil (Walk.support_ne_nil rest), List.mem_cons]
-        exact Or.inl rfl
+        simp only [walkInternals, Walk.support_cons, List.tail_cons]
+        rw [List.dropLast_cons_of_ne_nil (Walk.support_ne_nil rest)]
+        exact List.mem_cons_self
       rcases he with rfl | rfl | hrest
       · exact ⟨u, hu_int, by simp⟩
       · exact ⟨u, hu_int, by simp⟩
@@ -509,17 +514,17 @@ private theorem mem_internals_of_mem_edges_ge2' {G : SimpleGraph V} :
         | cons h3 rest2 =>
             obtain ⟨z, hz, hze⟩ :=
               mem_internals_of_mem_edges_ge2' (Walk.cons h2 (Walk.cons h3 rest2)) (by simp) e
-                (by simp [hrest])
+                (by rw [Walk.edges_cons]; exact List.mem_cons_of_mem _ hrest)
             refine ⟨z, ?_, hze⟩
-            simp only [walkInternals, Walk.support_cons, List.tail_cons,
-              List.dropLast_cons_of_ne_nil (Walk.support_ne_nil _), List.mem_cons] at hz ⊢
-            exact Or.inr hz
+            simp only [walkInternals, Walk.support_cons, List.tail_cons] at hz ⊢
+            rw [List.dropLast_cons_of_ne_nil (by simp)]
+            exact List.mem_cons_of_mem _ hz
 
 /-- Subset sum of a step list `steps : List ℕ` selected by a boolean mask `mask : List Bool`. -/
 def subsetSum : List ℕ → List Bool → ℕ
   | [], _ => 0
   | _, [] => 0
-  | d :: ds, false :: bs => subsetSum ds bs
+  | _ :: ds, false :: bs => subsetSum ds bs
   | d :: ds, true :: bs => d + subsetSum ds bs
 
 /-- **Heterogeneous Adjuster Chain (`HetAdjusterChain`)**:
@@ -645,7 +650,7 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} :
           · apply hdisj x (by simp [altVertices, halt])
             simp only [baseWalk, support_append_tail', List.mem_append]
             exact Or.inl hxs
-  | _, _, .step seg p0 p1 δ hδ hp0 hp1_path hstep rest, true :: bs, hlen, hnd, halt_nd, hdisj => by
+  | _, _, .step (w := w) seg p0 p1 δ hδ hp0 hp1_path hstep rest, true :: bs, hlen, hnd, halt_nd, hdisj => by
       simp only [steps, List.length_cons, Nat.add_right_cancel_iff] at hlen
       simp only [baseWalk, support_append_tail', List.nodup_append] at hnd
       simp only [altVertices, List.nodup_append] at halt_nd
@@ -662,7 +667,7 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} :
         cases hs : p1.support with
         | nil => exact absurd hs (Walk.support_ne_nil p1)
         | cons _ _ => rw [hs, List.nodup_cons] at h; exact h.2
-      have hw_mem_p0 : _ ∈ p0.support.tail := by
+      have hw_mem_p0 : w ∈ p0.support.tail := by
         rw [support_tail_eq_internals_append_end' p0 hp0, List.mem_append]
         exact Or.inr (List.mem_singleton.mpr rfl)
       simp only [realize, support_append_tail', List.nodup_append]
@@ -676,9 +681,9 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} :
             simp only [baseWalk, support_append_tail', List.mem_append]
             exact Or.inr (Or.inr hbase)
           · exact hp1_rest_alt x hint x halt rfl
-        · rcases mem_realize_support_tail rest bs hlen _ hyr with hbase | halt
-          · exact hp0_rb _ hw_mem_p0 _ hbase rfl
-          · apply hdisj _ (by simp [altVertices, halt])
+        · rcases mem_realize_support_tail rest bs hlen w hyr with hbase | halt
+          · exact hp0_rb w hw_mem_p0 w hbase rfl
+          · apply hdisj w (by simp [altVertices, halt])
             simp only [baseWalk, support_append_tail', List.mem_append]
             exact Or.inr (Or.inl hw_mem_p0)
       · intro x hxs y hyr hxy; subst hxy
@@ -690,7 +695,7 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} :
           · apply hdisj x (by simp [altVertices, hint])
             simp only [baseWalk, support_append_tail', List.mem_append]
             exact Or.inl hxs
-          · exact hseg_rest _ hxs _ (List.mem_append.mpr (Or.inl hw_mem_p0)) rfl
+          · exact hseg_rest x hxs w (List.mem_append.mpr (Or.inl hw_mem_p0)) rfl
         · rcases mem_realize_support_tail rest bs hlen x hxr with hbase | halt
           · exact hseg_rest x hxs x (List.mem_append.mpr (Or.inr hbase)) rfl
           · apply hdisj x (by simp [altVertices, halt])
@@ -735,7 +740,7 @@ private theorem realize_edges_nodup {G : SimpleGraph V} :
   | _, _, .base p, [], _, hnd, _, _ => hnd
   | _, _, .base _, _ :: _, hlen, _, _, _ => by simp [steps] at hlen
   | _, _, .step _ _ _ _ _ _ _ _ _, [], hlen, _, _, _ => by simp [steps] at hlen
-  | _, _, .step seg p0 p1 _ _ hp0 _ _ rest, false :: bs, hlen, hnd, halt_nd, hdisj => by
+  | _, _, .step (w := w) seg p0 p1 _ _ hp0 _ _ rest, false :: bs, hlen, hnd, halt_nd, hdisj => by
       simp only [steps, List.length_cons, Nat.add_right_cancel_iff] at hlen
       simp only [baseWalk, Walk.edges_append, List.nodup_append] at hnd
       simp only [altVertices, List.nodup_append] at halt_nd
@@ -743,20 +748,23 @@ private theorem realize_edges_nodup {G : SimpleGraph V} :
       have hrest_disj : ∀ z ∈ rest.altVertices, z ∉ rest.baseWalk.support := by
         intro z hz hm
         apply hdisj z (by simp [altVertices, hz])
-        rw [baseWalk, Walk.support_append, Walk.support_append, List.mem_append, List.mem_append]
-        cases hrb : rest.baseWalk.support with
-        | nil => exact absurd hrb (Walk.support_ne_nil _)
-        | cons w0 ws =>
-            have hw0 : w0 = _ := by
-              have := Walk.head_support rest.baseWalk; rw [hrb] at this; simpa using this
-            rw [hrb, List.mem_cons] at hm
+        rw [baseWalk, Walk.support_append, List.mem_append, support_append_tail', List.mem_append]
+        cases hrb : rest.baseWalk with
+        | nil =>
+            rw [hrb, Walk.support_nil, List.mem_singleton] at hm
+            subst hm
+            have hend : w ∈ p0.support.tail := by
+              rw [support_tail_eq_internals_append_end' p0 hp0, List.mem_append]
+              exact Or.inr (List.mem_singleton.mpr rfl)
+            exact Or.inr (Or.inl hend)
+        | cons h1 r1 =>
+            rw [hrb, Walk.support_cons, List.mem_cons] at hm
             rcases hm with rfl | hws
-            · rw [hw0]
-              have hend : _ ∈ p0.support.tail := by
+            · have hend : w ∈ p0.support.tail := by
                 rw [support_tail_eq_internals_append_end' p0 hp0, List.mem_append]
                 exact Or.inr (List.mem_singleton.mpr rfl)
               exact Or.inr (Or.inl hend)
-            · exact Or.inr (Or.inr (by rw [hrb]; exact hws))
+            · exact Or.inr (Or.inr (by rw [hrb, Walk.support_cons, List.tail_cons]; exact hws))
       have ih := realize_edges_nodup rest bs hlen hrb_nd halt_nd.2.1 hrest_disj
       simp only [realize, Walk.edges_append, List.nodup_append]
       refine ⟨hseg_nd, ⟨hp0_nd, ih, ?_⟩, ?_⟩
@@ -765,16 +773,17 @@ private theorem realize_edges_nodup {G : SimpleGraph V} :
         · exact hp0_rb e hep0 e hbase rfl
         · apply hdisj z (by simp [altVertices, hz])
           have hz_p0 := mem_support_of_mem_edges' hep0 hze
-          simp only [baseWalk, Walk.support_append, List.mem_append]
-          cases hps : p0.support with
-          | nil => exact absurd hps (Walk.support_ne_nil _)
-          | cons u0 us =>
-              have hu0 : u0 = _ := by
-                have := Walk.head_support p0; rw [hps] at this; simpa using this
-              rw [hps, List.mem_cons] at hz_p0
+          rw [baseWalk, Walk.support_append, List.mem_append, support_append_tail', List.mem_append]
+          cases hps : p0 with
+          | nil =>
+              rw [hps, Walk.support_nil, List.mem_singleton] at hz_p0
+              subst hz_p0
+              exact Or.inl (Walk.end_mem_support seg)
+          | cons h1 r1 =>
+              rw [hps, Walk.support_cons, List.mem_cons] at hz_p0
               rcases hz_p0 with rfl | ht
-              · left; rw [hu0]; exact Walk.end_mem_support seg
-              · right; left; rw [hps]; exact ht
+              · exact Or.inl (Walk.end_mem_support seg)
+              · exact Or.inr (Or.inl (by rw [hps, Walk.support_cons, List.tail_cons]; exact ht))
       · intro e hes e' her hee; subst hee
         rw [List.mem_append] at her
         rcases her with hep0 | her
@@ -784,7 +793,7 @@ private theorem realize_edges_nodup {G : SimpleGraph V} :
           · apply hdisj z (by simp [altVertices, hz])
             simp only [baseWalk, Walk.support_append, List.mem_append]
             exact Or.inl (mem_support_of_mem_edges' hes hze)
-  | _, _, .step seg p0 p1 δ hδ hp0 hp1_path hstep rest, true :: bs, hlen, hnd, halt_nd, hdisj => by
+  | _, _, .step (w := w) seg p0 p1 δ hδ hp0 hp1_path hstep rest, true :: bs, hlen, hnd, halt_nd, hdisj => by
       simp only [steps, List.length_cons, Nat.add_right_cancel_iff] at hlen
       simp only [baseWalk, Walk.edges_append, List.nodup_append] at hnd
       simp only [altVertices, List.nodup_append] at halt_nd
@@ -793,42 +802,49 @@ private theorem realize_edges_nodup {G : SimpleGraph V} :
       have hrest_disj : ∀ z ∈ rest.altVertices, z ∉ rest.baseWalk.support := by
         intro z hz hm
         apply hdisj z (by simp [altVertices, hz])
-        rw [baseWalk, Walk.support_append, Walk.support_append, List.mem_append, List.mem_append]
-        cases hrb : rest.baseWalk.support with
-        | nil => exact absurd hrb (Walk.support_ne_nil _)
-        | cons w0 ws =>
-            have hw0 : w0 = _ := by
-              have := Walk.head_support rest.baseWalk; rw [hrb] at this; simpa using this
-            rw [hrb, List.mem_cons] at hm
+        rw [baseWalk, Walk.support_append, List.mem_append, support_append_tail', List.mem_append]
+        cases hrb : rest.baseWalk with
+        | nil =>
+            rw [hrb, Walk.support_nil, List.mem_singleton] at hm
+            subst hm
+            have hend : w ∈ p0.support.tail := by
+              rw [support_tail_eq_internals_append_end' p0 hp0, List.mem_append]
+              exact Or.inr (List.mem_singleton.mpr rfl)
+            exact Or.inr (Or.inl hend)
+        | cons h1 r1 =>
+            rw [hrb, Walk.support_cons, List.mem_cons] at hm
             rcases hm with rfl | hws
-            · rw [hw0]
-              have hend : _ ∈ p0.support.tail := by
+            · have hend : w ∈ p0.support.tail := by
                 rw [support_tail_eq_internals_append_end' p0 hp0, List.mem_append]
                 exact Or.inr (List.mem_singleton.mpr rfl)
               exact Or.inr (Or.inl hend)
-            · exact Or.inr (Or.inr (by rw [hrb]; exact hws))
+            · exact Or.inr (Or.inr (by rw [hrb, Walk.support_cons, List.tail_cons]; exact hws))
       have ih := realize_edges_nodup rest bs hlen hrb_nd hrest_alt_nd hrest_disj
       simp only [realize, Walk.edges_append, List.nodup_append]
       refine ⟨hseg_nd, ⟨hp1_path.edges_nodup, ih, ?_⟩, ?_⟩
       · intro e hep1 e' her hee; subst hee
         obtain ⟨z, hz_int, hze⟩ := mem_internals_of_mem_edges_ge2' p1 (by omega) e hep1
         have hz_supp : z ∈ (rest.realize bs).support := mem_support_of_mem_edges' her hze
-        cases hr : (rest.realize bs).support with
-        | nil => exact absurd hr (Walk.support_ne_nil _)
-        | cons w0 ws =>
-            have hw0 : w0 = _ := by
-              have := Walk.head_support (rest.realize bs); rw [hr] at this; simpa using this
-            rw [hr, List.mem_cons] at hz_supp
+        cases hr : rest.realize bs with
+        | nil =>
+            rw [hr, Walk.support_nil, List.mem_singleton] at hz_supp
+            subst hz_supp
+            apply hdisj w (by simp [altVertices, hz_int])
+            rw [baseWalk, Walk.support_append, List.mem_append, support_append_tail', List.mem_append]
+            right; left
+            rw [support_tail_eq_internals_append_end' p0 hp0, List.mem_append]
+            exact Or.inr (List.mem_singleton.mpr rfl)
+        | cons h1 r1 =>
+            rw [hr, Walk.support_cons, List.mem_cons] at hz_supp
             rcases hz_supp with rfl | hws
-            · apply hdisj w0 (by simp [altVertices, hz_int])
-              rw [hw0]
-              simp only [baseWalk, Walk.support_append, List.mem_append]
+            · apply hdisj w (by simp [altVertices, hz_int])
+              rw [baseWalk, Walk.support_append, List.mem_append, support_append_tail', List.mem_append]
               right; left
               rw [support_tail_eq_internals_append_end' p0 hp0, List.mem_append]
               exact Or.inr (List.mem_singleton.mpr rfl)
-            · rcases mem_realize_support_tail rest bs hlen z (by rw [hr]; exact hws) with hbase | halt
+            · rcases mem_realize_support_tail rest bs hlen z (by rw [hr, Walk.support_cons, List.tail_cons]; exact hws) with hbase | halt
               · apply hdisj z (by simp [altVertices, hz_int])
-                simp only [baseWalk, Walk.support_append, List.mem_append]
+                rw [baseWalk, Walk.support_append, List.mem_append, support_append_tail', List.mem_append]
                 exact Or.inr (Or.inr hbase)
               · exact hp1_rest_alt z hz_int z halt rfl
       · intro e hes e' her hee; subst hee
@@ -967,13 +983,11 @@ private theorem concat3_isPath' {G : SimpleGraph V} {u1 v1 v2 u2 : V}
     rw [Walk.isPath_def, Walk.support_append, List.nodup_append]
     have hd_nd := hd.support_nodup
     have hv1_not : v1 ∉ d.support.tail := by
-      cases hds : d.support with
-      | nil => exact absurd hds (Walk.support_ne_nil d)
-      | cons x xs =>
-          have hx : x = v1 := by
-            have := Walk.head_support d; rw [hds] at this; simpa using this
-          rw [hds, List.nodup_cons] at hd_nd
-          simpa [hx] using hd_nd.1
+      cases d with
+      | nil => simp
+      | cons _ rest =>
+          rw [Walk.support_cons, List.nodup_cons] at hd_nd
+          simpa [Walk.support_cons] using hd_nd.1
     have hdtail_nd : d.support.tail.Nodup := by
       cases hds : d.support with
       | nil => exact absurd hds (Walk.support_ne_nil d)
@@ -985,13 +999,11 @@ private theorem concat3_isPath' {G : SimpleGraph V} {u1 v1 v2 u2 : V}
   have hp2r := hp2.reverse
   have hp2r_nd := hp2r.support_nodup
   have hv2_not : v2 ∉ p2.reverse.support.tail := by
-    cases hps : p2.reverse.support with
-    | nil => exact absurd hps (Walk.support_ne_nil _)
-    | cons x xs =>
-        have hx : x = v2 := by
-          have := Walk.head_support p2.reverse; rw [hps] at this; simpa using this
-        rw [hps, List.nodup_cons] at hp2r_nd
-        simpa [hx] using hp2r_nd.1
+    cases hr : p2.reverse with
+    | nil => simp
+    | cons _ rest =>
+        rw [hr, Walk.support_cons, List.nodup_cons] at hp2r_nd
+        simpa [Walk.support_cons] using hp2r_nd.1
   have hp2rtail_nd : p2.reverse.support.tail.Nodup := by
     cases hps : p2.reverse.support with
     | nil => exact absurd hps (Walk.support_ne_nil _)
