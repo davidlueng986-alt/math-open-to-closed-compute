@@ -1,0 +1,23 @@
+name: E64 Wave 8 Agent 10 High-Girth (g in [9,14]) OpenMP Counterexample Hunt
+
+on:
+  workflow_dispatch:
+
+jobs:
+  hunt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Compile and run OpenMP C++20 High-Girth Hunter
+        run: |
+          mkdir -p out
+          g++ -O3 -fopenmp -std=c++20 jobs/erdos64-wave8-agent10-highgirth-hunt/highgirth_hunt_omp.cpp -o highgirth_hunt_omp
+          ./highgirth_hunt_omp | tee out/highgirth_hunt_results.txt
+      - name: Upload hunt artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: erdos64-wave8-agent10-highgirth-hunt
+          path: out/
+          retention-days: 90
