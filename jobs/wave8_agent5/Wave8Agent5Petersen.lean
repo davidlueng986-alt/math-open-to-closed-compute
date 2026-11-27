@@ -11,7 +11,7 @@ def petersenEdges : List (Fin 10 × Fin 10) :=
 
 def Petersen : SimpleGraph (Fin 10) where
   Adj u v := (u, v) ∈ petersenEdges ∨ (v, u) ∈ petersenEdges
-  symm := by intro u v h; exact h.elim Or.inr Or.inl
+  symm := ⟨by intro u v h; exact h.elim Or.inr Or.inl⟩
   loopless := ⟨by intro u; fin_cases u <;> decide⟩
 
 instance : DecidableRel Petersen.Adj := fun u v =>
@@ -50,7 +50,7 @@ def pC10 : Petersen.Walk 2 2 := (.cons (show Petersen.Adj 2 3 by decide) (.cons 
 
 lemma pT0_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hno : ¬HasPower (VoltageLift Petersen α)) :
     walkVoltage α pT0x = walkVoltage α pT0y ∨ walkVoltage α pT0y = walkVoltage α pT0z ∨ walkVoltage α pT0z = walkVoltage α pT0x := by
-  by_contra h; push_neg at h; rcases h with ⟨h1, h2, h3⟩
+  by_contra h; push Not at h; rcases h with ⟨h1, h2, h3⟩
   obtain ⟨w, hwc, hwl⟩ := abelian_cover_theta_commutator_simple Petersen α pT0x pT0y pT0z
     (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide))
     (by decide) (by decide) (by decide)
@@ -58,7 +58,7 @@ lemma pT0_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hn
   exact hno ⟨4, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
 lemma pT1_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hno : ¬HasPower (VoltageLift Petersen α)) :
     walkVoltage α pT1x = walkVoltage α pT1y ∨ walkVoltage α pT1y = walkVoltage α pT1z ∨ walkVoltage α pT1z = walkVoltage α pT1x := by
-  by_contra h; push_neg at h; rcases h with ⟨h1, h2, h3⟩
+  by_contra h; push Not at h; rcases h with ⟨h1, h2, h3⟩
   obtain ⟨w, hwc, hwl⟩ := abelian_cover_theta_commutator_simple Petersen α pT1x pT1y pT1z
     (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide))
     (by decide) (by decide) (by decide)
@@ -66,7 +66,7 @@ lemma pT1_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hn
   exact hno ⟨4, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
 lemma pT2_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hno : ¬HasPower (VoltageLift Petersen α)) :
     walkVoltage α pT2x = walkVoltage α pT2y ∨ walkVoltage α pT2y = walkVoltage α pT2z ∨ walkVoltage α pT2z = walkVoltage α pT2x := by
-  by_contra h; push_neg at h; rcases h with ⟨h1, h2, h3⟩
+  by_contra h; push Not at h; rcases h with ⟨h1, h2, h3⟩
   obtain ⟨w, hwc, hwl⟩ := abelian_cover_theta_commutator_simple Petersen α pT2x pT2y pT2z
     (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide))
     (by decide) (by decide) (by decide)
@@ -74,7 +74,7 @@ lemma pT2_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hn
   exact hno ⟨4, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
 lemma pT3_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hno : ¬HasPower (VoltageLift Petersen α)) :
     walkVoltage α pT3x = walkVoltage α pT3y ∨ walkVoltage α pT3y = walkVoltage α pT3z ∨ walkVoltage α pT3z = walkVoltage α pT3x := by
-  by_contra h; push_neg at h; rcases h with ⟨h1, h2, h3⟩
+  by_contra h; push Not at h; rcases h with ⟨h1, h2, h3⟩
   obtain ⟨w, hwc, hwl⟩ := abelian_cover_theta_commutator_simple Petersen α pT3x pT3y pT3z
     (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide))
     (by decide) (by decide) (by decide)
@@ -82,7 +82,7 @@ lemma pT3_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hn
   exact hno ⟨4, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
 lemma pT4_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hno : ¬HasPower (VoltageLift Petersen α)) :
     walkVoltage α pT4x = walkVoltage α pT4y ∨ walkVoltage α pT4y = walkVoltage α pT4z ∨ walkVoltage α pT4z = walkVoltage α pT4x := by
-  by_contra h; push_neg at h; rcases h with ⟨h1, h2, h3⟩
+  by_contra h; push Not at h; rcases h with ⟨h1, h2, h3⟩
   obtain ⟨w, hwc, hwl⟩ := abelian_cover_theta_commutator_simple Petersen α pT4x pT4y pT4z
     (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide))
     (by decide) (by decide) (by decide)
@@ -90,7 +90,7 @@ lemma pT4_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hn
   exact hno ⟨4, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
 lemma pT5_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hno : ¬HasPower (VoltageLift Petersen α)) :
     walkVoltage α pT5x = walkVoltage α pT5y ∨ walkVoltage α pT5y = walkVoltage α pT5z ∨ walkVoltage α pT5z = walkVoltage α pT5x := by
-  by_contra h; push_neg at h; rcases h with ⟨h1, h2, h3⟩
+  by_contra h; push Not at h; rcases h with ⟨h1, h2, h3⟩
   obtain ⟨w, hwc, hwl⟩ := abelian_cover_theta_commutator_simple Petersen α pT5x pT5y pT5z
     (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide))
     (by decide) (by decide) (by decide)
