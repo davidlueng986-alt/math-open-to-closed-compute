@@ -434,13 +434,14 @@ theorem cert_trace_surplus_of_two_square (G : SimpleGraph V) [DecidableRel G.Adj
           have htk := taillessCount_eq_chebMat_trace_all G (d := 3) (by decide) hreg (k := k' + 1) (by omega)
           have h32 : ((3 - 2 : ℕ) : ℚ) = 1 := by norm_num
           rw [h32, one_mul] at htk
+          have h1k : 1 ≤ k' + 1 := by omega
           by_cases hev : (k' + 1) % 2 = 0
           · simp only [hev, ↓reduceIte] at htk
-            simp only [Nat.succ_ne_zero, ↓reduceIte, Nat.one_le_iff_ne_zero, hev, and_self]
+            simp only [Nat.succ_ne_zero, ↓reduceIte, h1k, hev, and_self]
             have : Matrix.trace (chebMat G 3 (k' + 1)) = (taillessCount G (k' + 1) : ℚ) - (Fintype.card V : ℚ) := by linarith
             rw [this]; ring
           · simp only [hev, ↓reduceIte, add_zero] at htk
-            simp only [Nat.succ_ne_zero, ↓reduceIte, Nat.one_le_iff_ne_zero, hev, and_false, sub_zero, zero_add]
+            simp only [Nat.succ_ne_zero, ↓reduceIte, h1k, hev, and_false, sub_zero, zero_add]
             rw [← htk]
     rw [hsplit, Finset.sum_add_distrib, Finset.sum_sub_distrib]
     congr 1
@@ -453,7 +454,7 @@ theorem cert_trace_surplus_of_two_square (G : SimpleGraph V) [DecidableRel G.Adj
     congr 1
     · ring
     · refine Finset.sum_congr rfl fun k _ => ?_
-      split_ifs <;> simp
+      split_ifs <;> ring
   have hsum_le : (∑ k ∈ Finset.range S.length,
         if 1 ≤ k then ((S.getD k 0 : ℤ) : ℚ) * (taillessCount G k : ℚ) else 0) ≤
       ((lead : ℤ) : ℚ) * (taillessCount G L : ℚ) -
@@ -474,7 +475,8 @@ theorem cert_trace_surplus_of_two_square (G : SimpleGraph V) [DecidableRel G.Adj
         have hgt : L < k := by omega
         have hkz := hhi_zero k hk
         simp only [hgt, ↓reduceIte, decide_eq_true_eq] at hkz
-        simp [hkz]
+        rw [hkz]
+        simp
       rw [hhi, Finset.sum_range_succ, hlead_def]
       simp only [hL1, ↓reduceIte]
     rw [hsplit_L]
@@ -498,10 +500,7 @@ theorem cert_trace_surplus_of_two_square (G : SimpleGraph V) [DecidableRel G.Adj
             have h0 := taillessCount_pow2_eq_zero G hg hnp hm hp2.2
             simp [h0]
           · have hck := hmid_le k hk
-            have hnotp2 : (isPow2Small k && decide (k < 2 * g)) = false := by
-              cases h1 : isPow2Small k <;> simp [h1] at hp2 ⊢
-              exact Nat.le_of_not_lt hp2
-            simp only [hk0, ↓reduceIte, hkg, hnotp2, Bool.false_eq_true, decide_eq_true_eq] at hck
+            simp only [hk0, ↓reduceIte, hkg, hp2, decide_eq_true_eq] at hck
             have hck_q : ((S.getD k 0 : ℤ) : ℚ) ≤ -(((lookupAlpha alpha k : ℕ) : ℚ) * ((lead : ℤ) : ℚ)) := by
               exact_mod_cast hck
             have hnn : (0 : ℚ) ≤ (taillessCount G k : ℚ) := Nat.cast_nonneg _
@@ -510,13 +509,13 @@ theorem cert_trace_surplus_of_two_square (G : SimpleGraph V) [DecidableRel G.Adj
     linarith
   have hord_q : ((negSlope : ℤ) : ℚ) * (Fintype.card V : ℚ) < ((s3 : ℤ) : ℚ) := by
     by_cases hns_le : negSlope ≤ 0
-    · simp only [hns_le, decide_true, ↓reduceIte, decide_eq_true_eq] at hord_check
+    · simp only [hns_le, ↓reduceIte, decide_eq_true_eq] at hord_check
       have h1 : ((negSlope : ℤ) : ℚ) ≤ 0 := by exact_mod_cast hns_le
       have h2 : (0 : ℚ) < ((s3 : ℤ) : ℚ) := by exact_mod_cast hord_check
       have h3 : ((negSlope : ℤ) : ℚ) * (Fintype.card V : ℚ) ≤ 0 :=
         mul_nonpos_of_nonpos_of_nonneg h1 (Nat.cast_nonneg _)
       linarith
-    · simp only [hns_le, decide_false, Bool.false_eq_true, ↓reduceIte, decide_eq_true_eq] at hord_check
+    · simp only [hns_le, ↓reduceIte, decide_eq_true_eq] at hord_check
       have hns_pos : (0 : ℚ) < ((negSlope : ℤ) : ℚ) := by exact_mod_cast (show 0 < negSlope by omega)
       have hle_q : (Fintype.card V : ℚ) ≤ (N : ℚ) := by exact_mod_cast hle
       have hlt_q : ((negSlope : ℤ) : ℚ) * (N : ℚ) < ((s3 : ℤ) : ℚ) := by exact_mod_cast hord_check
