@@ -104,7 +104,7 @@ lemma powerFree_induce {V : Type*} {G : SimpleGraph V} (s : Set V) (hG : PowerFr
     PowerFree (G.induce s) := by
   intro ⟨v, p, hcyc, hpow⟩
   apply hG
-  refine ⟨v.1, p.map (SimpleGraph.Embedding.induce s).toHom, ?_, ?_⟩
+  refine ⟨(SimpleGraph.Embedding.induce s).toHom v, p.map (SimpleGraph.Embedding.induce s).toHom, ?_, ?_⟩
   · exact hcyc.map Subtype.val_injective
   · rw [Walk.length_map]
     exact hpow
@@ -116,13 +116,16 @@ lemma degree_induce_eq {V : Type*} [Fintype V] (G : SimpleGraph V) (S : Finset V
   rw [← SimpleGraph.card_neighborFinset_eq_degree]
   apply Finset.card_bij (fun v _ => v.1)
   · intro v hv
+    have hv' : (G.induce (S : Set V)).Adj u v := mem_nb.mp hv
     rw [Finset.mem_inter, mem_nb]
-    exact ⟨mem_nb.mp hv, v.2⟩
+    exact ⟨hv', v.2⟩
   · intro _ _ _ _ h
     exact Subtype.ext h
   · intro w hw
     rw [Finset.mem_inter, mem_nb] at hw
-    exact ⟨⟨w, hw.2⟩, mem_nb.mpr hw.1, rfl⟩
+    refine ⟨⟨w, hw.2⟩, ?_, rfl⟩
+    rw [mem_nb]
+    exact hw.1
 
 /-- PILLAR 1.1: Universal Safe-Deletion Principle on EG2-CORE. -/
 theorem minimal_bad2_no_safe_deletion {V : Type} [Fintype V] {G : SimpleGraph V}
