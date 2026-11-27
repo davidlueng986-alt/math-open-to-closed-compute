@@ -1,0 +1,152 @@
+name: Ramsey R310 V8 Wave 2 — Unified NA-DAG Tier-2 D7 & D8
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Execution mode (poc = 4 McKay (3,8;27,85) cores on T*=27 D78 branches; full = sharded production)'
+        type: choice
+        required: true
+        default: 'poc'
+        options:
+          - poc
+          - full
+      num_shards:
+        description: 'Number of parallel shards (1..10)'
+        type: choice
+        required: true
+        default: '4'
+        options:
+          - '1'
+          - '2'
+          - '4'
+          - '6'
+          - '8'
+          - '10'
+      target_edges:
+        description: 'Comma-separated e(T) values to extract from McKay r38_27.g6.gz'
+        type: string
+        required: false
+        default: '85'
+      branches:
+        description: 'Optional comma-separated branch_id filter (empty = all mode branches)'
+        type: string
+        required: false
+        default: ''
+      per_core_seconds:
+        description: 'Kissat solve budget per (branch, core) in seconds'
+        type: string
+        required: false
+        default: '1500'
+
+permissions:
+  contents: read
+  packages: read
+  actions: read
+
+concurrency:
+  group: ramsey-r310-v8-w2-nadag-d78-${{ inputs.mode }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      shards: ${{ steps.prep.outputs.shards }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: prep
+        name: Run selftest, pure-integer Tier-2 D78 pruner, and extract McKay r38_27 cores
+        env:
+          INPUT_MODE: ${{ inputs.mode }}
+          INPUT_NUM_SHARDS: ${{ inputs.num_shards }}
+          INPUT_TARGET_EDGES: ${{ inputs.target_edges }}
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          python3 jobs/ramsey-r310-v8-w2-nadag-d78/selftest_d78_nadag.py \
+            --workflow .github/workflows/ramsey-r310-v8-w2-nadag-d78.yml
+          OPENBLAS_NUM_THREADS=1 python3 jobs/ramsey-r310-v8-w2-nadag-d78/d78_nadag_pruner.py \
+            --out-dir out/pruner
+          python3 - <<'PY'
+          import json, os, urllib.request
+          from pathlib import Path
+          import sys
+          sys.path.insert(0, 'jobs/ramsey-r310-v8-w2-nadag-d78')
+          import d78_batch_runner as br
+
+          url = 'https://users.cecs.anu.edu.au/~bdm/data/r38_27.g6.gz'
+          gz = Path('out/r38_27.g6.gz')
+          urllib.request.urlretrieve(url, gz)
+          edges = [int(x) for x in os.environ['INPUT_TARGET_EDGES'].split(',') if x.strip()]
+          by_eT = br.extract_mckay_r38_27(gz, target_edges=edges)
+          gz.unlink()
+          Path('out/cores.json').write_text(json.dumps({'27': by_eT}, indent=2) + '\n')
+          n_shards = int(os.environ['INPUT_NUM_SHARDS'])
+          assert 1 <= n_shards <= 10
+          shards_json = json.dumps(list(range(n_shards)), separators=(',', ':'))
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f'shards={shards_json}\n')
+          print('Extracted verified McKay r38_27 cores:', {k: len(v) for k, v in by_eT.items()}, flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: d78-nadag-inputs-${{ inputs.mode }}
+          path: out/
+          retention-days: 30
+
+  solve:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        shard_id: ${{ fromJSON(needs.prepare.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: d78-nadag-inputs-${{ inputs.mode }}
+          path: inputs/
+      - name: Run Proof-First Kissat + DRAT/LRAT Shard ${{ matrix.shard_id }}/${{ inputs.num_shards }} (${{ inputs.mode }})
+        env:
+          SHARD_ID: ${{ matrix.shard_id }}
+          NUM_SHARDS: ${{ inputs.num_shards }}
+          INPUT_MODE: ${{ inputs.mode }}
+          INPUT_BRANCHES: ${{ inputs.branches }}
+          PER_CORE_SECONDS: ${{ inputs.per_core_seconds }}
+        run: |
+          set -euo pipefail
+          python3 jobs/ramsey-r310-v8-w2-nadag-d78/d78_batch_runner.py \
+            --manifest inputs/pruner/d78_nadag_manifest.json \
+            --cores-json inputs/cores.json \
+            --out-dir out \
+            --shard-id "$SHARD_ID" \
+            --num-shards "$NUM_SHARDS" \
+            --mode "$INPUT_MODE" \
+            --budget-seconds 19800 \
+            --per-core-seconds "$PER_CORE_SECONDS" \
+            --branches "$INPUT_BRANCHES"
+          cat out/shard_summary.json >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: d78-nadag-${{ inputs.mode }}-shard-${{ matrix.shard_id }}
+          path: out/
+          retention-days: 30
