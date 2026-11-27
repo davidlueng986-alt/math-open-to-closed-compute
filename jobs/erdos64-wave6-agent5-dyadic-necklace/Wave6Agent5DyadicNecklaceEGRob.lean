@@ -188,11 +188,11 @@ private theorem finRange_take_succ (r m : ℕ) (hm : m < r) :
   · simp; omega
   · intro i hi1 hi2
     by_cases h : i < m
-    · rw [List.getElem_append_left (by simp; omega)]
+    · rw [List.getElem_append_left (by rw [List.length_take, List.length_finRange]; omega)]
       simp
     · have him : i = m := by simp at hi1; omega
       subst him
-      rw [List.getElem_append_right (by simp; omega)]
+      rw [List.getElem_append_right (by rw [List.length_take, List.length_finRange]; omega)]
       simp
 
 private theorem walk_edges_getElem {V : Type*} {G : SimpleGraph V} {u w : V}
