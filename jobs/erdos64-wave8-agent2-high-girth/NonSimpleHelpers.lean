@@ -40,13 +40,12 @@ def nbWalksSub (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ) (u v : V) :
     Finset {p : G.Walk u v // p.length = k} :=
   (nbWalks G k u v).attach.map
     ⟨fun x => ⟨x.1, (mem_finsetWalkLength_iff.mp (Finset.mem_filter.mp x.2).1)⟩,
-     fun a b h => by dsimp only at h; exact Subtype.ext (congrArg Subtype.val h)⟩
+     fun a b h => Subtype.ext (congrArg (Subtype.val : {p : G.Walk u v // p.length = k} → _) h)⟩
 
 @[simp] theorem mem_nbWalksSub_iff {G : SimpleGraph V} [DecidableRel G.Adj]
     {k : ℕ} {u v : V} {p : {q : G.Walk u v // q.length = k}} :
     p ∈ nbWalksSub G k u v ↔ IsNonBacktracking p.1 := by
-  simp only [nbWalksSub, Finset.mem_map, Finset.mem_attach, Function.Embedding.coeFn_mk,
-    true_and, Subtype.exists]
+  simp only [nbWalksSub, Finset.mem_map, Finset.mem_attach, true_and, Subtype.exists]
   constructor
   · rintro ⟨q, hq, heq⟩
     have hqp : q = p.1 := congrArg Subtype.val heq
@@ -328,6 +327,7 @@ theorem card_nbWalksBetweenAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
       have hr₂_nb : IsNonBacktracking r₂ := isNonBacktracking_of_append_right (happ₂ ▸ h₂.1)
       have hr_eq : r₁ = r₂ :=
         unique_nonBacktracking_walk_of_half_girth hg r₁ r₂ (by omega) (by omega) hr₁_nb hr₂_nb
+      dsimp only at happ₁ happ₂
       apply Subtype.ext
       dsimp only
       rw [← happ₁, ← happ₂, hr_eq]
@@ -383,8 +383,8 @@ def barbellTerm (g L r₁ : ℕ) : ℕ :=
 def alphaCoeff (g L r₁ : ℕ) : ℕ :=
   thetaTerm g L r₁ + barbellTerm g L r₁
 
-/-- Helper: cyclic rotation preserves `IsCyclicallyNonBacktracking`. -/
 omit [Fintype V] [DecidableEq V] in
+/-- Helper: cyclic rotation preserves `IsCyclicallyNonBacktracking`. -/
 theorem isCyclicallyNonBacktracking_rotate {G : SimpleGraph V} {u v : V}
     (a : G.Walk u v) (b : G.Walk v u) (hcyc : IsCyclicallyNonBacktracking (a.append b)) :
     IsCyclicallyNonBacktracking (b.append a) := by
@@ -413,8 +413,8 @@ theorem isCyclicallyNonBacktracking_rotate {G : SimpleGraph V} {u v : V}
       rw [isNonBacktracking_append_iff] at hba_b
       exact hba_b.2.2 x y hx hy
 
-/-- Helper: stripping first and last edges of a simple cycle `c` of length `≥ 3` at `v`. -/
 omit [Fintype V] [DecidableEq V] in
+/-- Helper: stripping first and last edges of a simple cycle `c` of length `≥ 3` at `v`. -/
 theorem strip_cycle_ends {G : SimpleGraph V} {v : V} (c : G.Walk v v)
     (hc : c.IsCycle) (h3 : 3 ≤ c.length) :
     ∃ (v₁ v₂ : V) (h₁ : G.Adj v v₁) (h₂ : G.Adj v₂ v) (mid : G.Walk v₁ v₂),
@@ -499,8 +499,8 @@ theorem strip_cycle_ends {G : SimpleGraph V} {v : V} (c : G.Walk v v)
             exact Ne.symm hnb_c.1
       exact ⟨v₁, v₂, h₁, h₂, mid, hv12, by rw [hrest_eq], hmid_len, hnb_mid, hfn_mid⟩
 
-/-- Helper: stripping first and last edges of any NB walk `q : G.Walk v u` of length `≥ 2`. -/
 omit [Fintype V] [DecidableEq V] in
+/-- Helper: stripping first and last edges of any NB walk `q : G.Walk v u` of length `≥ 2`. -/
 theorem strip_walk_ends {G : SimpleGraph V} {v u : V} (q : G.Walk v u)
     (hnb : IsNonBacktracking q) (h2 : 2 ≤ q.length) :
     ∃ (v₁ u₁ : V) (h₁ : G.Adj v v₁) (h₂ : G.Adj u₁ u) (mid : G.Walk v₁ u₁),

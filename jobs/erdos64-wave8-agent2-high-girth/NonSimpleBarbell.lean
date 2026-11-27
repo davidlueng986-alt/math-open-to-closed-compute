@@ -28,7 +28,7 @@ theorem nonSimple_barbell_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
     haveI : DecidablePred (isBarbellElem G g L) := Classical.decPred _
     (NS.filter (isBarbellElem G g L)).card ≤
       ∑ r ∈ Finset.range L, barbellTerm g L r * taillessCount G r := by
-  intro L _ NS _
+  intro L NS
   set s := (g - 1) / 2
   have hL1 : 1 ≤ L := Nat.one_le_two_pow
   have hnot_pow2_cycle : ∀ {z : V} (c : G.Walk z z), c.IsCycle → ¬ isPow2Small c.length = true := by
@@ -115,7 +115,7 @@ theorem nonSimple_barbell_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
       (TL r₁).sigma fun c1 =>
       (u3Set c1).sigma fun u3 =>
       (nbWalksAvoid G (p - 1) u3 c1.1).sigma fun Pw =>
-      let prevW := if p - 1 = 0 then c1.1 else Pw.2.1.reverse.snd
+      let prevW := if h0 : p - 1 = 0 then c1.1 else Pw.2.1.reverse.snd
       ((G.neighborFinset Pw.1).erase prevW).sigma fun v1 =>
       (((G.neighborFinset Pw.1).erase prevW).erase v1).sigma fun v2 =>
       nbWalksBetweenAvoid G (r₂ - 2) v1 Pw.1 v2
@@ -159,10 +159,10 @@ theorem nonSimple_barbell_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
               | cons _ _ => rfl
             exact ((isNonBacktracking_append_iff c1.2.1 c1.2.1).mp hcyc1).2.2 _ _ hl hf heq.symm
           have hmem2 : c1.2.1.reverse.snd ∈ (G.neighborFinset c1.1).erase c1.2.1.snd :=
-            Finset.mem_erase.mpr ⟨hne_sr.symm, G.mem_neighborFinset.mpr hrev_adj⟩
+            Finset.mem_erase.mpr ⟨hne_sr.symm, (G.mem_neighborFinset _ _).mpr hrev_adj⟩
           dsimp only [u3Set]
           rw [Finset.card_erase_of_mem hmem2,
-              Finset.card_erase_of_mem (G.mem_neighborFinset.mpr hsnd_adj),
+              Finset.card_erase_of_mem ((G.mem_neighborFinset _ _).mpr hsnd_adj),
               G.card_neighborFinset_eq_degree, hreg c1.1]
         have hu3_each : ∀ u3 ∈ u3Set c1,
             (∑ Pw ∈ nbWalksAvoid G (p - 1) u3 c1.1,
@@ -173,14 +173,14 @@ theorem nonSimple_barbell_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
             2 * 2 ^ (p - 1 + (r₂ - 2 - s)) := by
           intro u3 hu3
           have hu3_adj : G.Adj c1.1 u3 :=
-            G.mem_neighborFinset.mp (Finset.mem_erase.mp (Finset.mem_erase.mp hu3).2).2
+            (G.mem_neighborFinset _ _).mp (Finset.mem_erase.mp (Finset.mem_erase.mp hu3).2).2
           have hPw_each : ∀ Pw ∈ nbWalksAvoid G (p - 1) u3 c1.1,
               (let prevW := if p - 1 = 0 then c1.1 else Pw.2.1.reverse.snd
                ∑ v1 ∈ (G.neighborFinset Pw.1).erase prevW,
                  ∑ v2 ∈ ((G.neighborFinset Pw.1).erase prevW).erase v1,
                    (nbWalksBetweenAvoid G (r₂ - 2) v1 Pw.1 v2).card) ≤
               2 * 2 ^ (r₂ - 2 - s) := by
-            intro Pw _
+            intro Pw hPw
             dsimp only
             set prevW := if p - 1 = 0 then c1.1 else Pw.2.1.reverse.snd
             have hprevW_adj : G.Adj Pw.1 prevW := by
@@ -200,7 +200,7 @@ theorem nonSimple_barbell_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
                   (nbWalksBetweenAvoid G (r₂ - 2) v1 Pw.1 v2).card) ≤ 2 ^ (r₂ - 2 - s) := by
               intro v1 hv1
               have hv1_adj : G.Adj Pw.1 v1 :=
-                G.mem_neighborFinset.mp (Finset.mem_erase.mp hv1).2
+                (G.mem_neighborFinset _ _).mp (Finset.mem_erase.mp hv1).2
               have hv2_each : ∀ v2 ∈ ((G.neighborFinset Pw.1).erase prevW).erase v1,
                   (nbWalksBetweenAvoid G (r₂ - 2) v1 Pw.1 v2).card ≤ 2 ^ (r₂ - 2 - s) :=
                 fun v2 _ => card_nbWalksBetweenAvoid_le G hg hreg (r₂ - 2) v1 Pw.1 v2 hv1_adj.symm
@@ -208,14 +208,14 @@ theorem nonSimple_barbell_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
               rw [Finset.sum_const, smul_eq_mul] at hsum2
               have hc2 : (((G.neighborFinset Pw.1).erase prevW).erase v1).card = 1 := by
                 rw [Finset.card_erase_of_mem hv1,
-                    Finset.card_erase_of_mem (G.mem_neighborFinset.mpr hprevW_adj),
+                    Finset.card_erase_of_mem ((G.mem_neighborFinset _ _).mpr hprevW_adj),
                     G.card_neighborFinset_eq_degree, hreg Pw.1]
               rw [hc2, one_mul] at hsum2
               exact hsum2
             have hsum1 := Finset.sum_le_sum hv1_each
             rw [Finset.sum_const, smul_eq_mul] at hsum1
             have hc1 : ((G.neighborFinset Pw.1).erase prevW).card = 2 := by
-              rw [Finset.card_erase_of_mem (G.mem_neighborFinset.mpr hprevW_adj),
+              rw [Finset.card_erase_of_mem ((G.mem_neighborFinset _ _).mpr hprevW_adj),
                   G.card_neighborFinset_eq_degree, hreg Pw.1]
             rw [hc1] at hsum1
             exact hsum1
@@ -501,9 +501,9 @@ theorem nonSimple_barbell_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
           if h : x ∈ S_pr then Classical.choose (hpre x h) else y0
         have hle1 : S_pr.card ≤ Param.card := by
           refine Finset.card_le_card_of_injOn f' ?_ ?_
-          · intro x hx; simp only [Finset.mem_coe] at hx ⊢; dsimp only [f']; simp only [hx, ↓reduceDIte]; exact (Classical.choose_spec (hpre x hx)).1
+          · intro x hx; rw [Finset.mem_coe] at hx ⊢; dsimp only [f']; simp only [hx, ↓reduceDIte]; exact (Classical.choose_spec (hpre x hx)).1
           · intro x₁ h₁ x₂ h₂ heq
-            simp only [Finset.mem_coe] at h₁ h₂
+            rw [Finset.mem_coe] at h₁ h₂
             have hev1 : evalParam (f' x₁) = some x₁ := by
               dsimp only [f']; simp only [h₁, ↓reduceDIte]; exact (Classical.choose_spec (hpre x₁ h₁)).2.1
             have hev2 : evalParam (f' x₂) = some x₂ := by
@@ -519,6 +519,7 @@ theorem nonSimple_barbell_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
       obtain ⟨_, _, _, _, _, _, _, _, _, _, hg₁, hle12, hnp1, hnp2, _⟩ := hx.2
       exact hcond ⟨hg₁, hle12, hnp1, hnp2⟩
     simp [hemp]
+
 
 end NonSimpleBarbell
 
