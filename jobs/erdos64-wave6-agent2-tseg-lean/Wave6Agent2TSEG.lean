@@ -62,9 +62,9 @@ theorem transitionSystem_four_regular {V : Type*} [Fintype V] [DecidableEq V]
     constructor
     · rintro (⟨hv, _⟩ | ⟨hv, _⟩) <;> exact hv
     · intro hv
-      cases hb : side u v
-      · exact Or.inl ⟨hv, hb⟩
-      · exact Or.inr ⟨hv, hb⟩
+      cases side u v
+      · exact Or.inl ⟨hv, rfl⟩
+      · exact Or.inr ⟨hv, rfl⟩
   rw [hts u false, hts u true, H.card_neighborFinset_eq_degree] at hpart
   omega
 
@@ -224,6 +224,16 @@ def totalSwitches {V : Type*} {H : SimpleGraph V} (side : V → V → Bool)
     {u : V} (c : H.Walk u u) : ℕ :=
   internalSwitches side c + if startSide side c ≠ endSide side c then 1 else 0
 
+private theorem bool_parity_base (s₁ s₂ : Bool) :
+    (if s₁ ≠ s₂ then 1 else 0) % 2 = if s₁ ≠ s₂ then 1 else 0 := by
+  cases s₁ <;> cases s₂ <;> decide
+
+private theorem bool_parity_step (s₁ s₂ s₃ s₄ : Bool) (n m : ℕ)
+    (ih : (n + m) % 2 = if s₃ ≠ s₄ then 1 else 0) :
+    ((if s₂ ≠ s₃ then 1 else 0) + n + ((if s₁ ≠ s₂ then 1 else 0) + m)) % 2 =
+      if s₁ ≠ s₄ then 1 else 0 := by
+  cases s₁ <;> cases s₂ <;> cases s₃ <;> cases s₄ <;> simp_all <;> omega
+
 /-- **Exact Signed-Parity Law on Walks**: For every nonempty walk `p` in `(H, side)`,
 `internalSwitches side p + negEdgeCount side p` has the same parity as `startSide ≠ endSide`. -/
 theorem walk_signed_parity_law {V : Type*} {H : SimpleGraph V} (side : V → V → Bool) :
@@ -233,12 +243,14 @@ theorem walk_signed_parity_law {V : Type*} {H : SimpleGraph V} (side : V → V �
   | _, _, .nil, hp => by simp at hp
   | _, _, .cons (u := a) (v := b) _ .nil, _ => by
       simp only [internalSwitches, negEdgeCount, startSide, endSide, zero_add, add_zero]
-      cases h1 : side a b <;> cases h2 : side b a <;> simp
+      exact bool_parity_base (side a b) (side b a)
   | _, _, .cons (u := a) (v := b) _ (.cons (v := c) h₂ rest), _ => by
       have ih := walk_signed_parity_law side (.cons h₂ rest) (by simp)
       simp only [internalSwitches, negEdgeCount, startSide, endSide] at ih ⊢
-      cases h1 : side a b <;> cases h2 : side b a <;> cases h3 : side b c <;>
-        cases h4 : endSide side (.cons h₂ rest) <;> simp_all <;> omega
+      exact bool_parity_step (side a b) (side b a) (side b c)
+        (endSide side (.cons h₂ rest))
+        (internalSwitches side (.cons h₂ rest))
+        ((if side b c ≠ side c b then 1 else 0) + negEdgeCount side rest) ih
 
 /-- **Exact Signed-Parity Law on Closed Walks / Cycles**:
 `totalSwitches side c ≡ negEdgeCount side c (mod 2)`. -/
