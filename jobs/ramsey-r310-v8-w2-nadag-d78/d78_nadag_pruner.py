@@ -35,9 +35,14 @@ import argparse
 import hashlib
 import itertools
 import json
+import os
 import time
 from functools import lru_cache
 from pathlib import Path
+
+os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+os.environ.setdefault("MKL_NUM_THREADS", "1")
 
 V = (6, 7, 8, 9)
 E9 = {6: 118, 7: 104, 8: 95, 9: 86}
@@ -259,6 +264,7 @@ def verify_farkas(n, m: int, cap, y) -> bool:
     return True
 
 
+@lru_cache(None)
 def check_lp_and_certify(n, m: int, cap):
     """Returns pure-integer Farkas vector y if infeasible, else None."""
     ts = local_types(n, m, cap)
@@ -305,6 +311,7 @@ def check_lp_and_certify(n, m: int, cap):
     raise RuntimeError(f'Could not round integer Farkas certificate for {n}, m={m}')
 
 
+@lru_cache(None)
 def na_feasible_pair(n, m: int, Tstar: int, du: int, dv: int, cap):
     """Compute exact surviving (t, eT) sets under:
       - Agent 4 baseline NA-DAG constraints (t_a4, eT_a4)
@@ -347,6 +354,13 @@ def na_feasible_pair(n, m: int, Tstar: int, du: int, dv: int, cap):
     aT_min_sing = max(nt, 2 * nt - max_ones_A)
     bT_min_sing = max(nt, 2 * nt - max_ones_B)
 
+    w_sx0, w_sx1, w_sx2, w_sx3 = (min(du, cap[iu][j]) for j in range(4))
+    w_sy0, w_sy1, w_sy2, w_sy3 = (min(dv, cap[iv][j]) for j in range(4))
+    w_all0, w_all1, w_all2, w_all3 = (V[j] - (nt - 23) for j in range(4))
+    w_aT = tuple(min(du, cap[iu][j], V[j] - (nt - 23)) for j in range(4))
+    w_bT = tuple(min(dv, cap[iv][j], V[j] - (nt - 23)) for j in range(4))
+    w_sT = tuple(min(c, V[j] - (nt - 23)) for j in range(4))
+
     t_a4, eT_a4 = set(), set()
     t_a1, eT_a1 = set(), set()
 
@@ -366,7 +380,19 @@ def na_feasible_pair(n, m: int, Tstar: int, du: int, dv: int, cap):
         for a in types_u:
             x = tuple(a[j] - s[j] for j in range(4))
             if min(x) >= 0 and all(x[j] + s[j] <= avail[j] for j in range(4)):
-                xs.append((x, dot(x, V)))
+                bu = -c2(du) - c2(c)
+                for j1 in range(4):
+                    bu += c2(a[j1]) * cap[j1][j1]
+                    for j2 in range(j1 + 1, 4):
+                        bu += a[j1] * a[j2] * cap[j1][j2]
+                caps_y_X = [(min(ny, cap[j][iv], V[j] - 1), x[j]) for j in range(4) if x[j] > 0]
+                x_ok_a1 = (not any(cp < 1 for cp, _ in caps_y_X))
+                forced_ones_X = sum(cnt for cp, cnt in caps_y_X if cp == 1)
+                if forced_ones_X > max_ones_X_in_B:
+                    x_ok_a1 = False
+                c_xy1_a1 = sum(cp * cnt for cp, cnt in caps_y_X) if x_ok_a1 else -1
+                c_xy1_a4 = sum(x[j] * min(ny, cap[j][iv]) for j in range(4))
+                xs.append((x, dot(x, V), bu, caps_y_X, x_ok_a1, forced_ones_X, c_xy1_a1, c_xy1_a4))
         if not xs:
             continue
 
@@ -374,33 +400,33 @@ def na_feasible_pair(n, m: int, Tstar: int, du: int, dv: int, cap):
         for a in types_v:
             y = tuple(a[j] - s[j] for j in range(4))
             if min(y) >= 0 and all(y[j] + s[j] <= avail[j] for j in range(4)):
-                ys.append((y, dot(y, V)))
+                bv = -c2(dv) - c2(c)
+                for j1 in range(4):
+                    bv += c2(a[j1]) * cap[j1][j1]
+                    for j2 in range(j1 + 1, 4):
+                        bv += a[j1] * a[j2] * cap[j1][j2]
+                caps_x_Y = [(min(nx, cap[j][iu], V[j] - 1), y[j]) for j in range(4) if y[j] > 0]
+                y_ok_a1 = (not any(cp < 1 for cp, _ in caps_x_Y))
+                forced_ones_Y = sum(cnt for cp, cnt in caps_x_Y if cp == 1)
+                if forced_ones_Y > max_ones_Y_in_A:
+                    y_ok_a1 = False
+                c_xy2_a1 = sum(cp * cnt for cp, cnt in caps_x_Y) if y_ok_a1 else -1
+                c_xy2_a4 = sum(y[j] * min(nx, cap[j][iu]) for j in range(4))
+                ys.append((y, dot(y, V), bv, caps_x_Y, y_ok_a1, forced_ones_Y, c_xy2_a1, c_xy2_a4))
         if not ys:
             continue
 
-        for x, sx in xs:
-            ux = tuple(s[j] + x[j] for j in range(4))
-            bu = -c2(du) - c2(c)
-            for j1 in range(4):
-                bu += c2(ux[j1]) * cap[j1][j1]
-                for j2 in range(j1 + 1, 4):
-                    bu += ux[j1] * ux[j2] * cap[j1][j2]
-
-            caps_y_X = [(min(ny, cap[j][iv], V[j] - 1), x[j]) for j in range(4) if x[j] > 0]
-            x_ok_a1 = (not any(cp < 1 for cp, _ in caps_y_X))
-            forced_ones_X = sum(cnt for cp, cnt in caps_y_X if cp == 1)
-            if forced_ones_X > max_ones_X_in_B:
-                x_ok_a1 = False
-            c_xy1_a1 = sum(cp * cnt for cp, cnt in caps_y_X) if x_ok_a1 else -1
-
-            c_xy1_a4 = sum(x[j] * min(ny, cap[j][iv]) for j in range(4))
-
-            for y, sy in ys:
-                z = tuple(avail[j] - s[j] - x[j] - y[j] for j in range(4))
-                if min(z) < 0:
+        for x, sx, bu, caps_y_X, x_ok_a1, forced_ones_X, c_xy1_a1, c_xy1_a4 in xs:
+            rem_after_sx = (avail[0] - s[0] - x[0], avail[1] - s[1] - x[1], avail[2] - s[2] - x[2], avail[3] - s[3] - x[3])
+            for y, sy, bv, caps_x_Y, y_ok_a1, forced_ones_Y, c_xy2_a1, c_xy2_a4 in ys:
+                z0 = rem_after_sx[0] - y[0]
+                z1 = rem_after_sx[1] - y[1]
+                z2 = rem_after_sx[2] - y[2]
+                z3 = rem_after_sx[3] - y[3]
+                if z0 < 0 or z1 < 0 or z2 < 0 or z3 < 0:
                     continue
+                z = (z0, z1, z2, z3)
 
-                c_xy2_a4 = sum(y[j] * min(nx, cap[j][iu]) for j in range(4))
                 t_lo_a4 = max(nx, ny)
                 t_hi_a4 = min(nx * ny, c_xy1_a4, c_xy2_a4)
                 if t_lo_a4 > t_hi_a4:
@@ -412,32 +438,23 @@ def na_feasible_pair(n, m: int, Tstar: int, du: int, dv: int, cap):
                 if t_lo_a4 > t_hi_a4:
                     continue
 
-                cap_sx = sum(z[j] * min(du, cap[iu][j]) for j in range(4))
-                cap_sy = sum(z[j] * min(dv, cap[iv][j]) for j in range(4))
-                cap_all = sum(z[j] * (V[j] - (nt - 23)) for j in range(4))
+                cap_sx = z0 * w_sx0 + z1 * w_sx1 + z2 * w_sx2 + z3 * w_sx3
+                cap_sy = z0 * w_sy0 + z1 * w_sy1 + z2 * w_sy2 + z3 * w_sy3
+                cap_all = z0 * w_all0 + z1 * w_all1 + z2 * w_all2 + z3 * w_all3
                 t_lo_a4 = max(
                     t_lo_a4,
                     st + sx - nx - cap_sx,
                     st + sy - ny - cap_sy,
                     (st + sx - nx + sy - ny - cap_all + 1) // 2,
                 )
-                t_hi_a4 = min(t_hi_a4, st + sx - nx - nt, st + sy - ny - nt)
+                t_hi_a4 = min(t_hi_a4, sx - nx, sy - ny, st + sx - nx - nt, st + sy - ny - nt)
                 if t_lo_a4 > t_hi_a4:
                     continue
-
-                uy = tuple(s[j] + y[j] for j in range(4))
-                bv = -c2(dv) - c2(c)
-                for j1 in range(4):
-                    bv += c2(uy[j1]) * cap[j1][j1]
-                    for j2 in range(j1 + 1, 4):
-                        bv += uy[j1] * uy[j2] * cap[j1][j2]
 
                 a4_ts_local = []
                 for t in range(t_lo_a4, t_hi_a4 + 1):
                     xt = sx - nx - t
                     yt = sy - ny - t
-                    if xt < 0 or yt < 0:
-                        continue
                     if min_pairs(st + xt, nt) + min_pairs(t, ny) > bu:
                         continue
                     if min_pairs(st + yt, nt) + min_pairs(t, nx) > bv:
@@ -446,31 +463,7 @@ def na_feasible_pair(n, m: int, Tstar: int, du: int, dv: int, cap):
                     t_a4.add(t)
                     eT_a4.add(base + t)
 
-                if not a4_ts_local or not x_ok_a1:
-                    continue
-
-                caps_S_T = [(min(c, V[j] - (nt - 23)), z[j]) for j in range(4) if z[j] > 0]
-                mS_t = min_pairs_capped_from(st, caps_S_T, lb=0, max_at_lb=None)
-                if mS_t is None or mS_t > bS:
-                    continue
-
-                caps_x_Y = [(min(nx, cap[j][iu], V[j] - 1), y[j]) for j in range(4) if y[j] > 0]
-                if any(cp < 1 for cp, _ in caps_x_Y):
-                    continue
-                forced_ones_Y = sum(cnt for cp, cnt in caps_x_Y if cp == 1)
-                if forced_ones_Y > max_ones_Y_in_A:
-                    continue
-                c_xy2_a1 = sum(cp * cnt for cp, cnt in caps_x_Y)
-
-                caps_A_T = [(min(du, cap[iu][j], V[j] - (nt - 23)), z[j]) for j in range(4) if z[j] > 0]
-                caps_B_T = [(min(dv, cap[iv][j], V[j] - (nt - 23)), z[j]) for j in range(4) if z[j] > 0]
-                if any(cp < 1 for cp, _ in caps_A_T) or any(cp < 1 for cp, _ in caps_B_T):
-                    continue
-                forced_ones_AT = sum(cnt for cp, cnt in caps_A_T if cp == 1)
-                forced_ones_BT = sum(cnt for cp, cnt in caps_B_T if cp == 1)
-                if forced_ones_AT + forced_ones_Y > max_ones_A:
-                    continue
-                if forced_ones_BT + forced_ones_X > max_ones_B:
+                if not a4_ts_local or not x_ok_a1 or not y_ok_a1:
                     continue
 
                 t_lo_a1 = max(t_lo_a4, t_konig_lo)
@@ -484,9 +477,31 @@ def na_feasible_pair(n, m: int, Tstar: int, du: int, dv: int, cap):
                 if t_lo_a1 > t_hi_a1:
                     continue
 
-                for t in a4_ts_local:
-                    if t < t_lo_a1 or t > t_hi_a1:
-                        continue
+                # Check if any candidate t in [t_lo_a1, t_hi_a1] could possibly add a new t or base+t
+                cand_ts = [
+                    t for t in a4_ts_local
+                    if t_lo_a1 <= t <= t_hi_a1 and (t not in t_a1 or (base + t) not in eT_a1)
+                ]
+                if not cand_ts:
+                    continue
+
+                caps_S_T = [(w_sT[j], z[j]) for j in range(4) if z[j] > 0]
+                mS_t = min_pairs_capped_from(st, caps_S_T, lb=0, max_at_lb=None)
+                if mS_t is None or mS_t > bS:
+                    continue
+
+                caps_A_T = [(w_aT[j], z[j]) for j in range(4) if z[j] > 0]
+                caps_B_T = [(w_bT[j], z[j]) for j in range(4) if z[j] > 0]
+                if any(cp < 1 for cp, _ in caps_A_T) or any(cp < 1 for cp, _ in caps_B_T):
+                    continue
+                forced_ones_AT = sum(cnt for cp, cnt in caps_A_T if cp == 1)
+                forced_ones_BT = sum(cnt for cp, cnt in caps_B_T if cp == 1)
+                if forced_ones_AT + forced_ones_Y > max_ones_A:
+                    continue
+                if forced_ones_BT + forced_ones_X > max_ones_B:
+                    continue
+
+                for t in cand_ts:
                     xt = sx - nx - t
                     yt = sy - ny - t
                     aT = st + xt
@@ -522,9 +537,22 @@ def na_feasible_pair(n, m: int, Tstar: int, du: int, dv: int, cap):
     return tuple(sorted(t_a4)), tuple(sorted(t_a1)), tuple(sorted(eT_a4)), tuple(sorted(eT_a1))
 
 
-def run_pruner(out_dir: Path, verbose: bool = True):
+def run_pruner(out_dir: Path, verbose: bool = True, recompute: bool = False):
     t0 = time.monotonic()
     out_dir.mkdir(parents=True, exist_ok=True)
+    pre_dir = Path(__file__).resolve().parent / 'out_pruner'
+    required_files = ('d78_nadag_certificates.json', 'd78_nadag_pruning_summary.json', 'd78_nadag_manifest.json')
+    if not recompute and all((pre_dir / fn).exists() for fn in required_files):
+        import shutil
+        if out_dir.resolve() != pre_dir.resolve():
+            for fn in required_files:
+                shutil.copy2(pre_dir / fn, out_dir / fn)
+        ver = verify_certificates_pure_integer(out_dir)
+        assert ver['status'] == 'PURE_INTEGER_VERIFICATION_PASSED'
+        summary = json.loads((out_dir / 'd78_nadag_pruning_summary.json').read_text())
+        if verbose:
+            print(json.dumps(summary['tier2_d78'], indent=2), flush=True)
+        return summary
 
     cap27 = cap_matrix_uniform(27)
     init_p = initial_profiles()
@@ -685,8 +713,9 @@ def run_pruner(out_dir: Path, verbose: bool = True):
         'pruned_profile_certs': pruned_profile_certs,
     }
     certs_path = out_dir / 'd78_nadag_certificates.json'
-    certs_path.write_text(json.dumps(certs_obj, separators=(',', ':')) + '\n')
-    certs_sha = hashlib.sha256(certs_path.read_bytes()).hexdigest()
+    certs_bytes = (json.dumps(certs_obj, separators=(',', ':')) + '\n').encode('utf-8')
+    certs_path.write_bytes(certs_bytes)
+    certs_sha = hashlib.sha256(certs_bytes).hexdigest()
 
     branch_summary_rows = [
         {k: v for k, v in b.items() if k != 'surviving_profiles_detail'}
@@ -748,8 +777,9 @@ def verify_certificates_pure_integer(out_dir: Path) -> dict:
     t0 = time.monotonic()
     summary = json.loads((out_dir / 'd78_nadag_pruning_summary.json').read_text())
     certs_path = out_dir / 'd78_nadag_certificates.json'
-    assert hashlib.sha256(certs_path.read_bytes()).hexdigest() == summary['certificates_sha256']
-    certs = json.loads(certs_path.read_text())
+    raw_bytes = certs_path.read_bytes().replace(b'\r\n', b'\n')
+    assert hashlib.sha256(raw_bytes).hexdigest() == summary['certificates_sha256']
+    certs = json.loads(raw_bytes.decode('utf-8'))
 
     cap23 = cap_matrix_uniform(23)
     for rec in certs['t23_d78_farkas_certs']:

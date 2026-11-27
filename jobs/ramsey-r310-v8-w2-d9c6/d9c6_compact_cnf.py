@@ -60,7 +60,10 @@ import hashlib
 import itertools
 import json
 import os
-import resource
+try:
+    import resource
+except ImportError:
+    resource = None
 import shutil
 import subprocess
 import time
@@ -364,8 +367,51 @@ class CompactCNF:
         self.atmost_seq([-x for x in xs], len(xs) - k)
 
     def exact_seq(self, xs: list[int], k: int) -> None:
-        self.atmost_seq(xs, k)
-        self.atleast_seq(xs, k)
+        self.range_seq(xs, k, k)
+
+    def range_seq(self, xs: list[int], lo: int, hi: int) -> None:
+        m = len(xs)
+        lo = max(0, lo)
+        hi = min(m, hi)
+        if lo > hi:
+            self.add([])
+            return
+        if lo == 0 and hi == m:
+            return
+        if lo == 0:
+            self.atmost_seq(xs, hi)
+            return
+        if hi == m:
+            self.atleast_seq(xs, lo)
+            return
+        if hi == 0:
+            for x in xs:
+                self.add([-x])
+            return
+        if lo == m:
+            for x in xs:
+                self.add([x])
+            return
+        if m - lo < hi:
+            self.range_seq([-x for x in xs], m - hi, m - lo)
+            return
+        s = [[self.var() for _ in range(hi)] for _ in range(m)]
+        self.add([-xs[0], s[0][0]])
+        self.add([xs[0], -s[0][0]])
+        for j in range(1, hi):
+            self.add([-s[0][j]])
+        for i in range(1, m):
+            self.add([-xs[i], s[i][0]])
+            self.add([-s[i - 1][0], s[i][0]])
+            self.add([-s[i][0], s[i - 1][0], xs[i]])
+            for j in range(1, hi):
+                self.add([-xs[i], -s[i - 1][j - 1], s[i][j]])
+                self.add([-s[i - 1][j], s[i][j]])
+                if j < lo:
+                    self.add([-s[i][j], s[i - 1][j], xs[i]])
+                    self.add([-s[i][j], s[i - 1][j], s[i - 1][j - 1]])
+            self.add([-xs[i], -s[i - 1][hi - 1]])
+        self.add([s[m - 1][lo - 1]])
 
     def lex_lt(self, a: list[int], b: list[int]) -> None:
         """Enforce bitvector a < b strictly (MSB at index 0)."""
@@ -608,7 +654,7 @@ def build_d9c6_cnf(
                         hs.append(h)
                     cnf.atmost_seq(hs, 3)
 
-    # 9. Optional static I_7(T) hitting-set constraints
+    # 9. Optional static I_7(T) hitting-set constraints (ultra-compact binary + merged S/XY encoding)
     i7_total = 0
     i7_encoded = 0
     if include_i7:
@@ -616,6 +662,7 @@ def build_d9c6_cnf(
         i7_total = len(I7)
         use_i7 = I7 if max_i7 is None else I7[:max_i7]
         i7_encoded = len(use_i7)
+        non_edges_xy = [(i, j) for i in range(3) for j in range(3) if not ((adj_x[i] >> j) & 1)]
         for w in use_i7:
             vs = [t for t in range(N_T) if (w >> t) & 1]
             ms = []
@@ -623,8 +670,26 @@ def build_d9c6_cnf(
                 z = cnf.var()
                 cnf.add([z] + [M[r][t] for t in vs])
                 ms.append(z)
-            cnf.atmost_seq([ms[r] for r in A_rows], 2)
-            cnf.atmost_seq([ms[r] for r in B_rows], 2)
+            # At most 1 of X (6..8) misses W_7 (W_7 U R_X U {1} is independent): 3 binary clauses (0 counter vars)
+            for i1 in range(3):
+                for i2 in range(i1 + 1, 3):
+                    cnf.add([-ms[6 + i1], -ms[6 + i2]])
+            # At most 1 of Y (9..11) misses W_7 (W_7 U R_Y U {0} is independent): 3 binary clauses (0 counter vars)
+            for j1 in range(3):
+                for j2 in range(j1 + 1, 3):
+                    cnf.add([-ms[9 + j1], -ms[9 + j2]])
+            # Combined A & B hitting bound: |M(W_7) & S| + 1[any X or Y misses W_7] <= 2
+            m_xy = cnf.var()
+            for r in range(6, 12):
+                cnf.add([-ms[r], m_xy])
+            cnf.atmost_seq([ms[s] for s in range(NUM_S)] + [m_xy], 2)
+            # Cross-part independent triple {s, x_i, y_j} cut for every non-edge (x_i, y_j) not in E(H)
+            if non_edges_xy:
+                m_s = cnf.var()
+                for s in range(NUM_S):
+                    cnf.add([-ms[s], m_s])
+                for i, j in non_edges_xy:
+                    cnf.add([-m_s, -ms[6 + i], -ms[9 + j]])
 
     # 10. Sound automorphism-respecting symmetry breaking
     sym_constraints = []
@@ -818,7 +883,8 @@ def proof_first_solve_instance(
         cnf.write_dimacs(cnf_path, extra_cuts)
 
         def cap_fsize() -> None:
-            resource.setrlimit(resource.RLIMIT_FSIZE, (1024 * 1024 ** 2, 1024 * 1024 ** 2))
+            if resource is not None:
+                resource.setrlimit(resource.RLIMIT_FSIZE, (1024 * 1024 ** 2, 1024 * 1024 ** 2))
 
         t_solve0 = time.monotonic()
         try:
@@ -828,7 +894,7 @@ def proof_first_solve_instance(
                     stdout=log,
                     stderr=subprocess.STDOUT,
                     timeout=rem_sec + 30,
-                    preexec_fn=cap_fsize,
+                    preexec_fn=cap_fsize if resource is not None else None,
                 )
         except subprocess.TimeoutExpired:
             drat_path.unlink(missing_ok=True)
@@ -843,8 +909,9 @@ def proof_first_solve_instance(
             drat_bytes = drat_path.stat().st_size
             t_ver0 = time.monotonic()
 
+            has_lrat_check = bool(shutil.which("lrat-check"))
             drat_cmd = ["drat-trim", str(cnf_path), str(drat_path)]
-            if try_lrat:
+            if try_lrat and has_lrat_check:
                 drat_cmd += ["-L", str(lrat_path)]
 
             ok_drat = False
@@ -863,7 +930,7 @@ def proof_first_solve_instance(
                     v.returncode == 0
                     and "s VERIFIED" in (out_dir / "drat-trim.log").read_text(errors="replace")
                 )
-                if ok_drat and try_lrat and lrat_path.is_file() and shutil.which("lrat-check"):
+                if ok_drat and try_lrat and has_lrat_check and lrat_path.is_file():
                     with open(out_dir / "lrat-check.log", "w", encoding="utf-8") as log:
                         lv = subprocess.run(
                             ["lrat-check", str(cnf_path), str(lrat_path)],

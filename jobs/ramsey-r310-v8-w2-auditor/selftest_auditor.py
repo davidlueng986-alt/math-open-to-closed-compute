@@ -51,14 +51,14 @@ def test_ledger_passes_cleanly():
     assert report["zero_coverage_gaps"] is True
     assert report["problem_status"] == "OPEN"
     assert report["errors"] == []
-    assert report["sha256_digests_validated"] == 13, f"Expected 13 SHA-256 digests, got {report['sha256_digests_validated']}"
+    assert report["sha256_digests_validated"] == 45, f"Expected 45 SHA-256 digests, got {report['sha256_digests_validated']}"
     assert report["closure_progress"]["v8_active_37_branches"]["total"] == 37
     assert report["closure_progress"]["v8_active_37_branches"]["closed"] == 2
     assert report["closure_progress"]["v8_active_37_branches"]["open"] == 35
     assert report["closure_progress"]["v8_fine_40_obligations"]["total"] == 40
     assert report["closure_progress"]["v8_fine_40_obligations"]["closed"] == 5
     assert report["closure_progress"]["v8_fine_40_obligations"]["open"] == 35
-    print("[PASS] test_ledger_passes_cleanly (37 active branches: 2 closed / 35 open; 13 SHA-256 digests verified)")
+    print("[PASS] test_ledger_passes_cleanly (37 active branches: 2 closed / 35 open; 45 SHA-256 digests verified)")
 
 
 def test_ledger_mutation_checks():

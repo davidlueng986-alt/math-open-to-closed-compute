@@ -36,10 +36,14 @@ import hashlib
 import itertools
 import json
 import os
-import resource
+try:
+    import resource
+except ImportError:
+    resource = None
 import shutil
 import subprocess
 import time
+from functools import lru_cache
 from pathlib import Path
 
 N_G = 40
@@ -105,6 +109,11 @@ def enum_indep(adj, k, limit=None):
     return res
 
 
+@lru_cache(maxsize=64)
+def _cached_enum_i7(adj_tuple: tuple, limit: int | None):
+    return tuple(enum_indep(list(adj_tuple), 7, limit=limit))
+
+
 def verify_r38_core(adj, expected_n=None):
     n = len(adj)
     if expected_n is not None:
@@ -168,17 +177,51 @@ class CompactCNF:
         self.atmost_seq([-x for x in xs], len(xs) - k)
 
     def exact_seq(self, xs, k):
-        self.atmost_seq(xs, k)
-        self.atleast_seq(xs, k)
+        self.range_seq(xs, k, k)
 
     def range_seq(self, xs, lo, hi):
+        m = len(xs)
+        lo = max(0, lo)
+        hi = min(m, hi)
         if lo > hi:
             self.add([])
             return
-        if lo > 0:
-            self.atleast_seq(xs, lo)
-        if hi < len(xs):
+        if lo == 0 and hi == m:
+            return
+        if lo == 0:
             self.atmost_seq(xs, hi)
+            return
+        if hi == m:
+            self.atleast_seq(xs, lo)
+            return
+        if hi == 0:
+            for x in xs:
+                self.add([-x])
+            return
+        if lo == m:
+            for x in xs:
+                self.add([x])
+            return
+        if m - lo < hi:
+            self.range_seq([-x for x in xs], m - hi, m - lo)
+            return
+        s = [[self.var() for _ in range(hi)] for _ in range(m)]
+        self.add([-xs[0], s[0][0]])
+        self.add([xs[0], -s[0][0]])
+        for j in range(1, hi):
+            self.add([-s[0][j]])
+        for i in range(1, m):
+            self.add([-xs[i], s[i][0]])
+            self.add([-s[i - 1][0], s[i][0]])
+            self.add([-s[i][0], s[i - 1][0], xs[i]])
+            for j in range(1, hi):
+                self.add([-xs[i], -s[i - 1][j - 1], s[i][j]])
+                self.add([-s[i - 1][j], s[i][j]])
+                if j < lo:
+                    self.add([-s[i][j], s[i - 1][j], xs[i]])
+                    self.add([-s[i][j], s[i - 1][j], s[i - 1][j - 1]])
+            self.add([-xs[i], -s[i - 1][hi - 1]])
+        self.add([s[m - 1][lo - 1]])
 
     def lex_lt(self, a, b):
         """Enforce bitvector a < b strictly (MSB at index 0)."""
@@ -257,6 +300,15 @@ def build_d6_core_cnf(
     for t in range(nt):
         if deg_T[t] > 7 or deg_T[t] < nt - 23:
             return None, None, None, dict(unsat_by_pruner=True, reason=f"T vertex {t} has deg_T={deg_T[t]}")
+
+    # Check immediate core non-edge codegree prefilter (codeg_W(u, v) <= 7 for all u !~ v in T)
+    for u in range(nt):
+        for v in range(u + 1, nt):
+            if not ((adj_T[u] >> v) & 1) and (adj_T[u] & adj_T[v]).bit_count() > 7:
+                return None, None, None, dict(
+                    unsat_by_pruner=True,
+                    reason=f"T non-edge ({u},{v}) has codeg_T={(adj_T[u] & adj_T[v]).bit_count()} > 7",
+                )
 
     cnf = CompactCNF(1)
     # Primary variables:
@@ -362,6 +414,7 @@ def build_d6_core_cnf(
             cnf.atmost_seq(bs, 5)
 
     nontrivial_t_pairs = 0
+    zero_codeg_t_pairs = 0
     for u in range(nt):
         rem_u = 9 - deg_T[u]
         for v in range(u + 1, nt):
@@ -370,14 +423,25 @@ def build_d6_core_cnf(
             rem_v = 9 - deg_T[v]
             ct = (adj_T[u] & adj_T[v]).bit_count()
             cap_uv = 7 - ct  # worst-case deg_W(u)=deg_W(v)=9 => codeg_W <= 7
-            if min(rem_u, rem_v) > cap_uv:
-                nontrivial_t_pairs += 1
+            need_cap = min(rem_u, rem_v) > cap_uv
+            need_sat = (ct == 0)
+            if need_cap or need_sat:
+                if need_cap:
+                    nontrivial_t_pairs += 1
+                if need_sat:
+                    zero_codeg_t_pairs += 1
                 bs = []
                 for row in range(R):
                     b = cnf.var()
                     cnf.add([-M[row][u], -M[row][v], b])
+                    if need_sat:
+                        cnf.add([-b, M[row][u]])
+                        cnf.add([-b, M[row][v]])
                     bs.append(b)
-                cnf.atmost_seq(bs, cap_uv)
+                if need_cap:
+                    cnf.atmost_seq(bs, cap_uv)
+                if need_sat:
+                    cnf.add(bs)
 
     # 8. Exact Hall b=1 private-neighbor bounds on A (<= 4) and B (<= 10 - q)
     for ra in A_rows:
@@ -418,11 +482,11 @@ def build_d6_core_cnf(
     cnf.range_seq(yT_vars, eYT_lo, eYT_hi)
     cnf.range_seq(xT_vars, eXT_lo, eXT_hi)
 
-    # 10. Static I_7(T) hitting-set constraints (100% sound!)
+    # 10. Static I_7(T) hitting-set constraints (ultra-compact binary + merged S/XY encoding, 100% sound!)
     i7_total = 0
     i7_encoded = 0
     if include_i7:
-        I7 = enum_indep(adj_T, 7, limit=(max_i7 if max_i7 and max_i7 > 0 else None))
+        I7 = _cached_enum_i7(tuple(adj_T), (max_i7 if max_i7 and max_i7 > 0 else None))
         i7_total = len(I7)
         i7_encoded = len(I7)
         for w in I7:
@@ -432,16 +496,34 @@ def build_d6_core_cnf(
                 z = cnf.var()
                 cnf.add([z] + [M[row][t] for t in vs])
                 ms.append(z)
-            # At most 2 of A = S U X miss W_7
-            cnf.atmost_seq([ms[row] for row in A_rows], 2)
-            # At most 2 of B = S U Y miss W_7
-            cnf.atmost_seq([ms[row] for row in B_rows], 2)
-            # At most 1 of X misses W_7 (since W_7 U R_X U {v} is independent!)
-            if nx >= 2:
-                cnf.atmost_seq([ms[row] for row in X_rows], 1)
-            # At most 1 of Y misses W_7 (since W_7 U R_Y U {u} is independent!)
-            if ny >= 2:
-                cnf.atmost_seq([ms[row] for row in Y_rows], 1)
+            # At most 1 of X misses W_7 (since W_7 U R_X U {v} is independent): direct binary clauses (0 counter vars)
+            for i1 in range(nx):
+                for i2 in range(i1 + 1, nx):
+                    cnf.add([-ms[X_rows[i1]], -ms[X_rows[i2]]])
+            # At most 1 of Y misses W_7 (since W_7 U R_Y U {u} is independent): direct binary clauses (0 counter vars)
+            for j1 in range(ny):
+                for j2 in range(j1 + 1, ny):
+                    cnf.add([-ms[Y_rows[j1]], -ms[Y_rows[j2]]])
+            # Since |M(W_7) & X| <= 1 and |M(W_7) & Y| <= 1,
+            # (|M(W_7) & A| <= 2 and |M(W_7) & B| <= 2) <=> |M(W_7) & S| + 1[any X or Y misses W_7] <= 2
+            if c >= 2:
+                m_xy = cnf.var()
+                for row in X_rows + Y_rows:
+                    cnf.add([-ms[row], m_xy])
+                if c == 2:
+                    cnf.add([-ms[S_rows[0]], -ms[S_rows[1]], -m_xy])
+                else:
+                    cnf.atmost_seq([ms[rs] for rs in S_rows] + [m_xy], 2)
+            # Cross-part independent triple {s, x, y} cut: if x !~ y, then {s, x, y} U W_7 cannot be an I_10
+            if c == 1:
+                m_s = ms[S_rows[0]]
+            else:
+                m_s = cnf.var()
+                for rs in S_rows:
+                    cnf.add([-ms[rs], m_s])
+            for ix in range(nx):
+                for iy in range(ny):
+                    cnf.add([E_XY[ix][iy], -m_s, -ms[X_rows[ix]], -ms[Y_rows[iy]]])
 
     # 11. Sound strict lex symmetry breaking within S, X, Y
     #     (No two non-adjacent vertices in a (3,10;40)-graph can have identical neighborhoods!)
@@ -635,7 +717,8 @@ def proof_first_solve_core(
         cnf.write_dimacs(cnf_path, extra_cuts)
 
         def cap_fsize():
-            resource.setrlimit(resource.RLIMIT_FSIZE, (1024 * 1024**2, 1024 * 1024**2))
+            if resource is not None:
+                resource.setrlimit(resource.RLIMIT_FSIZE, (1024 * 1024**2, 1024 * 1024**2))
 
         t_solve0 = time.monotonic()
         with open(out_dir / "kissat.log", "w") as log:
@@ -644,7 +727,7 @@ def proof_first_solve_core(
                 stdout=log,
                 stderr=subprocess.STDOUT,
                 timeout=rem_sec + 30,
-                preexec_fn=cap_fsize,
+                preexec_fn=cap_fsize if resource is not None else None,
             )
         solve_sec = time.monotonic() - t_solve0
 
@@ -652,9 +735,13 @@ def proof_first_solve_core(
             cnf_sha = sha256_file(cnf_path)
             drat_sha = sha256_file(drat_path)
             t_ver0 = time.monotonic()
+            has_lrat_check = bool(shutil.which("lrat-check"))
+            drat_cmd = ["drat-trim", str(cnf_path), str(drat_path)]
+            if has_lrat_check:
+                drat_cmd += ["-L", str(lrat_path)]
             with open(out_dir / "drat-trim.log", "w") as log:
                 v = subprocess.run(
-                    ["drat-trim", str(cnf_path), str(drat_path), "-L", str(lrat_path)],
+                    drat_cmd,
                     stdout=log,
                     stderr=subprocess.STDOUT,
                     timeout=max(60, rem_sec),
@@ -665,7 +752,7 @@ def proof_first_solve_core(
             )
             ok_lrat = False
             lrat_sha = None
-            if ok_drat and lrat_path.exists() and shutil.which("lrat-check"):
+            if ok_drat and has_lrat_check and lrat_path.exists():
                 with open(out_dir / "lrat-check.log", "w") as log:
                     lv = subprocess.run(
                         ["lrat-check", str(cnf_path), str(lrat_path)],

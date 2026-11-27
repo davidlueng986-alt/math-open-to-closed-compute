@@ -25,7 +25,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import resource
+try:
+    import resource
+except ImportError:
+    resource = None
 import shutil
 import subprocess
 import sys
@@ -586,8 +589,9 @@ def run_kissat_and_lrat(
         }
 
     def _cap_fsize() -> None:
-        lim = max_fsize_mb * 1024 * 1024
-        resource.setrlimit(resource.RLIMIT_FSIZE, (lim, lim))
+        if resource is not None:
+            lim = max_fsize_mb * 1024 * 1024
+            resource.setrlimit(resource.RLIMIT_FSIZE, (lim, lim))
 
     t0 = time.monotonic()
     timed_out = False
@@ -599,7 +603,7 @@ def run_kissat_and_lrat(
                 stdout=log,
                 stderr=subprocess.STDOUT,
                 timeout=seconds + 30,
-                preexec_fn=_cap_fsize,
+                preexec_fn=_cap_fsize if resource is not None else None,
             )
             returncode = proc.returncode
         except subprocess.TimeoutExpired:

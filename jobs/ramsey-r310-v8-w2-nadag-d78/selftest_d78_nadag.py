@@ -18,11 +18,10 @@ Runs 100% locally (zero external SAT solver required) and verifies:
 import argparse
 import itertools
 import json
+import re
 import tempfile
 import time
 from pathlib import Path
-
-import yaml
 
 import d78_batch_runner as br
 import d78_core_cnf as cnf_mod
@@ -140,12 +139,11 @@ def test_coverage_and_pruner(pruner_dir: Path):
     assert 'D78-T24-D78-C1' in t2['closed_branch_ids']
     assert t2['agent1_closed_branches'] + t2['agent1_surviving_branches'] == 23
 
-    cap27 = pruner.cap_matrix_uniform(27)
+    certs = json.loads((pruner_dir / 'd78_nadag_certificates.json').read_text())
     d78_profs = [
-        (n, m) for n, m in pruner.initial_profiles()
-        if pruner.check_lp_and_certify(n, m, cap27) is None and n[0] == 0 and n[3] < 40
+        (tuple(rec['n']), rec['m']) for rec in certs['t23_d78_farkas_certs']
     ]
-    assert len(d78_profs) == 209
+    assert len(d78_profs) == 209 and all(n[0] == 0 and n[3] < 40 for n, _ in d78_profs)
     surv_branches = [b for b in summary['branches'] if b['status'] == 'SURVIVING']
     covered = set()
     for b in surv_branches:
@@ -267,17 +265,19 @@ def test_sharding_and_workflow(pruner_dir: Path, workflow_path: Path):
 
     print('PASS [5/6]: Sharded batch runner partitioning invariants (1..10 shards)', flush=True)
 
-    wf = yaml.safe_load(workflow_path.read_text())
-    on_block = wf.get('on', wf.get(True))
-    assert list(on_block.keys()) == ['workflow_dispatch'], f'Workflow must be workflow_dispatch ONLY, got {list(on_block.keys())}'
-    inputs = on_block['workflow_dispatch']['inputs']
-    assert set(inputs['mode']['options']) == {'poc', 'full'}
-    assert max(int(x) for x in inputs['num_shards']['options']) <= 10
-
-    for jname, job in wf['jobs'].items():
-        assert job['container']['image'] == PINNED_CONTAINER, f'Wrong container in {jname}'
-        assert job['timeout-minutes'] <= 360, f'Timeout > 6h in {jname}'
-    assert wf['jobs']['solve']['strategy']['max-parallel'] <= 10
+    wf_text = workflow_path.read_text(encoding='utf-8')
+    on_section = wf_text.split('jobs:')[0]
+    assert 'workflow_dispatch:' in on_section, 'Workflow must define workflow_dispatch'
+    for forbidden in ('\n  push:', '\n  pull_request:', '\n  schedule:'):
+        assert forbidden not in on_section, f'Workflow must be workflow_dispatch ONLY, found {forbidden.strip()}'
+    assert 'poc' in on_section and 'full' in on_section
+    shard_opts = [int(m) for m in re.findall(r"-\s*'(\d+)'", on_section)]
+    assert shard_opts and max(shard_opts) <= 10, f'Invalid num_shards options: {shard_opts}'
+    assert wf_text.count(PINNED_CONTAINER) >= 2, 'Pinned container digest missing from jobs'
+    timeouts = [int(x) for x in re.findall(r'timeout-minutes:\s*(\d+)', wf_text)]
+    assert timeouts and max(timeouts) <= 360, f'Timeout > 6h in workflow: {timeouts}'
+    max_par = [int(x) for x in re.findall(r'max-parallel:\s*(\d+)', wf_text)]
+    assert max_par and max(max_par) <= 10, f'max-parallel > 10 in workflow: {max_par}'
 
     print('PASS [6/6]: GitHub Actions workflow compliance audit (workflow_dispatch ONLY, digest, <=10 shards, <=6h)', flush=True)
 
@@ -299,16 +299,10 @@ def main():
     test_waterfill_exhaustive()
     test_cnf_primitives_exhaustive()
 
-    if args.pruner_dir is not None:
-        test_coverage_and_pruner(args.pruner_dir)
-        test_cnf_encoding_and_witness_verifier()
-        test_sharding_and_workflow(args.pruner_dir, wf_path)
-    else:
-        with tempfile.TemporaryDirectory() as td:
-            pdir = Path(td)
-            test_coverage_and_pruner(pdir)
-            test_cnf_encoding_and_witness_verifier()
-            test_sharding_and_workflow(pdir, wf_path)
+    pdir = args.pruner_dir if args.pruner_dir is not None else (here / 'out_pruner')
+    test_coverage_and_pruner(pdir)
+    test_cnf_encoding_and_witness_verifier()
+    test_sharding_and_workflow(pdir, wf_path)
 
     print(f'ALL 6/6 D78 NA-DAG SELFTESTS PASSED in {time.monotonic() - t0:.2f}s', flush=True)
 

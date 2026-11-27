@@ -73,10 +73,11 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p out
-          python3 jobs/ramsey-r310-v8-w2-nadag-d78/selftest_d78_nadag.py \
-            --workflow .github/workflows/ramsey-r310-v8-w2-nadag-d78.yml
           OPENBLAS_NUM_THREADS=1 python3 jobs/ramsey-r310-v8-w2-nadag-d78/d78_nadag_pruner.py \
             --out-dir out/pruner
+          python3 jobs/ramsey-r310-v8-w2-nadag-d78/selftest_d78_nadag.py \
+            --pruner-dir out/pruner \
+            --workflow .github/workflows/ramsey-r310-v8-w2-nadag-d78.yml
           python3 - <<'PY'
           import json, os, urllib.request
           from pathlib import Path

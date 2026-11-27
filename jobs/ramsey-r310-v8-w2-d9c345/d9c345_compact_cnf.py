@@ -26,7 +26,10 @@ import itertools
 import json
 import os
 import random
-import resource
+try:
+    import resource
+except ImportError:
+    resource = None
 import shutil
 import subprocess
 import sys
@@ -193,12 +196,51 @@ class CompactCNF:
         self.atmost_seq([-x for x in xs], len(xs) - k)
 
     def exact_seq(self, xs, k: int):
-        self.atmost_seq(xs, k)
-        self.atleast_seq(xs, k)
+        self.bounds_seq(xs, k, k)
 
     def bounds_seq(self, xs, lo: int, hi: int):
-        self.atmost_seq(xs, hi)
-        self.atleast_seq(xs, lo)
+        m = len(xs)
+        lo = max(0, lo)
+        hi = min(m, hi)
+        if lo > hi:
+            self.add([])
+            return
+        if lo == 0 and hi == m:
+            return
+        if lo == 0:
+            self.atmost_seq(xs, hi)
+            return
+        if hi == m:
+            self.atleast_seq(xs, lo)
+            return
+        if hi == 0:
+            for x in xs:
+                self.add([-x])
+            return
+        if lo == m:
+            for x in xs:
+                self.add([x])
+            return
+        if m - lo < hi:
+            self.bounds_seq([-x for x in xs], m - hi, m - lo)
+            return
+        s = [[self.var() for _ in range(hi)] for _ in range(m)]
+        self.add([-xs[0], s[0][0]])
+        self.add([xs[0], -s[0][0]])
+        for j in range(1, hi):
+            self.add([-s[0][j]])
+        for i in range(1, m):
+            self.add([-xs[i], s[i][0]])
+            self.add([-s[i - 1][0], s[i][0]])
+            self.add([-s[i][0], s[i - 1][0], xs[i]])
+            for j in range(1, hi):
+                self.add([-xs[i], -s[i - 1][j - 1], s[i][j]])
+                self.add([-s[i - 1][j], s[i][j]])
+                if j < lo:
+                    self.add([-s[i][j], s[i - 1][j], xs[i]])
+                    self.add([-s[i][j], s[i - 1][j], s[i - 1][j - 1]])
+            self.add([-xs[i], -s[i - 1][hi - 1]])
+        self.add([s[m - 1][lo - 1]])
 
     def lex_lt(self, a, b):
         """Enforce bitvector a < b strictly (MSB at index 0)."""
@@ -317,14 +359,17 @@ def build_d9c345_cnf(c: int, skeleton_rows, adj_T=None, include_i7: bool = True,
     # 3. Column degrees, T-degree bounds, A/B codegree bounds, and S-domination
     min_dt = max(0, c - 3)
     if adj_T is None:
+        min_ds_free = max(1 if is_complete_H else 0, 2 - alpha_xy)
         for t in range(nT):
             t_nbrs = [ET_var[(t, u)] for u in range(nT) if u != t]
             cnf.exact_seq([M[r][t] for r in range(R)] + t_nbrs, 9)
             cnf.bounds_seq(t_nbrs, min_dt, 7)
             cnf.bounds_seq([M[r][t] for r in A_rows], 1, c)
             cnf.bounds_seq([M[r][t] for r in B_rows], 1, c)
-            if is_complete_H:
-                cnf.atleast_seq([M[r][t] for r in S_rows], 1)
+            # In Free-T mode, d_X(t) + d_Y(t) <= alpha_xy (equivalent to d_S(t) >= rem_T(t) - alpha_xy)
+            cnf.atmost_seq([M[r][t] for r in X_rows + Y_rows], alpha_xy)
+            if min_ds_free > 0:
+                cnf.atleast_seq([M[r][t] for r in S_rows], min_ds_free)
     else:
         deg_T = [x.bit_count() for x in adj_T]
         rem_T = [9 - d for d in deg_T]
@@ -336,6 +381,16 @@ def build_d9c345_cnf(c: int, skeleton_rows, adj_T=None, include_i7: bool = True,
             min_ds = max(1 if is_complete_H else 0, rem_T[t] - alpha_xy)
             if min_ds > 0:
                 cnf.atleast_seq([M[r][t] for r in S_rows], min_ds)
+            # Exact non-edge saturation S -> T, X -> T, Y -> T on fixed core T
+            nbrs_t = [u for u in range(nT) if (adj_T[t] >> u) & 1]
+            for rs in S_rows:
+                cnf.add([M[rs][t]] + [M[rs][u] for u in nbrs_t])
+            for i, rx in enumerate(X_rows):
+                ynbrs = [Y_rows[j] for j in range(nX) if (skeleton_rows[i] >> j) & 1]
+                cnf.add([M[rx][t]] + [M[yr][t] for yr in ynbrs] + [M[rx][u] for u in nbrs_t])
+            for j, ry in enumerate(Y_rows):
+                xnbrs = [X_rows[i] for i in range(nX) if (cols[j] >> i) & 1]
+                cnf.add([M[ry][t]] + [M[xr][t] for xr in xnbrs] + [M[ry][u] for u in nbrs_t])
 
     # 4. Pairwise codegree caps (<= c) on S, X, Y
     def add_pair_cap(r1: int, r2: int, cap: int, require_atleast_one: bool = False):
@@ -448,11 +503,12 @@ def build_d9c345_cnf(c: int, skeleton_rows, adj_T=None, include_i7: bool = True,
             privB.append(pb)
         cnf.atmost_seq(privB, cap)
 
-    # 7. Static I7(T) hitting-set clauses (in Fixed-Core mode)
+    # 7. Static I7(T) hitting-set clauses (in Fixed-Core mode, ultra-compact binary + merged S/XY encoding)
     i7_count = 0
     if adj_T is not None and include_i7:
         I7 = enum_indep(adj_T, 7)
         i7_count = len(I7)
+        non_edges_xy = [(i, j) for i in range(nX) for j in range(nX) if not ((skeleton_rows[i] >> j) & 1)]
         for w in I7:
             vs = [t for t in range(nT) if (w >> t) & 1]
             ms = []
@@ -460,8 +516,26 @@ def build_d9c345_cnf(c: int, skeleton_rows, adj_T=None, include_i7: bool = True,
                 z = cnf.var()
                 cnf.add([z] + [M[r][t] for t in vs])
                 ms.append(z)
-            cnf.atmost_seq([ms[r] for r in A_rows], 2)
-            cnf.atmost_seq([ms[r] for r in B_rows], 2)
+            # At most 1 of X misses W_7: direct binary clauses (0 counter vars)
+            for i1 in range(nX):
+                for i2 in range(i1 + 1, nX):
+                    cnf.add([-ms[X_rows[i1]], -ms[X_rows[i2]]])
+            # At most 1 of Y misses W_7: direct binary clauses (0 counter vars)
+            for j1 in range(nX):
+                for j2 in range(j1 + 1, nX):
+                    cnf.add([-ms[Y_rows[j1]], -ms[Y_rows[j2]]])
+            # Combined A & B hitting bound: |M(W_7) & S| + 1[any X or Y misses W_7] <= 2
+            m_xy = cnf.var()
+            for r in X_rows + Y_rows:
+                cnf.add([-ms[r], m_xy])
+            cnf.atmost_seq([ms[rs] for rs in S_rows] + [m_xy], 2)
+            # Cross-part independent triple {s, x_i, y_j} cut for every non-edge (x_i, y_j) not in E(H)
+            if non_edges_xy:
+                m_s = cnf.var()
+                for rs in S_rows:
+                    cnf.add([-ms[rs], m_s])
+                for i, j in non_edges_xy:
+                    cnf.add([-m_s, -ms[X_rows[i]], -ms[Y_rows[j]]])
 
     # 8. Sound lex symmetry breaking
     if include_lex:
@@ -646,13 +720,15 @@ def proof_first_solve(c: int, skeleton_rows, out_dir: Path, seconds: int = 600,
         cnf.write_dimacs(cnf_path, extra_cuts)
 
         def cap_fsize():
-            resource.setrlimit(resource.RLIMIT_FSIZE, (1024 * 1024 ** 2, 1024 * 1024 ** 2))
+            if resource is not None:
+                resource.setrlimit(resource.RLIMIT_FSIZE, (1024 * 1024 ** 2, 1024 * 1024 ** 2))
 
         t_solve0 = time.monotonic()
         with open(out_dir / 'kissat.log', 'w') as log:
             r = subprocess.run(
                 ['kissat', f'--time={rem_sec}', str(cnf_path), str(drat_path)],
-                stdout=log, stderr=subprocess.STDOUT, timeout=rem_sec + 30, preexec_fn=cap_fsize
+                stdout=log, stderr=subprocess.STDOUT, timeout=rem_sec + 30,
+                preexec_fn=cap_fsize if resource is not None else None,
             )
         solve_sec = time.monotonic() - t_solve0
 
@@ -660,15 +736,19 @@ def proof_first_solve(c: int, skeleton_rows, out_dir: Path, seconds: int = 600,
             cnf_sha = sha256_file(cnf_path)
             drat_sha = sha256_file(drat_path)
             t_ver0 = time.monotonic()
+            has_lrat_check = bool(shutil.which('lrat-check'))
+            drat_cmd = ['drat-trim', str(cnf_path), str(drat_path)]
+            if has_lrat_check:
+                drat_cmd += ['-L', str(lrat_path)]
             with open(out_dir / 'drat-trim.log', 'w') as log:
                 v = subprocess.run(
-                    ['drat-trim', str(cnf_path), str(drat_path), '-L', str(lrat_path)],
+                    drat_cmd,
                     stdout=log, stderr=subprocess.STDOUT, timeout=max(60, rem_sec)
                 )
             ok_drat = (v.returncode == 0 and 's VERIFIED' in (out_dir / 'drat-trim.log').read_text(errors='replace'))
             ok_lrat = False
             lrat_sha = None
-            if ok_drat and lrat_path.exists() and shutil.which('lrat-check'):
+            if ok_drat and has_lrat_check and lrat_path.exists():
                 with open(out_dir / 'lrat-check.log', 'w') as log:
                     lv = subprocess.run(
                         ['lrat-check', str(cnf_path), str(lrat_path)],

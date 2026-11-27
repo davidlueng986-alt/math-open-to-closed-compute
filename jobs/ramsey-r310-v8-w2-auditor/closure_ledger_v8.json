@@ -266,27 +266,179 @@
     },
     {
       "id": "NA-T1-R5-Q6",
-      "title": "NA-T1 r=5, q=6 (nT=27, c=1, eT in [85,92])",
+      "title": "NA-T1 r=5, q=6 (nT=27, c=1, eT in [85,92]; eT=85 4/4 cores CERTIFIED_DRAT)",
       "status": "OPEN",
-      "params": {"r": 5, "q": 6, "nT": 27, "c": 1, "eT_min": 85, "eT_cap": 92}
+      "params": {"r": 5, "q": 6, "nT": 27, "c": 1, "eT_min": 85, "eT_cap": 92, "eT_85_cores_certified": 4},
+      "certificates": [
+        {
+          "slice": "eT=85_core_0",
+          "run_id": 46018191614,
+          "artifact_id": 15206638036,
+          "cnf_sha256": "fcea9858fa86ba23d104c084b3d20b1b3461a583069d0771cf44f94c9e50e6ef",
+          "drat_sha256": "c4f3d34b00fac682b2907e3fdbb8ffa546309ed43d7f845ef8556790eb51a2b8",
+          "solve_seconds": 1.37,
+          "verify_seconds": 0.931
+        },
+        {
+          "slice": "eT=85_core_1",
+          "run_id": 46018191614,
+          "artifact_id": 15207486160,
+          "cnf_sha256": "0e27d104a082311adef5cd14443b9d82ed642c8098075202dad454fdeb8b4802",
+          "drat_sha256": "cd028368cd3f47afda58fd3befb7eed2b93f1ff093d2a7f8e10bc6c9db3faeb4",
+          "solve_seconds": 1.421,
+          "verify_seconds": 0.78
+        },
+        {
+          "slice": "eT=85_core_2",
+          "run_id": 46018191614,
+          "artifact_id": 15206543267,
+          "cnf_sha256": "63b8942bfbfcf6b097be787782fca3e718ceb4844bb8584db63319bfb81c7784",
+          "drat_sha256": "d5d34dfce4110d0df52a94c426350d7465f340ac8b00a80cf08abe1005f8d4ba",
+          "solve_seconds": 1.018,
+          "verify_seconds": 0.629
+        },
+        {
+          "slice": "eT=85_core_3",
+          "run_id": 46018191614,
+          "artifact_id": 15207905822,
+          "cnf_sha256": "16f47ffecbbd5b1b20947ad45c653c626ab239f4dad4c115d7e554cc12f61150",
+          "drat_sha256": "84cd242f0fa7cc5b5a38c84f86c81dbcdb15f3ef5c826955e9710fc7436b7977",
+          "solve_seconds": 1.32,
+          "verify_seconds": 0.931
+        }
+      ]
     },
     {
       "id": "NA-T1-R5-Q7",
-      "title": "NA-T1 r=5, q=7 (nT=27, c=2, eT in [85,92])",
+      "title": "NA-T1 r=5, q=7 (nT=27, c=2, eT in [85,92]; eT=85 4/4 cores CERTIFIED_DRAT)",
       "status": "OPEN",
-      "params": {"r": 5, "q": 7, "nT": 27, "c": 2, "eT_min": 85, "eT_cap": 92}
+      "params": {"r": 5, "q": 7, "nT": 27, "c": 2, "eT_min": 85, "eT_cap": 92, "eT_85_cores_certified": 4},
+      "certificates": [
+        {
+          "slice": "eT=85_core_0",
+          "run_id": 46018191614,
+          "artifact_id": 15206638036,
+          "cnf_sha256": "a1f5289f1585822e9242bc40de993303ea098acca8af522a6ca19df2352ec546",
+          "drat_sha256": "07b856eaf4d3cae0d9249fd4902525a3bdddd9b1dfe5395d30f67ee2fc71298b",
+          "solve_seconds": 0.968,
+          "verify_seconds": 0.73
+        },
+        {
+          "slice": "eT=85_core_1",
+          "run_id": 46018191614,
+          "artifact_id": 15207486160,
+          "cnf_sha256": "d4b1689b3ea48129f4dfbbe94169a87d172832362f13bb4f64cabd0763259f83",
+          "drat_sha256": "c3f4b9f5f04cab4f2ef4e4d632ab0cc20b9c8d2b5b28a11391c03698f0c35fac",
+          "solve_seconds": 1.019,
+          "verify_seconds": 0.78
+        },
+        {
+          "slice": "eT=85_core_2",
+          "run_id": 46018191614,
+          "artifact_id": 15206543267,
+          "cnf_sha256": "92ab19384265a01af06d51e666645648d23edf20a7b564b3fcd408c4141af06e",
+          "drat_sha256": "0e5790773193d9ec735ea91f90b817850ef78b402a4b1e98eb1bc6c7b8ce75b4",
+          "solve_seconds": 0.818,
+          "verify_seconds": 0.579
+        },
+        {
+          "slice": "eT=85_core_3",
+          "run_id": 46018191614,
+          "artifact_id": 15207905822,
+          "cnf_sha256": "8a14fe7e7351371f346476d8c50e1155add972173f9be83e231a87807d09142e",
+          "drat_sha256": "ba29ac84ed5a2dad16e13d4990900a6abaafc69604e726c229fe26f1d22c49f5",
+          "solve_seconds": 1.62,
+          "verify_seconds": 0.88
+        }
+      ]
     },
     {
       "id": "NA-T1-R5-Q8",
-      "title": "NA-T1 r=5, q=8 (nT=27, c=3, eT in [85,92])",
+      "title": "NA-T1 r=5, q=8 (nT=27, c=3, eT in [85,92]; eT=85 4/4 cores CERTIFIED_DRAT)",
       "status": "OPEN",
-      "params": {"r": 5, "q": 8, "nT": 27, "c": 3, "eT_min": 85, "eT_cap": 92}
+      "params": {"r": 5, "q": 8, "nT": 27, "c": 3, "eT_min": 85, "eT_cap": 92, "eT_85_cores_certified": 4},
+      "certificates": [
+        {
+          "slice": "eT=85_core_0",
+          "run_id": 46018191614,
+          "artifact_id": 15206638036,
+          "cnf_sha256": "148c5f72c9edeb615a83da586f676a45848f73b9f840656aa757590d896df4fe",
+          "drat_sha256": "5ab727f7627f8476e5a8994ce31ca9b1f8e354cd2d634e8b8e7e08281adaff0c",
+          "solve_seconds": 1.018,
+          "verify_seconds": 0.78
+        },
+        {
+          "slice": "eT=85_core_1",
+          "run_id": 46018191614,
+          "artifact_id": 15207486160,
+          "cnf_sha256": "68fede3e5cc28cacd8c94101df9bfb53ee0735d1198d447742103b514b555b39",
+          "drat_sha256": "7c43a5c3149cf7d0ebb30d290122d6247129eb540ef0444388d3bc7d8c8381a1",
+          "solve_seconds": 1.069,
+          "verify_seconds": 0.73
+        },
+        {
+          "slice": "eT=85_core_2",
+          "run_id": 46018191614,
+          "artifact_id": 15206543267,
+          "cnf_sha256": "ce8bcb986bed3b38033a8e20570afda559608bc1488c65102fb69dec46427db3",
+          "drat_sha256": "c161fb7628d65cb18f3f4892c385d522ac96d1c12ada7743908857ebe6c9e279",
+          "solve_seconds": 0.767,
+          "verify_seconds": 0.479
+        },
+        {
+          "slice": "eT=85_core_3",
+          "run_id": 46018191614,
+          "artifact_id": 15207905822,
+          "cnf_sha256": "dc8dab042f2eccb4ab05a61d979db9736f6a888f9d51916feb93e30a6828174e",
+          "drat_sha256": "50f3bdc49ce3ed166a053781bdb58a047ff78b399bab441e11ee89b65593c50d",
+          "solve_seconds": 1.92,
+          "verify_seconds": 0.88
+        }
+      ]
     },
     {
       "id": "NA-T1-R5-Q9",
-      "title": "NA-T1 r=5, q=9 (nT=27, c=4, eT in [85,92])",
+      "title": "NA-T1 r=5, q=9 (nT=27, c=4, eT in [85,92]; eT=85 4/4 cores CERTIFIED_DRAT)",
       "status": "OPEN",
-      "params": {"r": 5, "q": 9, "nT": 27, "c": 4, "eT_min": 85, "eT_cap": 92}
+      "params": {"r": 5, "q": 9, "nT": 27, "c": 4, "eT_min": 85, "eT_cap": 92, "eT_85_cores_certified": 4},
+      "certificates": [
+        {
+          "slice": "eT=85_core_0",
+          "run_id": 46018191614,
+          "artifact_id": 15206638036,
+          "cnf_sha256": "5710ccd6dc06ec4a1e05bc17409f5259847ebb8b14f7096aad7e460372c3edc3",
+          "drat_sha256": "d3eb95adeee2e0f79557a37dba11d3b4d6b7c605f43955b9deef3f2dee17cc24",
+          "solve_seconds": 1.068,
+          "verify_seconds": 0.73
+        },
+        {
+          "slice": "eT=85_core_1",
+          "run_id": 46018191614,
+          "artifact_id": 15207486160,
+          "cnf_sha256": "5cefc658d340de24fd356cba3f80f2bb355b095cc93a53bdde1a341a49407adc",
+          "drat_sha256": "c07d65b052eaec2509760d48bc44341be5c56a63fe1031645e5281ee6ce8dfd8",
+          "solve_seconds": 1.571,
+          "verify_seconds": 0.73
+        },
+        {
+          "slice": "eT=85_core_2",
+          "run_id": 46018191614,
+          "artifact_id": 15206543267,
+          "cnf_sha256": "d8801eb05ed7430a6a78dde62e1d323b85b7c6d0515f6ba76b3616de3b7fa29b",
+          "drat_sha256": "cb639c08cc965d4c905d7f7726ed2dbdf218ea95781fca3a46d53d5c42959302",
+          "solve_seconds": 1.018,
+          "verify_seconds": 0.529
+        },
+        {
+          "slice": "eT=85_core_3",
+          "run_id": 46018191614,
+          "artifact_id": 15207905822,
+          "cnf_sha256": "2ffa520db8c243b39c3b89aa09677eccf65d29c3cbcd52ed7cff7269832c11bd",
+          "drat_sha256": "37615446267604c5da83006a24f25f5f6ac4eb2b462d88d321663103578e449c",
+          "solve_seconds": 1.219,
+          "verify_seconds": 0.831
+        }
+      ]
     },
     {
       "id": "NA-T1-R6-Q7",

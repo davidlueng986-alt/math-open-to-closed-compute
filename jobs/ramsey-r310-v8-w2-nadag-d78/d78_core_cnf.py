@@ -41,10 +41,14 @@ import argparse
 import gzip
 import hashlib
 import json
-import resource
+try:
+    import resource
+except ImportError:
+    resource = None
 import shutil
 import subprocess
 import time
+from functools import lru_cache
 from pathlib import Path
 
 from d78_nadag_pruner import E8, E8MAX, cap_matrix_tiebroken
@@ -114,6 +118,11 @@ def enum_indep(adj, k: int, limit=None):
 
     dfs((1 << n) - 1, k, 0)
     return res
+
+
+@lru_cache(maxsize=64)
+def _cached_enum_i7(adj_tuple: tuple, limit: int | None):
+    return tuple(enum_indep(list(adj_tuple), 7, limit=limit))
 
 
 def verify_r38_core(adj, expected_n=None, check_alpha=True):
@@ -191,12 +200,51 @@ class CompactCNF:
         self.atmost_seq([-x for x in xs], len(xs) - k)
 
     def exact_seq(self, xs, k: int):
-        self.atmost_seq(xs, k)
-        self.atleast_seq(xs, k)
+        self.range_seq(xs, k, k)
 
     def range_seq(self, xs, lo: int, hi: int):
-        self.atleast_seq(xs, lo)
-        self.atmost_seq(xs, hi)
+        m = len(xs)
+        lo = max(0, lo)
+        hi = min(m, hi)
+        if lo > hi:
+            self.add([])
+            return
+        if lo == 0 and hi == m:
+            return
+        if lo == 0:
+            self.atmost_seq(xs, hi)
+            return
+        if hi == m:
+            self.atleast_seq(xs, lo)
+            return
+        if hi == 0:
+            for x in xs:
+                self.add([-x])
+            return
+        if lo == m:
+            for x in xs:
+                self.add([x])
+            return
+        if m - lo < hi:
+            self.range_seq([-x for x in xs], m - hi, m - lo)
+            return
+        s = [[self.var() for _ in range(hi)] for _ in range(m)]
+        self.add([-xs[0], s[0][0]])
+        self.add([xs[0], -s[0][0]])
+        for j in range(1, hi):
+            self.add([-s[0][j]])
+        for i in range(1, m):
+            self.add([-xs[i], s[i][0]])
+            self.add([-s[i - 1][0], s[i][0]])
+            self.add([-s[i][0], s[i - 1][0], xs[i]])
+            for j in range(1, hi):
+                self.add([-xs[i], -s[i - 1][j - 1], s[i][j]])
+                self.add([-s[i - 1][j], s[i][j]])
+                if j < lo:
+                    self.add([-s[i][j], s[i - 1][j], xs[i]])
+                    self.add([-s[i][j], s[i - 1][j], s[i - 1][j - 1]])
+            self.add([-xs[i], -s[i - 1][hi - 1]])
+        self.add([s[m - 1][lo - 1]])
 
     def lex_lt(self, a, b):
         """Enforce bitvector a < b strictly (MSB at index 0)."""
@@ -447,6 +495,7 @@ def build_d78_core_cnf(
             add_pair_cap(M[Y_rows[i]] + col_i, M[Y_rows[j]] + col_j, max_cap - 1)
 
     nontrivial_t_pairs = 0
+    zero_codeg_t_pairs = 0
     for a in range(nT):
         rem_a = 9 - deg_T[a]
         for b in range(a + 1, nT):
@@ -454,14 +503,25 @@ def build_d78_core_cnf(
                 continue
             ct = (adj_T[a] & adj_T[b]).bit_count()
             cap_ab = max_cap - ct
-            if min(rem_a, 9 - deg_T[b]) > cap_ab:
-                nontrivial_t_pairs += 1
+            need_cap = min(rem_a, 9 - deg_T[b]) > cap_ab
+            need_sat = (ct == 0)
+            if need_cap or need_sat:
+                if need_cap:
+                    nontrivial_t_pairs += 1
+                if need_sat:
+                    zero_codeg_t_pairs += 1
                 bs = []
                 for r in range(R):
                     v = cnf.var()
                     cnf.add([-M[r][a], -M[r][b], v])
+                    if need_sat:
+                        cnf.add([-v, M[r][a]])
+                        cnf.add([-v, M[r][b]])
                     bs.append(v)
-                cnf.atmost_seq(bs, cap_ab)
+                if need_cap:
+                    cnf.atmost_seq(bs, cap_ab)
+                if need_sat:
+                    cnf.add(bs)
 
     for r in A_rows:
         otherA = [q for q in A_rows if q != r]
@@ -500,7 +560,7 @@ def build_d78_core_cnf(
 
     i7_count = 0
     if include_i7:
-        I7 = enum_indep(adj_T, 7, limit=max_i7)
+        I7 = _cached_enum_i7(tuple(adj_T), max_i7)
         i7_count = len(I7)
         for w in I7:
             vs = [t for t in range(nT) if (w >> t) & 1]
@@ -509,8 +569,34 @@ def build_d78_core_cnf(
                 z = cnf.var()
                 cnf.add([z] + [M[r][t] for t in vs])
                 ms.append(z)
-            cnf.atmost_seq([ms[r] for r in A_rows], 2)
-            cnf.atmost_seq([ms[r] for r in B_rows], 2)
+            # At most 1 of X misses W_7 (W_7 U R_X U {v} is independent): direct binary clauses (0 counter vars)
+            for i1 in range(nx):
+                for i2 in range(i1 + 1, nx):
+                    cnf.add([-ms[X_rows[i1]], -ms[X_rows[i2]]])
+            # At most 1 of Y misses W_7 (W_7 U R_Y U {u} is independent): direct binary clauses (0 counter vars)
+            for j1 in range(ny):
+                for j2 in range(j1 + 1, ny):
+                    cnf.add([-ms[Y_rows[j1]], -ms[Y_rows[j2]]])
+            # Combined A & B hitting bound: |M(W_7) & S| + 1[any X or Y misses W_7] <= 2
+            if c >= 2:
+                m_xy = cnf.var()
+                for r in X_rows + Y_rows:
+                    cnf.add([-ms[r], m_xy])
+                if c == 2:
+                    cnf.add([-ms[S_rows[0]], -ms[S_rows[1]], -m_xy])
+                else:
+                    cnf.atmost_seq([ms[rs] for rs in S_rows] + [m_xy], 2)
+            # Cross-part independent triple {s, x, y} cut when X-Y is not forced complete
+            if not forced_complete_xy and nx > 0 and ny > 0:
+                if c == 1:
+                    m_s = ms[S_rows[0]]
+                else:
+                    m_s = cnf.var()
+                    for rs in S_rows:
+                        cnf.add([-ms[rs], m_s])
+                for ix in range(nx):
+                    for iy in range(ny):
+                        cnf.add([E_XY[ix][iy], -m_s, -ms[X_rows[ix]], -ms[Y_rows[iy]]])
 
     if include_lex:
         for i in range(c - 1):
@@ -685,13 +771,15 @@ def proof_first_solve_core(
         cnf.write_dimacs(cnf_path, extra_cuts)
 
         def cap_fsize():
-            resource.setrlimit(resource.RLIMIT_FSIZE, (1024 * 1024 ** 2, 1024 * 1024 ** 2))
+            if resource is not None:
+                resource.setrlimit(resource.RLIMIT_FSIZE, (1024 * 1024 ** 2, 1024 * 1024 ** 2))
 
         t_solve0 = time.monotonic()
         with open(out_dir / 'kissat.log', 'w') as log:
             r = subprocess.run(
                 ['kissat', f'--time={rem_sec}', str(cnf_path), str(drat_path)],
-                stdout=log, stderr=subprocess.STDOUT, timeout=rem_sec + 30, preexec_fn=cap_fsize,
+                stdout=log, stderr=subprocess.STDOUT, timeout=rem_sec + 30,
+                preexec_fn=cap_fsize if resource is not None else None,
             )
         solve_sec = time.monotonic() - t_solve0
 
@@ -699,9 +787,13 @@ def proof_first_solve_core(
             cnf_sha = sha256_file(cnf_path)
             drat_sha = sha256_file(drat_path)
             t_ver0 = time.monotonic()
+            has_lrat_check = bool(shutil.which('lrat-check'))
+            drat_cmd = ['drat-trim', str(cnf_path), str(drat_path)]
+            if has_lrat_check:
+                drat_cmd += ['-L', str(lrat_path)]
             with open(out_dir / 'drat-trim.log', 'w') as log:
                 v = subprocess.run(
-                    ['drat-trim', str(cnf_path), str(drat_path), '-L', str(lrat_path)],
+                    drat_cmd,
                     stdout=log, stderr=subprocess.STDOUT, timeout=max(60, rem_sec),
                 )
             ok_drat = (
@@ -710,7 +802,7 @@ def proof_first_solve_core(
             )
             ok_lrat = False
             lrat_sha = None
-            if ok_drat and lrat_path.exists() and shutil.which('lrat-check'):
+            if ok_drat and has_lrat_check and lrat_path.exists():
                 with open(out_dir / 'lrat-check.log', 'w') as log:
                     lv = subprocess.run(
                         ['lrat-check', str(cnf_path), str(lrat_path)],

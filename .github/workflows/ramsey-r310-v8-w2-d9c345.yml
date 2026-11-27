@@ -4,11 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       case:
-        description: "D9 subcase to run (C5, C4, C3, or ALL)"
+        description: "D9 subcase to run (C6, C5, C4, C3, or ALL)"
         required: true
         default: "C5"
         type: choice
         options:
+          - C6
           - C5
           - C4
           - C3

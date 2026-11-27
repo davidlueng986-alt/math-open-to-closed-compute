@@ -131,7 +131,7 @@ def run_shard(cert_bundle_path: Path, case_selector: str, shard_index: int, num_
 def main():
     ap = argparse.ArgumentParser(description='Sharded D9-C3/C4/C5 Proof-First batch runner')
     ap.add_argument('--certs', type=Path, required=True, help='Path to orbits_manifest.json or d9c345_farkas_certificates.json')
-    ap.add_argument('--case', required=True, choices=['C5', 'C4', 'C3', 'ALL'])
+    ap.add_argument('--case', required=True, choices=['C6', 'C5', 'C4', 'C3', 'ALL'])
     ap.add_argument('--shard-index', type=int, required=True)
     ap.add_argument('--num-shards', type=int, default=10)
     ap.add_argument('--out', type=Path, required=True)

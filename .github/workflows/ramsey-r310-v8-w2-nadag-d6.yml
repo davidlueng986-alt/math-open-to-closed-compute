@@ -67,8 +67,7 @@ jobs:
           set -euo pipefail
           mkdir -p out
           OPENBLAS_NUM_THREADS=1 python3 jobs/ramsey-r310-v8-w2-nadag-d6/d6_nadag_pruner.py --out-dir out/pruner
-          python3 jobs/ramsey-r310-v8-w2-nadag-d6/d6_nadag_pruner.py --verify-only out/pruner
-          python3 jobs/ramsey-r310-v8-w2-nadag-d6/selftest_d6_nadag.py
+          python3 jobs/ramsey-r310-v8-w2-nadag-d6/selftest_d6_nadag.py --pruner-dir out/pruner
 
           python3 - <<'PY'
           import json, os, urllib.request

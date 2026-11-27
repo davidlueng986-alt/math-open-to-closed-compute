@@ -13,6 +13,7 @@ Tests:
        - Exact SAT witness verifier negative & positive control tests
   5. Sharded batch runner completeness & disjointness audit (num_shards=1..10, <= 5.5h cap).
 """
+import argparse
 import itertools
 import json
 import tempfile
@@ -66,7 +67,7 @@ def test_waterfilling_exhaustive():
     print("PASS [1/5]: Exhaustive water-filling capped convexity verified", flush=True)
 
 
-def test_coverage_and_pure_integer_certs():
+def test_coverage_and_pure_integer_certs(pruner_dir: Path | None = None):
     assert len(pruner.TIER1_D6_BRANCHES) == 9
     expected_ids = {
         "D6-R5-Q6", "D6-R5-Q7", "D6-R5-Q8", "D6-R5-Q9",
@@ -75,7 +76,7 @@ def test_coverage_and_pure_integer_certs():
     }
     assert {b["id"] for b in pruner.TIER1_D6_BRANCHES} == expected_ids
 
-    out_dir = Path(__file__).resolve().parent / "out_pruner"
+    out_dir = pruner_dir if pruner_dir is not None else (Path(__file__).resolve().parent / "out_pruner")
     cert_path = out_dir / "d6_nadag_certificates.json"
     plan_path = out_dir / "d6_nadag_plan.json"
     if not cert_path.exists() or not plan_path.exists():
@@ -267,9 +268,12 @@ def test_sharded_batch_runner(plan_obj):
 
 
 def main():
+    ap = argparse.ArgumentParser(description="Self-test suite for Tier-1 D6 Unified NA-DAG")
+    ap.add_argument("--pruner-dir", type=Path, default=None)
+    args = ap.parse_args()
     t0 = time.monotonic()
     test_waterfilling_exhaustive()
-    plan_obj = test_coverage_and_pure_integer_certs()
+    plan_obj = test_coverage_and_pure_integer_certs(args.pruner_dir)
     test_cnf_primitives_exhaustive()
     test_cnf_soundness_and_witness_verifier()
     test_sharded_batch_runner(plan_obj)

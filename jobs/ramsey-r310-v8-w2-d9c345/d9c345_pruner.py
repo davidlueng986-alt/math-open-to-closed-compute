@@ -521,8 +521,9 @@ def run_pruner(cases=(5, 4, 3), out_dir: Path = None):
     if out_dir is not None:
         out_dir.mkdir(parents=True, exist_ok=True)
         cert_path = out_dir / 'd9c345_farkas_certificates.json'
-        cert_path.write_text(json.dumps(cert_bundle, separators=(',', ':')) + '\n')
-        cert_sha = hashlib.sha256(cert_path.read_bytes()).hexdigest()
+        cert_bytes = (json.dumps(cert_bundle, separators=(',', ':')) + '\n').encode('utf-8')
+        cert_path.write_bytes(cert_bytes)
+        cert_sha = hashlib.sha256(cert_bytes).hexdigest()
         summary['certificates_sha256'] = cert_sha
         sum_path = out_dir / 'd9c345_pruning_summary.json'
         sum_path.write_text(json.dumps(summary, indent=2) + '\n')
@@ -532,7 +533,7 @@ def run_pruner(cases=(5, 4, 3), out_dir: Path = None):
 def verify_certificate_file(cert_path: Path, summary_path: Path = None):
     """Independent ZERO-SOLVER pure-integer verification of d9c345_farkas_certificates.json."""
     t0 = time.monotonic()
-    raw_bytes = cert_path.read_bytes()
+    raw_bytes = cert_path.read_bytes().replace(b'\r\n', b'\n')
     actual_sha = hashlib.sha256(raw_bytes).hexdigest()
     if summary_path is not None and summary_path.exists():
         sum_obj = json.loads(summary_path.read_text())
@@ -581,7 +582,7 @@ def expand_sparse_farkas(c: int, rows, y_eq_nz, y_ub_nz):
 def verify_sparse_certificate_file(sparse_path: Path, summary_path: Path = None):
     """Independent ZERO-SOLVER pure-integer verification of d9c345_farkas_sparse.json."""
     t0 = time.monotonic()
-    raw_bytes = sparse_path.read_bytes()
+    raw_bytes = sparse_path.read_bytes().replace(b'\r\n', b'\n')
     actual_sha = hashlib.sha256(raw_bytes).hexdigest()
     if summary_path is not None and summary_path.exists():
         sum_obj = json.loads(summary_path.read_text())
@@ -620,6 +621,23 @@ def build_surviving_manifest_stdlib(sparse_path: Path, case_selector: str, out_p
     keys = [k for k in ('C5', 'C4', 'C3') if k in bundle['cases']] if case_selector == 'ALL' else [case_selector]
     out_cases = {}
     for ck in keys:
+        if ck == 'C6' and 'C6' not in bundle['cases']:
+            orbits = enumerate_canonical_skeletons(6)
+            assert len(orbits) == 12
+            surviving = [
+                {
+                    'id': f"D9-C6-S{idx:04d}",
+                    'c': 6,
+                    'nX': 3,
+                    'nT': 26,
+                    'e_xy': sum(r.bit_count() for r in rows),
+                    'e_T': 72 + sum(r.bit_count() for r in rows),
+                    'rows': list(rows),
+                }
+                for idx, rows in enumerate(orbits)
+            ]
+            out_cases['C6'] = {'c': 6, 'surviving_orbits': surviving}
+            continue
         cdata = bundle['cases'][ck]
         c = cdata['c']
         nX, nT = 9 - c, 20 + c
@@ -662,7 +680,7 @@ def main():
     ap.add_argument('--cases', default='5,4,3', help='Comma-separated c values (default: 5,4,3)')
     ap.add_argument('--out-dir', type=Path, default=Path('out_pruner'))
     ap.add_argument('--verify', action='store_true', help='Run independent zero-solver verifier on --out-dir')
-    ap.add_argument('--build-manifest', default=None, choices=['C5', 'C4', 'C3', 'ALL'],
+    ap.add_argument('--build-manifest', default=None, choices=['C6', 'C5', 'C4', 'C3', 'ALL'],
                     help='Pure-stdlib manifest builder for surviving orbits using verified sparse certs')
     ap.add_argument('--manifest-out', type=Path, default=Path('out/orbits_manifest.json'))
     args = ap.parse_args()
