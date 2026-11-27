@@ -1,0 +1,37 @@
+name: E64 critical Lean lemmas November 27
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'jobs/erdos64-lean-critical-nov27/**'
+      - '.github/workflows/erdos64-lean-critical-nov27.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        module: [AllPairsObstruction]
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify theorem and transitive axioms
+        run: bash jobs/erdos64-lean-critical-nov27/verify.sh '${{ matrix.module }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos64-critical-${{ matrix.module }}
+          path: out/
+          retention-days: 90
