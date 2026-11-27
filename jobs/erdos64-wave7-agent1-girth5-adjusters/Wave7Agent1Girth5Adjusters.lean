@@ -145,8 +145,9 @@ theorem exists_pow2_in_octave {L : ℕ} (hL : 3 ≤ L) :
   have hm_le : 2 ^ m ≤ L := Nat.pow_log_le_self 2 (by omega)
   have hm_lt : L < 2 ^ (m + 1) := Nat.lt_pow_succ_log_self (by decide : 1 < 2) L
   have hm_ge1 : 1 ≤ m := by
-    have : Nat.log 2 2 ≤ Nat.log 2 L := Nat.log_mono_right (by omega)
-    simpa using this
+    have h1 : Nat.log 2 2 ≤ Nat.log 2 L := Nat.log_mono_right (by omega)
+    have h2 : Nat.log 2 2 = 1 := by decide
+    exact h2 ▸ h1
   by_cases heq : 2 ^ m = L
   · have hm_ge2 : 2 ≤ m := by
       by_contra h
@@ -193,9 +194,7 @@ private theorem pow2_mod3_ne_zero (m : ℕ) : 2 ^ m % 3 ≠ 0 := by
     rw [h]
     omega
 
-/-- Single-Unit (`r1 = 1`) Two-Octave Mod-3 Arithmetic Theorem:
-    For any `L0 ≥ 3` and `r3` with `1 + 3 * r3 ≥ 3 * L0 - 4`, there exists `2^k` (`k ≥ 2`)
-    of the form `L0 + b + 3 * j` with `b ∈ {0, 1}` and `j ≤ r3`. -/
+/-- Single-Unit (`r1 = 1`) Two-Octave Mod-3 Arithmetic Theorem. -/
 theorem exists_pow2_in_two_octaves_mod3 {L0 r3 : ℕ} (hL0 : 3 ≤ L0)
     (hspan : 3 * L0 - 4 ≤ 1 + 3 * r3) :
     ∃ (k : ℕ) (b : Bool) (j : ℕ),
@@ -283,7 +282,7 @@ private theorem walk_edges_eq_zipWith {V : Type*} {G : SimpleGraph V} {u w : V} 
     | cons h' q' =>
       simp only [SimpleGraph.Walk.edges_cons, SimpleGraph.Walk.support_cons,
         List.tail_cons, List.zipWith_cons_cons]
-      congr 1; exact ih
+      exact congrArg (s(a, b) :: ·) ih
 
 private theorem list_map_sum_ge_length {α : Type*} (l : List α) (f : α → ℕ)
     (h : ∀ a ∈ l, 1 ≤ f a) : l.length ≤ (l.map f).sum := by
@@ -350,7 +349,8 @@ theorem isCycle_of_dropLast_nodup {V : Type*} {G : SimpleGraph V} {v : V} (p : G
       intro a b ha hb heq
       have h1 : p.support.dropLast[a]'(by omega) = p.support.dropLast[b]'(by omega) := by
         rw [hdrop_get a ha, hdrop_get b hb, heq]
-      have hinj := (List.nodup_iff_injective_getElem.mp hnodup) h1
+      have hinj : (⟨a, by omega⟩ : Fin p.support.dropLast.length) = ⟨b, by omega⟩ :=
+        (List.nodup_iff_injective_getElem.mp hnodup) h1
       simpa using hinj
     have hlast_eq_head : p.support[p.length]'(by omega) = p.support[0]'(by omega) := by
       have h0 : p.support[0]'(by omega) = v := by
@@ -405,7 +405,7 @@ namespace BypassNecklace
 
 variable {V : Type*} {G : SimpleGraph V} (N : BypassNecklace G)
 
-def nextIdx (i : Fin N.r) : Fin N.r :=
+abbrev nextIdx (i : Fin N.r) : Fin N.r :=
   ⟨(i.val + 1) % N.r, Nat.mod_lt _ (by have := N.hr; omega)⟩
 
 def seg (σ : Fin N.r → Bool) (i : Fin N.r) :
@@ -415,14 +415,14 @@ def seg (σ : Fin N.r → Bool) (i : Fin N.r) :
 theorem seg_isPath (σ : Fin N.r → Bool) (i : Fin N.r) : (N.seg σ i).IsPath := by
   unfold seg
   cases h : σ i
-  · simpa [h] using N.segA_path i
-  · simpa [h] using N.segB_path i
+  · simp only [Bool.false_eq_true, ↓reduceIte]; exact N.segA_path i
+  · simp only [↓reduceIte]; exact N.segB_path i
 
 theorem seg_pos (σ : Fin N.r → Bool) (i : Fin N.r) : 1 ≤ (N.seg σ i).length := by
   unfold seg
   cases h : σ i
-  · simpa [h] using N.segA_pos i
-  · simpa [h] using le_trans (N.segA_pos i) (N.segB_ge i)
+  · simp only [Bool.false_eq_true, ↓reduceIte]; exact N.segA_pos i
+  · simp only [↓reduceIte]; exact le_trans (N.segA_pos i) (N.segB_ge i)
 
 theorem seg_disjoint (σ : Fin N.r → Bool) {i j : Fin N.r} (hij : i ≠ j) :
     List.Disjoint (N.seg σ i).support.dropLast (N.seg σ j).support.dropLast := by
@@ -549,9 +549,9 @@ theorem seg_length_eq (σ : Fin N.r → Bool) (a : Fin N.r) :
     (N.seg σ a).length =
       (N.segA a).length + (if σ a then (N.segB a).length - (N.segA a).length else 0) := by
   unfold seg
-  cases h : σ a
-  · simp [h]
-  · simp only [h, ↓reduceIte]
+  cases σ a
+  · simp
+  · simp only [↓reduceIte]
     have := N.segB_ge a
     omega
 
@@ -918,7 +918,7 @@ def gainsWithout {V : Type*} {G : SimpleGraph V} (N : BypassNecklace G) (i0 : Fi
 theorem strict_interior_avoids_seg_edges {V : Type*} {G : SimpleGraph V}
     (N : BypassNecklace G) (i0 : Fin N.r) {ds' : List ℕ}
     (hperm : ds'.Perm (gainsWithout N i0)) (hB : BrownUnit ds')
-    (m : ℕ) (hm : 2 ≤ m)
+    (m : ℕ)
     (hlo : N.baseLength + ((N.segB i0).length - (N.segA i0).length) ≤ 2 ^ m)
     (hhi : 2 ^ m ≤ N.baseLength + (gainsWithout N i0).sum) :
     (∃ σ : Fin N.r → Bool, σ i0 = false ∧ (N.cycleWalk σ).IsCycle ∧ (N.cycleWalk σ).length = 2 ^ m) ∧
@@ -991,7 +991,7 @@ theorem no_hitting_edge_on_strict_interior_adjuster {V : Type*} {H : SimpleGraph
     (hnotOther : ∀ j : Fin N.r, j ≠ i0 → e ∉ (N.segA j).edges ∧ e ∉ (N.segB j).edges) :
     ¬ IsHittingEdge H e := by
   intro hhit
-  obtain ⟨_, σ, hσ, hcyc, hlen⟩ := strict_interior_avoids_seg_edges N i0 hperm hB m hm hlo hhi
+  obtain ⟨_, σ, hσ, hcyc, hlen⟩ := strict_interior_avoids_seg_edges N i0 hperm hB m hlo hhi
   have hmem : e ∈ (N.cycleWalk σ).edges := hhit.2 _ (N.cycleWalk σ) hcyc ⟨m, hm, hlen⟩
   rw [N.cycleWalk_edges σ, List.mem_flatMap] at hmem
   obtain ⟨j, _, hj⟩ := hmem
