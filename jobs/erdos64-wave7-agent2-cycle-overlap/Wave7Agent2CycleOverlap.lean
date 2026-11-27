@@ -70,14 +70,14 @@ lemma bad2_of_iso {V W : Type*} [Fintype V] [Fintype W]
       apply Finset.card_bij (fun w _ => e.symm w)
       · intro w hw
         simp only [Defects, Finset.mem_filter, Finset.mem_univ, true_and] at hw ⊢
-        rw [← e.symm.degree_eq w]
+        rw [e.symm.degree_eq w]
         exact hw
       · intro _ _ _ _ h
         exact e.symm.injective h
       · intro v hv
         refine ⟨e v, ?_, e.symm_apply_apply v⟩
         simp only [Defects, Finset.mem_filter, Finset.mem_univ, true_and] at hv ⊢
-        rw [← e.degree_eq v]
+        rw [e.degree_eq v]
         exact hv
     omega
 
@@ -100,7 +100,7 @@ lemma powerFree_induce {V : Type*} {G : SimpleGraph V} (s : Set V) (hG : PowerFr
     PowerFree (G.induce s) := by
   intro ⟨v, p, hcyc, hpow⟩
   apply hG
-  refine ⟨v.1, p.map (SimpleGraph.Embedding.induce s).toHom, ?_, ?_⟩
+  refine ⟨(SimpleGraph.Embedding.induce s).toHom v, p.map (SimpleGraph.Embedding.induce s).toHom, ?_, ?_⟩
   · exact hcyc.map Subtype.val_injective
   · rw [Walk.length_map]; exact hpow
 
@@ -111,7 +111,8 @@ lemma degree_induce_eq {V : Type*} [Fintype V] (G : SimpleGraph V) (S : Finset V
   apply Finset.card_bij (fun v _ => v.1)
   · intro v hv
     rw [Finset.mem_inter, mem_nb]
-    exact ⟨mem_nb.mp hv, v.2⟩
+    have h1 : (G.induce (S : Set V)).Adj u v := mem_nb.mp hv
+    exact ⟨h1, v.2⟩
   · intro _ _ _ _ h
     exact Subtype.ext h
   · intro w hw
@@ -128,7 +129,8 @@ lemma minimal_bad2_no_safe_deletion {V : Type} [Fintype V] {G : SimpleGraph V}
   have hH_pf : PowerFree H := powerFree_induce (S : Set V) hG.1.1
   have hH_min : MinDegGe H 2 := by
     intro u
-    rw [degree_induce_eq]
+    have hdeg : H.degree u = ((G.neighborFinset u.1) ∩ S).card := degree_induce_eq G S u
+    rw [hdeg]
     exact hmin u.1 u.2
   have hH_def : (Defects H).card ≤ 2 := by
     have hcard : (Defects H).card =
@@ -136,7 +138,8 @@ lemma minimal_bad2_no_safe_deletion {V : Type} [Fintype V] {G : SimpleGraph V}
       apply Finset.card_bij (fun u _ => u.1)
       · intro u hu
         simp only [Defects, Finset.mem_filter, Finset.mem_univ, true_and] at hu
-        rw [degree_induce_eq] at hu
+        have hdeg : H.degree u = ((G.neighborFinset u.1) ∩ S).card := degree_induce_eq G S u
+        rw [hdeg] at hu
         exact Finset.mem_filter.mpr ⟨u.2, hu⟩
       · intro _ _ _ _ h
         exact Subtype.ext h
@@ -144,8 +147,8 @@ lemma minimal_bad2_no_safe_deletion {V : Type} [Fintype V] {G : SimpleGraph V}
         rcases Finset.mem_filter.mp hw with ⟨hwS, hwdeg⟩
         refine ⟨⟨w, hwS⟩, ?_, rfl⟩
         simp only [Defects, Finset.mem_filter, Finset.mem_univ, true_and]
-        dsimp only [H]
-        rw [degree_induce_eq]
+        have hdeg : H.degree ⟨w, hwS⟩ = ((G.neighborFinset w) ∩ S).card := degree_induce_eq G S ⟨w, hwS⟩
+        rw [hdeg]
         exact hwdeg
     rw [hcard]
     exact hdef
