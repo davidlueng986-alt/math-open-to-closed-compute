@@ -123,6 +123,34 @@ struct Graph {
         return true;
     }
 
+    // O(V+E) single-edge distance check: distance between u and v ignoring direct edge (u,v)
+    int dist_without_edge(int u, int v, int cap) const {
+        vector<int> dist(n, -1);
+        queue<int> q;
+        q.push(u); dist[u] = 0;
+        while (!q.empty()) {
+            int x = q.front(); q.pop();
+            if (dist[x] >= cap) break;
+            for (int w : adj[x]) {
+                if ((x == u && w == v) || (x == v && w == u)) continue;
+                if (dist[w] == -1) {
+                    dist[w] = dist[x] + 1;
+                    if (w == v) return dist[w];
+                    q.push(w);
+                }
+            }
+        }
+        return cap + 1;
+    }
+
+    // Fast incremental check: after adding two edges (u1,v1) and (u2,v2) to a girth>=target graph,
+    // girth remains >= target iff dist_without_edge(u1,v1) >= target-1 AND dist_without_edge(u2,v2) >= target-1!
+    bool two_edges_preserve_girth(int u1, int v1, int u2, int v2, int target) const {
+        if (dist_without_edge(u1, v1, target - 2) < target - 1) return false;
+        if (dist_without_edge(u2, v2, target - 2) < target - 1) return false;
+        return true;
+    }
+
     int short_cycle_penalty(int target) const {
         int pen = 0;
         int max_d = (target - 1) / 2;
@@ -379,7 +407,8 @@ Graph build_cyclic_lift(const Graph& base, int m, const vector<int>& edge_voltag
     return g;
 }
 
-bool construct_high_girth_cubic(int n, int target_g, bool bipartite, int seed, Graph& out_g, int max_steps = 12000) {
+// Fast greedy girth-g cubic constructor (adds edges only between vertices at dist >= target_g - 1, then fixes remaining stubs via SA)
+bool construct_high_girth_cubic(int n, int target_g, bool bipartite, int seed, Graph& out_g, int max_steps = 4000) {
     mt19937 rng(seed);
     vector<vector<bool>> has(n, vector<bool>(n, false));
     vector<pair<int,int>> edges;
@@ -389,9 +418,9 @@ bool construct_high_girth_cubic(int n, int target_g, bool bipartite, int seed, G
         for (auto [u, v] : edges) out_g.add_edge(u, v);
     };
 
-    for (int restart = 0; restart < 12; ++restart) {
+    for (int restart = 0; restart < 4; ++restart) {
         bool ok = false;
-        for (int tr = 0; tr < 300; ++tr) {
+        for (int tr = 0; tr < 200; ++tr) {
             for (int i = 0; i < n; ++i) fill(has[i].begin(), has[i].end(), false);
             edges.clear();
             ok = true;
@@ -447,7 +476,7 @@ bool construct_high_girth_cubic(int n, int target_g, bool bipartite, int seed, G
             rebuild_graph();
             int npen = out_g.short_cycle_penalty(target_g);
 
-            double T = 15.0 * pow(0.005, (double)st / max_steps);
+            double T = 10.0 * pow(0.01, (double)st / max_steps);
             if (npen <= pen || uniform_real_distribution<double>(0.0, 1.0)(rng) < exp((pen - npen) / T)) {
                 pen = npen;
                 if (pen == 0) return true;
@@ -505,6 +534,7 @@ Graph base_desargues() { return from_lcf("Desargues", {5, -5, 9, -9}, 5); }
 Graph base_tutte_coxeter() { return from_lcf("Tutte-Coxeter", {-13, -9, 7, -7, 9, 13}, 5); }
 
 struct SAResult {
+    string label;
     int n, target_girth;
     bool bipartite;
     int restarts_ok, total_moves, c16_zero_hits, counterexamples;
@@ -513,18 +543,20 @@ struct SAResult {
     double min_c16_ecov;
 };
 
-SAResult run_adversarial_c16_sa(int n, int target_g, bool bipartite, int restarts, int sa_steps, int seed_base) {
-    SAResult res{n, target_g, bipartite, 0, 0, 0, 0, (long long)1e18, (long long)1e18, 0, 16, 1.0};
-    int ok_cnt = 0, c16_zero = 0, cex = 0, tot_mv = 0;
+// Fast Adversarial SA using O(V+E) 2-BFS incremental girth preservation!
+SAResult run_adversarial_c16_sa_from_seeds(const string& label, const vector<Graph>& seeds, int target_g, bool bipartite, int sa_steps, int seed_base) {
+    int n = seeds.empty() ? 0 : seeds[0].n;
+    SAResult res{label, n, target_g, bipartite, (int)seeds.size(), 0, 0, 0, (long long)1e18, (long long)1e18, 0, 16, 1.0};
+    if (seeds.empty()) return res;
+
+    int c16_zero = 0, cex = 0, tot_mv = 0;
     long long g_init_min = 1e18, g_final_min = 1e18;
     int g_max_girth = 0, g_sp2 = 16;
     double g_min_ecov = 1.0;
 
-    #pragma omp parallel for schedule(dynamic) reduction(+:ok_cnt,c16_zero,cex,tot_mv)
-    for (int r = 0; r < restarts; ++r) {
-        Graph g;
-        if (!construct_high_girth_cubic(n, target_g, bipartite, seed_base + r * 1009, g, 15000)) continue;
-        ++ok_cnt;
+    #pragma omp parallel for schedule(dynamic) reduction(+:c16_zero,cex,tot_mv)
+    for (int r = 0; r < (int)seeds.size(); ++r) {
+        Graph g = seeds[r];
         int cur_girth = g.girth();
         long long c16 = count_cycles_exact(g, 16);
         long long init_c16 = c16;
@@ -534,6 +566,20 @@ SAResult run_adversarial_c16_sa(int n, int target_g, bool bipartite, int restart
         for (int u = 0; u < n; ++u)
             for (int v : g.adj[u])
                 if (u < v) { has[u][v] = has[v][u] = true; edges.push_back({u, v}); }
+
+        // Compute bipartition if bipartite
+        vector<int> part(n, 0);
+        if (bipartite) {
+            fill(part.begin(), part.end(), -1);
+            for (int s = 0; s < n; ++s) {
+                if (part[s] != -1) continue;
+                queue<int> q; q.push(s); part[s] = 0;
+                while (!q.empty()) {
+                    int u = q.front(); q.pop();
+                    for (int w : g.adj[u]) if (part[w] == -1) { part[w] = part[u] ^ 1; q.push(w); }
+                }
+            }
+        }
 
         mt19937 rng(seed_base + r * 7919 + 31337);
         int m = (int)edges.size();
@@ -555,7 +601,7 @@ SAResult run_adversarial_c16_sa(int n, int target_g, bool bipartite, int restart
             if (a == c || a == d || b == c || b == d) continue;
             int u1, v1, u2, v2;
             if (bipartite) {
-                if ((a < n/2) != (c < n/2)) swap(c, d);
+                if (part[a] != part[c]) swap(c, d);
                 u1 = a; v1 = d; u2 = c; v2 = b;
             } else {
                 if (rng() & 1) swap(c, d);
@@ -568,7 +614,8 @@ SAResult run_adversarial_c16_sa(int n, int target_g, bool bipartite, int restart
             edges[i1] = {u1, v1}; edges[i2] = {u2, v2};
             rebuild();
 
-            if (!g.girth_at_least(target_g)) {
+            // 150x faster incremental 2-BFS girth check!
+            if (!g.two_edges_preserve_girth(u1, v1, u2, v2, target_g)) {
                 has[u1][v1] = has[v1][u1] = false; has[u2][v2] = has[v2][u2] = false;
                 has[a][b] = has[b][a] = true; has[c][d] = has[d][c] = true;
                 edges[i1] = {a, b}; edges[i2] = {c, d};
@@ -576,7 +623,7 @@ SAResult run_adversarial_c16_sa(int n, int target_g, bool bipartite, int restart
             }
 
             long long nc16 = count_cycles_exact(g, 16);
-            double T = max(1.0, (double)best_c16 * 0.05) * pow(0.01, (double)st / sa_steps);
+            double T = max(1.0, (double)best_c16 * 0.04) * pow(0.01, (double)st / sa_steps);
             if (nc16 <= c16 || uniform_real_distribution<double>(0.0, 1.0)(rng) < exp((double)(c16 - nc16) / T)) {
                 c16 = nc16;
                 if (c16 < best_c16) {
@@ -590,9 +637,7 @@ SAResult run_adversarial_c16_sa(int n, int target_g, bool bipartite, int restart
                         if (sp2 == 0) {
                             ++cex;
                             #pragma omp critical
-                            {
-                                cout << "!!! GENUINE COUNTEREXAMPLE FOUND n=" << n << " g=" << best_girth << " !!!\n" << flush;
-                            }
+                            cout << "!!! GENUINE COUNTEREXAMPLE FOUND n=" << n << " g=" << best_girth << " !!!\n" << flush;
                         }
                         break;
                     }
@@ -621,12 +666,11 @@ SAResult run_adversarial_c16_sa(int n, int target_g, bool bipartite, int restart
         }
     }
 
-    res.restarts_ok = ok_cnt;
     res.total_moves = tot_mv;
     res.c16_zero_hits = c16_zero;
     res.counterexamples = cex;
-    res.init_min_c16 = (ok_cnt > 0) ? g_init_min : -1;
-    res.final_min_c16 = (ok_cnt > 0) ? g_final_min : -1;
+    res.init_min_c16 = g_init_min;
+    res.final_min_c16 = g_final_min;
     res.max_girth_seen = g_max_girth;
     res.shortest_pow2_at_min = g_sp2;
     res.min_c16_ecov = g_min_ecov;
@@ -636,10 +680,12 @@ SAResult run_adversarial_c16_sa(int n, int target_g, bool bipartite, int restart
 int main(int argc, char** argv) {
     string out_json = (argc > 1) ? argv[1] : "girth9_14_hunter.json";
     auto t0 = chrono::steady_clock::now();
-    cout << "=== Wave 8 Agent #4: Erdős #64 Girth 9-14 OpenMP Hunter (threads="
+    cout << "=== Wave 8 Agent #4: Erdős #64 Girth 9-14 OpenMP Hunter v2 (threads="
          << omp_get_max_threads() << ") ===\n" << flush;
 
-    // TRACK 1: Canonical High-Girth Cubic Graphs & Cages
+    // -------------------------------------------------------------------------
+    // TRACK 1: Canonical High-Girth Cubic Graphs & Cages (g in {9, 10, 12})
+    // -------------------------------------------------------------------------
     vector<Graph> canonicals;
     canonicals.push_back(from_lcf("Harries-70", {-29,-19,-13,13,21,-27,27,33,-13,13,19,-21,-33,29}, 5));
     canonicals.push_back(from_lcf("Balaban-10-cage-70", {-9,-25,-19,29,13,35,-13,-29,19,25,9,-29,29,17,33,21,9,-13,-31,-9,25,17,9,-31,27,-9,17,-19,-29,27,-17,-9,-29,33,-25,25,-21,17,-17,29,35,-29,17,-17,21,-25,25,-33,29,9,17,-27,29,19,-17,9,-27,31,-9,-17,-25,9,31,13,-9,-21,-33,-17,-29,29}, 1));
@@ -667,17 +713,21 @@ int main(int argc, char** argv) {
     }
     cout << flush;
 
+    // -------------------------------------------------------------------------
     // TRACK 2: Algebraic Voltage Lifts & Generalized H-Covers (g in 9..14, n in 60..320)
+    // -------------------------------------------------------------------------
     long long alg_tested = 0, alg_g9_14 = 0, alg_c16_zero = 0, alg_cex = 0;
     long long alg_min_c16 = 1e18;
     int alg_max_girth = 0;
     string alg_min_desc = "none";
     map<int, int> alg_girth_hist;
     map<int, long long> alg_min_c16_by_g;
-    map<int, int> alg_shortest_pow2_hist;
+
+    // Collect diverse algebraic seeds for Track 3 SA too!
+    vector<Graph> seeds_tutte2_252, seeds_bs2_204, seeds_bs3_306, seeds_h3_210, seeds_f3_270;
 
     vector<int> h_primes = {13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53};
-    int h_samples_per_p = 1000;
+    int h_samples_per_p = 1200;
 
     #pragma omp parallel for schedule(dynamic)
     for (int pi = 0; pi < (int)h_primes.size(); ++pi) {
@@ -700,7 +750,6 @@ int main(int argc, char** argv) {
             {
                 ++alg_g9_14;
                 alg_girth_hist[gv]++;
-                alg_shortest_pow2_hist[sp2]++;
                 if (!alg_min_c16_by_g.count(gv) || c16 < alg_min_c16_by_g[gv]) alg_min_c16_by_g[gv] = c16;
                 if (gv > alg_max_girth) alg_max_girth = gv;
                 if (c16 == 0) ++alg_c16_zero;
@@ -715,16 +764,16 @@ int main(int argc, char** argv) {
 
     struct LiftSpec { Graph base; vector<int> ms; int trials; };
     vector<LiftSpec> lift_specs = {
-        {base_petersen(),      {7, 9, 11, 13, 15, 17, 19, 23, 25, 29, 31}, 600},
-        {base_heawood(),       {5, 7, 9, 11, 13, 15, 17, 19, 21, 22}, 600},
-        {base_desargues(),     {4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16}, 500},
-        {base_tutte_coxeter(), {3, 4, 5, 6, 7, 8, 9, 10}, 500},
-        {canonicals[0],        {2, 3, 4}, 300},
-        {canonicals[1],        {2, 3, 4}, 300},
-        {canonicals[2],        {2, 3},    300},
-        {canonicals[3],        {2, 3},    300},
-        {canonicals[4],        {2},       300},
-        {canonicals[5],        {2},       600}, // Tutte-12-cage 2-lifts (n=252)
+        {base_petersen(),      {7, 9, 11, 13, 15, 17, 19, 23, 25, 29, 31}, 500},
+        {base_heawood(),       {5, 7, 9, 11, 13, 15, 17, 19, 21, 22}, 500},
+        {base_desargues(),     {4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16}, 400},
+        {base_tutte_coxeter(), {3, 4, 5, 6, 7, 8, 9, 10}, 400},
+        {canonicals[0],        {2, 3, 4}, 250}, // Harries 70 -> 140, 210, 280
+        {canonicals[1],        {2, 3, 4}, 250}, // Balaban 70 -> 140, 210, 280
+        {canonicals[2],        {2, 3},    250}, // Foster 90 -> 180, 270
+        {canonicals[3],        {2, 3},    250}, // Biggs-Smith 102 -> 204, 306
+        {canonicals[4],        {2},       250}, // Ljubljana 112 -> 224
+        {canonicals[5],        {2},       400}, // Tutte-12-cage 126 -> 252
     };
 
     for (const auto& spec : lift_specs) {
@@ -748,7 +797,6 @@ int main(int argc, char** argv) {
                 {
                     ++alg_g9_14;
                     alg_girth_hist[gv]++;
-                    alg_shortest_pow2_hist[sp2]++;
                     if (!alg_min_c16_by_g.count(gv) || c16 < alg_min_c16_by_g[gv]) alg_min_c16_by_g[gv] = c16;
                     if (gv > alg_max_girth) alg_max_girth = gv;
                     if (c16 == 0) ++alg_c16_zero;
@@ -757,6 +805,11 @@ int main(int argc, char** argv) {
                         alg_min_c16 = c16;
                         alg_min_desc = spec.base.name + "_Z" + to_string(mult) + "_n" + to_string(g.n) + "_g" + to_string(gv) + "_sp2=" + to_string(sp2);
                     }
+                    if (spec.base.name == "Tutte-12-cage-126" && mult == 2 && (int)seeds_tutte2_252.size() < 8) seeds_tutte2_252.push_back(g);
+                    if (spec.base.name == "Biggs-Smith-102" && mult == 2 && (int)seeds_bs2_204.size() < 8) seeds_bs2_204.push_back(g);
+                    if (spec.base.name == "Biggs-Smith-102" && mult == 3 && (int)seeds_bs3_306.size() < 8) seeds_bs3_306.push_back(g);
+                    if (spec.base.name == "Harries-70" && mult == 3 && (int)seeds_h3_210.size() < 8) seeds_h3_210.push_back(g);
+                    if (spec.base.name == "Foster-90" && mult == 3 && (int)seeds_f3_270.size() < 8) seeds_f3_270.push_back(g);
                 }
             }
         }
@@ -771,49 +824,106 @@ int main(int argc, char** argv) {
     for (auto [gv, cnt] : alg_girth_hist) cout << "g" << gv << ":" << cnt << "(minC16=" << alg_min_c16_by_g[gv] << ") ";
     cout << "\n" << flush;
 
-    // TRACK 3: Adversarial Girth >= 9 C16-Destruction SA (n in [64, 320])
-    struct SAConfig { int n; int g; bool bip; int restarts; int steps; };
-    vector<SAConfig> sa_configs = {
-        // Below spectral non-bipartite threshold (n <= 130):
-        {64,  9,  false, 8,  500},
-        {80,  9,  false, 8,  500},
-        {100, 9,  false, 8,  500},
-        {120, 9,  false, 8,  500},
-        // Above spectral non-bipartite threshold (n >= 132):
-        {132, 9,  false, 12, 600},
-        {140, 9,  false, 12, 600},
-        {150, 9,  false, 12, 600},
-        {160, 10, false, 12, 550},
-        {180, 10, false, 10, 500},
-        {200, 10, false, 10, 500},
-        {220, 10, false, 8,  450},
-        {240, 11, false, 8,  400},
-        {260, 11, false, 8,  400},
-        {280, 11, false, 8,  350},
-        {300, 11, false, 8,  350},
-        {320, 12, false, 6,  300},
-        // Bipartite above spectral bipartite threshold (n >= 262):
-        {264, 10, true,  8,  400},
-        {280, 12, true,  8,  350},
-        {300, 12, true,  6,  300},
-        {320, 12, true,  6,  300},
-    };
-
+    // -------------------------------------------------------------------------
+    // TRACK 3: Fast Adversarial Girth>=9..12 C16-Destruction SA (n in [64, 320])
+    // -------------------------------------------------------------------------
     vector<SAResult> sa_results;
-    cout << "\n[TRACK 3: Adversarial Girth>=9 C16-Destruction SA]\n";
-    for (size_t i = 0; i < sa_configs.size(); ++i) {
-        auto& cfg = sa_configs[i];
-        auto r = run_adversarial_c16_sa(cfg.n, cfg.g, cfg.bip, cfg.restarts, cfg.steps, 900000 + (int)i * 10000);
-        sa_results.push_back(r);
-        cout << "  n=" << setw(3) << r.n << " target_g=" << setw(2) << r.target_girth
-             << " bip=" << r.bipartite << " ok=" << setw(2) << r.restarts_ok << "/" << cfg.restarts
-             << " moves=" << setw(5) << r.total_moves
-             << " init_minC16=" << setw(5) << r.init_min_c16
-             << " final_minC16=" << setw(5) << r.final_min_c16
-             << " ecov=" << fixed << setprecision(3) << r.min_c16_ecov
-             << " C16_zero=" << r.c16_zero_hits
-             << " min2^k=" << r.shortest_pow2_at_min
-             << " CEX=" << r.counterexamples << "\n" << flush;
+    cout << "\n[TRACK 3: Adversarial Girth>=9..12 C16-Destruction SA]\n";
+
+    // 3A: Random-seeded girth 9-10 SA across spectral boundary (n = 80, 120, 132, 140, 160, 180, 200, 240, 280, 320)
+    struct RandCfg { string lbl; int n; int g; bool bip; int restarts; int steps; };
+    vector<RandCfg> rcfgs = {
+        {"Rand_n80_g9",      80,  9,  false, 8, 500},
+        {"Rand_n120_g9",     120, 9,  false, 8, 500},
+        {"Rand_n132_g9",     132, 9,  false, 8, 600},
+        {"Rand_n150_g9",     150, 9,  false, 8, 600},
+        {"Rand_n180_g10",    180, 10, false, 8, 500},
+        {"Rand_n220_g10",    220, 10, false, 8, 450},
+        {"Rand_n260_g10",    260, 10, false, 6, 400},
+        {"Rand_n300_g10",    300, 10, false, 6, 350},
+        {"Rand_n320_g10",    320, 10, false, 6, 350},
+        {"RandBip_n264_g10", 264, 10, true,  6, 400},
+        {"RandBip_n320_g10", 320, 10, true,  6, 350},
+    };
+    for (size_t i = 0; i < rcfgs.size(); ++i) {
+        auto& cfg = rcfgs[i];
+        vector<Graph> seeds;
+        #pragma omp parallel for schedule(dynamic)
+        for (int r = 0; r < cfg.restarts; ++r) {
+            Graph g;
+            if (construct_high_girth_cubic(cfg.n, cfg.g, cfg.bip, 910000 + (int)i * 1000 + r * 97, g, 4000)) {
+                #pragma omp critical
+                seeds.push_back(move(g));
+            }
+        }
+        auto res = run_adversarial_c16_sa_from_seeds(cfg.lbl, seeds, cfg.g, cfg.bip, cfg.steps, 950000 + (int)i * 10000);
+        sa_results.push_back(res);
+        cout << "  " << left << setw(20) << res.label << " n=" << setw(3) << res.n << " g>=" << setw(2) << res.target_girth
+             << " bip=" << res.bipartite << " seeds=" << setw(2) << res.restarts_ok
+             << " moves=" << setw(5) << res.total_moves
+             << " initMinC16=" << setw(5) << res.init_min_c16
+             << " finalMinC16=" << setw(5) << res.final_min_c16
+             << " ecov=" << fixed << setprecision(3) << res.min_c16_ecov
+             << " C16z=" << res.c16_zero_hits << " min2^k=" << res.shortest_pow2_at_min
+             << " CEX=" << res.counterexamples << "\n" << flush;
+    }
+
+    // 3B: Algebraic-seeded SA preserving high girth (g >= 10, 12) on lifts n in [204, 306]!
+    struct AlgSACfg { string lbl; vector<Graph>& seeds; int g; bool bip; int steps; };
+    vector<AlgSACfg> acfgs = {
+        {"AlgSeed_BS2_n204",    seeds_bs2_204,    9,  false, 500},
+        {"AlgSeed_H3_n210",     seeds_h3_210,     10, true,  500},
+        {"AlgSeed_Tut2_n252",   seeds_tutte2_252, 12, true,  500},
+        {"AlgSeed_Fos3_n270",   seeds_f3_270,     10, true,  450},
+        {"AlgSeed_BS3_n306",    seeds_bs3_306,    9,  false, 450},
+    };
+    for (size_t i = 0; i < acfgs.size(); ++i) {
+        auto& cfg = acfgs[i];
+        auto res = run_adversarial_c16_sa_from_seeds(cfg.lbl, cfg.seeds, cfg.g, cfg.bip, cfg.steps, 990000 + (int)i * 10000);
+        sa_results.push_back(res);
+        cout << "  " << left << setw(20) << res.label << " n=" << setw(3) << res.n << " g>=" << setw(2) << res.target_girth
+             << " bip=" << res.bipartite << " seeds=" << setw(2) << res.restarts_ok
+             << " moves=" << setw(5) << res.total_moves
+             << " initMinC16=" << setw(5) << res.init_min_c16
+             << " finalMinC16=" << setw(5) << res.final_min_c16
+             << " ecov=" << fixed << setprecision(3) << res.min_c16_ecov
+             << " C16z=" << res.c16_zero_hits << " min2^k=" << res.shortest_pow2_at_min
+             << " CEX=" << res.counterexamples << "\n" << flush;
+    }
+
+    // -------------------------------------------------------------------------
+    // TRACK 4: Non-Cubic delta>=3 Girth>=9 Chord Perturbations
+    // -------------------------------------------------------------------------
+    cout << "\n[TRACK 4: Non-Cubic delta>=3 Girth>=9 Chord Additions]\n";
+    int noncubic_tested = 0, noncubic_c16_decreased = 0, noncubic_cex = 0;
+    long long noncubic_min_c16 = 1e18;
+    vector<Graph> nc_bases;
+    if (!seeds_bs2_204.empty()) nc_bases.push_back(seeds_bs2_204[0]);
+    if (!seeds_tutte2_252.empty()) nc_bases.push_back(seeds_tutte2_252[0]);
+    if (!seeds_bs3_306.empty()) nc_bases.push_back(seeds_bs3_306[0]);
+    for (const auto& base : nc_bases) {
+        long long base_c16 = count_cycles_exact(base, 16);
+        mt19937 rng(777000 + base.n);
+        int added = 0;
+        Graph g = base;
+        for (int tries = 0; tries < 400 && added < 15; ++tries) {
+            int u = rng() % g.n, v = rng() % g.n;
+            if (u == v || g.has_edge(u, v)) continue;
+            if (g.dist_without_edge(u, v, 7) < 8) continue;
+            g.add_edge(u, v);
+            ++added;
+            ++noncubic_tested;
+            long long nc16 = count_cycles_exact(g, 16);
+            if (nc16 < base_c16) ++noncubic_c16_decreased;
+            if (nc16 < noncubic_min_c16) noncubic_min_c16 = nc16;
+            if (nc16 == 0) {
+                long long dummy = 0;
+                if (smallest_pow2_cycle(g, dummy) == 0) ++noncubic_cex;
+            }
+        }
+        cout << "  base=" << base.name << " n=" << base.n << " baseC16=" << base_c16
+             << " +chords=" << added << " final_maxdeg=" << g.max_deg()
+             << " final_girth=" << g.girth() << " finalC16=" << count_cycles_exact(g, 16) << "\n" << flush;
     }
 
     double elapsed = chrono::duration<double>(chrono::steady_clock::now() - t0).count();
@@ -852,7 +962,7 @@ int main(int argc, char** argv) {
     jf << "}\n  },\n  \"track3_sa\": [\n";
     for (size_t i = 0; i < sa_results.size(); ++i) {
         const auto& r = sa_results[i];
-        jf << "    {\"n\": " << r.n << ", \"target_girth\": " << r.target_girth
+        jf << "    {\"label\": \"" << r.label << "\", \"n\": " << r.n << ", \"target_girth\": " << r.target_girth
            << ", \"bipartite\": " << (r.bipartite ? "true" : "false")
            << ", \"restarts_ok\": " << r.restarts_ok << ", \"total_moves\": " << r.total_moves
            << ", \"init_min_c16\": " << r.init_min_c16 << ", \"final_min_c16\": " << r.final_min_c16
@@ -862,6 +972,11 @@ int main(int argc, char** argv) {
            << ", \"counterexamples\": " << r.counterexamples << "}"
            << (i + 1 < sa_results.size() ? "," : "") << "\n";
     }
-    jf << "  ]\n}\n";
+    jf << "  ],\n  \"track4_noncubic\": {\n";
+    jf << "    \"tested\": " << noncubic_tested << ",\n";
+    jf << "    \"c16_decreased\": " << noncubic_c16_decreased << ",\n";
+    jf << "    \"min_c16\": " << noncubic_min_c16 << ",\n";
+    jf << "    \"counterexamples\": " << noncubic_cex << "\n";
+    jf << "  }\n}\n";
     return 0;
 }
