@@ -40,15 +40,17 @@ theorem nilpotent_pow_finrank_eq_zero (f : Module.End K V)
 private def rangeEnd (f : Module.End K V) : Module.End K f.range :=
   f.rangeRestrict.comp f.range.subtype
 
+omit [FiniteDimensional K V] in
 private theorem rangeEnd_pow_apply (f : Module.End K V) (n : ℕ)
     (x : f.range) :
     ((rangeEnd f ^ n) x : V) = (f ^ n) (x : V) := by
   induction n with
   | zero => rfl
   | succ n ih =>
-    rw [pow_succ', Module.End.mul_apply, pow_succ', Module.End.mul_apply]
+    rw [pow_succ', mul_apply_eq_comp, pow_succ', mul_apply_eq_comp]
     exact congrArg f ih
 
+omit [FiniteDimensional K V] in
 private theorem rangeEnd_nilpotent (f : Module.End K V)
     (hf : IsNilpotent f) : IsNilpotent (rangeEnd f) := by
   obtain ⟨n, hn⟩ := hf
@@ -71,7 +73,7 @@ theorem nilpotent_pow_finrank_range_succ_eq_zero (f : Module.End K V)
   rw [rangeEnd_pow_apply] at h
   change (f ^ finrank K f.range) (f x) = 0 at h
   change (f ^ (finrank K f.range + 1)) x = 0
-  rw [pow_succ, Module.End.mul_apply]
+  rw [pow_succ, mul_apply_eq_comp]
   exact h
 
 /-- A nonzero power of a nilpotent endomorphism forces a sufficiently
@@ -126,7 +128,7 @@ theorem local_degree_bound_from_socle_power (t : A) (ht : IsNilpotent t)
     (hboundary : finrank K (A ⧸ (LinearMap.mulLeft K t).range) = r * m) :
     e - 1 + r * m ≤ finrank K A := by
   simpa only [hboundary] using
-    nilpotent_element_quotient_bound t ht (e - 1) hsocle
+    nilpotent_element_quotient_bound (K := K) t ht (e - 1) hsocle
 
 end Algebra
 
@@ -152,7 +154,10 @@ theorem monomial_cusp_surplus_fifth (a b r e d : ℚ)
     have hp : 0 ≤ (a - 2) * (b - 3) :=
       mul_nonneg (by linarith) (by linarith)
     nlinarith
-  have hden : 0 < r * (a + b) - 1 := by nlinarith
+  have hden : 0 < r * (a + b) - 1 := by
+    have hp : 0 ≤ (r - 1) * (a + b) :=
+      mul_nonneg (by linarith) (by linarith)
+    nlinarith
   have hinner : 0 < r * (5 * a * b - 6 * (a + b)) + 6 := by
     have hp := mul_nonneg (le_of_lt hrpos) hab
     linarith
