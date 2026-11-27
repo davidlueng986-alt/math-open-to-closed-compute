@@ -50,6 +50,22 @@ section CoreGluing
 
 variable {V : Type*}
 
+private theorem support_eq_cons_start {G : SimpleGraph V} {a b : V} (p : G.Walk a b) :
+    p.support = a :: p.support.tail := by
+  cases p <;> rfl
+
+private theorem start_notMem_support_tail_of_isPath {G : SimpleGraph V} {a b : V}
+    (p : G.Walk a b) (hp : p.IsPath) : a ∉ p.support.tail := by
+  have hnd := hp.support_nodup
+  rw [support_eq_cons_start p, List.nodup_cons] at hnd
+  exact hnd.1
+
+private theorem support_tail_nodup_of_isPath {G : SimpleGraph V} {a b : V}
+    (p : G.Walk a b) (hp : p.IsPath) : p.support.tail.Nodup := by
+  have hnd := hp.support_nodup
+  rw [support_eq_cons_start p, List.nodup_cons] at hnd
+  exact hnd.2
+
 private theorem mem_support_of_mem_edges {G : SimpleGraph V} :
     ∀ {a b : V} {p : G.Walk a b} {e : Sym2 V} {x : V},
       e ∈ p.edges → x ∈ e → x ∈ p.support
@@ -66,10 +82,8 @@ private theorem mem_support_of_mem_edges {G : SimpleGraph V} :
 private theorem support_append_tail {G : SimpleGraph V} {a u b : V}
     (p : G.Walk a u) (q : G.Walk u b) :
     (p.append q).support.tail = p.support.tail ++ q.support.tail := by
-  rw [Walk.support_append]
-  cases hp : p.support with
-  | nil => exact absurd hp (Walk.support_ne_nil p)
-  | cons x xs => simp
+  rw [Walk.support_append, support_eq_cons_start p]
+  rfl
 
 private theorem length_eq_one_of_isPath_mem_edges_endpoints {G : SimpleGraph V} :
     ∀ {u v : V} (p : G.Walk u v), p.IsPath → s(u, v) ∈ p.edges → p.length = 1
@@ -108,35 +122,11 @@ theorem isCycle_append_reverse_of_internally_disjoint {G : SimpleGraph V} {u v :
     have hpos : 0 < (p.append q.reverse).length := by
       rw [Walk.length_append, Walk.length_reverse]; omega
     rw [hnil] at hpos; simp at hpos
-  have hp_nd := hp.support_nodup
-  have hqr_nd := hqr.support_nodup
-  have hu_not_ptail : u ∉ p.support.tail := by
-    cases hps : p.support with
-    | nil => exact absurd hps (Walk.support_ne_nil p)
-    | cons x xs =>
-        have hx : x = u := by
-          have := Walk.head_support p; rw [hps] at this; simpa using this
-        rw [hps, List.nodup_cons] at hp_nd
-        simpa [hx] using hp_nd.1
-  have hv_not_qrtail : v ∉ q.reverse.support.tail := by
-    cases hqs : q.reverse.support with
-    | nil => exact absurd hqs (Walk.support_ne_nil _)
-    | cons x xs =>
-        have hx : x = v := by
-          have := Walk.head_support q.reverse; rw [hqs] at this; simpa using this
-        rw [hqs, List.nodup_cons] at hqr_nd
-        simpa [hx] using hqr_nd.1
-  have hptail_nd : p.support.tail.Nodup := by
-    cases hps : p.support with
-    | nil => exact absurd hps (Walk.support_ne_nil p)
-    | cons _ _ => rw [hps, List.nodup_cons] at hp_nd; exact hp_nd.2
-  have hqrtail_nd : q.reverse.support.tail.Nodup := by
-    cases hqs : q.reverse.support with
-    | nil => exact absurd hqs (Walk.support_ne_nil _)
-    | cons _ _ => rw [hqs, List.nodup_cons] at hqr_nd; exact hqr_nd.2
+  have hu_not_ptail := start_notMem_support_tail_of_isPath p hp
+  have hv_not_qrtail := start_notMem_support_tail_of_isPath q.reverse hqr
   have htail_nd : (p.append q.reverse).support.tail.Nodup := by
     rw [support_append_tail, List.nodup_append]
-    refine ⟨hptail_nd, hqrtail_nd, ?_⟩
+    refine ⟨support_tail_nodup_of_isPath p hp, support_tail_nodup_of_isPath q.reverse hqr, ?_⟩
     intro x hxp y hyq hxy
     subst hxy
     have hxp' : x ∈ p.support := List.mem_of_mem_tail hxp
@@ -209,20 +199,15 @@ def fwdWalk {G : SimpleGraph V} {m r : ℕ} (C : ChordedEvenCycle G m r) :
                         (C.v ⟨(start + 1) % (2 * m), Nat.mod_lt _ hpos⟩) := by
         have h := C.hadj_cyc ⟨start % (2 * m), Nat.mod_lt _ hpos⟩
         simpa only [hstep] using h
-      have hend : (start + 1 + len) % (2 * m) = (start + (len + 1)) % (2 * m) := by
-        congr 1; omega
-      Walk.cons hadj (hend ▸ C.fwdWalk (start + 1) len)
+      Walk.cons hadj ((C.fwdWalk (start + 1) len).copy rfl
+        (by congr 1; apply Fin.ext; dsimp only; congr 1; omega))
 
 theorem fwdWalk_length {G : SimpleGraph V} {m r : ℕ} (C : ChordedEvenCycle G m r) :
     ∀ (start len : ℕ), (C.fwdWalk start len).length = len
   | _, 0 => rfl
   | start, len + 1 => by
-      simp only [fwdWalk]
-      have hend : (start + 1 + len) % (2 * m) = (start + (len + 1)) % (2 * m) := by
-        congr 1; omega
-      have hlen : (hend ▸ C.fwdWalk (start + 1) len).length = (C.fwdWalk (start + 1) len).length := by
-        cases hend; rfl
-      rw [Walk.length_cons, hlen, fwdWalk_length C (start + 1) len]
+      simp only [fwdWalk, Walk.length_cons, Walk.length_copy]
+      rw [fwdWalk_length C (start + 1) len]
 
 theorem fwdWalk_support {G : SimpleGraph V} {m r : ℕ} (C : ChordedEvenCycle G m r) :
     ∀ (start len : ℕ),
@@ -231,12 +216,8 @@ theorem fwdWalk_support {G : SimpleGraph V} {m r : ℕ} (C : ChordedEvenCycle G 
           C.v ⟨(start + t) % (2 * m), Nat.mod_lt _ (by have := C.hm; omega)⟩)
   | start, 0 => by simp [fwdWalk]
   | start, len + 1 => by
-      simp only [fwdWalk]
-      have hend : (start + 1 + len) % (2 * m) = (start + (len + 1)) % (2 * m) := by
-        congr 1; omega
-      have hsupp : (hend ▸ C.fwdWalk (start + 1) len).support = (C.fwdWalk (start + 1) len).support := by
-        cases hend; rfl
-      rw [Walk.support_cons, hsupp, fwdWalk_support C (start + 1) len]
+      simp only [fwdWalk, Walk.support_cons, Walk.support_copy]
+      rw [fwdWalk_support C (start + 1) len]
       rw [List.range_succ_eq_map, List.map_cons, List.map_map]
       congr 1
       · simp
@@ -259,9 +240,9 @@ theorem fwdWalk_isPath {G : SimpleGraph V} {m r : ℕ} (C : ChordedEvenCycle G m
   have hval : (start + t1) % (2 * m) = (start + t2) % (2 * m) := congrArg Fin.val hfin
   have hpos : 0 < 2 * m := by have := C.hm; omega
   have h1 : (start + t1) % (2 * m) = (start % (2 * m) + t1) % (2 * m) := by
-    rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
+    rw [Nat.add_mod]; conv_rhs => rw [Nat.add_mod, Nat.mod_mod]
   have h2 : (start + t2) % (2 * m) = (start % (2 * m) + t2) % (2 * m) := by
-    rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
+    rw [Nat.add_mod]; conv_rhs => rw [Nat.add_mod, Nat.mod_mod]
   rw [h1, h2] at hval
   set s := start % (2 * m)
   have hs : s < 2 * m := Nat.mod_lt _ hpos
@@ -283,10 +264,6 @@ theorem fwdWalk_mem_range {G : SimpleGraph V} {m r : ℕ} (C : ChordedEvenCycle 
   rcases hx with ⟨t, _, rfl⟩
   exact ⟨_, rfl⟩
 
-/-- Helper: connect two forward-arc segments via the chord `0 — (2r+1)`.
-Given `p : G.Walk u v_0` and `q : G.Walk v_{2r+1} w` that are simple paths with disjoint supports
-inside `Set.range C.v`, `p.append (Walk.cons C.hadj_chord q)` is a simple path of length
-`p.length + 1 + q.length`. -/
 private theorem chord_bridge_isPath {G : SimpleGraph V} {m r : ℕ} (C : ChordedEvenCycle G m r)
     {u w : V} (p : G.Walk u (C.v ⟨0, by have := C.hm; omega⟩))
     (q : G.Walk (C.v ⟨2 * r + 1, by have := C.hm; have := C.hr_hi; omega⟩) w)
@@ -300,16 +277,18 @@ private theorem chord_bridge_isPath {G : SimpleGraph V} {m r : ℕ} (C : Chorded
   exact hdisj x hxp hyq
 
 /-- **Type 1 Chord Path** (Arc 1 `→ 0 → 2r+1 →` Arc 2):
-For `0 ≤ a ≤ r` and `1 ≤ b ≤ m - r - 1` with `a + b = k`, produces a simple path of length `2k`
+For `0 ≤ a ≤ r` and `1 ≤ b ≤ m - r - 1`, produces a simple path of length `2(a + b)`
 from `v_{2a}` to `v_{2(r+b)}` inside `Set.range C.v`. -/
 theorem exists_chord_path_type1 {G : SimpleGraph V} {m r : ℕ} (C : ChordedEvenCycle G m r)
     {a b : ℕ} (ha : a ≤ r) (hb1 : 1 ≤ b) (hb2 : b ≤ m - r - 1) :
     ∃ p : G.Walk (C.v ⟨2 * a, by have := C.hm; have := C.hr_hi; omega⟩)
                  (C.v ⟨2 * (r + b), by have := C.hm; have := C.hr_hi; omega⟩),
       p.IsPath ∧ p.length = 2 * (a + b) ∧ ∀ x ∈ p.support, x ∈ Set.range C.v := by
-  have hm := C.hm; have hrh := C.hr_hi
+  have hm := C.hm; have hr1 := C.hr_lo; have hrh := C.hr_hi
   have h1 : (0 + 2 * a) % (2 * m) = 2 * a := Nat.mod_eq_of_lt (by omega)
-  have h2 : (2 * r + 1 + (2 * b - 1)) % (2 * m) = 2 * (r + b) := Nat.mod_eq_of_lt (by omega)
+  have h2 : (2 * r + 1 + (2 * b - 1)) % (2 * m) = 2 * (r + b) := by
+    have : 2 * r + 1 + (2 * b - 1) = 2 * (r + b) := by omega
+    rw [this, Nat.mod_eq_of_lt (by omega)]
   have h0 : 0 % (2 * m) = 0 := Nat.zero_mod _
   have h2r1 : (2 * r + 1) % (2 * m) = 2 * r + 1 := Nat.mod_eq_of_lt (by omega)
   let p0 := (C.fwdWalk 0 (2 * a)).reverse
@@ -348,13 +327,15 @@ theorem exists_chord_path_type1 {G : SimpleGraph V} {m r : ℕ} (C : ChordedEven
 
 /-- **Type 2 Chord Path** (Arc 2 `→ 0 → 2r+1 →` Arc 1):
 For `0 ≤ a ≤ m - r - 1` and `1 ≤ b ≤ r`, produces a simple path of length `2(a + b)`
-from `v_{(2m - 2a) % 2m}` to `v_{2(r + 1 - b)}` inside `Set.range C.v`. -/
+from `v_{2((m - a) % m)}` to `v_{2(r + 1 - b)}` inside `Set.range C.v`. -/
 theorem exists_chord_path_type2 {G : SimpleGraph V} {m r : ℕ} (C : ChordedEvenCycle G m r)
     {a b : ℕ} (ha : a ≤ m - r - 1) (hb1 : 1 ≤ b) (hb2 : b ≤ r) :
-    ∃ p : G.Walk (C.v ⟨2 * ((m - a) % m), by have := C.hm; omega⟩)
+    ∃ p : G.Walk (C.v ⟨2 * ((m - a) % m), by
+                    have := C.hm; have := Nat.mod_lt (m - a) (by omega : 0 < m); omega⟩)
                  (C.v ⟨2 * (r + 1 - b), by have := C.hm; have := C.hr_hi; omega⟩),
       p.IsPath ∧ p.length = 2 * (a + b) ∧ ∀ x ∈ p.support, x ∈ Set.range C.v := by
-  have hm := C.hm; have hrh := C.hr_hi
+  have hm := C.hm; have hr1 := C.hr_lo; have hrh := C.hr_hi
+  have hmod_lt : (m - a) % m < m := Nat.mod_lt _ (by omega)
   have h1 : (2 * m - 2 * a) % (2 * m) = 2 * ((m - a) % m) := by
     by_cases ha0 : a = 0
     · subst ha0; simp
@@ -409,13 +390,15 @@ theorem exists_chord_path_type2 {G : SimpleGraph V} {m r : ℕ} (C : ChordedEven
 
 /-- **Type 3 Chord Path** (Arc 2 `→ 0 → 2r+1 →` Arc 2, disjoint):
 For `0 ≤ a` and `1 ≤ b` with `a + b ≤ m - r - 1`, produces a simple path of length `2(a + b)`
-from `v_{(2m - 2a) % 2m}` to `v_{2(r + b)}` inside `Set.range C.v`. -/
+from `v_{2((m - a) % m)}` to `v_{2(r + b)}` inside `Set.range C.v`. -/
 theorem exists_chord_path_type3 {G : SimpleGraph V} {m r : ℕ} (C : ChordedEvenCycle G m r)
     {a b : ℕ} (hb1 : 1 ≤ b) (hab : a + b ≤ m - r - 1) :
-    ∃ p : G.Walk (C.v ⟨2 * ((m - a) % m), by have := C.hm; omega⟩)
+    ∃ p : G.Walk (C.v ⟨2 * ((m - a) % m), by
+                    have := C.hm; have := Nat.mod_lt (m - a) (by omega : 0 < m); omega⟩)
                  (C.v ⟨2 * (r + b), by have := C.hm; have := C.hr_hi; omega⟩),
       p.IsPath ∧ p.length = 2 * (a + b) ∧ ∀ x ∈ p.support, x ∈ Set.range C.v := by
-  have hm := C.hm; have hrh := C.hr_hi
+  have hm := C.hm; have hr1 := C.hr_lo; have hrh := C.hr_hi
+  have hmod_lt : (m - a) % m < m := Nat.mod_lt _ (by omega)
   have h1 : (2 * m - 2 * a) % (2 * m) = 2 * ((m - a) % m) := by
     by_cases ha0 : a = 0
     · subst ha0; simp
@@ -424,7 +407,9 @@ theorem exists_chord_path_type3 {G : SimpleGraph V} {m r : ℕ} (C : ChordedEven
     have : 2 * m - 2 * a + 2 * a = 2 * m := by omega
     rw [this, Nat.mod_self]
   have h2r1 : (2 * r + 1) % (2 * m) = 2 * r + 1 := Nat.mod_eq_of_lt (by omega)
-  have h3 : (2 * r + 1 + (2 * b - 1)) % (2 * m) = 2 * (r + b) := Nat.mod_eq_of_lt (by omega)
+  have h3 : (2 * r + 1 + (2 * b - 1)) % (2 * m) = 2 * (r + b) := by
+    have : 2 * r + 1 + (2 * b - 1) = 2 * (r + b) := by omega
+    rw [this, Nat.mod_eq_of_lt (by omega)]
   let p0 := C.fwdWalk (2 * m - 2 * a) (2 * a)
   let q0 := C.fwdWalk (2 * r + 1) (2 * b - 1)
   have hp0_path : p0.IsPath := C.fwdWalk_isPath (2 * m - 2 * a) (2 * a) (by omega)
@@ -491,12 +476,13 @@ def reflect {G : SimpleGraph V} {m r : ℕ} (C : ChordedEvenCycle G m r) :
       by_cases hi_last : i.val + 1 = 2 * m
       · rw [hi_last, Nat.mod_self, Nat.sub_zero, Nat.mod_self, Nat.zero_add,
           Nat.mod_eq_of_lt (by omega), Nat.mod_eq_of_lt (by omega)]; omega
-      · rw [Nat.mod_eq_of_lt (by omega), Nat.mod_eq_of_lt (by omega)]
-        by_cases hi0 : i.val = 0
-        · rw [hi0, Nat.sub_zero, Nat.mod_self]
-          have : 2 * m - 1 + 1 = 2 * m := by omega
-          rw [this, Nat.mod_self]
-        · rw [Nat.mod_eq_of_lt (by omega), Nat.mod_eq_of_lt (by omega)]; omega
+      · have hstep1 : (i.val + 1) % (2 * m) = i.val + 1 := Nat.mod_eq_of_lt (by omega)
+        rw [hstep1]
+        have hstep2 : (2 * m - (i.val + 1)) % (2 * m) = 2 * m - (i.val + 1) :=
+          Nat.mod_eq_of_lt (by omega)
+        rw [hstep2]
+        have hstep3 : 2 * m - (i.val + 1) + 1 = 2 * m - i.val := by omega
+        rw [hstep3]
     have h := (C.hadj_cyc j).symm
     simpa only [j, hj_next] using h
   hadj_chord := by
@@ -506,6 +492,38 @@ def reflect {G : SimpleGraph V} {m r : ℕ} (C : ChordedEvenCycle G m r) :
       have : 2 * m - (2 * (m - 1 - r) + 1) = 2 * r + 1 := by omega
       rw [this, Nat.mod_eq_of_lt (by omega)]
     simpa only [h0, h1] using C.hadj_chord
+
+private theorem mod_add_cancel_right {d u v w : ℕ} (hd : 0 < d) (hu : u < d) (hv : v < d)
+    (h : (u + w) % d = (v + w) % d) : u = v := by
+  have h1 : (u + w) % d = (u + w % d) % d := by
+    rw [Nat.add_mod]; conv_rhs => rw [Nat.add_mod, Nat.mod_mod]
+  have h2 : (v + w) % d = (v + w % d) % d := by
+    rw [Nat.add_mod]; conv_rhs => rw [Nat.add_mod, Nat.mod_mod]
+  rw [h1, h2] at h
+  set r := w % d
+  have hr : r < d := Nat.mod_lt _ hd
+  have hm1 : (u + r) % d = if u + r < d then u + r else u + r - d := by
+    split_ifs with hlt
+    · exact Nat.mod_eq_of_lt hlt
+    · rw [Nat.mod_eq_sub_mod (by omega), Nat.mod_eq_of_lt (by omega)]
+  have hm2 : (v + r) % d = if v + r < d then v + r else v + r - d := by
+    split_ifs with hlt
+    · exact Nat.mod_eq_of_lt hlt
+    · rw [Nat.mod_eq_sub_mod (by omega), Nat.mod_eq_of_lt (by omega)]
+  rw [hm1, hm2] at h
+  split_ifs at h <;> omega
+
+private theorem add_sub_mod_cancel {d a b : ℕ} (hd : 0 < d) (hb : b < d) :
+    (a + (b + d - a % d) % d) % d = b := by
+  have ha : a % d < d := Nat.mod_lt _ hd
+  rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
+  have hsum : a % d + (b + d - a % d) = b + d := by omega
+  rw [hsum, Nat.add_mod_right, Nat.mod_eq_of_lt hb]
+
+private theorem add_neg_mod_eq_zero {d x : ℕ} (hd : 0 < d) :
+    (x + (d - x % d) % d) % d = 0 := by
+  have h := add_sub_mod_cancel (d := d) (a := x) (b := 0) hd hd
+  simpa using h
 
 /-- Algebraic heart of Bondy–Simonovits–Verstraëte: if a `d`-periodic coloring `f : ℕ → Bool`
 (`d ∣ m`, `d ∣ k`, `1 ≤ k < m`, `1 ≤ r ≤ m - r - 1`) satisfies the Type 1, Type 2, and (when
@@ -543,12 +561,9 @@ private theorem bsv_periodic_coloring_const {m r k : ℕ} (hm : 3 ≤ m)
           intro x
           have : x + (t + 1) * k = (x + t * k) + k := by ring
           rw [this, hper_k, ih]
-    -- Using `Nat.gcd_eq_gcd_ab`, write `d = a * k + b * m` in `ℤ`, lift to `ℕ`
     have hbez := Nat.gcd_eq_gcd_ab k m
     set A : ℤ := Nat.gcdA k m
     set B : ℤ := Nat.gcdB k m
-    -- Pick `p, q : ℕ` with `d + p * m = q * k`? Even easier: `A` and `B` have `d = k * A + m * B`.
-    -- Move negative terms to the other side: `∃ s t : ℕ, d + s * k + t * m = s' * k + t' * m`
     let p1 : ℕ := Int.toNat (max A 0)
     let n1 : ℕ := Int.toNat (max (-A) 0)
     let p2 : ℕ := Int.toNat (max B 0)
@@ -562,8 +577,7 @@ private theorem bsv_periodic_coloring_const {m r k : ℕ} (hm : 3 ≤ m)
         nlinarith
       exact_mod_cast hZ
     intro x
-    calc f (x + d) = f (x + d + n1 * k + n2 * m) := by
-          rw [hmul_m, hmul_k]
+    calc f (x + d) = f (x + d + n1 * k + n2 * m) := by rw [hmul_m, hmul_k]
       _ = f (x + (d + n1 * k + n2 * m)) := by congr 1; omega
       _ = f (x + (p1 * k + p2 * m)) := by rw [hEq_nat]
       _ = f (x + p1 * k + p2 * m) := by congr 1; omega
@@ -578,29 +592,22 @@ private theorem bsv_periodic_coloring_const {m r k : ℕ} (hm : 3 ≤ m)
           have : r0 + (q + 1) * d = (r0 + q * d) + d := by ring
           rw [this, hper_d, ih]
     intro x y hxy
-    have hx : x = x % d + (x / d) * d := by
-      have := Nat.div_add_mod x d; linarith
-    have hy : y = y % d + (y / d) * d := by
-      have := Nat.div_add_mod y d; linarith
+    have hx : x = x % d + (x / d) * d := by have := Nat.div_add_mod x d; linarith
+    have hy : y = y % d + (y / d) * d := by have := Nat.div_add_mod y d; linarith
     conv_lhs => rw [hx, hstep]
     conv_rhs => rw [hy, hstep]
     rw [hxy]
-  -- Simplify `(m - a) % m` mod `d`: since `a + b = k` and `d ∣ k, d ∣ m`, `(m - a) % m ≡ b (mod d)`
   have htype2_mod : ∀ a b, a ≤ m - r - 1 → 1 ≤ b → b ≤ r → a + b = k →
       f b = f (r + 1 - b) := by
     intro a b ha hb1 hb2 hab
     have h := htype2 a b ha hb1 hb2 hab
     have hmod : ((m - a) % m) % d = b % d := by
-      have h1 : ((m - a) % m) % d = (m - a) % d := Nat.mod_mod_of_dvd (m - a) hd_dvd_m
-      rw [h1]
+      rw [Nat.mod_mod_of_dvd (m - a) hd_dvd_m]
       rcases hd_dvd_m with ⟨qm, hqm⟩
       rcases hd_dvd_k with ⟨qk, hqk⟩
-      have hle : a ≤ m := by omega
       have hsum : (m - a) + k = b + m := by omega
-      have hmod1 : ((m - a) + k) % d = (m - a) % d := by
-        rw [hqk, Nat.add_mul_mod_self_left]
-      have hmod2 : (b + m) % d = b % d := by
-        rw [hqm, Nat.add_mul_mod_self_left]
+      have hmod1 : ((m - a) + k) % d = (m - a) % d := by rw [hqk, Nat.add_mul_mod_self_left]
+      have hmod2 : (b + m) % d = b % d := by rw [hqm, Nat.add_mul_mod_self_left]
       rw [← hmod1, hsum, hmod2]
     rw [← hper_mod _ _ hmod]
     exact h
@@ -610,7 +617,6 @@ private theorem bsv_periodic_coloring_const {m r k : ℕ} (hm : 3 ≤ m)
     have h := htype1 a b ha hb1 hb2 hab
     have : r + b = r + k - a := by omega
     rwa [this] at h
-  -- If `d = 1`, done immediately!
   by_cases hd1 : d = 1
   · intro x; exact hper_mod x 0 (by simp [hd1])
   have hd2 : 2 ≤ d := by omega
@@ -619,146 +625,69 @@ private theorem bsv_periodic_coloring_const {m r k : ℕ} (hm : 3 ≤ m)
     rcases hd_dvd_m with ⟨qm, hqm⟩
     rcases hd_dvd_k with ⟨qk, hqk⟩
     have : qk < qm := by nlinarith
-    have : qk + 1 ≤ qm := by omega
-    nlinarith
-  -- Split into Case 1 (`d ≤ r`) and Case 2 (`r < d`, where `k ≤ m - r - 1` automatically!)
+    have : d * qk + d ≤ d * qm := by nlinarith
+    omega
   by_cases hdr : d ≤ r
   · -- Case 1 (`d ≤ r`): Both Type 1 and Type 2 cover a full residue system mod `d`!
     have hstep1 : ∀ y, f y = f (y + 1) := by
       intro y
-      -- Find `a ∈ [lo, lo + d - 1]` with `a ≡ r - y (mod d)` where `lo = k - min (k - 1) (m - r - 1)`
-      -- Specifically, `a` is valid for Type 1 iff `a ≤ r ∧ 1 ≤ k - a ∧ k - a ≤ m - r - 1`,
-      -- i.e. `lo1 ≤ a ≤ hi1` where `lo1 = k - (m - r - 1)` and `hi1 = min r (k - 1)`.
-      -- Check `hi1 - lo1 + 1 ≥ d`? Wait: if `k ≤ m - r - 1`, `lo1 = 0, hi1 = min r (k - 1) ≥ d - 1`,
-      -- so `hi1 - lo1 + 1 ≥ d`! If `k > m - r - 1`, `lo1 = k - (m - r - 1)`, `hi1 = min r (k - 1)`,
-      -- wait: `r - (k - (m - r - 1)) = m - k - 1 ≥ d - 1`, AND `(k - 1) - (k - (m - r - 1)) = m - r - 2 ≥ d - 1`?
-      -- Check: `m - r - 1 ≥ r ≥ d`, so `m - r - 2 ≥ d - 1`! YES!!
       let lo1 := k - (m - r - 1)
-      have hlo1_hi : lo1 + (d - 1) ≤ r ∧ lo1 + (d - 1) ≤ k - 1 := by
-        dsimp only [lo1]; omega
-      -- Similarly for Type 2: `b` valid iff `1 ≤ b ≤ r` and `k - b ≤ m - r - 1`, i.e., `lo2 ≤ b ≤ hi2`
       let lo2 := max 1 (k - (m - r - 1))
-      have hlo2_hi : lo2 + (d - 1) ≤ r ∧ lo2 + (d - 1) ≤ k := by
-        dsimp only [lo2]; omega
-      -- Pick `t1 < d` such that `(lo1 + t1) % d = (r + k - y % d) % d`?
-      -- Even simpler: pick `x0` such that `(r + k - x0) % d = y % d` and `lo1 ≤ x0 ≤ lo1 + d - 1`,
-      -- and pick `x1` such that `x1 % d = x0 % d` and `lo2 ≤ x1 ≤ lo2 + d - 1`!
-      -- Wait: `f (r + k - x0) = f x0 = f x1 = f (r + 1 - x1)`, and `(r + 1 - x1) ≡ (r + k - x0) + 1 ≡ y + 1 (mod d)`!
       let target := (r + k + d - y % d) % d
+      have htar_lt : target < d := Nat.mod_lt _ hd_pos
       let t1 := (target + d - lo1 % d) % d
       let x0 := lo1 + t1
-      have hx0_mod : x0 % d = target := by
-        have ht1_lt : t1 < d := Nat.mod_lt _ hd_pos
-        have h1 : (lo1 + t1) % d = (lo1 % d + t1) % d := by
-          rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
-        rw [h1]
-        have hlo_lt : lo1 % d < d := Nat.mod_lt _ hd_pos
-        have htar_lt : target < d := Nat.mod_lt _ hd_pos
-        dsimp only [t1]
-        rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
-        have : (lo1 % d + (target + d - lo1 % d)) % d = (target + d) % d := by
-          congr 1; omega
-        rw [this, Nat.add_mod_right, Nat.mod_eq_of_lt htar_lt]
-      have hx0_le_r : x0 ≤ r := by
-        have : t1 ≤ d - 1 := by have := Nat.mod_lt (target + d - lo1 % d) hd_pos; omega
-        omega
-      have hx0_le_k1 : x0 ≤ k - 1 := by
-        have : t1 ≤ d - 1 := by have := Nat.mod_lt (target + d - lo1 % d) hd_pos; omega
-        omega
-      have hx0_ge_lo1 : lo1 ≤ x0 := Nat.le_add_right lo1 t1
+      have hx0_mod : x0 % d = target := add_sub_mod_cancel hd_pos htar_lt
+      have ht1_lt : t1 < d := Nat.mod_lt _ hd_pos
+      have hx0_le_r : x0 ≤ r := by dsimp only [x0, lo1]; omega
+      have hx0_le_k1 : x0 ≤ k - 1 := by dsimp only [x0, lo1]; omega
       have hT1 : f x0 = f (r + k - x0) :=
-        htype1_mod x0 (k - x0) hx0_le_r (by omega) (by omega) (by omega)
-      -- Now pick `x1 ∈ [lo2, lo2 + d - 1]` with `x1 % d = target`
+        htype1_mod x0 (k - x0) hx0_le_r (by omega) (by dsimp only [x0, lo1]; omega) (by omega)
       let t2 := (target + d - lo2 % d) % d
       let x1 := lo2 + t2
-      have hx1_mod : x1 % d = target := by
-        have h1 : (lo2 + t2) % d = (lo2 % d + t2) % d := by
-          rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
-        rw [h1]
-        have hlo_lt : lo2 % d < d := Nat.mod_lt _ hd_pos
-        have htar_lt : target < d := Nat.mod_lt _ hd_pos
-        dsimp only [t2]
-        rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
-        have : (lo2 % d + (target + d - lo2 % d)) % d = (target + d) % d := by
-          congr 1; omega
-        rw [this, Nat.add_mod_right, Nat.mod_eq_of_lt htar_lt]
-      have hx1_le_r : x1 ≤ r := by
-        have : t2 ≤ d - 1 := by have := Nat.mod_lt (target + d - lo2 % d) hd_pos; omega
-        omega
-      have hx1_le_k : x1 ≤ k := by
-        have : t2 ≤ d - 1 := by have := Nat.mod_lt (target + d - lo2 % d) hd_pos; omega
-        omega
+      have hx1_mod : x1 % d = target := add_sub_mod_cancel hd_pos htar_lt
+      have ht2_lt : t2 < d := Nat.mod_lt _ hd_pos
+      have hx1_le_r : x1 ≤ r := by dsimp only [x1, lo2]; omega
+      have hx1_le_k : x1 ≤ k := by dsimp only [x1, lo2]; omega
       have hx1_ge_1 : 1 ≤ x1 := by dsimp only [x1, lo2]; omega
       have hT2 : f x1 = f (r + 1 - x1) :=
         htype2_mod (k - x1) x1 (by dsimp only [x1, lo2]; omega) hx1_ge_1 hx1_le_r (by omega)
       have hfx0_x1 : f x0 = f x1 := hper_mod x0 x1 (by rw [hx0_mod, hx1_mod])
-      -- Check `(r + k - x0) % d = y % d` and `(r + 1 - x1) % d = (y + 1) % d`!
       have hy_mod : (r + k - x0) % d = y % d := by
-        have hsum : (r + k - x0) + x0 = r + k := by omega
-        have hmod_sum : ((r + k - x0) + x0) % d = (r + k) % d := by rw [hsum]
-        rw [Nat.add_mod, hx0_mod] at hmod_sum
-        dsimp only [target] at hmod_sum
-        have hy_lt : y % d < d := Nat.mod_lt _ hd_pos
-        -- `((r + k - x0) % d + (r + k + d - y % d) % d) % d = (r + k) % d`
-        -- Let `u = (r + k - x0) % d < d`, `v = y % d < d`. Then `(u + (r + k + d - v)) % d = (r + k) % d`.
-        rw [Nat.mod_mod, ← Nat.add_mod] at hmod_sum
-        have heq1 : ((r + k - x0) % d + (r + k + d - y % d)) =
-                    (r + k) + ((r + k - x0) % d + d - y % d) := by omega
-        rw [heq1, Nat.add_mod] at hmod_sum
-        have hzero : ((r + k - x0) % d + d - y % d) % d = 0 := by
-          set A0 := (r + k) % d
-          set B0 := ((r + k - x0) % d + d - y % d) % d
-          have hA0 : A0 < d := Nat.mod_lt _ hd_pos
-          have hB0 : B0 < d := Nat.mod_lt _ hd_pos
-          have hAB : (A0 + B0) % d = A0 := hmod_sum
-          by_cases hlt : A0 + B0 < d
-          · rw [Nat.mod_eq_of_lt hlt] at hAB; omega
-          · rw [Nat.mod_eq_sub_mod (by omega), Nat.mod_eq_of_lt (by omega)] at hAB; omega
-        have hu_lt : (r + k - x0) % d < d := Nat.mod_lt _ hd_pos
-        by_cases hcmp : (r + k - x0) % d < y % d
-        · rw [Nat.mod_eq_of_lt (by omega)] at hzero; omega
-        · rw [Nat.mod_eq_sub_mod (by omega), Nat.mod_eq_of_lt (by omega)] at hzero; omega
+        apply mod_add_cancel_right hd_pos (Nat.mod_lt _ hd_pos) (Nat.mod_lt _ hd_pos) (w := target)
+        have hL : ((r + k - x0) % d + target) % d = (r + k) % d := by
+          rw [← hx0_mod, ← Nat.add_mod]
+          have : r + k - x0 + x0 = r + k := by omega
+          rw [this]
+        have hR : (y % d + target) % d = (r + k) % d := by
+          dsimp only [target]
+          rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
+          have hy_lt : y % d < d := Nat.mod_lt _ hd_pos
+          have : y % d + (r + k + d - y % d) = (r + k) + d := by omega
+          rw [this, Nat.add_mod_right]
+        rw [hL, hR]
       have hy1_mod : (r + 1 - x1) % d = (y + 1) % d := by
-        have hsum : (r + 1 - x1) + x1 = r + 1 := by omega
-        have hmod_sum : ((r + 1 - x1) + x1) % d = (r + 1) % d := by rw [hsum]
-        rw [Nat.add_mod, hx1_mod] at hmod_sum
-        dsimp only [target] at hmod_sum
-        have hy_lt : y % d < d := Nat.mod_lt _ hd_pos
+        apply mod_add_cancel_right hd_pos (Nat.mod_lt _ hd_pos) (Nat.mod_lt _ hd_pos) (w := target)
         rcases hd_dvd_k with ⟨qk, hqk⟩
-        rw [Nat.mod_mod, ← Nat.add_mod] at hmod_sum
-        have heq1 : ((r + 1 - x1) % d + (r + k + d - y % d)) =
-                    (r + 1) + ((r + 1 - x1) % d + d - y % d - 1) + k := by omega
-        -- Actually simpler: `((r + 1 - x1) + x1 + k) = (r + k) + 1`!
-        -- So `(r + 1 - x1) + x1 ≡ (r + k - x0) + x0 + 1 (mod d)`!
-        have hmod_k : (r + k) % d = r % d := by rw [hqk, Nat.add_mul_mod_self_left]
-        have h1 : ((r + 1 - x1) + x1) % d = ((r + k - x0) + x0 + 1) % d := by
-          have hL : (r + 1 - x1) + x1 = r + 1 := by omega
-          have hR : (r + k - x0) + x0 + 1 = (r + 1) + k := by omega
-          rw [hL, hR, hqk, Nat.add_mul_mod_self_left]
-        rw [Nat.add_mod, hx1_mod] at h1
-        have h2 : ((r + k - x0) + x0 + 1) % d = (((y % d) + 1) % d + target) % d := by
-          have : (r + k - x0) + x0 + 1 = ((r + k - x0) + 1) + x0 := by omega
-          rw [this, Nat.add_mod, hx0_mod, Nat.add_mod, hy_mod, ← Nat.add_mod]
-        rw [h2] at h1
-        set U := (r + 1 - x1) % d
-        set W := (y % d + 1) % d
-        have hU : U < d := Nat.mod_lt _ hd_pos
-        have hW : W < d := Nat.mod_lt _ hd_pos
-        have hT : target < d := Nat.mod_lt _ hd_pos
-        have hUW : (U + target) % d = (W + target) % d := h1
-        have hU_eq_W : U = W := by
-          have hmU : (U + target) % d = if U + target < d then U + target else U + target - d := by
-            split_ifs with hlt
-            · exact Nat.mod_eq_of_lt hlt
-            · rw [Nat.mod_eq_sub_mod (by omega), Nat.mod_eq_of_lt (by omega)]
-          have hmW : (W + target) % d = if W + target < d then W + target else W + target - d := by
-            split_ifs with hlt
-            · exact Nat.mod_eq_of_lt hlt
-            · rw [Nat.mod_eq_sub_mod (by omega), Nat.mod_eq_of_lt (by omega)]
-          rw [hmU, hmW] at hUW
-          split_ifs at hUW <;> omega
-        dsimp only [U, W] at hU_eq_W
-        rw [hU_eq_W, Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
+        have hL : ((r + 1 - x1) % d + target) % d = (r + 1) % d := by
+          rw [← hx1_mod, ← Nat.add_mod]
+          have : r + 1 - x1 + x1 = r + 1 := by omega
+          rw [this]
+        have hR : ((y + 1) % d + target) % d = (r + 1) % d := by
+          rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
+          have : (y + 1) + target = (y + target) + 1 := by omega
+          rw [this, Nat.add_mod]
+          have hyt : (y + target) % d = (r + k) % d := by
+            rw [Nat.add_mod]
+            dsimp only [target]
+            rw [Nat.mod_mod, ← Nat.add_mod]
+            have hy_lt : y % d < d := Nat.mod_lt _ hd_pos
+            have : y % d + (r + k + d - y % d) = (r + k) + d := by omega
+            rw [this, Nat.add_mod_right]
+          rw [hyt, ← Nat.add_mod]
+          have : r + k + 1 = (r + 1) + d * qk := by omega
+          rw [this, Nat.add_mul_mod_self_left]
+        rw [hL, hR]
       calc f y = f (r + k - x0) := hper_mod y (r + k - x0) hy_mod.symm
         _ = f x0 := hT1.symm
         _ = f x1 := hfx0_x1
@@ -771,7 +700,6 @@ private theorem bsv_periodic_coloring_const {m r k : ℕ} (hm : 3 ≤ m)
   · -- Case 2 (`r < d`): Automatically `k ≤ m - d ≤ m - r - 1`!
     have hlt_rd : r < d := by omega
     have hk_le_mr1 : k ≤ m - r - 1 := by omega
-    -- Step 2A: For every `1 ≤ j ≤ r`, `f j = f (j - 1)` via Type 2 + Type 1!
     have hblock : ∀ j, j ≤ r → f j = f 0 := by
       intro j
       induction j with
@@ -787,90 +715,39 @@ private theorem bsv_periodic_coloring_const {m r k : ℕ} (hm : 3 ≤ m)
             have heq : r + k - (r - j) = j + k := by omega
             rwa [heq] at this
           rw [hT2, hT1, hper_k, ih (by omega)]
-    -- Step 2B: Type 3 gives `f (x + r) = f x` for ALL `x`!
     have hper_r : ∀ x, f (x + r) = f x := by
       intro x
-      -- Pick `a = (k - x % d) % d`? Actually `a ∈ [0, d - 1]` with `a ≡ (k - x) (mod d)`!
-      -- Since `d ≤ k ≤ m - r - 1`, `b = k - a` satisfies `1 ≤ b` and `a + b = k ≤ m - r - 1`!
-      -- Wait: if `a = 0`, `b = k ≥ 1`; if `a ≤ d - 1 < k`, `b = k - a ≥ 1`!
       let a := (d - x % d) % d
       have ha_lt_d : a < d := Nat.mod_lt _ hd_pos
       have hb_ge1 : 1 ≤ k - a := by omega
       have hT3 := htype3 a (k - a) hb_ge1 (by omega) (by omega)
-      -- Check `((m - a) % m) % d = x % d` and `(r + (k - a)) % d = (x + r) % d`!
+      have hxa0 : (x + a) % d = 0 := add_neg_mod_eq_zero hd_pos
       have hx_mod : ((m - a) % m) % d = x % d := by
         rw [Nat.mod_mod_of_dvd (m - a) hd_dvd_m]
+        apply mod_add_cancel_right hd_pos (Nat.mod_lt _ hd_pos) (Nat.mod_lt _ hd_pos) (w := a)
         rcases hd_dvd_m with ⟨qm, hqm⟩
-        have ha_le_m : a ≤ m := by omega
-        have h1 : (m - a + a) % d = 0 := by
-          have : m - a + a = m := by omega
-          rw [this, hqm, Nat.mul_mod_right]
-        have h2 : (x % d + a) % d = 0 := by
-          dsimp only [a]
-          by_cases hx0 : x % d = 0
-          · simp [hx0]
-          · have hx_lt : x % d < d := Nat.mod_lt _ hd_pos
-            rw [Nat.mod_eq_of_lt (by omega)]
-            have : x % d + (d - x % d) = d := by omega
-            rw [this, Nat.mod_self]
-        -- Both `(m - a) % d` and `x % d` are `< d` and add with `a` to `0 (mod d)`!
-        set U := (m - a) % d
-        set W := x % d
-        have hU : U < d := Nat.mod_lt _ hd_pos
-        have hW : W < d := Nat.mod_lt _ hd_pos
-        have h1' : (U + a) % d = 0 := by
-          rw [← Nat.add_mod_left] at h1; exact h1
-        have hmU : (U + a) % d = if U + a < d then U + a else U + a - d := by
-          split_ifs with hlt
-          · exact Nat.mod_eq_of_lt hlt
-          · rw [Nat.mod_eq_sub_mod (by omega), Nat.mod_eq_of_lt (by omega)]
-        have hmW : (W + a) % d = if W + a < d then W + a else W + a - d := by
-          split_ifs with hlt
-          · exact Nat.mod_eq_of_lt hlt
-          · rw [Nat.mod_eq_sub_mod (by omega), Nat.mod_eq_of_lt (by omega)]
-        rw [hmU] at h1'; rw [hmW] at h2
-        split_ifs at h1' h2 <;> omega
+        have hL : ((m - a) % d + a) % d = 0 := by
+          rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
+          have : m - a + a = d * qm := by omega
+          rw [this, Nat.mul_mod_right]
+        have hR : (x % d + a) % d = 0 := by
+          rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]; exact hxa0
+        rw [hL, hR]
       have hxr_mod : (r + (k - a)) % d = (x + r) % d := by
+        apply mod_add_cancel_right hd_pos (Nat.mod_lt _ hd_pos) (Nat.mod_lt _ hd_pos) (w := a)
         rcases hd_dvd_k with ⟨qk, hqk⟩
-        have h1 : (r + (k - a)) + a = r + k := by omega
-        have h2 : (r + k) % d = r % d := by rw [hqk, Nat.add_mul_mod_self_left]
-        have h3 : ((x + r) + a) % d = r % d := by
-          have : (x + r) + a = r + (x + a) := by omega
-          rw [this, Nat.add_mod]
-          have hxa : (x + a) % d = 0 := by
-            rw [Nat.add_mod]
-            dsimp only [a]
-            by_cases hx0 : x % d = 0
-            · simp [hx0]
-            · have hx_lt : x % d < d := Nat.mod_lt _ hd_pos
-              rw [Nat.mod_eq_of_lt (by omega)]
-              have : x % d + (d - x % d) = d := by omega
-              rw [this, Nat.mod_self]
-          rw [hxa, Nat.add_zero, Nat.mod_mod]
-        set U := (r + (k - a)) % d
-        set W := (x + r) % d
-        have hU : U < d := Nat.mod_lt _ hd_pos
-        have hW : W < d := Nat.mod_lt _ hd_pos
-        have h1' : (U + a) % d = r % d := by
-          have := congrArg (· % d) h1
-          rw [h2, Nat.add_mod, Nat.mod_mod_of_dvd _ (dvd_refl d)] at this
-          simpa [U, Nat.add_mod] using this
-        have h3' : (W + a) % d = r % d := by
-          simpa [W, Nat.add_mod] using h3
-        have hmU : (U + a) % d = if U + a < d then U + a else U + a - d := by
-          split_ifs with hlt
-          · exact Nat.mod_eq_of_lt hlt
-          · rw [Nat.mod_eq_sub_mod (by omega), Nat.mod_eq_of_lt (by omega)]
-        have hmW : (W + a) % d = if W + a < d then W + a else W + a - d := by
-          split_ifs with hlt
-          · exact Nat.mod_eq_of_lt hlt
-          · rw [Nat.mod_eq_sub_mod (by omega), Nat.mod_eq_of_lt (by omega)]
-        rw [hmU] at h1'; rw [hmW] at h3'
-        split_ifs at h1' h3' <;> omega
+        have hL : ((r + (k - a)) % d + a) % d = r % d := by
+          rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
+          have : r + (k - a) + a = r + d * qk := by omega
+          rw [this, Nat.add_mul_mod_self_left]
+        have hR : ((x + r) % d + a) % d = r % d := by
+          rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
+          have : x + r + a = (x + a) + r := by omega
+          rw [this, Nat.add_mod, hxa0, Nat.zero_add, Nat.mod_mod]
+        rw [hL, hR]
       calc f (x + r) = f (r + (k - a)) := hper_mod _ _ hxr_mod.symm
         _ = f ((m - a) % m) := hT3.symm
         _ = f x := hper_mod _ _ hx_mod
-    -- Step 2C: Shift `[0, r]` by multiples of `r` to cover every `x : ℕ`!
     intro x
     have hmul_r : ∀ q y, f (y + q * r) = f y := by
       intro q
@@ -880,8 +757,7 @@ private theorem bsv_periodic_coloring_const {m r k : ℕ} (hm : 3 ≤ m)
           intro y
           have : y + (q + 1) * r = (y + q * r) + r := by ring
           rw [this, hper_r, ih]
-    have hx : x = x % r + (x / r) * r := by
-      have := Nat.div_add_mod x r; linarith
+    have hx : x = x % r + (x / r) * r := by have := Nat.div_add_mod x r; linarith
     rw [hx, hmul_r]
     exact hblock (x % r) (Nat.le_of_lt (Nat.mod_lt x (by omega)))
 
@@ -900,7 +776,6 @@ theorem bsv_chorded_cycle_all_even_ab_paths {G : SimpleGraph V} {m r : ℕ}
     ∃ (i j : Fin m)
       (p : G.Walk (C.v ⟨2 * i.val, by omega⟩) (C.v ⟨2 * j.val, by omega⟩)),
       col i ≠ col j ∧ p.IsPath ∧ p.length = 2 * k ∧ ∀ x ∈ p.support, x ∈ Set.range C.v := by
-  -- Helper proving the result under the WLOG assumption `r ≤ m - r - 1`
   have hmain : ∀ {r' : ℕ} (C' : ChordedEvenCycle G m r') (col' : Fin m → Bool),
       (∃ i0 i1 : Fin m, col' i0 ≠ col' i1) →
       r' ≤ m - r' - 1 →
@@ -909,7 +784,11 @@ theorem bsv_chorded_cycle_all_even_ab_paths {G : SimpleGraph V} {m r : ℕ}
         col' i ≠ col' j ∧ p.IsPath ∧ p.length = 2 * k ∧ ∀ x ∈ p.support, x ∈ Set.range C'.v := by
     intro r' C' col' hnt hr_half
     by_contra hnone
-    push_neg at hnone
+    have hno : ∀ (i j : Fin m)
+        (p : G.Walk (C'.v ⟨2 * i.val, by omega⟩) (C'.v ⟨2 * j.val, by omega⟩)),
+        col' i ≠ col' j → p.IsPath → p.length = 2 * k →
+        (∀ x ∈ p.support, x ∈ Set.range C'.v) → False :=
+      fun i j p h1 h2 h3 h4 => hnone ⟨i, j, p, h1, h2, h3, h4⟩
     have hm := C'.hm
     let f : ℕ → Bool := fun x => col' ⟨x % m, Nat.mod_lt _ (by omega)⟩
     have hper_m : ∀ x, f (x + m) = f x := by
@@ -933,69 +812,74 @@ theorem bsv_chorded_cycle_all_even_ab_paths {G : SimpleGraph V} {m r : ℕ}
       have hp_mem : ∀ z ∈ p.support, z ∈ Set.range C'.v := by
         intro z hz; rw [Walk.support_copy] at hz
         exact C'.fwdWalk_mem_range (2 * i.val) (2 * k) z hz
-      have hEq := hnone i j p
       by_contra hne
-      have hcol_ne : col' i ≠ col' j := fun h => hne h.symm
-      exact hEq hcol_ne hp_path hp_len hp_mem
+      exact hno i j p (fun h => hne h.symm) hp_path hp_len hp_mem
     have htype1 : ∀ a b, a ≤ r' → 1 ≤ b → b ≤ m - r' - 1 → a + b = k → f a = f (r' + b) := by
       intro a b ha hb1 hb2 hab
       obtain ⟨p, hp, hlen, hmem⟩ := C'.exists_chord_path_type1 ha hb1 hb2
       let i : Fin m := ⟨a, by have := C'.hr_hi; omega⟩
       let j : Fin m := ⟨r' + b, by omega⟩
-      have hi_mod : a % m = a := Nat.mod_eq_of_lt (by have := C'.hr_hi; omega)
-      have hj_mod : (r' + b) % m = r' + b := Nat.mod_eq_of_lt (by omega)
-      have hlen' : p.length = 2 * k := by omega
+      have hi_fin : (⟨a % m, Nat.mod_lt _ (by omega)⟩ : Fin m) = i :=
+        Fin.ext (Nat.mod_eq_of_lt (by have := C'.hr_hi; omega))
+      have hj_fin : (⟨(r' + b) % m, Nat.mod_lt _ (by omega)⟩ : Fin m) = j :=
+        Fin.ext (Nat.mod_eq_of_lt (by omega))
       by_contra hne
       have hcol_ne : col' i ≠ col' j := by
-        intro h; apply hne; dsimp only [f]; simp only [hi_mod, hj_mod]; exact h
-      exact hnone i j p hcol_ne hp hlen' hmem
+        intro h; apply hne; dsimp only [f]; rw [hi_fin, hj_fin]; exact h
+      exact hno i j p hcol_ne hp (by omega) hmem
     have htype2 : ∀ a b, a ≤ m - r' - 1 → 1 ≤ b → b ≤ r' → a + b = k →
         f ((m - a) % m) = f (r' + 1 - b) := by
       intro a b ha hb1 hb2 hab
       obtain ⟨p, hp, hlen, hmem⟩ := C'.exists_chord_path_type2 ha hb1 hb2
       let i : Fin m := ⟨(m - a) % m, Nat.mod_lt _ (by omega)⟩
       let j : Fin m := ⟨r' + 1 - b, by have := C'.hr_hi; omega⟩
-      have hi_mod : ((m - a) % m) % m = (m - a) % m := Nat.mod_mod _ _
-      have hj_mod : (r' + 1 - b) % m = r' + 1 - b := Nat.mod_eq_of_lt (by have := C'.hr_hi; omega)
-      have hlen' : p.length = 2 * k := by omega
+      have hi_fin : (⟨((m - a) % m) % m, Nat.mod_lt _ (by omega)⟩ : Fin m) = i :=
+        Fin.ext (Nat.mod_mod _ _)
+      have hj_fin : (⟨(r' + 1 - b) % m, Nat.mod_lt _ (by omega)⟩ : Fin m) = j :=
+        Fin.ext (Nat.mod_eq_of_lt (by have := C'.hr_hi; omega))
       by_contra hne
       have hcol_ne : col' i ≠ col' j := by
-        intro h; apply hne; dsimp only [f]; simp only [hi_mod, hj_mod]; exact h
-      exact hnone i j p hcol_ne hp hlen' hmem
+        intro h; apply hne; dsimp only [f]; rw [hi_fin, hj_fin]; exact h
+      exact hno i j p hcol_ne hp (by omega) hmem
     have htype3 : ∀ a b, 1 ≤ b → a + b ≤ m - r' - 1 → a + b = k →
         f ((m - a) % m) = f (r' + b) := by
       intro a b hb1 hab_le hab
       obtain ⟨p, hp, hlen, hmem⟩ := C'.exists_chord_path_type3 hb1 hab_le
       let i : Fin m := ⟨(m - a) % m, Nat.mod_lt _ (by omega)⟩
       let j : Fin m := ⟨r' + b, by omega⟩
-      have hi_mod : ((m - a) % m) % m = (m - a) % m := Nat.mod_mod _ _
-      have hj_mod : (r' + b) % m = r' + b := Nat.mod_eq_of_lt (by omega)
-      have hlen' : p.length = 2 * k := by omega
+      have hi_fin : (⟨((m - a) % m) % m, Nat.mod_lt _ (by omega)⟩ : Fin m) = i :=
+        Fin.ext (Nat.mod_mod _ _)
+      have hj_fin : (⟨(r' + b) % m, Nat.mod_lt _ (by omega)⟩ : Fin m) = j :=
+        Fin.ext (Nat.mod_eq_of_lt (by omega))
       by_contra hne
       have hcol_ne : col' i ≠ col' j := by
-        intro h; apply hne; dsimp only [f]; simp only [hi_mod, hj_mod]; exact h
-      exact hnone i j p hcol_ne hp hlen' hmem
+        intro h; apply hne; dsimp only [f]; rw [hi_fin, hj_fin]; exact h
+      exact hno i j p hcol_ne hp (by omega) hmem
     have hconst := ChordedEvenCycle.bsv_periodic_coloring_const hm C'.hr_lo hr_half hk1
       (by omega) f hper_m hper_k htype1 htype2 htype3
     rcases hnt with ⟨i0, i1, hne⟩
     have h0 : col' i0 = f 0 := by
-      have := hconst i0.val
-      dsimp only [f] at this
-      rwa [Nat.mod_eq_of_lt i0.isLt] at this
+      have h := hconst i0.val
+      have hfin : (⟨i0.val % m, Nat.mod_lt _ (by omega)⟩ : Fin m) = i0 :=
+        Fin.ext (Nat.mod_eq_of_lt i0.isLt)
+      dsimp only [f] at h
+      rwa [hfin] at h
     have h1 : col' i1 = f 0 := by
-      have := hconst i1.val
-      dsimp only [f] at this
-      rwa [Nat.mod_eq_of_lt i1.isLt] at this
+      have h := hconst i1.val
+      have hfin : (⟨i1.val % m, Nat.mod_lt _ (by omega)⟩ : Fin m) = i1 :=
+        Fin.ext (Nat.mod_eq_of_lt i1.isLt)
+      dsimp only [f] at h
+      rwa [hfin] at h
     exact hne (h0.trans h1.symm)
   by_cases hr_half : r ≤ m - r - 1
   · exact hmain C col hnontriv hr_half
-  · -- Reflect the cycle so `r' = m - 1 - r ≤ m - r' - 1`
-    have hm := C.hm; have hr1 := C.hr_lo; have hrh := C.hr_hi
+  · have hm := C.hm; have hr1 := C.hr_lo; have hrh := C.hr_hi
     let C' := C.reflect
     let refIdx : Fin m → Fin m := fun i => ⟨(m - i.val) % m, Nat.mod_lt _ (by omega)⟩
     let col' : Fin m → Bool := fun i => col (refIdx i)
     have href_invol : ∀ i : Fin m, refIdx (refIdx i) = i := by
       intro i; apply Fin.ext; dsimp only [refIdx]
+      have hi := i.isLt
       by_cases hi0 : i.val = 0
       · simp [hi0]
       · rw [Nat.mod_eq_of_lt (by omega), Nat.mod_eq_of_lt (by omega)]; omega
@@ -1007,6 +891,7 @@ theorem bsv_chorded_cycle_all_even_ab_paths {G : SimpleGraph V} {m r : ℕ}
     obtain ⟨i', j', p', hcol_ne', hp', hlen', hmem'⟩ := hmain C' col' hnt' hr_half'
     have hv_eq : ∀ u : Fin m, C'.v ⟨2 * u.val, by omega⟩ = C.v ⟨2 * (refIdx u).val, by omega⟩ := by
       intro u; dsimp only [C', ChordedEvenCycle.reflect, refIdx]
+      have hu := u.isLt
       congr 1; apply Fin.ext; dsimp only
       by_cases hu0 : u.val = 0
       · simp [hu0]
@@ -1160,39 +1045,13 @@ private theorem concat3_isPath {G : SimpleGraph V} {u1 v1 v2 u2 : V}
     ((p1.append d).append p2.reverse).IsPath := by
   have h1 : (p1.append d).IsPath := by
     rw [Walk.isPath_def, Walk.support_append, List.nodup_append]
-    have hd_nd := hd.support_nodup
-    have hv1_not : v1 ∉ d.support.tail := by
-      cases hds : d.support with
-      | nil => exact absurd hds (Walk.support_ne_nil d)
-      | cons x xs =>
-          have hx : x = v1 := by
-            have := Walk.head_support d; rw [hds] at this; simpa using this
-          rw [hds, List.nodup_cons] at hd_nd
-          simpa [hx] using hd_nd.1
-    have hdtail_nd : d.support.tail.Nodup := by
-      cases hds : d.support with
-      | nil => exact absurd hds (Walk.support_ne_nil d)
-      | cons _ _ => rw [hds, List.nodup_cons] at hd_nd; exact hd_nd.2
-    refine ⟨hp1.support_nodup, hdtail_nd, ?_⟩
+    refine ⟨hp1.support_nodup, support_tail_nodup_of_isPath d hd, ?_⟩
     intro x hxp y hyd hxy; subst hxy
     have := hp1_d x hxp (List.mem_of_mem_tail hyd)
-    subst this; exact hv1_not hyd
+    subst this; exact start_notMem_support_tail_of_isPath d hd hyd
   have hp2r := hp2.reverse
-  have hp2r_nd := hp2r.support_nodup
-  have hv2_not : v2 ∉ p2.reverse.support.tail := by
-    cases hps : p2.reverse.support with
-    | nil => exact absurd hps (Walk.support_ne_nil _)
-    | cons x xs =>
-        have hx : x = v2 := by
-          have := Walk.head_support p2.reverse; rw [hps] at this; simpa using this
-        rw [hps, List.nodup_cons] at hp2r_nd
-        simpa [hx] using hp2r_nd.1
-  have hp2rtail_nd : p2.reverse.support.tail.Nodup := by
-    cases hps : p2.reverse.support with
-    | nil => exact absurd hps (Walk.support_ne_nil _)
-    | cons _ _ => rw [hps, List.nodup_cons] at hp2r_nd; exact hp2r_nd.2
   rw [Walk.isPath_def, Walk.support_append, List.nodup_append]
-  refine ⟨h1.support_nodup, hp2rtail_nd, ?_⟩
+  refine ⟨h1.support_nodup, support_tail_nodup_of_isPath p2.reverse hp2r, ?_⟩
   intro x hx1 y hy2 hxy; subst hxy
   have hxp2 : x ∈ p2.support := by
     have := List.mem_of_mem_tail hy2
@@ -1201,7 +1060,13 @@ private theorem concat3_isPath {G : SimpleGraph V} {u1 v1 v2 u2 : V}
   rcases hx1 with hxp1 | hxd
   · exact hp1_p2 x hxp1 hxp2
   · have := hp2_d x hxp2 (List.mem_of_mem_tail hxd)
-    subst this; exact hv2_not hy2
+    subst this; exact start_notMem_support_tail_of_isPath p2.reverse hp2r hy2
+
+private theorem length_pos_of_ne_endpoints {G : SimpleGraph V} {a b : V}
+    (p : G.Walk a b) (hne : a ≠ b) : 1 ≤ p.length := by
+  cases p with
+  | nil => exact absurd rfl hne
+  | cons _ _ => simp
 
 /-- **Pillar 2 — Gao–Li–Ma–Xie (2024) Lemma 8 (Quasi-Diagonal Even+Odd Cycle Gluing)**:
 Given an even cycle split at quasi-diagonal vertices `u1, u2` into two internally disjoint
@@ -1230,6 +1095,10 @@ theorem quasi_diagonal_even_odd_consecutive_even_cycles {G : SimpleGraph V}
     ∃ t : ℕ, 2 ≤ t ∧
       (∃ c1 : G.Walk u1 u1, c1.IsCycle ∧ c1.length = 2 * t) ∧
       (∃ c2 : G.Walk u1 u1, c2.IsCycle ∧ c2.length = 2 * t + 2) := by
+  have hp1_pos : 1 ≤ p1.length := length_pos_of_ne_endpoints p1 (fun h => by
+    subst h; exact hB_D1 u1 (Or.inl (Walk.start_mem_support b1)) (Walk.start_mem_support d1))
+  have hp2_pos : 1 ≤ p2.length := length_pos_of_ne_endpoints p2 (fun h => by
+    subst h; exact hB_D1 u2 (Or.inl (Walk.end_mem_support b1)) (Walk.end_mem_support d1))
   let Q1 := (p1.append d1).append p2.reverse
   let Q2 := (p1.append d2).append p2.reverse
   have hQ1_path : Q1.IsPath :=
@@ -1264,7 +1133,6 @@ theorem quasi_diagonal_even_odd_consecutive_even_cycles {G : SimpleGraph V}
         have := List.mem_of_mem_tail hxp2r
         rwa [Walk.support_reverse, List.mem_reverse] at this
       exact Or.inr (hB_p2 x hxB hxp2)
-  -- Since `d1.length + d2.length` is odd, either `b1.length + Q1.length` or `b1.length + Q2.length` is even!
   rcases hodd with ⟨s, hs⟩
   by_cases hev : Even (b1.length + Q1.length)
   · rcases hev with ⟨t, ht⟩
@@ -1323,42 +1191,35 @@ private theorem support_tail_eq_internals_append_end {G : SimpleGraph V} :
     ∀ {a b : V} (p : G.Walk a b), 1 ≤ p.length →
       p.support.tail = walkInternals p ++ [b]
   | _, _, .nil, h => by simp at h
-  | a, b, .cons _ .nil, _ => by simp [walkInternals]
-  | a, b, .cons h1 (.cons h2 rest), _ => by
+  | _, _, .cons _ .nil, _ => by simp [walkInternals]
+  | _, b, .cons h1 (.cons h2 rest), _ => by
       have ih := support_tail_eq_internals_append_end (.cons h2 rest) (by simp)
       simp only [walkInternals, Walk.support_cons, List.tail_cons] at ih ⊢
-      have hne : (Walk.cons h2 rest).support ≠ [] := Walk.support_ne_nil _
-      rw [Walk.support_cons] at hne ⊢
-      simp only [List.dropLast_cons_of_ne_nil (Walk.support_ne_nil rest)]
-      rw [List.cons_append]
-      congr 1
-      simpa [walkInternals] using ih
+      rw [List.dropLast_cons_of_ne_nil (Walk.support_ne_nil rest), List.cons_append, ← ih]
 
 private theorem mem_internals_of_mem_edges_ge2 {G : SimpleGraph V} :
     ∀ {a b : V} (p : G.Walk a b), 2 ≤ p.length →
       ∀ e ∈ p.edges, ∃ z ∈ walkInternals p, z ∈ e
   | _, _, .nil, h, _, _ => by simp at h
   | _, _, .cons _ .nil, h, _, _ => by simp at h
-  | a, b, .cons (v := u) h1 (.cons (v := w) h2 rest), _, e, he => by
+  | _, _, .cons (v := u) h1 (.cons (v := w) h2 rest), _, e, he => by
       simp only [Walk.edges_cons, List.mem_cons] at he
       have hu_int : u ∈ walkInternals (Walk.cons h1 (Walk.cons h2 rest)) := by
         simp only [walkInternals, Walk.support_cons, List.tail_cons,
-          List.dropLast_cons_of_ne_nil (Walk.support_ne_nil rest), List.mem_cons]
-        exact Or.inl rfl
+          List.dropLast_cons_of_ne_nil (Walk.support_ne_nil rest), List.mem_cons, true_or]
       rcases he with rfl | rfl | hrest
       · exact ⟨u, hu_int, by simp⟩
       · exact ⟨u, hu_int, by simp⟩
-      · -- `rest` has length ≥ 1 since `e ∈ rest.edges`, so `w` is also internal!
-        cases rest with
+      · cases rest with
         | nil => simp at hrest
         | cons h3 rest2 =>
             obtain ⟨z, hz, hze⟩ :=
               mem_internals_of_mem_edges_ge2 (Walk.cons h2 (Walk.cons h3 rest2)) (by simp) e
-                (by simp [hrest])
+                (by simp only [Walk.edges_cons, List.mem_cons]; exact Or.inr hrest)
             refine ⟨z, ?_, hze⟩
-            simp only [walkInternals, Walk.support_cons, List.tail_cons,
-              List.dropLast_cons_of_ne_nil (Walk.support_ne_nil _), List.mem_cons] at hz ⊢
-            exact Or.inr hz
+            simp only [walkInternals, Walk.support_cons, List.tail_cons] at hz ⊢
+            rw [List.dropLast_cons_of_ne_nil (by simp)]
+            exact List.mem_cons_of_mem u hz
 
 /-- An arbitrary-girth Liu–Montgomery / quasi-diagonal adjuster chain of uniform step `δ ≥ 1`:
 at each `step`, the chain may traverse either the short path `p0 : G.Walk u w` or the long
@@ -1404,8 +1265,8 @@ theorem realize_length {G : SimpleGraph V} {δ : ℕ} :
   | _, _, .step seg p0 p1 _ _ _ rest, false :: bs, hlen => by
       simp only [numAdjusters, List.length_cons, Nat.add_right_cancel_iff] at hlen
       have ih := realize_length rest bs hlen
-      simp only [realize, baseWalk, Walk.length_append, List.count_cons,
-        beq_self_eq_true, Bool.false_eq_true, ↓reduceIte]
+      simp only [realize, baseWalk, Walk.length_append, List.count_cons]
+      simp only [beq_iff_eq, Bool.false_eq_true, ↓reduceIte, Nat.add_zero]
       omega
   | _, _, .step seg p0 p1 _ _ hstep rest, true :: bs, hlen => by
       simp only [numAdjusters, List.length_cons, Nat.add_right_cancel_iff] at hlen
@@ -1485,24 +1346,20 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} {δ : ℕ} :
           · apply hdisj x (by simp [altVertices, halt])
             simp only [baseWalk, support_append_tail, List.mem_append]
             exact Or.inl hxs
-  | _, _, .step seg p0 p1 hp0 hp1_path hstep rest, true :: bs, hlen, hnd, halt_nd, hdisj => by
+  | _, _, .step (w := w) seg p0 p1 hp0 hp1_path hstep rest, true :: bs, hlen, hnd, halt_nd, hdisj => by
       simp only [numAdjusters, List.length_cons, Nat.add_right_cancel_iff] at hlen
       simp only [baseWalk, support_append_tail, List.nodup_append] at hnd
       simp only [altVertices, List.nodup_append] at halt_nd
       rcases hnd with ⟨hseg_nd, ⟨hp0_nd, hrb_nd, hp0_rb⟩, hseg_rest⟩
-      rcases halt_nd with ⟨hp1int_nd, hrest_alt_nd, hp1_rest_alt⟩
+      rcases halt_nd with ⟨_, hrest_alt_nd, hp1_rest_alt⟩
       have hrest_disj : ∀ z ∈ rest.altVertices, z ∉ rest.baseWalk.support.tail := by
         intro z hz hm
         apply hdisj z (by simp [altVertices, hz])
         simp only [baseWalk, support_append_tail, List.mem_append]
         exact Or.inr (Or.inr hm)
       have ih := realize_support_tail_nodup rest bs hlen hrb_nd hrest_alt_nd hrest_disj
-      have hp1_tail_nd : p1.support.tail.Nodup := by
-        have h := hp1_path.support_nodup
-        cases hs : p1.support with
-        | nil => exact absurd hs (Walk.support_ne_nil p1)
-        | cons _ _ => rw [hs, List.nodup_cons] at h; exact h.2
-      have hw_mem_p0 : _ ∈ p0.support.tail := by
+      have hp1_tail_nd := support_tail_nodup_of_isPath p1 hp1_path
+      have hw_mem_p0 : w ∈ p0.support.tail := by
         rw [support_tail_eq_internals_append_end p0 hp0, List.mem_append]
         exact Or.inr (List.mem_singleton.mpr rfl)
       simp only [realize, support_append_tail, List.nodup_append]
@@ -1516,9 +1373,9 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} {δ : ℕ} :
             simp only [baseWalk, support_append_tail, List.mem_append]
             exact Or.inr (Or.inr hbase)
           · exact hp1_rest_alt x hint x halt rfl
-        · rcases mem_realize_support_tail rest bs hlen _ hyr with hbase | halt
-          · exact hp0_rb _ hw_mem_p0 _ hbase rfl
-          · apply hdisj _ (by simp [altVertices, halt])
+        · rcases mem_realize_support_tail rest bs hlen w hyr with hbase | halt
+          · exact hp0_rb w hw_mem_p0 w hbase rfl
+          · apply hdisj w (by simp [altVertices, halt])
             simp only [baseWalk, support_append_tail, List.mem_append]
             exact Or.inr (Or.inl hw_mem_p0)
       · intro x hxs y hyr hxy; subst hxy
@@ -1530,7 +1387,7 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} {δ : ℕ} :
           · apply hdisj x (by simp [altVertices, hint])
             simp only [baseWalk, support_append_tail, List.mem_append]
             exact Or.inl hxs
-          · exact hseg_rest _ hxs _ (List.mem_append.mpr (Or.inl hw_mem_p0)) rfl
+          · exact hseg_rest w hxs w (List.mem_append.mpr (Or.inl hw_mem_p0)) rfl
         · rcases mem_realize_support_tail rest bs hlen x hxr with hbase | halt
           · exact hseg_rest x hxs x (List.mem_append.mpr (Or.inr hbase)) rfl
           · apply hdisj x (by simp [altVertices, halt])
@@ -1565,6 +1422,15 @@ private theorem mem_realize_edges {G : SimpleGraph V} {δ : ℕ} (hδ : 1 ≤ δ
         · exact Or.inl (Or.inr (Or.inr hbase))
         · exact Or.inr ⟨z, Or.inr hz, hze⟩
 
+private theorem mem_append_support_right {G : SimpleGraph V} {a u b : V}
+    (p : G.Walk a u) (q : G.Walk u b) {z : V} (hz : z ∈ q.support) :
+    z ∈ (p.append q).support := by
+  rw [Walk.support_append, List.mem_append]
+  rw [support_eq_cons_start q, List.mem_cons] at hz
+  rcases hz with rfl | ht
+  · exact Or.inl (Walk.end_mem_support p)
+  · exact Or.inr ht
+
 private theorem realize_edges_nodup {G : SimpleGraph V} {δ : ℕ} (hδ : 1 ≤ δ) :
     ∀ {a b : V} (c : AdjusterChain G δ a b) (mask : List Bool),
       mask.length = c.numAdjusters →
@@ -1583,28 +1449,8 @@ private theorem realize_edges_nodup {G : SimpleGraph V} {δ : ℕ} (hδ : 1 ≤ 
       have hrest_disj : ∀ z ∈ rest.altVertices, z ∉ rest.baseWalk.support := by
         intro z hz hm
         apply hdisj z (by simp [altVertices, hz])
-        simp only [baseWalk, Walk.support_append, List.mem_append]
-        cases hrb : rest.baseWalk.support with
-        | nil => exact absurd hrb (Walk.support_ne_nil _)
-        | cons w0 ws =>
-            have hw0 : w0 = _ := by
-              have := Walk.head_support rest.baseWalk; rw [hrb] at this; simpa using this
-            rw [hrb, List.mem_cons] at hm
-            rcases hm with rfl | hws
-            · right; left
-              rw [hw0]; exact List.mem_of_mem_tail (by
-                have h := Walk.end_mem_support p0
-                cases hps : p0.support with
-                | nil => exact absurd hps (Walk.support_ne_nil _)
-                | cons _ _ =>
-                    rw [hps, List.mem_cons] at h
-                    rcases h with rfl | ht
-                    · exfalso
-                      -- Actually `w0` is in `p0.support` so it's in `seg.support ++ p0.support.tail`!
-                      exact False.elim (by
-                        have := Walk.start_mem_support p0; omega)
-                    · exact ht)
-            · right; right; rw [hrb]; exact hws
+        exact mem_append_support_right seg (p0.append rest.baseWalk)
+          (mem_append_support_right p0 rest.baseWalk hm)
       have ih := realize_edges_nodup hδ rest bs hlen hrb_nd halt_nd.2.1 hrest_disj
       simp only [realize, Walk.edges_append, List.nodup_append]
       refine ⟨hseg_nd, ⟨hp0_nd, ih, ?_⟩, ?_⟩
@@ -1612,17 +1458,8 @@ private theorem realize_edges_nodup {G : SimpleGraph V} {δ : ℕ} (hδ : 1 ≤ 
         rcases mem_realize_edges hδ rest bs hlen e her with hbase | ⟨z, hz, hze⟩
         · exact hp0_rb e hep0 e hbase rfl
         · apply hdisj z (by simp [altVertices, hz])
-          have hz_p0 := mem_support_of_mem_edges hep0 hze
-          simp only [baseWalk, Walk.support_append, List.mem_append]
-          cases hps : p0.support with
-          | nil => exact absurd hps (Walk.support_ne_nil _)
-          | cons u0 us =>
-              have hu0 : u0 = _ := by
-                have := Walk.head_support p0; rw [hps] at this; simpa using this
-              rw [hps, List.mem_cons] at hz_p0
-              rcases hz_p0 with rfl | ht
-              · left; rw [hu0]; exact Walk.end_mem_support seg
-              · right; left; rw [hps]; exact ht
+          exact mem_append_support_right seg (p0.append rest.baseWalk)
+            (by rw [Walk.support_append, List.mem_append]; exact Or.inl (mem_support_of_mem_edges hep0 hze))
       · intro e hes e' her hee; subst hee
         rw [List.mem_append] at her
         rcases her with hep0 | her
@@ -1632,7 +1469,7 @@ private theorem realize_edges_nodup {G : SimpleGraph V} {δ : ℕ} (hδ : 1 ≤ 
           · apply hdisj z (by simp [altVertices, hz])
             simp only [baseWalk, Walk.support_append, List.mem_append]
             exact Or.inl (mem_support_of_mem_edges hes hze)
-  | _, _, .step seg p0 p1 hp0 hp1_path hstep rest, true :: bs, hlen, hnd, halt_nd, hdisj => by
+  | _, _, .step (w := w) seg p0 p1 hp0 hp1_path hstep rest, true :: bs, hlen, hnd, halt_nd, hdisj => by
       simp only [numAdjusters, List.length_cons, Nat.add_right_cancel_iff] at hlen
       simp only [baseWalk, Walk.edges_append, List.nodup_append] at hnd
       simp only [altVertices, List.nodup_append] at halt_nd
@@ -1641,47 +1478,24 @@ private theorem realize_edges_nodup {G : SimpleGraph V} {δ : ℕ} (hδ : 1 ≤ 
       have hrest_disj : ∀ z ∈ rest.altVertices, z ∉ rest.baseWalk.support := by
         intro z hz hm
         apply hdisj z (by simp [altVertices, hz])
-        have hmem_base : z ∈ (seg.append (p0.append rest.baseWalk)).support := by
-          rw [Walk.support_append, Walk.support_append, List.mem_append, List.mem_append]
-          cases hrb : rest.baseWalk.support with
-          | nil => exact absurd hrb (Walk.support_ne_nil _)
-          | cons w0 ws =>
-              have hw0 : w0 = _ := by
-                have := Walk.head_support rest.baseWalk; rw [hrb] at this; simpa using this
-              rw [hrb, List.mem_cons] at hm
-              rcases hm with rfl | hws
-              · rw [hw0]
-                have hend : _ ∈ p0.support.tail := by
-                  rw [support_tail_eq_internals_append_end p0 hp0, List.mem_append]
-                  exact Or.inr (List.mem_singleton.mpr rfl)
-                exact Or.inr (Or.inl hend)
-              · exact Or.inr (Or.inr (by rw [hrb]; exact hws))
-        exact hmem_base
+        exact mem_append_support_right seg (p0.append rest.baseWalk)
+          (mem_append_support_right p0 rest.baseWalk hm)
       have ih := realize_edges_nodup hδ rest bs hlen hrb_nd hrest_alt_nd hrest_disj
       simp only [realize, Walk.edges_append, List.nodup_append]
       refine ⟨hseg_nd, ⟨hp1_path.edges_nodup, ih, ?_⟩, ?_⟩
       · intro e hep1 e' her hee; subst hee
         obtain ⟨z, hz_int, hze⟩ := mem_internals_of_mem_edges_ge2 p1 (by omega) e hep1
-        -- `z` is in `(rest.realize bs).support`!
         have hz_supp : z ∈ (rest.realize bs).support := mem_support_of_mem_edges her hze
-        cases hr : (rest.realize bs).support with
-        | nil => exact absurd hr (Walk.support_ne_nil _)
-        | cons w0 ws =>
-            have hw0 : w0 = _ := by
-              have := Walk.head_support (rest.realize bs); rw [hr] at this; simpa using this
-            rw [hr, List.mem_cons] at hz_supp
-            rcases hz_supp with rfl | hws
-            · apply hdisj w0 (by simp [altVertices, hz_int])
-              rw [hw0]
-              simp only [baseWalk, Walk.support_append, List.mem_append]
-              right; left
-              rw [support_tail_eq_internals_append_end p0 hp0, List.mem_append]
-              exact Or.inr (List.mem_singleton.mpr rfl)
-            · rcases mem_realize_support_tail rest bs hlen z (by rw [hr]; exact hws) with hbase | halt
-              · apply hdisj z (by simp [altVertices, hz_int])
-                simp only [baseWalk, Walk.support_append, List.mem_append]
-                exact Or.inr (Or.inr hbase)
-              · exact hp1_rest_alt z hz_int z halt rfl
+        rw [support_eq_cons_start (rest.realize bs), List.mem_cons] at hz_supp
+        rcases hz_supp with rfl | hws
+        · apply hdisj w (by simp [altVertices, hz_int])
+          exact mem_append_support_right seg (p0.append rest.baseWalk)
+            (mem_append_support_right p0 rest.baseWalk (Walk.start_mem_support rest.baseWalk))
+        · rcases mem_realize_support_tail rest bs hlen z hws with hbase | halt
+          · apply hdisj z (by simp [altVertices, hz_int])
+            exact mem_append_support_right seg (p0.append rest.baseWalk)
+              (mem_append_support_right p0 rest.baseWalk (List.mem_of_mem_tail hbase))
+          · exact hp1_rest_alt z hz_int z halt rfl
       · intro e hes e' her hee; subst hee
         rw [List.mem_append] at her
         rcases her with hep1 | her
@@ -1789,7 +1603,7 @@ theorem interior_edge_saturation {G : SimpleGraph V} {δ : ℕ} (hδ : 1 ≤ δ)
     have hget : mask[i]'(by omega) = false := by
       simp [mask, List.getElem_append_right, hpre_len]
     have hcnt : mask.count true = j := by
-      simp [mask, pre, suf, List.count_append, List.count_cons, List.count_replicate]; omega
+      simp [mask, pre, suf, List.count_append, List.count_replicate]; omega
     refine ⟨mask, hlen, hget, realize_isCycle hδ c hcyc halt hdisj mask hlen, ?_⟩
     rw [realize_length c mask hlen, hcnt]
   · let a := min i (j - 1)
@@ -1805,7 +1619,7 @@ theorem interior_edge_saturation {G : SimpleGraph V} {δ : ℕ} (hδ : 1 ≤ δ)
     have hget : mask[i]'(by omega) = true := by
       simp [mask, List.getElem_append_right, hpre_len]
     have hcnt : mask.count true = j := by
-      simp [mask, pre, suf, List.count_append, List.count_cons, List.count_replicate]; omega
+      simp [mask, pre, suf, List.count_append, List.count_replicate]; omega
     refine ⟨mask, hlen, hget, realize_isCycle hδ c hcyc halt hdisj mask hlen, ?_⟩
     rw [realize_length c mask hlen, hcnt]
 
