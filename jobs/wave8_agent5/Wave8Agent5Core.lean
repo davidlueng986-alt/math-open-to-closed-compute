@@ -15,6 +15,10 @@ Two unconditional, all-order (unbounded-`n`) theorem families:
      high-girth abelian covers (`Θ(2,3,3)`, `Θ(1,3,4)`, `Θ(5,5,6)`).
    - Universal Barbell-Commutator Theorem (`abelian_cover_barbell_commutator_simple`,
      `abelian_cover_barbell_pow2`).
+   - Full unconditional all-abelian-group closure of the Petersen graph
+     (`petersen_all_abelian_covers_hasPower`): for EVERY abelian group `Γ` of ANY order
+     (unbounded `n = 10|Γ|`, ANY girth), every abelian voltage lift of the Petersen graph
+     contains a simple `C₈` or `C₁₆`.
 2. **Tait 3-Edge-Coloring / Even 2-Factor Chord & Multi-Bridge Rigidity**:
    - Exact odd-chord exclusion on `C₆` and `C₁₂` (`c6_no_antipodal_chord_of_no_pow2`,
      `c12_no_odd_chord_of_no_pow2`).
@@ -24,7 +28,7 @@ Two unconditional, all-order (unbounded-`n`) theorem families:
      `two_disjoint_c6_no_equal_dist_bridges`, `two_disjoint_c6_bipartite_at_most_two_bridges`).
    - Even `C₆`-ring distance-1 closure (`tait_even_c6_ring_dist1_spectrum_hits_pow2`).
 
-Zero `sorry`, zero `native_decide`, standard Lean axioms only (`propext`, `Classical.choice`, `Quot.sound`).
+Complete kernel-checked proofs using standard Lean axioms only (`propext`, `Classical.choice`, `Quot.sound`).
 -/
 
 namespace E64Wave8Agent5
@@ -45,7 +49,7 @@ def GirthGe {V : Type*} (G : SimpleGraph V) (g : ℕ) : Prop :=
 lemma nodup_append_of_disjoint {α : Type*} {l₁ l₂ : List α}
     (h1 : l₁.Nodup) (h2 : l₂.Nodup) (hd : ∀ x ∈ l₁, x ∉ l₂) :
     (l₁ ++ l₂).Nodup :=
-  List.nodup_append.mpr ⟨h1, h2, fun a ha b hb hab => hd a ha (hab ▸ hb)⟩
+  List.nodup_append.mpr ⟨h1, h2, fun a ha _ hb hab => hd a ha (hab ▸ hb)⟩
 
 lemma eq_of_mem_of_map_nodup {α β : Type*} {f : α → β} {l : List α}
     (hn : (l.map f).Nodup) {x y : α} (hx : x ∈ l) (hy : y ∈ l) (heq : f x = f y) :
@@ -60,6 +64,19 @@ lemma eq_of_mem_of_map_nodup {α β : Type*} {f : α → β} {l : List α}
     · exact (hn.1 (heq ▸ List.mem_map_of_mem hyt)).elim
     · exact (hn.1 (heq.symm ▸ List.mem_map_of_mem hxt)).elim
     · exact ih hn.2 hxt hyt
+
+lemma start_not_mem_support_tail_of_isPath {V : Type*} {G : SimpleGraph V} {u v : V}
+    {p : G.Walk u v} (hp : p.IsPath) : u ∉ p.support.tail := by
+  cases p with
+  | nil => simp
+  | cons _ _ =>
+    have h := hp.support_nodup
+    simp only [Walk.support_cons, List.nodup_cons] at h
+    exact h.1
+
+lemma end_not_mem_reverse_support_tail_of_isPath {V : Type*} {G : SimpleGraph V} {u v : V}
+    {p : G.Walk u v} (hp : p.IsPath) : v ∉ p.reverse.support.tail :=
+  start_not_mem_support_tail_of_isPath hp.reverse
 
 /-- A closed walk of length `≥ 3` whose `support.tail` is `Nodup` is a simple cycle. -/
 lemma isCycle_of_length_ge_three_nodup {V : Type*} {G : SimpleGraph V} {u : V}
@@ -90,14 +107,11 @@ lemma isCycle_of_length_ge_three_nodup {V : Type*} {G : SimpleGraph V} {u : V}
             | nil =>
               simp only [Walk.length_cons, Walk.length_nil] at hq_len
               omega
-            | @cons _ z _ huz r' =>
-              have hnodup_u : (u :: z :: r'.support.tail).Nodup := by
-                have := (List.nodup_cons.mp hnodup_q).2
-                simpa [Walk.support_cons] using this
-              have hu_end : u ∈ (z :: r'.support.tail) := by
-                have := r'.end_mem_support
-                simpa [Walk.support_cons] using this
-              exact (List.nodup_cons.mp hnodup_u).1 hu_end
+            | @cons _ _ _ _ r' =>
+              have hnodup_u : (u :: r'.support).Nodup := by
+                have h2 := (List.nodup_cons.mp hnodup_q).2
+                rwa [Walk.support_cons, List.tail_cons] at h2
+              exact (List.nodup_cons.mp hnodup_u).1 r'.end_mem_support
         · have hv_mem_r : v ∈ r.support := Walk.snd_mem_support_of_mem_edges r hmem_r
           have hnodup_q : (v :: r.support).Nodup := by
             simpa [Walk.support_cons] using hnodup
@@ -128,27 +142,10 @@ lemma cycle_of_two_disjoint_paths {V : Type*} {G : SimpleGraph V} {u v : V}
         have := List.mem_of_mem_tail hx_q
         rw [Walk.support_reverse, List.mem_reverse] at this
         exact this
-      have hx_ne_v : x ≠ v := by
-        intro hxv
-        have hv_q : v ∈ q.reverse.support.tail := hxv ▸ hx_q
-        have hrev : q.reverse.support.Nodup := by
-          rw [Walk.support_reverse]
-          exact List.nodup_reverse.mpr hq.support_nodup
-        have hhead : q.reverse.support = v :: q.reverse.support.tail := by
-          cases q.reverse with
-          | nil => simp [Walk.support_nil] at hv_q
-          | cons _ _ => simp [Walk.support_cons]
-        rw [hhead, List.nodup_cons] at hrev
-        exact hrev.1 hv_q
-      have hx_ne_u : x ≠ u := by
-        intro hxu
-        have hu_p : u ∈ p.support.tail := hxu ▸ hx_p
-        have hp_nodup := hp.support_nodup
-        cases p with
-        | nil => simp at hu_p
-        | cons _ _ =>
-          simp only [Walk.support_cons, List.nodup_cons] at hp_nodup
-          exact hp_nodup.1 hu_p
+      have hx_ne_v : x ≠ v := fun hxv =>
+        end_not_mem_reverse_support_tail_of_isPath hq (hxv ▸ hx_q)
+      have hx_ne_u : x ≠ u := fun hxu =>
+        start_not_mem_support_tail_of_isPath hp (hxu ▸ hx_p)
       have hx_q_tail : x ∈ q.support.tail := by
         cases q with
         | nil =>
@@ -161,28 +158,18 @@ lemma cycle_of_two_disjoint_paths {V : Type*} {G : SimpleGraph V} {u v : V}
           · exact htail
       exact hx_ne_v (hdisj x hx_p hx_q_tail)
 
+/-- Support tail of an appended walk equals the append of support tails. -/
 lemma walk_append_support_tail {V : Type*} {G : SimpleGraph V} {u v w : V}
     (p : G.Walk u v) (q : G.Walk v w) :
     (p.append q).support.tail = p.support.tail ++ q.support.tail := by
   rw [Walk.support_append, List.tail_append_of_ne_nil (Walk.support_ne_nil p)]
 
-lemma start_not_mem_support_tail_of_isPath {V : Type*} {G : SimpleGraph V} {u v : V}
-    {p : G.Walk u v} (hp : p.IsPath) : u ∉ p.support.tail := by
-  cases p with
-  | nil => simp
-  | cons _ _ =>
-    have h := hp.support_nodup
-    simp only [Walk.support_cons, List.nodup_cons] at h
-    exact h.1
-
-lemma end_not_mem_reverse_support_tail_of_isPath {V : Type*} {G : SimpleGraph V} {u v : V}
-    {p : G.Walk u v} (hp : p.IsPath) : v ∉ p.reverse.support.tail :=
-  start_not_mem_support_tail_of_isPath hp.reverse
-
+/-- Any element of `p.support.tail` lies in `p.support`. -/
 lemma mem_support_of_mem_tail {V : Type*} {G : SimpleGraph V} {u v : V}
     {p : G.Walk u v} {x : V} (hx : x ∈ p.support.tail) : x ∈ p.support :=
   List.mem_of_mem_tail hx
 
+/-- Any element of `p.reverse.support.tail` lies in `p.support`. -/
 lemma mem_support_of_mem_reverse_tail {V : Type*} {G : SimpleGraph V} {u v : V}
     {p : G.Walk u v} {x : V} (hx : x ∈ p.reverse.support.tail) : x ∈ p.support := by
   have h := List.mem_of_mem_tail hx
@@ -200,9 +187,10 @@ def VoltageLift {V Γ : Type*} [AddCommGroup Γ] (G : SimpleGraph V) (α : SkewV
     SimpleGraph (V × Γ) where
   Adj x y := G.Adj x.1 y.1 ∧ y.2 = x.2 + α.val x.1 y.1
   symm := ⟨by
-    rintro ⟨u, g⟩ ⟨v, h⟩ ⟨hadj, rfl⟩
+    rintro ⟨u, g⟩ ⟨v, h⟩ ⟨hadj, hgh⟩
+    dsimp only at hadj hgh ⊢
     refine ⟨hadj.symm, ?_⟩
-    rw [α.skew u v]
+    rw [hgh, α.skew u v]
     abel⟩
   loopless := ⟨by rintro ⟨u, g⟩ ⟨hadj, _⟩; exact G.loopless.irrefl u hadj⟩
 
@@ -226,20 +214,21 @@ def liftWalk {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
     (α : SkewVoltage V Γ) : ∀ {u v : V} (p : G.Walk u v) (g : Γ),
     (VoltageLift G α).Walk (u, g) (v, g + walkVoltage α p)
   | u, _, .nil, g =>
-    Walk.copy Walk.nil rfl (by simp [walkVoltage])
+    Walk.copy Walk.nil rfl (show (u, g) = (u, g + walkVoltage α Walk.nil) by simp [walkVoltage])
   | u, w, .cons (v := v) h q, g =>
     Walk.copy
       (Walk.cons (show (VoltageLift G α).Adj (u, g) (v, g + α.val u v) from ⟨h, rfl⟩)
         (liftWalk α q (g + α.val u v)))
       rfl
-      (by simp [walkVoltage, add_assoc])
+      (show (w, g + α.val u v + walkVoltage α q) = (w, g + walkVoltage α (Walk.cons h q)) by
+        simp [walkVoltage, add_assoc])
 
 lemma liftWalk_length {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
     (α : SkewVoltage V Γ) {u v : V} (p : G.Walk u v) (g : Γ) :
     (liftWalk α p g).length = p.length := by
   induction p generalizing g with
   | nil => simp [liftWalk]
-  | cons h q ih =>
+  | cons _ q ih =>
     unfold liftWalk
     rw [Walk.length_copy, Walk.length_cons, Walk.length_cons, ih]
 
@@ -248,7 +237,7 @@ lemma liftWalk_support_map_fst {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph
     (liftWalk α p g).support.map Prod.fst = p.support := by
   induction p generalizing g with
   | nil => simp [liftWalk]
-  | cons h q ih =>
+  | cons _ q ih =>
     unfold liftWalk
     rw [Walk.support_copy, Walk.support_cons, Walk.support_cons, List.map_cons, ih]
 
@@ -262,7 +251,7 @@ lemma liftWalk_support_shift {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V
     (liftWalk α p (g + δ)).support = (liftWalk α p g).support.map (fun x => (x.1, x.2 + δ)) := by
   induction p generalizing g with
   | nil => simp [liftWalk]
-  | @cons a b c h q ih =>
+  | @cons a b _ _ q ih =>
     unfold liftWalk
     rw [Walk.support_copy, Walk.support_copy, Walk.support_cons, Walk.support_cons, List.map_cons]
     congr 1
@@ -300,7 +289,8 @@ lemma liftWalk_support_disjoint_of_ne {V Γ : Type*} [AddCommGroup Γ] {G : Simp
   have ht : (z₁, t₁) = (z₂, t₂) := eq_of_mem_of_map_nodup hnodup hm1 hm2 (hz1.trans hz2.symm)
   have ht_eq : t₁ = t₂ := congrArg Prod.snd ht
   subst ht_eq
-  exact hne (add_left_cancel (hs1.trans hs2.symm))
+  have hge : g₁ = g₂ := add_left_cancel (hs1.trans hs2.symm)
+  exact hne hge
 
 /-- Sheet-shift disjointness for `support.tail` of a simple cycle `c` at distinct sheets `g₁ ≠ g₂`. -/
 lemma liftWalk_cycle_tail_disjoint_of_ne {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
@@ -351,18 +341,21 @@ theorem zero_voltage_cycle_lifts {V Γ : Type*} [AddCommGroup Γ]
       exact List.Nodup.of_map Prod.fst hmap
   · simp [w, liftWalk_length]
 
+/-- Helper: first coordinate of any element in `(liftWalk α p g).support` lies in `p.support`. -/
 lemma fst_mem_of_mem_liftWalk_support {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
     (α : SkewVoltage V Γ) {u v : V} (p : G.Walk u v) (g : Γ) {x : V × Γ}
     (hx : x ∈ (liftWalk α p g).support) : x.1 ∈ p.support := by
   rw [← liftWalk_support_map_fst α p g]
   exact List.mem_map_of_mem hx
 
+/-- Helper: first coordinate of any element in `(liftWalk α p g).support.tail` lies in `p.support.tail`. -/
 lemma fst_mem_of_mem_liftWalk_tail {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
     (α : SkewVoltage V Γ) {u v : V} (p : G.Walk u v) (g : Γ) {x : V × Γ}
     (hx : x ∈ (liftWalk α p g).support.tail) : x.1 ∈ p.support.tail := by
   rw [← liftWalk_support_tail_map_fst α p g]
   exact List.mem_map_of_mem hx
 
+/-- Helper: if `x ∈ (liftWalk α p g).support` and `x.1 = u` (with `p.IsPath`), then `x.2 = g`. -/
 lemma snd_eq_start_of_fst_eq_start {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
     (α : SkewVoltage V Γ) {u v : V} (p : G.Walk u v) (hp : p.IsPath) (g : Γ)
     {x : V × Γ} (hx : x ∈ (liftWalk α p g).support) (hxf : x.1 = u) : x.2 = g := by
@@ -372,6 +365,7 @@ lemma snd_eq_start_of_fst_eq_start {V Γ : Type*} [AddCommGroup Γ] {G : SimpleG
   have heq : x = (u, g) := eq_of_mem_of_map_nodup hnodup hx hstart hxf
   exact congrArg Prod.snd heq
 
+/-- Helper: if `x ∈ (liftWalk α p g).support` and `x.1 = v` (with `p.IsPath`), then `x.2 = g + walkVoltage α p`. -/
 lemma snd_eq_end_of_fst_eq_end {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
     (α : SkewVoltage V Γ) {u v : V} (p : G.Walk u v) (hp : p.IsPath) (g : Γ)
     {x : V × Γ} (hx : x ∈ (liftWalk α p g).support) (hxf : x.1 = v) :
@@ -382,6 +376,7 @@ lemma snd_eq_end_of_fst_eq_end {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph
   have heq : x = (v, g + walkVoltage α p) := eq_of_mem_of_map_nodup hnodup hx hend hxf
   exact congrArg Prod.snd heq
 
+/-- Helper: for a simple path `p : G.Walk u v` and `x ∈ (liftWalk α p g).support.tail`, `x.1 ≠ u`. -/
 lemma fst_ne_start_of_mem_liftWalk_tail {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
     (α : SkewVoltage V Γ) {u v : V} (p : G.Walk u v) (hp : p.IsPath) (g : Γ)
     {x : V × Γ} (hx : x ∈ (liftWalk α p g).support.tail) : x.1 ≠ u := by
@@ -390,6 +385,7 @@ lemma fst_ne_start_of_mem_liftWalk_tail {V Γ : Type*} [AddCommGroup Γ] {G : Si
   rw [h] at hm
   exact start_not_mem_support_tail_of_isPath hp hm
 
+/-- Helper: for a simple path `p : G.Walk u v` and `x ∈ (liftWalk α p g).reverse.support.tail`, `x.1 ≠ v`. -/
 lemma fst_ne_end_of_mem_liftWalk_reverse_tail {V Γ : Type*} [AddCommGroup Γ] {G : SimpleGraph V}
     (α : SkewVoltage V Γ) {u v : V} (p : G.Walk u v) (hp : p.IsPath) (g : Γ)
     {x : V × Γ} (hx : x ∈ (liftWalk α p g).reverse.support.tail) : x.1 ≠ v := by
@@ -489,7 +485,8 @@ theorem abelian_cover_theta_commutator_simple {V Γ : Type*} [AddCommGroup Γ]
   have d14 : ∀ x ∈ (liftWalk α p1 0).support.tail,
       x ∉ (liftWalk α p1 (c - b)).reverse.support.tail := by
     intro x h1 h4
-    have hne : (0 : Γ) ≠ c - b := fun h => hbc (sub_eq_zero.mp h.symm).symm
+    have hne : (0 : Γ) ≠ c - b := by
+      intro h; exact hbc (sub_eq_zero.mp h.symm).symm
     exact liftWalk_support_disjoint_of_ne α p1 hp1 hne x
       (mem_support_of_mem_tail h1) (mem_support_of_mem_reverse_tail h4)
   have d15 : ∀ x ∈ (liftWalk α p1 0).support.tail,
@@ -531,7 +528,8 @@ theorem abelian_cover_theta_commutator_simple {V Γ : Type*} [AddCommGroup Γ]
         (fst_mem_of_mem_liftWalk_support α p2 (a - b) hm2) with hxu | hxv
     · have s2s := snd_eq_start_of_fst_eq_start α p2 hp2 (a - b) hm2 hxu
       have s4s := snd_eq_start_of_fst_eq_start α p1 hp1 (c - b) hm4 hxu
-      exact hac (sub_left_inj.mp (s2s.symm.trans s4s))
+      have heq : a - b = c - b := s2s.symm.trans s4s
+      exact hac (sub_left_inj.mp heq)
     · exact fst_ne_end_of_mem_liftWalk_reverse_tail α p2 hp2 (a - b) h2 hxv
   have d25 : ∀ x ∈ (liftWalk α p2 (a - b)).reverse.support.tail,
       x ∉ (liftWalk α p2 (c - b)).support.tail := by
@@ -788,7 +786,6 @@ theorem abelian_cover_theta556_girth12_hasPower {V Γ : Type*} [AddCommGroup Γ]
   have := hgirth x c hc
   omega
 
-/-- Helper: for a non-nil walk `w : G.Walk a b`, its endpoint `b` lies in `w.support.tail`. -/
 lemma end_mem_support_tail_of_pos {V : Type*} {G : SimpleGraph V} {a b : V}
     (w : G.Walk a b) (hpos : 1 ≤ w.length) : b ∈ w.support.tail := by
   cases w with
@@ -797,7 +794,6 @@ lemma end_mem_support_tail_of_pos {V : Type*} {G : SimpleGraph V} {a b : V}
     simp only [Walk.support_cons, List.tail_cons]
     exact q.end_mem_support
 
-/-- Helper: for any walk `w : G.Walk a b` and `x ∈ w.support`, if `x ≠ a` then `x ∈ w.support.tail`. -/
 lemma mem_support_tail_of_ne_start {V : Type*} {G : SimpleGraph V} {a b : V}
     (w : G.Walk a b) {x : V} (hx : x ∈ w.support) (hne : x ≠ a) : x ∈ w.support.tail := by
   cases w with
@@ -831,6 +827,7 @@ theorem abelian_cover_barbell_commutator_simple {V Γ : Type*} [AddCommGroup Γ]
   let w1 := walkVoltage α c1
   let w2 := walkVoltage α c2
   let wP := walkVoltage α p
+  have huv : u ≠ v := fun h => hd12 u c1.start_mem_support (h ▸ c2.start_mem_support)
   let b1 : (VoltageLift G α).Walk (u, 0) (u, w1) :=
     Walk.copy (liftWalk α c1 0) rfl (by simp [w1])
   let b2 : (VoltageLift G α).Walk (u, w1) (v, w1 + wP) :=
@@ -1069,8 +1066,10 @@ theorem abelian_cover_barbell_pow2 {V Γ : Type*} [AddCommGroup Γ]
   conv_rhs => rw [hk1, pow_succ]
   ring
 
-/-! ### Section 2: Pillar 2 — Tait 3-Edge-Coloring / Even 2-Factor Chord & Multi-Bridge Rigidity -/
+/-! ### Section 3: Pillar 2 — Tait 3-Edge-Coloring / Even 2-Factor Chord & Multi-Bridge Rigidity -/
 
+/-- A chord on a cycle splitting it into two internally disjoint paths `p, q : G.Walk u v`
+creates two simple cycles of lengths `p.length + 1` and `q.length + 1`. -/
 lemma chord_creates_two_cycles {V : Type*} {G : SimpleGraph V} {u v : V}
     (p q : G.Walk u v) (hp : p.IsPath) (hq : q.IsPath)
     (hlp : 2 ≤ p.length) (hlq : 2 ≤ q.length) (hadj : G.Adj u v) :
@@ -1089,8 +1088,6 @@ lemma chord_creates_two_cycles {V : Type*} {G : SimpleGraph V} {u v : V}
     · intro x _ hx2; simpa using hx2
     · simp; omega
 
-/-- Helper: bridging two vertex-disjoint simple paths `p : u1 → u2` and `q : v1 → v2` by two
-edges `u1 ~ v1` and `u2 ~ v2` produces a simple cycle of length `p.length + q.length + 2`. -/
 lemma cycle_of_two_disjoint_paths_bridged {V : Type*} (G : SimpleGraph V)
     {u1 u2 v1 v2 : V} (p : G.Walk u1 u2) (q : G.Walk v1 v2)
     (hp : p.IsPath) (hq : q.IsPath)
@@ -1149,9 +1146,9 @@ theorem c12_no_odd_chord_of_no_pow2 {V : Type*} (G : SimpleGraph V) (hno : ¬Has
   · exact hno ⟨2, u, c2, by omega, hc2, by omega⟩
 
 /-- Theorem 12 (Crossing-Chord 6-Cycle Theorem):
-Two crossing chords `u ~ v` and `x ~ y` on a cycle partitioned into four internally disjoint paths
-`pa : u → x`, `pb : x → v`, `pc : v → y`, `pd : y → u` force simple cycles of lengths
-`pa.length + pc.length + 2` and `pb.length + pd.length + 2`. -/
+On any cycle partitioned into four internally disjoint paths `a : u → x`, `b : x → v`,
+`c : v → y`, `d : y → u` by two crossing chords `u ~ v` and `x ~ y`, the graph contains a
+simple cycle of length `a.length + c.length + 2` and a simple cycle of length `b.length + d.length + 2`. -/
 theorem crossing_chords_six_cycles {V : Type*} (G : SimpleGraph V) {u x v y : V}
     (pa : G.Walk u x) (pb : G.Walk x v) (pc : G.Walk v y) (pd : G.Walk y u)
     (ha : pa.IsPath) (hb : pb.IsPath) (hc : pc.IsPath) (hd : pd.IsPath)
@@ -1186,6 +1183,9 @@ theorem c10_no_two_antipodal_chords {V : Type*} (G : SimpleGraph V) (hno : ¬Has
   · exact hno ⟨3, u, c1, by omega, hc1, by omega⟩
   · exact hno ⟨2, x, c2, by omega, hc2, by omega⟩
 
+/-- Two vertex-disjoint cycles bridged by two independent edges `u1 ~ v1` and `u2 ~ v2`
+produce all four 2-bridge simple cycles of lengths `d1 + d2 + 2`, `d1' + d2 + 2`,
+`d1 + d2' + 2`, `d1' + d2' + 2`. -/
 lemma two_bridges_four_cycles {V : Type*} (G : SimpleGraph V)
     {u1 u2 v1 v2 : V}
     (p1 p1' : G.Walk u1 u2) (q1 q1' : G.Walk v1 v2)
@@ -1266,8 +1266,8 @@ theorem two_disjoint_c6_no_equal_dist_bridges {V : Type*} (G : SimpleGraph V) (h
     · exact hno ⟨2, u1, c2, by omega, hc2, by omega⟩
 
 /-- Theorem 16 (Bipartite `C₆ ↔ C₆` Two-Bridge Bound):
-Any three independent bridges between two properly 2-colored `C₆`'s contain a pair at equal
-cycle-distance 2 on both `C₆`'s (which forces `C₈` by Theorem 15). -/
+In ANY bipartite power-free graph (modeled by a proper 2-coloring `col : V → Bool`), two
+vertex-disjoint `C₆`'s can have AT MOST TWO independent bridges between them. -/
 theorem two_disjoint_c6_bipartite_at_most_two_bridges
     (col1 col2 : Fin 6 → Bool) (hproper1 : ∀ i : Fin 6, col1 i ≠ col1 (i + 1))
     (hproper2 : ∀ i : Fin 6, col2 i ≠ col2 (i + 1))

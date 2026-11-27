@@ -3,6 +3,8 @@ import Wave8Agent5Core
 namespace E64Wave8Agent5
 open SimpleGraph
 set_option maxHeartbeats 800000
+set_option linter.unusedSimpArgs false
+set_option linter.unusedVariables false
 
 def petersenEdges : List (Fin 10 × Fin 10) :=
   [(0,1),(1,2),(2,3),(3,4),(4,0),(5,7),(7,9),(9,6),(6,8),(8,5),(0,5),(1,6),(2,7),(3,8),(4,9)]
@@ -53,7 +55,7 @@ lemma pT0_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hn
     (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide))
     (by decide) (by decide) (by decide)
     (by intro x; fin_cases x <;> decide) (by intro x; fin_cases x <;> decide) (by intro x; fin_cases x <;> decide) h1 h2 h3.symm
-  exact hno ⟨4, (0, 0), w, by omega, hwc, by simpa [pT0x, pT0y, pT0z] using hwl⟩
+  exact hno ⟨4, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
 lemma pT1_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hno : ¬HasPower (VoltageLift Petersen α)) :
     walkVoltage α pT1x = walkVoltage α pT1y ∨ walkVoltage α pT1y = walkVoltage α pT1z ∨ walkVoltage α pT1z = walkVoltage α pT1x := by
   by_contra h; push_neg at h; rcases h with ⟨h1, h2, h3⟩
@@ -61,7 +63,7 @@ lemma pT1_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hn
     (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide))
     (by decide) (by decide) (by decide)
     (by intro x; fin_cases x <;> decide) (by intro x; fin_cases x <;> decide) (by intro x; fin_cases x <;> decide) h1 h2 h3.symm
-  exact hno ⟨4, (0, 0), w, by omega, hwc, by simpa [pT1x, pT1y, pT1z] using hwl⟩
+  exact hno ⟨4, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
 lemma pT2_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hno : ¬HasPower (VoltageLift Petersen α)) :
     walkVoltage α pT2x = walkVoltage α pT2y ∨ walkVoltage α pT2y = walkVoltage α pT2z ∨ walkVoltage α pT2z = walkVoltage α pT2x := by
   by_contra h; push_neg at h; rcases h with ⟨h1, h2, h3⟩
@@ -69,7 +71,7 @@ lemma pT2_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hn
     (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide))
     (by decide) (by decide) (by decide)
     (by intro x; fin_cases x <;> decide) (by intro x; fin_cases x <;> decide) (by intro x; fin_cases x <;> decide) h1 h2 h3.symm
-  exact hno ⟨4, (0, 0), w, by omega, hwc, by simpa [pT2x, pT2y, pT2z] using hwl⟩
+  exact hno ⟨4, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
 lemma pT3_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hno : ¬HasPower (VoltageLift Petersen α)) :
     walkVoltage α pT3x = walkVoltage α pT3y ∨ walkVoltage α pT3y = walkVoltage α pT3z ∨ walkVoltage α pT3z = walkVoltage α pT3x := by
   by_contra h; push_neg at h; rcases h with ⟨h1, h2, h3⟩
@@ -77,7 +79,7 @@ lemma pT3_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hn
     (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide))
     (by decide) (by decide) (by decide)
     (by intro x; fin_cases x <;> decide) (by intro x; fin_cases x <;> decide) (by intro x; fin_cases x <;> decide) h1 h2 h3.symm
-  exact hno ⟨4, (0, 0), w, by omega, hwc, by simpa [pT3x, pT3y, pT3z] using hwl⟩
+  exact hno ⟨4, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
 lemma pT4_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hno : ¬HasPower (VoltageLift Petersen α)) :
     walkVoltage α pT4x = walkVoltage α pT4y ∨ walkVoltage α pT4y = walkVoltage α pT4z ∨ walkVoltage α pT4z = walkVoltage α pT4x := by
   by_contra h; push_neg at h; rcases h with ⟨h1, h2, h3⟩
@@ -85,7 +87,7 @@ lemma pT4_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hn
     (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide))
     (by decide) (by decide) (by decide)
     (by intro x; fin_cases x <;> decide) (by intro x; fin_cases x <;> decide) (by intro x; fin_cases x <;> decide) h1 h2 h3.symm
-  exact hno ⟨4, (0, 0), w, by omega, hwc, by simpa [pT4x, pT4y, pT4z] using hwl⟩
+  exact hno ⟨4, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
 lemma pT5_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hno : ¬HasPower (VoltageLift Petersen α)) :
     walkVoltage α pT5x = walkVoltage α pT5y ∨ walkVoltage α pT5y = walkVoltage α pT5z ∨ walkVoltage α pT5z = walkVoltage α pT5x := by
   by_contra h; push_neg at h; rcases h with ⟨h1, h2, h3⟩
@@ -93,11 +95,8 @@ lemma pT5_dich {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) (hn
     (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide)) (Walk.IsPath.mk' (by decide))
     (by decide) (by decide) (by decide)
     (by intro x; fin_cases x <;> decide) (by intro x; fin_cases x <;> decide) (by intro x; fin_cases x <;> decide) h1 h2 h3.symm
-  exact hno ⟨4, (0, 0), w, by omega, hwc, by simpa [pT5x, pT5y, pT5z] using hwl⟩
+  exact hno ⟨4, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
 
-/-- Theorem 18 (Full Unconditional All-Abelian-Group Petersen Cover Closure):
-For EVERY abelian group `Γ` of ANY order (unbounded `n = 10|Γ|`, ANY girth), EVERY abelian
-voltage lift `VoltageLift Petersen α` unconditionally contains a simple `C₈` or `C₁₆`. -/
 theorem petersen_all_abelian_covers_hasPower {Γ : Type*} [AddCommGroup Γ] (α : SkewVoltage (Fin 10) Γ) : HasPower (VoltageLift Petersen α) := by
   by_contra hno
   have r0 : α.val 1 0 = -α.val 0 1 := α.skew 0 1
@@ -126,21 +125,21 @@ theorem petersen_all_abelian_covers_hasPower {Γ : Type*} [AddCommGroup Γ] (α 
           have heq : walkVoltage α pC0 = -(walkVoltage α pT2x - walkVoltage α pT2y) + -(walkVoltage α pT3x - walkVoltage α pT3y) := by simp only [walkVoltage,pC0,pT2x,pT2y,pT3x,pT3y,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
           rw [heq,h1',h2']; abel
         obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC0 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-        exact hno ⟨3, (0, 0), w, by omega, hwc, by simpa [pC0] using hwl⟩
+        exact hno ⟨3, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
       ·
         have hc : walkVoltage α pC5 = 0 := by
           have h0' := sub_eq_zero.mpr h0; have h1' := sub_eq_zero.mpr h1; have h2' := sub_eq_zero.mpr h2
           have heq : walkVoltage α pC5 = (walkVoltage α pT0x - walkVoltage α pT0y) + (walkVoltage α pT2x - walkVoltage α pT2y) + -(walkVoltage α pT3y - walkVoltage α pT3z) := by simp only [walkVoltage,pC5,pT0x,pT0y,pT2x,pT2y,pT3y,pT3z,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
           rw [heq,h0',h1',h2']; abel
         obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC5 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-        exact hno ⟨3, (0, 0), w, by omega, hwc, by simpa [pC5] using hwl⟩
+        exact hno ⟨3, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
       ·
         have hc : walkVoltage α pC9 = 0 := by
           have h0' := sub_eq_zero.mpr h0; have h2' := sub_eq_zero.mpr h2
           have heq : walkVoltage α pC9 = (walkVoltage α pT0x - walkVoltage α pT0y) + (walkVoltage α pT3z - walkVoltage α pT3x) := by simp only [walkVoltage,pC9,pT0x,pT0y,pT3x,pT3z,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
           rw [heq,h0',h2']; abel
         obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC9 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-        exact hno ⟨3, (0, 0), w, by omega, hwc, by simpa [pC9] using hwl⟩
+        exact hno ⟨3, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
     ·
       rcases pT3_dich α hno with h2 | h2 | h2
       ·
@@ -149,28 +148,28 @@ theorem petersen_all_abelian_covers_hasPower {Γ : Type*} [AddCommGroup Γ] (α 
           have heq : walkVoltage α pC10 = (walkVoltage α pT0x - walkVoltage α pT0y) + (walkVoltage α pT2y - walkVoltage α pT2z) + (walkVoltage α pT3x - walkVoltage α pT3y) := by simp only [walkVoltage,pC10,pT0x,pT0y,pT2y,pT2z,pT3x,pT3y,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
           rw [heq,h0',h1',h2']; abel
         obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC10 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-        exact hno ⟨3, (2, 0), w, by omega, hwc, by simpa [pC10] using hwl⟩
+        exact hno ⟨3, (2, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
       ·
         have hc : walkVoltage α pC6 = 0 := by
           have h1' := sub_eq_zero.mpr h1; have h2' := sub_eq_zero.mpr h2
           have heq : walkVoltage α pC6 = (walkVoltage α pT2y - walkVoltage α pT2z) + (walkVoltage α pT3y - walkVoltage α pT3z) := by simp only [walkVoltage,pC6,pT2y,pT2z,pT3y,pT3z,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
           rw [heq,h1',h2']; abel
         obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC6 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-        exact hno ⟨3, (0, 0), w, by omega, hwc, by simpa [pC6] using hwl⟩
+        exact hno ⟨3, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
       ·
         have hc : walkVoltage α pC9 = 0 := by
           have h0' := sub_eq_zero.mpr h0; have h2' := sub_eq_zero.mpr h2
           have heq : walkVoltage α pC9 = (walkVoltage α pT0x - walkVoltage α pT0y) + (walkVoltage α pT3z - walkVoltage α pT3x) := by simp only [walkVoltage,pC9,pT0x,pT0y,pT3x,pT3z,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
           rw [heq,h0',h2']; abel
         obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC9 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-        exact hno ⟨3, (0, 0), w, by omega, hwc, by simpa [pC9] using hwl⟩
+        exact hno ⟨3, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
     ·
       have hc : walkVoltage α pC1 = 0 := by
         have h0' := sub_eq_zero.mpr h0; have h1' := sub_eq_zero.mpr h1
         have heq : walkVoltage α pC1 = -(walkVoltage α pT0x - walkVoltage α pT0y) + -(walkVoltage α pT2z - walkVoltage α pT2x) := by simp only [walkVoltage,pC1,pT0x,pT0y,pT2x,pT2z,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
         rw [heq,h0',h1']; abel
       obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC1 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-      exact hno ⟨3, (0, 0), w, by omega, hwc, by simpa [pC1] using hwl⟩
+      exact hno ⟨3, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
   ·
     rcases pT2_dich α hno with h1 | h1 | h1
     ·
@@ -181,28 +180,28 @@ theorem petersen_all_abelian_covers_hasPower {Γ : Type*} [AddCommGroup Γ] (α 
           have heq : walkVoltage α pC10 = -(walkVoltage α pT0y - walkVoltage α pT0z) + -(walkVoltage α pT2x - walkVoltage α pT2y) + -(walkVoltage α pT4x - walkVoltage α pT4y) := by simp only [walkVoltage,pC10,pT0y,pT0z,pT2x,pT2y,pT4x,pT4y,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
           rw [heq,h0',h1',h2']; abel
         obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC10 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-        exact hno ⟨3, (2, 0), w, by omega, hwc, by simpa [pC10] using hwl⟩
+        exact hno ⟨3, (2, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
       ·
         have hc : walkVoltage α pC2 = 0 := by
           have h0' := sub_eq_zero.mpr h0; have h2' := sub_eq_zero.mpr h2
           have heq : walkVoltage α pC2 = (walkVoltage α pT0y - walkVoltage α pT0z) + (walkVoltage α pT4y - walkVoltage α pT4z) := by simp only [walkVoltage,pC2,pT0y,pT0z,pT4y,pT4z,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
           rw [heq,h0',h2']; abel
         obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC2 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-        exact hno ⟨3, (0, 0), w, by omega, hwc, by simpa [pC2] using hwl⟩
+        exact hno ⟨3, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
       ·
         have hc : walkVoltage α pC4 = 0 := by
           have h1' := sub_eq_zero.mpr h1; have h2' := sub_eq_zero.mpr h2
           have heq : walkVoltage α pC4 = (walkVoltage α pT2x - walkVoltage α pT2y) + (walkVoltage α pT4z - walkVoltage α pT4x) := by simp only [walkVoltage,pC4,pT2x,pT2y,pT4x,pT4z,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
           rw [heq,h1',h2']; abel
         obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC4 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-        exact hno ⟨3, (0, 0), w, by omega, hwc, by simpa [pC4] using hwl⟩
+        exact hno ⟨3, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
     ·
       have hc : walkVoltage α pC10 = 0 := by
         have h0' := sub_eq_zero.mpr h0; have h1' := sub_eq_zero.mpr h1
         have heq : walkVoltage α pC10 = -(walkVoltage α pT0y - walkVoltage α pT0z) + (walkVoltage α pT2y - walkVoltage α pT2z) := by simp only [walkVoltage,pC10,pT0y,pT0z,pT2y,pT2z,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
         rw [heq,h0',h1']; abel
       obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC10 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-      exact hno ⟨3, (2, 0), w, by omega, hwc, by simpa [pC10] using hwl⟩
+      exact hno ⟨3, (2, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
     ·
       rcases pT5_dich α hno with h2 | h2 | h2
       ·
@@ -211,21 +210,21 @@ theorem petersen_all_abelian_covers_hasPower {Γ : Type*} [AddCommGroup Γ] (α 
           have heq : walkVoltage α pC10 = -(walkVoltage α pT0y - walkVoltage α pT0z) + -(walkVoltage α pT2z - walkVoltage α pT2x) + (walkVoltage α pT5x - walkVoltage α pT5y) := by simp only [walkVoltage,pC10,pT0y,pT0z,pT2x,pT2z,pT5x,pT5y,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
           rw [heq,h0',h1',h2']; abel
         obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC10 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-        exact hno ⟨3, (2, 0), w, by omega, hwc, by simpa [pC10] using hwl⟩
+        exact hno ⟨3, (2, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
       ·
         have hc : walkVoltage α pC5 = 0 := by
           have h0' := sub_eq_zero.mpr h0; have h2' := sub_eq_zero.mpr h2
           have heq : walkVoltage α pC5 = -(walkVoltage α pT0y - walkVoltage α pT0z) + (walkVoltage α pT5y - walkVoltage α pT5z) := by simp only [walkVoltage,pC5,pT0y,pT0z,pT5y,pT5z,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
           rw [heq,h0',h2']; abel
         obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC5 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-        exact hno ⟨3, (0, 0), w, by omega, hwc, by simpa [pC5] using hwl⟩
+        exact hno ⟨3, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
       ·
         have hc : walkVoltage α pC3 = 0 := by
           have h1' := sub_eq_zero.mpr h1; have h2' := sub_eq_zero.mpr h2
           have heq : walkVoltage α pC3 = -(walkVoltage α pT2z - walkVoltage α pT2x) + (walkVoltage α pT5z - walkVoltage α pT5x) := by simp only [walkVoltage,pC3,pT2x,pT2z,pT5x,pT5z,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
           rw [heq,h1',h2']; abel
         obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC3 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-        exact hno ⟨3, (0, 0), w, by omega, hwc, by simpa [pC3] using hwl⟩
+        exact hno ⟨3, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
   ·
     rcases pT1_dich α hno with h1 | h1 | h1
     ·
@@ -236,21 +235,21 @@ theorem petersen_all_abelian_covers_hasPower {Γ : Type*} [AddCommGroup Γ] (α 
           have heq : walkVoltage α pC0 = -(walkVoltage α pT0z - walkVoltage α pT0x) + -(walkVoltage α pT2x - walkVoltage α pT2y) := by simp only [walkVoltage,pC0,pT0x,pT0z,pT2x,pT2y,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
           rw [heq,h0',h2']; abel
         obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC0 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-        exact hno ⟨3, (0, 0), w, by omega, hwc, by simpa [pC0] using hwl⟩
+        exact hno ⟨3, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
       ·
         have hc : walkVoltage α pC10 = 0 := by
           have h0' := sub_eq_zero.mpr h0; have h1' := sub_eq_zero.mpr h1; have h2' := sub_eq_zero.mpr h2
           have heq : walkVoltage α pC10 = (walkVoltage α pT0z - walkVoltage α pT0x) + -(walkVoltage α pT1x - walkVoltage α pT1y) + (walkVoltage α pT2y - walkVoltage α pT2z) := by simp only [walkVoltage,pC10,pT0x,pT0z,pT1x,pT1y,pT2y,pT2z,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
           rw [heq,h0',h1',h2']; abel
         obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC10 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-        exact hno ⟨3, (2, 0), w, by omega, hwc, by simpa [pC10] using hwl⟩
+        exact hno ⟨3, (2, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
       ·
         have hc : walkVoltage α pC1 = 0 := by
           have h1' := sub_eq_zero.mpr h1; have h2' := sub_eq_zero.mpr h2
           have heq : walkVoltage α pC1 = (walkVoltage α pT1x - walkVoltage α pT1y) + -(walkVoltage α pT2z - walkVoltage α pT2x) := by simp only [walkVoltage,pC1,pT1x,pT1y,pT2x,pT2z,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
           rw [heq,h1',h2']; abel
         obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC1 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-        exact hno ⟨3, (0, 0), w, by omega, hwc, by simpa [pC1] using hwl⟩
+        exact hno ⟨3, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
     ·
       rcases pT2_dich α hno with h2 | h2 | h2
       ·
@@ -259,27 +258,27 @@ theorem petersen_all_abelian_covers_hasPower {Γ : Type*} [AddCommGroup Γ] (α 
           have heq : walkVoltage α pC0 = -(walkVoltage α pT0z - walkVoltage α pT0x) + -(walkVoltage α pT2x - walkVoltage α pT2y) := by simp only [walkVoltage,pC0,pT0x,pT0z,pT2x,pT2y,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
           rw [heq,h0',h2']; abel
         obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC0 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-        exact hno ⟨3, (0, 0), w, by omega, hwc, by simpa [pC0] using hwl⟩
+        exact hno ⟨3, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
       ·
         have hc : walkVoltage α pC8 = 0 := by
           have h1' := sub_eq_zero.mpr h1; have h2' := sub_eq_zero.mpr h2
           have heq : walkVoltage α pC8 = (walkVoltage α pT1y - walkVoltage α pT1z) + -(walkVoltage α pT2y - walkVoltage α pT2z) := by simp only [walkVoltage,pC8,pT1y,pT1z,pT2y,pT2z,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
           rw [heq,h1',h2']; abel
         obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC8 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-        exact hno ⟨3, (0, 0), w, by omega, hwc, by simpa [pC8] using hwl⟩
+        exact hno ⟨3, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
       ·
         have hc : walkVoltage α pC2 = 0 := by
           have h0' := sub_eq_zero.mpr h0; have h1' := sub_eq_zero.mpr h1; have h2' := sub_eq_zero.mpr h2
           have heq : walkVoltage α pC2 = -(walkVoltage α pT0z - walkVoltage α pT0x) + -(walkVoltage α pT1y - walkVoltage α pT1z) + -(walkVoltage α pT2z - walkVoltage α pT2x) := by simp only [walkVoltage,pC2,pT0x,pT0z,pT1y,pT1z,pT2x,pT2z,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
           rw [heq,h0',h1',h2']; abel
         obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC2 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-        exact hno ⟨3, (0, 0), w, by omega, hwc, by simpa [pC2] using hwl⟩
+        exact hno ⟨3, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
     ·
       have hc : walkVoltage α pC7 = 0 := by
         have h0' := sub_eq_zero.mpr h0; have h1' := sub_eq_zero.mpr h1
         have heq : walkVoltage α pC7 = -(walkVoltage α pT0z - walkVoltage α pT0x) + (walkVoltage α pT1z - walkVoltage α pT1x) := by simp only [walkVoltage,pC7,pT0x,pT0z,pT1x,pT1z,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14]; abel
         rw [heq,h0',h1']; abel
       obtain ⟨w, hwc, hwl⟩ := zero_voltage_cycle_lifts Petersen α pC7 (isCycle_of_length_ge_three_nodup (by decide) (by decide)) hc
-      exact hno ⟨3, (0, 0), w, by omega, hwc, by simpa [pC7] using hwl⟩
+      exact hno ⟨3, (0, 0), w, by omega, hwc, by rw [hwl]; rfl⟩
 
 end E64Wave8Agent5
