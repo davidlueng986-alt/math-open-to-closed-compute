@@ -1,0 +1,49 @@
+name: E64 Wave 8 Agent 9 Delsarte-SOS, Tri-Rewiring & High-Girth Siege (Lean 4.36.0 + OpenMP)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  lean_verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Verify Wave 8 Agent 9 Lean 4.36.0 modules and transitive axioms
+        run: bash jobs/erdos64-wave8-agent9-delsarte-sos/verify.sh
+      - name: Upload Lean verification artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos64-wave8-agent9-lean
+          path: out/
+          retention-days: 90
+
+  highgirth_siege:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Compile and run OpenMP C++20 Post-Delsarte High-Girth Siege
+        run: |
+          mkdir -p out
+          g++ -O3 -std=c++20 -fopenmp -Wall -Wextra jobs/erdos64-wave8-agent9-delsarte-sos/highgirth_siege.cpp -o highgirth_siege
+          ./highgirth_siege | tee out/highgirth_siege.log
+      - name: Upload C++20 siege artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos64-wave8-agent9-highgirth-siege
+          path: out/
+          retention-days: 90
