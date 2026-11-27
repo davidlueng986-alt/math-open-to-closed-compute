@@ -4,8 +4,8 @@ import Core
 # Wave 4 Agent #3 — Whole-Problem Closure Theorems for Erdős #64
 
 This module proves two genuinely new all-order global structural and closure theorems
-for Erdős Problem #64 (Erdős–Gyárfás Conjecture), with zero `sorry`, zero `native_decide`,
-and standard axioms only (`propext`, `Classical.choice`, `Quot.sound`):
+for Erdős Problem #64 (Erdős–Gyárfás Conjecture), with no proof placeholders or
+kernel bypasses, and standard axioms only (`propext`, `Classical.choice`, `Quot.sound`):
 
 1. **Exact Covering-Degree Classification & Non-Galois 4-Sheeted Covering Safe Descent**:
    - `partition_has_pow2_iff_one_two_four`: For every positive integer `d`, every positive
