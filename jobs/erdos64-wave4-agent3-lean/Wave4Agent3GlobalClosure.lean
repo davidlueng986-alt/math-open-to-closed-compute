@@ -211,7 +211,7 @@ lemma liftWalk_append (cov : GraphCover G H d) {a b c : W}
   | nil => rfl
   | cons h p' ih =>
     simp only [Walk.cons_append, liftWalk]
-    exact ih _ _
+    exact ih q _ _
 
 lemma liftWalk_reverse_endpoint (cov : GraphCover G H d) {a b : W} (p : H.Walk a b)
     (u : V) (hu : cov.toFun u = a) :
@@ -224,16 +224,9 @@ lemma liftWalk_reverse_endpoint (cov : GraphCover G H d) {a b : W} (p : H.Walk a
     have hq := ih u1 hu1
     have hrev : (Walk.cons h q).reverse = q.reverse.append (Walk.cons h.symm Walk.nil) :=
       Walk.reverse_cons h q
-    have h1 := cov.liftWalk_append q.reverse (Walk.cons h.symm Walk.nil)
-      (cov.liftWalk q u1 hu1).1 (cov.liftWalk q u1 hu1).2.2
-    have h2 : (cov.liftWalk (Walk.cons h q).reverse
-        (cov.liftWalk (Walk.cons h q) u hu).1
-        (cov.liftWalk (Walk.cons h q) u hu).2.2).1 =
-        (cov.liftWalk (Walk.cons h.symm Walk.nil)
-          (cov.liftWalk q.reverse (cov.liftWalk q u1 hu1).1 (cov.liftWalk q u1 hu1).2.2).1
-          (cov.liftWalk q.reverse (cov.liftWalk q u1 hu1).1 (cov.liftWalk q u1 hu1).2.2).2.2).1 := by
-      simpa only [hrev] using h1
-    rw [h2]
+    change (cov.liftWalk (Walk.cons h q).reverse
+      (cov.liftWalk q u1 hu1).1 (cov.liftWalk q u1 hu1).2.2).1 = u
+    rw [hrev, cov.liftWalk_append]
     simp only [liftWalk]
     symm
     apply cov.liftStep_unique
@@ -272,7 +265,8 @@ lemma liftRepeat_length (cov : GraphCover G H d) {w₀ : W} (c : H.Walk w₀ w�
     (cov.liftRepeat c r u).length = r * c.length := by
   induction r generalizing u with
   | zero =>
-    simp [liftRepeat]
+    simp only [liftRepeat, zero_mul]
+    rfl
   | succ r ih =>
     simp only [liftRepeat, Walk.length_append, Walk.length_copy]
     rw [cov.liftWalk_length c u.1 u.2, ih]
@@ -346,11 +340,14 @@ lemma liftWalk_support_tail_mem_proj (cov : GraphCover G H d) {w₀ : W}
           ih _ _ _ _ k' (by simp at hk; omega) heq
         let s := cov.liftStep u1 (hu1.symm ▸ h)
         have hs_proj : cov.toFun s = _ := cov.liftStep_proj u1 (hu1.symm ▸ h)
+        have hadj2 : G.Adj s u2 := by
+          have hs_eq : s = cov.liftStep u2 (hu2.symm ▸ h) := hstep
+          rw [hs_eq]
+          exact (cov.liftStep_adj u2 (hu2.symm ▸ h)).symm
         have hback1 : u1 = cov.liftStep s (hs_proj.symm ▸ h.symm) :=
           cov.liftStep_unique s (hs_proj.symm ▸ h.symm) (cov.liftStep_adj u1 (hu1.symm ▸ h)).symm hu1
         have hback2 : u2 = cov.liftStep s (hs_proj.symm ▸ h.symm) :=
-          cov.liftStep_unique s (hs_proj.symm ▸ h.symm)
-            (hstep ▸ (cov.liftStep_adj u2 (hu2.symm ▸ h)).symm) hu2
+          cov.liftStep_unique s (hs_proj.symm ▸ h.symm) hadj2 hu2
         exact hback1.trans hback2.symm
   apply Subtype.ext
   have hk : i + 1 ≤ c.length := by
@@ -380,7 +377,7 @@ lemma liftRepeat_support_tail_nodup (cov : GraphCover G H d) {w₀ : W}
   | zero =>
     change ([] : List V).Nodup ∧
       ∀ x ∈ ([] : List V), ∃ i < 0, x ∈ (cov.liftWalk c (((cov.monodromy c) ^ i) u).1 (((cov.monodromy c) ^ i) u).2).2.1.support.tail
-    exact ⟨List.nodup_nil, fun _ h => absurd h (List.not_mem_nil _)⟩
+    exact ⟨List.nodup_nil, fun _ h => nomatch h⟩
   | succ r ih =>
     let step := cov.liftWalk c u.1 u.2
     let u1 : {x : V // cov.toFun x = w₀} := ⟨step.1, step.2.2⟩
@@ -830,8 +827,9 @@ theorem minimal_bad_two_indep_avoiding_dyadic_path
           have hfull_len : full.length = 2 ^ k := by
             have hcl : c'.length = 2 ^ k := hc'_len
             rw [hc'_eq, hrest_eq] at hcl
-            simp only [Walk.length_cons, Walk.length_append, Walk.length_nil] at hcl
-            simp only [full, Walk.length_cons, Walk.length_concat, hqmid_len]
+            rw [Walk.length_cons, Walk.length_append, Walk.length_cons, Walk.length_nil] at hcl
+            rw [show full.length = (qmid.concat hvxm.symm).length + 1 from rfl,
+              Walk.length_concat, hqmid_len]
             omega
           have hqmid_nodup : qmid.support.Nodup := by
             rw [List.nodup_append] at hnd_tail
