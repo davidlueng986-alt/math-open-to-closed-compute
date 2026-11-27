@@ -1,0 +1,37 @@
+name: Pause Ramsey R310 v7 run 45936075262 for algorithm optimization
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/cancel-ramsey-v7-45936075262.yml']
+permissions:
+  actions: write
+  contents: read
+jobs:
+  pause-v7-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TARGET_REPO: davidlueng986-alt/math-open-to-closed-compute
+      TARGET_RUN: '45936075262'
+    steps:
+      - name: Preserve published artifacts and cancel only the specified v7 run
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "$TARGET_REPO"
+          meta="$(gh api "repos/$TARGET_REPO/actions/runs/$TARGET_RUN")"
+          test "$(jq -r '.head_sha' <<< "$meta")" = '6b513630694cb5dff3ea8b7aa8f9eb324b49f066'
+          test "$(jq -r '.path' <<< "$meta")" = '.github/workflows/ramsey-r310-cubes-v7-continue.yml'
+          gh api --paginate "repos/$TARGET_REPO/actions/runs/$TARGET_RUN/artifacts?per_page=100" --jq '.artifacts[] | [.id,.name,.digest,.expires_at] | @tsv' > artifact-inventory.tsv
+          if [[ "$(jq -r '.status' <<< "$meta")" != completed ]]; then
+            gh api --method POST "repos/$TARGET_REPO/actions/runs/$TARGET_RUN/cancel"
+            echo "Cancellation requested. No artifacts deleted; in-flight unsaved progress may be lost."
+          else
+            echo "Run already completed."
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: paused-v7-artifact-inventory
+          path: artifact-inventory.tsv
+          retention-days: 90
