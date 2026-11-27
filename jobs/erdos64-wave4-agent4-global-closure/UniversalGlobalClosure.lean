@@ -32,14 +32,14 @@ def ContractSet {V : Type u} (G : SimpleGraph V) (S : Set V) :
     | none, some x => ∃ u ∈ S, G.Adj u x.1
     | some x, none => ∃ u ∈ S, G.Adj u x.1
     | some x, some y => G.Adj x.1 y.1
-  symm := by
+  symm := ⟨by
     intro a b h
-    cases a <;> cases b <;> simp_all [G.symm]
-  loopless := by
+    cases a <;> cases b <;> simp_all [G.symm]⟩
+  loopless := ⟨by
     intro a h
     cases a with
     | none => exact h
-    | some x => exact G.loopless x.1 h
+    | some x => exact G.loopless.irrefl x.1 h⟩
 
 /-- Contracting any set of size at least 2 strictly decreases the vertex count. -/
 theorem contractSet_card_lt {V : Type u} [Fintype V] [DecidableEq V]
@@ -48,8 +48,10 @@ theorem contractSet_card_lt {V : Type u} [Fintype V] [DecidableEq V]
   classical
   have hS' : 2 ≤ Fintype.card {v : V // v ∈ S} := by
     simpa only [Nat.card_eq_fintype_card] using hS
-  have hsum : Fintype.card {v : V // v ∈ S} + Fintype.card {v : V // v ∉ S} = Fintype.card V :=
+  have hcompl : Fintype.card {v : V // v ∉ S} = Fintype.card V - Fintype.card {v : V // v ∈ S} :=
     Fintype.card_subtype_compl (fun v => v ∈ S)
+  have hle : Fintype.card {v : V // v ∈ S} ≤ Fintype.card V :=
+    Fintype.card_subtype_le (fun v => v ∈ S)
   rw [Fintype.card_option]
   omega
 
@@ -88,12 +90,14 @@ theorem contractSet_degree_some {V : Type u} [Fintype V] [DecidableEq V]
         intro q
         rcases q with ⟨w, hw⟩
         by_cases hwS : w ∈ S
-        · simp only [hwS, ↓reduceDIte]
+        · dsimp only
+          rw [dif_pos hwS]
           apply Subtype.ext
           have h : ∃ u ∈ S, G.Adj u x.1 := ⟨w, hwS, hw.symm⟩
           have hspec := Classical.choose_spec h
           exact hnm x.1 x.2 (Classical.choose h) hspec.1 w hwS hspec.2.symm hw
-        · simp [hwS] }
+        · dsimp only
+          rw [dif_neg hwS] }
   calc
     (ContractSet G S).degree (some x)
         = Nat.card ((ContractSet G S).neighborSet (some x)) := by
@@ -150,33 +154,27 @@ def liftWalkAvoiding {V : Type u} {G : SimpleGraph V} {S : Set V} :
     ∀ {x y : {v : V // v ∉ S}} (p : (ContractSet G S).Walk (some x) (some y)),
       none ∉ p.support → G.Walk x.1 y.1
   | _, _, .nil, _ => .nil
-  | x, _, .cons (v := none) _ _, h => absurd (by simp) h
-  | x, y, .cons (v := some z) hadj q, h =>
+  | _, _, .cons (v := none) _ _, h => absurd (by simp) h
+  | _, _, .cons (v := some _) hadj q, h =>
       .cons hadj (liftWalkAvoiding q (fun hm => h (by simp [hm])))
 
-theorem liftWalkAvoiding_length {V : Type u} {G : SimpleGraph V} {S : Set V}
-    {x y : {v : V // v ∉ S}} (p : (ContractSet G S).Walk (some x) (some y))
-    (h : none ∉ p.support) :
-    (liftWalkAvoiding p h).length = p.length := by
-  induction p with
-  | nil => rfl
-  | @cons a b c hadj q ih =>
-    cases b with
-    | none => exact absurd (by simp) h
-    | some z =>
+theorem liftWalkAvoiding_length {V : Type u} {G : SimpleGraph V} {S : Set V} :
+    ∀ {x y : {v : V // v ∉ S}} (p : (ContractSet G S).Walk (some x) (some y))
+      (h : none ∉ p.support),
+      (liftWalkAvoiding p h).length = p.length
+  | _, _, .nil, _ => rfl
+  | _, _, .cons (v := none) _ _, h => absurd (by simp) h
+  | _, _, .cons (v := some _) _ q, h => by
       simp only [liftWalkAvoiding, Walk.length_cons]
-      rw [ih (fun hm => h (by simp [hm]))]
+      rw [liftWalkAvoiding_length q (fun hm => h (by simp [hm]))]
 
-theorem liftWalkAvoiding_support_map {V : Type u} {G : SimpleGraph V} {S : Set V}
-    {x y : {v : V // v ∉ S}} (p : (ContractSet G S).Walk (some x) (some y))
-    (h : none ∉ p.support) :
-    p.support.map (fun o => o.elim x.1 Subtype.val) = (liftWalkAvoiding p h).support := by
-  induction p with
-  | nil => simp [liftWalkAvoiding]
-  | @cons a b c hadj q ih =>
-    cases b with
-    | none => exact absurd (by simp) h
-    | some z =>
+theorem liftWalkAvoiding_support_map {V : Type u} {G : SimpleGraph V} {S : Set V} :
+    ∀ {x y : {v : V // v ∉ S}} (p : (ContractSet G S).Walk (some x) (some y))
+      (h : none ∉ p.support),
+      p.support.map (fun o => o.elim x.1 Subtype.val) = (liftWalkAvoiding p h).support
+  | _, _, .nil, _ => by simp [liftWalkAvoiding]
+  | _, _, .cons (v := none) _ _, h => absurd (by simp) h
+  | x, _, .cons (v := some z) _ q, h => by
       have hq : none ∉ q.support := fun hm => h (by simp [hm])
       have hmap : q.support.map (fun o => o.elim x.1 Subtype.val) =
           q.support.map (fun o => o.elim z.1 Subtype.val) := by
@@ -186,26 +184,21 @@ theorem liftWalkAvoiding_support_map {V : Type u} {G : SimpleGraph V} {S : Set V
         | none => exact absurd ho hq
         | some t => rfl
       simp only [liftWalkAvoiding, Walk.support_cons, List.map_cons]
-      rw [hmap, ih hq]
+      rw [hmap, liftWalkAvoiding_support_map q hq]
 
-theorem liftWalkAvoiding_mem_compl {V : Type u} {G : SimpleGraph V} {S : Set V}
-    {x y : {v : V // v ∉ S}} (p : (ContractSet G S).Walk (some x) (some y))
-    (h : none ∉ p.support) :
-    ∀ v ∈ (liftWalkAvoiding p h).support, v ∉ S := by
-  induction p with
-  | nil =>
-    intro v hv
-    simp only [liftWalkAvoiding, Walk.support_nil, List.mem_singleton] at hv
-    exact hv ▸ x.2
-  | @cons a b c hadj q ih =>
-    cases b with
-    | none => exact absurd (by simp) h
-    | some z =>
-      intro v hv
+theorem liftWalkAvoiding_mem_compl {V : Type u} {G : SimpleGraph V} {S : Set V} :
+    ∀ {x y : {v : V // v ∉ S}} (p : (ContractSet G S).Walk (some x) (some y))
+      (h : none ∉ p.support),
+      ∀ v ∈ (liftWalkAvoiding p h).support, v ∉ S
+  | x, _, .nil, _, v, hv => by
+      simp only [liftWalkAvoiding, Walk.support_nil, List.mem_singleton] at hv
+      exact hv ▸ x.2
+  | _, _, .cons (v := none) _ _, h, _, _ => absurd (by simp) h
+  | x, _, .cons (v := some _) _ q, h, v, hv => by
       simp only [liftWalkAvoiding, Walk.support_cons, List.mem_cons] at hv
       rcases hv with rfl | hv
       · exact x.2
-      · exact ih (fun hm => h (by simp [hm])) v hv
+      · exact liftWalkAvoiding_mem_compl q (fun hm => h (by simp [hm])) v hv
 
 theorem liftWalkAvoiding_support_nodup {V : Type u} {G : SimpleGraph V} {S : Set V}
     {x y : {v : V // v ∉ S}} (p : (ContractSet G S).Walk (some x) (some y))
@@ -283,8 +276,8 @@ theorem minimal_bad_contractSet_dyadic_ear {V : Type u} [Fintype V] [DecidableEq
       exact hm.2.1 ⟨k, x.1, liftWalkAvoiding c hnot, hk,
         liftWalkAvoiding_isCycle c hnot hc, by rw [liftWalkAvoiding_length, hlen]⟩
   -- Rotate `c` so it starts and ends at `none`.
-  let c0 : (ContractSet G S).Walk none none := c.rotate hmem
-  have hc0 : c0.IsCycle := hc.rotate hmem
+  let c0 : (ContractSet G S).Walk none none := c.rotate none hmem
+  have hc0 : c0.IsCycle := Walk.IsCycle.rotate hmem hc
   have hlen0 : c0.length = 2 ^ k := by rw [Walk.length_rotate, hlen]
   have hpow4 : 4 ≤ 2 ^ k := by
     calc 4 = 2 ^ 2 := by decide
@@ -292,23 +285,17 @@ theorem minimal_bad_contractSet_dyadic_ear {V : Type u} [Fintype V] [DecidableEq
   -- Peel off the first edge `none → some x`.
   cases hce : c0 with
   | nil =>
-    have := Walk.length_nil (G := ContractSet G S) (u := none)
+    have h0 : c0.length = 0 := by rw [hce]; rfl
     omega
   | @cons _ b _ h1 p1 =>
     cases b with
-    | none => exact absurd h1 (ContractSet G S).loopless
+    | none => exact absurd h1 ((ContractSet G S).loopless.irrefl none)
     | some x =>
       -- Peel off the last edge `some y → none` via `p1.reverse`.
       cases hpe : p1.reverse with
-      | nil =>
-        have hlen1 : p1.length = 0 := by
-          have := congrArg Walk.length hpe
-          simpa using this
-        have : c0.length = 1 := by simp [hce, hlen1]
-        omega
       | @cons _ d _ h2 p2 =>
         cases d with
-        | none => exact absurd h2 (ContractSet G S).loopless
+        | none => exact absurd h2 ((ContractSet G S).loopless.irrefl none)
         | some y =>
           let q : (ContractSet G S).Walk (some x) (some y) := p2.reverse
           have hq_len : q.length = 2 ^ k - 2 := by
@@ -325,7 +312,7 @@ theorem minimal_bad_contractSet_dyadic_ear {V : Type u} [Fintype V] [DecidableEq
             simpa [hce] using hnd
           have hp1rev_nd : p1.reverse.support.Nodup := by
             rw [Walk.support_reverse]
-            exact hp1_nd.reverse
+            exact List.nodup_reverse.mpr hp1_nd
           have hnone_not_p2 : none ∉ p2.support := by
             rw [hpe, Walk.support_cons, List.nodup_cons] at hp1rev_nd
             exact hp1rev_nd.1
@@ -334,7 +321,8 @@ theorem minimal_bad_contractSet_dyadic_ear {V : Type u} [Fintype V] [DecidableEq
             exact hnone_not_p2 (by simpa [q, Walk.support_reverse] using hm)
           have hq_nd : q.support.Nodup := by
             rw [hpe, Walk.support_cons, List.nodup_cons] at hp1rev_nd
-            simpa [q, Walk.support_reverse] using hp1rev_nd.2.reverse
+            have hp2_nd : p2.support.Nodup := hp1rev_nd.2
+            simpa [q, Walk.support_reverse] using List.nodup_reverse.mpr hp2_nd
           -- Lift `q` to a simple path `qG` in `G` completely outside `S`.
           let qG : G.Walk x.1 y.1 := liftWalkAvoiding q hnone_not_q
           have hqG_len : qG.length = 2 ^ k - 2 := by
@@ -394,11 +382,12 @@ theorem minimal_bad_contractSet_dyadic_ear {V : Type u} [Fintype V] [DecidableEq
           have hsup : P.support = u :: (qG.support ++ [v]) := by
             simp [P, Walk.support_cons, Walk.support_concat]
           rw [hsup] at hw
-          simp only [List.mem_cons, List.mem_append, List.mem_singleton] at hw
-          rcases hw with rfl | hmq | rfl
+          simp only [List.mem_cons, List.mem_append] at hw
+          rcases hw with rfl | hmq | hmv
           · exact absurd rfl hwu
           · exact hqG_compl w hmq
-          · exact absurd rfl hwv
+          · simp only [List.mem_singleton] at hmv
+            exact absurd hmv hwv
 
 /-- **Universal 2-Packing Dyadic-Avoidance Theorem (ALL 13 Remaining Leaves)**:
     In any `MinimalBad G`, every 2-packing `I` of size at least 2 admits two distinct
@@ -435,16 +424,17 @@ theorem minimal_bad_two_packing_dyadic_path {V : Type u} [Fintype V] [DecidableE
       simpa only [Nat.card_eq_fintype_card] using hI
     have hex : ∃ u : {v : V // v ∈ I}, u.1 ≠ w := by
       by_contra hno
-      push_neg at hno
+      have hall : ∀ u : {v : V // v ∈ I}, u.1 = w := fun u => by
+        by_contra hne
+        exact hno ⟨u, hne⟩
       have hinj : Function.Injective (fun _ : {v : V // v ∈ I} => ()) := by
         intro a b _
-        exact Subtype.ext ((hno a).trans (hno b).symm)
+        exact Subtype.ext ((hall a).trans (hall b).symm)
       have hc := Fintype.card_le_of_injective _ hinj
-      simp at hc
+      rw [Fintype.card_unit] at hc
       omega
     obtain ⟨⟨u, huI⟩, huw⟩ := hex
     have hdu : 3 ≤ G.degree u := hw u huw
-    -- Every neighbor `y` of `u` lies in `Iᶜ` (since `I` is independent) and is adjacent to `none`.
     let f : G.neighborSet u → (ContractSet G I).neighborSet none := fun y =>
       have hyI : y.1 ∉ I := by
         intro hyI
@@ -489,13 +479,11 @@ theorem minimal_bad_no_synchronized_contraction {V : Type u} [Fintype V] [Decida
   obtain ⟨q, hq, hqlen, hqin⟩ := hmatch u v k huS hvS huv hk ⟨p, hp, hplen, hpout⟩
   have hdisj : p.support.tail.Disjoint q.reverse.support.tail := by
     intro w hwp hwq
-    -- `w ∈ p.support.tail` implies `w ≠ u` (since `p.support = u :: p.support.tail` is `Nodup`).
     have hwu : w ≠ u := by
       have hnd := hp.support_nodup
       rw [← p.cons_tail_support, List.nodup_cons] at hnd
       intro h
       exact hnd.1 (h ▸ hwp)
-    -- `w ∈ q.reverse.support.tail` implies `w ≠ v` (since `q.reverse.support = v :: q.reverse.support.tail` is `Nodup`).
     have hwv : w ≠ v := by
       have hnd := hq.reverse.support_nodup
       rw [← q.reverse.cons_tail_support, List.nodup_cons] at hnd
@@ -516,17 +504,18 @@ theorem minimal_bad_no_synchronized_contraction {V : Type u} [Fintype V] [Decida
 theorem erdos64_closed_of_global_target
     (hTarget : ∀ (V : Type u) (G : SimpleGraph V) [Fintype V] [DecidableEq V] [DecidableRel G.Adj],
       MinimalBad G → HasSynchronizedContraction G ∨ SafeStep G) :
-    ∀ (V : Type u) (G : SimpleGraph V) [Fintype V] [DecidableRel G.Adj],
+    ∀ (V : Type u) (G : SimpleGraph V) [Fintype V] [DecidableEq V] [DecidableRel G.Adj],
       G.minDegree ≥ 3 → ∃ (k : ℕ) (v : V) (c : G.Walk v v),
         k ≥ 2 ∧ c.IsCycle ∧ c.length = 2 ^ k := by
   classical
-  intro V G _ _ hmin
+  intro V G _ _ _ hmin
   by_contra hno
   have hnotpow : ¬HasPower G := hno
   have hne : Nonempty V := by
     by_contra hempty
-    haveI : IsEmpty V := not_nonempty_iff.mp hempty
-    have h0 : G.minDegree = 0 := SimpleGraph.minDegree_eq_zero_of_isEmpty G
+    have hemp : IsEmpty V := not_nonempty_iff.mp hempty
+    have h0 : G.minDegree = 0 := by
+      simp [SimpleGraph.minDegree, Finset.univ_eq_empty_iff.mpr hemp]
     omega
   obtain ⟨v0⟩ := hne
   have hnear : Near G :=
