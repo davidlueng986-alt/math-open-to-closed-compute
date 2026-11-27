@@ -1,0 +1,28 @@
+name: E64 Wave 7 Agent 4 Girth-5/6/7 TS-EG Exact CEGAR & OpenMP Siege
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  siege:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install OR-Tools for exact CP-SAT CEGAR
+        run: python3 -m pip install --quiet ortools
+      - name: Compile C++20 oracle and OpenMP siege
+        run: |
+          mkdir -p out
+          g++ -O3 -shared -fPIC -std=c++20 jobs/erdos64-wave7-agent4-girth567-siege/tseg_oracle.cpp -o jobs/erdos64-wave7-agent4-girth567-siege/libtseg_oracle.so
+          g++ -O3 -fopenmp -std=c++20 jobs/erdos64-wave7-agent4-girth567-siege/girth567_siege.cpp -o girth567_siege
+      - name: Run OpenMP Girth-5/6/7 Cubic & Balanced Siege
+        run: ./girth567_siege out/openmp_siege.json | tee out/openmp_siege.log
+      - name: Run Exact CP-SAT CEGAR on Girth-5 & Girth-6 4-Regular Graphs and 1-Port Blocks
+        run: python3 jobs/erdos64-wave7-agent4-girth567-siege/cegar_girth56.py out/cegar_girth56.json | tee out/cegar_girth56.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos64-wave7-agent4-girth567-siege
+          path: out/
+          retention-days: 90
