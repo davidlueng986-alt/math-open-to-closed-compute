@@ -80,7 +80,7 @@ theorem polynomial_norm_identity (p q s : K[X]) (a b : K)
     (h : q ^ 2 = p ^ 3 + C a * p + C b + s) :
     q ^ 2 * normPolynomial p q a = leadingTerm p s a + lowerTerms p s a b := by
   have hd := congrArg Polynomial.derivative h
-  simp only [derivative_sq, derivative_pow, derivative_add, derivative_C_mul,
+  simp only [derivative_pow, derivative_add, derivative_C_mul,
     derivative_C, add_zero] at hd
   norm_num only [C_eq_natCast, pow_one] at hd
   change 2 * q * q.derivative =
