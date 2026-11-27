@@ -39,6 +39,7 @@ import Erdos64Wave8Agent10
 #print axioms E64Wave8Agent10.crossing_chords_balanced_sum_refutation
 #print axioms E64Wave8Agent10.RungLadder.windowCycle_len
 #print axioms E64Wave8Agent10.ladder_girth_mod4_two_immunity
+#print axioms E64Wave8Agent10.ladder_girth10_mod8_shift_immunity
 #print axioms E64Wave8Agent10.ladder_girth5_closure
 #print axioms E64Wave8Agent10.ladder_girth7_closure
 #print axioms E64Wave8Agent10.ladder_girth9_closure
@@ -76,8 +77,8 @@ for line in text.splitlines():
                 raise SystemExit(f"FORBIDDEN AXIOM {a} in {name}")
         axioms[name] = sorted(ax_list)
 
-if len(axioms) != 29:
-    raise SystemExit(f"Expected 29 audited declarations, got {len(axioms)}")
+if len(axioms) != 30:
+    raise SystemExit(f"Expected 30 audited declarations, got {len(axioms)}")
 
 sha = hashlib.sha256(open("jobs/erdos64-wave8-agent10-lean/Erdos64Wave8Agent10.lean", "rb").read()).hexdigest()
 summary = {

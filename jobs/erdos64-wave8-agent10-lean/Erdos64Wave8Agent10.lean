@@ -12,26 +12,32 @@ namespace E64Wave8Agent10
    Edge-Surgery (`G_∥`, `G_×1`, `G_×2`) with Girth-g Disjoint-Pair Elimination (`2^c < 2g - 2`)
 2. Crossing-Chord 7-Cycle Spectrum Theorem & Balanced-Sum Refutation
 3. Arbitrary-Girth `r`-Rung Ladder Trichotomy (`g ∈ {5,7,9,11,12,13}` unbounded-n closures),
-   Exact Mod-4 Immunity Obstruction (`g ≡ 2 (mod 4)`), and Single-Twist Mod-4 Breaker
+   Exact Mod-4 Immunity Obstruction (`g ≡ 2 (mod 4)`), Mod-8 Girth-10 Shift Obstruction,
+   and Twist-Breakers for `g ∈ {6, 10, 14}`
 4. Ihara–Chebyshev `B^16` Cage-Surpassing Thresholds (`g ∈ {9..12}` & Bipartite `g = 14`)
    and `EGRob` Two-Copy Gluing Half-Power Path Exclusion
 -/
 
-/-- A positive integer is a power of two at least 4 (`2^k` with `k ≥ 2`). -/\ndef IsPowerOfTwo (n : ℕ) : Prop := ∃ k : ℕ, 2 ≤ k ∧ n = 2 ^ k
+/-- A positive integer is a power of two at least 4 (`2^k` with `k ≥ 2`). -/
+def IsPowerOfTwo (n : ℕ) : Prop := ∃ k : ℕ, 2 ≤ k ∧ n = 2 ^ k
 
-/-- Simple cycle of length ≥ 3 in a `SimpleGraph V`, represented by its distinct vertex list. -/\nstructure SimpleCycle {V : Type*} (G : SimpleGraph V) where
+/-- Simple cycle of length ≥ 3 in a `SimpleGraph V`, represented by its distinct vertex list. -/
+structure SimpleCycle {V : Type*} (G : SimpleGraph V) where
   verts : List V
   len_ge_three : 3 ≤ verts.length
   nodup : verts.Nodup
   adj_cycle : ∀ i (hi : i < verts.length),
     G.Adj (verts[i]'hi) (verts[(i + 1) % verts.length]'(Nat.mod_lt _ (by omega)))
 
-/-- A graph satisfies Erdős–Gyárfás if it contains a simple cycle of length `2^k` (`k ≥ 2`). -/\ndef HasPowerCycle {V : Type*} (G : SimpleGraph V) : Prop :=
+/-- A graph satisfies Erdős–Gyárfás if it contains a simple cycle of length `2^k` (`k ≥ 2`). -/
+def HasPowerCycle {V : Type*} (G : SimpleGraph V) : Prop :=
   ∃ C : SimpleCycle G, IsPowerOfTwo C.verts.length
 
-/-- A graph is power-free if it has no simple cycle of length `2^k` (`k ≥ 2`). -/\ndef PowerFree {V : Type*} (G : SimpleGraph V) : Prop := ¬ HasPowerCycle G
+/-- A graph is power-free if it has no simple cycle of length `2^k` (`k ≥ 2`). -/
+def PowerFree {V : Type*} (G : SimpleGraph V) : Prop := ¬ HasPowerCycle G
 
-/-- Core cycle builder from any non-empty `Nodup` `IsChain G.Adj` list whose last connects to head. -/\ndef SimpleCycle.ofList {V : Type*} {G : SimpleGraph V} (L : List V)
+/-- Core cycle builder from any non-empty `Nodup` `IsChain G.Adj` list whose last connects to head. -/
+def SimpleCycle.ofList {V : Type*} {G : SimpleGraph V} (L : List V)
     (h3 : 3 ≤ L.length) (hnd : L.Nodup) (hch : L.IsChain G.Adj)
     (hne : L ≠ []) (hwrap : G.Adj (L.getLast hne) (L.head hne)) : SimpleCycle G where
   verts := L
@@ -53,7 +59,8 @@ namespace E64Wave8Agent10
       rw [h0, hL]
       exact hwrap
 
-/-- Helper: `IsChain R (l1 ++ l2)` given chains on `l1, l2` and link from `l1.getLast` to `l2.head`. -/\nprivate lemma isChain_append_of_link {α : Type*} {R : α → α → Prop} {l1 l2 : List α}
+/-- Helper: `IsChain R (l1 ++ l2)` given chains on `l1, l2` and link from `l1.getLast` to `l2.head`. -/
+private lemma isChain_append_of_link {α : Type*} {R : α → α → Prop} {l1 l2 : List α}
     (h1 : l1.IsChain R) (h2 : l2.IsChain R) (hne1 : l1 ≠ []) (hne2 : l2 ≠ [])
     (hlink : R (l1.getLast hne1) (l2.head hne2)) :
     (l1 ++ l2).IsChain R := by
@@ -65,7 +72,8 @@ namespace E64Wave8Agent10
   subst hx; subst hy
   exact hlink
 
-/-- Helper: reversing an `IsChain G.Adj` preserves `IsChain G.Adj` by symmetry of `G.Adj`. -/\nprivate lemma isChain_reverse_adj {V : Type*} {G : SimpleGraph V} {l : List V}
+/-- Helper: reversing an `IsChain G.Adj` preserves `IsChain G.Adj` by symmetry of `G.Adj`. -/
+private lemma isChain_reverse_adj {V : Type*} {G : SimpleGraph V} {l : List V}
     (h : l.IsChain G.Adj) : l.reverse.IsChain G.Adj := by
   rw [List.isChain_iff_getElem] at h ⊢
   intro i hi
@@ -76,17 +84,20 @@ namespace E64Wave8Agent10
   simp only [h1] at h2
   exact G.symm h2
 
-/-- Helper: `head` of `l.reverse` equals `getLast` of `l`. -/\nprivate lemma head_reverse_eq_getLast {α : Type*} {l : List α} (hne : l ≠ []) :
+/-- Helper: `head` of `l.reverse` equals `getLast` of `l`. -/
+private lemma head_reverse_eq_getLast {α : Type*} {l : List α} (hne : l ≠ []) :
     l.reverse.head (by simpa using hne) = l.getLast hne := by
   rw [List.head_eq_getElem, List.getLast_eq_getElem, List.getElem_reverse]
   congr 1
 
-/-- Helper: `getLast` of `l.reverse` equals `head` of `l`. -/\nprivate lemma getLast_reverse_eq_head {α : Type*} {l : List α} (hne : l ≠ []) :
+/-- Helper: `getLast` of `l.reverse` equals `head` of `l`. -/
+private lemma getLast_reverse_eq_head {α : Type*} {l : List α} (hne : l ≠ []) :
     l.reverse.getLast (by simpa using hne) = l.head hne := by
   rw [List.getLast_eq_getElem, List.head_eq_getElem, List.getElem_reverse]
   simp
 
-/-- Core 2-arc cycle builder: glues two disjoint non-empty paths `A, B` into a `SimpleCycle G`. -/\ndef SimpleCycle.ofTwoArcs {V : Type*} {G : SimpleGraph V} (A B : List V)
+/-- Core 2-arc cycle builder: glues two disjoint non-empty paths `A, B` into a `SimpleCycle G`. -/
+def SimpleCycle.ofTwoArcs {V : Type*} {G : SimpleGraph V} (A B : List V)
     (hneA : A ≠ []) (hneB : B ≠ [])
     (h3 : 3 ≤ A.length + B.length)
     (hndA : A.Nodup) (hndB : B.Nodup) (hdisj : List.Disjoint A B)
@@ -106,8 +117,9 @@ namespace E64Wave8Agent10
 
 /-- Theorem 1 (P3-Collapse Double-Edge Refutation):
     In `G_y(u) = (G - u) + {xy, yz}`, if a `2^k`-cycle uses BOTH edges `xy` and `yz`,
-    its remaining path `P` from `z` to `x` in `G - {u, y}` has length `2^k - 2` (i.e. `2^k - 1` vertices).
-    Replacing `x - y - z` by `x - u - z` yields a valid `SimpleCycle G` of exact length `2^k`! -/\ntheorem p3_collapse_double_edge_gives_pow2 {V : Type*} {G : SimpleGraph V}
+    its remaining path `P` from `z` to `x` in `G - {u, y}` has `2^k - 1` vertices.
+    Replacing `x - y - z` by `x - u - z` yields a valid `SimpleCycle G` of exact length `2^k`! -/
+theorem p3_collapse_double_edge_gives_pow2 {V : Type*} {G : SimpleGraph V}
     {u x z : V} {k : ℕ} (hk : 2 ≤ k)
     (P : List V) (hne : P ≠ []) (hlen : P.length = 2 ^ k - 1)
     (hnd : P.Nodup) (hch : P.IsChain G.Adj)
@@ -132,7 +144,8 @@ namespace E64Wave8Agent10
 /-- Theorem 2 (P3-Collapse Single-Edge Lift):
     In `G_y(u) = (G - u) + {xy, yz}`, a simple `2^k`-cycle using ONLY ONE added edge `xy`
     (a `2^k`-vertex simple path `P` from `y` to `x` in `G - u`) lifts to a simple `(2^k + 1)`-cycle
-    in `G` passing through `x - u - y`. Works even when `u` lies in a triangle `uxz`! -/\ntheorem p3_collapse_single_edge_lifts_to_2k_plus_1 {V : Type*} {G : SimpleGraph V}
+    in `G` passing through `x - u - y`. Works even when `u` lies in a triangle `uxz`! -/
+theorem p3_collapse_single_edge_lifts_to_2k_plus_1 {V : Type*} {G : SimpleGraph V}
     {u x y : V} {k : ℕ} (hk : 2 ≤ k)
     (P : List V) (hne : P ≠ []) (hlen : P.length = 2 ^ k)
     (hnd : P.Nodup) (hch : P.IsChain G.Adj)
@@ -158,7 +171,8 @@ namespace E64Wave8Agent10
 
 /-- Theorem 3 (Dual Cross-Rewiring Single-Edge Lift):
     In `G_×1(uv) = (G - {u,v}) + {a1 b1, a2 b2}`, a simple `2^c`-cycle using ONE added edge `a1 b1`
-    lifts to a simple `(2^c + 2)`-cycle in `G` passing through `a1 - u - v - b1`. -/\ntheorem cross_rewiring_single_edge_lifts_to_2k_plus_2 {V : Type*} {G : SimpleGraph V}
+    lifts to a simple `(2^c + 2)`-cycle in `G` passing through `a1 - u - v - b1`. -/
+theorem cross_rewiring_single_edge_lifts_to_2k_plus_2 {V : Type*} {G : SimpleGraph V}
     {u v a1 b1 : V} {c : ℕ} (hc : 2 ≤ c) (huv : G.Adj u v)
     (P : List V) (hne : P ≠ []) (hlen : P.length = 2 ^ c)
     (hnd : P.Nodup) (hch : P.IsChain G.Adj)
@@ -190,7 +204,8 @@ namespace E64Wave8Agent10
 /-- Theorem 4 (Dual Cross-Rewiring Crossed-Pair Lift):
     If a simple `2^c`-cycle in `G_×1(uv)` uses BOTH added edges in the crossed orientation
     (`P1 : a1 ⇝ b2`, `P2 : a2 ⇝ b1`, vertex-disjoint in `G - {u,v}` with `|P1| + |P2| = 2^c`),
-    splicing `u` and `v` yields a simple `(2^c + 2)`-cycle in `G - uv`! -/\ntheorem cross_rewiring_crossed_pair_lifts_to_2k_plus_2 {V : Type*} {G : SimpleGraph V}
+    splicing `u` and `v` yields a simple `(2^c + 2)`-cycle in `G - uv`! -/
+theorem cross_rewiring_crossed_pair_lifts_to_2k_plus_2 {V : Type*} {G : SimpleGraph V}
     {u v a1 a2 b1 b2 : V} {c : ℕ} (hc : 2 ≤ c) (hne_uv : u ≠ v)
     (P1 P2 : List V) (hne1 : P1 ≠ []) (hne2 : P2 ≠ [])
     (hlen : P1.length + P2.length = 2 ^ c)
@@ -242,14 +257,16 @@ namespace E64Wave8Agent10
 
 /-- Theorem 5 (Girth-g Disjoint-Pair Elimination for Dual Cross-Rewiring):
     In any graph of girth ≥ g, the disjoint-cycle escape `|D_u| + |D_v| = 2^c + 2` in
-    `G_×i(uv)` is IMPOSSIBLE whenever `2^c + 2 < 2 * g`! -/\ntheorem cross_rewiring_no_disjoint_pair_below_2g_minus_2 {g c d1 d2 : ℕ}
+    `G_×i(uv)` is IMPOSSIBLE whenever `2^c + 2 < 2 * g`! -/
+theorem cross_rewiring_no_disjoint_pair_below_2g_minus_2 {g c d1 d2 : ℕ}
     (hd1 : g ≤ d1) (hd2 : g ≤ d2) (hsum : d1 + d2 = 2 ^ c + 2)
     (hsmall : 2 ^ c + 2 < 2 * g) : False := by
   omega
 
 /-- Theorem 6 (Girth ≥ 10 Eliminates ALL C4, C8, and C16 Disjoint-Pair Escapes):
     For any graph of girth g ≥ 10 (the open frontier g ∈ {10..14}), NO C4, C8, or C16
-    in `G_×1(uv)` or `G_×2(uv)` can lift to a disjoint-cycle pair! -/\ntheorem cross_rewiring_girth10_eliminates_c4_c8_c16_pairs {g c d1 d2 : ℕ}
+    in `G_×1(uv)` or `G_×2(uv)` can lift to a disjoint-cycle pair! -/
+theorem cross_rewiring_girth10_eliminates_c4_c8_c16_pairs {g c d1 d2 : ℕ}
     (hg : 10 ≤ g) (hc : c = 2 ∨ c = 3 ∨ c = 4)
     (hd1 : g ≤ d1) (hd2 : g ≤ d2) (hsum : d1 + d2 = 2 ^ c + 2) : False := by
   rcases hc with rfl | rfl | rfl <;>
@@ -257,8 +274,8 @@ namespace E64Wave8Agent10
 
 /-- Theorem 7 (Same-Side Suppression Lift):
     In `G_∥(uv) = (G - {u,v}) + {a1 a2, b1 b2}`, a simple `2^c`-cycle using both added edges
-    (two vertex-disjoint paths `P1 : a2 ⇝ b1` and `P2 : b2 ⇝ a1` with `|P1| + |P2| = 2^c`)
-    lifts directly to a simple `(2^c + 2)`-cycle in `G - uv`. -/\ntheorem same_side_suppression_lifts_to_2k_plus_1_or_2 {V : Type*} {G : SimpleGraph V}
+    lifts directly to a simple `(2^c + 2)`-cycle in `G - uv`. -/
+theorem same_side_suppression_lifts_to_2k_plus_1_or_2 {V : Type*} {G : SimpleGraph V}
     {u v a1 a2 b1 b2 : V} {c : ℕ} (hc : 2 ≤ c) (hne_uv : u ≠ v)
     (P1 P2 : List V) (hne1 : P1 ≠ []) (hne2 : P2 ≠ [])
     (hlen : P1.length + P2.length = 2 ^ c)
@@ -275,12 +292,8 @@ namespace E64Wave8Agent10
 /-! ### Part II: Crossing-Chord 7-Cycle Spectrum Theorem (All Girths, Unbounded n) -/
 
 /-- A cycle split by two crossing chords `(u0, ub)` and `(ua, uc)` into 4 pairwise vertex-disjoint
-    non-empty arcs `A1, A2, A3, A4` of lengths `x1, x2, x3, x4 ≥ 1`, where:
-    - `A1.head = u0`, `A1.getLast` adj `ua = A2.head`
-    - `A2.head = ua`, `A2.getLast` adj `ub = A3.head`
-    - `A3.head = ub`, `A3.getLast` adj `uc = A4.head`
-    - `A4.head = uc`, `A4.getLast` adj `u0 = A1.head`
-    - Crossing chords: `G.Adj u0 ub` and `G.Adj ua uc`. -/\nstructure CrossingChordPair {V : Type*} (G : SimpleGraph V) where
+    non-empty arcs `A1, A2, A3, A4` of lengths `x1, x2, x3, x4 ≥ 1`. -/
+structure CrossingChordPair {V : Type*} (G : SimpleGraph V) where
   A1 A2 A3 A4 : List V
   hne1 : A1 ≠ []
   hne2 : A2 ≠ []
@@ -319,7 +332,8 @@ private lemma len_pos4 : 1 ≤ X.A4.length := List.length_pos_of_ne_nil X.hne4
 private lemma ne_append {α : Type*} {l1 l2 : List α} (h1 : l1 ≠ []) : l1 ++ l2 ≠ [] := by
   intro h; exact h1 (List.append_eq_nil_iff.mp h).1
 
-/-- 1. Outer cycle: `A1 ++ A2 ++ A3 ++ A4` of length `x1 + x2 + x3 + x4`. -/\ndef outerCycle : SimpleCycle G :=
+/-- 1. Outer cycle: `A1 ++ A2 ++ A3 ++ A4` of length `x1 + x2 + x3 + x4`. -/
+def outerCycle : SimpleCycle G :=
   SimpleCycle.ofTwoArcs (X.A1 ++ X.A2) (X.A3 ++ X.A4)
     (ne_append X.hne1) (ne_append X.hne3)
     (by simp; have := X.len_pos1; have := X.len_pos2; have := X.len_pos3; have := X.len_pos4; omega)
@@ -342,7 +356,8 @@ theorem outerCycle_len :
   show ((X.A1 ++ X.A2) ++ (X.A3 ++ X.A4)).length = _
   simp; omega
 
-/-- 2. Chord-1 Side A: `A1 ++ A2 ++ [A3.head]` of length `x1 + x2 + 1`. -/\ndef chord1CycleA : SimpleCycle G :=
+/-- 2. Chord-1 Side A: `A1 ++ A2 ++ [A3.head]` of length `x1 + x2 + 1`. -/
+def chord1CycleA : SimpleCycle G :=
   SimpleCycle.ofTwoArcs (X.A1 ++ X.A2) [X.A3.head X.hne3]
     (ne_append X.hne1) (by simp)
     (by simp; have := X.len_pos1; have := X.len_pos2; omega)
@@ -365,7 +380,8 @@ theorem chord1CycleA_len :
   show ((X.A1 ++ X.A2) ++ [X.A3.head X.hne3]).length = _
   simp
 
-/-- 3. Chord-1 Side B: `A3 ++ A4 ++ [A1.head]` of length `x3 + x4 + 1`. -/\ndef chord1CycleB : SimpleCycle G :=
+/-- 3. Chord-1 Side B: `A3 ++ A4 ++ [A1.head]` of length `x3 + x4 + 1`. -/
+def chord1CycleB : SimpleCycle G :=
   SimpleCycle.ofTwoArcs (X.A3 ++ X.A4) [X.A1.head X.hne1]
     (ne_append X.hne3) (by simp)
     (by simp; have := X.len_pos3; have := X.len_pos4; omega)
@@ -388,7 +404,8 @@ theorem chord1CycleB_len :
   show ((X.A3 ++ X.A4) ++ [X.A1.head X.hne1]).length = _
   simp
 
-/-- 4. Chord-2 Side A: `A2 ++ A3 ++ [A4.head]` of length `x2 + x3 + 1`. -/\ndef chord2CycleA : SimpleCycle G :=
+/-- 4. Chord-2 Side A: `A2 ++ A3 ++ [A4.head]` of length `x2 + x3 + 1`. -/
+def chord2CycleA : SimpleCycle G :=
   SimpleCycle.ofTwoArcs (X.A2 ++ X.A3) [X.A4.head X.hne4]
     (ne_append X.hne2) (by simp)
     (by simp; have := X.len_pos2; have := X.len_pos3; omega)
@@ -411,7 +428,8 @@ theorem chord2CycleA_len :
   show ((X.A2 ++ X.A3) ++ [X.A4.head X.hne4]).length = _
   simp
 
-/-- 5. Chord-2 Side B: `A4 ++ A1 ++ [A2.head]` of length `x4 + x1 + 1`. -/\ndef chord2CycleB : SimpleCycle G :=
+/-- 5. Chord-2 Side B: `A4 ++ A1 ++ [A2.head]` of length `x4 + x1 + 1`. -/
+def chord2CycleB : SimpleCycle G :=
   SimpleCycle.ofTwoArcs (X.A4 ++ X.A1) [X.A2.head X.hne2]
     (ne_append X.hne4) (by simp)
     (by simp; have := X.len_pos4; have := X.len_pos1; omega)
@@ -434,7 +452,8 @@ theorem chord2CycleB_len :
   show ((X.A4 ++ X.A1) ++ [X.A2.head X.hne2]).length = _
   simp
 
-/-- 6. Cross Cycle A: `(A1 ++ [ua]) ++ ([uc] ++ A3.reverse)` of length `x1 + x3 + 2`. -/\ndef crossCycleA : SimpleCycle G :=
+/-- 6. Cross Cycle A: `(A1 ++ [ua]) ++ ([uc] ++ A3.reverse)` of length `x1 + x3 + 2`. -/
+def crossCycleA : SimpleCycle G :=
   let P := X.A1 ++ [X.A2.head X.hne2]
   let Q := [X.A4.head X.hne4] ++ X.A3.reverse
   SimpleCycle.ofTwoArcs P Q
@@ -471,7 +490,8 @@ theorem crossCycleA_len :
   show ((X.A1 ++ [X.A2.head X.hne2]) ++ ([X.A4.head X.hne4] ++ X.A3.reverse)).length = _
   simp; omega
 
-/-- 7. Cross Cycle B: `(A2 ++ [ub]) ++ ([u0] ++ A4.reverse)` of length `x2 + x4 + 2`. -/\ndef crossCycleB : SimpleCycle G :=
+/-- 7. Cross Cycle B: `(A2 ++ [ub]) ++ ([u0] ++ A4.reverse)` of length `x2 + x4 + 2`. -/
+def crossCycleB : SimpleCycle G :=
   let P := X.A2 ++ [X.A3.head X.hne3]
   let Q := [X.A1.head X.hne1] ++ X.A4.reverse
   SimpleCycle.ofTwoArcs P Q
@@ -511,7 +531,8 @@ theorem crossCycleB_len :
 end CrossingChordPair
 
 /-- Theorem 8 (Master Crossing-Chord 7-Cycle Spectrum):
-    Every `CrossingChordPair G` realizes all 7 cycle lengths simultaneously. -/\ntheorem crossing_chords_seven_cycle_spectrum {V : Type*} {G : SimpleGraph V}
+    Every `CrossingChordPair G` realizes all 7 cycle lengths simultaneously. -/
+theorem crossing_chords_seven_cycle_spectrum {V : Type*} {G : SimpleGraph V}
     (X : CrossingChordPair G) :
     (∃ C : SimpleCycle G, C.verts.length = X.A1.length + X.A2.length + X.A3.length + X.A4.length) ∧
     (∃ C : SimpleCycle G, C.verts.length = X.A1.length + X.A2.length + 1) ∧
@@ -531,7 +552,8 @@ end CrossingChordPair
 /-- Theorem 9 (Balanced-Sum Crossing-Chord Refutation):
     If a `CrossingChordPair` has outer length `2^k - 2` (`k ≥ 3`) with balanced halves
     `x1 + x2 = x3 + x4`, OR outer length `2^k - 4` (`k ≥ 3`) with `x1 + x3 = x2 + x4`,
-    then `G` unconditionally contains a simple `2^(k-1)`-cycle! -/\ntheorem crossing_chords_balanced_sum_refutation {V : Type*} {G : SimpleGraph V}
+    then `G` unconditionally contains a simple `2^(k-1)`-cycle! -/
+theorem crossing_chords_balanced_sum_refutation {V : Type*} {G : SimpleGraph V}
     (X : CrossingChordPair G) {k : ℕ} (hk : 3 ≤ k)
     (hbal : (X.A1.length + X.A2.length + X.A3.length + X.A4.length + 2 = 2 ^ k ∧
              X.A1.length + X.A2.length = X.A3.length + X.A4.length) ∨
@@ -549,12 +571,8 @@ end CrossingChordPair
 
 /-! ### Part III: Arbitrary-Girth `r`-Rung Ladder Trichotomy & Mod-4 Immunity Breaker -/
 
-/-- An `r`-rung ladder (`r ≥ 2`) on a `SimpleGraph V`:
-    - Rung endpoints `u : Fin r → V` (top rail) and `v : Fin r → V` (bottom rail) with `G.Adj (u i) (v i)`
-    - For each bay `t : Fin (r - 1)`:
-      * `topSeg t` starts at `u t` and ends at a neighbor of `u (t + 1)`
-      * `botSeg t` starts at `v (t + 1)` and ends at a neighbor of `v t`
-    - All top-rail segments, bottom-rail segments, `u (r-1)`, and `v 0` are pairwise disjoint. -/\nstructure RungLadder {V : Type*} (G : SimpleGraph V) (r : ℕ) where
+/-- An `r`-rung ladder (`r ≥ 2`) on a `SimpleGraph V`. -/
+structure RungLadder {V : Type*} (G : SimpleGraph V) (r : ℕ) where
   hr : 2 ≤ r
   u : Fin r → V
   v : Fin r → V
@@ -584,18 +602,20 @@ namespace RungLadder
 
 variable {V : Type*} {G : SimpleGraph V} {r : ℕ}
 
-/-- Recursive concatenation of top segments `topSeg i ++ ... ++ topSeg (i + m - 1)` for `m ≥ 1`. -/\ndef topRun (L : RungLadder G r) (i m : ℕ) (him : i + m < r) : List V :=
+/-- Recursive concatenation of top segments `topSeg i ++ ... ++ topSeg (i + m - 1)`. -/
+def topRun (L : RungLadder G r) (i m : ℕ) (him : i + m < r) : List V :=
   match m with
   | 0 => []
   | m' + 1 =>
-    if hm' : m' = 0 then L.topSeg ⟨i, by omega⟩
+    if _ : m' = 0 then L.topSeg ⟨i, by omega⟩
     else L.topSeg ⟨i, by omega⟩ ++ L.topRun (i + 1) m' (by omega)
 
-/-- Recursive concatenation of bottom segments `botSeg (i + m - 1) ++ ... ++ botSeg i` for `m ≥ 1`. -/\ndef botRun (L : RungLadder G r) (i m : ℕ) (him : i + m < r) : List V :=
+/-- Recursive concatenation of bottom segments `botSeg (i + m - 1) ++ ... ++ botSeg i`. -/
+def botRun (L : RungLadder G r) (i m : ℕ) (him : i + m < r) : List V :=
   match m with
   | 0 => []
   | m' + 1 =>
-    if hm' : m' = 0 then L.botSeg ⟨i, by omega⟩
+    if _ : m' = 0 then L.botSeg ⟨i, by omega⟩
     else L.botRun (i + 1) m' (by omega) ++ L.botSeg ⟨i, by omega⟩
 
 lemma topRun_ne (L : RungLadder G r) (i m : ℕ) (hm : 1 ≤ m) (him : i + m < r) :
@@ -805,7 +825,7 @@ lemma botRun_length (L : RungLadder G r) :
       rw [L.botRun_length m' (i + 1) (by omega)]
       omega
 
-/-- Helper: `u j` does not lie in `topRun i m` (for `j = i + m`), and `v i` does not lie in `botRun i m`. -/\nprivate lemma u_end_not_topRun (L : RungLadder G r) (i m : ℕ) (him : i + m < r) :
+private lemma u_end_not_topRun (L : RungLadder G r) (i m : ℕ) (him : i + m < r) :
     L.u ⟨i + m, him⟩ ∉ L.topRun i m him := by
   intro hx
   obtain ⟨t, _, ht2, hxt⟩ := L.mem_topRun m i him hx
@@ -892,8 +912,8 @@ private lemma u_end_ne_v_start (L : RungLadder G r) (i m : ℕ) (him : i + m < r
       rw [← heq] at hmem_bot
       exact L.top_bot_disj ⟨i + m, by omega⟩ ⟨i - 1, by omega⟩ hmem_top hmem_bot
 
-/-- Window cycle on bays `[i, i + m)` (`1 ≤ m`, `i + m < r`):
-    `(topRun i m ++ [u (i+m)]) ++ (botRun i m ++ [v i])`. -/\ndef windowCycle (L : RungLadder G r) (i m : ℕ) (hm : 1 ≤ m) (him : i + m < r) : SimpleCycle G :=
+/-- Window cycle on bays `[i, i + m)` (`1 ≤ m`, `i + m < r`). -/
+def windowCycle (L : RungLadder G r) (i m : ℕ) (hm : 1 ≤ m) (him : i + m < r) : SimpleCycle G :=
   let P := L.topRun i m him ++ [L.u ⟨i + m, him⟩]
   let Q := L.botRun i m him ++ [L.v ⟨i, by omega⟩]
   SimpleCycle.ofTwoArcs P Q
@@ -932,7 +952,8 @@ private lemma u_end_ne_v_start (L : RungLadder G r) (i m : ℕ) (him : i + m < r
       simpa using G.symm (L.rung ⟨i, by omega⟩))
 
 /-- Theorem 10 (Exact Window-Cycle Length Formula on an `r`-Rung Ladder):
-    `|windowCycle i m| = 2 + ∑_{t ∈ [i, i+m)} (|topSeg t| + |botSeg t|)`. -/\ntheorem windowCycle_len (L : RungLadder G r) (i m : ℕ) (hm : 1 ≤ m) (him : i + m < r) :
+    `|windowCycle i m| = 2 + ∑_{t ∈ [i, i+m)} (|topSeg t| + |botSeg t|)`. -/
+theorem windowCycle_len (L : RungLadder G r) (i m : ℕ) (hm : 1 ≤ m) (him : i + m < r) :
     (L.windowCycle i m hm him).verts.length =
       2 + ∑ t ∈ (Finset.univ : Finset (Fin (r - 1))).filter (fun t => i ≤ t.val ∧ t.val < i + m),
         ((L.topSeg t).length + (L.botSeg t).length) := by
@@ -941,7 +962,7 @@ private lemma u_end_ne_v_start (L : RungLadder G r) (i m : ℕ) (him : i + m < r
   rw [L.topRun_length m i him, L.botRun_length m i him, Finset.sum_add_distrib]
   omega
 
-/-- Helper: cardinality of the bay filter `[i, i+m)` inside `Fin (r - 1)` is `m`. -/\nprivate lemma card_bay_filter {r i m : ℕ} (him : i + m < r) :
+private lemma card_bay_filter {r i m : ℕ} (him : i + m < r) :
     ((Finset.univ : Finset (Fin (r - 1))).filter (fun t => i ≤ t.val ∧ t.val < i + m)).card = m := by
   have hbij : (Finset.univ : Finset (Fin (r - 1))).filter (fun t => i ≤ t.val ∧ t.val < i + m) =
       (Finset.range m).attach.map ⟨fun x => ⟨i + x.val, by have := Finset.mem_range.mp x.prop; omega⟩,
@@ -958,7 +979,7 @@ private lemma u_end_ne_v_start (L : RungLadder G r) (i m : ℕ) (him : i + m < r
       omega
   rw [hbij, Finset.card_map, Finset.card_attach, Finset.card_range]
 
-/-- Helper: uniform-bay window cycle length equals `2 + m * w`. -/\nlemma uniform_windowCycle_len (L : RungLadder G r) {w i m : ℕ}
+lemma uniform_windowCycle_len (L : RungLadder G r) {w i m : ℕ}
     (hunif : ∀ t : Fin (r - 1), (L.topSeg t).length + (L.botSeg t).length = w)
     (hm : 1 ≤ m) (him : i + m < r) :
     (L.windowCycle i m hm him).verts.length = 2 + m * w := by
@@ -978,7 +999,8 @@ end RungLadder
 
 /-- Theorem 11 (Exact Mod-4 Ladder Immunity Obstruction):
     For EVERY `g ≡ 2 (mod 4)` (`g = 6, 10, 14, ...`) and EVERY `m : ℕ`,
-    `2 + m * (g - 2)` is NEVER a power of two `2^k` (`k ≥ 2`)! -/\ntheorem ladder_girth_mod4_two_immunity {g m : ℕ} (hg : g % 4 = 2) :
+    `2 + m * (g - 2)` is NEVER a power of two `2^k` (`k ≥ 2`)! -/
+theorem ladder_girth_mod4_two_immunity {g m : ℕ} (hg : g % 4 = 2) :
     ¬ IsPowerOfTwo (2 + m * (g - 2)) := by
   rintro ⟨k, hk, heq⟩
   have h4dvd : 4 ∣ 2 ^ k := by
@@ -990,88 +1012,139 @@ end RungLadder
   obtain ⟨t, ht⟩ := h4dvd
   omega
 
-/-- Theorem 12 (Unbounded-n Girth-5 Ladder Closure):
-    Any uniform girth-5 rung ladder (`w = 3`) with `r ≥ 3` rungs unconditionally contains `C_8`. -/\ntheorem ladder_girth5_closure {V : Type*} {G : SimpleGraph V} {r : ℕ}
+/-- Theorem 12 (Girth-10 Mod-8 Shift Immunity Obstruction):
+    Even with a single `+2` shifted bay (`w_0 = 10`, remaining bays `w_t = 8`),
+    `2 + 10 + m * 8 = 12 + 8*m` is NEVER a power of two `2^k` (`k ≥ 2`)! -/
+theorem ladder_girth10_mod8_shift_immunity (m : ℕ) :
+    ¬ IsPowerOfTwo (2 + 10 + m * 8) := by
+  rintro ⟨k, hk, heq⟩
+  by_cases hk2 : k = 2
+  · subst hk2; norm_num at heq; omega
+  · have hk3 : 3 ≤ k := by omega
+    have h8dvd : 8 ∣ 2 ^ k := by
+      have h3 : 2 ^ 3 ∣ 2 ^ k := Nat.pow_dvd_pow 2 hk3
+      simpa using h3
+    obtain ⟨t, ht⟩ := h8dvd
+    omega
+
+/-- Theorem 13 (Unbounded-n Girth-5 Ladder Closure):
+    Any uniform girth-5 rung ladder (`w = 3`) with `r ≥ 3` rungs unconditionally contains `C_8`. -/
+theorem ladder_girth5_closure {V : Type*} {G : SimpleGraph V} {r : ℕ}
     (L : RungLadder G r) (hr3 : 3 ≤ r)
     (hw : ∀ t : Fin (r - 1), (L.topSeg t).length + (L.botSeg t).length = 3) :
     HasPowerCycle G := by
   refine ⟨L.windowCycle 0 2 (by omega) (by omega), 3, by omega, ?_⟩
   rw [L.uniform_windowCycle_len hw]; norm_num
 
-/-- Theorem 13 (Unbounded-n Girth-7 Ladder Closure):
-    Any uniform girth-7 rung ladder (`w = 5`) with `r ≥ 7` rungs unconditionally contains `C_32`. -/\ntheorem ladder_girth7_closure {V : Type*} {G : SimpleGraph V} {r : ℕ}
+/-- Theorem 14 (Unbounded-n Girth-7 Ladder Closure):
+    Any uniform girth-7 rung ladder (`w = 5`) with `r ≥ 7` rungs unconditionally contains `C_32`. -/
+theorem ladder_girth7_closure {V : Type*} {G : SimpleGraph V} {r : ℕ}
     (L : RungLadder G r) (hr7 : 7 ≤ r)
     (hw : ∀ t : Fin (r - 1), (L.topSeg t).length + (L.botSeg t).length = 5) :
     HasPowerCycle G := by
   refine ⟨L.windowCycle 0 6 (by omega) (by omega), 5, by omega, ?_⟩
   rw [L.uniform_windowCycle_len hw]; norm_num
 
-/-- Theorem 14 (Unbounded-n Girth-9 Ladder Closure):
-    Any uniform girth-9 rung ladder (`w = 7`) with `r ≥ 3` rungs unconditionally contains `C_16`. -/\ntheorem ladder_girth9_closure {V : Type*} {G : SimpleGraph V} {r : ℕ}
+/-- Theorem 15 (Unbounded-n Girth-9 Ladder Closure):
+    Any uniform girth-9 rung ladder (`w = 7`) with `r ≥ 3` rungs unconditionally contains `C_16`. -/
+theorem ladder_girth9_closure {V : Type*} {G : SimpleGraph V} {r : ℕ}
     (L : RungLadder G r) (hr3 : 3 ≤ r)
     (hw : ∀ t : Fin (r - 1), (L.topSeg t).length + (L.botSeg t).length = 7) :
     HasPowerCycle G := by
   refine ⟨L.windowCycle 0 2 (by omega) (by omega), 4, by omega, ?_⟩
   rw [L.uniform_windowCycle_len hw]; norm_num
 
-/-- Theorem 15 (Unbounded-n Girth-11 Ladder Closure):
-    Any uniform girth-11 rung ladder (`w = 9`) with `r ≥ 15` rungs unconditionally contains `C_128`. -/\ntheorem ladder_girth11_closure {V : Type*} {G : SimpleGraph V} {r : ℕ}
+/-- Theorem 16 (Unbounded-n Girth-11 Ladder Closure):
+    Any uniform girth-11 rung ladder (`w = 9`) with `r ≥ 15` rungs unconditionally contains `C_128`. -/
+theorem ladder_girth11_closure {V : Type*} {G : SimpleGraph V} {r : ℕ}
     (L : RungLadder G r) (hr15 : 15 ≤ r)
     (hw : ∀ t : Fin (r - 1), (L.topSeg t).length + (L.botSeg t).length = 9) :
     HasPowerCycle G := by
   refine ⟨L.windowCycle 0 14 (by omega) (by omega), 7, by omega, ?_⟩
   rw [L.uniform_windowCycle_len hw]; norm_num
 
-/-- Theorem 16 (Unbounded-n Girth-12 Ladder Closure):
-    Any uniform girth-12 rung ladder (`w = 10`) with `r ≥ 4` rungs unconditionally contains `C_32`. -/\ntheorem ladder_girth12_closure {V : Type*} {G : SimpleGraph V} {r : ℕ}
+/-- Theorem 17 (Unbounded-n Girth-12 Ladder Closure):
+    Any uniform girth-12 rung ladder (`w = 10`) with `r ≥ 4` rungs unconditionally contains `C_32`. -/
+theorem ladder_girth12_closure {V : Type*} {G : SimpleGraph V} {r : ℕ}
     (L : RungLadder G r) (hr4 : 4 ≤ r)
     (hw : ∀ t : Fin (r - 1), (L.topSeg t).length + (L.botSeg t).length = 10) :
     HasPowerCycle G := by
   refine ⟨L.windowCycle 0 3 (by omega) (by omega), 5, by omega, ?_⟩
   rw [L.uniform_windowCycle_len hw]; norm_num
 
-/-- Theorem 17 (Unbounded-n Girth-13 Ladder Closure):
-    Any uniform girth-13 rung ladder (`w = 11`) with `r ≥ 187` rungs unconditionally contains `C_2048`. -/\ntheorem ladder_girth13_closure {V : Type*} {G : SimpleGraph V} {r : ℕ}
+/-- Theorem 18 (Unbounded-n Girth-13 Ladder Closure):
+    Any uniform girth-13 rung ladder (`w = 11`) with `r ≥ 187` rungs unconditionally contains `C_2048`. -/
+theorem ladder_girth13_closure {V : Type*} {G : SimpleGraph V} {r : ℕ}
     (L : RungLadder G r) (hr187 : 187 ≤ r)
     (hw : ∀ t : Fin (r - 1), (L.topSeg t).length + (L.botSeg t).length = 11) :
     HasPowerCycle G := by
   refine ⟨L.windowCycle 0 186 (by omega) (by omega), 11, by omega, ?_⟩
   rw [L.uniform_windowCycle_len hw]; norm_num
 
-/-- Theorem 18 (Single-Twist Mod-4 Immunity Breaker for `g ∈ {6, 10, 14}`):
-    For ALL three mod-4-two girths `g ∈ {6, 10, 14}` in `{5..14}`, a single `+2`-shifted
-    first bay (`w_0 = g`, remaining bays `w_t = g - 2`) unconditionally breaks the mod-4
-    immunity and forces a simple power-of-two cycle (`C_8` at `g=6, r≥2`; `C_32` at `g=10, r≥4`;
-    `C_16` at `g=14, r≥2`)! -/\ntheorem twisted_ladder_breaks_mod4_two_barrier {V : Type*} {G : SimpleGraph V} {r g : ℕ}
+/-- Theorem 19 (Twist-Breaker for `g ∈ {6, 10, 14}`):
+    A single shifted bay `w_0 = 6` (`g = 6`, `+2` shift) yields `C_8`,
+    `w_0 = 14` (`g = 10`, `+6` shift, or `g = 14`, `+2` shift) yields `C_16`,
+    and `w_0 = 14` with `w_1 = 8` (`g = 10`) already hits `C_16` on bay 0! -/
+theorem twisted_ladder_breaks_mod4_two_barrier {V : Type*} {G : SimpleGraph V} {r : ℕ}
     (L : RungLadder G r)
-    (hg : (g = 6 ∧ 2 ≤ r) ∨ (g = 10 ∧ 4 ≤ r) ∨ (g = 14 ∧ 2 ≤ r))
     (hw0 : (L.topSeg ⟨0, by have := L.hr; omega⟩).length +
-           (L.botSeg ⟨0, by have := L.hr; omega⟩).length = g)
-    (hwt : ∀ t : Fin (r - 1), t.val ≠ 0 →
-           (L.topSeg t).length + (L.botSeg t).length = g - 2) :
+           (L.botSeg ⟨0, by have := L.hr; omega⟩).length = 6 ∨
+           (L.topSeg ⟨0, by have := L.hr; omega⟩).length +
+           (L.botSeg ⟨0, by have := L.hr; omega⟩).length = 14) :
     HasPowerCycle G := by
-  rcases hg with ⟨rfl, hr2⟩ | ⟨rfl, hr4⟩ | ⟨rfl, hr2⟩
-  · -- g = 6, m = 1: 2 + 6 = 8 = 2^3
-    refine ⟨L.windowCycle 0 1 (by omega) (by omega), 3, by omega, ?_⟩
-    rw [L.windowCycle_len 0 1 (by omega) (by omega)]
-    have hf : (Finset.univ : Finset (Fin (r - 1))).filter (fun t => 0 ≤ t.val ∧ t.val < 0 + 1) =
-        {⟨0, by omega⟩} := by
-      ext t; simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton, Fin.ext_iff]
-      omega
-    rw [hf, Finset.sum_singleton, hw0]
-  · -- g = 10, m = 3: 2 + (10 + 8 + 8) = 28? Wait: 2 + 10 + 8 + 8 = 28; let's check m=1: 2+10=12, m=2: 20, m=3: 28,
-    -- WAIT: 2 + 10 + (m-1)*8 = 12 + 8*(m-1) = 4*(2m + 1) ≡ 4 (mod 8)!!
-    -- AHA!! For g = 10, a +2 shift gives 4*(2m+1) ≡ 4 (mod 8), NOT 2^k!!
-    -- Instead, for g = 10, a +6 shift (or +2 shift with m=1 on g=10? Wait: 2 + 10 = 12 ≠ 2^k)!
-    -- Wait: let's check what happens for g = 10: 2 + (g + 4) = 16 = 2^4! Or +4 shift!
-    -- Wait: we cannot prove false! Let's fix the theorem statement cleanly before pushing!
-    exfalso; sorry
+  have hhr := L.hr
+  have hf : (Finset.univ : Finset (Fin (r - 1))).filter (fun t => 0 ≤ t.val ∧ t.val < 0 + 1) =
+      {⟨0, by omega⟩} := by
+    ext t; simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton, Fin.ext_iff]
+    omega
+  rcases hw0 with h6 | h14
+  · refine ⟨L.windowCycle 0 1 (by omega) (by omega), 3, by omega, ?_⟩
+    rw [L.windowCycle_len 0 1 (by omega) (by omega), hf, Finset.sum_singleton, h6]
   · refine ⟨L.windowCycle 0 1 (by omega) (by omega), 4, by omega, ?_⟩
-    rw [L.windowCycle_len 0 1 (by omega) (by omega)]
-    have hf : (Finset.univ : Finset (Fin (r - 1))).filter (fun t => 0 ≤ t.val ∧ t.val < 0 + 1) =
-        {⟨0, by omega⟩} := by
-      ext t; simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton, Fin.ext_iff]
-      omega
-    rw [hf, Finset.sum_singleton, hw0]
+    rw [L.windowCycle_len 0 1 (by omega) (by omega), hf, Finset.sum_singleton, h14]
+
+/-! ### Part IV: Ihara–Chebyshev `B^16` Cage Thresholds & `EGRob` 2-Copy Gluing Spectrum -/
+
+/-- Theorem 20 (Ihara–Chebyshev `B^16` Cage-Surpassing Thresholds & Cauchy–Schwarz Refinement):
+    1. Nonbipartite `d = 3`: `T_8(3)^2 = 257^2 = 66049 > 511 * n` for ALL `n ≤ 129`,
+       strictly surpassing the Moore bounds and exact cages for `g = 9, 10, 11, 12` (`58, 70, 112, 126`).
+    2. Cauchy–Schwarz refinement (using `Tr(B^8) = 0`): `(n - 1) * 257^2 + (257 + n)^2 > 511 * n * (n - 1)`
+       holds for ALL `2 ≤ n ≤ 131`.
+    3. Bipartite `d = 3`: `2 * 257^2 = 132098 > 511 * n` for ALL `n ≤ 258`,
+       strictly surpassing the Moore bound `M(3, 14) = 254`! -/
+theorem ihara_chebyshev_b16_cage_thresholds :
+    (∀ n : ℕ, n ≤ 129 → 511 * n < (2 ^ 8 + 1) ^ 2) ∧
+    (∀ n : ℕ, 2 ≤ n → n ≤ 131 → 511 * n * (n - 1) < (n - 1) * (2 ^ 8 + 1) ^ 2 + (2 ^ 8 + 1 + n) ^ 2) ∧
+    (∀ n : ℕ, n ≤ 258 → 511 * n < 2 * (2 ^ 8 + 1) ^ 2) := by
+  refine ⟨fun n hn => by norm_num; omega, ?_, fun n hn => by norm_num; omega⟩
+  intro n h2 h131
+  nlinarith
+
+/-- Theorem 21 (`EGRob` Two-Copy Gluing Half-Power Path Exclusion):
+    If two vertex-disjoint copies of `G = H - ab` glued at `{a, b}` are power-free,
+    then `G` contains NO simple `a`-`b` path of length `2^(k-1)` (`k ≥ 2`) — because
+    pairing the two copies of that path produces a simple `2^k`-cycle in the glued graph! -/
+theorem egrob_two_copy_gluing_no_half_pow2_path {V : Type*} {G : SimpleGraph V}
+    (hpf : PowerFree G) {k : ℕ} (hk : 2 ≤ k)
+    (A B : List V) (hneA : A ≠ []) (hneB : B ≠ [])
+    (hlenA : A.length = 2 ^ (k - 1)) (hlenB : B.length = 2 ^ (k - 1))
+    (hndA : A.Nodup) (hndB : B.Nodup) (hdisj : List.Disjoint A B)
+    (hchA : A.IsChain G.Adj) (hchB : B.IsChain G.Adj)
+    (hAB : G.Adj (A.getLast hneA) (B.head hneB))
+    (hBA : G.Adj (B.getLast hneB) (A.head hneA)) :
+    False := by
+  have h2k : 2 ^ k = 2 ^ (k - 1) + 2 ^ (k - 1) := by
+    have : k = (k - 1) + 1 := by omega
+    conv_lhs => rw [this, pow_succ]
+    omega
+  have hpow4 : 4 ≤ 2 ^ k := by
+    calc 4 = 2 ^ 2 := by norm_num
+      _ ≤ 2 ^ k := Nat.pow_le_pow_right (by omega) hk
+  let C := SimpleCycle.ofTwoArcs A B hneA hneB
+    (by omega) hndA hndB hdisj hchA hchB hAB hBA
+  apply hpf
+  refine ⟨C, k, hk, ?_⟩
+  show (A ++ B).length = 2 ^ k
+  rw [List.length_append, hlenA, hlenB, h2k]
 
 end E64Wave8Agent10
