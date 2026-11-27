@@ -176,7 +176,7 @@ theorem closed_nb_seq_has_simple_cycle_le (G : SimpleGraph V) :
           rw [hs1, hs2] at hstep; exact hstep
         · intro t ht
           have hstep := hnb (i.1 + t) (by omega)
-          have hs2 : (⟨i.1 + t + 2, by omega⟩ : Fin (L + 1)) = ⟨i.1 + (t + 2), by omega⟩ := by ext; omega
+          have hs2 : (⟨i.1 + t + 2, by omega⟩ : Fin (L + 1)) = ⟨i.1 + (t + 2), by omega⟩ := by ext; simp; omega
           rw [hs2] at hstep; exact hstep
       obtain ⟨c, hcm, hcyc⟩ := ih m hmL g hg_closed
       exact ⟨c, le_trans hcm (le_of_lt hmL), hcyc⟩
@@ -230,7 +230,7 @@ theorem girth9_tailless16_is_simple_cycle (G : SimpleGraph V)
           rw [hs1, hs2] at hstep; exact hstep
         · intro t ht
           have hstep := hnb (i.1 + t) (by omega)
-          have hs2 : (⟨i.1 + t + 2, by omega⟩ : Fin 17) = ⟨i.1 + (t + 2), by omega⟩ := by ext; omega
+          have hs2 : (⟨i.1 + t + 2, by omega⟩ : Fin 17) = ⟨i.1 + (t + 2), by omega⟩ := by ext; simp; omega
           rw [hs2] at hstep; exact hstep
       obtain ⟨c, hcm, hcyc⟩ := closed_nb_seq_has_simple_cycle_le G m g hg_closed
       exact False.elim (hg c (by omega) hcyc)
@@ -606,7 +606,7 @@ lemma tailedCount_step (G : SimpleGraph V) [DecidableRel G.Adj]
           have hs2 : (⟨i.1 + 1, by omega⟩ : Fin (k + 2)).succ = ⟨i.succ.1 + 1, by omega⟩ := by ext; simp
           rw [hs1, hs2] at hstep; exact hstep
         · have hstep := hnb (i + 1) (by omega)
-          have hs2 : (⟨i + 1 + 2, by omega⟩ : Fin (k + 3)) = ⟨i + 2 + 1, by omega⟩ := by ext; omega
+          have hs2 : (⟨i + 1 + 2, by omega⟩ : Fin (k + 3)) = ⟨i + 2 + 1, by omega⟩ := by ext; simp; omega
           rw [hs2] at hstep; exact hstep
       · simp only [Finset.mem_filter, Finset.mem_univ, true_and]
         refine ⟨?_, ?_, ?_⟩
@@ -645,10 +645,9 @@ lemma tailedCount_step (G : SimpleGraph V) [DecidableRel G.Adj]
         else q.1 ⟨i.1 - 1, by omega⟩
       have hf_zero : f 0 = q.2 := by simp [f]
       have hf_last : f (Fin.last (k + 2)) = q.2 := by
-        dsimp [f]; split_ifs with h1 h2
+        dsimp [f]; split_ifs with h1
         · rfl
-        · rfl
-        · exact False.elim (h2 rfl)
+        · exact False.elim (h1 rfl)
       have hf_mid : ∀ m : ℕ, ∀ hm1 : 1 ≤ m, ∀ hm2 : m ≤ k + 1,
           f ⟨m, by omega⟩ = q.1 ⟨m - 1, by omega⟩ := by
         intro m hm1 hm2; dsimp [f]; split_ifs <;> [omega; omega; rfl]
@@ -1626,7 +1625,7 @@ theorem four_layer_annulus_telescoping_peak (D : ℕ) (hD : 1 ≤ D) (a : ℕ �
           rw [hsplit]; ring
         rw [Finset.sum_range_succ, hshift]
         by_cases hk0 : k = 0
-        · subst hk0; simp; ring
+        · subst hk0; simp
         · have hne1 : k + 1 ≠ 1 := by omega
           have hne2 : k + 2 ≠ 1 := by omega
           simp only [hne1, hne2, ite_false] at hih ⊢
@@ -1734,7 +1733,7 @@ theorem k4_subdivision_parity_and_dyadic_sum (a₁ a₂ a₃ b₁ b₂ b₃ : �
   by_contra h
   push Not at h
   rcases h with ⟨h1, h2, h3⟩
-  rw [Nat.even_iff] at h1 h2 h3
+  rw [Nat.odd_iff] at h1 h2 h3
   have hsum : Q₁ + Q₂ + Q₃ = 2 * (a₁ + a₂ + a₃ + b₁ + b₂ + b₃) := by omega
   omega
 
