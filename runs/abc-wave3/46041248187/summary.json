@@ -1,0 +1,66 @@
+{
+  "problem": "ABC",
+  "resolution": "unknown",
+  "batch": "agent4",
+  "workflow_result": "success",
+  "source_commit": "e2a47a835201e7be2c50fa14e86317da52cc6df4",
+  "run_id": "46041248187",
+  "agents": {
+    "4": {
+      "result": {
+        "agent": 4,
+        "wave": 3,
+        "status": "LEAN_VERIFIED",
+        "problem_resolution": "unknown",
+        "lean_version": "Lean (version 4.36.0, x86_64-unknown-linux-gnu, commit 611c117bfaf7b7ae1cfcf246ce6fba31e8f509e9, Release)",
+        "mathlib_commit": "fc4f59e577feb1a4956671bc04ac18aaaf8cd842",
+        "pinned_mathlib_verified": true,
+        "source_sha256": "e97ea98a8feb82460a48bb63f6b1db94528f3ed30cf761b5945d83ff54d5bdef",
+        "kernel_log_sha256": "6c51e52638a5a727bb9dceec6859f7702129a524ef1dbd6022abbc741c08a0f5",
+        "theorem_count": 4,
+        "axioms": {
+          "ABCWave3Fermat.primitive_square_area_descent_odd": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave3Fermat.primitive_square_area_descent": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave3Fermat.no_primitive_square_area": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave3Fermat.fourth_difference_not_square": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ]
+        },
+        "github_run_id": "46041248187",
+        "github_sha": "e2a47a835201e7be2c50fa14e86317da52cc6df4",
+        "scope": "Primitive positive integer square-area triangles cannot exist, proved by complete descending construction and strong induction. The quartic consequence c^4-b^4 != w^2 is proved for 0<b<c, gcd(c,b)=1, odd c and even b. These statements suffice for the quartic ROOT escape, but the uniform ROOT bound and full abc are not proved.",
+        "original_abc_closed": false
+      },
+      "provenance": {
+        "agent": 4,
+        "job": "abc-wave3-agent4-lean",
+        "toolbox": "lean",
+        "source_commit": "e2a47a835201e7be2c50fa14e86317da52cc6df4",
+        "run_id": "46041248187",
+        "run_attempt": "1",
+        "python": "3.10.12",
+        "file_sha256": {
+          "jobs/abc-wave3-agent4-lean/FermatSquareArea.lean": "e97ea98a8feb82460a48bb63f6b1db94528f3ed30cf761b5945d83ff54d5bdef",
+          "jobs/abc-wave3-agent4-lean/README.md": "cb3c67ebc848087b0146fec669fb5856cf9ff4dafce1482878d0605f5b80b0a1",
+          "jobs/abc-wave3-agent4-lean/audit.py": "960a9377c1ec021cebbfb020fe7d8d0d6ca8c26f11142c481fb3ef8baede1947",
+          "jobs/abc-wave3-agent4-lean/run.sh": "783133be6bf4ca7f860845bfb472a265fb391f22931cee3d5510471a0bd2cd92"
+        }
+      }
+    }
+  },
+  "scope": "Successful jobs verify only their exact structural lemmas or bounded searches, never the original abc conjecture."
+}

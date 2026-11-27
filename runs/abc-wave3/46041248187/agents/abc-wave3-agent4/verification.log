@@ -1,0 +1,43 @@
+Lean (version 4.36.0, x86_64-unknown-linux-gnu, commit 611c117bfaf7b7ae1cfcf246ce6fba31e8f509e9, Release)
+'ABCWave3Fermat.primitive_square_area_descent_odd' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave3Fermat.primitive_square_area_descent' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave3Fermat.no_primitive_square_area' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave3Fermat.fourth_difference_not_square' depends on axioms: [propext, Classical.choice, Quot.sound]
+{
+  "agent": 4,
+  "wave": 3,
+  "status": "LEAN_VERIFIED",
+  "problem_resolution": "unknown",
+  "lean_version": "Lean (version 4.36.0, x86_64-unknown-linux-gnu, commit 611c117bfaf7b7ae1cfcf246ce6fba31e8f509e9, Release)",
+  "mathlib_commit": "fc4f59e577feb1a4956671bc04ac18aaaf8cd842",
+  "pinned_mathlib_verified": true,
+  "source_sha256": "e97ea98a8feb82460a48bb63f6b1db94528f3ed30cf761b5945d83ff54d5bdef",
+  "kernel_log_sha256": "6c51e52638a5a727bb9dceec6859f7702129a524ef1dbd6022abbc741c08a0f5",
+  "theorem_count": 4,
+  "axioms": {
+    "ABCWave3Fermat.primitive_square_area_descent_odd": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave3Fermat.primitive_square_area_descent": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave3Fermat.no_primitive_square_area": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave3Fermat.fourth_difference_not_square": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  "github_run_id": "46041248187",
+  "github_sha": "e2a47a835201e7be2c50fa14e86317da52cc6df4",
+  "scope": "Primitive positive integer square-area triangles cannot exist, proved by complete descending construction and strong induction. The quartic consequence c^4-b^4 != w^2 is proved for 0<b<c, gcd(c,b)=1, odd c and even b. These statements suffice for the quartic ROOT escape, but the uniform ROOT bound and full abc are not proved.",
+  "original_abc_closed": false
+}
