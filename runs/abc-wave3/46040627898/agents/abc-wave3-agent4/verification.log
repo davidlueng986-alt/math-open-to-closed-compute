@@ -1,0 +1,11 @@
+Lean (version 4.36.0, x86_64-unknown-linux-gnu, commit 611c117bfaf7b7ae1cfcf246ce6fba31e8f509e9, Release)
+/opt/mathlib4/ABCWave3Agent4_9iQwcyG1.lean:62:14: error(lean.unknownIdentifier): Unknown constant `Int.pow_emod`
+/opt/mathlib4/ABCWave3Agent4_9iQwcyG1.lean:149:30: error(lean.unknownIdentifier): Unknown constant `Int.pow_emod`
+/opt/mathlib4/ABCWave3Agent4_9iQwcyG1.lean:190:4: error: Invalid alternative name `h`: Expected `ind`
+/opt/mathlib4/ABCWave3Agent4_9iQwcyG1.lean:189:4: error: Alternative `ind` has not been provided
+/opt/mathlib4/ABCWave3Agent4_9iQwcyG1.lean:227:16: error(lean.unknownIdentifier): Unknown constant `Int.pow_emod`
+/opt/mathlib4/ABCWave3Agent4_9iQwcyG1.lean:228:16: error(lean.unknownIdentifier): Unknown constant `Int.pow_emod`
+'ABCWave3Fermat.primitive_square_area_descent_odd' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave3Fermat.primitive_square_area_descent' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave3Fermat.no_primitive_square_area' depends on axioms: [propext, sorryAx]
+'ABCWave3Fermat.fourth_difference_not_square' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
