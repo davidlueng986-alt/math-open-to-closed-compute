@@ -189,7 +189,8 @@ theorem induceFin_degree {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj
   rw [← SimpleGraph.card_neighborFinset_eq_degree]
   refine Finset.card_bij (fun j _ => (S.equivFin.symm j).1) ?_ ?_ ?_
   · intro j hj
-    exact Finset.mem_inter.mpr ⟨mem_nb_of_adj (adj_of_mem_nb hj), (S.equivFin.symm j).2⟩
+    have hadj : G.Adj (S.equivFin.symm i).1 (S.equivFin.symm j).1 := adj_of_mem_nb hj
+    exact Finset.mem_inter.mpr ⟨mem_nb_of_adj hadj, (S.equivFin.symm j).2⟩
   · intro _ _ _ _ h; exact S.equivFin.symm.injective (Subtype.ext h)
   · intro y hy
     rw [Finset.mem_inter] at hy
@@ -215,7 +216,7 @@ theorem delEdge_degree_left {V : Type*} [Fintype V] [DecidableEq V]
     rw [SimpleGraph.mem_neighborFinset, Finset.mem_erase, SimpleGraph.mem_neighborFinset]
     change (G.Adj a y ∧ ¬((a = a ∧ y = b) ∨ (a = b ∧ y = a))) ↔ (y ≠ b ∧ G.Adj a y)
     exact ⟨fun ⟨h1, h2⟩ => ⟨fun hy => h2 (Or.inl ⟨rfl, hy⟩), h1⟩,
-           fun ⟨hne, h1⟩ => ⟨h1, fun h => h.elim (fun ⟨_, hy⟩ => hne hy) (fun ⟨h', _⟩ => adj_irrefl a (h' ▸ h1))⟩⟩
+           fun ⟨hne, h1⟩ => ⟨h1, fun h => h.elim (fun ⟨_, hy⟩ => hne hy) (fun ⟨_, hy⟩ => adj_irrefl a (hy ▸ h1))⟩⟩
   rw [heq, Finset.card_erase_of_mem (mem_nb_of_adj hab)]
 
 theorem delEdge_degree_right {V : Type*} [Fintype V] [DecidableEq V]
@@ -227,7 +228,7 @@ theorem delEdge_degree_right {V : Type*} [Fintype V] [DecidableEq V]
     rw [SimpleGraph.mem_neighborFinset, Finset.mem_erase, SimpleGraph.mem_neighborFinset]
     change (G.Adj b y ∧ ¬((b = a ∧ y = b) ∨ (b = b ∧ y = a))) ↔ (y ≠ a ∧ G.Adj b y)
     exact ⟨fun ⟨h1, h2⟩ => ⟨fun hy => h2 (Or.inr ⟨rfl, hy⟩), h1⟩,
-           fun ⟨hne, h1⟩ => ⟨h1, fun h => h.elim (fun ⟨h', _⟩ => adj_irrefl b (h' ▸ h1)) (fun ⟨_, hy⟩ => hne hy)⟩⟩
+           fun ⟨hne, h1⟩ => ⟨h1, fun h => h.elim (fun ⟨_, hy⟩ => adj_irrefl b (hy ▸ h1)) (fun ⟨_, hy⟩ => hne hy)⟩⟩
   rw [heq, Finset.card_erase_of_mem (mem_nb_of_adj (adj_symm hab))]
 
 theorem delEdge_degree_other {V : Type*} [Fintype V] [DecidableEq V]
@@ -316,7 +317,7 @@ theorem near2_induceFin_of_defects {n : ℕ} {G : SimpleGraph (Fin n)} [Decidabl
       refine Finset.card_le_card_of_injOn (fun i => (S.equivFin.symm i).1) ?_
         (fun _ _ _ _ h => S.equivFin.symm.injective (Subtype.ext h))
       intro i hi
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi
+      simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_univ, true_and] at hi
       rw [induceFin_degree] at hi
       by_contra hnotD; have := hge3 _ (S.equivFin.symm i).2 hnotD; omega
     omega
@@ -334,7 +335,7 @@ theorem no_c4_of_not_hasPower {V : Type*} {G : SimpleGraph V} (h : ¬HasPower G)
   apply h; refine ⟨a, p, ⟨⟨⟨?_⟩, ?_⟩, ?_⟩, ⟨2, le_rfl, rfl⟩⟩
   · simp [p, SimpleGraph.Walk.edges, hab_ne, hab_ne.symm, hbc_ne,
       hcd_ne, hda_ne, hda_ne.symm, hac, hac.symm, hbd]
-  · intro hnil; cases hnil
+  · intro hnil; dsimp only [p] at hnil; cases hnil
   · simp [p, List.nodup_cons, hab_ne.symm, hbc_ne, hcd_ne, hda_ne, hac.symm, hbd]
 
 theorem card_ge_five_of_near2_not_hasPower {n : ℕ} {G : SimpleGraph (Fin n)} [DecidableRel G.Adj]
@@ -454,9 +455,9 @@ theorem minimal_bad2_exact_two_defects {n : ℕ} {G : SimpleGraph (Fin n)} [Deci
     have hnear' : Near2 G' := by
       refine ⟨fun x => ?_, ?_, ?_⟩
       · by_cases hxa : x = a
-        · subst hxa; rw [delEdge_degree_left G hab]; have := hall3 x; omega
+        · subst hxa; rw [delEdge_degree_left G hab]; have := hall3 a; omega
         · by_cases hxb : x = b
-          · subst hxb; rw [delEdge_degree_right G hab]; have := hall3 x; omega
+          · subst hxb; rw [delEdge_degree_right G hab]; have := hall3 b; omega
           · rw [delEdge_degree_other G hxa hxb]; have := hall3 x; omega
       · refine (Finset.card_le_card (t := ({a, b} : Finset (Fin n))) ?_).trans Finset.card_le_two
         intro x hx; simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx
@@ -764,12 +765,12 @@ theorem minimal_bad2_nonbipartite {n : ℕ} {G : SimpleGraph (Fin n)} [Decidable
       exact hy.2 (Finset.mem_erase.mpr ⟨hya, Finset.mem_univ _⟩))).trans (by simp)
   have hdeg_ui : 3 ≤ G'.degree ui := by
     rw [addEdge_degree_left G0 huvi hnotuv0, induceFin_degree]
-    dsimp only [ui]; rw [Equiv.symm_apply_apply]
+    dsimp only [ui]; rw [Equiv.symm_apply_apply]; dsimp only
     have := inter_card_ge_of_sdiff_le G S u 1 (hdiff1 u (Finset.mem_erase.mpr ⟨hua, Finset.mem_univ _⟩))
     have := hother u hua hub; omega
   have hdeg_vi : 3 ≤ G'.degree vi := by
     rw [addEdge_degree_right G0 huvi hnotuv0, induceFin_degree]
-    dsimp only [vi]; rw [Equiv.symm_apply_apply]
+    dsimp only [vi]; rw [Equiv.symm_apply_apply]; dsimp only
     have := inter_card_ge_of_sdiff_le G S v 1 (hdiff1 v (Finset.mem_erase.mpr ⟨hva, Finset.mem_univ _⟩))
     have := hother v hva hvb; omega
   have hdeg_other : ∀ i : Fin S.card, i ≠ ui → i ≠ vi → G'.degree i = G.degree (S.equivFin.symm i).1 := by
@@ -1073,13 +1074,13 @@ theorem minimal_bad2_no_cut_vertex {n : ℕ} {G : SimpleGraph (Fin n)} [Decidabl
       have hle : cutSize G X ≤ (G.neighborFinset v ∩ S).card := by
         unfold cutSize
         refine Finset.card_le_card_of_injOn (fun p => p.1) ?_ ?_
-        · intro p hp; simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hp
+        · intro p hp; simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_univ, true_and] at hp
           have hp2v : p.2 = v := Finset.mem_singleton.mp
             ((Finset.mem_union.mp (hX_nb p.1 hp.1 (mem_nb_of_adj hp.2.2))).resolve_left hp.2.1)
           exact Finset.mem_inter.mpr ⟨mem_nb_of_adj (adj_symm (hp2v ▸ hp.2.2)),
             Finset.mem_union_left _ hp.1⟩
         · intro p1 hp1 p2 hp2 heq
-          simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hp1 hp2
+          simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_univ, true_and] at hp1 hp2
           have h1v : p1.2 = v := Finset.mem_singleton.mp
             ((Finset.mem_union.mp (hX_nb p1.1 hp1.1 (mem_nb_of_adj hp1.2.2))).resolve_left hp1.2.1)
           have h2v : p2.2 = v := Finset.mem_singleton.mp
@@ -1159,7 +1160,7 @@ theorem minimal_bad2_no_defect_free_two_cut {n : ℕ} {G : SimpleGraph (Fin n)} 
       have h1 : D.card ≤ ∑ v ∈ D, (G.neighborFinset v \ S).card := by
         calc D.card = ∑ _v ∈ D, 1 := by simp
         _ ≤ ∑ v ∈ D, (G.neighborFinset v \ S).card := Finset.sum_le_sum (fun v hv => (Finset.mem_filter.mp hv).2)
-      have h2 := Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ S) (fun _ _ _ => Nat.zero_le _)
+      have h2 := Finset.sum_le_sum_of_subset_of_nonneg (f := fun v => (G.neighborFinset v \ S).card) (Finset.filter_subset (fun v => 1 ≤ (G.neighborFinset v \ S).card) S) (fun _ _ _ => Nat.zero_le _)
       omega
     have hminS : ∀ v ∈ S, 2 ≤ (G.neighborFinset v ∩ S).card := fun v hv => by
       have := inter_card_ge_of_sdiff_le G S v 1 (by have := hex2 v hv; omega); have := hS3 v hv; omega
@@ -1686,11 +1687,12 @@ theorem minimal_bad2_cubic_density_bound {n : ℕ} {G : SimpleGraph (Fin n)} [De
     have h1 : ∑ u ∈ Ndef, ((G.neighborFinset u).filter (fun v => 4 ≤ G.degree v)).card ≤ Ndef.card :=
       (Finset.sum_le_sum fun u hu => (Finset.mem_union.mp hu).elim
         (fun hua => minimal_bad2_defect_neighbor_at_most_one_high_neighbor hmb hab hda hdb hother (adj_of_mem_nb hua))
-        (fun hub => minimal_bad2_defect_neighbor_at_most_one_high_neighbor hmb hab.symm hdb hda (fun z hzb hza => hother z hza hzb) (adj_of_mem_nb hub))).trans (by simp)
+        (fun hub => minimal_bad2_defect_neighbor_at_most_one_high_neighbor hmb hab.symm hdb hda (fun z hzb hza => hother z hza hzb) (adj_of_mem_nb hub))).trans (by simp [Finset.sum_const, smul_eq_mul])
     have h2 : ∑ u ∈ V3 \ Ndef, ((G.neighborFinset u).filter (fun v => 4 ≤ G.degree v)).card ≤ 2 * (V3 \ Ndef).card :=
-      (Finset.sum_le_sum fun u hu => minimal_bad2_cubic_at_most_two_high_neighbors hmb (Finset.mem_filter.mp (Finset.mem_sdiff.mp hu).1).2).trans (by simp [mul_comm])
+      (Finset.sum_le_sum fun u hu => minimal_bad2_cubic_at_most_two_high_neighbors hmb (Finset.mem_filter.mp (Finset.mem_sdiff.mp hu).1).2).trans (by simp [Finset.sum_const, smul_eq_mul, mul_comm])
     have hcard_sdiff : (V3 \ Ndef).card + Ndef.card = V3.card := by
-      rw [Finset.card_sdiff hNdef_sub, Nat.sub_add_cancel (Finset.card_le_card hNdef_sub)]
+      have hs := Finset.card_sdiff_add_card_inter V3 Ndef
+      rw [Finset.inter_eq_right.mpr hNdef_sub] at hs; exact hs
     omega
   have hpart : V3.card + V4.card + 2 = n := by
     have hdisj : Disjoint V3 V4 := Finset.disjoint_left.mpr fun x h3 h4 => by
@@ -1700,17 +1702,17 @@ theorem minimal_bad2_cubic_density_bound {n : ℕ} {G : SimpleGraph (Fin n)} [De
       · have := (Finset.mem_filter.mp h3).2; rcases hab' with rfl | rfl <;> omega
       · have := (Finset.mem_filter.mp h4).2; rcases hab' with rfl | rfl <;> omega
     have hunion : (V3 ∪ V4) ∪ ({a, b} : Finset (Fin n)) = Finset.univ := by
-      ext x; simp only [Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert, Finset.mem_singleton, iff_true]
+      ext x; simp only [Finset.mem_union, Finset.mem_univ, Finset.mem_insert, Finset.mem_singleton, iff_true]
       by_cases hxa : x = a
       · exact Or.inr (Or.inl hxa)
       · by_cases hxb : x = b
         · exact Or.inr (Or.inr hxb)
         · have := hother x hxa hxb; by_cases hx4 : 4 ≤ G.degree x
-          · exact Or.inl (Or.inr hx4)
-          · exact Or.inl (Or.inl (by omega))
+          · exact Or.inl (Or.inr (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hx4⟩))
+          · exact Or.inl (Or.inl (Finset.mem_filter.mpr ⟨Finset.mem_univ _, by omega⟩))
     have hc := congrArg Finset.card hunion
     rw [Finset.card_union_of_disjoint hdisj2, Finset.card_union_of_disjoint hdisj,
       Finset.card_pair hab, Finset.card_univ, Fintype.card_fin] at hc; exact hc
-  dsimp only [V3]; omega
+  change 4 * n - 5 ≤ 6 * V3.card; omega
 
 end E64Wave5Agent2EGRob
