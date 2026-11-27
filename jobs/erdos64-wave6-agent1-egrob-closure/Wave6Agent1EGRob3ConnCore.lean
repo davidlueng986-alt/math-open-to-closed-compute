@@ -134,6 +134,7 @@ theorem minimal_bad2_no_safe_deletion {V : Type} [Fintype V] {G : SimpleGraph V}
   have hH_pf : PowerFree H := powerFree_induce (S : Set V) hG.1.1
   have hH_min : MinDegGe H 2 := by
     intro u
+    change 2 ≤ (G.induce (S : Set V)).degree u
     rw [degree_induce_eq]
     exact hmin u.1 u.2
   have hH_def : (Defects H).card ≤ 2 := by
@@ -142,6 +143,7 @@ theorem minimal_bad2_no_safe_deletion {V : Type} [Fintype V] {G : SimpleGraph V}
       apply Finset.card_bij (fun u _ => u.1)
       · intro u hu
         simp only [Defects, Finset.mem_filter, Finset.mem_univ, true_and] at hu
+        change (G.induce (S : Set V)).degree u = 2 at hu
         rw [degree_induce_eq] at hu
         exact Finset.mem_filter.mpr ⟨u.2, hu⟩
       · intro _ _ _ _ h
@@ -156,11 +158,9 @@ theorem minimal_bad2_no_safe_deletion {V : Type} [Fintype V] {G : SimpleGraph V}
     rw [hcard]
     exact hdef
   have hlt : Fintype.card {x : V // x ∈ (S : Set V)} < Fintype.card V := by
-    have hcard_coe : Fintype.card {x : V // x ∈ (S : Set V)} = S.card := by
-      simpa using Fintype.card_coe S
+    have hcard_coe : Fintype.card {x : V // x ∈ (S : Set V)} = S.card := by simp
     rw [hcard_coe]
-    have hsum : K.card + S.card = Fintype.card V := by
-      simpa [S] using Finset.card_add_card_compl K
+    have hsum : K.card + S.card = Fintype.card V := by simp [S]
     have hKpos : 0 < K.card := Finset.card_pos.mpr hKne
     omega
   exact minimal_bad2_no_smaller hG H ⟨hH_pf, hH_min, hH_def⟩ hlt
@@ -342,10 +342,12 @@ theorem minimal_bad2_common_defect_neighbor_no_high_neighbor {V : Type} [Fintype
           · exact False.elim (hu_notK (by simp [K, hu2]))
           · simp [hu3]
       by_cases h1 : u = a2
-      · rw [h1] at hsub; simp only [↓reduceIte, ha2_ne_b2, hdisj_abc'.1.symm, Finset.union_empty] at hsub
+      · rw [h1] at hsub ⊢
+        simp only [↓reduceIte, ha2_ne_b2, hdisj_abc'.1.symm, Finset.union_empty] at hsub
         exact le_trans (Finset.card_le_card hsub) (by simp)
       · by_cases h2 : u = b2
-        · rw [h2] at hsub; simp only [h1, ↓reduceIte, hdisj_abc'.2.symm, Finset.empty_union,
+        · rw [h2] at hsub ⊢
+          simp only [ha2_ne_b2.symm, ↓reduceIte, hdisj_abc'.2.symm, Finset.empty_union,
             Finset.union_empty] at hsub
           exact le_trans (Finset.card_le_card hsub) (by simp)
         · by_cases h3 : u = c'
@@ -462,10 +464,12 @@ theorem minimal_bad2_defect_triangle_no_high_neighbor {V : Type} [Fintype V]
         · exact False.elim (hu_notK (by simp [K, hu2]))
         · simp [hu3]
     by_cases h1 : u = x1
-    · rw [h1] at hsub; simp only [↓reduceIte, hx12, Finset.union_empty] at hsub
+    · rw [h1] at hsub ⊢
+      simp only [↓reduceIte, hx12, Finset.union_empty] at hsub
       exact le_trans (Finset.card_le_card hsub) (by simp)
     · by_cases h2 : u = x2
-      · rw [h2] at hsub; simp only [h1, ↓reduceIte, Finset.empty_union] at hsub
+      · rw [h2] at hsub ⊢
+        simp only [hx12.symm, ↓reduceIte, Finset.empty_union] at hsub
         exact le_trans (Finset.card_le_card hsub) (by simp)
       · simp only [h1, h2, ↓reduceIte, Finset.empty_union] at hsub
         exact le_trans (Finset.card_le_card hsub) (by simp)
@@ -1031,6 +1035,15 @@ def identGraph {V : Type*} (G : SimpleGraph V) (x y : V) :
     · exact ⟨hne.symm, Or.inr (Or.inl ⟨rfl, hy.symm⟩)⟩⟩
   loopless := ⟨fun _ ⟨hne, _⟩ => hne rfl⟩
 
+/-- Helper: a walk with nodup support and equal endpoints has length 0. -/
+lemma length_eq_zero_of_nodup_eq {V : Type*} {G : SimpleGraph V} {u v : V}
+    (q : G.Walk u v) (hnd : q.support.Nodup) (heq : u = v) : q.length = 0 := by
+  cases q with
+  | nil => rfl
+  | @cons _ w _ _ q' =>
+    have h1 := List.nodup_cons.mp hnd
+    exact False.elim (h1.1 (heq ▸ Walk.end_mem_support q'))
+
 /-- Helper: lifting a walk in identGraph G x y that avoids ⟨x, hxy⟩ gives a walk in G
     with exact length, support, and edge-list correspondence. -/
 lemma identGraph_walk_lift {V : Type*} {G : SimpleGraph V} {x y : V} (hxy : x ≠ y)
@@ -1066,9 +1079,10 @@ theorem identGraph_cycle_lifts_to_dyadic_path {V : Type*} {G : SimpleGraph V}
   · let c := c0.rotate z hz
     have hc : c.IsCycle := hc0.rotate hz
     have hclen : IsPowerOfTwo c.length := by simpa [c] using hpow
-    cases c with
-    | nil => exact False.elim (hc.ne_nil rfl)
+    cases hc_eq : c with
+    | nil => exact False.elim (hc.ne_nil hc_eq)
     | @cons _ b _ hzb rest =>
+      rw [hc_eq] at hc hclen
       have hrest_nodup : rest.support.Nodup := by
         have := hc.support_nodup; simpa using this
       let rev := rest.reverse
@@ -1124,17 +1138,10 @@ theorem identGraph_cycle_lifts_to_dyadic_path {V : Type*} {G : SimpleGraph V}
                 hw_not (Walk.mem_support_of_mem_edges he hwe)
               have hdb_ne : d.1 ≠ b.1 := by
                 intro heq
-                have hq0 : q.length = 0 := by
-                  cases q with
-                  | nil => rfl
-                  | @cons _ next _ h1 q' =>
-                    have hnd := List.nodup_cons.mp hq_nodup
-                    have hmem : d.1 ∈ (Walk.cons h1 q').support.tail := by
-                      rw [heq]; exact Walk.end_mem_support _
-                    exact False.elim (hnd.1 hmem)
+                have hq0 := length_eq_zero_of_nodup_eq q hq_nodup heq
                 omega
-              simp only [cyc, Walk.edges_cons, Walk.edges_concat, List.nodup_cons, List.mem_append,
-                List.mem_singleton, not_or, List.nodup_append]
+              simp only [cyc, Walk.edges_cons, Walk.edges_concat, List.concat_eq_append,
+                List.nodup_cons, List.mem_append, List.mem_singleton, not_or, List.nodup_append]
               refine ⟨⟨fun hm => hw_not_edges _ hm (by simp), ?_⟩, hq_edges_nodup,
                 List.nodup_singleton _, ?_⟩
               · rw [Sym2.eq_iff]
@@ -1175,7 +1182,7 @@ theorem identGraph_cycle_lifts_to_dyadic_path {V : Type*} {G : SimpleGraph V}
             rw [List.mem_singleton] at ha'; subst ha'; subst heq; exact hx_not_q ha
           refine ⟨path_rev.reverse, (Walk.IsPath.mk' hpr_nodup).reverse, ?_⟩
           have : path_rev.reverse.length = (Walk.cons hzb rest).length := by
-            simp [path_rev, Walk.length_reverse, Walk.length_concat, hqlen_eq]
+            simp [path_rev, Walk.length_reverse, hqlen_eq]
           rw [this]; exact hclen
         · exact False.elim (mk_cyc hy_not_q hyd hyb)
   · rcases identGraph_walk_lift hxy c0 hz with ⟨q, hqlen, hqsupp, hqedges⟩
@@ -1231,7 +1238,7 @@ lemma identGraph_degree_other_no_common {V : Type*} [Fintype V] (G : SimpleGraph
 
 /-- Helper: degree of a common neighbor u of x and y in identGraph G x y drops by exactly 1. -/
 lemma identGraph_degree_other_common {V : Type*} [Fintype V] (G : SimpleGraph V)
-    {x y : V} (hxy : x ≠ y) (u : {w : V // w ≠ y}) (hux : u.1 ≠ x)
+    {x y : V} (u : {w : V // w ≠ y}) (hux : u.1 ≠ x)
     (hcomm : G.Adj u.1 x ∧ G.Adj u.1 y) :
     (identGraph G x y).degree u = G.degree u.1 - 1 := by
   rw [← SimpleGraph.card_neighborFinset_eq_degree, ← SimpleGraph.card_neighborFinset_eq_degree]
@@ -1374,7 +1381,7 @@ theorem minimal_bad2_defect_to_any_dyadic_path {V : Type} [Fintype V]
       by_cases hua : u.1 = a
       · have heq : u = ⟨a, hay⟩ := Subtype.ext hua; rw [heq]; omega
       · by_cases hcomm : G.Adj u.1 a ∧ G.Adj u.1 y
-        · rw [identGraph_degree_other_common G hay u hua hcomm]
+        · rw [identGraph_degree_other_common G u hua hcomm]
           have h3 := hdef_nb_ge3 u.1 hcomm.1.symm
           omega
         · rw [identGraph_degree_other_no_common G hay u hua hcomm]
@@ -1457,7 +1464,7 @@ theorem minimal_bad2_non_triangle_edge_dyadic_plus_one_cycle {V : Type} [Fintype
   let c : G.Walk u u := Walk.cons huv p.reverse
   have hclen : c.length = 2 ^ k + 1 := by simp [c, Walk.length_reverse, hplen]
   have hge4 : 4 ≤ p.length := by
-    have : 2 ^ 2 ≤ 2 ^ k := Nat.pow_le_pow_right (by omega) hk2
+    have : 4 ≤ 2 ^ k := le_trans (by norm_num : 4 ≤ 2 ^ 2) (Nat.pow_le_pow_right (by norm_num) hk2)
     omega
   have hc_is : c.IsCycle := by
     rw [Walk.isCycle_def]
@@ -1697,7 +1704,8 @@ theorem minimal_bad2_two_cut_fermat_disjoint {V : Type} [Fintype V]
     {k : ℕ} (hk : 2 ≤ k) (hA_len : pA.length = 2 ^ k - 1) (hB_len : pB.length = 2 ^ k - 1) :
     False := by
   let c : G.Walk u1 u1 := pA.append (Walk.cons he2 (pB.concat he1.symm))
-  have h2k_ge4 : 4 ≤ 2 ^ k := Nat.pow_le_pow_right (by omega) hk
+  have h2k_ge4 : 4 ≤ 2 ^ k :=
+    le_trans (by norm_num : 4 ≤ 2 ^ 2) (Nat.pow_le_pow_right (by norm_num) hk)
   have hclen : c.length = 2 ^ (k + 1) := by
     simp only [c, Walk.length_append, Walk.length_cons, Walk.length_concat, hA_len, hB_len]
     have : 2 ^ (k + 1) = 2 ^ k + 2 ^ k := by ring
@@ -1709,7 +1717,7 @@ theorem minimal_bad2_two_cut_fermat_disjoint {V : Type} [Fintype V]
     rw [Walk.isCycle_def]
     refine ⟨?_, ?_, ?_⟩
     · rw [Walk.isTrail_def]
-      simp only [c, Walk.edges_append, Walk.edges_cons, Walk.edges_concat]
+      simp only [c, Walk.edges_append, Walk.edges_cons, Walk.edges_concat, List.concat_eq_append]
       have hA_in_A : ∀ e ∈ pA.edges, ∀ x ∈ e, x ∈ A := fun e he x hx =>
         hpA_in x (Walk.mem_support_of_mem_edges he hx)
       have hB_in_B : ∀ e ∈ pB.edges, ∀ x ∈ e, x ∈ B := fun e he x hx =>
