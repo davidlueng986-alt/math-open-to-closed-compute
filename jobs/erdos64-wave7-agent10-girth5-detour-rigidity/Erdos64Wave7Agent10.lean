@@ -43,14 +43,13 @@ lemma powerFree_cycleFree {V : Type*} {G : SimpleGraph V} (h : PowerFree G)
 /-- Every integer L ≥ 1 has a power of two 2^k in [L, 2*L). -/
 theorem exists_pow2_in_octave (L : ℕ) (hL : 1 ≤ L) :
     ∃ k : ℕ, L ≤ 2 ^ k ∧ 2 ^ k < 2 * L := by
-  induction L using Nat.strong_induction_on with
-  | ind L ih =>
-    by_cases h1 : L = 1
-    · subst h1; exact ⟨0, by omega, by omega⟩
-    · have hhalf : 1 ≤ L / 2 := by omega
-      have hlt : L / 2 < L := Nat.div_lt_self (by omega) (by omega)
-      obtain ⟨k, hk1, hk2⟩ := ih (L / 2) hlt hhalf
-      by_cases hle : L ≤ 2 ^ k
+  induction L with
+  | zero => omega
+  | succ m ih =>
+    by_cases hm : m = 0
+    · subst hm; exact ⟨0, by norm_num, by norm_num⟩
+    · obtain ⟨k, hk1, hk2⟩ := ih (by omega)
+      by_cases hle : m + 1 ≤ 2 ^ k
       · exact ⟨k, hle, by omega⟩
       · exact ⟨k + 1, by rw [pow_succ]; omega, by rw [pow_succ]; omega⟩
 
