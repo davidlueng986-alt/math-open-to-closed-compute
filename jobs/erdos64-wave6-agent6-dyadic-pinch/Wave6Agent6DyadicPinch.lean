@@ -17,9 +17,8 @@ This module formally verifies (in Lean 4.36.0, zero `sorry`, standard axioms onl
 3. Exact Triangle-Truncation Dead-Window Classification (`truncation_dead_window_iff`,
    `truncation_small_dead_windows`, `truncation_hasPower_of_non_dead_cycle`).
 4. Universal Edge-Suppression & Defect-Triangle Contraction Weighted-Cycle Lifting
-   (`weighted_cycle_lift_of_replacement`, `two_edge_pinch_lift_pow2`,
-   `defect_triangle_no_c4_outer_distinct_nonadj`, `eg2_implies_erdos64`,
-   `dyadic_pinch_whole_problem_closure_gate`).
+   (`eg2_implies_erdos64`, `hasPow2Cycle_of_pinchReduction`,
+   `defect_triangle_outer_distinct_nonadj`, `dyadic_pinch_whole_problem_closure_gate`).
 -/
 
 namespace E64Wave6Agent6
@@ -63,7 +62,8 @@ theorem exists_pow2_in_doubling_interval (L₀ : ℕ) (hL : 3 ≤ L₀) :
   have hr1 : 1 ≤ r := by
     have h2 : 2 ≤ L₀ - 1 := by omega
     have hlog : Nat.log 2 2 ≤ Nat.log 2 (L₀ - 1) := Nat.log_mono_right h2
-    simpa [r] using hlog
+    have hlog2 : Nat.log 2 2 = 1 := by decide
+    omega
   refine ⟨2 ^ (r + 1), ?_, ?_, ⟨r + 1, by omega, rfl⟩⟩
   · have hlt : L₀ - 1 < 2 ^ (r + 1) := Nat.lt_pow_succ_log_self (by decide : 1 < 2) (L₀ - 1)
     omega
@@ -72,7 +72,7 @@ theorem exists_pow2_in_doubling_interval (L₀ : ℕ) (hL : 3 ≤ L₀) :
     omega
 
 /-- Optimality: `[2^k + 1, 2*(2^k + 1) - 3] = [2^k + 1, 2^(k+1) - 1]` contains no power of 2. -/
-theorem doubling_interval_sharp (k : ℕ) (hk : 2 ≤ k) :
+theorem doubling_interval_sharp (k : ℕ) (_hk : 2 ≤ k) :
     ¬ ∃ m : ℕ, 2 ^ k + 1 ≤ m ∧ m ≤ 2 * (2 ^ k + 1) - 3 ∧ IsPow2Ge4 m := by
   rintro ⟨m, hlo, hhi, ⟨r, _, rfl⟩⟩
   have h1 : 2 ^ k < 2 ^ r := by omega
@@ -288,9 +288,8 @@ structure PinchReduction {V : Type*} (G : SimpleGraph V) where
 
 /-- Any graph admitting a `PinchReduction` unconditionally has a `2^k`-cycle under `AllDyadicPinchFree`. -/
 theorem hasPow2Cycle_of_pinchReduction {V : Type*} {G : SimpleGraph V}
-    (hpinch : AllDyadicPinchFree) (red : PinchReduction G) : HasPow2Cycle G := by
-  letI := red.decG'
-  exact red.hlift (hpinch red.m red.G' red.hmin red.e₁ red.e₂ red.W₁ red.W₂ red.hallow)
+    (hpinch : AllDyadicPinchFree) (red : PinchReduction G) : HasPow2Cycle G :=
+  red.hlift (@hpinch red.m red.G' red.decG' red.hmin red.e₁ red.e₂ red.W₁ red.W₂ red.hallow)
 
 /-- In any `C₄`-free graph, a defect triangle `{a, a₁, a₂}` with `a₁, a₂` adjacent to `a` and each other,
     and outer neighbors `x₁` of `a₁` and `x₂` of `a₂` (distinct from `{a, a₁, a₂}`),
@@ -306,6 +305,8 @@ theorem defect_triangle_outer_distinct_nonadj {V : Type*} (G : SimpleGraph V)
   have ha1_ne_a2 : a₁ ≠ a₂ := G.ne_of_adj ha12
   have ha_ne_a1 : a ≠ a₁ := G.ne_of_adj haa1
   have ha_ne_a2 : a ≠ a₂ := G.ne_of_adj haa2
+  have ha1_ne_x1 : a₁ ≠ x₁ := G.ne_of_adj hx1
+  have ha2_ne_x2 : a₂ ≠ x₂ := G.ne_of_adj hx2
   constructor
   · intro heq
     subst heq
@@ -315,12 +316,24 @@ theorem defect_triangle_outer_distinct_nonadj {V : Type*} (G : SimpleGraph V)
           (SimpleGraph.Walk.cons hx2.symm
             (SimpleGraph.Walk.cons haa2.symm SimpleGraph.Walk.nil)))
     have hcyc : w.IsCycle := by
-      refine ⟨⟨?_, ?_⟩, ?_⟩
+      refine ⟨⟨⟨?_⟩, ?_⟩, ?_⟩
+      · simp [w, Sym2.eq_iff]
+        refine ⟨⟨?_, ?_, ?_⟩, ⟨?_, ?_⟩, ?_⟩ <;> intro h <;> first
+          | exact ha_ne_a1 h.1 | exact ha_ne_a1 h.1.symm
+          | exact ha_ne_a2 h.1 | exact ha_ne_a2 h.1.symm
+          | exact ha1_ne_a2 h.1 | exact ha1_ne_a2 h.1.symm
+          | exact ha1_ne_x1 h.1 | exact ha1_ne_x1 h.1.symm
+          | exact hx1_ne_a h.1 | exact hx1_ne_a h.1.symm
+          | exact hx1_ne_a2 h.1 | exact hx1_ne_a2 h.1.symm
+          | exact ha_ne_a1 h.2 | exact ha_ne_a1 h.2.symm
+          | exact ha_ne_a2 h.2 | exact ha_ne_a2 h.2.symm
+          | exact ha1_ne_a2 h.2 | exact ha1_ne_a2 h.2.symm
+          | exact ha1_ne_x1 h.2 | exact ha1_ne_x1 h.2.symm
+          | exact hx1_ne_a h.2 | exact hx1_ne_a h.2.symm
+          | exact hx1_ne_a2 h.2 | exact hx1_ne_a2 h.2.symm
       · intro hnil; simp [w] at hnil
-      · simp [w, SimpleGraph.Walk.edges_cons, Sym2.eq_iff]
-        tauto
-      · simp [w, SimpleGraph.Walk.support_cons]
-        tauto
+      · simp [w]
+        exact ⟨⟨ha1_ne_x1, ha1_ne_a2, ha_ne_a1.symm⟩, ⟨hx1_ne_a2, hx1_ne_a⟩, ha_ne_a2.symm⟩
     exact hC4 ⟨a, w, hcyc, rfl⟩
   · intro hadj
     have hx1_ne_x2 : x₁ ≠ x₂ := G.ne_of_adj hadj
@@ -330,12 +343,24 @@ theorem defect_triangle_outer_distinct_nonadj {V : Type*} (G : SimpleGraph V)
           (SimpleGraph.Walk.cons hadj.symm
             (SimpleGraph.Walk.cons hx1.symm SimpleGraph.Walk.nil)))
     have hcyc : w.IsCycle := by
-      refine ⟨⟨?_, ?_⟩, ?_⟩
+      refine ⟨⟨⟨?_⟩, ?_⟩, ?_⟩
+      · simp [w, Sym2.eq_iff]
+        refine ⟨⟨?_, ?_, ?_⟩, ⟨?_, ?_⟩, ?_⟩ <;> intro h <;> first
+          | exact ha1_ne_a2 h.1 | exact ha1_ne_a2 h.1.symm
+          | exact ha1_ne_x1 h.1 | exact ha1_ne_x1 h.1.symm
+          | exact ha2_ne_x2 h.1 | exact ha2_ne_x2 h.1.symm
+          | exact hx1_ne_a2 h.1 | exact hx1_ne_a2 h.1.symm
+          | exact hx2_ne_a1 h.1 | exact hx2_ne_a1 h.1.symm
+          | exact hx1_ne_x2 h.1 | exact hx1_ne_x2 h.1.symm
+          | exact ha1_ne_a2 h.2 | exact ha1_ne_a2 h.2.symm
+          | exact ha1_ne_x1 h.2 | exact ha1_ne_x1 h.2.symm
+          | exact ha2_ne_x2 h.2 | exact ha2_ne_x2 h.2.symm
+          | exact hx1_ne_a2 h.2 | exact hx1_ne_a2 h.2.symm
+          | exact hx2_ne_a1 h.2 | exact hx2_ne_a1 h.2.symm
+          | exact hx1_ne_x2 h.2 | exact hx1_ne_x2 h.2.symm
       · intro hnil; simp [w] at hnil
-      · simp [w, SimpleGraph.Walk.edges_cons, Sym2.eq_iff]
-        tauto
-      · simp [w, SimpleGraph.Walk.support_cons]
-        tauto
+      · simp [w]
+        exact ⟨⟨ha2_ne_x2, hx1_ne_a2.symm, ha1_ne_a2.symm⟩, ⟨hx1_ne_x2.symm, hx2_ne_a1⟩, ha1_ne_x1.symm⟩
     exact hC4 ⟨a₁, w, hcyc, rfl⟩
 
 /-- Whole-Problem Closure Gate: if every minimal `EG2` counterexample admits a `PinchReduction`
