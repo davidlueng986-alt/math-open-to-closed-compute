@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Apply final 10 surgical fixes to Wave5Agent2EGRob.lean
+      - name: Apply final 5 one-line fixes to Wave5Agent2EGRob.lean
         run: |
           python3 - << 'PYEOF'
           from pathlib import Path
@@ -24,60 +24,24 @@ jobs:
 
           replacements = [
               (
-                  "  · intro j hj\n    exact Finset.mem_inter.mpr ⟨mem_nb_of_adj (adj_of_mem_nb hj), (S.equivFin.symm j).2⟩",
-                  "  · intro j hj\n    have hadj : G.Adj (S.equivFin.symm i).1 (S.equivFin.symm j).1 := adj_of_mem_nb hj\n    exact Finset.mem_inter.mpr ⟨mem_nb_of_adj hadj, (S.equivFin.symm j).2⟩",
+                  "    have hadj : G.Adj (S.equivFin.symm i).1 (S.equivFin.symm j).1 := adj_of_mem_nb hj",
+                  "    have hadj0 : (induceFin G S).Adj i j := adj_of_mem_nb hj\n    have hadj : G.Adj (S.equivFin.symm i).1 (S.equivFin.symm j).1 := hadj0",
               ),
               (
-                  "           fun ⟨hne, h1⟩ => ⟨h1, fun h => h.elim (fun ⟨_, hy⟩ => hne hy) (fun ⟨h', _⟩ => adj_irrefl a (h' ▸ h1))⟩⟩",
-                  "           fun ⟨hne, h1⟩ => ⟨h1, fun h => h.elim (fun ⟨_, hy⟩ => hne hy) (fun ⟨_, hy⟩ => adj_irrefl a (hy ▸ h1))⟩⟩",
+                  "          · subst hxb; rw [delEdge_degree_right G hab]; have := hall3 b; omega",
+                  "          · rw [hxb, delEdge_degree_right G hab]; have := hall3 b; omega",
               ),
               (
-                  "           fun ⟨hne, h1⟩ => ⟨h1, fun h => h.elim (fun ⟨h', _⟩ => adj_irrefl b (h' ▸ h1)) (fun ⟨_, hy⟩ => hne hy)⟩⟩",
-                  "           fun ⟨hne, h1⟩ => ⟨h1, fun h => h.elim (fun ⟨_, hy⟩ => adj_irrefl b (hy ▸ h1)) (fun ⟨_, hy⟩ => hne hy)⟩⟩",
+                  "      have h2 := Finset.sum_le_sum_of_subset_of_nonneg (f := fun v => (G.neighborFinset v \\ S).card) (Finset.filter_subset (fun v => 1 ≤ (G.neighborFinset v \\ S).card) S) (fun _ _ _ => Nat.zero_le _)\n      omega",
+                  "      have h2 : ∑ v ∈ D, (G.neighborFinset v \\ S).card ≤ ∑ v ∈ S, (G.neighborFinset v \\ S).card :=\n        Finset.sum_le_sum_of_subset_of_nonneg (f := fun v => (G.neighborFinset v \\ S).card) (Finset.filter_subset (fun v => 1 ≤ (G.neighborFinset v \\ S).card) S) (fun _ _ _ => Nat.zero_le _)\n      omega",
               ),
               (
-                  "      intro i hi\n      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi",
-                  "      intro i hi\n      simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_univ, true_and] at hi",
+                  "        (fun hub => minimal_bad2_defect_neighbor_at_most_one_high_neighbor hmb hab.symm hdb hda (fun z hzb hza => hother z hza hzb) (adj_of_mem_nb hub))).trans (by simp [Finset.sum_const, smul_eq_mul])\n    have h2 : ∑ u ∈ V3 \\ Ndef, ((G.neighborFinset u).filter (fun v => 4 ≤ G.degree v)).card ≤ 2 * (V3 \\ Ndef).card :=\n      (Finset.sum_le_sum fun u hu => minimal_bad2_cubic_at_most_two_high_neighbors hmb (Finset.mem_filter.mp (Finset.mem_sdiff.mp hu).1).2).trans (by simp [Finset.sum_const, smul_eq_mul, mul_comm])",
+                  "        (fun hub => minimal_bad2_defect_neighbor_at_most_one_high_neighbor hmb hab.symm hdb hda (fun z hzb hza => hother z hza hzb) (adj_of_mem_nb hub))).trans (by simp [Finset.sum_const, smul_eq_mul]; exact le_rfl)\n    have h2 : ∑ u ∈ V3 \\ Ndef, ((G.neighborFinset u).filter (fun v => 4 ≤ G.degree v)).card ≤ 2 * (V3 \\ Ndef).card :=\n      (Finset.sum_le_sum fun u hu => minimal_bad2_cubic_at_most_two_high_neighbors hmb (Finset.mem_filter.mp (Finset.mem_sdiff.mp hu).1).2).trans (by simp [Finset.sum_const, smul_eq_mul, mul_comm]; exact le_rfl)",
               ),
               (
-                  "  · intro hnil; cases hnil",
-                  "  · intro hnil; dsimp only [p] at hnil; cases hnil",
-              ),
-              (
-                  "        · subst hxa; rw [delEdge_degree_left G hab]; have := hall3 x; omega\n        · by_cases hxb : x = b\n          · subst hxb; rw [delEdge_degree_right G hab]; have := hall3 x; omega",
-                  "        · subst hxa; rw [delEdge_degree_left G hab]; have := hall3 a; omega\n        · by_cases hxb : x = b\n          · subst hxb; rw [delEdge_degree_right G hab]; have := hall3 b; omega",
-              ),
-              (
-                  "    dsimp only [ui]; rw [Equiv.symm_apply_apply]\n    have := inter_card_ge_of_sdiff_le G S u 1",
-                  "    dsimp only [ui]; rw [Equiv.symm_apply_apply]; dsimp only\n    have := inter_card_ge_of_sdiff_le G S u 1",
-              ),
-              (
-                  "    dsimp only [vi]; rw [Equiv.symm_apply_apply]\n    have := inter_card_ge_of_sdiff_le G S v 1",
-                  "    dsimp only [vi]; rw [Equiv.symm_apply_apply]; dsimp only\n    have := inter_card_ge_of_sdiff_le G S v 1",
-              ),
-              (
-                  "        · intro p hp; simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hp",
-                  "        · intro p hp; simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_univ, true_and] at hp",
-              ),
-              (
-                  "        · intro p1 hp1 p2 hp2 heq\n          simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hp1 hp2",
-                  "        · intro p1 hp1 p2 hp2 heq\n          simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_univ, true_and] at hp1 hp2",
-              ),
-              (
-                  "      have h2 := Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ S) (fun _ _ _ => Nat.zero_le _)",
-                  "      have h2 := Finset.sum_le_sum_of_subset_of_nonneg (f := fun v => (G.neighborFinset v \\ S).card) (Finset.filter_subset (fun v => 1 ≤ (G.neighborFinset v \\ S).card) S) (fun _ _ _ => Nat.zero_le _)",
-              ),
-              (
-                  "        (fun hub => minimal_bad2_defect_neighbor_at_most_one_high_neighbor hmb hab.symm hdb hda (fun z hzb hza => hother z hza hzb) (adj_of_mem_nb hub))).trans (by simp)\n    have h2 : ∑ u ∈ V3 \\ Ndef, ((G.neighborFinset u).filter (fun v => 4 ≤ G.degree v)).card ≤ 2 * (V3 \\ Ndef).card :=\n      (Finset.sum_le_sum fun u hu => minimal_bad2_cubic_at_most_two_high_neighbors hmb (Finset.mem_filter.mp (Finset.mem_sdiff.mp hu).1).2).trans (by simp [mul_comm])\n    have hcard_sdiff : (V3 \\ Ndef).card + Ndef.card = V3.card := by\n      rw [Finset.card_sdiff hNdef_sub, Nat.sub_add_cancel (Finset.card_le_card hNdef_sub)]",
-                  "        (fun hub => minimal_bad2_defect_neighbor_at_most_one_high_neighbor hmb hab.symm hdb hda (fun z hzb hza => hother z hza hzb) (adj_of_mem_nb hub))).trans (by simp [Finset.sum_const, smul_eq_mul])\n    have h2 : ∑ u ∈ V3 \\ Ndef, ((G.neighborFinset u).filter (fun v => 4 ≤ G.degree v)).card ≤ 2 * (V3 \\ Ndef).card :=\n      (Finset.sum_le_sum fun u hu => minimal_bad2_cubic_at_most_two_high_neighbors hmb (Finset.mem_filter.mp (Finset.mem_sdiff.mp hu).1).2).trans (by simp [Finset.sum_const, smul_eq_mul, mul_comm])\n    have hcard_sdiff : (V3 \\ Ndef).card + Ndef.card = V3.card := by\n      have hs := Finset.card_sdiff_add_card_inter V3 Ndef\n      rw [Finset.inter_eq_right.mpr hNdef_sub] at hs; exact hs",
-              ),
-              (
-                  "      ext x; simp only [Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert, Finset.mem_singleton, iff_true]\n      by_cases hxa : x = a\n      · exact Or.inr (Or.inl hxa)\n      · by_cases hxb : x = b\n        · exact Or.inr (Or.inr hxb)\n        · have := hother x hxa hxb; by_cases hx4 : 4 ≤ G.degree x\n          · exact Or.inl (Or.inr hx4)\n          · exact Or.inl (Or.inl (by omega))",
-                  "      ext x; simp only [Finset.mem_union, Finset.mem_univ, Finset.mem_insert, Finset.mem_singleton, iff_true]\n      by_cases hxa : x = a\n      · exact Or.inr (Or.inl hxa)\n      · by_cases hxb : x = b\n        · exact Or.inr (Or.inr hxb)\n        · have := hother x hxa hxb; by_cases hx4 : 4 ≤ G.degree x\n          · exact Or.inl (Or.inr (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hx4⟩))\n          · exact Or.inl (Or.inl (Finset.mem_filter.mpr ⟨Finset.mem_univ _, by omega⟩))",
-              ),
-              (
-                  "  dsimp only [V3]; omega",
                   "  change 4 * n - 5 ≤ 6 * V3.card; omega",
+                  "  have hNdef_le_V3 : Ndef.card ≤ V3.card := Finset.card_le_card hNdef_sub\n  change 4 * n - 5 ≤ 6 * V3.card; omega",
               ),
           ]
 
@@ -86,12 +50,12 @@ jobs:
               s = s.replace(old, new, 1)
 
           p.write_text(s)
-          print(f"Applied all {len(replacements)} surgical fixes successfully.")
+          print(f"Applied all {len(replacements)} final fixes successfully.")
           PYEOF
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add jobs/erdos64-wave5-agent2-egrob/Wave5Agent2EGRob.lean
-          git commit -m "Fix final 14 Lean 4.36.0 proof details in Wave5Agent2EGRob.lean"
+          git commit -m "Fix final 5 lines in Wave5Agent2EGRob.lean for full Lean 4.36.0 PASS"
           git push origin main
 
   verify:
