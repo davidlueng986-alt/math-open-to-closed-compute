@@ -5,7 +5,27 @@ import Wave5Agent6ChebyshevGirth
 import ChebTraceEngine
 
 /-!
-# Wave 8 Agent #2 — Pillar 2a: Walk Splitting, Girth-Ball Bounds & Non-Simple Helpers
+# Wave 8 Agent #2 — Pillar 2: Exact Trace-Coupled Non-Simple CNB Walk Upper Bound (`L < 3g`)
+
+Proves unconditionally for EVERY cubic (`d = 3`), power-free (`¬ HasPower G`) simple graph `G`
+of girth `g ≥ 6` and target power-of-2 length `L = 2^k` (`k ≥ 4`, `L < 3 * g`, `L ≤ 64`):
+
+  `nonSimpleTaillessCount G L ≤ ∑ r ∈ Finset.range L, alphaCoeff g L r * taillessCount G r`
+
+where `alphaCoeff g L r = thetaTerm g L r + barbellTerm g L r` is the exact trace-coupled
+non-simple walk coefficient (with zero assumption that intersecting cycles share a single path!).
+
+Key components:
+1. `card_nbWalksAvoid_le`: at most `2^m` NB walks of length `m` starting at `u` avoiding `prev`.
+2. `card_nbWalksBetweenAvoid_le`: at most `2^(m - s)` NB walks of length `m` from `u` to `v`
+   avoiding `prev` at the start, where `s = (g - 1) / 2` (via `unique_nonBacktracking_walk_of_half_girth`).
+3. `tailless_nonSimple_exact_decomp`: upgrades `Wave5Agent5`'s girth-tripling decomposition to
+   retain the exact cyclic rotation `rot = c₁ ++ P ++ c₂ ++ P.reverse` with `c₁, c₂` simple cycles.
+4. `exists_maximal_shared_prefix`: for any zero-tail pair `c₁ ++ c₂` (`c₁.length < c₂.length`)
+   in a cubic graph, finds a rotation `c₁' ++ c₂'` sharing a maximal prefix `P_b` (`1 ≤ b < r₁`)
+   whose entry edges at `u` and exit edges at `v` are distinct (forcing the 3rd edge at both ends!).
+5. `nonSimpleTaillessCount_le_sum_alpha`: combines Barbell (including exact 2-to-1 symmetry when
+   `r₁ = r₂`) and Theta (`r₁ < r₂` forced by `¬ HasPower G`) surjection counts.
 -/
 
 namespace E64Wave8Agent2
@@ -195,12 +215,12 @@ theorem card_nbWalksAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
         rw [Finset.card_sigma]
         have hstep : ∀ w ∈ (G.neighborFinset u).erase prev, (nbWalksAvoid G m w u).card ≤ 2 ^ m := by
           intro w hw
-          have huw : G.Adj u w := G.mem_neighborFinset.mp (Finset.mem_erase.mp hw).2
+          have huw : G.Adj u w := (G.mem_neighborFinset u w).mp (Finset.mem_erase.mp hw).2
           exact card_nbWalksAvoid_le G hreg m w u huw.symm
         have hsum := Finset.sum_le_sum hstep
         rw [Finset.sum_const, smul_eq_mul] at hsum
         have herase : ((G.neighborFinset u).erase prev).card = 2 := by
-          rw [Finset.card_erase_of_mem (G.mem_neighborFinset.mpr hprev),
+          rw [Finset.card_erase_of_mem ((G.mem_neighborFinset u prev).mpr hprev),
               G.card_neighborFinset_eq_degree, hreg u]
         rw [herase] at hsum
         simpa [pow_succ, mul_comm] using hsum
@@ -212,22 +232,27 @@ theorem card_nbWalksAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
         | ⟨_, ⟨.nil, hp⟩⟩ => absurd hp (by simp)
       refine Finset.card_le_card_of_injOn peel ?_ ?_
       · rintro ⟨v, ⟨p, hp⟩⟩ hx
-        simp only [Finset.mem_coe] at hx ⊢
+        rw [Finset.mem_coe] at hx ⊢
         cases p with
         | nil => simp at hp
         | cons h₁ rest =>
             rename_i w
-            simp only [nbWalksAvoid, Finset.mem_filter, Finset.mem_sigma, Finset.mem_univ,
-              true_and, mem_nbWalksSub_iff, firstNbr, ne_eq, Option.some.injEq] at hx
+            have hx' := Finset.mem_filter.mp hx
+            have hnb : IsNonBacktracking (Walk.cons h₁ rest) :=
+              mem_nbWalksSub_iff.mp (Finset.mem_sigma.mp hx'.1).2
+            have hne : w ≠ prev := by
+              have := hx'.2
+              simp only [firstNbr, ne_eq, Option.some.injEq] at this
+              exact this
             simp only [peel, T, Finset.mem_sigma, Finset.mem_erase, G.mem_neighborFinset,
               nbWalksAvoid, Finset.mem_filter, Finset.mem_univ, true_and, mem_nbWalksSub_iff]
-            refine ⟨⟨hx.2, h₁⟩, ?_, ?_⟩
-            · exact isNonBacktracking_of_append_right (p := .cons h₁ .nil) hx.1
+            refine ⟨⟨hne, h₁⟩, ?_, ?_⟩
+            · exact isNonBacktracking_of_append_right (p := .cons h₁ .nil) hnb
             · cases rest with
               | nil => simp [firstNbr]
               | cons h₂ rest₂ =>
                   simp only [firstNbr, ne_eq, Option.some.injEq]
-                  exact Ne.symm hx.1.1
+                  exact Ne.symm hnb.1
       · rintro ⟨v₁, ⟨p₁, hp₁⟩⟩ _ ⟨v₂, ⟨p₂, hp₂⟩⟩ _ heq
         cases p₁ with
         | nil => simp at hp₁
@@ -235,7 +260,7 @@ theorem card_nbWalksAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
             cases p₂ with
             | nil => simp at hp₂
             | cons h₂ rest₂ =>
-                simp only [peel, Sigma.mk.inj_iff, Subtype.mk.injEq, heq_eq_eq] at heq
+                simp only [peel, Sigma.mk.inj_iff] at heq
                 rcases heq with ⟨rfl, rfl, rfl⟩
                 rfl
 
@@ -277,7 +302,8 @@ theorem card_nbWalksBetweenAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
       refine ⟨isNonBacktracking_of_append_left (happ ▸ hmem.1), ?_⟩
       have hpos : 1 ≤ sp.2.1.1.length := by rw [sp.2.1.2]; omega
       have hfn : firstNbr p = firstNbr sp.2.1.1 := by
-        rw [← happ]
+        have h1 : firstNbr p = firstNbr (sp.2.1.1.append sp.2.2.1) := congrArg firstNbr happ.symm
+        rw [h1]
         exact firstNbr_append_of_pos sp.2.1.1 sp.2.2.1 hpos
       rw [← hfn]
       exact hmem.2
@@ -288,7 +314,8 @@ theorem card_nbWalksBetweenAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
       rcases hsp₁ : splitWalk (m - s) p₁ (by rw [hp₁]; exact hle_ms) with ⟨w₁, ⟨q₁, hq₁⟩, ⟨r₁, hr₁⟩⟩
       rcases hsp₂ : splitWalk (m - s) p₂ (by rw [hp₂]; exact hle_ms) with ⟨w₂, ⟨q₂, hq₂⟩, ⟨r₂, hr₂⟩⟩
       dsimp only at heq
-      rw [hsp₁, hsp₂] at heq happ₁ happ₂
+      rw [hsp₁] at heq happ₁
+      rw [hsp₂] at heq happ₂
       simp only [Sigma.mk.inj_iff] at heq
       rcases heq with ⟨rfl, hq_heq⟩
       have hq_eq : q₁ = q₂ := congrArg Subtype.val (eq_of_heq hq_heq)
@@ -306,9 +333,9 @@ theorem exists_unique_third_nbr (G : SimpleGraph V) [DecidableRel G.Adj]
     ∃! c : V, G.Adj u c ∧ c ≠ a ∧ c ≠ b := by
   have hcard : (((G.neighborFinset u).erase a).erase b).card = 1 := by
     have hb_mem : b ∈ (G.neighborFinset u).erase a :=
-      Finset.mem_erase.mpr ⟨hab.symm, G.mem_neighborFinset.mpr hb⟩
+      Finset.mem_erase.mpr ⟨hab.symm, (G.mem_neighborFinset u b).mpr hb⟩
     rw [Finset.card_erase_of_mem hb_mem,
-        Finset.card_erase_of_mem (G.mem_neighborFinset.mpr ha),
+        Finset.card_erase_of_mem ((G.mem_neighborFinset u a).mpr ha),
         G.card_neighborFinset_eq_degree, hdeg]
   obtain ⟨c, hc⟩ := Finset.card_eq_one.mp hcard
   refine ⟨c, ?_, ?_⟩
@@ -415,7 +442,7 @@ theorem strip_cycle_ends {G : SimpleGraph V} {v : V} (c : G.Walk v v)
               | nil => trivial
               | cons hb r' =>
                   have hnd := ht.edges_nodup
-                  simp only [Walk.edges_cons, List.nodup_cons] at hnd
+                  rw [Walk.edges_cons, List.nodup_cons] at hnd
                   refine ⟨fun heq => ?_, ih (Walk.IsTrail.mk hnd.2)⟩
                   subst heq
                   exact hnd.1 (by simp [Sym2.eq_swap])
@@ -511,6 +538,10 @@ theorem strip_walk_ends {G : SimpleGraph V} {v u : V} (q : G.Walk v u)
         simp only [Walk.length_append, Walk.length_cons, Walk.length_nil] at this ⊢
         omega
       exact ⟨v₁, u₁, h₁, h₂, mid, by rw [hrest_eq], rfl, hlast, hmid_len, hnb_mid, hfn_mid⟩
+
+/-- Exact rotation decomposition of a non-simple CNB walk of length `< 3 * g`:
+produces a rotation `rot = c₁ ++ P ++ c₂ ++ P.reverse` with `c₁, c₂` simple cycles of lengths
+in `[g, 2g - 1]` and `P` a NB walk with `c₁.length + c₂.length + 2 * P.length = L`. -/
 
 end ExactAlphaCounting
 
