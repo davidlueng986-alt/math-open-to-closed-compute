@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-27",
+  "scope": "D678 v7 plan",
+  "task_count": 279,
+  "prior_pairs": 99862,
+  "new_pairs": 79026,
+  "reduced_tasks": 177,
+  "empty_prior": 0,
+  "empty_new": 8,
+  "newly_closed_tasks": 0,
+  "unresolved_prior_pairs": 96795,
+  "unresolved_new_pairs": 77563,
+  "empty_ids": [
+    "D6-N9-B3-P000-T06",
+    "D6-N9-B3-P000-T07",
+    "D6-N9-B3-P001-T06",
+    "D6-N9-B3-P001-T07",
+    "D6-N9-B3-P002-T06",
+    "D6-N9-B3-P002-T07",
+    "D6-N9-B3-P003-T06",
+    "D6-N9-B3-P003-T07"
+  ],
+  "plan_artifact": 15170482260,
+  "plan_sha256": "bdb5fd354c63887c6e1bcba7a97b684b973c05599e0bb8a13e11b52dfc54f95e",
+  "output_sha256": "cc581deb605ca358b9d9b136d03b07f4971c84f2ac9e54b42e7b6641cb36379e",
+  "selftest": "PASS",
+  "status": "OFFLINE_PROTOTYPE_PENDING_AUDIT_AND_SOLVER_BENCHMARK"
+}
