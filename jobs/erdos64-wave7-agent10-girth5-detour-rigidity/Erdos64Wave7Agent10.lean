@@ -44,7 +44,7 @@ lemma powerFree_cycleFree {V : Type*} {G : SimpleGraph V} (h : PowerFree G)
 theorem exists_pow2_in_octave (L : ℕ) (hL : 1 ≤ L) :
     ∃ k : ℕ, L ≤ 2 ^ k ∧ 2 ^ k < 2 * L := by
   induction L using Nat.strong_induction_on with
-  | h L ih =>
+  | ind L ih =>
     by_cases h1 : L = 1
     · subst h1; exact ⟨0, by omega, by omega⟩
     · have hhalf : 1 ≤ L / 2 := by omega
