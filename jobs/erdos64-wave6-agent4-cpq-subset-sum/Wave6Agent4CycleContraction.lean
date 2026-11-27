@@ -133,14 +133,14 @@ theorem brownComplete_replicate_one (t : ℕ) : BrownComplete (List.replicate t 
 
 theorem isSubsetSum_replicate_one (t s : ℕ) (hs : s ≤ t) :
     IsSubsetSum (List.replicate t 1) s := by
-  have hsum : (List.replicate t 1).sum = t := by simp
-  exact brown_complete_subset_sum (brownComplete_replicate_one t) s (hsum ▸ hs)
+  have hs' : s ≤ (List.replicate t 1).sum := by simpa using hs
+  exact brown_complete_subset_sum (brownComplete_replicate_one t) s hs'
 
 /-- Every dyadic octave `[L, 2*L]` for `L ≥ 2` contains a power of 2 (`2^k`, `k ≥ 2`). -/
 theorem exists_pow2_in_octave (L : ℕ) (hL : 2 ≤ L) :
     ∃ k : ℕ, 2 ≤ k ∧ L ≤ 2 ^ k ∧ 2 ^ k ≤ 2 * L := by
   induction L using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     by_cases h4 : n ≤ 4
     · exact ⟨2, le_rfl, by omega, by omega⟩
     · have hhalf : 2 ≤ n / 2 := by omega
@@ -250,21 +250,22 @@ theorem isCycle_of_support_tail_nodup {V : Type*} {G : SimpleGraph V} {v : V}
           cases w'' with
           | nil => simp at hlen''
           | @cons _ y _ h2 w''' =>
-            have hhead_not : v ∉ (Walk.cons h2 w''').support.tail := by
-              have := (List.nodup_cons.mp hsup'').1
-              simpa [Walk.support_cons] using this
-            have hend : v ∈ (Walk.cons h2 w''').support.tail := by
-              simp only [Walk.support_cons, List.tail_cons]
-              exact Walk.end_mem_support w'''
-            exact hhead_not hend
+            have hhead_not : v ∉ w'''.support := by
+              have htmp := (List.nodup_cons.mp hsup'').1
+              simp only [Walk.support_cons] at htmp
+              exact htmp
+            exact hhead_not (Walk.end_mem_support w''')
         · intro hmem
           have hu_in : u ∈ w''.support :=
             mem_support_of_mem_edges_sym2 w'' hmem (by simp)
           have hu_not : u ∉ w''.support := by
-            have := (List.nodup_cons.mp hsup').1
-            simpa [Walk.support_cons] using this
+            have htmp := (List.nodup_cons.mp hsup').1
+            simp only [Walk.support_cons] at htmp
+            exact htmp
           exact hu_not hu_in
-    exact hpath'.cons_isCycle h hnotmem
+    refine ⟨⟨?_⟩, Walk.cons_ne_nil h w', hnodup⟩
+    rw [Walk.edges_cons]
+    exact List.nodup_cons.mpr ⟨hnotmem, hpath'.isTrail.edges_nodup⟩
 
 /-- A single switchable cluster segment from `u` to `v` in `G` (modeling entry/exit of a contracted
     cycle plus the connecting path to the next cluster). -/
@@ -320,10 +321,10 @@ inductive DisjointSwitchChain {V : Type*} (G : SimpleGraph V) : V → V → Set 
 theorem support_tail_append {V : Type*} {G : SimpleGraph V} {u w v : V}
     (p : G.Walk u w) (q : G.Walk w v) :
     (p.append q).support.tail = p.support.tail ++ q.support.tail := by
-  induction p with
+  cases p with
   | nil => simp
-  | cons h p' ih =>
-    simp [Walk.support_cons, ih]
+  | cons h p' =>
+    simp [Walk.cons_append, Walk.support_cons, Walk.support_append]
 
 /-- Every subset-sum value `s` of `ds` is realized by a concrete walk in `G` whose `support.tail`
     is `Nodup` and contained in `S`, with exact length `base + s`. -/
@@ -368,7 +369,7 @@ theorem DisjointSwitchChain.realize {V : Type*} {G : SimpleGraph V}
         refine ⟨seg.choose_nodup true, hnodup, ?_⟩
         intro x hx1 y hy2 hxy
         subst hxy
-        exact Set.disjoint_left.mp hdisj (seg.choose_mem_tailSet true hx1) (hmem x hx2)
+        exact Set.disjoint_left.mp hdisj (seg.choose_mem_tailSet true hx1) (hmem x hy2)
       · intro x hx
         rw [support_tail_append, List.mem_append] at hx
         rcases hx with hx1 | hx2
