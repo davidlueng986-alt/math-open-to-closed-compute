@@ -20,7 +20,7 @@ Proves:
 
 namespace E64Wave8Agent9Delsarte
 
-open scoped BigOperators
+open scoped BigOperators Matrix
 
 section ChebyshevAlgebra
 
@@ -48,7 +48,7 @@ def chebValZ (d : ℕ) : ℕ → ℤ
 theorem chebValZ_cast (d : ℕ) : ∀ k : ℕ, (chebValZ d k : ℚ) = chebVal d k := by
   intro k
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
     match k with
     | 0 => simp [chebValZ, chebVal]
     | 1 => simp [chebValZ, chebVal]
@@ -62,7 +62,7 @@ theorem chebValZ_cast (d : ℕ) : ∀ k : ℕ, (chebValZ d k : ℚ) = chebVal d 
 theorem chebVal_closed (d : ℕ) : ∀ k : ℕ, 1 ≤ k → chebVal d k = ((d : ℚ) - 1) ^ k + 1 := by
   intro k
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
     intro hk
     match k with
     | 0 => omega
@@ -81,7 +81,7 @@ theorem chebMat_comm_A (A : Matrix V V ℚ) (d : ℕ) :
     ∀ k : ℕ, A * chebMat A d k = chebMat A d k * A := by
   intro k
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
     match k with
     | 0 => simp [chebMat, Matrix.mul_smul, Matrix.smul_mul]
     | 1 => simp [chebMat]
@@ -92,11 +92,11 @@ theorem chebMat_comm_A (A : Matrix V V ℚ) (d : ℕ) :
       rw [← Matrix.mul_assoc, h1, h2]
 
 /-- Every `chebMat A d k` is symmetric when `A` is symmetric. -/
-theorem chebMat_symm (A : Matrix V V ℚ) (d : ℕ) (hA : Aᵀ = A) :
-    ∀ k : ℕ, (chebMat A d k)ᵀ = chebMat A d k := by
+theorem chebMat_symm (A : Matrix V V ℚ) (d : ℕ) (hA : A.transpose = A) :
+    ∀ k : ℕ, (chebMat A d k).transpose = chebMat A d k := by
   intro k
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
     match k with
     | 0 => simp [chebMat]
     | 1 => simpa [chebMat] using hA
@@ -107,6 +107,7 @@ theorem chebMat_symm (A : Matrix V V ℚ) (d : ℕ) (hA : Aᵀ = A) :
         hA, h1, h2]
       rw [chebMat_comm_A]
 
+omit [DecidableEq V] in
 private lemma rowSum_mul (A B : Matrix V V ℚ) (rA rB : ℚ)
     (hA : ∀ u, ∑ v, A u v = rA) (hB : ∀ u, ∑ v, B u v = rB) :
     ∀ u, ∑ v, (A * B) u v = rA * rB := by
@@ -124,7 +125,7 @@ theorem chebMat_rowSum (A : Matrix V V ℚ) (d : ℕ) (hreg : ∀ u, ∑ v, A u 
     ∀ k : ℕ, ∀ u, ∑ v, chebMat A d k u v = chebVal d k := by
   intro k
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
     intro u
     match k with
     | 0 =>
@@ -148,7 +149,7 @@ theorem chebMat_mul (A : Matrix V V ℚ) (d : ℕ) :
         chebMat A d (j + k) + (((d : ℚ) - 1) ^ k) • chebMat A d (j - k) := by
   intro k
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
     intro j hkj
     match k with
     | 0 =>
@@ -210,7 +211,7 @@ theorem chebMat_mul_any (A : Matrix V V ℚ) (d : ℕ) (j k : ℕ) :
     have hcomm : ∀ a b : ℕ, chebMat A d a * chebMat A d b = chebMat A d b * chebMat A d a := by
       intro a
       induction a using Nat.strong_induction_on with
-      | h a ih =>
+      | ind a ih =>
         intro b
         match a with
         | 0 => simp [chebMat, Matrix.mul_smul, Matrix.smul_mul]
@@ -228,8 +229,9 @@ section BesselMultiCluster
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+omit [DecidableEq V] in
 /-- Trace of the square of a symmetric matrix equals the sum of squared entries. -/
-theorem symm_sq_trace_eq_sum_sq (M : Matrix V V ℚ) (hM : Mᵀ = M) :
+theorem symm_sq_trace_eq_sum_sq (M : Matrix V V ℚ) (hM : M.transpose = M) :
     Matrix.trace (M * M) = ∑ u : V, ∑ v : V, (M u v) ^ 2 := by
   simp only [Matrix.trace, Matrix.diag, Matrix.mul_apply]
   refine Finset.sum_congr rfl fun u _ => Finset.sum_congr rfl fun v _ => ?_
@@ -257,8 +259,11 @@ theorem finset_sq_sum_le_card_mul_sum_sq {α : Type*} (T : Finset α) (f : α �
         _ = (T.card : ℚ) * (f x) ^ 2 - 2 * f x * (∑ y ∈ T, f y) + ∑ y ∈ T, (f y) ^ 2 := by
               simp [Finset.sum_const, nsmul_eq_mul, Finset.mul_sum]
     rw [Finset.sum_congr rfl h1, Finset.sum_add_distrib, Finset.sum_sub_distrib]
+    have hmid : ∑ x ∈ T, 2 * f x * (∑ y ∈ T, f y) = 2 * (∑ x ∈ T, f x) ^ 2 := by
+      rw [← Finset.sum_mul, ← Finset.mul_sum]
+      ring
+    rw [hmid]
     simp only [← Finset.mul_sum, Finset.sum_const, nsmul_eq_mul]
-    rw [← Finset.sum_mul]
     ring
   linarith
 
@@ -266,6 +271,7 @@ theorem finset_sq_sum_le_card_mul_sum_sq {α : Type*} (T : Finset α) (f : α �
 def clusterSum (M : Matrix V V ℚ) (S : Finset V) : ℚ :=
   ∑ u ∈ S, ∑ v ∈ S, M u v
 
+omit [Fintype V] [DecidableEq V] in
 /-- Single-cluster squared-sum bound: `(clusterSum M S)^2 / |S|^2 ≤ ∑_{u,v ∈ S} (M u v)^2`. -/
 theorem clusterSum_sq_div_le (M : Matrix V V ℚ) (S : Finset V) (hS : S.Nonempty) :
     (clusterSum M S) ^ 2 / ((S.card : ℚ) ^ 2) ≤ ∑ u ∈ S, ∑ v ∈ S, (M u v) ^ 2 := by
@@ -287,7 +293,7 @@ theorem clusterSum_sq_div_le (M : Matrix V V ℚ) (S : Finset V) (hS : S.Nonempt
     non-empty vertex subsets `{S i}_{i ∈ J}`,
     `∑ i ∈ J, (clusterSum M (S i))^2 / |S i|^2 ≤ Tr(M^2)`. -/
 theorem bessel_multi_cluster_sq_trace_ge {ι : Type*} [DecidableEq ι]
-    (M : Matrix V V ℚ) (hM : Mᵀ = M)
+    (M : Matrix V V ℚ) (hM : M.transpose = M)
     (J : Finset ι) (S : ι → Finset V)
     (hne : ∀ i ∈ J, (S i).Nonempty)
     (hdisj : Set.PairwiseDisjoint (J : Set ι) S) :
@@ -316,7 +322,7 @@ theorem bessel_multi_cluster_sq_trace_ge {ι : Type*} [DecidableEq ι]
 /-- Specialization to the single full-graph cluster `S = univ`:
     for any symmetric `M` with constant row sum `μ` on a non-empty vertex set `V`,
     `μ ^ 2 ≤ Tr(M^2)`. -/
-theorem single_cluster_sq_trace_ge [Nonempty V] (M : Matrix V V ℚ) (hM : Mᵀ = M) (μ : ℚ)
+theorem single_cluster_sq_trace_ge [Nonempty V] (M : Matrix V V ℚ) (hM : M.transpose = M) (μ : ℚ)
     (hrow : ∀ u, ∑ v, M u v = μ) :
     μ ^ 2 ≤ Matrix.trace (M * M) := by
   have hne : (Finset.univ : Finset V).Nonempty := Finset.univ_nonempty
@@ -357,8 +363,8 @@ def polyMat (A : Matrix V V ℚ) (d : ℕ) (c : List ℤ) : Matrix V V ℚ :=
 def polyValZ (d : ℕ) (c : List ℤ) : ℤ :=
   sumRangeZ c.length (fun j => c.getD j 0 * chebValZ d j)
 
-theorem polyMat_symm (A : Matrix V V ℚ) (d : ℕ) (hA : Aᵀ = A) (c : List ℤ) :
-    (polyMat A d c)ᵀ = polyMat A d c := by
+theorem polyMat_symm (A : Matrix V V ℚ) (d : ℕ) (hA : A.transpose = A) (c : List ℤ) :
+    (polyMat A d c).transpose = polyMat A d c := by
   simp only [polyMat, Matrix.transpose_sum, Matrix.transpose_smul]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [chebMat_symm A d hA j]
@@ -394,9 +400,14 @@ theorem polyMat_sq_trace_eq (A : Matrix V V ℚ) (d L : ℕ) (c : List ℤ)
   have hexp : polyMat A d c * polyMat A d c =
       ∑ j ∈ Finset.range c.length, ∑ l ∈ Finset.range c.length,
         ((c.getD j 0 : ℚ) * (c.getD l 0 : ℚ)) • (chebMat A d j * chebMat A d l) := by
-    simp only [polyMat, Finset.sum_mul, Finset.mul_sum, Matrix.smul_mul, Matrix.mul_smul, smul_smul]
+    simp only [polyMat]
+    rw [Finset.sum_mul]
+    refine Finset.sum_congr rfl fun j _ => ?_
+    rw [Finset.mul_sum]
+    refine Finset.sum_congr rfl fun l _ => ?_
+    simp only [Matrix.smul_mul, Matrix.mul_smul, smul_smul]
   rw [hexp]
-  simp only [map_sum, LinearMap.map_smul, smul_eq_mul]
+  simp only [Matrix.trace_sum, Matrix.trace_smul, smul_eq_mul]
   have hterm : ∀ j ∈ Finset.range c.length, ∀ l ∈ Finset.range c.length,
       (c.getD j 0 : ℚ) * (c.getD l 0 : ℚ) * Matrix.trace (chebMat A d j * chebMat A d l) =
       ∑ k ∈ Finset.range (L + 1),
@@ -411,7 +422,7 @@ theorem polyMat_sq_trace_eq (A : Matrix V V ℚ) (d L : ℕ) (c : List ℤ)
       rw [Finset.mem_range]
       have := hdeg j hj l hl
       split_ifs <;> omega
-    rw [chebMat_mul_any A d j l, map_add, LinearMap.map_smul, smul_eq_mul]
+    rw [chebMat_mul_any A d j l, Matrix.trace_add, Matrix.trace_smul, smul_eq_mul]
     simp_rw [mul_add, add_mul, Finset.sum_add_distrib]
     have hs1 : ∑ k ∈ Finset.range (L + 1),
         (c.getD j 0 : ℚ) * (c.getD l 0 : ℚ) * (if j + l = k then (1 : ℚ) else 0) * Matrix.trace (chebMat A d k) =
@@ -420,7 +431,8 @@ theorem polyMat_sq_trace_eq (A : Matrix V V ℚ) (d L : ℕ) (c : List ℤ)
           (c.getD j 0 : ℚ) * (c.getD l 0 : ℚ) * (if j + l = k then (1 : ℚ) else 0) * Matrix.trace (chebMat A d k) =
           if j + l = k then (c.getD j 0 : ℚ) * (c.getD l 0 : ℚ) * Matrix.trace (chebMat A d k) else 0 := by
         intro k _; split_ifs <;> ring
-      rw [Finset.sum_congr rfl this, Finset.sum_ite_eq, if_pos hadd_mem]
+      rw [Finset.sum_congr rfl this, Finset.sum_ite_eq]
+      simp [hadd_mem]
     have hs2 : ∑ k ∈ Finset.range (L + 1),
         (c.getD j 0 : ℚ) * (c.getD l 0 : ℚ) *
           (if (if l ≤ j then j - l else l - j) = k then ((d : ℚ) - 1) ^ (min j l) else 0) *
@@ -435,7 +447,8 @@ theorem polyMat_sq_trace_eq (A : Matrix V V ℚ) (d L : ℕ) (c : List ℤ)
             (c.getD j 0 : ℚ) * (c.getD l 0 : ℚ) * (((d : ℚ) - 1) ^ (min j l) * Matrix.trace (chebMat A d k))
           else 0 := by
         intro k _; split_ifs <;> ring
-      rw [Finset.sum_congr rfl this, Finset.sum_ite_eq, if_pos hdiff_mem]
+      rw [Finset.sum_congr rfl this, Finset.sum_ite_eq]
+      simp [hdiff_mem]
     rw [hs1, hs2]
     ring
   calc
@@ -488,8 +501,11 @@ theorem trace_sum_eq_kmDenom_add_walks (A : Matrix V V ℚ) (d L : ℕ) (F : ℕ
       intro k hk
       rw [Finset.mem_Icc] at hk
       by_cases hev : k % 2 = 0
-      · rw [htr_even k hk.1 hk.2 hev, if_pos ⟨hk.1, hev⟩]; ring
-      · rw [htr_odd k hk.1 hk.2 hev, if_neg (by tauto)]; simp
+      · rw [htr_even k hk.1 hk.2 hev]
+        simp only [hk.1, hev, and_self, ↓reduceIte]
+        ring
+      · rw [htr_odd k hk.1 hk.2 hev]
+        simp [hev]
     rw [Finset.sum_congr rfl hterm, Finset.sum_sub_distrib, ← Finset.mul_sum]
     have hzero : ∑ k ∈ Finset.range (L + 1), ((if (1 ≤ k ∧ k % 2 = 0) then F k else 0 : ℤ) : ℚ) =
         ∑ k ∈ Finset.Icc 1 L, ((if (1 ≤ k ∧ k % 2 = 0) then F k else 0 : ℤ) : ℚ) := by
@@ -509,7 +525,7 @@ theorem trace_sum_eq_kmDenom_add_walks (A : Matrix V V ℚ) (d L : ℕ) (F : ℕ
     the multi-cluster Bessel spectral excess exceeds `n * kmDenomZ d L F`, then `0 < b L`. -/
 theorem delsarte_bessel_unbounded_n_forces_bL {ι : Type*} [DecidableEq ι]
     (A : Matrix V V ℚ) (d g L : ℕ) (bip : Bool) (c1 c2 : List ℤ) (b : ℕ → ℚ)
-    (hA : Aᵀ = A) (hL : 1 ≤ L)
+    (hA : A.transpose = A) (hL : 1 ≤ L)
     (hdeg1 : ∀ j < c1.length, ∀ l < c1.length, j + l ≤ L)
     (hdeg2 : ∀ j < c2.length, ∀ l < c2.length, j + l ≤ L)
     (htr0 : Matrix.trace (chebMat A d 0) = 2 * (Fintype.card V : ℚ))
@@ -581,7 +597,7 @@ theorem delsarte_bessel_unbounded_n_forces_bL {ι : Type*} [DecidableEq ι]
 /-- **Master Finite-`n` Delsarte 2-Square SOS Forcing Theorem** (Single Full-Graph Cluster). -/
 theorem delsarte_two_sq_forces_bL [Nonempty V]
     (A : Matrix V V ℚ) (d g L : ℕ) (bip : Bool) (c1 c2 : List ℤ) (b : ℕ → ℚ)
-    (hA : Aᵀ = A) (hreg : ∀ u, ∑ v, A u v = (d : ℚ)) (hL : 1 ≤ L)
+    (hA : A.transpose = A) (hreg : ∀ u, ∑ v, A u v = (d : ℚ)) (hL : 1 ≤ L)
     (hdeg1 : ∀ j < c1.length, ∀ l < c1.length, j + l ≤ L)
     (hdeg2 : ∀ j < c2.length, ∀ l < c2.length, j + l ≤ L)
     (htr0 : Matrix.trace (chebMat A d 0) = 2 * (Fintype.card V : ℚ))
@@ -631,7 +647,7 @@ def ValidCubicCert (g L n_max : ℕ) (bip : Bool) (c1 c2 : List ℤ) : Prop :=
 theorem cubic_cert_forces_bL {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
     (A : Matrix V V ℚ) (g L n_max : ℕ) (bip : Bool) (c1 c2 : List ℤ) (b : ℕ → ℚ)
     (hcert : ValidCubicCert g L n_max bip c1 c2)
-    (hA : Aᵀ = A) (hreg : ∀ u, ∑ v, A u v = 3) (hL : 1 ≤ L)
+    (hA : A.transpose = A) (hreg : ∀ u, ∑ v, A u v = 3) (hL : 1 ≤ L)
     (htr0 : Matrix.trace (chebMat A 3 0) = 2 * (Fintype.card V : ℚ))
     (htr_even : ∀ k, 1 ≤ k → k ≤ L → k % 2 = 0 →
       Matrix.trace (chebMat A 3 k) = b k - (3 - 2) * (Fintype.card V : ℚ))
@@ -745,7 +761,7 @@ theorem cert_girth14_bip_c16_n346 :
   intro k hlo hhi hev
   have hk : k % 2 = 0 := hev rfl
   interval_cases k <;> try omega
-  all_goals decide
+  decide
 
 /-- **Certificate 10 (`g ≥ 15, L = 16`, general cubic, `n ≤ 573`)**. -/
 theorem cert_girth15_c16_n573 :
