@@ -6,7 +6,7 @@ on:
       batch:
         description: Which independent agent bundles to verify
         type: choice
-        options: [all, batch1, batch2]
+        options: [all, batch1, batch2, agent6]
         default: all
         required: true
 
@@ -43,8 +43,8 @@ jobs:
             {'agent':5,'job':'abc-wave1-agent5-families','toolbox':'sage'},
             {'agent':6,'job':'abc-wave1-agent6-lean','toolbox':'lean'}]
           batch=os.environ['BATCH']
-          assert batch in ('all','batch1','batch2')
-          selected=[r for r in rows if batch=='all' or (batch=='batch1' and r['agent']<=3) or (batch=='batch2' and r['agent']>=4)]
+          assert batch in ('all','batch1','batch2','agent6')
+          selected=[r for r in rows if batch=='all' or (batch=='batch1' and r['agent']<=3) or (batch=='batch2' and r['agent']>=4) or (batch=='agent6' and r['agent']==6)]
           print('matrix='+json.dumps({'include':selected},separators=(',',':')))
           PY
 
@@ -126,7 +126,7 @@ jobs:
           python3 - <<'PY'
           import os,json,pathlib
           p=pathlib.Path('summary');p.mkdir(exist_ok=True)
-          expected=list(range(1,7)) if os.environ['BATCH']=='all' else ([1,2,3] if os.environ['BATCH']=='batch1' else [4,5,6])
+          expected=list(range(1,7)) if os.environ['BATCH']=='all' else {'batch1':[1,2,3],'batch2':[4,5,6],'agent6':[6]}[os.environ['BATCH']]
           records={}
           for a in expected:
             folder=p/'agents'/f'abc-wave1-agent{a}'
