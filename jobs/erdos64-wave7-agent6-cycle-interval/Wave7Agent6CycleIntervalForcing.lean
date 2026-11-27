@@ -284,9 +284,7 @@ theorem exists_chord_path_type1 {G : SimpleGraph V} {m r : ℕ} (C : ChordedEven
                  (C.v ⟨2 * (r + b), by have := C.hm; have := C.hr_hi; omega⟩),
       p.IsPath ∧ p.length = 2 * (a + b) ∧ ∀ x ∈ p.support, x ∈ Set.range C.v := by
   have hm := C.hm; have hr1 := C.hr_lo; have hrh := C.hr_hi
-  have h1 : (0 + 2 * a) % (2 * m) = 2 * a := by
-    rw [Nat.zero_add]
-    exact Nat.mod_eq_of_lt (by omega)
+  have h1 : (2 * a) % (2 * m) = 2 * a := Nat.mod_eq_of_lt (by omega)
   have h2 : (2 * r + 1 + (2 * b - 1)) % (2 * m) = 2 * (r + b) := by
     have heq : 2 * r + 1 + (2 * b - 1) = 2 * (r + b) := by omega
     rw [heq]
