@@ -1,0 +1,42 @@
+name: Erdos 25 saved exact prefix audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/erdos25-selector-audit.yml'
+  workflow_dispatch:
+    inputs:
+      source_run:
+        description: Completed exact selector run whose artifact is audited
+        type: string
+        default: '46046487789'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  audit-saved-prefix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: erdos25-seeded-selector
+          path: replay
+          run-id: ${{ inputs.source_run || '46046487789' }}
+          github-token: ${{ github.token }}
+      - name: Record exact source and input
+        run: |
+          mkdir -p out
+          cp -R replay out/original
+          git rev-parse HEAD > out/audit-commit.txt
+          python --version > out/audit-python.txt
+          sha256sum jobs/erdos25-seeded-selector/validate_result.py replay/result.json > out/audit-source.sha256
+      - name: Independently audit the completed exact prefix
+        run: python jobs/erdos25-seeded-selector/validate_result.py replay/result.json out/validation.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos25-selector-audit
+          path: out/
+          retention-days: 30
