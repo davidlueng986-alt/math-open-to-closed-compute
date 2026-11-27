@@ -563,7 +563,7 @@ theorem completion_min_deg_three {V : Type u} [Fintype V] [DecidableEq V]
     rw [hout_a, Finset.card_singleton] at hd
     have ha := degree_add_new_edge_left K a b hab hnadj
     have h3 := hwfree a
-    simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at ha hd
+    simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at ha hd h3
     change 3 ≤ Nat.card (H.neighborSet a)
     omega
   by_cases hvb : v = b
@@ -572,7 +572,7 @@ theorem completion_min_deg_three {V : Type u} [Fintype V] [DecidableEq V]
     rw [hout_b, Finset.card_singleton] at hd
     have hb := degree_add_new_edge_right K a b hab hnadj
     have h3 := hwfree b
-    simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at hb hd
+    simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at hb hd h3
     change 3 ≤ Nat.card (H.neighborSet b)
     omega
   have hout : ((G.neighborFinset v.1).filter (fun z => z ∉ A)) = ∅ := by
@@ -595,7 +595,7 @@ theorem completion_min_deg_three {V : Type u} [Fintype V] [DecidableEq V]
       right_inv := by intro z; rfl }
   have heq : Nat.card (H.neighborSet v) = Nat.card (K.neighborSet v) := Nat.card_congr e
   have h3 := hwfree v
-  simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at hd
+  simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at hd h3
   change 3 ≤ Nat.card (H.neighborSet v)
   omega
 
@@ -968,7 +968,7 @@ theorem matching_contraction_simple_4reg_power {V : Type u} [Fintype V] [Decidab
             (⟨x.1, Finset.mem_erase.mpr ⟨x.2.2, (G.mem_neighborFinset u x.1).mpr x.2.1⟩⟩ :
               {z // z ∈ (G.neighborFinset u).erase (m u)})) ?_)).trans (Fintype.card_coe _)
           constructor
-          · intro x y h; exact Subtype.ext (congrArg Subtype.val h)
+          · intro x y h; exact Subtype.ext (by simpa [Subtype.ext_iff] using h)
           · rintro ⟨z, hz⟩
             have hmem := Finset.mem_erase.mp hz
             exact ⟨⟨z, (G.mem_neighborFinset u z).mp hmem.2, hmem.1⟩, rfl⟩
@@ -980,7 +980,7 @@ theorem matching_contraction_simple_4reg_power {V : Type u} [Fintype V] [Decidab
             (⟨y.1, Finset.mem_erase.mpr ⟨y.2.2, (G.mem_neighborFinset (m u) y.1).mpr y.2.1⟩⟩ :
               {z // z ∈ (G.neighborFinset (m u)).erase u})) ?_)).trans (Fintype.card_coe _)
           constructor
-          · intro x y h; exact Subtype.ext (congrArg Subtype.val h)
+          · intro x y h; exact Subtype.ext (by simpa [Subtype.ext_iff] using h)
           · rintro ⟨z, hz⟩
             have hmem := Finset.mem_erase.mp hz
             exact ⟨⟨z, (G.mem_neighborFinset (m u) z).mp hmem.2, hmem.1⟩, rfl⟩
