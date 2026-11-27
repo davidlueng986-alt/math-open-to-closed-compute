@@ -1,6 +1,6 @@
 import Mathlib
 
-open SimpleGraph
+open SimpleGraph Classical
 open scoped BigOperators
 
 namespace E64Wave7Agent2
@@ -141,7 +141,8 @@ lemma minimal_bad2_no_safe_deletion {V : Type} [Fintype V] {G : SimpleGraph V}
     rw [hcard]
     exact hdef
   have hlt : Fintype.card {x : V // x ∈ (S : Set V)} < Fintype.card V := by
-    rw [Fintype.card_coe]
+    have hcard_coe : Fintype.card {x : V // x ∈ (S : Set V)} = S.card := Fintype.card_coe S
+    rw [hcard_coe]
     have hcardS : S.card = Fintype.card V - K.card := by
       simp [S, Finset.card_compl]
     have hKpos : 0 < K.card := Finset.card_pos.mpr hKne
@@ -205,7 +206,8 @@ lemma cycle_of_internally_disjoint_paths {V : Type*} {G : SimpleGraph V} {u v : 
   have hnodup_tail : c.support.tail.Nodup := by
     rw [hsupp_eq, List.nodup_append]
     refine ⟨hp1.support_nodup.tail, hp2.reverse.support_nodup.tail, ?_⟩
-    intro x hx1 hx2
+    intro x hx1 y hx2 hxy
+    subst hxy
     have hx1' : x ∈ p1.support := List.mem_of_mem_tail hx1
     have hx2' : x ∈ p2.support := by
       have : x ∈ p2.reverse.support := List.mem_of_mem_tail hx2
@@ -235,49 +237,51 @@ lemma cycle_of_internally_disjoint_paths {V : Type*} {G : SimpleGraph V} {u v : 
     rw [Walk.isTrail_def]
     simp only [c, Walk.edges_append, List.nodup_append]
     refine ⟨hp1.isTrail.edges_nodup, hp2.reverse.isTrail.edges_nodup, ?_⟩
-    intro e he1 he2
-    rcases Sym2.exists_eq e with ⟨x, y, rfl⟩
-    have hx1 : x ∈ p1.support := Walk.mem_support_of_mem_edges p1 he1 (by simp)
-    have hy1 : y ∈ p1.support := Walk.mem_support_of_mem_edges p1 he1 (by simp)
-    have hx2 : x ∈ p2.support := by
-      have := Walk.mem_support_of_mem_edges p2.reverse he2 (by simp)
-      rwa [Walk.support_reverse, List.mem_reverse] at this
-    have hy2 : y ∈ p2.support := by
-      have := Walk.mem_support_of_mem_edges p2.reverse he2 (by simp)
-      rwa [Walk.support_reverse, List.mem_reverse] at this
-    have hxy_ne : x ≠ y := G.ne_of_adj (Walk.adj_of_mem_edges p1 he1)
-    have hpair : (x = u ∧ y = v) ∨ (x = v ∧ y = u) := by
-      rcases hdisj x hx1 hx2 with rfl | rfl <;> rcases hdisj y hy1 hy2 with rfl | rfl
-      · exact False.elim (hxy_ne rfl)
-      · exact Or.inl ⟨rfl, rfl⟩
-      · exact Or.inr ⟨rfl, rfl⟩
-      · exact False.elim (hxy_ne rfl)
-    have hsuv : s(u, v) ∈ p1.edges := by
-      rcases hpair with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-      · exact he1
-      · rwa [Sym2.eq_swap] at he1
-    have hlen_le1 : p1.length ≤ 1 := by
-      cases hp1w : p1 with
-      | nil => simp
-      | @cons _ w _ huw q =>
-        rw [hp1w] at hsuv
-        simp only [Walk.edges_cons, List.mem_cons] at hsuv
-        rcases hsuv with heq | hmem'
-        · rw [Sym2.eq_iff] at heq
-          rcases heq with ⟨_, rfl⟩ | ⟨huv', _⟩
+    intro e he1 e' he2 hee'
+    subst hee'
+    induction e using Sym2.ind with
+    | _ x y =>
+      have hx1 : x ∈ p1.support := Walk.mem_support_of_mem_edges p1 he1 (by simp)
+      have hy1 : y ∈ p1.support := Walk.mem_support_of_mem_edges p1 he1 (by simp)
+      have hx2 : x ∈ p2.support := by
+        have := Walk.mem_support_of_mem_edges p2.reverse he2 (by simp)
+        rwa [Walk.support_reverse, List.mem_reverse] at this
+      have hy2 : y ∈ p2.support := by
+        have := Walk.mem_support_of_mem_edges p2.reverse he2 (by simp)
+        rwa [Walk.support_reverse, List.mem_reverse] at this
+      have hxy_ne : x ≠ y := G.ne_of_adj (Walk.adj_of_mem_edges p1 he1)
+      have hpair : (x = u ∧ y = v) ∨ (x = v ∧ y = u) := by
+        rcases hdisj x hx1 hx2 with rfl | rfl <;> rcases hdisj y hy1 hy2 with rfl | rfl
+        · exact False.elim (hxy_ne rfl)
+        · exact Or.inl ⟨rfl, rfl⟩
+        · exact Or.inr ⟨rfl, rfl⟩
+        · exact False.elim (hxy_ne rfl)
+      have hsuv : s(u, v) ∈ p1.edges := by
+        rcases hpair with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        · exact he1
+        · rwa [Sym2.eq_swap] at he1
+      have hlen_le1 : p1.length ≤ 1 := by
+        cases hp1w : p1 with
+        | nil => simp
+        | @cons _ w _ huw q =>
+          rw [hp1w] at hsuv
+          simp only [Walk.edges_cons, List.mem_cons] at hsuv
+          rcases hsuv with heq | hmem'
+          · rw [Sym2.eq_iff] at heq
+            rcases heq with ⟨_, rfl⟩ | ⟨huv', _⟩
+            · have hnd : (Walk.cons huw q).support.Nodup := by
+                rw [← hp1w]; exact hp1.support_nodup
+              cases q with
+              | nil => simp
+              | @cons _ z _ hvz q' =>
+                have hnd' := List.nodup_cons.mp (List.nodup_cons.mp hnd).2
+                exact False.elim (hnd'.1 (Walk.end_mem_support q'))
+            · exact False.elim (huv huv')
           · have hnd : (Walk.cons huw q).support.Nodup := by
               rw [← hp1w]; exact hp1.support_nodup
-            cases q with
-            | nil => simp
-            | @cons _ z _ hvz q' =>
-              have hnd' := List.nodup_cons.mp (List.nodup_cons.mp hnd).2
-              exact False.elim (hnd'.1 (Walk.end_mem_support q'))
-          · exact False.elim (huv huv')
-        · have hnd : (Walk.cons huw q).support.Nodup := by
-            rw [← hp1w]; exact hp1.support_nodup
-          have hu_in : u ∈ q.support := Walk.mem_support_of_mem_edges q hmem' (by simp)
-          exact False.elim ((List.nodup_cons.mp hnd).1 hu_in)
-    omega
+            have hu_in : u ∈ q.support := Walk.mem_support_of_mem_edges q hmem' (by simp)
+            exact False.elim ((List.nodup_cons.mp hnd).1 hu_in)
+      omega
   rw [Walk.isCycle_def]
   refine ⟨htrail, ?_, hnodup_tail⟩
   intro hnil
@@ -335,9 +339,9 @@ theorem mixed_scale_dyadic_plus_one_path_overlap_exclusion {V : Type*} {G : Simp
     (hl_eq : l = 2 ^ (k2 - 1) + 1) :
     False := by
   have hpow2 : 2 ^ k2 = 2 * 2 ^ (k2 - 1) := by
-    have h := Nat.pow_succ 2 (k2 - 1)
-    have heq : k2 - 1 + 1 = k2 := by omega
-    rw [heq] at h
+    have h1 : 2 ^ k2 = 2 ^ (k2 - 1) * 2 := by
+      conv_lhs => rw [show k2 = (k2 - 1) + 1 by omega]
+      rw [pow_succ]
     omega
   have h2k2_1 : 2 ≤ 2 ^ (k2 - 1) := by
     calc 2 = 2 ^ 1 := by norm_num
@@ -376,17 +380,11 @@ theorem powerFree_no_c4 {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
     refine ⟨?_, by simp [p], ?_⟩
     · rw [Walk.isTrail_def]
       simp only [p, Walk.edges_cons, Walk.edges_nil, List.nodup_cons, List.mem_cons,
-        List.not_mem_nil, or_false, not_or, Sym2.eq_iff, List.nodup_nil, and_true]
-      refine ⟨⟨?_, ?_, ?_⟩, ⟨?_, ?_⟩, ?_⟩
-      · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) <;> first | exact h1 rfl | exact h2 rfl
-      · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) <;> first | exact h2 rfl | exact h3 rfl
-      · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) <;> first | exact h3 rfl | exact h5 rfl
-      · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) <;> first | exact h4 rfl | exact h5 rfl
-      · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) <;> first | exact h5 rfl | exact h1 rfl
-      · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) <;> first | exact h6 rfl | exact h2 rfl
+        List.not_mem_nil, or_false, not_or, not_false_eq_true, Sym2.eq_iff, List.nodup_nil, and_true]
+      tauto
     · simp only [p, Walk.support_cons, Walk.support_nil, List.tail_cons, List.nodup_cons,
-        List.mem_cons, List.not_mem_nil, or_false, not_or, List.nodup_nil, and_true]
-      exact ⟨⟨h4, h5, h1.symm⟩, ⟨h6, h2.symm⟩, h3.symm⟩
+        List.mem_cons, List.not_mem_nil, or_false, not_or, not_false_eq_true, List.nodup_nil, and_true]
+      tauto
   exact hpf ⟨a, p, hcyc, 2, le_rfl, rfl⟩
 
 theorem powerFree_no_c8 {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
@@ -396,7 +394,7 @@ theorem powerFree_no_c8 {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
   let p2 : G.Walk v0 v4 :=
     Walk.cons h70.symm (Walk.cons h67.symm (Walk.cons h56.symm (Walk.cons h45.symm Walk.nil)))
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true] at hnd
+    not_false_eq_true, List.nodup_nil, and_true] at hnd
   rcases hnd with ⟨⟨h01n, h02n, h03n, h04n, h05n, h06n, h07n⟩,
     ⟨h12n, h13n, h14n, h15n, h16n, h17n⟩,
     ⟨h23n, h24n, h25n, h26n, h27n⟩,
@@ -404,13 +402,13 @@ theorem powerFree_no_c8 {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
     ⟨h45n, h46n, h47n⟩, ⟨h56n, h57n⟩, h67n⟩
   have hp1 : p1.IsPath := Walk.IsPath.mk' (by
     simp only [p1, Walk.support_cons, Walk.support_nil, List.nodup_cons, List.mem_cons,
-      List.not_mem_nil, or_false, not_or, List.nodup_nil, and_true]
-    exact ⟨⟨h01n, h02n, h03n, h04n⟩, ⟨h12n, h13n, h14n⟩, ⟨h23n, h24n⟩, h34n⟩)
+      List.not_mem_nil, or_false, not_or, not_false_eq_true, List.nodup_nil, and_true]
+    tauto)
   have hp2 : p2.IsPath := Walk.IsPath.mk' (by
     simp only [p2, Walk.support_cons, Walk.support_nil, List.nodup_cons, List.mem_cons,
-      List.not_mem_nil, or_false, not_or, List.nodup_nil, and_true]
-    exact ⟨⟨h07n, h06n, h05n, h04n⟩, ⟨h67n.symm, h57n.symm, h47n.symm⟩,
-      ⟨h56n.symm, h46n.symm⟩, h45n.symm⟩)
+      List.not_mem_nil, or_false, not_or, not_false_eq_true, List.nodup_nil, and_true]
+    refine ⟨⟨h07n, h06n, h05n, h04n⟩, ⟨fun h => h67n h.symm, fun h => h57n h.symm, fun h => h47n h.symm⟩,
+      ⟨fun h => h56n h.symm, fun h => h46n h.symm⟩, fun h => h45n h.symm⟩)
   have hdisj : ∀ w, w ∈ p1.support → w ∈ p2.support → w = v0 ∨ w = v4 := by
     intro w hw1 hw2
     simp only [p1, p2, Walk.support_cons, Walk.support_nil, List.mem_cons, List.not_mem_nil,
@@ -464,7 +462,7 @@ theorem c5_overlap_rigidity {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
     have hcc' : c ≠ c' := by rcases hdiff with h | h; exact False.elim (h rfl); exact h
     have hbb' : b ≠ b' := by
       intro hb_eq; subst hb_eq
-      exact hcc' (powerFree_common_neighbor_unique hpf hubn hcu.symm hbc.symm hc'u.symm hb'c'.symm)
+      exact hcc' (powerFree_common_neighbor_unique hpf hubn hcu.symm hbc hc'u.symm hb'c')
     have hb'c : b' ≠ c := by
       intro heq; subst heq; exact hnc1.2.2.1 ha'b'
     have hc'b : c' ≠ b := by
@@ -478,7 +476,7 @@ theorem c5_overlap_rigidity {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
       have ha'b : a' ≠ b := by
         intro heq; subst heq; exact hnc1.2.1 hva'
       have hb'a : b' ≠ a := by
-        intro heq; subst heq; exact hnc1.2.2.1 hb'c'
+        intro heq; subst heq; exact hnc1.2.2.1 hb'c'.symm
       exact Or.inr ⟨rfl, fun h => haa' h.symm, ha'b, hb'a, hbb'.symm⟩
     · have ha'b : a' ≠ b := by
         intro heq; subst heq; exact hnc1.2.1 hva'
@@ -489,22 +487,27 @@ theorem c5_overlap_rigidity {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
       have hc'b : c' ≠ b := by
         intro heq; subst heq; exact hnc1.2.2.2.1 hc'u
       have hb'a : b' ≠ a := by
-        intro heq; subst heq
-        exact powerFree_no_c4 hpf ⟨hva, ha'b'.symm, hva'.symm, huv.symm,
-          hvan, hva'n, huvn.symm, ha'b'n.symm, haa', G.ne_of_adj hva'⟩
+        intro heq
+        -- If b' = a, then v - a - c' - u - v is a C4!
+        have hac' : G.Adj a c' := heq ▸ hb'c'
+        exact powerFree_no_c4 hpf ⟨hva, hac', hc'u, huv,
+          hvan, hvc'n, huvn.symm, hc'a.symm, huan.symm, huc'n.symm⟩
       have hb'b : b' ≠ b := by
-        intro heq; subst heq
-        exact powerFree_no_c4 hpf ⟨hva, hab, ha'b'.symm, hva'.symm,
-          hvan, hvbn, hva'n, habn, haa', ha'b'n.symm⟩
+        intro heq
+        have ha'b_adj : G.Adj a' b := heq ▸ ha'b'
+        exact powerFree_no_c4 hpf ⟨hva, hab, ha'b_adj.symm, hva'.symm,
+          hvan, hvbn, hva'n, habn, haa', ha'b.symm⟩
       have hb'c : b' ≠ c := by
-        intro heq; subst heq
-        exact powerFree_no_c4 hpf ⟨hcu.symm, hb'c'.symm, hc'u, huv,
-          hucn, huc'n, huvn, hb'c'n.symm, hcc', G.ne_of_adj hc'u⟩
+        intro heq
+        -- If b' = c, then u - c - a' - v - u is a C4!
+        have hca' : G.Adj c a' := (heq ▸ ha'b').symm
+        exact powerFree_no_c4 hpf ⟨hcu.symm, hca', hva'.symm, huv.symm,
+          hucn, hua'n, huvn, ha'c.symm, hvcn.symm, hva'n.symm⟩
       exact False.elim (powerFree_no_c8 hpf (v0 := u) (v1 := c) (v2 := b) (v3 := a)
         (v4 := v) (v5 := a') (v6 := b') (v7 := c') ⟨hcu.symm, hbc.symm, hab.symm, hva.symm,
           hva', ha'b', hb'c', hc'u, by
           simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-            List.nodup_nil, and_true]
+            not_false_eq_true, List.nodup_nil, and_true]
           exact ⟨⟨hucn, hubn, huan, huvn, hua'n, hub'n, huc'n⟩,
             ⟨hbcn.symm, hacn.symm, hvcn.symm, ha'c.symm, hb'c.symm, hcc'⟩,
             ⟨habn.symm, hvbn.symm, ha'b.symm, hb'b.symm, hc'b.symm⟩,
@@ -517,7 +520,7 @@ theorem c5_star_obstruction {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
     (h1 : IsC5 G u v a b c) (h2 : IsC5 G u v a' b' c') :
     a = a' ∨ c = c' := by
   by_contra h
-  push_neg at h
+  push Not at h
   rcases c5_overlap_rigidity hpf h1 h2 (Or.inl h.1) with ⟨ha, _⟩ | ⟨hc, _⟩
   · exact h.1 ha
   · exact h.2 hc
@@ -572,12 +575,14 @@ theorem theta233_strong_spine_edge_c5_blockade {V : Type*} [Fintype V] {G : Simp
   rcases hC2 with ⟨_, _, hwc2, hc2v3, hv3u, _, _, huc2n, huv3n, _, hac2n, hav3n, hwc2n, hwv3n, hc2v3n⟩
   have hr_nb : r = u ∨ r = w ∨ r = t :=
     mem_of_degree_three hdega hua.symm haw hat huan.symm htu.symm htw.symm hC3.2.2.2.2.1.symm
-  rcases hr_nb with rfl | rfl | rfl
-  · have hq_nb : q = a ∨ q = v2 ∨ q = v3 :=
+  rcases hr_nb with hr | hr | hr
+  · subst hr
+    have hq_nb : q = a ∨ q = v2 ∨ q = v3 :=
       mem_of_degree_three hdegu hua hv2u.symm hv3u.symm huv2n huv3n hv23 hC3.2.2.2.1.symm
-    rcases hq_nb with rfl | rfl | rfl
-    · exact hC3.2.2.2.2.2.2.2.1 rfl
-    · rcases hC3 with ⟨_, htp, hpv2, _, _, hatn, hapn, _, _, htpn, htv2n, _, hpv2n, hpun, _⟩
+    rcases hq_nb with hq | hq | hq
+    · subst hq; exact hC3.2.2.2.2.2.2.2.1 rfl
+    · subst hq
+      rcases hC3 with ⟨_, htp, hpv2, _, _, hatn, hapn, _, _, htpn, htv2n, _, hpv2n, hpun, _⟩
       have hnc2 := isC5_no_chord hpf ⟨hua, haw, hwc2, hc2v3, hv3u, huan, huwn, huc2n, huv3n, hawn, hac2n, hav3n, hwc2n, hwv3n, hc2v3n⟩
       have htc2 : t ≠ c2 := by intro heq; subst heq; exact hnc2.2.1 hat
       have htv3 : t ≠ v3 := by intro heq; subst heq; exact hnc2.2.2.2.2 hat.symm
@@ -594,14 +599,15 @@ theorem theta233_strong_spine_edge_c5_blockade {V : Type*} [Fintype V] {G : Simp
         (v4 := v3) (v5 := u) (v6 := v2) (v7 := p)
         ⟨hat.symm, haw, hwc2, hc2v3, hv3u, hv2u.symm, hpv2.symm, htp.symm, by
           simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-            List.nodup_nil, and_true]
+            not_false_eq_true, List.nodup_nil, and_true]
           exact ⟨⟨hatn.symm, htw, htc2, htv3, htu, htv2n, htpn⟩,
             ⟨hawn, hac2n, hav3n, huan.symm, hav2n, hapn⟩,
             ⟨hwc2n, hwv3n, huwn.symm, hwv2n, hpw.symm⟩,
             ⟨hc2v3n, huc2n.symm, hc2v2, hpc2.symm⟩,
             ⟨huv3n.symm, hv23.symm, hpv3.symm⟩,
             ⟨huv2n, hpun.symm⟩, hpv2n.symm⟩⟩
-    · rcases hC3 with ⟨_, htp, hpv3, _, _, hatn, hapn, _, _, htpn, htv3n, _, hpv3n, hpun, _⟩
+    · subst hq
+      rcases hC3 with ⟨_, htp, hpv3, _, _, hatn, hapn, _, _, htpn, htv3n, _, hpv3n, hpun, _⟩
       have hnc1 := isC5_no_chord hpf ⟨hua, haw, hwc1, hc1v2, hv2u, huan, huwn, huc1n, huv2n, hawn, hac1n, hav2n, hwc1n, hwv2n, hc1v2n⟩
       have htc1 : t ≠ c1 := by intro heq; subst heq; exact hnc1.2.1 hat
       have htv2 : t ≠ v2 := by intro heq; subst heq; exact hnc1.2.2.2.2 hat.symm
@@ -618,14 +624,15 @@ theorem theta233_strong_spine_edge_c5_blockade {V : Type*} [Fintype V] {G : Simp
         (v4 := v2) (v5 := u) (v6 := v3) (v7 := p)
         ⟨hat.symm, haw, hwc1, hc1v2, hv2u, hv3u.symm, hpv3.symm, htp.symm, by
           simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-            List.nodup_nil, and_true]
+            not_false_eq_true, List.nodup_nil, and_true]
           exact ⟨⟨hatn.symm, htw, htc1, htv2, htu, htv3n, htpn⟩,
             ⟨hawn, hac1n, hav2n, huan.symm, hav3n, hapn⟩,
             ⟨hwc1n, hwv2n, huwn.symm, hwv3n, hpw.symm⟩,
             ⟨hc1v2n, huc1n.symm, hv3c1.symm, hpc1.symm⟩,
             ⟨huv2n.symm, hv23, hpv2.symm⟩,
             ⟨huv3n, hpun.symm⟩, hpv3n.symm⟩⟩
-  · have hC1_aw : IsC5 G a w c1 v2 u := isC5_rot ⟨hua, haw, hwc1, hc1v2, hv2u, huan, huwn, huc1n, huv2n, hawn, hac1n, hav2n, hwc1n, hwv2n, hc1v2n⟩
+  · subst hr
+    have hC1_aw : IsC5 G a w c1 v2 u := isC5_rot ⟨hua, haw, hwc1, hc1v2, hv2u, huan, huwn, huc1n, huv2n, hawn, hac1n, hav2n, hwc1n, hwv2n, hc1v2n⟩
     have hC2_aw : IsC5 G a w c2 v3 u := isC5_rot ⟨hua, haw, hwc2, hc2v3, hv3u, huan, huwn, huc2n, huv3n, hawn, hac2n, hav3n, hwc2n, hwv3n, hc2v3n⟩
     have hC3_aw : IsC5 G a w q p t := isC5_rev hC3
     have hq1 : c1 = q := by
@@ -637,7 +644,7 @@ theorem theta233_strong_spine_edge_c5_blockade {V : Type*} [Fintype V] {G : Simp
       · exact h
       · exact False.elim (htu h.symm)
     exact hc21 (hq2.trans hq1.symm)
-  · exact hC3.2.2.2.2.2.2.2.2.2.2.2.1 rfl
+  · subst hr; exact hC3.2.2.2.2.2.2.2.2.2.2.2.1 rfl
 
 /-- PILLAR 2.4: Rim-Edge C5-Blockade (triangle-free PowerFree, ARBITRARY deg(a) and deg(c1)!). -/
 theorem theta233_rim_edge_c5_blockade {V : Type*} [Fintype V] {G : SimpleGraph V}
@@ -659,11 +666,13 @@ theorem theta233_rim_edge_c5_blockade {V : Type*} [Fintype V] {G : SimpleGraph V
   rcases hC2 with ⟨_, _, hwc2, hc2v3, hv3u, _, _, huc2n, huv3n, _, hac2n, hav3n, hwc2n, hwv3n, hc2v3n⟩
   have hr_nb : r = u ∨ r = c1 ∨ r = z :=
     mem_of_degree_three hdegv2 hv2u hc1v2.symm hv2z huc1n hzu.symm hzc1.symm hC3.2.2.2.2.1.symm
-  rcases hr_nb with rfl | rfl | rfl
-  · have hq_nb : q = a ∨ q = v2 ∨ q = v3 :=
-      mem_of_degree_three hdegu hua hv2u.symm hv3u.symm huv2n huv3n hv23 hC3.2.2.2.1.symm
-    rcases hq_nb with rfl | rfl | rfl
-    · rcases hC3 with ⟨_, hzp, hpa, _, _, hv2zn, hv2pn, _, _, hzpn, hzan, _, hpan, hpun, _⟩
+  rcases hr_nb with hr | hr | hr
+  · subst hr
+    have hq_nb : q = a ∨ q = v2 ∨ q = v3 :=
+      mem_of_degree_three hdegu hua hv2u.symm hv3u.symm hav2n hav3n hv23 hC3.2.2.2.1.symm
+    rcases hq_nb with hq | hq | hq
+    · subst hq
+      rcases hC3 with ⟨_, hzp, hpa, _, _, hv2zn, hv2pn, _, _, hzpn, hzan, _, hpan, hpun, _⟩
       have hzw : z ≠ w := by
         intro heq; subst heq
         exact powerFree_no_c4 hpf ⟨hv2u, hua, haw, hv2z.symm, huv2n.symm, hav2n.symm, hwv2n.symm, huan, huwn, hawn⟩
@@ -686,20 +695,22 @@ theorem theta233_rim_edge_c5_blockade {V : Type*} [Fintype V] {G : SimpleGraph V
         (v4 := c2) (v5 := v3) (v6 := u) (v7 := v2)
         ⟨hzp, hpa, haw, hwc2, hc2v3, hv3u, hv2u.symm, hv2z, by
           simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-            List.nodup_nil, and_true]
+            not_false_eq_true, List.nodup_nil, and_true]
           exact ⟨⟨hzpn, hzan, hzw, hzc2, hzv3, hzu, hv2zn.symm⟩,
             ⟨hpan, hpw, hpc2, hpv3, hpun, hv2pn.symm⟩,
             ⟨hawn, hac2n, hav3n, huan.symm, hav2n⟩,
             ⟨hwc2n, hwv3n, huwn.symm, hwv2n⟩,
             ⟨hc2v3n, huc2n.symm, hc2v2⟩,
             ⟨huv3n.symm, hv23.symm⟩, huv2n⟩⟩
-    · exact hC3.2.2.2.2.2.2.2.1 rfl
-    · have hC1_uv2 : IsC5 G u v2 c1 w a := isC5_rev ⟨hua, haw, hwc1, hc1v2, hv2u, huan, huwn, huc1n, huv2n, hawn, hac1n, hav2n, hwc1n, hwv2n, hc1v2n⟩
+    · subst hq; exact hC3.2.2.2.2.2.2.2.1 rfl
+    · subst hq
+      have hC1_uv2 : IsC5 G u v2 c1 w a := isC5_rev ⟨hua, haw, hwc1, hc1v2, hv2u, huan, huwn, huc1n, huv2n, hawn, hac1n, hav2n, hwc1n, hwv2n, hc1v2n⟩
       have hC3_uv2 : IsC5 G u v2 z p v3 := isC5_rot (isC5_rot (isC5_rot (isC5_rot hC3)))
       rcases c5_star_obstruction hpf hC1_uv2 hC3_uv2 with h | h
       · exact hzc1 h.symm
       · exact hav3n h
-  · have hC1_c1v2 : IsC5 G c1 v2 u a w :=
+  · subst hr
+    have hC1_c1v2 : IsC5 G c1 v2 u a w :=
       isC5_rot (isC5_rot (isC5_rot ⟨hua, haw, hwc1, hc1v2, hv2u, huan, huwn, huc1n, huv2n, hawn, hac1n, hav2n, hwc1n, hwv2n, hc1v2n⟩))
     have hC3_c1v2 : IsC5 G c1 v2 z p q := isC5_rot (isC5_rot (isC5_rot (isC5_rot hC3)))
     have hqw : q = w := by
@@ -709,11 +720,13 @@ theorem theta233_rim_edge_c5_blockade {V : Type*} [Fintype V] {G : SimpleGraph V
     subst hqw
     have hp_nb : p = a ∨ p = c1 ∨ p = c2 :=
       mem_of_degree_three hdegw haw.symm hwc1 hwc2 hac1n hac2n hc21.symm hC3.2.2.1.symm
-    rcases hp_nb with rfl | rfl | rfl
-    · exact powerFree_no_c4 hpf ⟨hv2z, hC3.2.1, hua.symm, hv2u.symm,
+    rcases hp_nb with hp | hp | hp
+    · subst hp
+      exact powerFree_no_c4 hpf ⟨hv2z, hC3.2.1, hua.symm, hv2u.symm,
         hC3.2.2.2.2.2.1, hav2n.symm, huv2n.symm, hC3.2.2.2.2.2.2.2.2.2.1, hzu, huan.symm⟩
-    · exact hC3.2.2.2.2.2.2.2.2.2.2.2.2.1 rfl
-    · rcases hC3 with ⟨_, hzc2, _, _, _, hv2zn, _, _, _, hzc2n, _, _, _, _, _⟩
+    · subst hp; exact hC3.2.2.2.2.2.2.2.2.2.2.2.2.1 rfl
+    · subst hp
+      rcases hC3 with ⟨_, hzc2, _, _, _, hv2zn, _, _, _, hzc2n, _, _, _, _, _⟩
       have hzv3 : z ≠ v3 := by
         intro heq; subst heq; exact htri u v2 v3 hv2u.symm hv2z hv3u.symm
       have hza : z ≠ a := by
@@ -725,14 +738,14 @@ theorem theta233_rim_edge_c5_blockade {V : Type*} [Fintype V] {G : SimpleGraph V
         (v4 := a) (v5 := w) (v6 := c1) (v7 := v2)
         ⟨hzc2, hc2v3, hv3u, hua, haw, hwc1, hc1v2, hv2z, by
           simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-            List.nodup_nil, and_true]
+            not_false_eq_true, List.nodup_nil, and_true]
           exact ⟨⟨hzc2n, hzv3, hzu, hza, hzw, hzc1, hv2zn.symm⟩,
             ⟨hc2v3n, huc2n.symm, hac2n.symm, hwc2n.symm, hc21, hc2v2⟩,
             ⟨huv3n.symm, hav3n.symm, hwv3n.symm, hv3c1, hv23.symm⟩,
             ⟨huan, huwn, huc1n, huv2n⟩,
             ⟨hawn, hac1n, hav2n⟩,
             ⟨hwc1n, hwv2n⟩, hc1v2n⟩⟩
-  · exact hC3.2.2.2.2.2.2.2.2.2.2.2.1 rfl
+  · subst hr; exact hC3.2.2.2.2.2.2.2.2.2.2.2.1 rfl
 
 lemma degree_three_all_c5_forces_theta233 {V : Type*} [Fintype V] {G : SimpleGraph V}
     (hpf : PowerFree G) {u : V} (hdegu : G.degree u = 3)
@@ -757,24 +770,26 @@ lemma degree_three_all_c5_forces_theta233 {V : Type*} [Fintype V] {G : SimpleGra
     intro p q r hp hq hr hpq hpr hqr hall ⟨x, y, hCp⟩
     rcases hc5 r hr with ⟨xr, yr, zr, hCr⟩
     have hzr : zr = p ∨ zr = q ∨ zr = r := hall zr hCr.2.2.2.2.1.symm
-    rcases hzr with rfl | rfl | rfl
-    · have hCr' : IsC5 G u p yr xr r := isC5_rev hCr
+    rcases hzr with hzr | hzr | hzr
+    · subst hzr
+      have hCr' : IsC5 G u p yr xr r := isC5_rev hCr
       rcases c5_overlap_rigidity hpf hCp hCr' (Or.inr hqr) with ⟨hx, _⟩ | ⟨heq, _⟩
       · subst hx; exact ⟨p, x, q, r, y, xr, hCp, hCr', hqr⟩
       · exact False.elim (hqr heq)
-    · have hCp' : IsC5 G u q y x p := isC5_rev hCp
+    · subst hzr
+      have hCp' : IsC5 G u q y x p := isC5_rev hCp
       have hCr' : IsC5 G u q yr xr r := isC5_rev hCr
       rcases c5_overlap_rigidity hpf hCp' hCr' (Or.inr hpr) with ⟨hy, _⟩ | ⟨heq, _⟩
       · subst hy; exact ⟨q, y, p, r, x, xr, hCp', hCr', hpr⟩
       · exact False.elim (hpr heq)
-    · exact False.elim (hCr.2.2.2.2.2.2.2.2.2.2.2.1 rfl)
+    · subst hzr; exact False.elim (hCr.2.2.2.2.2.2.2.2.2.2.2.1 rfl)
   have hall : ∀ v, G.Adj u v → v = n1 ∨ v = n2 ∨ v = n3 := fun v hv =>
     mem_of_degree_three hdegu hn1 hn2 hn3 h12 h13 h23 hv
   simp only [Finset.mem_insert, Finset.mem_singleton] at hz1_mem
-  rcases hz1_mem with rfl | rfl | rfl
-  · exact False.elim (hz1_ne1 rfl)
-  · exact pick_third n1 n2 n3 hn1 hn2 hn3 h12 h13 h23 hall ⟨x1, y1, hC1⟩
-  · exact pick_third n1 n3 n2 hn1 hn3 hn2 h13 h12 h23.symm
+  rcases hz1_mem with hz | hz | hz
+  · exact False.elim (hz1_ne1 hz)
+  · subst hz; exact pick_third n1 n2 n3 hn1 hn2 hn3 h12 h13 h23 hall ⟨x1, y1, hC1⟩
+  · subst hz; exact pick_third n1 n3 n2 hn1 hn3 hn2 h13 h12 h23.symm
       (fun v hv => by rcases hall v hv with h | h | h <;> tauto) ⟨x1, y1, hC1⟩
 
 /-- PILLAR 2.5: Unconditional Cubic All-C5 Refutation. -/
@@ -787,7 +802,6 @@ theorem cubic_all_c5_refutation {V : Type*} [Fintype V] {G : SimpleGraph V}
   rcases degree_three_all_c5_forces_theta233 hpf hdegu hc5_u with
     ⟨a, w, v2, v3, c1, c2, hC1, hC2, hv23⟩
   have hua : G.Adj u a := hC1.1
-  have haw : G.Adj a w := hC1.2.1
   have hdega : G.degree a = 3 := hnb3 a hua
   have hcard2 : ({u, w} : Finset V).card = 2 := Finset.card_pair hC1.2.2.2.2.2.2.1
   have hlt : ({u, w} : Finset V).card < (G.neighborFinset a).card := by
@@ -811,7 +825,6 @@ theorem trifree_minimal_bad2_all_c5_refutation {V : Type*} [Fintype V] {G : Simp
   have hdegu : G.degree u = 3 := (Finset.mem_filter.mp hu3).2
   rcases degree_three_all_c5_forces_theta233 hpf hdegu (hall_c5 u hu3) with
     ⟨a, w, v2, v3, c1, c2, hC1, hC2, hv23⟩
-  have hua : G.Adj u a := hC1.1
   have haw : G.Adj a w := hC1.2.1
   have ha_ne3 : G.degree a ≠ 3 := by
     intro hdega
@@ -1374,7 +1387,7 @@ theorem minimal_bad2_s0_at_most_two_s2 {V : Type} [Fintype V]
       have hne2 : G.degree w ≠ 2 := fun h => hwd (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩)
       omega
     have hwK_le1 : ((G.neighborFinset w) ∩ K).card ≤ 1 := by
-      by_contra hgt; push_neg at hgt
+      by_contra hgt; push Not at hgt
       rcases Finset.one_lt_card.mp hgt with ⟨k1, hk1, k2, hk2, hk12⟩
       rcases Finset.mem_inter.mp hk1 with ⟨hk1N, hk1K⟩
       rcases Finset.mem_inter.mp hk2 with ⟨hk2N, hk2K⟩
@@ -1478,7 +1491,7 @@ theorem minimal_bad2_trifree_adjacent_s1b_forces_c5_deg4 {V : Type} [Fintype V]
       Finset.mem_erase.mpr ⟨hwa, SimpleGraph.mem_neighborFinset.mpr hsw⟩
     rw [← heq] at hw_in; exact (Finset.mem_inter.mp hw_in).2
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   apply minimal_bad2_no_safe_deletion_disjoint_defects hG K ⟨u, by simp [K]⟩
   · intro d hd k hk hadj
     have hd_n4 : d ∉ VGe4 G := fun h => by
@@ -1517,7 +1530,7 @@ theorem minimal_bad2_trifree_adjacent_s1b_forces_c5_deg4 {V : Type} [Fintype V]
       have hdeg4 : 4 ≤ G.degree w := (Finset.mem_filter.mp hw4).2
       by_cases hle1 : ((G.neighborFinset w) ∩ K).card ≤ 1
       · omega
-      · push_neg at hle1
+      · push Not at hle1
         have hwx : G.Adj w x := by
           rcases Finset.one_lt_card.mp hle1 with ⟨k1, hk1, k2, hk2, hk12⟩
           rcases Finset.mem_inter.mp hk1 with ⟨h1N, h1K⟩
