@@ -99,6 +99,18 @@ def toggleNegSel : List ℤ → List Bool → List Bool
   | _, [] => []
   | d :: ds, b :: bs => (if d < 0 then !b else b) :: toggleNegSel ds bs
 
+private lemma toggleNegSel_length (ds : List ℤ) (sel : List Bool)
+    (hlen : sel.length = ds.length) :
+    (toggleNegSel ds sel).length = ds.length := by
+  induction ds generalizing sel with
+  | nil => cases sel <;> simp [toggleNegSel] at *
+  | cons d tl ih =>
+    cases sel with
+    | nil => simp at hlen
+    | cons b bs =>
+      simp only [List.length_cons, Nat.succ.injEq] at hlen
+      simp [toggleNegSel, ih bs hlen]
+
 /-- Exact Signed Adjuster Normalization Bijection:
     For any base length `L` and boolean selector `sel` of length `ds.length`,
     `(L - negSum ds) + absSelSum ds sel = L + signedSelSum ds (toggleNegSel ds sel)`. -/
@@ -219,17 +231,8 @@ theorem signed_adjuster_brown_pow2 (L : ℕ) (ds : List ℤ)
   have habs : absSelSum ds sel0 = m - (L - negSum ds) := by
     rw [absSelSum_eq_foldr_map, ← hfold]
   have hnorm := signed_adjuster_normalization (L : ℤ) ds sel0 hlen_ds
-  refine ⟨toggleNegSel ds sel0, ?_, m, hpow, ?_⟩
-  · clear hnorm hfold habs ht_le hsum_eq hlo hhi hpow hB hmin hmax hshortcut
-    induction ds generalizing sel0 with
-    | nil => cases sel0 <;> simp [toggleNegSel] at *
-    | cons d tl ih =>
-      cases sel0 with
-      | nil => simp at hlen_ds
-      | cons b bs =>
-        simp only [List.length_cons, Nat.succ.injEq] at hlen_ds
-        simp [toggleNegSel, ih bs hlen_ds]
-  · omega
+  refine ⟨toggleNegSel ds sel0, toggleNegSel_length ds sel0 hlen_ds, m, hpow, ?_⟩
+  omega
 
 /-- Parity-Flip + Even-Brown Completeness Theorem (Zero Unit-Step Adjusters!):
     Given ONE odd weight `w0` and a Brown-complete list `hs` representing even weights `2 * h`,
@@ -249,8 +252,11 @@ theorem parity_flip_even_brown_pow2 (L_min w0 : ℕ) (hs : List ℕ)
       ⟨m, hlo, hhi, ⟨c, hc⟩, hpow⟩
     have ht_le : c - a ≤ hs.sum := by omega
     refine ⟨false, c - a, brown_subset_sum_complete hs hB (c - a) ht_le, ?_⟩
-    have heq : L_min + 0 + 2 * (c - a) = m := by omega
-    simpa [heq] using hpow
+    have heq : L_min + (if false then w0 else 0) + 2 * (c - a) = m := by
+      simp only [Bool.false_eq_true, ↓reduceIte, add_zero]
+      omega
+    rw [heq]
+    exact hpow
   · have hLodd : Odd L_min := Nat.not_even_iff_odd.mp hpar
     rcases hLodd with ⟨a1, ha1⟩
     rcases hodd with ⟨a2, ha2⟩
@@ -262,8 +268,11 @@ theorem parity_flip_even_brown_pow2 (L_min w0 : ℕ) (hs : List ℕ)
       ⟨m, hlo, hhi, ⟨c, hc⟩, hpow⟩
     have ht_le : c - a ≤ hs.sum := by omega
     refine ⟨true, c - a, brown_subset_sum_complete hs hB (c - a) ht_le, ?_⟩
-    have heq : L_min + w0 + 2 * (c - a) = m := by omega
-    simpa [heq] using hpow
+    have heq : L_min + (if true then w0 else 0) + 2 * (c - a) = m := by
+      simp only [↓reduceIte]
+      omega
+    rw [heq]
+    exact hpow
 
 /-- Clean Modular Dyadic AP Hitting Theorem with canonical representative `2 ≤ j ≤ e + 1`. -/
 theorem modular_dyadic_ap_hit_canon (m e j L_min r : ℕ)
@@ -286,20 +295,14 @@ theorem modular_dyadic_ap_hit_canon (m e j L_min r : ℕ)
     | zero => simp
     | succ n ih =>
       have hadd : j + (n + 1) * e = (j + n * e) + e := by ring
-      rw [hadd, Nat.pow_add, Nat.mul_mod, ih, hord]
-      simp [Nat.mul_mod]
+      rw [hadd, Nat.pow_add, Nat.mul_mod, ih, hord, ← Nat.mul_mod, mul_one]
   have hq_mod : 2 ^ (j + q * e) % m = L_min % m := by
     rw [hmod_step q, hres]
   have hdiv : m ∣ (2 ^ (j + q * e) - L_min) := by
-    rw [Nat.dvd_iff_mod_eq_zero]
-    have hsub : (2 ^ (j + q * e) - L_min + L_min) % m = L_min % m := by
-      rw [Nat.sub_add_cancel hq_ge]
-      exact hq_mod
-    have h1 := Nat.add_mod (2 ^ (j + q * e) - L_min) L_min m
-    omega
+    exact (Nat.modEq_iff_dvd' hq_ge).mp hq_mod.symm
   have hq_upper : 2 ^ (j + q * e) ≤ 2 ^ e * (L_min - 1) := by
     by_cases hq0 : q = 0
-    · subst hq0
+    · rw [hq0]
       simp only [zero_mul, add_zero]
       have h1 : 2 ^ j ≤ 2 ^ (e + 1) := Nat.pow_le_pow_right (by norm_num) hj_hi
       have h2 : 2 ^ (e + 1) = 2 ^ e * 2 := by rw [Nat.pow_succ]
@@ -415,6 +418,7 @@ theorem cross_scale_pow2_plus_one_forbidden_path (a b : ℕ) (ha : 2 ≤ a) (hab
     have : a = (a - 1) + 1 := by omega
     conv_lhs => rw [this, Nat.pow_succ]
     ring
+  have h2b : 1 ≤ 2 ^ b := Nat.one_le_two_pow
   refine ⟨b, by omega, ?_⟩
   dsimp [p]
   omega
@@ -423,6 +427,7 @@ theorem cross_scale_pow2_plus_one_forbidden_path (a b : ℕ) (ha : 2 ≤ a) (hab
     in a single 3-edge path (`p = 3`), as the symmetric difference has length `2^b`. -/
 theorem pentagon_no_p4_overlap_with_pow2_plus_one (b : ℕ) (hb : 3 ≤ b) :
     IsPow2Ge4 (5 + (2 ^ b + 1) - 2 * 3) := by
+  have h2b : 1 ≤ 2 ^ b := Nat.one_le_two_pow
   exact ⟨b, by omega, by omega⟩
 
 /-- Pentagon Single-Path Overlap Rigidity:
