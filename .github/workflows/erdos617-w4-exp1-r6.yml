@@ -1,0 +1,44 @@
+name: Erdos 617 W4 Exp1 r=6 SAT Closure
+
+on:
+  push:
+    branches: [erdos617-w4-exp1-r6]
+  workflow_dispatch:
+
+jobs:
+  sat-matrix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        case:
+          - control_sat
+          - p6_6B
+          - p7_7D_m12
+          - p7_7D_m13
+          - p7_7D_m14
+          - p7_7D_m15
+          - p7_7B_11
+          - p7_7B_10
+          - p8_8D_m11
+          - p8_8D_m12
+          - p8_8D_m13
+          - p8_8D_m14
+          - p8_8D_m15
+          - p9_9D_m9
+          - p9_9D_m10
+          - p9_9D_m11
+          - p9_9D_m12
+          - p9_9D_m13
+          - p9_9D_m14
+          - p9_9D_m15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install python-sat
+        run: pip install --quiet python-sat
+      - name: Run CaDiCaL 1.9.5 CEGAR for ${{ matrix.case }}
+        run: python3 jobs/erdos617-w4-exp1-r6/sat_closure.py --case "${{ matrix.case }}" --time-limit 480
