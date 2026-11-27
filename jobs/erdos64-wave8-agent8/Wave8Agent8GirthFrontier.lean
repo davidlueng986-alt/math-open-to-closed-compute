@@ -39,7 +39,13 @@ def IsNBSeq (G : SimpleGraph V) (k : ℕ) (f : Fin (k + 1) → V) : Prop :=
 
 instance instDecidableIsNBSeq (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ)
     (f : Fin (k + 1) → V) : Decidable (IsNBSeq G k f) := by
-  unfold IsNBSeq; infer_instance
+  unfold IsNBSeq
+  refine decidable_of_iff
+    ((∀ i : Fin k, G.Adj (f i.castSucc) (f i.succ)) ∧
+     (∀ i : Fin (k + 1), ∀ hi : i.1 + 2 ≤ k, f i ≠ f ⟨i.1 + 2, by omega⟩)) ?_
+  constructor
+  · rintro ⟨h1, h2⟩; exact ⟨h1, fun i hi => h2 ⟨i, by omega⟩ hi⟩
+  · rintro ⟨h1, h2⟩; exact ⟨h1, fun i hi => h2 i.1 hi⟩
 
 /-- A closed non-backtracking walk of length `k ≥ 1`. -/
 def IsClosedNBSeq (G : SimpleGraph V) (k : ℕ) (f : Fin (k + 1) → V) : Prop :=
@@ -135,7 +141,7 @@ theorem closed_nb_seq_has_simple_cycle_le (G : SimpleGraph V) :
         have hstep := hadj i
         have hnxt : (⟨(i.1 + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L).castSucc = i.succ := by
           ext; simp [hmod]
-        rw [hnxt]; exact hstep
+        dsimp only; rw [hnxt]; exact hstep
       · have hi : i.1 + 1 = L := by omega
         have hmod : (i.1 + 1) % L = 0 := by rw [hi, Nat.mod_self]
         have hstep := hadj i
@@ -145,7 +151,7 @@ theorem closed_nb_seq_has_simple_cycle_le (G : SimpleGraph V) :
         rw [hlast_eq] at hstep
         have hnxt : (⟨(i.1 + 1) % L, Nat.mod_lt _ (by omega)⟩ : Fin L).castSucc = 0 := by
           ext; simp [hmod]
-        rw [hnxt]; exact hstep
+        dsimp only; rw [hnxt]; exact hstep
     · rw [Function.Injective] at hinj
       push Not at hinj
       rcases hinj with ⟨a, b, hab, hne⟩
@@ -165,14 +171,10 @@ theorem closed_nb_seq_has_simple_cycle_le (G : SimpleGraph V) :
           rw [h1, h2, hfij]
         · intro t
           have hstep := hadj ⟨i.1 + t.1, by omega⟩
-          convert hstep using 2
-          · ext; simp
-          · ext; simp; omega
+          convert hstep using 2; ext; simp; omega
         · intro t ht
           have hstep := hnb (i.1 + t) (by omega)
-          convert hstep using 2
-          · ext; simp
-          · ext; simp; omega
+          convert hstep using 2; ext; simp; omega
       obtain ⟨c, hcm, hcyc⟩ := ih m hmL g hg_closed
       exact ⟨c, le_trans hcm (le_of_lt hmL), hcyc⟩
 
@@ -190,7 +192,7 @@ theorem girth9_tailless16_is_simple_cycle (G : SimpleGraph V)
       have hstep := hadj i
       have hnxt : (⟨(i.1 + 1) % 16, Nat.mod_lt _ (by omega)⟩ : Fin 16).castSucc = i.succ := by
         ext; simp [hmod]
-      rw [hnxt]; exact hstep
+      dsimp only; rw [hnxt]; exact hstep
     · have hi : i.1 + 1 = 16 := by omega
       have hmod : (i.1 + 1) % 16 = 0 := by rw [hi, Nat.mod_self]
       have hstep := hadj i
@@ -200,7 +202,7 @@ theorem girth9_tailless16_is_simple_cycle (G : SimpleGraph V)
       rw [hlast_eq] at hstep
       have hnxt : (⟨(i.1 + 1) % 16, Nat.mod_lt _ (by omega)⟩ : Fin 16).castSucc = 0 := by
         ext; simp [hmod]
-      rw [hnxt]; exact hstep
+      dsimp only; rw [hnxt]; exact hstep
   · rw [Function.Injective] at hinj
     push Not at hinj
     rcases hinj with ⟨a, b, hab, hne⟩
@@ -220,14 +222,10 @@ theorem girth9_tailless16_is_simple_cycle (G : SimpleGraph V)
           rw [h1, h2, hfij]
         · intro t
           have hstep := hadj ⟨i.1 + t.1, by omega⟩
-          convert hstep using 2
-          · ext; simp
-          · ext; simp; omega
+          convert hstep using 2; ext; simp; omega
         · intro t ht
           have hstep := hnb (i.1 + t) (by omega)
-          convert hstep using 2
-          · ext; simp
-          · ext; simp; omega
+          convert hstep using 2; ext; simp; omega
       obtain ⟨c, hcm, hcyc⟩ := closed_nb_seq_has_simple_cycle_le G m g hg_closed
       exact False.elim (hg c (by omega) hcyc)
     · let m2 := 16 - m
@@ -440,8 +438,9 @@ theorem nbMat_recurrence (G : SimpleGraph V) [DecidableRel G.Adj]
     let S_good := S.filter (fun p => p.2 ⟨1, by omega⟩ ≠ u)
     let S_back := S.filter (fun p => p.2 ⟨1, by omega⟩ = u)
     have hpart : S.card = S_good.card + S_back.card := by
-      rw [← Finset.card_filter_add_card_filter_not (fun p => p.2 ⟨1, by omega⟩ ≠ u)]
-      congr 1; congr 1; ext p; simp [S_back, not_ne_iff]
+      have hback : S.filter (fun p => ¬ p.2 ⟨1, by omega⟩ ≠ u) = S_back := by
+        ext p; simp only [S_back, Finset.mem_filter, not_ne_iff]
+      rw [← Finset.card_filter_add_card_filter_not (fun p => p.2 ⟨1, by omega⟩ ≠ u), hback]
     rw [hpart]; congr 1
     · refine Finset.card_bij (fun p _ => Fin.cons u p.2) ?_ ?_ ?_
       · intro p hp
@@ -458,7 +457,7 @@ theorem nbMat_recurrence (G : SimpleGraph V) [DecidableRel G.Adj]
             rw [h0', h2', Fin.cons_zero, Fin.cons_succ]; exact Ne.symm hne
           | succ m =>
             have hm1 : (⟨m + 1, by omega⟩ : Fin (k + 4)) = (⟨m, by omega⟩ : Fin (k + 3)).succ := by ext; rfl
-            have hm3 : (⟨m + 1 + 2, by omega⟩ : Fin (k + 4)) = (⟨m + 2, by omega⟩ : Fin (k + 3)).succ := by ext; simp; omega
+            have hm3 : (⟨m + 1 + 2, by omega⟩ : Fin (k + 4)) = (⟨m + 2, by omega⟩ : Fin (k + 3)).succ := by ext; simp
             rw [hm1, hm3, Fin.cons_succ, Fin.cons_succ]; exact hnb m (by omega)
       · intro p₁ hp₁ p₂ hp₂ heq
         simp only [S_good, S, Finset.mem_filter, Finset.mem_univ, true_and] at hp₁ hp₂
@@ -526,7 +525,7 @@ theorem nbMat_recurrence (G : SimpleGraph V) [DecidableRel G.Adj]
               rw [h0', h2', Fin.cons_zero, Fin.cons_succ]; exact hw.2
             | succ m =>
               have hm1 : (⟨m + 1, by omega⟩ : Fin (k + 3)) = (⟨m, by omega⟩ : Fin (k + 2)).succ := by ext; rfl
-              have hm3 : (⟨m + 1 + 2, by omega⟩ : Fin (k + 3)) = (⟨m + 2, by omega⟩ : Fin (k + 2)).succ := by ext; simp; omega
+              have hm3 : (⟨m + 1 + 2, by omega⟩ : Fin (k + 3)) = (⟨m + 2, by omega⟩ : Fin (k + 2)).succ := by ext; simp
               rw [hm1, hm3, Fin.cons_succ, Fin.cons_succ]; exact hg'.2.2.2 m (by omega)
           · have h1' : (⟨1, by omega⟩ : Fin (k + 3)) = (0 : Fin (k + 2)).succ := by ext; rfl
             rw [h1', Fin.cons_succ, hg'.1]
@@ -557,7 +556,8 @@ lemma trace_nbMat_eq_closedNBCount (G : SimpleGraph V) [DecidableRel G.Adj] (k :
   rw [← Nat.cast_sum]; congr 1
   rw [← Finset.card_biUnion]
   · congr 1; ext f
-    simp only [Finset.mem_biUnion, Finset.mem_univ, Finset.mem_filter, true_and, IsClosedNBSeq]
+    rw [Finset.mem_biUnion, Finset.mem_filter]
+    simp only [Finset.mem_univ, true_and, Finset.mem_filter, IsClosedNBSeq]
     exact ⟨fun ⟨_, h0, hlast, hnb⟩ => ⟨hk, h0.trans hlast.symm, hnb⟩,
            fun ⟨_, hcl, hnb⟩ => ⟨f 0, rfl, hcl.symm, hnb⟩⟩
   · intro u _ v _ huv
@@ -596,13 +596,9 @@ lemma tailedCount_step (G : SimpleGraph V) [DecidableRel G.Adj]
           show f ⟨0 + 1, _⟩ = f ⟨(Fin.last k).1 + 1, _⟩
           rw [h1, h2]; exact htail
         · have hstep := hadj ⟨i.1 + 1, by omega⟩
-          convert hstep using 2
-          · ext; simp
-          · ext; simp; omega
+          convert hstep using 2; ext; simp; omega
         · have hstep := hnb (i + 1) (by omega)
-          convert hstep using 2
-          · ext; simp
-          · ext; simp; omega
+          convert hstep using 2; ext; simp; omega
       · simp only [Finset.mem_filter, Finset.mem_univ, true_and]
         refine ⟨?_, ?_, ?_⟩
         · have h01 := hadj ⟨0, by omega⟩
@@ -638,9 +634,9 @@ lemma tailedCount_step (G : SimpleGraph V) [DecidableRel G.Adj]
         if h0 : i.1 = 0 then q.2
         else if hl : i.1 = k + 2 then q.2
         else q.1 ⟨i.1 - 1, by omega⟩
-      have hf_zero : f 0 = q.2 := by dsimp [f]; simp
+      have hf_zero : f 0 = q.2 := by simp [f]
       have hf_last : f (Fin.last (k + 2)) = q.2 := by
-        dsimp [f]; split_ifs <;> [rfl; rfl; (exfalso; omega)]
+        dsimp [f]; split_ifs <;> rfl
       have hf_mid : ∀ m : ℕ, ∀ hm1 : 1 ≤ m, ∀ hm2 : m ≤ k + 1,
           f ⟨m, by omega⟩ = q.1 ⟨m - 1, by omega⟩ := by
         intro m hm1 hm2; dsimp [f]; split_ifs <;> [omega; omega; rfl]
@@ -665,10 +661,10 @@ lemma tailedCount_step (G : SimpleGraph V) [DecidableRel G.Adj]
             · have h1 : f i.castSucc = q.1 ⟨i.1 - 1, by omega⟩ := hf_mid i.1 (by omega) (by omega)
               have h2 : f i.succ = q.1 ⟨i.1, by omega⟩ := by
                 have : i.succ = ⟨i.1 + 1, by omega⟩ := by ext; rfl
-                rw [this, hf_mid (i.1 + 1) (by omega) (by omega)]; congr 1; ext; simp
+                rw [this, hf_mid (i.1 + 1) (by omega) (by omega)]
               rw [h1, h2]
               have hstep := hg.2.2.1 ⟨i.1 - 1, by omega⟩
-              convert hstep using 2 <;> (ext; simp; omega)
+              convert hstep using 2; ext; simp; omega
         · by_cases hi0 : i = 0
           · subst hi0
             have h1 : f ⟨0, by omega⟩ = q.2 := hf_zero
@@ -676,14 +672,14 @@ lemma tailedCount_step (G : SimpleGraph V) [DecidableRel G.Adj]
             rw [h1, h2]; exact hu.2.1
           · by_cases hik : i = k
             · have h1 : f ⟨i, by omega⟩ = q.1 ⟨k - 1, by omega⟩ := by
-                rw [hf_mid i (by omega) (by omega)]; congr 1; ext; simp [hik]
+                rw [hf_mid i (by omega) (by omega), hik]
               have h2 : f ⟨i + 2, by omega⟩ = q.2 := by
                 have : (⟨i + 2, by omega⟩ : Fin (k + 3)) = Fin.last (k + 2) := by ext; simp [hik]
                 rw [this, hf_last]
               rw [h1, h2]; exact Ne.symm hu.2.2
             · have h1 : f ⟨i, by omega⟩ = q.1 ⟨i - 1, by omega⟩ := hf_mid i (by omega) (by omega)
-              have h2 : f ⟨i + 2, by omega⟩ = q.1 ⟨i + 1, by omega⟩ := by
-                rw [hf_mid (i + 2) (by omega) (by omega)]; congr 1; ext; simp
+              have h2 : f ⟨i + 2, by omega⟩ = q.1 ⟨i + 1, by omega⟩ :=
+                hf_mid (i + 2) (by omega) (by omega)
               rw [h1, h2]
               have hstep := hg.2.2.2 (i - 1) (by omega)
               convert hstep using 2 <;> (ext; simp; omega)
@@ -693,7 +689,7 @@ lemma tailedCount_step (G : SimpleGraph V) [DecidableRel G.Adj]
             rw [this, hf_mid (k + 1) (by omega) (by omega)]; rfl
           rw [h1, h2, hg.2.1]
       · refine Sigma.ext ?_ (heq_of_eq hf_zero)
-        ext i; dsimp only; rw [hf_mid (i.1 + 1) (by omega) (by omega)]; congr 1; ext; simp
+        ext i; dsimp only; rw [hf_mid (i.1 + 1) (by omega) (by omega)]
   rw [hbij]
   let C_tl := C_k.filter (fun g => g ⟨1, by omega⟩ ≠ g ⟨k - 1, by omega⟩)
   let C_td := C_k.filter (fun g => g ⟨1, by omega⟩ = g ⟨k - 1, by omega⟩)
@@ -761,7 +757,7 @@ lemma chebMat_step_eq_nbMat (G : SimpleGraph V) [DecidableRel G.Adj]
       rw [nbMat_recurrence G hreg 0, nbMat_two G hreg, nbMat_one G]; simp only [chebMat]
       ext u v
       simp only [Matrix.sub_apply, Matrix.mul_sub, Matrix.mul_smul, Matrix.mul_one,
-        Matrix.smul_apply, Matrix.one_apply]
+        Matrix.smul_apply]
       simp only [nsmul_eq_mul, Nat.cast_ofNat]; ring
     | 2 =>
       rw [nbMat_recurrence G hreg 1, nbMat_recurrence G hreg 0, nbMat_two G hreg, nbMat_one G]
@@ -865,7 +861,8 @@ lemma aeval_adjMat_transpose (G : SimpleGraph V) [DecidableRel G.Adj] (P : Polyn
     rw [Matrix.algebraMap_eq_diagonal, Matrix.diagonal_transpose]
     have hcomm : Matrix.diagonal (algebraMap ℚ (V → ℚ) a) * adjMat G ^ n =
         adjMat G ^ n * Matrix.diagonal (algebraMap ℚ (V → ℚ) a) := by
-      ext u v; simp only [Matrix.diagonal_mul, Matrix.mul_diagonal]; ring
+      ext u v; simp only [Matrix.diagonal_mul, Matrix.mul_diagonal]
+      change a * (adjMat G ^ n) u v = (adjMat G ^ n) u v * a; ring
     rw [hcomm]
 
 lemma aeval_adjMat_row_sum (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -880,7 +877,7 @@ lemma aeval_adjMat_row_sum (G : SimpleGraph V) [DecidableRel G.Adj]
       | zero => intro x; simp [Matrix.one_apply]
       | succ m ihm =>
         intro x; rw [pow_succ']
-        simp_rw [Matrix.mul_apply, Finset.sum_mul]; rw [Finset.sum_comm]
+        simp_rw [Matrix.mul_apply]; rw [Finset.sum_comm]
         have hstep : ∀ w : V, ∑ v : V, adjMat G x w * ((adjMat G) ^ m) w v =
             adjMat G x w * 3 ^ m := fun w => by rw [← Finset.mul_sum, ihm w]
         simp_rw [hstep, ← Finset.sum_mul, adjMat_row_sum G hreg x, pow_succ']
@@ -903,7 +900,8 @@ lemma sq_sum_le_card_mul_sum_sq (x : V → ℚ) :
       simp_rw [hterm, Finset.sum_add_distrib, Finset.sum_sub_distrib, Finset.sum_const,
         Finset.card_univ, nsmul_eq_mul, ← Finset.mul_sum]
     simp_rw [h1, Finset.sum_add_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum,
-      ← Finset.sum_mul, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]; ring
+      ← Finset.sum_mul, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+    simp_rw [← Finset.sum_mul]; ring
   linarith
 
 omit [DecidableEq V] in
@@ -961,7 +959,8 @@ lemma lukacs_boundary_trace_nonneg (G : SimpleGraph V) [DecidableRel G.Adj]
     simp only [map_mul, map_sub, map_ofNat, map_pow, aeval_X, sub_mul, Matrix.trace_sub]
     have h9 : Matrix.trace ((9 : Matrix V V ℚ) * M ^ 2) = 9 * ∑ w : V, ∑ v : V, (M v w) ^ 2 := by
       have h9' : (9 : Matrix V V ℚ) * M ^ 2 = (9 : ℚ) • (M * M) := by
-        rw [sq, ← nsmul_one 9, Matrix.smul_mul, Matrix.one_mul]
+        have h9_1 : (9 : Matrix V V ℚ) = (9 : ℕ) • (1 : Matrix V V ℚ) := by simp
+        rw [sq, h9_1, Matrix.smul_mul, Matrix.one_mul]
         ext u v; simp [nsmul_eq_mul]
       rw [h9', Matrix.trace_smul, smul_eq_mul]; congr 1
       simp only [Matrix.trace, Matrix.diag, Matrix.mul_apply]; rw [Finset.sum_comm]
@@ -971,15 +970,18 @@ lemma lukacs_boundary_trace_nonneg (G : SimpleGraph V) [DecidableRel G.Adj]
       rw [hv, ← sq]
     have hA2 : Matrix.trace (A ^ 2 * M ^ 2) = ∑ w : V, ∑ v : V, (∑ u : V, A v u * M u w) ^ 2 := by
       have hAM : A ^ 2 * M ^ 2 = (A * M) * (A * M) := by
-        rw [sq, sq, Matrix.mul_assoc, ← Matrix.mul_assoc A M M, hcomm]
-        simp only [Matrix.mul_assoc]
+        calc A ^ 2 * M ^ 2 = A * (A * M) * M := by simp only [sq, Matrix.mul_assoc]
+          _ = A * (M * A) * M := by rw [hcomm]
+          _ = (A * M) * (A * M) := by simp only [Matrix.mul_assoc]
       have hAM_sym : (A * M).transpose = A * M := by
         rw [Matrix.transpose_mul, hM_sym, hA_sym, ← hcomm]
       rw [hAM]; simp only [Matrix.trace, Matrix.diag, Matrix.mul_apply]; rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun w _ => Finset.sum_congr rfl fun v _ => ?_
       have hv : (A * M) w v = (A * M) v w := by
         have := congr_fun (congr_fun hAM_sym v) w; simpa [transpose_apply] using this
-      rw [hv, ← sq, Matrix.mul_apply]
+      have hv' : ∑ j : V, A w j * M j v = ∑ j : V, A v j * M j w := by
+        simpa [Matrix.mul_apply] using hv
+      rw [hv', ← sq]
     rw [h9, hA2, Finset.sum_sub_distrib, ← Finset.mul_sum]
   rw [htr_eq]
   refine Finset.sum_nonneg fun w _ => ?_
@@ -1002,6 +1004,7 @@ theorem sos_trace_lower_bound_general (G : SimpleGraph V) [DecidableRel G.Adj]
       refine Finset.sum_congr rfl fun u _ => Finset.sum_congr rfl fun v _ => ?_
       have hv : M v u = M u v := by
         have := congr_fun (congr_fun hM_sym u) v; simpa [transpose_apply] using this
+      change M u v * M v u = M u v ^ 2
       rw [hv, ← sq]
     rw [htr]
     have hn_pos : (0 : ℚ) < (Fintype.card V : ℚ) := Nat.cast_pos.mpr Fintype.card_pos
@@ -1077,6 +1080,7 @@ lemma bipartite_aeval_sign_mul (G : SimpleGraph V) [DecidableRel G.Adj]
       rw [Matrix.algebraMap_eq_diagonal, Matrix.diagonal_mul]
       change a * ((adjMat G) ^ n) u v * s v = _
       ring
+    change ∑ v : V, (algebraMap ℚ (Matrix V V ℚ) a * adjMat G ^ n) u v * s v = _
     simp_rw [hsc, ← Finset.mul_sum, hpow n u]; ring
 
 /-- Theorem 7: Zero-spectral-theorem Lukács SOS trace lower bound (Bipartite 3-regular graphs). -/
@@ -1106,6 +1110,7 @@ theorem sos_trace_lower_bound_bipartite (G : SimpleGraph V) [DecidableRel G.Adj]
       refine Finset.sum_congr rfl fun u _ => Finset.sum_congr rfl fun v _ => ?_
       have hv : M v u = M u v := by
         have := congr_fun (congr_fun hM_sym u) v; simpa [transpose_apply] using this
+      change M u v * M v u = M u v ^ 2
       rw [hv, ← sq]
     rw [htr]
     have hnn : (0 : ℚ) ≤ ∑ u : V, ∑ v : V, (M u v - α / n - (β / n) * s u * s v) ^ 2 :=
@@ -1326,7 +1331,7 @@ theorem cubic_girth9_le_129_has_c16 (G : SimpleGraph V) [DecidableRel G.Adj] [No
       add_zero, P, Q, c, Matrix.cons_val_zero, Matrix.cons_val_succ, chebPoly,
       Polynomial.C_neg, Polynomial.C_ofNat, map_zero]; ring
   · norm_num [c]
-  · intro k hkg hk16; fin_cases k <;> simp_all [c] <;> norm_num
+  · intro k hkg hk16; fin_cases k <;> simp_all [c]
   · have hcard : (Fintype.card V : ℚ) ≤ 129 := by exact_mod_cast hn
     have hden : (2 * c ⟨0, by omega⟩ - ∑ k : Fin 17, if k.1 ≠ 0 ∧ Even k.1 then c k else 0) = 200829208932 := by
       simp only [Fin.sum_univ_succ, Fin.isValue, Fin.val_zero, Fin.val_succ, Fin.sum_univ_zero,
@@ -1347,7 +1352,7 @@ theorem cubic_girth10_le_132_has_c16 (G : SimpleGraph V) [DecidableRel G.Adj] [N
       add_zero, P, Q, c, Matrix.cons_val_zero, Matrix.cons_val_succ, chebPoly,
       Polynomial.C_neg, Polynomial.C_ofNat, map_zero]; ring
   · norm_num [c]
-  · intro k hkg hk16; fin_cases k <;> simp_all [c] <;> norm_num
+  · intro k hkg hk16; fin_cases k <;> simp_all [c]
   · have hcard : (Fintype.card V : ℚ) ≤ 132 := by exact_mod_cast hn
     have hden : (2 * c ⟨0, by omega⟩ - ∑ k : Fin 17, if k.1 ≠ 0 ∧ Even k.1 then c k else 0) = 205478254800 := by
       simp only [Fin.sum_univ_succ, Fin.isValue, Fin.val_zero, Fin.val_succ, Fin.sum_univ_zero,
@@ -1368,7 +1373,7 @@ theorem cubic_girth11_le_146_has_c16 (G : SimpleGraph V) [DecidableRel G.Adj] [N
       add_zero, P, Q, c, Matrix.cons_val_zero, Matrix.cons_val_succ, chebPoly,
       Polynomial.C_neg, Polynomial.C_ofNat, map_zero]; ring
   · norm_num [c]
-  · intro k hkg hk16; fin_cases k <;> simp_all [c] <;> norm_num
+  · intro k hkg hk16; fin_cases k <;> simp_all [c]
   · have hcard : (Fintype.card V : ℚ) ≤ 146 := by exact_mod_cast hn
     have hden : (2 * c ⟨0, by omega⟩ - ∑ k : Fin 17, if k.1 ≠ 0 ∧ Even k.1 then c k else 0) = 58909853813616 := by
       simp only [Fin.sum_univ_succ, Fin.isValue, Fin.val_zero, Fin.val_succ, Fin.sum_univ_zero,
@@ -1389,7 +1394,7 @@ theorem cubic_girth12_le_155_has_c16 (G : SimpleGraph V) [DecidableRel G.Adj] [N
       add_zero, P, Q, c, Matrix.cons_val_zero, Matrix.cons_val_succ, chebPoly,
       Polynomial.C_neg, Polynomial.C_ofNat]; ring
   · norm_num [c]
-  · intro k hkg hk16; fin_cases k <;> simp_all [c] <;> norm_num
+  · intro k hkg hk16; fin_cases k <;> simp_all [c]
   · have hcard : (Fintype.card V : ℚ) ≤ 155 := by exact_mod_cast hn
     have hden : (2 * c ⟨0, by omega⟩ - ∑ k : Fin 17, if k.1 ≠ 0 ∧ Even k.1 then c k else 0) = 4280585864688 := by
       simp only [Fin.sum_univ_succ, Fin.isValue, Fin.val_zero, Fin.val_succ, Fin.sum_univ_zero,
@@ -1410,7 +1415,7 @@ theorem cubic_girth13_le_214_has_c16 (G : SimpleGraph V) [DecidableRel G.Adj] [N
       add_zero, P, Q, c, Matrix.cons_val_zero, Matrix.cons_val_succ, chebPoly,
       Polynomial.C_neg, Polynomial.C_ofNat]; ring
   · norm_num [c]
-  · intro k hkg hk16; fin_cases k <;> simp_all [c] <;> norm_num
+  · intro k hkg hk16; fin_cases k <;> simp_all [c]
   · have hcard : (Fintype.card V : ℚ) ≤ 214 := by exact_mod_cast hn
     have hden : (2 * c ⟨0, by omega⟩ - ∑ k : Fin 17, if k.1 ≠ 0 ∧ Even k.1 then c k else 0) = 27949375071 := by
       simp only [Fin.sum_univ_succ, Fin.isValue, Fin.val_zero, Fin.val_succ, Fin.sum_univ_zero,
@@ -1431,7 +1436,7 @@ theorem cubic_girth14_le_267_has_c16 (G : SimpleGraph V) [DecidableRel G.Adj] [N
       add_zero, P, Q, c, Matrix.cons_val_zero, Matrix.cons_val_succ, chebPoly,
       Polynomial.C_neg, Polynomial.C_ofNat]; ring
   · norm_num [c]
-  · intro k hkg hk16; fin_cases k <;> simp_all [c] <;> norm_num
+  · intro k hkg hk16; fin_cases k <;> simp_all [c]
   · have hcard : (Fintype.card V : ℚ) ≤ 267 := by exact_mod_cast hn
     have hden : (2 * c ⟨0, by omega⟩ - ∑ k : Fin 17, if k.1 ≠ 0 ∧ Even k.1 then c k else 0) = 440142767172 := by
       simp only [Fin.sum_univ_succ, Fin.isValue, Fin.val_zero, Fin.val_succ, Fin.sum_univ_zero,
@@ -1452,7 +1457,7 @@ theorem cubic_girth15_le_573_has_c16 (G : SimpleGraph V) [DecidableRel G.Adj] [N
       add_zero, P, Q, c, Matrix.cons_val_zero, Matrix.cons_val_succ, chebPoly,
       Polynomial.C_ofNat, map_zero]; ring
   · norm_num [c]
-  · intro k hkg hk16; fin_cases k <;> simp_all [c] <;> norm_num
+  · intro k hkg hk16; fin_cases k <;> simp_all [c]
   · have hcard : (Fintype.card V : ℚ) ≤ 573 := by exact_mod_cast hn
     have hden : (2 * c ⟨0, by omega⟩ - ∑ k : Fin 17, if k.1 ≠ 0 ∧ Even k.1 then c k else 0) = 4520328048 := by
       simp only [Fin.sum_univ_succ, Fin.isValue, Fin.val_zero, Fin.val_succ, Fin.sum_univ_zero,
@@ -1475,7 +1480,7 @@ theorem cubic_bipartite_girth10_le_259_has_c16 (G : SimpleGraph V) [DecidableRel
       add_zero, P, Q, c, Matrix.cons_val_zero, Matrix.cons_val_succ, chebPoly,
       Polynomial.C_neg, Polynomial.C_ofNat, map_zero]; ring
   · norm_num [c]
-  · intro k hkg hk16; fin_cases k <;> simp_all [c] <;> norm_num
+  · intro k hkg hk16; fin_cases k <;> simp_all [c]
   · have hcard : (Fintype.card V : ℚ) ≤ 259 := by exact_mod_cast hn
     have hden : (2 * c ⟨0, by omega⟩ - ∑ k : Fin 17, if k.1 ≠ 0 ∧ Even k.1 then c k else 0) = 200829208932 := by
       simp only [Fin.sum_univ_succ, Fin.isValue, Fin.val_zero, Fin.val_succ, Fin.sum_univ_zero,
@@ -1500,7 +1505,7 @@ theorem cubic_bipartite_girth12_le_287_has_c16 (G : SimpleGraph V) [DecidableRel
       add_zero, P, Q, c, Matrix.cons_val_zero, Matrix.cons_val_succ, chebPoly,
       Polynomial.C_neg, Polynomial.C_ofNat, map_zero]; ring
   · norm_num [c]
-  · intro k hkg hk16; fin_cases k <;> simp_all [c] <;> norm_num
+  · intro k hkg hk16; fin_cases k <;> simp_all [c]
   · have hcard : (Fintype.card V : ℚ) ≤ 287 := by exact_mod_cast hn
     have hden : (2 * c ⟨0, by omega⟩ - ∑ k : Fin 17, if k.1 ≠ 0 ∧ Even k.1 then c k else 0) = 399609928260 := by
       simp only [Fin.sum_univ_succ, Fin.isValue, Fin.val_zero, Fin.val_succ, Fin.sum_univ_zero,
@@ -1525,7 +1530,7 @@ theorem cubic_bipartite_girth14_le_400_has_c16 (G : SimpleGraph V) [DecidableRel
       add_zero, P, Q, c, Matrix.cons_val_zero, Matrix.cons_val_succ, chebPoly,
       Polynomial.C_neg, Polynomial.C_ofNat, map_zero]; ring
   · norm_num [c]
-  · intro k hkg hk16; fin_cases k <;> simp_all [c] <;> norm_num
+  · intro k hkg hk16; fin_cases k <;> simp_all [c]
   · have hcard : (Fintype.card V : ℚ) ≤ 400 := by exact_mod_cast hn
     have hden : (2 * c ⟨0, by omega⟩ - ∑ k : Fin 17, if k.1 ≠ 0 ∧ Even k.1 then c k else 0) = 23425143012 := by
       simp only [Fin.sum_univ_succ, Fin.isValue, Fin.val_zero, Fin.val_succ, Fin.sum_univ_zero,
@@ -1566,7 +1571,7 @@ theorem four_layer_annulus_telescoping_peak (D : ℕ) (hD : 1 ≤ D) (a : ℕ �
     | succ m ih =>
       cases m with
       | zero =>
-        simp [Finset.sum_range_one]
+        simp
       | succ k =>
         have hih := ih (by omega)
         have hshift :
@@ -1600,16 +1605,12 @@ theorem four_layer_annulus_telescoping_peak (D : ℕ) (hD : 1 ≤ D) (a : ℕ �
               simp [show t + 2 ≤ k + 2 by omega, show t + 2 ≤ k + 1 by omega]
             rw [hcongr]
             have hfalse : ¬ (k + 2 ≤ k + 1) := by omega
-            simp [hfalse]; ring
+            simp [hfalse]
           rw [hsplit]; ring
         rw [Finset.sum_range_succ, hshift]
         by_cases hk0 : k = 0
-        · subst hk0; simp at hih ⊢; linarith
-        · have hne1 : k + 1 ≠ 1 := by omega
-          have hne2 : k + 2 ≠ 1 := by omega
-          simp [hne1, hne2] at hih ⊢
-          have hksub : k + 1 - 1 = k := by omega
-          rw [hksub] at hih
+        · subst hk0; simp; ring
+        · simp [hk0] at hih ⊢
           linarith
   have htelD := htel D hD
   have hle_z : (∑ t ∈ Finset.range D, ((a t : ℤ) + a (t + 1))) ≤
@@ -1678,7 +1679,7 @@ theorem crossing_ears_seven_cycle_identities (x₁ x₂ x₃ x₄ p q : ℕ) :
   omega
 
 /-- Theorem 23 (Arbitrary-Girth Pósa-Rotation Interlaced-Chord 7-Cycle System — Unbounded n). -/
-theorem posa_interlaced_chord_seven_cycles (a b c : ℕ) (ha : 2 ≤ a) (hac : a < c) (hcb : c < b) :
+theorem posa_interlaced_chord_seven_cycles (a b c : ℕ) (_ha : 2 ≤ a) (hac : a < c) (hcb : c < b) :
     let l₁ := a
     let l₂ := b
     let l₃ := c
@@ -1709,6 +1710,7 @@ theorem k4_subdivision_parity_and_dyadic_sum (a₁ a₂ a₃ b₁ b₂ b₃ : �
   refine ⟨by omega, by omega, by omega, ?_⟩
   have hev : Even (Q₁ + Q₂ + Q₃) := ⟨a₁ + a₂ + a₃ + b₁ + b₂ + b₃, by omega⟩
   rw [Nat.even_iff] at hev ⊢
+  dsimp only [Q₁, Q₂, Q₃] at hev ⊢
   omega
 
 end UnboundedNArbitraryGirthStructural
