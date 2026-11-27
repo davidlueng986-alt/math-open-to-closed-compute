@@ -2074,7 +2074,7 @@ theorem crossing_chords_six_cycle_spectrum {V : Type*} {G : SimpleGraph V}
             rw [hidx]; dsimp only [idx]; rw [dite_eq_right (by omega), dite_eq_left heq2, dite_eq_right (by omega), dite_eq_right (by omega)]
             have h := (C.adj ⟨L - 1, by omega⟩).symm
             convert h using 2
-            · apply Fin.ext; dsimp only [L]; have hL1 : s₁ + s₂ + s₃ + s₄ - 1 + 1 = s₁ + s₂ + s₃ + s₄ := by omega; rw [hL1, Nat.mod_self]
+            · apply Fin.ext; dsimp only [L]; rw [show s₁ + s₂ + s₃ + s₄ - 1 + 1 = s₁ + s₂ + s₃ + s₄ by omega, Nat.mod_self]
             · exact Fin.ext (by dsimp only; omega)
           · by_cases hlt2 : i.val + 1 < M
             · have hm : (i.val + 1) % M = i.val + 1 := Nat.mod_eq_of_lt hlt2
