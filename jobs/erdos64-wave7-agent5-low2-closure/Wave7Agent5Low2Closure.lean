@@ -286,7 +286,7 @@ theorem wfree_completion_degrees {V : Type u} [Fintype V] [DecidableEq V]
     have ha := degree_add_new_edge_left K a b hab hnadj
     have ha' : Nat.card (H.neighborSet a) = K.degree a + 1 := by
       rw [Nat.card_eq_fintype_card, SimpleGraph.card_neighborSet_eq_degree]
-      convert ha
+      convert ha; rfl
     exact ha'.trans hd
   by_cases hzb : z = b
   · rw [hzb]
@@ -295,7 +295,7 @@ theorem wfree_completion_degrees {V : Type u} [Fintype V] [DecidableEq V]
     have hb := degree_add_new_edge_right K a b hab hnadj
     have hb' : Nat.card (H.neighborSet b) = K.degree b + 1 := by
       rw [Nat.card_eq_fintype_card, SimpleGraph.card_neighborSet_eq_degree]
-      convert hb
+      convert hb; rfl
     exact hb'.trans hd
   have hout : ((G.neighborFinset z.1).filter (fun t => t ∉ A)) = ∅ := by
     rw [Finset.filter_eq_empty_iff]
