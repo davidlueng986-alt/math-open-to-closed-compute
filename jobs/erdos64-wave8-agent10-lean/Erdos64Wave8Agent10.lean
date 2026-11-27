@@ -72,6 +72,11 @@ private lemma isChain_append_of_link {α : Type*} {R : α → α → Prop} {l1 l
   subst hx; subst hy
   exact hlink
 
+/-- Helper: `Nodup (A ++ B)` from `Nodup A`, `Nodup B`, and `List.Disjoint A B`. -/
+private lemma nodup_append_of_disjoint {α : Type*} {A B : List α}
+    (hA : A.Nodup) (hB : B.Nodup) (hd : List.Disjoint A B) : (A ++ B).Nodup :=
+  List.nodup_append.mpr ⟨hA, hB, fun a ha b hb hab => hd ha (hab ▸ hb)⟩
+
 /-- Helper: reversing an `IsChain G.Adj` preserves `IsChain G.Adj` by symmetry of `G.Adj`. -/
 private lemma isChain_reverse_adj {V : Type*} {G : SimpleGraph V} {l : List V}
     (h : l.IsChain G.Adj) : l.reverse.IsChain G.Adj := by
@@ -82,7 +87,7 @@ private lemma isChain_reverse_adj {V : Type*} {G : SimpleGraph V} {l : List V}
   have h1 : l.length - 1 - (i + 1) + 1 = l.length - 1 - i := by omega
   have h2 := h (l.length - 1 - (i + 1)) (by omega)
   simp only [h1] at h2
-  exact G.symm h2
+  exact G.adj_comm _ _ |>.mp h2
 
 /-- Helper: `head` of `l.reverse` equals `getLast` of `l`. -/
 private lemma head_reverse_eq_getLast {α : Type*} {l : List α} (hne : l ≠ []) :
@@ -106,11 +111,11 @@ def SimpleCycle.ofTwoArcs {V : Type*} {G : SimpleGraph V} (A B : List V)
     (hBA : G.Adj (B.getLast hneB) (A.head hneA)) : SimpleCycle G :=
   SimpleCycle.ofList (A ++ B)
     (by rw [List.length_append]; exact h3)
-    (List.nodup_append.mpr ⟨hndA, hndB, hdisj⟩)
+    (nodup_append_of_disjoint hndA hndB hdisj)
     (isChain_append_of_link hchA hchB hneA hneB hAB)
     (by intro h; exact hneA (List.append_eq_nil_iff.mp h).1)
     (by
-      rw [List.getLast_append_of_ne_nil A hneB, List.head_append_of_ne_nil hneA]
+      rw [List.getLast_append_of_ne_nil hneB, List.head_append_of_ne_nil hneA]
       exact hBA)
 
 /-! ### Part I: P3-Collapse (`G_y(u)`) & 3-Way Cubic Edge-Surgery (`G_∥`, `G_×1`, `G_×2`) -/
@@ -231,10 +236,10 @@ theorem cross_rewiring_crossed_pair_lifts_to_2k_plus_2 {V : Type*} {G : SimpleGr
     exact isChain_append_of_link (List.isChain_singleton v) hch2 (by simp) hne2 (by simp [h2_head]; exact hvb1)
   have hlastA : A.getLast hneA = b2 := by
     change ([u] ++ P1).getLast _ = b2
-    rw [List.getLast_append_of_ne_nil [u] hne1, h1_last]
+    rw [List.getLast_append_of_ne_nil hne1, h1_last]
   have hlastB : B.getLast hneB = a2 := by
     change ([v] ++ P2).getLast _ = a2
-    rw [List.getLast_append_of_ne_nil [v] hne2, h2_last]
+    rw [List.getLast_append_of_ne_nil hne2, h2_last]
   let C := SimpleCycle.ofTwoArcs A B hneA hneB
     (by simp [A, B]; omega)
     (List.nodup_cons.mpr ⟨hu1, hnd1⟩)
@@ -294,7 +299,10 @@ theorem same_side_suppression_lifts_to_2k_plus_1_or_2 {V : Type*} {G : SimpleGra
 /-- A cycle split by two crossing chords `(u0, ub)` and `(ua, uc)` into 4 pairwise vertex-disjoint
     non-empty arcs `A1, A2, A3, A4` of lengths `x1, x2, x3, x4 ≥ 1`. -/
 structure CrossingChordPair {V : Type*} (G : SimpleGraph V) where
-  A1 A2 A3 A4 : List V
+  A1 : List V
+  A2 : List V
+  A3 : List V
+  A4 : List V
   hne1 : A1 ≠ []
   hne2 : A2 ≠ []
   hne3 : A3 ≠ []
@@ -337,8 +345,8 @@ def outerCycle : SimpleCycle G :=
   SimpleCycle.ofTwoArcs (X.A1 ++ X.A2) (X.A3 ++ X.A4)
     (ne_append X.hne1) (ne_append X.hne3)
     (by simp; have := X.len_pos1; have := X.len_pos2; have := X.len_pos3; have := X.len_pos4; omega)
-    (List.nodup_append.mpr ⟨X.hnd1, X.hnd2, X.d12⟩)
-    (List.nodup_append.mpr ⟨X.hnd3, X.hnd4, X.d34⟩)
+    (nodup_append_of_disjoint X.hnd1 X.hnd2 X.d12)
+    (nodup_append_of_disjoint X.hnd3 X.hnd4 X.d34)
     (fun w hL hR => by
       simp only [List.mem_append] at hL hR
       rcases hL with h1 | h2 <;> rcases hR with h3 | h4
@@ -348,8 +356,8 @@ def outerCycle : SimpleCycle G :=
       · exact X.d24 h2 h4)
     (isChain_append_of_link X.hch1 X.hch2 X.hne1 X.hne2 X.link12)
     (isChain_append_of_link X.hch3 X.hch4 X.hne3 X.hne4 X.link34)
-    (by rw [List.getLast_append_of_ne_nil _ X.hne2, List.head_append_of_ne_nil X.hne3]; exact X.link23)
-    (by rw [List.getLast_append_of_ne_nil _ X.hne4, List.head_append_of_ne_nil X.hne1]; exact X.link41)
+    (by rw [List.getLast_append_of_ne_nil X.hne2, List.head_append_of_ne_nil X.hne3]; exact X.link23)
+    (by rw [List.getLast_append_of_ne_nil X.hne4, List.head_append_of_ne_nil X.hne1]; exact X.link41)
 
 theorem outerCycle_len :
     X.outerCycle.verts.length = X.A1.length + X.A2.length + X.A3.length + X.A4.length := by
@@ -361,7 +369,7 @@ def chord1CycleA : SimpleCycle G :=
   SimpleCycle.ofTwoArcs (X.A1 ++ X.A2) [X.A3.head X.hne3]
     (ne_append X.hne1) (by simp)
     (by simp; have := X.len_pos1; have := X.len_pos2; omega)
-    (List.nodup_append.mpr ⟨X.hnd1, X.hnd2, X.d12⟩)
+    (nodup_append_of_disjoint X.hnd1 X.hnd2 X.d12)
     (List.nodup_singleton _)
     (fun w hL hR => by
       simp only [List.mem_singleton] at hR; subst hR
@@ -372,8 +380,8 @@ def chord1CycleA : SimpleCycle G :=
       · exact X.d23 h2 hm3)
     (isChain_append_of_link X.hch1 X.hch2 X.hne1 X.hne2 X.link12)
     (List.isChain_singleton _)
-    (by rw [List.getLast_append_of_ne_nil _ X.hne2]; simpa using X.link23)
-    (by rw [List.head_append_of_ne_nil X.hne1]; simpa using G.symm X.chord1)
+    (by rw [List.getLast_append_of_ne_nil X.hne2]; simpa using X.link23)
+    (by rw [List.head_append_of_ne_nil X.hne1]; simpa using (G.adj_comm _ _).mp X.chord1)
 
 theorem chord1CycleA_len :
     X.chord1CycleA.verts.length = X.A1.length + X.A2.length + 1 := by
@@ -385,7 +393,7 @@ def chord1CycleB : SimpleCycle G :=
   SimpleCycle.ofTwoArcs (X.A3 ++ X.A4) [X.A1.head X.hne1]
     (ne_append X.hne3) (by simp)
     (by simp; have := X.len_pos3; have := X.len_pos4; omega)
-    (List.nodup_append.mpr ⟨X.hnd3, X.hnd4, X.d34⟩)
+    (nodup_append_of_disjoint X.hnd3 X.hnd4 X.d34)
     (List.nodup_singleton _)
     (fun w hL hR => by
       simp only [List.mem_singleton] at hR; subst hR
@@ -396,7 +404,7 @@ def chord1CycleB : SimpleCycle G :=
       · exact X.d14 hm1 h4)
     (isChain_append_of_link X.hch3 X.hch4 X.hne3 X.hne4 X.link34)
     (List.isChain_singleton _)
-    (by rw [List.getLast_append_of_ne_nil _ X.hne4]; simpa using X.link41)
+    (by rw [List.getLast_append_of_ne_nil X.hne4]; simpa using X.link41)
     (by rw [List.head_append_of_ne_nil X.hne3]; simpa using X.chord1)
 
 theorem chord1CycleB_len :
@@ -409,7 +417,7 @@ def chord2CycleA : SimpleCycle G :=
   SimpleCycle.ofTwoArcs (X.A2 ++ X.A3) [X.A4.head X.hne4]
     (ne_append X.hne2) (by simp)
     (by simp; have := X.len_pos2; have := X.len_pos3; omega)
-    (List.nodup_append.mpr ⟨X.hnd2, X.hnd3, X.d23⟩)
+    (nodup_append_of_disjoint X.hnd2 X.hnd3 X.d23)
     (List.nodup_singleton _)
     (fun w hL hR => by
       simp only [List.mem_singleton] at hR; subst hR
@@ -420,8 +428,8 @@ def chord2CycleA : SimpleCycle G :=
       · exact X.d34 h3 hm4)
     (isChain_append_of_link X.hch2 X.hch3 X.hne2 X.hne3 X.link23)
     (List.isChain_singleton _)
-    (by rw [List.getLast_append_of_ne_nil _ X.hne3]; simpa using X.link34)
-    (by rw [List.head_append_of_ne_nil X.hne2]; simpa using G.symm X.chord2)
+    (by rw [List.getLast_append_of_ne_nil X.hne3]; simpa using X.link34)
+    (by rw [List.head_append_of_ne_nil X.hne2]; simpa using (G.adj_comm _ _).mp X.chord2)
 
 theorem chord2CycleA_len :
     X.chord2CycleA.verts.length = X.A2.length + X.A3.length + 1 := by
@@ -433,7 +441,7 @@ def chord2CycleB : SimpleCycle G :=
   SimpleCycle.ofTwoArcs (X.A4 ++ X.A1) [X.A2.head X.hne2]
     (ne_append X.hne4) (by simp)
     (by simp; have := X.len_pos4; have := X.len_pos1; omega)
-    (List.nodup_append.mpr ⟨X.hnd4, X.hnd1, fun w h4 h1 => X.d14 h1 h4⟩)
+    (nodup_append_of_disjoint X.hnd4 X.hnd1 (fun w h4 h1 => X.d14 h1 h4))
     (List.nodup_singleton _)
     (fun w hL hR => by
       simp only [List.mem_singleton] at hR; subst hR
@@ -444,7 +452,7 @@ def chord2CycleB : SimpleCycle G :=
       · exact X.d12 h1 hm2)
     (isChain_append_of_link X.hch4 X.hch1 X.hne4 X.hne1 X.link41)
     (List.isChain_singleton _)
-    (by rw [List.getLast_append_of_ne_nil _ X.hne1]; simpa using X.link12)
+    (by rw [List.getLast_append_of_ne_nil X.hne1]; simpa using X.link12)
     (by rw [List.head_append_of_ne_nil X.hne4]; simpa using X.chord2)
 
 theorem chord2CycleB_len :
@@ -457,15 +465,15 @@ def crossCycleA : SimpleCycle G :=
   let P := X.A1 ++ [X.A2.head X.hne2]
   let Q := [X.A4.head X.hne4] ++ X.A3.reverse
   SimpleCycle.ofTwoArcs P Q
-    (ne_append X.hne1) (by simp)
+    (ne_append X.hne1) (by simp [Q])
     (by simp [P, Q]; have := X.len_pos1; have := X.len_pos3; omega)
-    (List.nodup_append.mpr ⟨X.hnd1, List.nodup_singleton _, fun w h1 h2 => by
+    (nodup_append_of_disjoint X.hnd1 (List.nodup_singleton _) (fun w h1 h2 => by
       simp only [List.mem_singleton] at h2; subst h2
-      exact X.d12 h1 (List.head_mem X.hne2)⟩)
-    (List.nodup_append.mpr ⟨List.nodup_singleton _, List.nodup_reverse.mpr X.hnd3, fun w h4 h3 => by
+      exact X.d12 h1 (List.head_mem X.hne2)))
+    (nodup_append_of_disjoint (List.nodup_singleton _) (List.nodup_reverse.mpr X.hnd3) (fun w h4 h3 => by
       simp only [List.mem_singleton] at h4; subst h4
       rw [List.mem_reverse] at h3
-      exact X.d34 h3 (List.head_mem X.hne4)⟩)
+      exact X.d34 h3 (List.head_mem X.hne4)))
     (fun w hP hQ => by
       simp only [P, Q, List.mem_append, List.mem_singleton, List.mem_reverse] at hP hQ
       rcases hP with h1 | rfl <;> rcases hQ with rfl | h3
@@ -476,14 +484,14 @@ def crossCycleA : SimpleCycle G :=
     (isChain_append_of_link X.hch1 (List.isChain_singleton _) X.hne1 (by simp) (by simpa using X.link12))
     (isChain_append_of_link (List.isChain_singleton _) (isChain_reverse_adj X.hch3)
       (by simp) (by simpa using X.hne3)
-      (by simp [head_reverse_eq_getLast X.hne3]; exact G.symm X.link34))
+      (by simp [head_reverse_eq_getLast X.hne3]; exact (G.adj_comm _ _).mp X.link34))
     (by
-      rw [List.getLast_append_of_ne_nil X.A1 (by simp), List.head_append_of_ne_nil (by simp)]
+      rw [List.getLast_append_of_ne_nil (by simp), List.head_append_of_ne_nil (by simp)]
       simpa using X.chord2)
     (by
-      rw [List.getLast_append_of_ne_nil _ (by simpa using X.hne3), List.head_append_of_ne_nil X.hne1]
+      rw [List.getLast_append_of_ne_nil (by simpa using X.hne3), List.head_append_of_ne_nil X.hne1]
       rw [getLast_reverse_eq_head X.hne3]
-      exact G.symm X.chord1)
+      exact (G.adj_comm _ _).mp X.chord1)
 
 theorem crossCycleA_len :
     X.crossCycleA.verts.length = X.A1.length + X.A3.length + 2 := by
@@ -495,15 +503,15 @@ def crossCycleB : SimpleCycle G :=
   let P := X.A2 ++ [X.A3.head X.hne3]
   let Q := [X.A1.head X.hne1] ++ X.A4.reverse
   SimpleCycle.ofTwoArcs P Q
-    (ne_append X.hne2) (by simp)
+    (ne_append X.hne2) (by simp [Q])
     (by simp [P, Q]; have := X.len_pos2; have := X.len_pos4; omega)
-    (List.nodup_append.mpr ⟨X.hnd2, List.nodup_singleton _, fun w h2 h3 => by
+    (nodup_append_of_disjoint X.hnd2 (List.nodup_singleton _) (fun w h2 h3 => by
       simp only [List.mem_singleton] at h3; subst h3
-      exact X.d23 h2 (List.head_mem X.hne3)⟩)
-    (List.nodup_append.mpr ⟨List.nodup_singleton _, List.nodup_reverse.mpr X.hnd4, fun w h1 h4 => by
+      exact X.d23 h2 (List.head_mem X.hne3)))
+    (nodup_append_of_disjoint (List.nodup_singleton _) (List.nodup_reverse.mpr X.hnd4) (fun w h1 h4 => by
       simp only [List.mem_singleton] at h1; subst h1
       rw [List.mem_reverse] at h4
-      exact X.d14 (List.head_mem X.hne1) h4⟩)
+      exact X.d14 (List.head_mem X.hne1) h4))
     (fun w hP hQ => by
       simp only [P, Q, List.mem_append, List.mem_singleton, List.mem_reverse] at hP hQ
       rcases hP with h2 | rfl <;> rcases hQ with rfl | h4
@@ -514,14 +522,14 @@ def crossCycleB : SimpleCycle G :=
     (isChain_append_of_link X.hch2 (List.isChain_singleton _) X.hne2 (by simp) (by simpa using X.link23))
     (isChain_append_of_link (List.isChain_singleton _) (isChain_reverse_adj X.hch4)
       (by simp) (by simpa using X.hne4)
-      (by simp [head_reverse_eq_getLast X.hne4]; exact G.symm X.link41))
+      (by simp [head_reverse_eq_getLast X.hne4]; exact (G.adj_comm _ _).mp X.link41))
     (by
-      rw [List.getLast_append_of_ne_nil X.A2 (by simp), List.head_append_of_ne_nil (by simp)]
-      simpa using G.symm X.chord1)
+      rw [List.getLast_append_of_ne_nil (by simp), List.head_append_of_ne_nil (by simp)]
+      simpa using (G.adj_comm _ _).mp X.chord1)
     (by
-      rw [List.getLast_append_of_ne_nil _ (by simpa using X.hne4), List.head_append_of_ne_nil X.hne2]
+      rw [List.getLast_append_of_ne_nil (by simpa using X.hne4), List.head_append_of_ne_nil X.hne2]
       rw [getLast_reverse_eq_head X.hne4]
-      exact G.symm X.chord2)
+      exact (G.adj_comm _ _).mp X.chord2)
 
 theorem crossCycleB_len :
     X.crossCycleB.verts.length = X.A2.length + X.A4.length + 2 := by
@@ -657,7 +665,7 @@ lemma botRun_exit (L : RungLadder G r) (i m : ℕ) (hm : 1 ≤ m) (him : i + m <
     unfold botRun
     split_ifs
     · exact L.bot_exit ⟨i, by omega⟩
-    · rw [List.getLast_append_of_ne_nil _ (L.bot_ne ⟨i, by omega⟩)]
+    · rw [List.getLast_append_of_ne_nil (L.bot_ne ⟨i, by omega⟩)]
       exact L.bot_exit ⟨i, by omega⟩
 
 lemma topRun_exit (L : RungLadder G r) :
@@ -677,9 +685,12 @@ lemma topRun_exit (L : RungLadder G r) :
       have hgl : (L.topRun i (m' + 1) him).getLast (L.topRun_ne i (m' + 1) (by omega) him) =
           (L.topRun (i + 1) m' (by omega)).getLast hne2 := by
         simp only [h1]
-        exact List.getLast_append_of_ne_nil _ hne2
+        exact List.getLast_append_of_ne_nil hne2
       rw [hgl]
-      convert ih using 2; ext; omega
+      have hidx : (⟨i + 1 + m', by omega⟩ : Fin r) = ⟨i + (m' + 1), by omega⟩ := by
+        ext; dsimp; omega
+      rw [← hidx]
+      exact ih
 
 lemma botRun_head (L : RungLadder G r) :
     ∀ m i (hm : 1 ≤ m) (him : i + m < r),
@@ -700,10 +711,13 @@ lemma botRun_head (L : RungLadder G r) :
         simp only [h1]
         exact List.head_append_of_ne_nil hne2
       rw [hhd]
-      convert ih using 2; ext; omega
+      have hidx : (⟨i + 1 + m', by omega⟩ : Fin r) = ⟨i + (m' + 1), by omega⟩ := by
+        ext; dsimp; omega
+      rw [← hidx]
+      exact ih
 
 lemma topRun_chain (L : RungLadder G r) :
-    ∀ m i (hm : 1 ≤ m) (him : i + m < r), (L.topRun i m him).IsChain G.Adj
+    ∀ m i (_hm : 1 ≤ m) (him : i + m < r), (L.topRun i m him).IsChain G.Adj
   | 0, _, hm, _ => by omega
   | m' + 1, i, _, him => by
     by_cases hm' : m' = 0
@@ -715,7 +729,7 @@ lemma topRun_chain (L : RungLadder G r) :
       exact L.top_exit ⟨i, by omega⟩
 
 lemma botRun_chain (L : RungLadder G r) :
-    ∀ m i (hm : 1 ≤ m) (him : i + m < r), (L.botRun i m him).IsChain G.Adj
+    ∀ m i (_hm : 1 ≤ m) (him : i + m < r), (L.botRun i m him).IsChain G.Adj
   | 0, _, hm, _ => by omega
   | m' + 1, i, _, him => by
     by_cases hm' : m' = 0
@@ -732,10 +746,10 @@ lemma mem_topRun (L : RungLadder G r) :
   | 0, _, _, _, hx => by simp [topRun] at hx
   | m' + 1, i, him, x, hx => by
     by_cases hm' : m' = 0
-    · subst hm'; simp [topRun] at hx; exact ⟨⟨i, by omega⟩, by omega, by omega, hx⟩
+    · subst hm'; simp [topRun] at hx; exact ⟨⟨i, by omega⟩, by dsimp; omega, by dsimp; omega, hx⟩
     · simp only [topRun, hm', ↓reduceDIte, List.mem_append] at hx
       rcases hx with h1 | h2
-      · exact ⟨⟨i, by omega⟩, by omega, by omega, h1⟩
+      · exact ⟨⟨i, by omega⟩, by dsimp; omega, by dsimp; omega, h1⟩
       · obtain ⟨t, ht1, ht2, hxt⟩ := L.mem_topRun m' (i + 1) (by omega) h2
         exact ⟨t, by omega, by omega, hxt⟩
 
@@ -745,12 +759,12 @@ lemma mem_botRun (L : RungLadder G r) :
   | 0, _, _, _, hx => by simp [botRun] at hx
   | m' + 1, i, him, x, hx => by
     by_cases hm' : m' = 0
-    · subst hm'; simp [botRun] at hx; exact ⟨⟨i, by omega⟩, by omega, by omega, hx⟩
+    · subst hm'; simp [botRun] at hx; exact ⟨⟨i, by omega⟩, by dsimp; omega, by dsimp; omega, hx⟩
     · simp only [botRun, hm', ↓reduceDIte, List.mem_append] at hx
       rcases hx with h1 | h2
       · obtain ⟨t, ht1, ht2, hxt⟩ := L.mem_botRun m' (i + 1) (by omega) h1
         exact ⟨t, by omega, by omega, hxt⟩
-      · exact ⟨⟨i, by omega⟩, by omega, by omega, h2⟩
+      · exact ⟨⟨i, by omega⟩, by dsimp; omega, by dsimp; omega, h2⟩
 
 lemma topRun_nodup (L : RungLadder G r) :
     ∀ m i (him : i + m < r), (L.topRun i m him).Nodup
@@ -759,10 +773,10 @@ lemma topRun_nodup (L : RungLadder G r) :
     by_cases hm' : m' = 0
     · subst hm'; simp [topRun, L.top_nd]
     · simp only [topRun, hm', ↓reduceDIte]
-      refine List.nodup_append.mpr ⟨L.top_nd ⟨i, by omega⟩, L.topRun_nodup m' (i + 1) (by omega), ?_⟩
+      refine nodup_append_of_disjoint (L.top_nd ⟨i, by omega⟩) (L.topRun_nodup m' (i + 1) (by omega)) ?_
       intro x hx1 hx2
       obtain ⟨t, ht1, _, hxt⟩ := L.mem_topRun m' (i + 1) (by omega) hx2
-      exact L.top_disj ⟨i, by omega⟩ t (by intro h; have := congrArg Fin.val h; omega) hx1 hxt
+      exact L.top_disj ⟨i, by omega⟩ t (by intro h; have hv := congrArg Fin.val h; dsimp at hv; omega) hx1 hxt
 
 lemma botRun_nodup (L : RungLadder G r) :
     ∀ m i (him : i + m < r), (L.botRun i m him).Nodup
@@ -771,23 +785,23 @@ lemma botRun_nodup (L : RungLadder G r) :
     by_cases hm' : m' = 0
     · subst hm'; simp [botRun, L.bot_nd]
     · simp only [botRun, hm', ↓reduceDIte]
-      refine List.nodup_append.mpr ⟨L.botRun_nodup m' (i + 1) (by omega), L.bot_nd ⟨i, by omega⟩, ?_⟩
+      refine nodup_append_of_disjoint (L.botRun_nodup m' (i + 1) (by omega)) (L.bot_nd ⟨i, by omega⟩) ?_
       intro x hx1 hx2
       obtain ⟨t, ht1, _, hxt⟩ := L.mem_botRun m' (i + 1) (by omega) hx1
-      exact L.bot_disj t ⟨i, by omega⟩ (by intro h; have := congrArg Fin.val h; omega) hxt hx2
+      exact L.bot_disj t ⟨i, by omega⟩ (by intro h; have hv := congrArg Fin.val h; dsimp at hv; omega) hxt hx2
 
 lemma topRun_length (L : RungLadder G r) :
     ∀ m i (him : i + m < r),
     (L.topRun i m him).length = ∑ t ∈ (Finset.univ : Finset (Fin (r - 1))).filter (fun t => i ≤ t.val ∧ t.val < i + m), (L.topSeg t).length
   | 0, i, _ => by
     have hf : (Finset.univ : Finset (Fin (r - 1))).filter (fun t => i ≤ t.val ∧ t.val < i + 0) = ∅ := by
-      ext t; simp; omega
-    simp [topRun, hf]
+      ext t; simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.notMem_empty, iff_false]; omega
+    rw [hf]; simp [topRun]
   | m' + 1, i, him => by
     have hsplit : (Finset.univ : Finset (Fin (r - 1))).filter (fun t => i ≤ t.val ∧ t.val < i + (m' + 1)) =
         insert ⟨i, by omega⟩ ((Finset.univ : Finset (Fin (r - 1))).filter (fun t => i + 1 ≤ t.val ∧ t.val < i + 1 + m')) := by
       ext t; simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert, Fin.ext_iff]
-      omega
+      dsimp; omega
     have hnotmem : (⟨i, by omega⟩ : Fin (r - 1)) ∉
         (Finset.univ : Finset (Fin (r - 1))).filter (fun t => i + 1 ≤ t.val ∧ t.val < i + 1 + m') := by
       simp
@@ -795,8 +809,8 @@ lemma topRun_length (L : RungLadder G r) :
     by_cases hm' : m' = 0
     · subst hm'
       have hemp : (Finset.univ : Finset (Fin (r - 1))).filter (fun t => i + 1 ≤ t.val ∧ t.val < i + 1 + 0) = ∅ := by
-        ext t; simp; omega
-      simp [topRun, hemp]
+        ext t; simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.notMem_empty, iff_false]; omega
+      rw [hemp]; simp [topRun]
     · simp only [topRun, hm', ↓reduceDIte, List.length_append]
       rw [L.topRun_length m' (i + 1) (by omega)]
 
@@ -805,13 +819,13 @@ lemma botRun_length (L : RungLadder G r) :
     (L.botRun i m him).length = ∑ t ∈ (Finset.univ : Finset (Fin (r - 1))).filter (fun t => i ≤ t.val ∧ t.val < i + m), (L.botSeg t).length
   | 0, i, _ => by
     have hf : (Finset.univ : Finset (Fin (r - 1))).filter (fun t => i ≤ t.val ∧ t.val < i + 0) = ∅ := by
-      ext t; simp; omega
-    simp [botRun, hf]
+      ext t; simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.notMem_empty, iff_false]; omega
+    rw [hf]; simp [botRun]
   | m' + 1, i, him => by
     have hsplit : (Finset.univ : Finset (Fin (r - 1))).filter (fun t => i ≤ t.val ∧ t.val < i + (m' + 1)) =
         insert ⟨i, by omega⟩ ((Finset.univ : Finset (Fin (r - 1))).filter (fun t => i + 1 ≤ t.val ∧ t.val < i + 1 + m')) := by
       ext t; simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert, Fin.ext_iff]
-      omega
+      dsimp; omega
     have hnotmem : (⟨i, by omega⟩ : Fin (r - 1)) ∉
         (Finset.univ : Finset (Fin (r - 1))).filter (fun t => i + 1 ≤ t.val ∧ t.val < i + 1 + m') := by
       simp
@@ -819,8 +833,8 @@ lemma botRun_length (L : RungLadder G r) :
     by_cases hm' : m' = 0
     · subst hm'
       have hemp : (Finset.univ : Finset (Fin (r - 1))).filter (fun t => i + 1 ≤ t.val ∧ t.val < i + 1 + 0) = ∅ := by
-        ext t; simp; omega
-      simp [botRun, hemp]
+        ext t; simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.notMem_empty, iff_false]; omega
+      rw [hemp]; simp [botRun]
     · simp only [botRun, hm', ↓reduceDIte, List.length_append]
       rw [L.botRun_length m' (i + 1) (by omega)]
       omega
@@ -836,7 +850,7 @@ private lemma u_end_not_topRun (L : RungLadder G r) (i m : ℕ) (him : i + m < r
   · have hmem_next : L.u ⟨i + m, him⟩ ∈ L.topSeg ⟨i + m, by omega⟩ := by
       rw [← L.top_head ⟨i + m, by omega⟩]
       exact List.head_mem (L.top_ne ⟨i + m, by omega⟩)
-    exact L.top_disj t ⟨i + m, by omega⟩ (by intro h; have := congrArg Fin.val h; omega) hxt hmem_next
+    exact L.top_disj t ⟨i + m, by omega⟩ (by intro h; have hv := congrArg Fin.val h; dsimp at hv; omega) hxt hmem_next
 
 private lemma u_end_not_botRun (L : RungLadder G r) (i m : ℕ) (him : i + m < r) :
     L.u ⟨i + m, him⟩ ∉ L.botRun i m him := by
@@ -861,11 +875,11 @@ private lemma v_start_not_botRun (L : RungLadder G r) (i m : ℕ) (him : i + m <
     exact L.v_first_not_bot t hxt
   · have hmem_prev : L.v ⟨i, by omega⟩ ∈ L.botSeg ⟨i - 1, by omega⟩ := by
       have hhd := L.bot_head ⟨i - 1, by omega⟩
-      have heq : (⟨i - 1 + 1, by omega⟩ : Fin r) = ⟨i, by omega⟩ := by ext; omega
+      have heq : (⟨i - 1 + 1, by omega⟩ : Fin r) = ⟨i, by omega⟩ := by ext; dsimp; omega
       rw [heq] at hhd
       rw [← hhd]
       exact List.head_mem (L.bot_ne ⟨i - 1, by omega⟩)
-    exact L.bot_disj t ⟨i - 1, by omega⟩ (by intro h; have := congrArg Fin.val h; omega) hxt hmem_prev
+    exact L.bot_disj t ⟨i - 1, by omega⟩ (by intro h; have hv := congrArg Fin.val h; dsimp at hv; omega) hxt hmem_prev
 
 private lemma v_start_not_topRun (L : RungLadder G r) (i m : ℕ) (him : i + m < r) :
     L.v ⟨i, by omega⟩ ∉ L.topRun i m him := by
@@ -877,7 +891,7 @@ private lemma v_start_not_topRun (L : RungLadder G r) (i m : ℕ) (him : i + m <
     exact L.v_first_not_top t hxt
   · have hmem_prev : L.v ⟨i, by omega⟩ ∈ L.botSeg ⟨i - 1, by omega⟩ := by
       have hhd := L.bot_head ⟨i - 1, by omega⟩
-      have heq : (⟨i - 1 + 1, by omega⟩ : Fin r) = ⟨i, by omega⟩ := by ext; omega
+      have heq : (⟨i - 1 + 1, by omega⟩ : Fin r) = ⟨i, by omega⟩ := by ext; dsimp; omega
       rw [heq] at hhd
       rw [← hhd]
       exact List.head_mem (L.bot_ne ⟨i - 1, by omega⟩)
@@ -893,7 +907,7 @@ private lemma u_end_ne_v_start (L : RungLadder G r) (i m : ℕ) (him : i + m < r
     · intro heq
       have hmem : L.v ⟨i, by omega⟩ ∈ L.botSeg ⟨i - 1, by omega⟩ := by
         have hhd := L.bot_head ⟨i - 1, by omega⟩
-        have hidx : (⟨i - 1 + 1, by omega⟩ : Fin r) = ⟨i, by omega⟩ := by ext; omega
+        have hidx : (⟨i - 1 + 1, by omega⟩ : Fin r) = ⟨i, by omega⟩ := by ext; dsimp; omega
         rw [hidx] at hhd; rw [← hhd]; exact List.head_mem (L.bot_ne _)
       have h1 : (⟨i + m, him⟩ : Fin r) = ⟨r - 1, by have := L.hr; omega⟩ := by ext; exact hlast
       rw [← heq, h1] at hmem
@@ -907,7 +921,7 @@ private lemma u_end_ne_v_start (L : RungLadder G r) (i m : ℕ) (him : i + m < r
       exact L.v_first_not_top ⟨i + m, by omega⟩ hmem_top
     · have hmem_bot : L.v ⟨i, by omega⟩ ∈ L.botSeg ⟨i - 1, by omega⟩ := by
         have hhd := L.bot_head ⟨i - 1, by omega⟩
-        have hidx : (⟨i - 1 + 1, by omega⟩ : Fin r) = ⟨i, by omega⟩ := by ext; omega
+        have hidx : (⟨i - 1 + 1, by omega⟩ : Fin r) = ⟨i, by omega⟩ := by ext; dsimp; omega
         rw [hidx] at hhd; rw [← hhd]; exact List.head_mem (L.bot_ne _)
       rw [← heq] at hmem_bot
       exact L.top_bot_disj ⟨i + m, by omega⟩ ⟨i - 1, by omega⟩ hmem_top hmem_bot
@@ -923,12 +937,12 @@ def windowCycle (L : RungLadder G r) (i m : ℕ) (hm : 1 ≤ m) (him : i + m < r
       have h1 : 1 ≤ (L.topRun i m him).length := List.length_pos_of_ne_nil (L.topRun_ne i m hm him)
       have h2 : 1 ≤ (L.botRun i m him).length := List.length_pos_of_ne_nil (L.botRun_ne i m hm him)
       simp [P, Q]; omega)
-    (List.nodup_append.mpr ⟨L.topRun_nodup m i him, List.nodup_singleton _, fun x hx1 hx2 => by
+    (nodup_append_of_disjoint (L.topRun_nodup m i him) (List.nodup_singleton _) (fun x hx1 hx2 => by
       simp only [List.mem_singleton] at hx2; subst hx2
-      exact L.u_end_not_topRun i m him hx1⟩)
-    (List.nodup_append.mpr ⟨L.botRun_nodup m i him, List.nodup_singleton _, fun x hx1 hx2 => by
+      exact L.u_end_not_topRun i m him hx1))
+    (nodup_append_of_disjoint (L.botRun_nodup m i him) (List.nodup_singleton _) (fun x hx1 hx2 => by
       simp only [List.mem_singleton] at hx2; subst hx2
-      exact L.v_start_not_botRun i m him hx1⟩)
+      exact L.v_start_not_botRun i m him hx1))
     (fun x hP hQ => by
       simp only [P, Q, List.mem_append, List.mem_singleton] at hP hQ
       rcases hP with ht | rfl <;> rcases hQ with hb | rfl
@@ -943,13 +957,13 @@ def windowCycle (L : RungLadder G r) (i m : ℕ) (hm : 1 ≤ m) (him : i + m < r
     (isChain_append_of_link (L.botRun_chain m i hm him) (List.isChain_singleton _)
       (L.botRun_ne i m hm him) (by simp) (by simpa using L.botRun_exit i m hm him))
     (by
-      rw [List.getLast_append_of_ne_nil _ (by simp), List.head_append_of_ne_nil (L.botRun_ne i m hm him)]
+      rw [List.getLast_append_of_ne_nil (by simp), List.head_append_of_ne_nil (L.botRun_ne i m hm him)]
       rw [L.botRun_head m i hm him]
       simpa using L.rung ⟨i + m, him⟩)
     (by
-      rw [List.getLast_append_of_ne_nil _ (by simp), List.head_append_of_ne_nil (L.topRun_ne i m hm him)]
+      rw [List.getLast_append_of_ne_nil (by simp), List.head_append_of_ne_nil (L.topRun_ne i m hm him)]
       rw [L.topRun_head i m hm him]
-      simpa using G.symm (L.rung ⟨i, by omega⟩))
+      simpa using (G.adj_comm _ _).mp (L.rung ⟨i, by omega⟩))
 
 /-- Theorem 10 (Exact Window-Cycle Length Formula on an `r`-Rung Ladder):
     `|windowCycle i m| = 2 + ∑_{t ∈ [i, i+m)} (|topSeg t| + |botSeg t|)`. -/
@@ -972,7 +986,7 @@ private lemma card_bay_filter {r i m : ℕ} (him : i + m < r) :
       Finset.mem_attach, true_and, Function.Embedding.coeFn_mk]
     constructor
     · rintro ⟨h1, h2⟩
-      exact ⟨⟨t.val - i, Finset.mem_range.mpr (by omega)⟩, by ext; omega⟩
+      exact ⟨⟨t.val - i, Finset.mem_range.mpr (by omega)⟩, by ext; dsimp; omega⟩
     · rintro ⟨⟨x, hx⟩, hxt⟩
       have hv : i + x = t.val := congrArg Fin.val hxt
       have hxlt := Finset.mem_range.mp hx
@@ -1083,8 +1097,7 @@ theorem ladder_girth13_closure {V : Type*} {G : SimpleGraph V} {r : ℕ}
 
 /-- Theorem 19 (Twist-Breaker for `g ∈ {6, 10, 14}`):
     A single shifted bay `w_0 = 6` (`g = 6`, `+2` shift) yields `C_8`,
-    `w_0 = 14` (`g = 10`, `+6` shift, or `g = 14`, `+2` shift) yields `C_16`,
-    and `w_0 = 14` with `w_1 = 8` (`g = 10`) already hits `C_16` on bay 0! -/
+    and `w_0 = 14` (`g = 10`, `+6` shift, or `g = 14`, `+2` shift) yields `C_16`! -/
 theorem twisted_ladder_breaks_mod4_two_barrier {V : Type*} {G : SimpleGraph V} {r : ℕ}
     (L : RungLadder G r)
     (hw0 : (L.topSeg ⟨0, by have := L.hr; omega⟩).length +
@@ -1096,7 +1109,7 @@ theorem twisted_ladder_breaks_mod4_two_barrier {V : Type*} {G : SimpleGraph V} {
   have hf : (Finset.univ : Finset (Fin (r - 1))).filter (fun t => 0 ≤ t.val ∧ t.val < 0 + 1) =
       {⟨0, by omega⟩} := by
     ext t; simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton, Fin.ext_iff]
-    omega
+    dsimp; omega
   rcases hw0 with h6 | h14
   · refine ⟨L.windowCycle 0 1 (by omega) (by omega), 3, by omega, ?_⟩
     rw [L.windowCycle_len 0 1 (by omega) (by omega), hf, Finset.sum_singleton, h6]
