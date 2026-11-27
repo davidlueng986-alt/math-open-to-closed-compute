@@ -104,12 +104,14 @@ theorem c8_mchord_forces_two_c5 {V : Type*} (H : SimpleGraph V) (side : V → V 
     (hl₁ : 2 ≤ p₁.length) (hl₂ : 2 ≤ p₂.length)
     (hlen : (p₁.append p₂).length = 8) :
     p₁.length = 4 ∧ p₂.length = 4 ∧
-      (p₁.append (.cons (Or.inl ⟨rfl, Bool.false_ne_true.symm⟩) .nil)).IsCycle ∧
-      (p₂.append (.cons (Or.inl ⟨rfl, Bool.false_ne_true⟩) .nil)).IsCycle := by
+      (p₁.append (Walk.cons (v := (u, false)) (Or.inl ⟨rfl, Bool.false_ne_true.symm⟩) .nil)).IsCycle ∧
+      (p₂.append (Walk.cons (v := (u, true)) (Or.inl ⟨rfl, Bool.false_ne_true⟩) .nil)).IsCycle := by
   have hm1 : (blowUp H side).Adj (u, true) (u, false) := Or.inl ⟨rfl, Bool.false_ne_true.symm⟩
   have hm2 : (blowUp H side).Adj (u, false) (u, true) := Or.inl ⟨rfl, Bool.false_ne_true⟩
-  have hc₁ : (p₁.append (.cons hm1 .nil)).IsCycle := isCycle_append_edge' p₁ hp₁ hl₁ hm1
-  have hc₂ : (p₂.append (.cons hm2 .nil)).IsCycle := isCycle_append_edge' p₂ hp₂ hl₂ hm2
+  have hc₁ : (p₁.append (Walk.cons (v := (u, false)) hm1 .nil)).IsCycle :=
+    isCycle_append_edge' p₁ hp₁ hl₁ hm1
+  have hc₂ : (p₂.append (Walk.cons (v := (u, true)) hm2 .nil)).IsCycle :=
+    isCycle_append_edge' p₂ hp₂ hl₂ hm2
   have hne2_1 : p₁.length ≠ 2 := fun h => blowUp_no_len2_matching_path H side Bool.false_ne_true p₁ h
   have hne2_2 : p₂.length ≠ 2 := fun h => blowUp_no_len2_matching_path H side Bool.false_ne_true.symm p₂ h
   have hne3_1 : p₁.length ≠ 3 := by
@@ -245,11 +247,13 @@ theorem bipartite_c4_c6_c8_free_c16_mchordless {V : Type*} (H : SimpleGraph V) (
   have h16 : (p₁.append p₂).length = 16 := heq.trans hlen
   have hcases := bipartite_c16_mchord_forces_c6_c12 H side heven hc4 hc8 p₁ p₂ hp₁ hp₂ hl₁ hl₂ h16
   rcases hcases with ⟨h5, _⟩ | ⟨_, h5⟩
-  · have hc₁ := isCycle_append_edge' p₁ hp₁ hl₁ (Or.inl ⟨rfl, Bool.false_ne_true.symm⟩)
+  · have hm1 : (blowUp H side).Adj (u, true) (u, false) := Or.inl ⟨rfl, Bool.false_ne_true.symm⟩
+    have hc₁ := isCycle_append_edge' p₁ hp₁ hl₁ hm1
     have hne6 := hc6 (u, false) _ hc₁
     simp only [Walk.length_append, Walk.length_cons, Walk.length_nil] at hne6
     omega
-  · have hc₂ := isCycle_append_edge' p₂ hp₂ hl₂ (Or.inl ⟨rfl, Bool.false_ne_true⟩)
+  · have hm2 : (blowUp H side).Adj (u, false) (u, true) := Or.inl ⟨rfl, Bool.false_ne_true⟩
+    have hc₂ := isCycle_append_edge' p₂ hp₂ hl₂ hm2
     have hne6 := hc6 (u, true) _ hc₂
     simp only [Walk.length_append, Walk.length_cons, Walk.length_nil] at hne6
     omega
@@ -539,10 +543,11 @@ private theorem internalSwitches_append_edge {V : Type*} {H : SimpleGraph V}
         internalSwitches side p + if endSide side p ≠ side w z then 1 else 0
   | _, _, _, .nil, _, hp => by simp at hp
   | _, _, _, .cons _ .nil, _, _ => by
-      simp [Walk.append, internalSwitches, endSide]
+      simp only [Walk.append, internalSwitches, endSide, zero_add, add_zero]
   | _, _, _, .cons _ (.cons h₂ rest), hwz, _ => by
       have ih := internalSwitches_append_edge side (.cons h₂ rest) hwz (by simp)
       simp only [Walk.append, internalSwitches, endSide] at ih ⊢
+      rw [ih]
       omega
 
 private theorem startSide_append_edge {V : Type*} {H : SimpleGraph V}
