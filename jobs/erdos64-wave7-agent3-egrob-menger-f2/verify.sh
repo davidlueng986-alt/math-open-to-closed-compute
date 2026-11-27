@@ -77,7 +77,7 @@ with open("out/axioms.log") as f:
     text = f.read()
 
 pattern = re.compile(r"'([^']+)' depends on axioms: \[([^\]]*)\]", re.MULTILINE | re.DOTALL)
-allowed = {"propext", "Classical.choice", "Quot.sound"}
+allowed = {"propext", "Classical.choice", "choice", "Quot.sound"}
 axioms = {}
 disallowed = {}
 for m in pattern.finditer(text):
