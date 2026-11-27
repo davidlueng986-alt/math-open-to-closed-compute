@@ -7,38 +7,6 @@ import NonBacktrackingGirth
 
 All theorems are all-order (no bound on `|V|`), zero-`sorry`, zero-`native_decide`,
 and depend only on standard Lean axioms (`propext`, `Classical.choice`, `Quot.sound`).
-
-## Pillar A: Exact Girth-Tripling (`2^k < 3g`) Non-Backtracking Architecture
-1. `isNonBacktracking_append_iff` & `isNonBacktracking_reverse`:
-   Exact boundary characterization and reversal invariance of non-backtracking walks.
-2. `nonBacktracking_tail_peel`:
-   Every nonempty non-backtracking closed walk `q` decomposes as `t ++ c ++ t.reverse`
-   with `c` nonempty and cyclically non-backtracking (tailless), and `q.length = c.length + 2 * t.length`.
-3. `tailless_nonBacktracking_lt_three_girth_decomp`:
-   **Exact Girth-Tripling Decomposition Theorem (`< 3g`, ALL graphs)**:
-   Every nonempty cyclically non-backtracking closed walk `p` of length `< 3g` is either
-   a simple cycle, OR decomposes into two simple cycles `c₁, c₂` of lengths in `[g, 2g - 1]`
-   and tails `t₁, t₂` satisfying `c₁.length + c₂.length + 2 * (t₁.length + t₂.length) = p.length`.
-4. `no_equal_half_cycles_of_not_hasPower`:
-   In any power-free graph (`¬ HasPower G`), no simple cycle has length `2^(k-1)` (`k ≥ 3`),
-   eliminating all repeated-cycle CNB walks of length `2^k` at every girth `g ≥ 3`.
-5. `cubic_no_figure_eight_split`:
-   At any vertex of degree `≤ 3`, a non-backtracking split cannot use 4 distinct incident edges,
-   eliminating all figure-eight CNB walks in cubic graphs.
-6. `unique_nonBacktracking_walk_of_sum_lt_girth` & `unique_nonBacktracking_walk_of_half_girth`:
-   **Exact Girth-Ball Uniqueness**: in any graph of girth `≥ g`, any two non-backtracking walks
-   between the same endpoints whose lengths sum to `< g` (in particular, both `≤ (g - 1) / 2`)
-   are identical. This underpins the sharp diagonal bound `(B^r)_{e,e} ≤ 2^(r - 1 - ⌊(g-1)/2⌋)`.
-7. `exists_pow2_in_tripling_window_of_octave_top`:
-   Covers the octave-top girths `g ∈ (2/3 · 2^k, 2^k)` (where Girth-Doubling falls below
-   the cubic Moore bound) inside the Girth-Tripling window `(2g, 3g)` at `2^(k+1)`.
-8. `hasPower_iff_nonBacktracking_surplus` & `erdos64_of_nonBacktracking_surplus`:
-   Exact Whole-Problem Closure Gate directly proving `Erdos64Closure.HasPower` for all `δ ≥ 3`.
-
-## Pillar B: 4-Regular Perfect-Matching Transition-System Power-Lifting (`TS-EG`)
-9. `transition_walk_lift_length` & `hasPower_of_transition_pow2_lift`:
-   Exact length formula `L + crossings` and `HasPower G` certification for lifting a
-   simple cycle in a 4-regular perfect-matching contraction `G / M` back to `G`.
 -/
 
 namespace E64Wave5Agent5
@@ -58,20 +26,6 @@ def lastNbr {V : Type*} {G : SimpleGraph V} : ∀ {u v : V}, G.Walk u v → Opti
   | _, _, .cons (u := a) _ .nil => some a
   | _, _, .cons _ (.cons h rest) => lastNbr (.cons h rest)
 
-private theorem firstNbr_eq_none_iff {V : Type*} {G : SimpleGraph V} :
-    ∀ {u v : V} (p : G.Walk u v), firstNbr p = none ↔ p.length = 0
-  | _, _, .nil => by simp [firstNbr]
-  | _, _, .cons _ _ => by simp [firstNbr]
-
-private theorem lastNbr_eq_none_iff {V : Type*} {G : SimpleGraph V} :
-    ∀ {u v : V} (p : G.Walk u v), lastNbr p = none ↔ p.length = 0
-  | _, _, .nil => by simp [lastNbr]
-  | _, _, .cons _ .nil => by simp [lastNbr]
-  | _, _, .cons _ (.cons h rest) => by
-      have ih := lastNbr_eq_none_iff (.cons h rest)
-      simp only [lastNbr, Walk.length_cons] at ih ⊢
-      omega
-
 private theorem firstNbr_append_of_pos {V : Type*} {G : SimpleGraph V} :
     ∀ {u v w : V} (p : G.Walk u v) (q : G.Walk v w),
       1 ≤ p.length → firstNbr (p.append q) = firstNbr p
@@ -81,10 +35,10 @@ private theorem firstNbr_append_of_pos {V : Type*} {G : SimpleGraph V} :
 private theorem lastNbr_append_of_pos {V : Type*} {G : SimpleGraph V} :
     ∀ {u v w : V} (p : G.Walk u v) (q : G.Walk v w),
       1 ≤ q.length → lastNbr (p.append q) = lastNbr q
-  | _, _, _, .nil, q, _ => rfl
+  | _, _, _, .nil, _, _ => rfl
   | _, _, _, .cons _ .nil, .nil, hq => by simp at hq
   | _, _, _, .cons _ .nil, .cons _ _, _ => rfl
-  | _, _, _, .cons h₁ (.cons h₂ rest), q, hq => by
+  | _, _, _, .cons _ (.cons h₂ rest), q, hq => by
       have ih := lastNbr_append_of_pos (.cons h₂ rest) q hq
       simpa only [Walk.cons_append, lastNbr] using ih
 
@@ -94,11 +48,11 @@ theorem isNonBacktracking_append_iff {V : Type*} {G : SimpleGraph V} :
       IsNonBacktracking (p.append q) ↔
         IsNonBacktracking p ∧ IsNonBacktracking q ∧
         ∀ x y : V, lastNbr p = some x → firstNbr q = some y → x ≠ y
-  | _, _, _, .nil, q => by
+  | _, _, _, .nil, _ => by
       simp [IsNonBacktracking, lastNbr]
-  | _, _, _, .cons (u := a) h .nil, .nil => by
+  | _, _, _, .cons _ .nil, .nil => by
       simp [IsNonBacktracking, firstNbr]
-  | _, _, _, .cons (u := a) h₁ .nil, .cons (v := c) h₂ rest => by
+  | _, _, _, .cons (u := a) _ .nil, .cons (v := c) _ _ => by
       simp only [Walk.cons_append, Walk.nil_append, IsNonBacktracking, lastNbr, firstNbr,
         Option.some.injEq, true_and]
       constructor
@@ -109,7 +63,7 @@ theorem isNonBacktracking_append_iff {V : Type*} {G : SimpleGraph V} :
         exact hne
       · rintro ⟨hnb, hne⟩
         exact ⟨hne a c rfl rfl, hnb⟩
-  | _, _, _, .cons (u := a) h₁ (.cons (v := c) h₂ rest), q => by
+  | _, _, _, .cons _ (.cons h₂ rest), q => by
       have ih := isNonBacktracking_append_iff (.cons h₂ rest) q
       simp only [Walk.cons_append, IsNonBacktracking, lastNbr] at ih ⊢
       constructor
@@ -123,7 +77,7 @@ private theorem firstNbr_reverse {V : Type*} {G : SimpleGraph V} :
     ∀ {u v : V} (p : G.Walk u v), firstNbr p.reverse = lastNbr p
   | _, _, .nil => rfl
   | _, _, .cons _ .nil => rfl
-  | _, _, .cons h₁ (.cons h₂ rest) => by
+  | _, _, .cons _ (.cons h₂ rest) => by
       rw [Walk.reverse_cons]
       have hpos : 1 ≤ (Walk.cons h₂ rest).reverse.length := by simp
       rw [firstNbr_append_of_pos _ _ hpos]
@@ -133,7 +87,7 @@ private theorem lastNbr_reverse {V : Type*} {G : SimpleGraph V} :
     ∀ {u v : V} (p : G.Walk u v), lastNbr p.reverse = firstNbr p
   | _, _, .nil => rfl
   | _, _, .cons _ .nil => rfl
-  | _, _, .cons h₁ (.cons h₂ rest) => by
+  | _, _, .cons h₁ (.cons _ _) => by
       rw [Walk.reverse_cons]
       have hpos : 1 ≤ (Walk.cons h₁.symm .nil).length := by simp
       rw [lastNbr_append_of_pos _ _ hpos]
@@ -144,7 +98,7 @@ theorem isNonBacktracking_reverse {V : Type*} {G : SimpleGraph V} :
     ∀ {u v : V} {p : G.Walk u v}, IsNonBacktracking p → IsNonBacktracking p.reverse
   | _, _, .nil, _ => trivial
   | _, _, .cons _ .nil, _ => trivial
-  | _, _, .cons (u := a) h₁ (.cons (v := c) h₂ rest), hnb => by
+  | _, _, .cons _ (.cons _ _), hnb => by
       rw [Walk.reverse_cons, isNonBacktracking_append_iff]
       refine ⟨isNonBacktracking_reverse hnb.2, trivial, ?_⟩
       intro x y hx hy
@@ -239,7 +193,7 @@ private theorem mem_support_of_mem_edges' {V : Type*} {G : SimpleGraph V} :
     ∀ {u v : V} {w : G.Walk u v} {a b : V},
       s(a, b) ∈ w.edges → a ∈ w.support ∧ b ∈ w.support
   | _, _, .nil, _, _, h => by simp at h
-  | _, _, .cons (u := x) (v := y) _ rest, a, b, h => by
+  | _, _, .cons _ rest, _, _, h => by
       simp only [Walk.edges_cons, List.mem_cons] at h
       rcases h with heq | hmem
       · rw [Sym2.eq_iff] at heq
@@ -294,7 +248,7 @@ private theorem exists_append_of_mem_support' {V : Type*} {G : SimpleGraph V} :
       simp only [Walk.support_nil, List.mem_singleton] at hx
       subst hx
       exact ⟨.nil, .nil, rfl⟩
-  | _, _, .cons h rest, x, hx => by
+  | _, _, .cons h rest, _, hx => by
       simp only [Walk.support_cons, List.mem_cons] at hx
       rcases hx with rfl | hmem
       · exact ⟨.nil, .cons h rest, rfl⟩
@@ -306,7 +260,7 @@ private theorem exists_append_of_mem_support_tail' {V : Type*} {G : SimpleGraph 
       x ∈ w.support.tail →
       ∃ (w₁ : G.Walk u x) (w₂ : G.Walk x v), w = w₁.append w₂ ∧ 1 ≤ w₁.length
   | _, _, .nil, _, hx => by simp at hx
-  | _, _, .cons h rest, x, hx => by
+  | _, _, .cons h rest, _, hx => by
       simp only [Walk.support_cons, List.tail_cons] at hx
       obtain ⟨w₁, w₂, heq⟩ := exists_append_of_mem_support' rest hx
       exact ⟨.cons h w₁, w₂, by rw [Walk.cons_append, ← heq], by simp⟩
@@ -632,7 +586,7 @@ theorem transitionStep_length {V : Type*} {G : SimpleGraph V} (m : V → V)
 
 /-- Exact length formula for concatenating a transition walk across `L` contracted matching edges
 with `crossings` crossing steps: `lift.length = L + crossings`. -/
-theorem transition_walk_lift_length {V : Type*} {G : SimpleGraph V} {u v w : V}
+theorem transition_walk_lift_length {V : Type*} {G : SimpleGraph V} {u v : V}
     (m : V → V) (hm_adj : ∀ x, G.Adj x (m x))
     (a b : V) (h : b = a ∨ b = m a) (hab : G.Adj b u) (rest : G.Walk u v) (L c : ℕ)
     (hrest : rest.length = L + c) :
