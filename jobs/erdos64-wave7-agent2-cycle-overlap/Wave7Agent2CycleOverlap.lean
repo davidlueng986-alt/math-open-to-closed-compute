@@ -144,6 +144,7 @@ lemma minimal_bad2_no_safe_deletion {V : Type} [Fintype V] {G : SimpleGraph V}
         rcases Finset.mem_filter.mp hw with ⟨hwS, hwdeg⟩
         refine ⟨⟨w, hwS⟩, ?_, rfl⟩
         simp only [Defects, Finset.mem_filter, Finset.mem_univ, true_and]
+        dsimp only [H]
         rw [degree_induce_eq]
         exact hwdeg
     rw [hcard]
@@ -252,10 +253,10 @@ lemma cycle_of_internally_disjoint_paths {V : Type*} {G : SimpleGraph V} {u v : 
       have hx1 : x ∈ p1.support := Walk.mem_support_of_mem_edges he1 (by simp)
       have hy1 : y ∈ p1.support := Walk.mem_support_of_mem_edges he1 (by simp)
       have hx2 : x ∈ p2.support := by
-        have := Walk.mem_support_of_mem_edges he2 (by simp)
+        have : x ∈ p2.reverse.support := Walk.mem_support_of_mem_edges he2 (by simp)
         rwa [Walk.support_reverse, List.mem_reverse] at this
       have hy2 : y ∈ p2.support := by
-        have := Walk.mem_support_of_mem_edges he2 (by simp)
+        have : y ∈ p2.reverse.support := Walk.mem_support_of_mem_edges he2 (by simp)
         rwa [Walk.support_reverse, List.mem_reverse] at this
       have hxy_ne : x ≠ y := G.ne_of_adj (Walk.adj_of_mem_edges p1 he1)
       have hpair : (x = u ∧ y = v) ∨ (x = v ∧ y = u) := by
@@ -276,7 +277,7 @@ lemma cycle_of_internally_disjoint_paths {V : Type*} {G : SimpleGraph V} {u v : 
           simp only [Walk.edges_cons, List.mem_cons] at hsuv
           rcases hsuv with heq | hmem'
           · rw [Sym2.eq_iff] at heq
-            rcases heq with ⟨_, rfl⟩ | ⟨huv', _⟩
+            rcases heq with ⟨_, rfl⟩ | ⟨_, hvu'⟩
             · have hnd : (Walk.cons huw q).support.Nodup := by
                 rw [← hp1w]; exact hp1.support_nodup
               cases q with
@@ -284,7 +285,7 @@ lemma cycle_of_internally_disjoint_paths {V : Type*} {G : SimpleGraph V} {u v : 
               | @cons _ z _ hvz q' =>
                 have hnd' := List.nodup_cons.mp (List.nodup_cons.mp hnd).2
                 exact False.elim (hnd'.1 (Walk.end_mem_support q'))
-            · exact False.elim (huv huv')
+            · exact False.elim (huv hvu'.symm)
           · have hnd : (Walk.cons huw q).support.Nodup := by
               rw [← hp1w]; exact hp1.support_nodup
             have hu_in : u ∈ q.support := Walk.mem_support_of_mem_edges hmem' (by simp)
@@ -425,8 +426,7 @@ theorem powerFree_no_c8 {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
     rcases hw2 with h | h | h | h | h
     all_goals first
       | exact Or.inl rfl | exact Or.inr rfl
-      | exact False.elim (h07n h) | exact False.elim (h06n h) | exact False.elim (h05n h)
-      | exact False.elim (h04n h) | exact False.elim (h01n h.symm) | exact False.elim (h17n h)
+      | exact False.elim (h01n h.symm) | exact False.elim (h17n h)
       | exact False.elim (h16n h) | exact False.elim (h15n h) | exact False.elim (h14n h)
       | exact False.elim (h02n h.symm) | exact False.elim (h27n h) | exact False.elim (h26n h)
       | exact False.elim (h25n h) | exact False.elim (h24n h) | exact False.elim (h03n h.symm)
@@ -484,7 +484,7 @@ theorem c5_overlap_rigidity {V : Type*} {G : SimpleGraph V} (hpf : PowerFree G)
       have ha'b : a' ≠ b := by
         intro heq; subst heq; exact hnc1.2.1 hva'
       have hb'a : b' ≠ a := by
-        intro heq; subst heq; exact hnc1.2.2.1 hb'c'.symm
+        intro heq; subst heq; exact hnc1.2.2.1 hb'c'
       exact Or.inr ⟨rfl, fun h => haa' h.symm, ha'b, hb'a, hbb'.symm⟩
     · have ha'b : a' ≠ b := by
         intro heq; subst heq; exact hnc1.2.1 hva'
@@ -580,7 +580,7 @@ theorem theta233_strong_spine_edge_c5_blockade {V : Type*} [Fintype V] {G : Simp
   rcases hC1 with ⟨hua, haw, hwc1, hc1v2, hv2u, huan, huwn, huc1n, huv2n, hawn, hac1n, hav2n, hwc1n, hwv2n, hc1v2n⟩
   rcases hC2 with ⟨_, _, hwc2, hc2v3, hv3u, _, _, huc2n, huv3n, _, hac2n, hav3n, hwc2n, hwv3n, hc2v3n⟩
   have hr_nb : r = u ∨ r = w ∨ r = t :=
-    mem_of_degree_three hdega hua.symm haw hat huan.symm htu.symm htw.symm hC3.2.2.2.2.1.symm
+    mem_of_degree_three hdega hua.symm haw hat huwn htu.symm htw.symm hC3.2.2.2.2.1.symm
   rcases hr_nb with hr | hr | hr
   · subst r
     have hq_nb : q = a ∨ q = v2 ∨ q = v3 :=
@@ -1002,17 +1002,14 @@ lemma identGraph_cycle_lifts_to_dyadic_path {V : Type*} {G : SimpleGraph V}
               have hw_not_edges : ∀ e ∈ q.edges, w ∉ e := fun _ he hwe =>
                 hw_not (Walk.mem_support_of_mem_edges he hwe)
               have hdb_ne : d.1 ≠ b.1 := by
-                intro heq
-                have hq0 : q.length = 0 := by
-                  cases q with
-                  | nil => rfl
-                  | @cons _ next _ h1 q' =>
-                    have hnd := List.nodup_cons.mp hq_nodup
-                    have hend : b.1 ∈ (Walk.cons h1 q').support.tail := by
-                      simpa using Walk.end_mem_support q'
-                    rw [← heq] at hend
-                    exact False.elim (hnd.1 hend)
-                omega
+                have haux : ∀ {u1 v1 : V} (p : G.Walk u1 v1), 1 ≤ p.length → p.support.Nodup → u1 ≠ v1 := by
+                  intro u1 v1 p hpl hpnd heq
+                  cases p with
+                  | nil => simp at hpl
+                  | cons _ p' =>
+                    subst heq
+                    exact (List.nodup_cons.mp hpnd).1 (Walk.end_mem_support p')
+                exact haux q hqlen_ge1 hq_nodup
               simp only [cyc, Walk.edges_cons, Walk.edges_concat, List.concat_eq_append,
                 List.nodup_cons, List.mem_append, List.mem_singleton, not_or, List.nodup_append]
               refine ⟨⟨fun hm => hw_not_edges _ hm (by simp), ?_⟩, hq_edges_nodup, by simp, ?_⟩
@@ -1020,7 +1017,7 @@ lemma identGraph_cycle_lifts_to_dyadic_path {V : Type*} {G : SimpleGraph V}
                 · exact G.ne_of_adj hwd h2.symm
                 · exact hdb_ne h2
               · intro e he e' he' heq
-                rw [List.mem_singleton] at he'; subst he'; subst heq
+                subst he'; subst heq
                 exact hw_not_edges _ he (by simp)
             · simp only [cyc, Walk.support_cons, Walk.support_concat, List.tail_cons]
               rw [List.nodup_append]
@@ -1193,7 +1190,7 @@ lemma dyadic_path_avoids_common_nb_edges {V : Type*} {G : SimpleGraph V}
                   rcases hmemq with heq2 | hmem2
                   · rw [Sym2.eq_iff] at heq2
                     rcases heq2 with ⟨hvw, _⟩ | ⟨hxw, _⟩
-                    · exact False.elim (G.ne_of_adj hwv hvw.symm)
+                    · exact False.elim (G.ne_of_adj hwv hvw)
                     · subst x
                       have hnd : (Walk.cons hvx r).support.Nodup := by
                         rw [← hqr]; exact hq_path.reverse.support_nodup
@@ -1246,7 +1243,7 @@ lemma dyadic_path_avoids_common_nb_edges {V : Type*} {G : SimpleGraph V}
                   rcases hmemq with heq2 | hmem2
                   · rw [Sym2.eq_iff] at heq2
                     rcases heq2 with ⟨hwu, _⟩ | ⟨hxw, _⟩
-                    · exact False.elim (G.ne_of_adj huw hwu)
+                    · exact False.elim (G.ne_of_adj huw hwu.symm)
                     · subst x
                       have hnd : (Walk.cons hux r).support.Nodup := by
                         rw [← hqr]; exact hq_path.reverse.support_nodup
@@ -1308,7 +1305,7 @@ theorem minimal_bad2_vge4_dist2_dyadic_path {V : Type} [Fintype V]
         have hcomm : G.Adj x.1 u ∧ G.Adj x.1 v := by rw [hxw]; exact ⟨hwu, hwv⟩
         have h := identGraph_degree_other_common G x hxu hcomm
         have hw_ge4 : 4 ≤ G.degree w := (Finset.mem_filter.mp hw4).2
-        rw [hxw] at h; omega
+        rw [hxw] at h; dsimp only [H]; omega
       · intro hxw
         apply identGraph_degree_other_no_common G huv x hxu
         rintro ⟨h1, h2⟩; exact hxw (hcomm_uniq x.1 h1 h2)
@@ -1713,7 +1710,7 @@ theorem minimal_bad2_girth6_v3_density_20_27 {V : Type} [Fintype V]
     constructor
     · rintro (⟨h, _⟩ | ⟨h, _⟩) <;> exact h
     · intro hx
-      have h1 := hs1_le1 x (Finset.mem_filter.mp hx).1 (Finset.mem_filter.mp hx).2
+      have h1 : ((G.neighborFinset x) ∩ S2).card ≤ 1 := hs1_le1 x (Finset.mem_filter.mp hx).1 (Finset.mem_filter.mp hx).2
       match h : ((G.neighborFinset x) ∩ S2).card with
       | 0 => exact Or.inl ⟨hx, rfl⟩
       | 1 => exact Or.inr ⟨hx, rfl⟩
