@@ -1,0 +1,26 @@
+name: E64 Wave4 Agent3 Counterexample & f(4) Hunter
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  hunt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [54, 58, 60, 62, 68, 72, 74, 76]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and run OpenMP hunter
+        run: |
+          g++ -O3 -fopenmp -std=c++20 jobs/erdos64-wave4-agent3-hunter/hunter.cpp -o hunter
+          mkdir -p out
+          ./hunter ${{ matrix.n }} 16 250000 4 | tee out/hunt_n${{ matrix.n }}.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos64-w4a3-hunt-n${{ matrix.n }}
+          path: out/
+          retention-days: 30
