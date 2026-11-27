@@ -139,7 +139,6 @@ theorem dual_cross_rewiring_trifree_same_scale_c6_rigidity {V : Type*} (G : Simp
   rcases hp2_nd with ⟨⟨hay1_ne, hay2_ne, had_ne⟩, ⟨hy12_ne, hy1d_ne⟩, hy2d_ne⟩
   have hcv_ne : c ≠ v := (G.ne_of_adj hvc).symm
   have hdv_ne : d ≠ v := (G.ne_of_adj hvd).symm
-  -- First rule out c = y₁, c = y₂, d = x₁, d = x₂, x₂ = y₂, x₁ = y₂, x₂ = y₁
   have hx2_ne_y2 : x₂ ≠ y₂ := by
     intro h; subst h
     exact no_c4 G hpf hx2c_ne hcv_ne hdv_ne.symm (Ne.symm hy2d_ne) hx2_ne_v hcd
@@ -158,7 +157,6 @@ theorem dual_cross_rewiring_trifree_same_scale_c6_rigidity {V : Type*} (G : Simp
     exact htf v c d ⟨hvc, hx2c.symm, hvd.symm⟩
   have hc_ne_y1 : c ≠ y₁ := by
     intro h; subst h
-    -- If c = y₁, then a ~ c, so check x₁ = y₂? Wait: a - x₁ - x₂ - c - a is a C₄!
     exact no_c4 G hpf hax1_ne hx12_ne hx2c_ne (Ne.symm hac_ne) hax2_ne hx1c_ne
       hax1 hx12 hx2c hay1.symm
   have hd_ne_x1 : d ≠ x₁ := by
@@ -167,7 +165,6 @@ theorem dual_cross_rewiring_trifree_same_scale_c6_rigidity {V : Type*} (G : Simp
       hay1 hy12 hy2d hax1.symm
   have hx1_eq_y1 : x₁ = y₁ := by
     by_contra hne
-    -- All 8 vertices [a, x₁, x₂, c, v, d, y₂, y₁] are pairwise distinct, forming a C₈!
     have hnd8 : [a, x₁, x₂, c, v, d, y₂, y₁].Nodup := by
       simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
         List.nodup_nil, and_true, not_false_eq_true]
@@ -180,11 +177,10 @@ theorem dual_cross_rewiring_trifree_same_scale_c6_rigidity {V : Type*} (G : Simp
         Ne.symm hy12_ne⟩
     exact no_c8 G hpf hnd8 hax1 hx12 hx2c hvc.symm hvd hy2d.symm hy12.symm hay1.symm
   subst hx1_eq_y1
-  -- Now [x₁, x₂, c, v, d, y₂] is a simple 6-cycle!
   have hnd6 : [x₁, x₂, c, v, d, y₂].Nodup := by
     simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
       List.nodup_nil, and_true, not_false_eq_true]
-    exact ⟨⟨hx12_ne, hx1c_ne, hx1_ne_v, Ne.symm hy1d_ne, hy12_ne⟩,
+    exact ⟨⟨hx12_ne, hx1c_ne, hx1_ne_v, hy1d_ne, hy12_ne⟩,
       ⟨hx2c_ne, hx2_ne_v, hd_ne_x2.symm, hx2_ne_y2⟩,
       ⟨hcv_ne, hcd, hc_ne_y2⟩,
       ⟨hdv_ne.symm, hy2_ne_v.symm⟩,
@@ -257,10 +253,8 @@ theorem minimal_bad2_v3_min_component_forces_vge4_girth_cycle {V : Type*} [Finty
     rw [heq, List.nodup_cons]
     refine ⟨?_, ?_⟩
     · simp only [List.mem_append, List.mem_singleton, not_or, Sym2.eq_iff]
-      refine ⟨fun hm => h_no_w s(w, a) hm (Sym2.mem_mk_left w a), ?_⟩
-      rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
-      · exact hw_not (Walk.end_mem_support p)
-      · exact hab rfl
+      exact ⟨fun hm => h_no_w s(w, a) hm (Sym2.mem_mk_left w a),
+        ⟨fun ⟨h, _⟩ => hw_not (h ▸ Walk.end_mem_support p), fun ⟨_, h⟩ => hab h⟩⟩
     · rw [List.nodup_append]
       refine ⟨hp_path.isTrail.edges_nodup, List.nodup_singleton _, ?_⟩
       intro e he e' hbw rfl
@@ -334,7 +328,6 @@ theorem crossRewire_two_cut_dyadic_path_asymmetry {V : Type*} (G : SimpleGraph V
     (p_b : G.Walk x y) (hpb : p_b.IsPath) (hlb : p_b.length = 2 ^ m)
     (hdisj : ∀ z : V, z ∈ p_a.support → z ∈ p_b.support → z = x ∨ z = y) :
     False := by
-  -- Construct simple cycle p_a.append p_b.reverse of length 2^(m+1)
   let q : G.Walk x x := p_a.append p_b.reverse
   have hq_len : q.length = 2 ^ (m + 1) := by
     simp [q, Walk.length_append, Walk.length_reverse, hla, hlb, pow_succ]; omega
@@ -389,8 +382,6 @@ theorem crossRewire_two_cut_dyadic_path_asymmetry {V : Type*} (G : SimpleGraph V
       have hw_b : w ∈ p_b.support :=
         List.mem_reverse.mp (Walk.support_reverse p_b ▸ Walk.snd_mem_support_of_mem_edges p_b.reverse heb)
       have huw : u ≠ w := G.ne_of_adj (Walk.adj_of_mem_edges p_a hea)
-      -- Both u, w ∈ {x, y}, so s(u, w) = s(x, y), which implies p_a has edge s(x, y) AND length ≥ 2!
-      -- Wait: if p_a is a path from x to y and contains edge s(x, y), then p_a.length = 1!
       have huxy := hdisj u hu_a hu_b
       have hwxy := hdisj w hw_a hw_b
       have hlen1 : ∀ {s t : V} (r : G.Walk s t), r.IsPath → s(s, t) ∈ r.edges → r.length ≤ 1 := by
@@ -401,15 +392,15 @@ theorem crossRewire_two_cut_dyadic_path_asymmetry {V : Type*} (G : SimpleGraph V
           simp only [Walk.edges_cons, List.mem_cons] at hm
           rcases hm with heq | hmem
           · rw [Sym2.eq_iff] at heq
-            rcases heq with ⟨_, hvt⟩ | ⟨_, hvs⟩
-            · subst hvt
+            rcases heq with ⟨_, htv⟩ | ⟨hsv, _⟩
+            · subst htv
               have hnd := hr.support_nodup
               cases r' with
               | nil => simp
               | cons hadj' r'' =>
                 simp only [Walk.support_cons, List.nodup_cons] at hnd
                 exact absurd (Walk.end_mem_support r'') hnd.2.1
-            · exact absurd hvs.symm (G.ne_of_adj hadj)
+            · exact absurd hsv (G.ne_of_adj hadj)
           · have hs1 : s ∈ r'.support := Walk.fst_mem_support_of_mem_edges r' hmem
             have hnd := hr.support_nodup
             simp only [Walk.support_cons, List.nodup_cons] at hnd
