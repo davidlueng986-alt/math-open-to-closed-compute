@@ -14,6 +14,11 @@ from decimal import Decimal, localcontext
 from fractions import Fraction
 from pathlib import Path
 
+# Trusted, bounded exact CRT output can have a hazard sum with more than
+# Python's default 4300 decimal digits. Keep a finite, ample reporting cap.
+if hasattr(sys, "set_int_max_str_digits"):
+    sys.set_int_max_str_digits(100_000)
+
 
 def prime_factors(n):
     out = []
