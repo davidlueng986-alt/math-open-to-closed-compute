@@ -43,7 +43,7 @@ and depend only on standard Lean axioms (`propext`, `Classical.choice`, `Quot.so
 namespace E64Wave7Agent4
 open SimpleGraph Erdos64Closure E64Wave6Agent2
 
-/-! ## Section 1: Sharp `M`-Chord Rigidity & Girth-Boundary Shatter -/\
+/-! ## Section 1: Sharp `M`-Chord Rigidity & Girth-Boundary Shatter -/
 
 /-- Helper: closing a path of length `≥ 2` by an edge forms a simple cycle. -/
 private theorem isCycle_append_edge' {V : Type*} {G : SimpleGraph V} {u w : V}
@@ -104,14 +104,14 @@ theorem c8_mchord_forces_two_c5 {V : Type*} (H : SimpleGraph V) (side : V → V 
     (hl₁ : 2 ≤ p₁.length) (hl₂ : 2 ≤ p₂.length)
     (hlen : (p₁.append p₂).length = 8) :
     p₁.length = 4 ∧ p₂.length = 4 ∧
-      (p₁.append (.cons (Or.inl ⟨rfl, Bool.true_ne_false⟩) .nil)).IsCycle ∧
+      (p₁.append (.cons (Or.inl ⟨rfl, Bool.false_ne_true.symm⟩) .nil)).IsCycle ∧
       (p₂.append (.cons (Or.inl ⟨rfl, Bool.false_ne_true⟩) .nil)).IsCycle := by
-  have hm1 : (blowUp H side).Adj (u, true) (u, false) := Or.inl ⟨rfl, Bool.true_ne_false⟩
+  have hm1 : (blowUp H side).Adj (u, true) (u, false) := Or.inl ⟨rfl, Bool.false_ne_true.symm⟩
   have hm2 : (blowUp H side).Adj (u, false) (u, true) := Or.inl ⟨rfl, Bool.false_ne_true⟩
   have hc₁ : (p₁.append (.cons hm1 .nil)).IsCycle := isCycle_append_edge' p₁ hp₁ hl₁ hm1
   have hc₂ : (p₂.append (.cons hm2 .nil)).IsCycle := isCycle_append_edge' p₂ hp₂ hl₂ hm2
   have hne2_1 : p₁.length ≠ 2 := fun h => blowUp_no_len2_matching_path H side Bool.false_ne_true p₁ h
-  have hne2_2 : p₂.length ≠ 2 := fun h => blowUp_no_len2_matching_path H side Bool.true_ne_false p₂ h
+  have hne2_2 : p₂.length ≠ 2 := fun h => blowUp_no_len2_matching_path H side Bool.false_ne_true.symm p₂ h
   have hne3_1 : p₁.length ≠ 3 := by
     intro h
     have h4 := hc4 (u, false) _ hc₁
@@ -196,7 +196,6 @@ theorem bipartite_girth_pow2_shatter {V : Type*} (H : SimpleGraph V) (side : V �
     have hne := hno_small v cy hcy
     have hev := heven v cy hcy
     have hpow_ev : 2 ^ (r - 1) % 2 = 0 := by
-      have hpos : 1 ≤ r - 1 := by omega
       obtain ⟨m, hm⟩ : ∃ m, r - 1 = m + 1 := ⟨r - 2, by omega⟩
       rw [hm, pow_succ]
       omega
@@ -221,7 +220,7 @@ theorem bipartite_c16_mchord_forces_c6_c12 {V : Type*} (H : SimpleGraph V) (side
     (hl₁ : 2 ≤ p₁.length) (hl₂ : 2 ≤ p₂.length)
     (hlen : (p₁.append p₂).length = 16) :
     (p₁.length = 5 ∧ p₂.length = 11) ∨ (p₁.length = 11 ∧ p₂.length = 5) := by
-  have hm1 : (blowUp H side).Adj (u, true) (u, false) := Or.inl ⟨rfl, Bool.true_ne_false⟩
+  have hm1 : (blowUp H side).Adj (u, true) (u, false) := Or.inl ⟨rfl, Bool.false_ne_true.symm⟩
   have hm2 : (blowUp H side).Adj (u, false) (u, true) := Or.inl ⟨rfl, Bool.false_ne_true⟩
   have hc₁ := isCycle_append_edge' p₁ hp₁ hl₁ hm1
   have hc₂ := isCycle_append_edge' p₂ hp₂ hl₂ hm2
@@ -246,7 +245,7 @@ theorem bipartite_c4_c6_c8_free_c16_mchordless {V : Type*} (H : SimpleGraph V) (
   have h16 : (p₁.append p₂).length = 16 := heq.trans hlen
   have hcases := bipartite_c16_mchord_forces_c6_c12 H side heven hc4 hc8 p₁ p₂ hp₁ hp₂ hl₁ hl₂ h16
   rcases hcases with ⟨h5, _⟩ | ⟨_, h5⟩
-  · have hc₁ := isCycle_append_edge' p₁ hp₁ hl₁ (Or.inl ⟨rfl, Bool.true_ne_false⟩)
+  · have hc₁ := isCycle_append_edge' p₁ hp₁ hl₁ (Or.inl ⟨rfl, Bool.false_ne_true.symm⟩)
     have hne6 := hc6 (u, false) _ hc₁
     simp only [Walk.length_append, Walk.length_cons, Walk.length_nil] at hne6
     omega
@@ -265,6 +264,15 @@ def flipSide {V : Type*} (side : V → V → Bool) (φ : V → Bool) : V → V �
 def IsGaugeBalanced {V : Type*} (H : SimpleGraph V) (side : V → V → Bool) : Prop :=
   ∃ φ : V → Bool, IsBalanced H (flipSide side φ)
 
+private theorem xor_eq_iff_xor (a b c : Bool) : (xor a b = c) ↔ (a = xor c b) := by
+  cases a <;> cases b <;> cases c <;> decide
+
+private theorem xor_eq_xor_iff (a b c : Bool) : (xor a c = xor b c) ↔ (a = b) := by
+  cases a <;> cases b <;> cases c <;> decide
+
+private theorem xor_ne_xor_iff (a b c : Bool) : (xor a c ≠ xor b c) ↔ (a ≠ b) := by
+  cases a <;> cases b <;> cases c <;> decide
+
 /-- Gauge flipping preserves `IsTransitionSystem`. -/
 theorem flipSide_preserves_transitionSystem {V : Type*} [Fintype V] [DecidableEq V]
     (H : SimpleGraph V) [DecidableRel H.Adj] (side : V → V → Bool) (φ : V → Bool)
@@ -274,10 +282,7 @@ theorem flipSide_preserves_transitionSystem {V : Type*} [Fintype V] [DecidableEq
   have h : (H.neighborFinset u).filter (fun v => flipSide side φ u v = b) =
            (H.neighborFinset u).filter (fun v => side u v = xor b (φ u)) := by
     ext v
-    simp only [Finset.mem_filter, flipSide]
-    constructor <;> rintro ⟨hv, h1⟩ <;> refine ⟨hv, ?_⟩
-    · cases side u v <;> cases φ u <;> cases b <;> simp_all
-    · cases side u v <;> cases φ u <;> cases b <;> simp_all
+    simp only [Finset.mem_filter, flipSide, xor_eq_iff_xor]
   rw [h, hts u (xor b (φ u))]
 
 /-- Exact graph isomorphism `blowUp H side ≃g blowUp H (flipSide side φ)`. -/
@@ -295,27 +300,14 @@ def blowUp_gauge_iso {V : Type*} (H : SimpleGraph V) (side : V → V → Bool) (
     cases a <;> cases φ u <;> rfl
   map_rel_iff' := by
     rintro ⟨u, a⟩ ⟨v, b⟩
-    simp only [Equiv.coe_fn_mk, blowUp, flipSide]
+    simp only [Equiv.coe_fn_mk, blowUp, flipSide, xor_eq_xor_iff]
     constructor
     · rintro (⟨rfl, hne⟩ | ⟨hadj, h1, h2⟩)
-      · left
-        refine ⟨rfl, ?_⟩
-        cases a <;> cases b <;> cases φ u <;> simp_all
-      · right
-        refine ⟨hadj, ?_, ?_⟩
-        · cases side u v <;> cases φ u <;> cases a <;> simp_all
-        · cases side v u <;> cases φ v <;> cases b <;> simp_all
+      · exact Or.inl ⟨rfl, (xor_ne_xor_iff a b (φ u)).mp hne⟩
+      · exact Or.inr ⟨hadj, h1, h2⟩
     · rintro (⟨rfl, hne⟩ | ⟨hadj, h1, h2⟩)
-      · left
-        refine ⟨rfl, ?_⟩
-        cases a <;> cases b <;> cases φ u <;> simp_all
-      · right
-        refine ⟨hadj, ?_, ?_⟩
-        · cases side u v <;> cases φ u <;> cases a <;> simp_all
-        · cases side v u <;> cases φ v <;> cases b <;> simp_all
-
-private theorem xor_ne_xor_iff (a b c : Bool) : (xor a c ≠ xor b c) ↔ (a ≠ b) := by
-  cases a <;> cases b <;> cases c <;> decide
+      · exact Or.inl ⟨rfl, (xor_ne_xor_iff a b (φ u)).mpr hne⟩
+      · exact Or.inr ⟨hadj, h1, h2⟩
 
 /-- `internalSwitches` is strictly invariant under `ℤ₂^V` gauge flips. -/
 theorem gauge_preserves_internalSwitches {V : Type*} {H : SimpleGraph V}
@@ -426,18 +418,14 @@ theorem balanced_blowUp_closed_walk_even_matching {V : Type*} [DecidableEq V]
   simp at h
   exact h
 
-/-- Helper: a path of length 4 from `(u, false)` to `(u, true)` in a balanced blow-up
-has odd matching-edge count (`1` or `3`); since matching edges are vertex-disjoint in a path,
-there can be at most 1 internal matching edge, and if there is 1 internal matching edge,
-the 3 non-matching edges form a triangle in `H`! -/
+/-- **Triangle-Free Balanced No-`C₅`-Matching Theorem**:
+In any triangle-free balanced blow-up `blowUp H side`, no simple 5-cycle can contain a matching edge. -/
 theorem triangle_free_balanced_no_c5_matching {V : Type*} [DecidableEq V]
     {H : SimpleGraph V} {side : V → V → Bool} (hbal : IsBalanced H side)
     (htf : ∀ a b c : V, H.Adj a b → H.Adj b c → H.Adj c a → False)
     {u : V} (p : (blowUp H side).Walk (u, false) (u, true))
     (hp : p.IsPath) (hlen : p.length = 4) : False := by
-  -- Unroll the 4 edges of p: (u,false) - v1 - v2 - v3 - (u,true)
   cases p with
-  | nil => simp at hlen
   | cons h1 r1 =>
     cases r1 with
     | nil => simp at hlen
@@ -454,63 +442,53 @@ theorem triangle_free_balanced_no_c5_matching {V : Type*} [DecidableEq V]
             have hnd := hp.support_nodup
             simp only [Walk.support_cons, Walk.support_nil, List.nodup_cons, List.mem_cons,
               List.not_mem_nil, or_false, not_or] at hnd
-            -- First edge h1 cannot be matching edge (u,false)-(u,true) since (u,true) is at the end
+            rename_i v1 v2 v3
+            rcases v1 with ⟨x1, b1⟩
+            rcases v2 with ⟨x2, b2⟩
+            rcases v3 with ⟨x3, b3⟩
             rcases h1 with ⟨heq1, hne1⟩ | ⟨ha1, hs1a, hs1b⟩
-            · -- v1 = (u, true), contradicts nodup
-              rcases hnd with ⟨⟨_, _, _, hne_end⟩, _⟩
-              cases ‹V × Bool› with
-              | mk x1 b1 =>
-                simp only at heq1 hne1 hne_end
-                subst heq1
-                cases b1
-                · exact hne1 rfl
-                · exact hne_end rfl
-            -- Last edge h4 cannot be matching edge (u,false)-(u,true) since (u,false) is at the start
+            · simp only at heq1 hne1 hnd
+              subst heq1
+              cases b1
+              · exact hne1 rfl
+              · exact hnd.2.1.2.2 rfl
             rcases h4 with ⟨heq4, hne4⟩ | ⟨ha4, hs4a, hs4b⟩
-            · rcases hnd with ⟨⟨_, _, hne3, _⟩, _⟩
-              cases ‹V × Bool› with
-              | mk x3 b3 =>
-                simp only at heq4 hne4 hne3
-                subst heq4
-                cases b3
-                · exact hne3 rfl
-                · exact hne4 rfl
-            -- Now v1 has Bool = false (by hbal), v3 has Bool = true (by hbal)
-            -- So between v1 (Bool=false) and v3 (Bool=true), exactly one of h2, h3 is a matching edge!
-            have hb1 : ( _ : V × Bool).2 = false := by
-              have hb := hbal _ _ ha1
+            · simp only at heq4 hne4 hnd
+              subst heq4
+              cases b3
+              · exact hnd.1.2.2.1 rfl
+              · exact hne4 rfl
+            have hb1 : b1 = false := by
+              have hb := hbal u x1 ha1
               rw [hs1a, hs1b] at hb
               exact hb.symm
-            have hb3 : ( _ : V × Bool).2 = true := by
-              have hb := hbal _ _ ha4
+            have hb3 : b3 = true := by
+              have hb := hbal x3 u ha4
               rw [hs4a, hs4b] at hb
               exact hb
+            subst hb1; subst hb3
             rcases h2 with ⟨heq2, hne2⟩ | ⟨ha2, hs2a, hs2b⟩
-            · -- h2 is a matching edge: v1.1 = v2.1, v2.2 = true. Then h3 must be an H-edge!
-              rcases h3 with ⟨heq3, hne3⟩ | ⟨ha3, _, _⟩
-              · -- h3 is also a matching edge => v3 = v1, contradicts nodup!
-                cases ‹V × Bool› with | mk x1 b1 =>
-                cases ‹V × Bool› with | mk x2 b2 =>
-                cases ‹V × Bool› with | mk x3 b3 =>
-                simp only at heq2 hne2 heq3 hne3 hb1 hb3 hnd
-                subst heq2; subst heq3; subst hb1; subst hb3
-                cases b2 <;> simp_all
-              · -- ha1 : u ~ x1, ha3 : x1 ~ x3, ha4 : x3 ~ u => triangle in H!
-                rw [← heq2] at ha3
-                exact htf u _ _ ha1 ha3 ha4
-            · -- h2 is an H-edge => v2.2 = false. Then h3 MUST be a matching edge (since v3.2 = true)!
+            · simp only at heq2 hne2
+              subst heq2
+              cases b2
+              · exact hne2 rfl
+              · rcases h3 with ⟨heq3, _⟩ | ⟨ha3, _, _⟩
+                · simp only at heq3
+                  subst heq3
+                  exact hnd.2.2.1.1 rfl
+                · exact htf u x1 x3 ha1 ha3 ha4
+            · have hb2 : b2 = false := by
+                have hb := hbal x1 x2 ha2
+                rw [hs2a, hs2b] at hb
+                exact hb.symm
+              subst hb2
               rcases h3 with ⟨heq3, _⟩ | ⟨ha3, hs3a, hs3b⟩
-              · -- ha1 : u ~ x1, ha2 : x1 ~ x2, ha4 : x2 ~ u => triangle in H!
-                rw [← heq3] at ha4
-                exact htf u _ _ ha1 ha2 ha4
-              · -- Both h2 and h3 are H-edges => v2.2 = false and v3.2 = false, contradicting hb3!
-                have h2b := hbal _ _ ha2
-                have h3b := hbal _ _ ha3
-                rw [hs2a, hs2b] at h2b
-                rw [hs3a, hs3b] at h3b
-                rw [hb1] at h2b
-                rw [← h2b, hb3] at h3b
-                exact Bool.false_ne_true h3b
+              · simp only at heq3
+                subst heq3
+                exact htf u x1 x2 ha1 ha2 ha4
+              · have hb := hbal x2 x3 ha3
+                rw [hs3a, hs3b] at hb
+                exact Bool.false_ne_true hb
 
 /-- **Triangle-Free Balanced `C₈` Unconditional `M`-Chordlessness**:
 In any triangle-free balanced transition system `(H, side)` whose blow-up is `C₄`-free (even at
@@ -535,7 +513,8 @@ private theorem internalSwitches_allEdgesOnSide {V : Type*} {H : SimpleGraph V}
     ∀ {u v : V} (p : H.Walk u v), AllEdgesOnSide side b p → internalSwitches side p = 0
   | _, _, .nil, _ => rfl
   | _, _, .cons _ .nil, _ => rfl
-  | _, _, .cons _ (.cons h₂ rest), ⟨_, hba, hbc, hcb, hrest⟩ => by
+  | _, _, .cons _ (.cons h₂ rest), h => by
+      rcases h with ⟨_, hba, hbc, hcb, hrest⟩
       simp only [internalSwitches, hba, hbc, ne_eq, not_true_eq_false, ↓reduceIte, zero_add]
       exact internalSwitches_allEdgesOnSide side b (.cons h₂ rest) ⟨hbc, hcb, hrest⟩
 
@@ -543,43 +522,43 @@ private theorem startSide_allEdgesOnSide {V : Type*} {H : SimpleGraph V}
     (side : V → V → Bool) (b : Bool) :
     ∀ {u v : V} (p : H.Walk u v), 1 ≤ p.length → AllEdgesOnSide side b p → startSide side p = b
   | _, _, .nil, hp, _ => by simp at hp
-  | _, _, .cons _ _, _, ⟨hab, _, _⟩ => hab
+  | _, _, .cons _ _, _, h => h.1
 
 private theorem endSide_allEdgesOnSide {V : Type*} {H : SimpleGraph V}
     (side : V → V → Bool) (b : Bool) :
     ∀ {u v : V} (p : H.Walk u v), 1 ≤ p.length → AllEdgesOnSide side b p → endSide side p = b
   | _, _, .nil, hp, _ => by simp at hp
-  | _, _, .cons _ .nil, _, ⟨_, hba, _⟩ => hba
-  | _, _, .cons _ (.cons h rest), _, ⟨_, _, hrest⟩ =>
-      endSide_allEdgesOnSide side b (.cons h rest) (by simp) hrest
+  | _, _, .cons _ .nil, _, h => h.2.1
+  | _, _, .cons _ (.cons h₂ rest), _, h =>
+      endSide_allEdgesOnSide side b (.cons h₂ rest) (by simp) h.2.2
 
 private theorem internalSwitches_append_edge {V : Type*} {H : SimpleGraph V}
     (side : V → V → Bool) :
-    ∀ {u w : V} (p : H.Walk u w) (hwu : H.Adj w u), 1 ≤ p.length →
-      internalSwitches side (p.append (.cons hwu .nil)) =
-        internalSwitches side p + if endSide side p ≠ side w u then 1 else 0
-  | _, _, .nil, _, hp => by simp at hp
-  | _, _, .cons _ .nil, _, _ => by
+    ∀ {u w z : V} (p : H.Walk u w) (hwz : H.Adj w z), 1 ≤ p.length →
+      internalSwitches side (p.append (.cons hwz .nil)) =
+        internalSwitches side p + if endSide side p ≠ side w z then 1 else 0
+  | _, _, _, .nil, _, hp => by simp at hp
+  | _, _, _, .cons _ .nil, _, _ => by
       simp [Walk.append, internalSwitches, endSide]
-  | _, _, .cons _ (.cons h₂ rest), hwu, _ => by
-      have ih := internalSwitches_append_edge side (.cons h₂ rest) hwu (by simp)
+  | _, _, _, .cons _ (.cons h₂ rest), hwz, _ => by
+      have ih := internalSwitches_append_edge side (.cons h₂ rest) hwz (by simp)
       simp only [Walk.append, internalSwitches, endSide] at ih ⊢
       omega
 
 private theorem startSide_append_edge {V : Type*} {H : SimpleGraph V}
     (side : V → V → Bool) :
-    ∀ {u w : V} (p : H.Walk u w) (hwu : H.Adj w u), 1 ≤ p.length →
-      startSide side (p.append (.cons hwu .nil)) = startSide side p
-  | _, _, .nil, _, hp => by simp at hp
-  | _, _, .cons _ _, _, _ => rfl
+    ∀ {u w z : V} (p : H.Walk u w) (hwz : H.Adj w z), 1 ≤ p.length →
+      startSide side (p.append (.cons hwz .nil)) = startSide side p
+  | _, _, _, .nil, _, hp => by simp at hp
+  | _, _, _, .cons _ _, _, _ => rfl
 
 private theorem endSide_append_edge {V : Type*} {H : SimpleGraph V}
     (side : V → V → Bool) :
-    ∀ {u w : V} (p : H.Walk u w) (hwu : H.Adj w u),
-      endSide side (p.append (.cons hwu .nil)) = side u w
-  | _, _, .nil, _ => rfl
-  | _, _, .cons _ .nil, _ => rfl
-  | _, _, .cons _ (.cons h₂ rest), hwu => endSide_append_edge side (.cons h₂ rest) hwu
+    ∀ {u w z : V} (p : H.Walk u w) (hwz : H.Adj w z),
+      endSide side (p.append (.cons hwz .nil)) = side z w
+  | _, _, _, .nil, _ => rfl
+  | _, _, _, .cons _ .nil, _ => rfl
+  | _, _, _, .cons _ (.cons h₂ rest), hwz => endSide_append_edge side (.cons h₂ rest) hwz
 
 /-- **Balanced 2-Factor Single-Edge Chord Forcing Theorem**:
 In any balanced system `H = F₀ ⊔ F₁`, if a simple `F₁`-path `p` of length `2^r - 3` (`r ≥ 3`)
