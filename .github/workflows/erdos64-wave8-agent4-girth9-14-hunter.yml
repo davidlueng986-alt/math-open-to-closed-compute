@@ -1,0 +1,23 @@
+name: E64 Wave 8 Agent 4 Girth 9-14 OpenMP Counterexample Hunter
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  hunt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile C++20 OpenMP Girth 9-14 Hunter
+        run: |
+          mkdir -p out
+          g++ -O3 -fopenmp -std=c++20 -Wall -Wextra jobs/erdos64-wave8-agent4-girth9-14-hunter/girth9_14_hunter.cpp -o girth9_14_hunter
+      - name: Run Full OpenMP Girth 9-14 Counterexample Hunter (n in [58, 320])
+        run: ./girth9_14_hunter out/girth9_14_hunter.json | tee out/girth9_14_hunter.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos64-wave8-agent4-girth9-14-hunter
+          path: out/
+          retention-days: 90
