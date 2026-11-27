@@ -46,12 +46,12 @@ noncomputable def Defects {V : Type*} [Fintype V] (G : SimpleGraph V) [Decidable
 /-- `MinimalBad2 G`: a vertex-minimal `PowerFree` graph with `δ(G) ≥ 2` and at most 2 defects,
 such that every strictly smaller nonempty simple graph with `δ ≥ 2` and at most 2 defects
 contains a power-of-two simple cycle. -/
-structure MinimalBad2 {V : Type*} [Fintype V] [DecidableEq V]
+structure MinimalBad2.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] : Prop where
   power_free : PowerFree G
   min_deg_two : ∀ v : V, 2 ≤ G.degree v
   defects_le_two : (Defects G).card ≤ 2
-  minimal : ∀ {W : Type*} [Fintype W] [DecidableEq W]
+  minimal : ∀ {W : Type u} [Fintype W] [DecidableEq W]
     (H : SimpleGraph W) [DecidableRel H.Adj],
     Nonempty W →
     Fintype.card W < Fintype.card V →
@@ -66,38 +66,19 @@ lemma powerFree_c4Free {V : Type*} (G : SimpleGraph V) (hpf : PowerFree G) : C4F
     Walk.cons h1 (Walk.cons h2 (Walk.cons h3 (Walk.cons h4 Walk.nil)))
   have hp_cyc : p.IsCycle := by
     rw [Walk.isCycle_def]
-    refine ⟨?_, ?_, ?_⟩
+    refine ⟨?_, by simp [p], ?_⟩
     · rw [Walk.isTrail_def]
       simp only [p, Walk.edges_cons, Walk.edges_nil, List.nodup_cons, List.mem_cons,
-        List.not_mem_nil, or_false, List.nodup_nil, and_true, Sym2.eq_iff]
-      refine ⟨?_, ?_, ?_⟩
-      · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
-        · exact hab rfl
-        · exact hac rfl
-        · exact hac rfl
-        · exact hbd rfl
-        · exact hda rfl
-        · exact hbd rfl
-      · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
-        · exact hbc rfl
-        · exact hbd rfl
-        · exact hbd rfl
-        · exact hac rfl
-      · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
-        · exact hcd rfl
-        · exact hac rfl
-    · simp [p]
+        List.not_mem_nil, or_false, List.nodup_nil, and_true, Sym2.eq_iff, not_or]
+      exact ⟨⟨⟨fun ⟨h, _⟩ => hab h, fun ⟨h, _⟩ => hac h⟩,
+              ⟨fun ⟨h, _⟩ => hac h, fun ⟨_, h⟩ => hbd h⟩,
+              ⟨fun ⟨h, _⟩ => hda h.symm, fun ⟨_, h⟩ => hbd h⟩⟩,
+             ⟨⟨fun ⟨h, _⟩ => hbc h, fun ⟨h, _⟩ => hbd h⟩,
+              ⟨fun ⟨h, _⟩ => hbd h, fun ⟨_, h⟩ => hac h.symm⟩⟩,
+             ⟨fun ⟨h, _⟩ => hcd h, fun ⟨h, _⟩ => hac h.symm⟩⟩
     · simp only [p, Walk.support_cons, Walk.support_nil, List.tail_cons, List.nodup_cons,
-        List.mem_cons, List.not_mem_nil, or_false, List.nodup_nil, and_true]
-      refine ⟨?_, ?_, ?_⟩
-      · rintro (rfl | rfl | rfl)
-        · exact hbc rfl
-        · exact hbd rfl
-        · exact hab rfl
-      · rintro (rfl | rfl)
-        · exact hcd rfl
-        · exact hac rfl
-      · intro h; exact hda h.symm
+        List.mem_cons, List.not_mem_nil, or_false, List.nodup_nil, and_true, not_or]
+      exact ⟨⟨hbc, hbd, hab.symm⟩, ⟨hcd, hac.symm⟩, hda⟩
   exact hpf ⟨a, p, hp_cyc, ⟨2, le_rfl, rfl⟩⟩
 
 /-- Disjointness and non-adjacency of external neighborhoods of a non-triangle edge in a `C4Free` graph. -/
@@ -122,22 +103,20 @@ def crossRewire {V : Type*} (G : SimpleGraph V) (u v u₁ u₂ v₁ v₂ : V)
     G.Adj x.1 y.1 ∨
     (x.1 = u₁ ∧ y.1 = v₁) ∨ (x.1 = v₁ ∧ y.1 = u₁) ∨
     (x.1 = u₂ ∧ y.1 = v₂) ∨ (x.1 = v₂ ∧ y.1 = u₂)
-  symm := by
-    intro x y h
+  symm := ⟨fun _ _ h => by
     rcases h with h | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
     · exact Or.inl h.symm
     · exact Or.inr (Or.inr (Or.inl ⟨rfl, rfl⟩))
     · exact Or.inr (Or.inl ⟨rfl, rfl⟩)
     · exact Or.inr (Or.inr (Or.inr (Or.inr ⟨rfl, rfl⟩)))
-    · exact Or.inr (Or.inr (Or.inr (Or.inl ⟨rfl, rfl⟩)))
-  loopless := by
-    intro x h
+    · exact Or.inr (Or.inr (Or.inr (Or.inl ⟨rfl, rfl⟩)))⟩
+  loopless := ⟨fun x h => by
     rcases h with h | ⟨hxa, hxb⟩ | ⟨hxa, hxb⟩ | ⟨hxa, hxb⟩ | ⟨hxa, hxb⟩
-    · exact G.loopless x.1 h
+    · exact G.loopless.irrefl x.1 h
     · exact h1 (hxa.symm.trans hxb)
     · exact h1 (hxb.symm.trans hxa)
     · exact h2 (hxa.symm.trans hxb)
-    · exact h2 (hxb.symm.trans hxa)
+    · exact h2 (hxb.symm.trans hxa)⟩
 
 private lemma degree_eq_of_single_replace' {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -202,7 +181,7 @@ theorem crossRewire_exact_degree_eq {V : Type*} [Fintype V] [DecidableEq V]
     letI : DecidableRel H.Adj := Classical.decRel H.Adj
     ∀ x : {w : V // w ≠ u ∧ w ≠ v}, H.degree x = G.degree x.1 := by
   classical
-  intro H _ x
+  intro H x
   have hu₁_adj : G.Adj u u₁ := (hu_nb u₁).mpr (Or.inr (Or.inl rfl))
   have hu₂_adj : G.Adj u u₂ := (hu_nb u₂).mpr (Or.inr (Or.inr rfl))
   have hv₁_adj : G.Adj v v₁ := (hv_nb v₁).mpr (Or.inr (Or.inl rfl))
@@ -340,7 +319,7 @@ theorem crossRewire_preserves_defects {V : Type*} [Fintype V] [DecidableEq V]
     (∀ x : {w : V // w ≠ u ∧ w ≠ v}, 2 ≤ H.degree x) ∧
     (Defects H).card ≤ (Defects G).card := by
   classical
-  intro H _
+  intro H
   have hdeg := crossRewire_exact_degree_eq G hc4 huv hnotri hu_nb hv_nb hu₁₂ hv₁₂
     hu₁v hu₂v hv₁u hv₂u h1 h2
   refine ⟨fun x => by rw [hdeg x]; exact hmin2 x.1, ?_⟩
@@ -356,7 +335,7 @@ In any `MinimalBad2` graph `G`, for any non-triangle cubic edge `uv` with `N(u) 
 and `N(v) = {u, v₁, v₂}`, **BOTH** cross-rewirings `G_×^(1)` (adding `{u₁v₁, u₂v₂}`) and
 `G_×^(2)` (adding `{u₁v₂, u₂v₁}`) unconditionally contain a simple `2^k`-cycle (`k ≥ 2`).
 -/
-theorem minimal_bad2_dual_cross_rewiring_both_pow2 {V : Type*} [Fintype V] [DecidableEq V]
+theorem minimal_bad2_dual_cross_rewiring_both_pow2.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2 G) {u v u₁ u₂ v₁ v₂ : V}
     (huv : G.Adj u v)

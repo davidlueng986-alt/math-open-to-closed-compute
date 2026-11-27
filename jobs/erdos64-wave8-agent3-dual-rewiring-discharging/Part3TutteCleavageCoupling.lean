@@ -39,34 +39,16 @@ private lemma no_c4 {V : Type*} (G : SimpleGraph V) (hpf : PowerFree G)
     refine ⟨?_, by simp [p], ?_⟩
     · rw [Walk.isTrail_def]
       simp only [p, Walk.edges_cons, Walk.edges_nil, List.nodup_cons, List.mem_cons,
-        List.not_mem_nil, or_false, List.nodup_nil, and_true, Sym2.eq_iff]
-      refine ⟨?_, ?_, ?_⟩
-      · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
-        · exact hab rfl
-        · exact hac rfl
-        · exact hac rfl
-        · exact hbd rfl
-        · exact hda rfl
-        · exact hbd rfl
-      · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
-        · exact hbc rfl
-        · exact hbd rfl
-        · exact hbd rfl
-        · exact hac rfl
-      · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
-        · exact hcd rfl
-        · exact hac rfl
+        List.not_mem_nil, or_false, List.nodup_nil, and_true, Sym2.eq_iff, not_or]
+      exact ⟨⟨⟨fun ⟨h, _⟩ => hab h, fun ⟨h, _⟩ => hac h⟩,
+              ⟨fun ⟨h, _⟩ => hac h, fun ⟨_, h⟩ => hbd h⟩,
+              ⟨fun ⟨h, _⟩ => hda h.symm, fun ⟨_, h⟩ => hbd h⟩⟩,
+             ⟨⟨fun ⟨h, _⟩ => hbc h, fun ⟨h, _⟩ => hbd h⟩,
+              ⟨fun ⟨h, _⟩ => hbd h, fun ⟨_, h⟩ => hac h.symm⟩⟩,
+             ⟨fun ⟨h, _⟩ => hcd h, fun ⟨h, _⟩ => hac h.symm⟩⟩
     · simp only [p, Walk.support_cons, Walk.support_nil, List.tail_cons, List.nodup_cons,
-        List.mem_cons, List.not_mem_nil, or_false, List.nodup_nil, and_true]
-      refine ⟨?_, ?_, ?_⟩
-      · rintro (rfl | rfl | rfl)
-        · exact hbc rfl
-        · exact hbd rfl
-        · exact hab rfl
-      · rintro (rfl | rfl)
-        · exact hcd rfl
-        · exact hac rfl
-      · intro h; exact hda h.symm
+        List.mem_cons, List.not_mem_nil, or_false, List.nodup_nil, and_true, not_or]
+      exact ⟨⟨hbc, hbd, hab.symm⟩, ⟨hcd, hac.symm⟩, hda⟩
   exact hpf ⟨a, p, hp, ⟨2, le_rfl, rfl⟩⟩
 
 private lemma no_c8 {V : Type*} (G : SimpleGraph V) (hpf : PowerFree G)
@@ -89,7 +71,7 @@ private lemma no_c8 {V : Type*} (G : SimpleGraph V) (hpf : PowerFree G)
     refine ⟨?_, by simp [p], htail_nd⟩
     rw [Walk.isTrail_def]
     simp only [p, Walk.edges_cons, Walk.edges_nil, List.nodup_cons, List.mem_cons,
-      List.not_mem_nil, or_false, List.nodup_nil, and_true, Sym2.eq_iff]
+      List.not_mem_nil, or_false, List.nodup_nil, and_true, Sym2.eq_iff, not_or]
     simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
       List.nodup_nil, and_true] at hnd
     rcases hnd with ⟨⟨h01, h02, h03, h04, h05, h06, h07⟩,
@@ -99,28 +81,24 @@ private lemma no_c8 {V : Type*} (G : SimpleGraph V) (hpf : PowerFree G)
       ⟨h45, h46, h47⟩,
       ⟨h56, h57⟩,
       h67⟩
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
-      · intro h; rcases h with
-          (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) | (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) |
-          (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) | (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) |
-          (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) | (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) |
-          (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) <;> first
-          | exact h01 rfl | exact h02 rfl | exact h03 rfl | exact h04 rfl
-          | exact h05 rfl | exact h06 rfl | exact h07 rfl
-          | exact h12 rfl | exact h13 rfl | exact h14 rfl | exact h15 rfl
-          | exact h16 rfl | exact h17 rfl
-          | exact h23 rfl | exact h24 rfl | exact h25 rfl | exact h26 rfl | exact h27 rfl
-          | exact h34 rfl | exact h35 rfl | exact h36 rfl | exact h37 rfl
-          | exact h45 rfl | exact h46 rfl | exact h47 rfl
-          | exact h56 rfl | exact h57 rfl | exact h67 rfl
-          | exact h01.symm rfl | exact h02.symm rfl | exact h03.symm rfl | exact h04.symm rfl
-          | exact h05.symm rfl | exact h06.symm rfl | exact h07.symm rfl
-          | exact h12.symm rfl | exact h13.symm rfl | exact h14.symm rfl | exact h15.symm rfl
-          | exact h16.symm rfl | exact h17.symm rfl
-          | exact h23.symm rfl | exact h24.symm rfl | exact h25.symm rfl | exact h26.symm rfl
-          | exact h27.symm rfl | exact h34.symm rfl | exact h35.symm rfl | exact h36.symm rfl
-          | exact h37.symm rfl | exact h45.symm rfl | exact h46.symm rfl | exact h47.symm rfl
-          | exact h56.symm rfl | exact h57.symm rfl | exact h67.symm rfl
+    refine ⟨⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩,
+            ⟨?_, ?_, ?_, ?_, ?_⟩, ⟨?_, ?_, ?_, ?_⟩, ⟨?_, ?_, ?_⟩, ⟨?_, ?_⟩, ?_⟩ <;>
+      exact ⟨fun ⟨h, _⟩ => by first
+        | exact h01 h | exact h02 h | exact h03 h | exact h04 h | exact h05 h | exact h06 h | exact h07 h
+        | exact h12 h | exact h13 h | exact h14 h | exact h15 h | exact h16 h | exact h17 h
+        | exact h23 h | exact h24 h | exact h25 h | exact h26 h | exact h27 h
+        | exact h34 h | exact h35 h | exact h36 h | exact h37 h
+        | exact h45 h | exact h46 h | exact h47 h | exact h56 h | exact h57 h | exact h67 h
+        | exact h01 h.symm | exact h02 h.symm | exact h03 h.symm | exact h04 h.symm
+        | exact h05 h.symm | exact h06 h.symm | exact h07 h.symm,
+      fun ⟨h, _⟩ => by first
+        | exact h01 h | exact h02 h | exact h03 h | exact h04 h | exact h05 h | exact h06 h | exact h07 h
+        | exact h12 h | exact h13 h | exact h14 h | exact h15 h | exact h16 h | exact h17 h
+        | exact h23 h | exact h24 h | exact h25 h | exact h26 h | exact h27 h
+        | exact h34 h | exact h35 h | exact h36 h | exact h37 h
+        | exact h45 h | exact h46 h | exact h47 h | exact h56 h | exact h57 h | exact h67 h
+        | exact h01 h.symm | exact h02 h.symm | exact h03 h.symm | exact h04 h.symm
+        | exact h05 h.symm | exact h06 h.symm | exact h07 h.symm⟩
   exact hpf ⟨v₀, p, hp, ⟨3, by decide, by decide⟩⟩
 
 private lemma has_c6_of_six {V : Type*} (G : SimpleGraph V)
@@ -143,24 +121,22 @@ private lemma has_c6_of_six {V : Type*} (G : SimpleGraph V)
     refine ⟨?_, by simp [p], htail_nd⟩
     rw [Walk.isTrail_def]
     simp only [p, Walk.edges_cons, Walk.edges_nil, List.nodup_cons, List.mem_cons,
-      List.not_mem_nil, or_false, List.nodup_nil, and_true, Sym2.eq_iff]
+      List.not_mem_nil, or_false, List.nodup_nil, and_true, Sym2.eq_iff, not_or]
     simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
       List.nodup_nil, and_true] at hnd
     rcases hnd with ⟨⟨h01, h02, h03, h04, h05⟩, ⟨h12, h13, h14, h15⟩,
       ⟨h23, h24, h25⟩, ⟨h34, h35⟩, h45⟩
-    refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;>
-      · intro h; rcases h with
-          (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) | (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) |
-          (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) | (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) |
-          (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) <;> first
-          | exact h01 rfl | exact h02 rfl | exact h03 rfl | exact h04 rfl | exact h05 rfl
-          | exact h12 rfl | exact h13 rfl | exact h14 rfl | exact h15 rfl
-          | exact h23 rfl | exact h24 rfl | exact h25 rfl
-          | exact h34 rfl | exact h35 rfl | exact h45 rfl
-          | exact h01.symm rfl | exact h02.symm rfl | exact h03.symm rfl | exact h04.symm rfl
-          | exact h05.symm rfl | exact h12.symm rfl | exact h13.symm rfl | exact h14.symm rfl
-          | exact h15.symm rfl | exact h23.symm rfl | exact h24.symm rfl | exact h25.symm rfl
-          | exact h34.symm rfl | exact h35.symm rfl | exact h45.symm rfl
+    refine ⟨⟨?_, ?_, ?_, ?_, ?_⟩, ⟨?_, ?_, ?_, ?_⟩, ⟨?_, ?_, ?_⟩, ⟨?_, ?_⟩, ?_⟩ <;>
+      exact ⟨fun ⟨h, _⟩ => by first
+        | exact h01 h | exact h02 h | exact h03 h | exact h04 h | exact h05 h
+        | exact h12 h | exact h13 h | exact h14 h | exact h15 h
+        | exact h23 h | exact h24 h | exact h25 h | exact h34 h | exact h35 h | exact h45 h
+        | exact h01 h.symm | exact h02 h.symm | exact h03 h.symm | exact h04 h.symm | exact h05 h.symm,
+      fun ⟨h, _⟩ => by first
+        | exact h01 h | exact h02 h | exact h03 h | exact h04 h | exact h05 h
+        | exact h12 h | exact h13 h | exact h14 h | exact h15 h
+        | exact h23 h | exact h24 h | exact h25 h | exact h34 h | exact h35 h | exact h45 h
+        | exact h01 h.symm | exact h02 h.symm | exact h03 h.symm | exact h04 h.symm | exact h05 h.symm⟩
   exact ⟨v₀, p, hp, rfl⟩
 
 theorem dual_cross_rewiring_trifree_same_scale_c6_rigidity {V : Type*} (G : SimpleGraph V)
@@ -301,22 +277,20 @@ def crossRewire {V : Type*} (G : SimpleGraph V) (u v u₁ u₂ v₁ v₂ : V)
     G.Adj x.1 y.1 ∨
     (x.1 = u₁ ∧ y.1 = v₁) ∨ (x.1 = v₁ ∧ y.1 = u₁) ∨
     (x.1 = u₂ ∧ y.1 = v₂) ∨ (x.1 = v₂ ∧ y.1 = u₂)
-  symm := by
-    intro x y h
+  symm := ⟨fun _ _ h => by
     rcases h with h | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
     · exact Or.inl h.symm
     · exact Or.inr (Or.inr (Or.inl ⟨rfl, rfl⟩))
     · exact Or.inr (Or.inl ⟨rfl, rfl⟩)
     · exact Or.inr (Or.inr (Or.inr (Or.inr ⟨rfl, rfl⟩)))
-    · exact Or.inr (Or.inr (Or.inr (Or.inl ⟨rfl, rfl⟩)))
-  loopless := by
-    intro x h
+    · exact Or.inr (Or.inr (Or.inr (Or.inl ⟨rfl, rfl⟩)))⟩
+  loopless := ⟨fun x h => by
     rcases h with h | ⟨hxa, hxb⟩ | ⟨hxa, hxb⟩ | ⟨hxa, hxb⟩ | ⟨hxa, hxb⟩
-    · exact G.loopless x.1 h
+    · exact G.loopless.irrefl x.1 h
     · exact h1 (hxa.symm.trans hxb)
     · exact h1 (hxb.symm.trans hxa)
     · exact h2 (hxa.symm.trans hxb)
-    · exact h2 (hxb.symm.trans hxa)
+    · exact h2 (hxb.symm.trans hxa)⟩
 
 theorem crossRewire_preserves_two_cut_separation {V : Type*} (G : SimpleGraph V)
     {C_a C_b : Set V}

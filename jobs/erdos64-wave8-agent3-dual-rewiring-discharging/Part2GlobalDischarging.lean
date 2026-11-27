@@ -34,12 +34,12 @@ noncomputable def V4 {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G
     Finset V :=
   Finset.univ.filter (fun v => 4 ≤ G.degree v)
 
-structure MinimalBad2EV {V : Type*} [Fintype V] [DecidableEq V]
+structure MinimalBad2EV.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] : Prop where
   power_free : PowerFree G
   min_deg_two : ∀ v : V, 2 ≤ G.degree v
   defects_le_two : (Defects G).card ≤ 2
-  vertex_minimal : ∀ {W : Type*} [Fintype W] [DecidableEq W]
+  vertex_minimal : ∀ {W : Type u} [Fintype W] [DecidableEq W]
     (H : SimpleGraph W) [DecidableRel H.Adj],
     Nonempty W →
     Fintype.card W < Fintype.card V →
@@ -67,7 +67,7 @@ lemma hasPow2Cycle_of_le {V : Type*} {H G : SimpleGraph V} (hle : H ≤ G)
   refine ⟨v, p.map f, hcyc.map Function.injective_id, ?_⟩
   simpa [Walk.length_map] using hpow
 
-theorem minimal_bad2_vge4_independent {V : Type*} [Fintype V] [DecidableEq V]
+theorem minimal_bad2_vge4_independent.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) {u v : V}
     (hu : 4 ≤ G.degree u) (hv : 4 ≤ G.degree v) :
@@ -143,7 +143,7 @@ theorem minimal_bad2_vge4_independent {V : Type*} [Fintype V] [DecidableEq V]
     (le_trans hH_def hmb.defects_le_two)
   exact hmb.power_free (hasPow2Cycle_of_le hle hpow)
 
-lemma safe_delete_v3_subset_impossible {V : Type*} [Fintype V] [DecidableEq V]
+lemma safe_delete_v3_subset_impossible.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) (S : Finset V) (hSne : S.Nonempty)
     (hcomp_ne : ∃ z : V, z ∉ S)
@@ -214,7 +214,7 @@ lemma safe_delete_v3_subset_impossible {V : Type*} [Fintype V] [DecidableEq V]
   have hpow := hmb.vertex_minimal H hneW hcard_lt hH_min2 (le_trans hH_def hmb.defects_le_two)
   exact hmb.power_free (hasPow2Cycle_of_induce G {w : V | w ∉ S} hpow)
 
-theorem minimal_bad2_v3_no_all_high_neighbors {V : Type*} [Fintype V] [DecidableEq V]
+theorem minimal_bad2_v3_no_all_high_neighbors.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) {u : V} (hu : G.degree u = 3) :
     ∃ w : V, G.Adj u w ∧ G.degree w < 4 := by
@@ -272,7 +272,7 @@ private lemma cycle_of_path_and_cherry' {V : Type*} (G : SimpleGraph V)
     · simp [q]
   exact ⟨q, hq_cyc, hlen⟩
 
-theorem minimal_bad2_v3_component_size_ge_girth_sub_one {V : Type*} [Fintype V] [DecidableEq V]
+theorem minimal_bad2_v3_component_size_ge_girth_sub_one.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) {g : ℕ} (hg : GirthGe G g)
     (hV4 : (V4 G).Nonempty)
@@ -419,7 +419,7 @@ lemma sum_inter_card_comm {V : Type*} [Fintype V] [DecidableEq V]
   simp_rw [h1, h2]
   exact Finset.sum_comm
 
-theorem minimal_bad2_girth_g_v3_density_universal {V : Type*} [Fintype V] [DecidableEq V]
+theorem minimal_bad2_girth_g_v3_density_universal.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) {g : ℕ} (hg4 : 4 ≤ g) (hg : GirthGe G g) :
     4 * (g - 1) * Fintype.card V ≤
@@ -680,7 +680,7 @@ theorem minimal_bad2_girth_g_v3_density_universal {V : Type*} [Fintype V] [Decid
         _ = (5 * g - 3) * (V3 G).card := by rw [hcoeff]
     linarith
 
-theorem minimal_bad2_girth7_v3_density_3_4 {V : Type*} [Fintype V] [DecidableEq V]
+theorem minimal_bad2_girth7_v3_density_3_4.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) (hg : GirthGe G 7) :
     3 * Fintype.card V ≤ 4 * (V3 G).card + 9 := by
@@ -688,7 +688,7 @@ theorem minimal_bad2_girth7_v3_density_3_4 {V : Type*} [Fintype V] [DecidableEq 
   have hd := hmb.defects_le_two
   omega
 
-theorem minimal_bad2_girth8_auto_girth9_v3_density_16_21 {V : Type*} [Fintype V] [DecidableEq V]
+theorem minimal_bad2_girth8_auto_girth9_v3_density_16_21.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) (hg8 : GirthGe G 8) :
     16 * Fintype.card V ≤ 21 * (V3 G).card + 48 := by
@@ -702,7 +702,7 @@ theorem minimal_bad2_girth8_auto_girth9_v3_density_16_21 {V : Type*} [Fintype V]
   have hd := hmb.defects_le_two
   omega
 
-theorem minimal_bad2_girth_g_v3_internal_degree_bound {V : Type*} [Fintype V] [DecidableEq V]
+theorem minimal_bad2_girth_g_v3_internal_degree_bound.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) {g : ℕ} (hg4 : 4 ≤ g) (hg : GirthGe G g) :
     2 * (g - 2) * (V3 G).card ≤

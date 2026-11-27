@@ -20,17 +20,21 @@ done
 
 rm -f out/axioms.log
 touch out/axioms.log
+FAIL=0
 
 run_audit() {
   local fname="$1"
   shift
   echo "=== Compiling ${fname} ==="
-  lake --dir="${LAKE_DIR}" env lean -DwarningAsError=true "${JOB_DIR}/${fname}" 2>&1 | tee "out/${fname}.compile.log"
-  cp "${JOB_DIR}/${fname}" "out/Audit_${fname}"
-  for thm in "$@"; do
-    echo "#print axioms ${thm}" >> "out/Audit_${fname}"
-  done
-  lake --dir="${LAKE_DIR}" env lean -DwarningAsError=true "out/Audit_${fname}" 2>&1 | tee -a out/axioms.log
+  if lake --dir="${LAKE_DIR}" env lean -DwarningAsError=true "${JOB_DIR}/${fname}" 2>&1 | tee "out/${fname}.compile.log"; then
+    cp "${JOB_DIR}/${fname}" "out/Audit_${fname}"
+    for thm in "$@"; do
+      echo "#print axioms ${thm}" >> "out/Audit_${fname}"
+    done
+    lake --dir="${LAKE_DIR}" env lean -DwarningAsError=true "out/Audit_${fname}" 2>&1 | tee -a out/axioms.log || FAIL=1
+  else
+    FAIL=1
+  fi
 }
 
 run_audit Part1DualCrossRewiring.lean \
@@ -57,6 +61,11 @@ run_audit Part3TutteCleavageCoupling.lean \
   E64Wave8Agent3P3.minimal_bad2_v3_min_component_forces_vge4_girth_cycle \
   E64Wave8Agent3P3.crossRewire_preserves_two_cut_separation \
   E64Wave8Agent3P3.crossRewire_two_cut_dyadic_path_asymmetry
+
+if [ "${FAIL}" -ne 0 ]; then
+  echo "ERROR: One or more Lean modules failed to compile."
+  exit 1
+fi
 
 python3 - << 'PY'
 import json, re, hashlib
