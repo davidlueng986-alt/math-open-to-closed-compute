@@ -921,7 +921,6 @@ theorem one_step_tail_strip (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
       cases p with
       | nil => simp at hplen
       | cons huw rest =>
-          rename_i w
           have hrev_len : rest.reverse.length = k + 1 := by
             simp only [Walk.length_reverse]
             simp only [Walk.length_cons] at hplen
@@ -930,21 +929,20 @@ theorem one_step_tail_strip (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
           | nil =>
               rw [hrv] at hrev_len; simp at hrev_len
           | cons huw' qrev =>
-              rename_i w'
-              have hww' : w' = w := by
-                have h1 : (Walk.cons huw rest).reverse.snd = w' := by
+              have hww' : (Walk.cons huw' qrev).snd = (Walk.cons huw rest).snd := by
+                have h1 : (Walk.cons huw rest).reverse.snd = (Walk.cons huw' qrev).snd := by
                   rw [Walk.reverse_cons, hrv]; simp [Walk.cons_append]
-                have h2 : (Walk.cons huw rest).snd = w := rfl
-                rw [h2, h1] at hsnd_eq
+                rw [← h1]
                 exact hsnd_eq.symm
-              subst w'
-              let q : G.Walk w w := qrev.reverse
+              simp only [Walk.snd_cons] at hww'
+              subst hww'
+              let q : G.Walk _ _ := qrev.reverse
               have hrest_eq : rest = q.append (Walk.cons huw'.symm Walk.nil) := by
                 have := congrArg Walk.reverse hrv
                 simpa [q, Walk.reverse_cons] using this
               have hqlen : q.length = k := by
-                have h0 := congrArg Walk.length hrv
-                simp only [Walk.length_reverse, Walk.length_cons] at h0
+                have h0 : (Walk.cons huw' qrev).length = k + 1 := hrv ▸ hrev_len
+                simp only [Walk.length_cons] at h0
                 change qrev.reverse.length = k
                 rw [Walk.length_reverse]
                 omega
@@ -955,10 +953,11 @@ theorem one_step_tail_strip (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
               have hne_snd : u ≠ q.snd := by
                 have hp' : Walk.cons huw rest =
                     Walk.cons huw (q.append (Walk.cons huw'.symm Walk.nil)) := by rw [hrest_eq]
-                cases q with
-                | nil => simp at hqlen; omega
+                cases hq_eq : q with
+                | nil =>
+                    rw [hq_eq] at hqlen; simp at hqlen; omega
                 | cons h₁ q' =>
-                    rw [hp'] at hnb_p
+                    rw [hp', hq_eq, Walk.cons_append] at hnb_p
                     exact hnb_p.1
               have hne_rev : u ≠ q.reverse.snd := by
                 have hnb_rev := isNonBacktracking_reverse hnb_p
@@ -972,7 +971,7 @@ theorem one_step_tail_strip (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
                 | cons h₁ qrev' =>
                     simp only [IsNonBacktracking] at hnb_r2
                     simpa [q, Walk.reverse_reverse, Walk.snd_cons] using hnb_r2.1
-              refine ⟨⟨⟨w, q⟩, u⟩, ?_, ?_⟩
+              refine ⟨⟨⟨_, q⟩, u⟩, ?_, ?_⟩
               · simp only [Fibers, All, Finset.mem_sigma, Finset.mem_univ, true_and, nbWalks,
                   Finset.mem_filter, mem_finsetWalkLength_iff, Finset.mem_erase,
                   G.mem_neighborFinset]
@@ -1055,14 +1054,13 @@ theorem taillessCount_eq_chebMat_trace (G : SimpleGraph V) [DecidableRel G.Adj] 
               have h1not : 1 ∉ Finset.Icc 2 (r + 1) := by simp
               rw [Finset.sum_insert h1not]
               congr 1
-              · rw [show 2 * (r + 2) - 2 * 1 = 2 * (r + 1) by omega]
-              · refine Finset.sum_bij (fun j _ => j - 1) ?_ ?_ ?_ ?_
-                · intro j hj; simp only [Finset.mem_Icc] at hj ⊢; omega
-                · intro j₁ hj₁ j₂ hj₂ h; simp only [Finset.mem_Icc] at hj₁ hj₂; omega
-                · intro b hb; refine ⟨b + 1, ?_, by omega⟩; simp only [Finset.mem_Icc] at hb ⊢; omega
-                · intro j hj
-                  simp only [Finset.mem_Icc] at hj
-                  rw [show 2 * (r + 2) - 2 * j = 2 * (r + 1) - 2 * (j - 1) by omega]
+              refine Finset.sum_bij (fun j _ => j - 1) ?_ ?_ ?_ ?_
+              · intro j hj; simp only [Finset.mem_Icc] at hj ⊢; omega
+              · intro j₁ hj₁ j₂ hj₂ h; simp only [Finset.mem_Icc] at hj₁ hj₂; omega
+              · intro b hb; refine ⟨b + 1, ?_, by omega⟩; simp only [Finset.mem_Icc] at hb ⊢; omega
+              · intro j hj
+                simp only [Finset.mem_Icc] at hj
+                rw [show 2 * (r + 2) - 2 * j = 2 * (r + 1) - 2 * (j - 1) by omega]
             have hsub_r : r + 2 - 1 = r + 1 := by omega
             have hsub_r1 : r + 1 - 1 = r := by omega
             rw [hsub_r, hsum_shift]
