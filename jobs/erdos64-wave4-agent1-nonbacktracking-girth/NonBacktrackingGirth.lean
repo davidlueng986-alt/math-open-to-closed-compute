@@ -118,7 +118,7 @@ private theorem isCycle_of_nonBacktracking_nodup_tail {V : Type*} {G : SimpleGra
         refine ⟨?_⟩
         simp only [Walk.edges_cons, List.nodup_cons]
         exact ⟨hnotmem, hrest_path.isTrail.edges_nodup⟩
-      exact ⟨htrail, by simp, hnd⟩
+      exact ⟨⟨htrail, by simp⟩, hnd⟩
 
 private theorem exists_append_of_mem_support {V : Type*} {G : SimpleGraph V} :
     ∀ {u v : V} (w : G.Walk u v) {x : V},
