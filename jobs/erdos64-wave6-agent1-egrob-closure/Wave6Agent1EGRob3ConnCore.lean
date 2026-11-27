@@ -1149,7 +1149,7 @@ theorem identGraph_cycle_lifts_to_dyadic_path {V : Type*} {G : SimpleGraph V}
                 · exact G.ne_of_adj hwd rfl
                 · exact hdb_ne rfl
               · intro e he e' he' heq
-                rw [List.mem_singleton] at he'; subst he'; rw [heq] at he
+                subst he'; subst heq
                 exact hw_not_edges _ he (by simp)
             · simp only [cyc, Walk.support_cons, Walk.support_concat, List.tail_cons]
               rw [List.nodup_append]
@@ -1727,7 +1727,8 @@ theorem minimal_bad2_two_cut_fermat_disjoint {V : Type} [Fintype V]
       have hv1B : v1 ∈ B := hpB_in v1 (Walk.end_mem_support pB)
       have hu1A : u1 ∈ A := hpA_in u1 (Walk.start_mem_support pA)
       have hcross_ne : s(u2, v2) ≠ s(v1, u1) := by
-        rw [Sym2.eq_iff]; rintro (⟨h1, _⟩ | ⟨_, h2⟩)
+        intro h; rw [Sym2.eq_iff] at h
+        rcases h with ⟨h1, _⟩ | ⟨_, h2⟩
         · exact Finset.disjoint_left.mp hdisj hu2A (h1 ▸ hv1B)
         · exact hv12 h2.symm
       rw [List.nodup_append]
@@ -1743,7 +1744,7 @@ theorem minimal_bad2_two_cut_fermat_disjoint {V : Type} [Fintype V]
           exact Finset.disjoint_left.mp hdisj hu1A (hB_in_B _ he u1 (by simp))
       · intro e heA e' heR heq
         subst heq
-        simp only [List.mem_cons, List.mem_append, List.mem_singleton] at heR
+        simp only [List.mem_cons, List.mem_append, List.not_mem_nil, or_false] at heR
         rcases heR with rfl | heB | rfl
         · exact Finset.disjoint_left.mp hdisj (hA_in_A _ heA v2 (by simp)) hv2B
         · cases e with
@@ -1767,14 +1768,15 @@ theorem minimal_bad2_two_cut_fermat_disjoint {V : Type} [Fintype V]
       refine ⟨?_, List.nodup_singleton _, ?_⟩
       · rw [List.nodup_append]
         refine ⟨hpA.support_nodup.tail, hpB.support_nodup, ?_⟩
-        intro x hxA hxB
-        exact hsupp_disj x (List.mem_of_mem_tail hxA) hxB
+        intro x hxA y hyB heq
+        subst heq
+        exact hsupp_disj x (List.mem_of_mem_tail hxA) hyB
       · intro x hxAB y hy heq
         rw [List.mem_singleton] at hy; subst hy; subst heq
         rw [List.mem_append] at hxAB
         rcases hxAB with hxA | hxB
         · have hnd := hpA.support_nodup
-          cases hpA with
+          cases pA with
           | nil => exact hu12 rfl
           | cons _ _ => exact (List.nodup_cons.mp hnd).1 hxA
         · exact hu1_not_B hxB
