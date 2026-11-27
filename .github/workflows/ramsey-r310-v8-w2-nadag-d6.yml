@@ -1,0 +1,140 @@
+name: Ramsey R(3,10) V8 Wave 2 — Unified NA-DAG Tier-1 D6 Closure
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Run mode: poc (20m benchmark on 4 McKay (3,8;27,85) cores) or full (sharded <=5.5h production closure)"
+        required: true
+        default: "poc"
+        type: choice
+        options:
+          - poc
+          - full
+      num_shards:
+        description: "Number of parallel shards (1..10; poc uses 4, full uses up to 10)"
+        required: false
+        default: "4"
+        type: string
+      e_lo:
+        description: "Minimum core edge count e(T) for n_T=27 McKay r38_27.g6.gz (85..92)"
+        required: false
+        default: "85"
+        type: string
+      e_hi:
+        description: "Maximum core edge count e(T) for n_T=27 McKay r38_27.g6.gz (85..92)"
+        required: false
+        default: "85"
+        type: string
+      branches:
+        description: "Optional comma-separated branch IDs (e.g. D6-R5-Q9,D6-R5-Q8; empty = all r=5 branches)"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+  actions: read
+
+concurrency:
+  group: ramsey-r310-v8-w2-nadag-d6-${{ inputs.mode }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      shards: ${{ steps.prep.outputs.shards }}
+      num_shards: ${{ steps.prep.outputs.num_shards }}
+      budget_seconds: ${{ steps.prep.outputs.budget_seconds }}
+      per_core_seconds: ${{ steps.prep.outputs.per_core_seconds }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: prep
+        name: Run Tier-1 D6 pruner, full selftest, and fetch McKay r38_27.g6.gz
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          OPENBLAS_NUM_THREADS=1 python3 jobs/ramsey-r310-v8-w2-nadag-d6/d6_nadag_pruner.py --out-dir out/pruner
+          python3 jobs/ramsey-r310-v8-w2-nadag-d6/d6_nadag_pruner.py --verify-only out/pruner
+          python3 jobs/ramsey-r310-v8-w2-nadag-d6/selftest_d6_nadag.py
+
+          python3 - <<'PY'
+          import json, os, urllib.request
+          from pathlib import Path
+          url = "https://users.cecs.anu.edu.au/~bdm/data/r38_27.g6.gz"
+          gz = Path("out/r38_27.g6.gz")
+          urllib.request.urlretrieve(url, gz)
+          mode = "${{ inputs.mode }}"
+          req_shards = int("${{ inputs.num_shards }}" or "4")
+          num_shards = 4 if mode == "poc" else max(1, min(10, req_shards))
+          budget = 1200 if mode == "poc" else 19800
+          per_core = 600 if mode == "poc" else 1800
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write("shards=" + json.dumps(list(range(num_shards))) + "\n")
+              f.write(f"num_shards={num_shards}\n")
+              f.write(f"budget_seconds={budget}\n")
+              f.write(f"per_core_seconds={per_core}\n")
+          print(f"Prepared mode={mode} num_shards={num_shards} budget={budget}s", flush=True)
+          PY
+          cat out/pruner/d6_nadag_summary.json >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: d6-nadag-inputs-${{ inputs.mode }}
+          path: out/
+          retention-days: 30
+
+  solve-shards:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        shard: ${{ fromJSON(needs.prepare.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: d6-nadag-inputs-${{ inputs.mode }}
+          path: inputs/
+      - name: Run Proof-First Kissat + DRAT/LRAT Shard ${{ matrix.shard }} / ${{ needs.prepare.outputs.num_shards }}
+        run: |
+          set -euo pipefail
+          python3 jobs/ramsey-r310-v8-w2-nadag-d6/d6_batch_runner.py \
+            --plan inputs/pruner/d6_nadag_plan.json \
+            --g6-file inputs/r38_27.g6.gz \
+            --out-dir out \
+            --mode "${{ inputs.mode }}" \
+            --shard-id "${{ matrix.shard }}" \
+            --num-shards "${{ needs.prepare.outputs.num_shards }}" \
+            --budget-seconds "${{ needs.prepare.outputs.budget_seconds }}" \
+            --per-core-seconds "${{ needs.prepare.outputs.per_core_seconds }}" \
+            --nt 27 \
+            --e-lo "${{ inputs.e_lo }}" \
+            --e-hi "${{ inputs.e_hi }}" \
+            --branches "${{ inputs.branches }}"
+          cat out/shard_summary.json >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: d6-nadag-${{ inputs.mode }}-shard-${{ matrix.shard }}
+          path: out/
+          retention-days: 30
