@@ -2,7 +2,7 @@
 // Zero SymPy overhead: builds all polynomials in C++ in <0.1s!
 // Weighted-homogeneous subsystem (l = 1 WLOG since l != 0):
 //   - 2*M*T' - M'*T = 18*A*(A'*r - A*r')  (all degrees 23..0)
-//   - coeff_d(T^2 - 9*p_L*A^2) = 0        (degrees 26..5)
+//   - coeff_d(T^2 - 9*p_L*A^2) = 0        (degrees 30..5; degrees 40..31 vanish identically!)
 //   - w * b2 - 1 = 0                      (b2 != 0 from ord_w Delta D = 10)
 // Runs F_32003 check first, then exact Q modStd(I, 1) (with exact Q verification).
 
@@ -67,9 +67,10 @@ list mcoeff;
 int j, ii, d;
 for (j = 0; j <= 4; j++) { mcoeff[j+1] = ucoeff(M, j); }
 
+poly lhs_rest;
 for (k = 20; k >= 3; k--) {
   d = k + 3;
-  poly lhs_rest = 0;
+  lhs_rest = 0;
   for (j = 0; j <= 3; j++) {
     ii = d + 1 - j;
     if (ii >= 3 && ii <= 20) {
@@ -103,33 +104,58 @@ for (k = 0; k <= 17; k++) {
   pL = pL + ucoeff(gA, k) * u^(k+1) / (k+1);
 }
 poly sqDiff = Tfull^2 - 9*pL*A^2;
-for (k = 27; k <= 40; k++) {
+for (k = 31; k <= 40; k++) {
   if (ucoeff(sqDiff, k) != 0) { printf("ERROR: sqDiff nonzero at %s!", k); quit; }
 }
 
+// First test JUST the top equations eq30, eq29, eq28, eq27, eq26, eq25, eq24, eq23 + ode5 + w*b2 - 1 (NO t2,t1,t0,p0!)
+ideal Itop = ucoeff(sqDiff, 30), ucoeff(sqDiff, 29), ucoeff(sqDiff, 28), ucoeff(sqDiff, 27),
+             ucoeff(sqDiff, 26), ucoeff(sqDiff, 25), ucoeff(sqDiff, 24), ucoeff(sqDiff, 23),
+             ode5, w*b2 - 1;
+printf("Built Itop (no p0,t2,t1,t0)! size(Itop)=%s", size(Itop));
+
 ideal Iu = ode5, ode4, ode3, ode2, ode1, ode0, w*b2 - 1;
-for (k = 5; k <= 26; k++) {
+for (k = 5; k <= 30; k++) {
   Iu = Iu, ucoeff(sqDiff, k);
 }
-printf("All 29 exact polynomials built in Singular! size(Iu)=%s", size(Iu));
+printf("All 33 exact polynomials built in Singular! size(Iu)=%s", size(Iu));
 
-// Map to ring without u!
+// Test Itop first (ONLY 7 variables: a2, a1, a0, w, v6, r0, r1)!
+ring Rtop = 0, (a2, a1, a0, w, v6, r0, r1), dp;
+ideal I_top_q = imap(Ru, Itop);
+
+ring Rtop_p = 32003, (a2, a1, a0, w, v6, r0, r1), dp;
+ideal I_top_p = imap(Rtop, I_top_q);
+printf("=== Running slimgb(I_top_p) over F_32003 (7 vars, NO t2,t1,t0,p0) ===");
+ideal G_top_p = slimgb(I_top_p);
+printf("F_32003 slimgb(Itop) size = %s, G_top_p[1] = %s", size(G_top_p), G_top_p[1]);
+
+setring Rtop;
+if (size(G_top_p) == 1 && G_top_p[1] == 1) {
+  printf("=== Running exact modStd(I_top_q, 1) over Q ===");
+  ideal G_top_q = modStd(I_top_q, 1);
+  printf("Q modStd(Itop, 1) size = %s, G_top_q[1] = %s", size(G_top_q), G_top_q[1]);
+  if (size(G_top_q) == 1 && G_top_q[1] == 1) {
+    printf("SUCCESS_TOP: DEGREE_135_IV_GCD_SIX_PROVED_EMPTY_OVER_Q");
+    quit;
+  }
+}
+
+// Otherwise test full Iall (11 vars)
 ring Rq = 0, (p0, t2, t1, t0, a2, a1, a0, w, v6, r0, r1), dp;
 ideal Iall = imap(Ru, Iu);
 
-// First test over F_32003
 ring Rp = 32003, (p0, t2, t1, t0, a2, a1, a0, w, v6, r0, r1), dp;
 ideal Ip = imap(Rq, Iall);
 printf("=== Running slimgb(Ip) over F_32003 ===");
 ideal Gp = slimgb(Ip);
 printf("F_32003 slimgb(Iall) size = %s, Gp[1] = %s", size(Gp), Gp[1]);
 
-// Now exact Q proof via modStd(Iall, 1) (with exact Q verification)!
 setring Rq;
 printf("=== Running exact modStd(Iall, 1) over Q ===");
 ideal Gq = modStd(Iall, 1);
 printf("Q modStd(Iall, 1) size = %s, Gq[1] = %s", size(Gq), Gq[1]);
 if (size(Gq) == 1 && Gq[1] == 1) {
-  printf("SUCCESS: DEGREE_135_IV_GCD_SIX_PROVED_EMPTY_OVER_Q");
+  printf("SUCCESS_ALL: DEGREE_135_IV_GCD_SIX_PROVED_EMPTY_OVER_Q");
 }
 quit;
