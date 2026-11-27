@@ -69,14 +69,14 @@ lemma bad2_of_iso {V W : Type*} [Fintype V] [Fintype W]
       apply Finset.card_bij (fun w _ => e.symm w)
       · intro w hw
         simp only [Defects, Finset.mem_filter, Finset.mem_univ, true_and] at hw ⊢
-        rw [← e.symm.degree_eq w]
+        rw [e.symm.degree_eq w]
         exact hw
       · intro _ _ _ _ h
         exact e.symm.injective h
       · intro v hv
         refine ⟨e v, ?_, e.symm_apply_apply v⟩
         simp only [Defects, Finset.mem_filter, Finset.mem_univ, true_and] at hv ⊢
-        rw [← e.degree_eq v]
+        rw [e.degree_eq v]
         exact hv
     rw [hcard]
     exact hdef
@@ -106,7 +106,8 @@ lemma powerFree_induce {V : Type*} {G : SimpleGraph V} (s : Set V) (hG : PowerFr
   apply hG
   refine ⟨v.1, p.map (SimpleGraph.Embedding.induce s).toHom, ?_, ?_⟩
   · exact hcyc.map Subtype.val_injective
-  · simpa using hpow
+  · rw [Walk.length_map]
+    exact hpow
 
 /-- Helper: degree in induced subgraph equals number of neighbors inside S. -/
 lemma degree_induce_eq {V : Type*} [Fintype V] (G : SimpleGraph V) (S : Finset V)
@@ -115,13 +116,13 @@ lemma degree_induce_eq {V : Type*} [Fintype V] (G : SimpleGraph V) (S : Finset V
   rw [← SimpleGraph.card_neighborFinset_eq_degree]
   apply Finset.card_bij (fun v _ => v.1)
   · intro v hv
-    simp only [mem_nb, Finset.mem_inter] at hv ⊢
-    exact ⟨hv, v.2⟩
+    rw [Finset.mem_inter, mem_nb]
+    exact ⟨mem_nb.mp hv, v.2⟩
   · intro _ _ _ _ h
     exact Subtype.ext h
   · intro w hw
-    simp only [Finset.mem_inter, mem_nb] at hw
-    exact ⟨⟨w, hw.2⟩, by simpa [mem_nb] using hw.1, rfl⟩
+    rw [Finset.mem_inter, mem_nb] at hw
+    exact ⟨⟨w, hw.2⟩, mem_nb.mpr hw.1, rfl⟩
 
 /-- PILLAR 1.1: Universal Safe-Deletion Principle on EG2-CORE. -/
 theorem minimal_bad2_no_safe_deletion {V : Type} [Fintype V] {G : SimpleGraph V}
@@ -1143,11 +1144,11 @@ theorem identGraph_cycle_lifts_to_dyadic_path {V : Type*} {G : SimpleGraph V}
               simp only [cyc, Walk.edges_cons, Walk.edges_concat, List.concat_eq_append,
                 List.nodup_cons, List.mem_append, List.mem_singleton, not_or, List.nodup_append]
               refine ⟨⟨fun hm => hw_not_edges _ hm (by simp), ?_⟩, hq_edges_nodup,
-                List.nodup_singleton _, ?_⟩
+                by simp, ?_⟩
               · rw [Sym2.eq_iff]
-                rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
-                · exact G.ne_of_adj hwd rfl
-                · exact hdb_ne rfl
+                rintro (⟨_, h2⟩ | ⟨_, h2⟩)
+                · exact G.ne_of_adj hwd h2.symm
+                · exact hdb_ne h2
               · intro e he e' he' heq
                 subst he'; subst heq
                 exact hw_not_edges _ he (by simp)
