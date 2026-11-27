@@ -21,12 +21,16 @@ jobs:
           from pathlib import Path
           p = Path("jobs/erdos64-wave5-agent2-egrob/Wave5Agent2EGRob.lean")
           s = p.read_text()
-          old = """theorem minimal_bad2_no_defect_free_two_cut {n : ℕ} {G : SimpleGraph (Fin n)} [DecidableRel G.Adj]
-    (hmb : MinimalBad2 n G) {a b : Fin n} (hab : a ≠ b)
-    (hda : G.degree a = 2) (hdb : G.degree b = 2)"""
-          new = """theorem minimal_bad2_no_defect_free_two_cut {n : ℕ} {G : SimpleGraph (Fin n)} [DecidableRel G.Adj]
-    (hmb : MinimalBad2 n G) {a b : Fin n} (_hab : a ≠ b)
-    (_hda : G.degree a = 2) (_hdb : G.degree b = 2)"""
+          old = (
+              "theorem minimal_bad2_no_defect_free_two_cut {n : ℕ} {G : SimpleGraph (Fin n)} [DecidableRel G.Adj]\n"
+              "    (hmb : MinimalBad2 n G) {a b : Fin n} (hab : a ≠ b)\n"
+              "    (hda : G.degree a = 2) (hdb : G.degree b = 2)"
+          )
+          new = (
+              "theorem minimal_bad2_no_defect_free_two_cut {n : ℕ} {G : SimpleGraph (Fin n)} [DecidableRel G.Adj]\n"
+              "    (hmb : MinimalBad2 n G) {a b : Fin n} (_hab : a ≠ b)\n"
+              "    (_hda : G.degree a = 2) (_hdb : G.degree b = 2)"
+          )
           assert old in s, "Target header not found"
           p.write_text(s.replace(old, new, 1))
           print("Fixed unused variable warnings.")
