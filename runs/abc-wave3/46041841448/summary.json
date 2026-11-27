@@ -1,0 +1,42 @@
+{
+  "problem": "ABC",
+  "resolution": "unknown",
+  "batch": "agent5",
+  "workflow_result": "success",
+  "source_commit": "a4639f950f2acf69ecf27e0d8eb73ce28b6ad9d7",
+  "run_id": "46041841448",
+  "agents": {
+    "5": {
+      "result": {
+        "certificates_sha256": "f3b84f5684762f73f6a381ce1a667498c641ace0f7dd8158812495bacc6475d9",
+        "doubling_identities_checked": 200,
+        "exact_j_5_adic_checks": 501,
+        "large_index_radicals_computed": false,
+        "max_index": 1001,
+        "new_global_core_estimates_proved": 0,
+        "norm_parity_gcd_congruence_checks": 1001,
+        "odd_root_indices_checked": 501,
+        "original_abc_closed": false,
+        "scope": "Finite exact checks of stated structural family; universal proof is in REPORT.md.",
+        "small_complete_factorizations": 11,
+        "source_sha256": "5e2f7d982ed3ef1cc3315f24f2f70def542cd9b5e65de0e88c2e21d9ac1b465c",
+        "status": "CHECKED"
+      },
+      "provenance": {
+        "agent": 5,
+        "job": "abc-wave3-agent5-root-kernel",
+        "toolbox": "sat",
+        "source_commit": "a4639f950f2acf69ecf27e0d8eb73ce28b6ad9d7",
+        "run_id": "46041841448",
+        "run_attempt": "1",
+        "python": "3.10.12",
+        "file_sha256": {
+          "jobs/abc-wave3-agent5-root-kernel/README.md": "665de51805a3e2f3166dcb1f727728442a833f36a394b5afd4d192a557c646b7",
+          "jobs/abc-wave3-agent5-root-kernel/run.sh": "57beec9c6f7e3c4ae493d7279bc7405bc063faff336d2020e09abc53829154a3",
+          "jobs/abc-wave3-agent5-root-kernel/verify.py": "5e2f7d982ed3ef1cc3315f24f2f70def542cd9b5e65de0e88c2e21d9ac1b465c"
+        }
+      }
+    }
+  },
+  "scope": "Successful jobs verify only their exact structural lemmas or bounded searches, never the original abc conjecture."
+}

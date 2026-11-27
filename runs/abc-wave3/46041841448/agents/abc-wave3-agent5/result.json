@@ -1,0 +1,15 @@
+{
+  "certificates_sha256": "f3b84f5684762f73f6a381ce1a667498c641ace0f7dd8158812495bacc6475d9",
+  "doubling_identities_checked": 200,
+  "exact_j_5_adic_checks": 501,
+  "large_index_radicals_computed": false,
+  "max_index": 1001,
+  "new_global_core_estimates_proved": 0,
+  "norm_parity_gcd_congruence_checks": 1001,
+  "odd_root_indices_checked": 501,
+  "original_abc_closed": false,
+  "scope": "Finite exact checks of stated structural family; universal proof is in REPORT.md.",
+  "small_complete_factorizations": 11,
+  "source_sha256": "5e2f7d982ed3ef1cc3315f24f2f70def542cd9b5e65de0e88c2e21d9ac1b465c",
+  "status": "CHECKED"
+}

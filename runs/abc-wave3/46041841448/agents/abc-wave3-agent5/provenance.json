@@ -1,0 +1,14 @@
+{
+  "agent": 5,
+  "job": "abc-wave3-agent5-root-kernel",
+  "toolbox": "sat",
+  "source_commit": "a4639f950f2acf69ecf27e0d8eb73ce28b6ad9d7",
+  "run_id": "46041841448",
+  "run_attempt": "1",
+  "python": "3.10.12",
+  "file_sha256": {
+    "jobs/abc-wave3-agent5-root-kernel/README.md": "665de51805a3e2f3166dcb1f727728442a833f36a394b5afd4d192a557c646b7",
+    "jobs/abc-wave3-agent5-root-kernel/run.sh": "57beec9c6f7e3c4ae493d7279bc7405bc063faff336d2020e09abc53829154a3",
+    "jobs/abc-wave3-agent5-root-kernel/verify.py": "5e2f7d982ed3ef1cc3315f24f2f70def542cd9b5e65de0e88c2e21d9ac1b465c"
+  }
+}

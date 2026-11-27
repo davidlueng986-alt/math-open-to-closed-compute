@@ -1,0 +1,251 @@
+{
+  "scope": "Completely factored small sample only; no large-index factorization claim.",
+  "small_sample": [
+    {
+      "a": 1,
+      "b": 4,
+      "c": 5,
+      "coordinate_squarefree_kernels": [
+        1,
+        1,
+        5
+      ],
+      "factor_abs_u": {},
+      "factor_abs_v": {
+        "2": 1
+      },
+      "j_5_adic_valuation": -2,
+      "k": 1,
+      "radical_abc": 10,
+      "u": 1,
+      "v": 2
+    },
+    {
+      "a": 121,
+      "b": 4,
+      "c": 125,
+      "coordinate_squarefree_kernels": [
+        1,
+        1,
+        5
+      ],
+      "factor_abs_u": {
+        "11": 1
+      },
+      "factor_abs_v": {
+        "2": 1
+      },
+      "j_5_adic_valuation": -6,
+      "k": 3,
+      "radical_abc": 110,
+      "u": -11,
+      "v": -2
+    },
+    {
+      "a": 1681,
+      "b": 1444,
+      "c": 3125,
+      "coordinate_squarefree_kernels": [
+        1,
+        1,
+        5
+      ],
+      "factor_abs_u": {
+        "41": 1
+      },
+      "factor_abs_v": {
+        "2": 1,
+        "19": 1
+      },
+      "j_5_adic_valuation": -10,
+      "k": 5,
+      "radical_abc": 7790,
+      "u": 41,
+      "v": -38
+    },
+    {
+      "a": 841,
+      "b": 77284,
+      "c": 78125,
+      "coordinate_squarefree_kernels": [
+        1,
+        1,
+        5
+      ],
+      "factor_abs_u": {
+        "29": 1
+      },
+      "factor_abs_v": {
+        "2": 1,
+        "139": 1
+      },
+      "j_5_adic_valuation": -14,
+      "k": 7,
+      "radical_abc": 40310,
+      "u": 29,
+      "v": 278
+    },
+    {
+      "a": 1437601,
+      "b": 515524,
+      "c": 1953125,
+      "coordinate_squarefree_kernels": [
+        1,
+        1,
+        5
+      ],
+      "factor_abs_u": {
+        "11": 1,
+        "109": 1
+      },
+      "factor_abs_v": {
+        "2": 1,
+        "359": 1
+      },
+      "j_5_adic_valuation": -18,
+      "k": 9,
+      "radical_abc": 4304410,
+      "u": -1199,
+      "v": -718
+    },
+    {
+      "a": 41847961,
+      "b": 6980164,
+      "c": 48828125,
+      "coordinate_squarefree_kernels": [
+        1,
+        1,
+        5
+      ],
+      "factor_abs_u": {
+        "6469": 1
+      },
+      "factor_abs_v": {
+        "2": 1,
+        "1321": 1
+      },
+      "j_5_adic_valuation": -22,
+      "k": 11,
+      "radical_abc": 85455490,
+      "u": 6469,
+      "v": -2642
+    },
+    {
+      "a": 78127921,
+      "b": 1142575204,
+      "c": 1220703125,
+      "coordinate_squarefree_kernels": [
+        1,
+        1,
+        5
+      ],
+      "factor_abs_u": {
+        "8839": 1
+      },
+      "factor_abs_v": {
+        "2": 1,
+        "16901": 1
+      },
+      "j_5_adic_valuation": -26,
+      "k": 13,
+      "radical_abc": 1493879390,
+      "u": -8839,
+      "v": 33802
+    },
+    {
+      "a": 11813733481,
+      "b": 18703844644,
+      "c": 30517578125,
+      "coordinate_squarefree_kernels": [
+        1,
+        1,
+        5
+      ],
+      "factor_abs_u": {
+        "11": 1,
+        "41": 1,
+        "241": 1
+      },
+      "factor_abs_v": {
+        "2": 1,
+        "19": 1,
+        "59": 1,
+        "61": 1
+      },
+      "j_5_adic_valuation": -30,
+      "k": 15,
+      "radical_abc": 74323992710,
+      "u": -108691,
+      "v": -136762
+    },
+    {
+      "a": 762340280641,
+      "b": 599172484,
+      "c": 762939453125,
+      "coordinate_squarefree_kernels": [
+        1,
+        1,
+        5
+      ],
+      "factor_abs_u": {
+        "873121": 1
+      },
+      "factor_abs_v": {
+        "2": 1,
+        "12239": 1
+      },
+      "j_5_adic_valuation": -34,
+      "k": 17,
+      "radical_abc": 106861279190,
+      "u": 873121,
+      "v": -24478
+    },
+    {
+      "a": 6357715145401,
+      "b": 12715771182724,
+      "c": 19073486328125,
+      "coordinate_squarefree_kernels": [
+        1,
+        1,
+        5
+      ],
+      "factor_abs_u": {
+        "2521451": 1
+      },
+      "factor_abs_v": {
+        "2": 1,
+        "1782959": 1
+      },
+      "j_5_adic_valuation": -38,
+      "k": 19,
+      "radical_abc": 44956437535090,
+      "u": -2521451,
+      "v": 3565918
+    },
+    {
+      "a": 44880875063761,
+      "b": 431956283139364,
+      "c": 476837158203125,
+      "coordinate_squarefree_kernels": [
+        1,
+        1,
+        5
+      ],
+      "factor_abs_u": {
+        "11": 1,
+        "29": 1,
+        "21001": 1
+      },
+      "factor_abs_v": {
+        "2": 1,
+        "139": 1,
+        "74761": 1
+      },
+      "j_5_adic_valuation": -42,
+      "k": 21,
+      "radical_abc": 696178424985010,
+      "u": -6699319,
+      "v": -20783558
+    }
+  ]
+}
