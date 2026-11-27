@@ -257,7 +257,7 @@ theorem isCycle_of_support_tail_nodup {V : Type*} {G : SimpleGraph V} {v : V}
           exact (List.nodup_cons.mp hsup').1 hu_in
     have htrail : (Walk.cons h w').IsTrail :=
       Walk.IsTrail.mk (by rw [Walk.edges_cons]; exact List.nodup_cons.mpr ⟨hnotmem, hpath'.isTrail.edges_nodup⟩)
-    exact Walk.IsCycle.mk (Walk.IsCircuit.mk htrail (Walk.cons_ne_nil h w')) hnodup
+    exact Walk.IsCycle.mk (Walk.IsCircuit.mk htrail (fun hc => by cases hc)) hnodup
 
 /-- A single switchable cluster segment from `u` to `v` in `G` (modeling entry/exit of a contracted
     cycle plus the connecting path to the next cluster). -/
