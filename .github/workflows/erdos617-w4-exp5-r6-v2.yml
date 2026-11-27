@@ -1,6 +1,12 @@
 name: erdos617-w4-exp5-r6-v2-coupling
 
 on:
+  push:
+    branches:
+      - erdos617-w4-exp5-r6-cegar
+    paths:
+      - 'jobs/erdos617-w4-exp5-r6/solve_k19_and_vdc.py'
+      - '.github/workflows/erdos617-w4-exp5-r6-v2.yml'
   workflow_dispatch:
     inputs:
       max_time:
