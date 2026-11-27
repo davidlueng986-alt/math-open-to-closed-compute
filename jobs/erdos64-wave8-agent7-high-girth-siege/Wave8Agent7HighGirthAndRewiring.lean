@@ -51,15 +51,11 @@ def EvenCyclesOnly (G : SimpleGraph V) : Prop :=
 
 private lemma dite_val_pos {P : Prop} [Decidable P] {α : Type*}
     {t : P → α} {e : ¬ P → α} (h : P) : dite P t e = t h := by
-  split_ifs with h'
-  · rfl
-  · exact absurd h h'
+  split_ifs; rfl
 
 private lemma dite_val_neg {P : Prop} [Decidable P] {α : Type*}
     {t : P → α} {e : ¬ P → α} (h : ¬ P) : dite P t e = e h := by
-  split_ifs with h'
-  · exact absurd h' h
-  · rfl
+  split_ifs; rfl
 
 end CoreDefinitions
 
