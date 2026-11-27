@@ -42,6 +42,14 @@ lemma tail_map {α β : Type*} (f : α → β) (l : List α) :
     (l.map f).tail = l.tail.map f := by
   cases l <;> rfl
 
+lemma path_endpoints_ne_of_pos {V : Type*} {G : SimpleGraph V} {u v : V}
+    (p : G.Walk u v) (hp : p.support.Nodup) (hpos : 1 ≤ p.length) : u ≠ v := by
+  intro heq; subst heq
+  cases p with
+  | nil => simp at hpos
+  | @cons _ _ _ _ p' =>
+    exact (List.nodup_cons.mp hp).1 (Walk.end_mem_support p')
+
 lemma mem_support_of_edge {V : Type*} {G : SimpleGraph V} {u v w : V} {e : Sym2 V}
     (p : G.Walk u v) (he : e ∈ p.edges) (hw : w ∈ e) : w ∈ p.support := by
   induction p with
@@ -92,7 +100,7 @@ lemma powerFree_induce {V : Type*} {G : SimpleGraph V} (s : Set V) (hG : PowerFr
     PowerFree (G.induce s) := by
   intro ⟨v, p, hcyc, hpow⟩
   apply hG
-  let f := (SimpleGraph.Embedding.induce s).toHom
+  let f : G.induce s →g G := (SimpleGraph.Embedding.induce s).toHom
   have hlen : (p.map f).length = p.length := Walk.length_map f p
   exact ⟨f v, p.map f, hcyc.map Subtype.val_injective, hlen.symm ▸ hpow⟩
 
@@ -367,21 +375,9 @@ lemma identGraph_cycle_lifts_to_dyadic_path {V : Type*} {G : SimpleGraph V}
               have hq_edges_nodup : q.edges.Nodup := hq_path.isTrail.edges_nodup
               have hw_not_edges : ∀ e ∈ q.edges, w ∉ e := fun e he hwe =>
                 hw_not (mem_support_of_edge q he hwe)
-              have hdb_ne : d.1 ≠ b.1 := by
-                intro heq
-                have hq0 : q.length = 0 := by
-                  generalize hd1 : d.1 = d1 at q hq_nodup heq
-                  generalize hb1 : b.1 = b1 at q hq_nodup heq
-                  subst heq
-                  cases q with
-                  | nil => rfl
-                  | @cons _ next _ h1 q' =>
-                    have hnd := List.nodup_cons.mp hq_nodup
-                    have hlast_in : d1 ∈ q'.support := Walk.end_mem_support q'
-                    exact False.elim (hnd.1 hlast_in)
-                omega
-              simp only [cyc, Walk.edges_cons, Walk.edges_concat, List.nodup_cons,
-                List.mem_append, List.mem_singleton, not_or]
+              have hdb_ne : d.1 ≠ b.1 := path_endpoints_ne_of_pos q hq_nodup hqlen_ge1
+              simp only [cyc, Walk.edges_cons, Walk.edges_concat, List.concat_eq_append,
+                List.nodup_cons, List.mem_append, List.mem_singleton, not_or]
               refine ⟨⟨fun h => hw_not_edges _ h (by simp), ?_⟩, ?_⟩
               · intro heq; rw [Sym2.eq_iff] at heq
                 rcases heq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
@@ -810,29 +806,29 @@ theorem minimal_bad2_cubic_triangle_dual_cycle_lifting {V : Type} [Fintype V]
           · exact False.elim (h2 ⟨hbt, hw'⟩)
     · intro b1 _ b2 _ heq
       by_cases h1v : b1 = t ∧ G.Adj a.1 v
-      · rw [if_pos h1v] at heq
+      · simp [h1v] at heq
         by_cases h2v : b2 = t ∧ G.Adj a.1 v
         · exact h1v.1.trans h2v.1.symm
-        · rw [if_neg h2v] at heq
+        · simp [h2v] at heq
           by_cases h2w : b2 = t ∧ G.Adj a.1 w
-          · rw [if_pos h2w] at heq; exact False.elim (hvw_ne heq)
-          · rw [if_neg h2w] at heq; exact False.elim (b2.2.1 heq.symm)
-      · rw [if_neg h1v] at heq
+          · simp [h2w] at heq; exact False.elim (hvw_ne heq)
+          · simp [h2w] at heq; exact False.elim (b2.2.1 heq.symm)
+      · simp [h1v] at heq
         by_cases h1w : b1 = t ∧ G.Adj a.1 w
-        · rw [if_pos h1w] at heq
+        · simp [h1w] at heq
           by_cases h2v : b2 = t ∧ G.Adj a.1 v
-          · rw [if_pos h2v] at heq; exact False.elim (hvw_ne heq.symm)
-          · rw [if_neg h2v] at heq
+          · simp [h2v] at heq; exact False.elim (hvw_ne heq.symm)
+          · simp [h2v] at heq
             by_cases h2w : b2 = t ∧ G.Adj a.1 w
             · exact h1w.1.trans h2w.1.symm
-            · rw [if_neg h2w] at heq; exact False.elim (b2.2.2 heq.symm)
-        · rw [if_neg h1w] at heq
+            · simp [h2w] at heq; exact False.elim (b2.2.2 heq.symm)
+        · simp [h1w] at heq
           by_cases h2v : b2 = t ∧ G.Adj a.1 v
-          · rw [if_pos h2v] at heq; exact False.elim (b1.2.1 heq)
-          · rw [if_neg h2v] at heq
+          · simp [h2v] at heq; exact False.elim (b1.2.1 heq)
+          · simp [h2v] at heq
             by_cases h2w : b2 = t ∧ G.Adj a.1 w
-            · rw [if_pos h2w] at heq; exact False.elim (b1.2.2 heq)
-            · rw [if_neg h2w] at heq; exact Subtype.ext heq
+            · simp [h2w] at heq; exact False.elim (b1.2.2 heq)
+            · simp [h2w] at heq; exact Subtype.ext heq
     · intro y hy; rw [SimpleGraph.mem_neighborFinset] at hy
       by_cases hyv : y = v
       · subst hyv; refine ⟨t, ?_, by simp [hy]⟩
@@ -966,20 +962,9 @@ theorem minimal_bad2_cubic_triangle_dual_cycle_lifting {V : Type} [Fintype V]
         · intro h; rcases List.mem_map.mp h with ⟨z, _, hzv⟩; exact z.2.1 hzv
         · intro h; rcases List.mem_map.mp h with ⟨z, _, hzw⟩; exact z.2.2 hzw
       have hdb_ne : d.1 ≠ b.1 := by
-        intro heq
         have hge4 : 4 ≤ 2 ^ k := calc 4 = 2 ^ 2 := by norm_num
           _ ≤ 2 ^ k := Nat.pow_le_pow_right (by norm_num) hk2
-        have hq0 : q.length = 0 := by
-          generalize hd1 : d.1 = d1 at q hq_path heq
-          generalize hb1 : b.1 = b1 at q hq_path heq
-          subst heq
-          cases q with
-          | nil => rfl
-          | @cons _ _ _ _ q' =>
-            have hnd := List.nodup_cons.mp hq_path.support_nodup
-            have hlast : d1 ∈ q'.support := Walk.end_mem_support q'
-            exact False.elim (hnd.1 hlast)
-        omega
+        exact path_endpoints_ne_of_pos q hq_path.support_nodup (by omega)
       have lift_pair : ∀ (p1 p2 p3 : V), p1 ≠ p2 → p2 ≠ p3 → p3 ≠ p1 →
           p1 ∉ q.support → p2 ∉ q.support → p3 ∉ q.support →
           G.Adj d.1 p1 → G.Adj p2 b.1 → G.Adj p1 p2 → G.Adj p1 p3 → G.Adj p3 p2 →

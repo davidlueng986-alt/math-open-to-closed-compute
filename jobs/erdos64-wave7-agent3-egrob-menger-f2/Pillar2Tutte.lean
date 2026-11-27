@@ -36,6 +36,14 @@ lemma tail_map {α β : Type*} (f : α → β) (l : List α) :
     (l.map f).tail = l.tail.map f := by
   cases l <;> rfl
 
+lemma path_endpoints_ne_of_pos {V : Type*} {G : SimpleGraph V} {u v : V}
+    (p : G.Walk u v) (hp : p.support.Nodup) (hpos : 1 ≤ p.length) : u ≠ v := by
+  intro heq; subst heq
+  cases p with
+  | nil => simp at hpos
+  | @cons _ _ _ _ p' =>
+    exact (List.nodup_cons.mp hp).1 (Walk.end_mem_support p')
+
 lemma mem_support_of_edge {V : Type*} {G : SimpleGraph V} {u v w : V} {e : Sym2 V}
     (p : G.Walk u v) (he : e ∈ p.edges) (hw : w ∈ e) : w ∈ p.support := by
   induction p with
@@ -111,7 +119,7 @@ lemma powerFree_induce {V : Type*} {G : SimpleGraph V} (s : Set V) (hG : PowerFr
     PowerFree (G.induce s) := by
   intro ⟨v, p, hcyc, hpow⟩
   apply hG
-  let f := (SimpleGraph.Embedding.induce s).toHom
+  let f : G.induce s →g G := (SimpleGraph.Embedding.induce s).toHom
   have hlen : (p.map f).length = p.length := Walk.length_map f p
   exact ⟨f v, p.map f, hcyc.map Subtype.val_injective, hlen.symm ▸ hpow⟩
 
@@ -484,21 +492,9 @@ lemma identGraph_cycle_lifts_to_dyadic_path {V : Type*} {G : SimpleGraph V}
               have hq_edges_nodup : q.edges.Nodup := hq_path.isTrail.edges_nodup
               have hw_not_edges : ∀ e ∈ q.edges, w ∉ e := fun e he hwe =>
                 hw_not (mem_support_of_edge q he hwe)
-              have hdb_ne : d.1 ≠ b.1 := by
-                intro heq
-                have hq0 : q.length = 0 := by
-                  generalize hd1 : d.1 = d1 at q hq_nodup heq
-                  generalize hb1 : b.1 = b1 at q hq_nodup heq
-                  subst heq
-                  cases q with
-                  | nil => rfl
-                  | @cons _ next _ h1 q' =>
-                    have hnd := List.nodup_cons.mp hq_nodup
-                    have hlast_in : d1 ∈ q'.support := Walk.end_mem_support q'
-                    exact False.elim (hnd.1 hlast_in)
-                omega
-              simp only [cyc, Walk.edges_cons, Walk.edges_concat, List.nodup_cons,
-                List.mem_append, List.mem_singleton, not_or]
+              have hdb_ne : d.1 ≠ b.1 := path_endpoints_ne_of_pos q hq_nodup hqlen_ge1
+              simp only [cyc, Walk.edges_cons, Walk.edges_concat, List.concat_eq_append,
+                List.nodup_cons, List.mem_append, List.mem_singleton, not_or]
               refine ⟨⟨fun h => hw_not_edges _ h (by simp), ?_⟩, ?_⟩
               · intro heq; rw [Sym2.eq_iff] at heq
                 rcases heq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
@@ -703,7 +699,7 @@ theorem minimal_bad2_nonadj_two_cut_torso_fermat_path {V : Type} [Fintype V]
       constructor
       · rintro ⟨hw, h | rfl | rfl⟩
         · exact ⟨hw, h⟩
-        · exact False.elim (G.loopless.irrefl x hw)
+        · exact False.elim (G.loopless.irrefl _ hw)
         · exact False.elim (hxy_nadj hw)
       · rintro ⟨hw, h⟩; exact ⟨hw, Or.inl h⟩
     · rw [Finset.disjoint_singleton_right, SimpleGraph.mem_neighborFinset]; exact hxy_nadj
@@ -732,7 +728,7 @@ theorem minimal_bad2_nonadj_two_cut_torso_fermat_path {V : Type} [Fintype V]
       · rintro ⟨hw, h | rfl | rfl⟩
         · exact ⟨hw, h⟩
         · exact False.elim (hxy_nadj hw.symm)
-        · exact False.elim (G.loopless.irrefl y hw)
+        · exact False.elim (G.loopless.irrefl _ hw)
       · rintro ⟨hw, h⟩; exact ⟨hw, Or.inl h⟩
     · rw [Finset.disjoint_singleton_right, SimpleGraph.mem_neighborFinset]
       exact fun h => hxy_nadj h.symm
@@ -798,7 +794,7 @@ theorem minimal_bad2_nonadj_two_cut_torso_fermat_path {V : Type} [Fintype V]
   have hxy_sub_ne : (⟨x, hxS⟩ : {z : V // z ∈ (S : Set V)}) ≠ ⟨y, hyS⟩ :=
     fun h => hxy_ne (congrArg Subtype.val h)
   rcases addEdge_cycle_lifts_to_fermat_path hGS_pf hxy_sub_ne hcyc with ⟨pS, hpS, k, hk2, hplen⟩
-  let f := (SimpleGraph.Embedding.induce (S : Set V)).toHom
+  let f : GS →g G := (SimpleGraph.Embedding.induce (S : Set V)).toHom
   have hp_len : (pS.map f).length = 2 ^ k - 1 := (Walk.length_map f pS).trans hplen
   have hp_supp : (pS.map f).support = pS.support.map f := Walk.support_map f pS
   refine ⟨pS.map f, hpS.map Subtype.val_injective, ?_, k, hk2, hp_len⟩
@@ -973,7 +969,7 @@ theorem minimal_bad2_nonadj_two_cut_contraction_dyadic_path {V : Type} [Fintype 
         simp only [S, Finset.mem_coe, Finset.mem_union, Finset.mem_insert, Finset.mem_singleton] at this
         rcases this with h | h | h
         · exact h
-        · exact False.elim (G.loopless.irrefl x (h ▸ hwx))
+        · exact False.elim (G.ne_of_adj hwx h.symm)
         · exact False.elim (hxy_nadj (h ▸ hwx))
       exact hno_comm_Ca w.1 hwCa ⟨hwx.symm, hwy.symm⟩
     have hdisj_xy : Disjoint (GS.neighborFinset xS ∪ GS.neighborFinset yS) ({xS, yS} : Finset _) := by
@@ -990,8 +986,11 @@ theorem minimal_bad2_nonadj_two_cut_contraction_dyadic_path {V : Type} [Fintype 
     rw [Finset.sdiff_eq_self_of_disjoint hdisj_xy, Finset.card_union_of_disjoint hdisjN,
         SimpleGraph.card_neighborFinset_eq_degree, SimpleGraph.card_neighborFinset_eq_degree,
         degree_induce_eq, degree_induce_eq]
-    have hx_ge := le_trans hxCa1 (Finset.card_le_card (Finset.inter_subset_inter_left (Finset.subset_union_left : Ca ⊆ S)))
-    have hy_ge := le_trans hyCa1 (Finset.card_le_card (Finset.inter_subset_inter_left (Finset.subset_union_left : Ca ⊆ S)))
+    have hx_ge : 1 ≤ ((G.neighborFinset x) ∩ S).card :=
+      le_trans hxCa1 (Finset.card_le_card (Finset.inter_subset_inter_left (Finset.subset_union_left : Ca ⊆ S)))
+    have hy_ge : 1 ≤ ((G.neighborFinset y) ∩ S).card :=
+      le_trans hyCa1 (Finset.card_le_card (Finset.inter_subset_inter_left (Finset.subset_union_left : Ca ⊆ S)))
+    dsimp only [xS, yS]
     omega
   have hH_not_pf : ¬ PowerFree H := by
     intro hH_pf
@@ -1034,7 +1033,7 @@ theorem minimal_bad2_nonadj_two_cut_contraction_dyadic_path {V : Type} [Fintype 
     exact minimal_bad2_no_smaller hG H ⟨hH_pf, hH_min, hH_def⟩ hlt
   have hcyc : HasPowerCycle H := not_not.mp hH_not_pf
   rcases identGraph_cycle_lifts_to_dyadic_path hGS_pf hxyS_ne hcyc with ⟨pS, hpS, hpow⟩
-  let f := (SimpleGraph.Embedding.induce (S : Set V)).toHom
+  let f : GS →g G := (SimpleGraph.Embedding.induce (S : Set V)).toHom
   have hp_len : IsPowerOfTwo (pS.map f).length := (Walk.length_map f pS).symm ▸ hpow
   have hp_supp : (pS.map f).support = pS.support.map f := Walk.support_map f pS
   refine ⟨pS.map f, hpS.map Subtype.val_injective, ?_, hp_len⟩
