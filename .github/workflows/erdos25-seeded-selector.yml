@@ -1,0 +1,36 @@
+name: Erdos 25 exact seeded selector
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'jobs/erdos25-seeded-selector/**'
+      - '.github/workflows/erdos25-seeded-selector.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  exact-prefix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      JOB_DIR: jobs/erdos25-seeded-selector
+    steps:
+      - uses: actions/checkout@v4
+      - name: Record public source
+        run: |
+          mkdir -p out
+          python --version > out/python.txt
+          git rev-parse HEAD > out/commit.txt
+          sha256sum "$JOB_DIR/rare_fiber_selector.py" "$JOB_DIR/validate_result.py" > out/source.sha256
+      - name: Evaluate the fixed rule from scratch
+        run: |
+          set -o pipefail
+          python "$JOB_DIR/rare_fiber_selector.py" --stop 1200 --seconds 480 --output out/result.json | tee out/selector.log
+      - name: Check exact-prefix scope and arithmetic invariants
+        run: python "$JOB_DIR/validate_result.py" out/result.json out/validation.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos25-seeded-selector
+          path: out/
+          retention-days: 30
