@@ -1,0 +1,1 @@
+Single bounded proof-first pilot: 7 exhaustive global prefix cases and 2 restricted certificate replays.

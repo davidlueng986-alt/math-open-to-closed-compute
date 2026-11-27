@@ -1,0 +1,63 @@
+name: Finite coloring frontier v1 proof-first PoC
+on:
+  push:
+    branches: [main]
+    paths: ['jobs/finite-coloring-frontier-v1/launch.txt']
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: read
+defaults:
+  run:
+    shell: bash
+jobs:
+  controls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 jobs/finite-coloring-frontier-v1/solve.py --selftest
+  frontier:
+    needs: controls
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        include:
+          - {id: W171-P001, kind: vdw, args: '--prefix 001 --mode windows'}
+          - {id: W171-P010, kind: vdw, args: '--prefix 010 --mode windows'}
+          - {id: W171-P011, kind: vdw, args: '--prefix 011 --mode windows'}
+          - {id: W171-P012, kind: vdw, args: '--prefix 012 --mode windows'}
+          - {id: S539-P010, kind: schur, args: '--prefix 010 --mode windows'}
+          - {id: S539-P011, kind: schur, args: '--prefix 011 --mode windows'}
+          - {id: S539-P012, kind: schur, args: '--prefix 012 --mode windows'}
+          - {id: W171-local-c0-r7, kind: vdw, args: '--color 0 --radius 7'}
+          - {id: W171-local-c4-r6, kind: vdw, args: '--color 4 --radius 6'}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Proof-first solve and independently verify result
+        env:
+          KIND: ${{ matrix.kind }}
+          ARGS: ${{ matrix.args }}
+        run: |
+          set -euo pipefail
+          python3 jobs/finite-coloring-frontier-v1/solve.py --kind "$KIND" $ARGS --seconds 180 --proof-seconds 120 --out out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ matrix.id }}
+          path: out/
+          retention-days: 90
+          if-no-files-found: error
