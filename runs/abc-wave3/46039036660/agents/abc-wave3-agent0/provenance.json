@@ -1,0 +1,14 @@
+{
+  "agent": 0,
+  "job": "abc-wave3-agent0-curves",
+  "toolbox": "sage",
+  "source_commit": "3b2425e4d6006b7e1f71ec0814272ab029794612",
+  "run_id": "46039036660",
+  "run_attempt": "1",
+  "python": "3.10.12",
+  "file_sha256": {
+    "jobs/abc-wave3-agent0-curves/README.md": "ca630e2d62f260ba144b416026523ab05e49416fa7a467345ccaf3b68cc44cd6",
+    "jobs/abc-wave3-agent0-curves/run.sh": "bf676032f27519272be202297f409c99a95e8fbaa8470f8fe48c1638976826df",
+    "jobs/abc-wave3-agent0-curves/verify.py": "f2a23e9cd95c6a726ee4f80efb5af6ddc70e105fb848041fb468931f62d6e0f7"
+  }
+}
