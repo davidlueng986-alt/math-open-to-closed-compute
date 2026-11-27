@@ -10,7 +10,7 @@ import Mathlib.Tactic
 ## Modular-Octave Ear Adjusters, Dual Cross-Rewiring, and Cubic Non-Backtracking Exclusions
 
 All theorems are proved unconditionally in Lean 4.36.0 with standard axioms only
-(`propext`, `Classical.choice`, `Quot.sound`), zero `sorry`, zero `native_decide`.
+(`propext`, `Classical.choice`, `Quot.sound`).
 -/
 
 namespace E64Wave7Agent7
@@ -567,8 +567,7 @@ theorem cross_rewiring_min_degree_three {V : Type*} [Fintype V] [DecidableEq V]
               · rfl
             · rw [hxv₂]; intro hadj; exact h22.2 hadj.symm
             · exact Or.inr (Or.inr (Or.inr (Or.inr ⟨hxv₂, rfl⟩)))
-          · -- x.1 ∉ {u₁, u₂, v₁, v₂}: x.1 has no adjacency to u or v in G
-            rw [← card_neighborFinset_eq_degree, ← card_neighborFinset_eq_degree]
+          · rw [← card_neighborFinset_eq_degree, ← card_neighborFinset_eq_degree]
             refine Finset.card_le_card_of_injOn
               (fun w => if hw : w ≠ u ∧ w ≠ v then ⟨w, hw⟩ else x) ?_ ?_
             · intro w hw
@@ -665,7 +664,6 @@ private lemma cycle_two_distinct_incident_edges {V : Type*} (G : SimpleGraph V)
   have hnodup : p.edges.Nodup := hp.edges_nodup
   have hlen_edges : p.edges.length = p.length := p.length_edges
   have hpos : 0 < p.edges.length := by omega
-  have hgt1 : 1 < p.edges.length := by omega
   let e₁ := p.edges.head (List.ne_nil_of_length_pos hpos)
   let e₂ := p.edges.getLast (List.ne_nil_of_length_pos hpos)
   have he₁_mem : e₁ ∈ p.edges := List.head_mem _
@@ -685,7 +683,6 @@ private lemma cycle_two_distinct_incident_edges {V : Type*} (G : SimpleGraph V)
     | cons h q =>
       simp [e₁, Walk.edges_cons]
   have hv₂ : v ∈ e₂ := by
-    -- The reverse walk `p.reverse` starts at `v`, and `p.reverse.edges.head = p.edges.getLast`
     have hrev : p.reverse.edges = p.edges.reverse := Walk.edges_reverse p
     have hne_rev : ¬ p.reverse.Nil := by
       intro hr
