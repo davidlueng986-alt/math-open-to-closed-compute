@@ -4,7 +4,7 @@ Open, reproducible computations for the Math Open-to-Closed research project, ru
 
 **Everything here is public:** code, inputs, logs and results.
 
-[Hadamard conjecture research log](HADAMARD.md) tracks the order-2396 constructions and sign certificates. The [full-conjecture proof map](jobs/hadamard-all-orders/README.md) gives the all-order dependencies, proved lemmas and remaining existence statements.
+The Hadamard project records order-2396 sign certificates, both routes to a definite answer for the full conjecture, and research assignments with explicit proof obligations. [Research log](HADAMARD.md) · [Full closure DAG](jobs/hadamard-all-orders/closure-dag/README.md) · [Agent task list](jobs/hadamard-all-orders/closure-dag/TASKS.md)
 
 ## Run a job
 

@@ -16,6 +16,14 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+      - name: Check closure dependencies and task readiness
+        run: python3 jobs/hadamard-all-orders/closure-dag/check_dag.py --check-tasks
+      - name: Check that the graph and task views match their source
+        run: python3 -B jobs/hadamard-all-orders/closure-dag/render.py --check
+      - name: Replay the pivot-to-clique correspondence
+        run: python3 -B jobs/hadamard-all-orders/closure-dag/verify_pivot.py
+      - name: Replay codimension-eight extension and exclusion controls
+        run: python3 -B jobs/hadamard-all-orders/closure-dag/verify_endgame.py
       - name: Reconstruct the incidence examples and the 2396 by 1196 matrix
         run: python3 jobs/hadamard-all-orders/verify.py
       - name: Install pinned Lean 4.36.0

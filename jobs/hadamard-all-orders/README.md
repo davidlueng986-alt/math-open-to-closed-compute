@@ -4,6 +4,8 @@ Let $H(n)$ mean that $n$ mutually orthogonal sign columns of length $n$ exist, a
 
 **全題仲未攻克。** 以下每條未證引理都寫明要覆蓋邊啲 $t$、可以更換邊啲已選嘅集合，以及點樣接返去全猜想。單獨做好幾多個階數，量度唔到距離通證仲有幾遠。
 
+The current closure DAG adds an exact pivot-pair formulation, the defect-eight row types, and ready-to-hand-off tasks for both possible answers. [Closure DAG](closure-dag/README.md) · [Research task list](closure-dag/TASKS.md)
+
 ## What is known about the distance
 
 Write $r(n)=\max\{k:P(n,k)\}$. Unconditionally, for every $\epsilon>0$ and all sufficiently large multiples of four, $r(n)\ge n/2-O_\epsilon(n^{113/132+\epsilon})$. In particular the literature guarantees $(1/2-o(1))n$ orthogonal columns. Verheiden proved that **any** $n-7$ real orthogonal sign columns of length $n$ can be completed to $n$ for the orders used here. The conjecture follows if that threshold can be reached for every required $n$. The lower bound gives neither a rate of proof progress nor an effective finite search for the rest. [Graham–Shparlinski, §3](https://arxiv.org/abs/0709.2704) · [de Launey–Levin, Theorem A](https://arxiv.org/abs/1003.4003) · [Verheiden, thesis §4](https://thesis.caltech.edu/2899/) · [Verheiden, journal article](https://doi.org/10.1016/0097-3165(80)90028-X)

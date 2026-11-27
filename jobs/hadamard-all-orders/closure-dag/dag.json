@@ -1,0 +1,1363 @@
+{
+  "version": 1,
+  "updated": "2026-11-27",
+  "root": "RESOLUTION",
+  "resolution": "OPEN",
+  "nodes": [
+    {
+      "id": "RESOLUTION",
+      "role": "goal",
+      "status": "OPEN",
+      "scope": "JSP-000013",
+      "statement": "Determine whether every positive t has a real Hadamard matrix of order 4t.",
+      "all_of": [],
+      "any_of": [
+        "YES",
+        "NO"
+      ],
+      "composition": "Accept a reviewed proof with a definite polarity. Each child on its own would answer the original question.",
+      "evidence": [
+        "https://github.com/TheJustinSunPrize/awards/blob/10e0ab6e7503b6db769029d7d68cc4ca42c011d7/problems/catalog-0001-0100.md#JSP-000013"
+      ]
+    },
+    {
+      "id": "YES",
+      "role": "gate",
+      "status": "OPEN",
+      "scope": "all positive integers t",
+      "statement": "There exists H(4t) for every t≥1.",
+      "all_of": [
+        "ODD-REDUCTION",
+        "KNOWN-ORDERS",
+        "ALL-D"
+      ],
+      "any_of": [],
+      "composition": "The covered odd multipliers are settled, the odd multipliers in D are covered by ALL-D, and doubling handles each remaining even multiplier.",
+      "evidence": [
+        "../README.md"
+      ]
+    },
+    {
+      "id": "NO",
+      "role": "gate",
+      "status": "OPEN",
+      "scope": "one explicit positive integer t",
+      "statement": "Give t and prove H(4t) does not exist.",
+      "all_of": [],
+      "any_of": [
+        "NO-DESIGN",
+        "NO-CLIQUES"
+      ],
+      "composition": "Either an unrestricted design exclusion or a universal exclusion over all pivot pairs at the same t gives the single required counterexample.",
+      "evidence": [
+        "lemmas.md#unrestricted-disproof-and-the-finite-cutoff-alternative"
+      ]
+    },
+    {
+      "id": "ODD-REDUCTION",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "all positive t",
+      "statement": "H(n) implies H(2n); every positive t is an odd multiplier times a power of two.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "Sylvester doubling and strong induction are proved as double_order and all_of_odd.",
+      "evidence": [
+        "../Constructions.lean",
+        "../Reductions.lean"
+      ]
+    },
+    {
+      "id": "KNOWN-ORDERS",
+      "role": "lemma",
+      "status": "PUBLISHED",
+      "scope": "odd t outside D",
+      "statement": "The two direct Paley tests, Scarpis–Đoković orders and t=1,3 supply H(4t) on their stated domains.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "Use q=4t−1, q=2t−1, or 4t=q(q+1) with the specified prime-power and congruence hypotheses; D is the exact remaining odd domain.",
+      "evidence": [
+        "../README.md",
+        "https://doi.org/10.1002/sapm1933121311",
+        "https://arxiv.org/abs/1601.00635"
+      ]
+    },
+    {
+      "id": "ALL-D",
+      "role": "gate",
+      "status": "OPEN",
+      "scope": "every t in D",
+      "statement": "H(4t) exists on the entire remaining domain.",
+      "all_of": [],
+      "any_of": [
+        "BANDS",
+        "CLIQUE-ROUTE",
+        "DESIGN-ROUTE",
+        "TAIL-AND-BASE"
+      ],
+      "composition": "Capacity induction, a uniform clique theorem, the full symmetric design, or a matched tail plus finite proof each suffice on its own. Each route quantifies over the same D.",
+      "evidence": [
+        "lemmas.md"
+      ]
+    },
+    {
+      "id": "ASSEMBLY",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "all incidence widths",
+      "statement": "On one row labelling, an outer design and j compatible inner columns give 1+2t+j orthogonal sign columns.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "The constant column and the two border signs convert intersection counts to inner products; full width b gives a square directly.",
+      "evidence": [
+        "../Assembly.lean"
+      ]
+    },
+    {
+      "id": "EXTRACTION",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "all full squares with t≥5",
+      "statement": "A full normalized H(4t) gives a residual design and every capacity-feasible prefix up to b.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "Normalize row and column signs and count positives. All lower rows have exactly k inner ones in the full square.",
+      "evidence": [
+        "../README.md#the-construction-and-its-converse"
+      ]
+    },
+    {
+      "id": "LAST-SEVEN",
+      "role": "lemma",
+      "status": "PUBLISHED",
+      "scope": "n=4t, t≥5",
+      "statement": "Any n−7 orthogonal real sign columns of length n can be completed to a square.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "Apply the published row-completion result after transposition.",
+      "evidence": [
+        "https://doi.org/10.1016/0097-3165(80)90028-X",
+        "https://thesis.caltech.edu/2899/"
+      ]
+    },
+    {
+      "id": "PIVOT",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "every t in D",
+      "statement": "Outer existence is equivalent to two b×b k-regular binary matrices satisfying AᵀA+BᵀB=tI+(t−2)J.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "Mark one outside point, remove it on one half, complement the other half and invert the construction.",
+      "evidence": [
+        "lemmas.md#pivot"
+      ]
+    },
+    {
+      "id": "SIGNATURE",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "one given pivot pair",
+      "statement": "Valid inner columns are precisely pairs of k-subsets u,v with Aᵀu=Bᵀv.",
+      "all_of": [
+        "PIVOT"
+      ],
+      "any_of": [],
+      "composition": "The mixed count at the pivot fixes both sizes. The finite-point counts give the signature identity; the first-selector count is the overlap of two signature histograms.",
+      "evidence": [
+        "lemmas.md#signature"
+      ]
+    },
+    {
+      "id": "CLIQUE-EQUIV",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "every t in D",
+      "statement": "H(4t) iff some unrestricted pivot pair admits a clique of size h.",
+      "all_of": [
+        "SIGNATURE",
+        "ASSEMBLY",
+        "LAST-SEVEN",
+        "EXTRACTION"
+      ],
+      "any_of": [],
+      "composition": "Adjacency gives exactly the inside codegree t−2. Assemble to n−7 and complete. For the reverse direction normalize a square and use any h inner columns.",
+      "evidence": [
+        "lemmas.md#signature"
+      ]
+    },
+    {
+      "id": "SWITCH-FORMULA",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "all k-regular square pairs",
+      "statement": "The defect energy is nonnegative, vanishes exactly at the required Gram, and its exact two-by-two switch change is known.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "Each switch preserves regularity; only two rows of off-diagonal column codegrees change. Regular seeds exist for every t.",
+      "evidence": [
+        "lemmas.md#regular-switches"
+      ]
+    },
+    {
+      "id": "FOUR-CYCLE",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "positive defect energy",
+      "statement": "Positive energy is at least four. At E=4 the defect is one alternating four-cycle; exact one-switch repair is equivalent to a specified row-difference pair.",
+      "all_of": [
+        "SWITCH-FORMULA"
+      ],
+      "any_of": [],
+      "composition": "Zero signed degree classifies the support. Substituting the two opposite columns into the switch formula forces the two positive edge sets to be the differences between the chosen rows.",
+      "evidence": [
+        "lemmas.md#regular-switches"
+      ]
+    },
+    {
+      "id": "OUTER",
+      "role": "gate",
+      "status": "OPEN",
+      "scope": "every t in D",
+      "statement": "Some valid outside design exists at every required order.",
+      "all_of": [
+        "PIVOT"
+      ],
+      "any_of": [
+        "PAIR-CONSTRUCTION",
+        "SWITCH-DESCENT"
+      ],
+      "composition": "An explicit Gram pair or a successful two-band descent furnishes the integral block design through PIVOT.",
+      "evidence": [
+        "lemmas.md#pivot"
+      ]
+    },
+    {
+      "id": "PAIR-CONSTRUCTION",
+      "role": "obligation",
+      "status": "OPEN",
+      "scope": "every t in D",
+      "statement": "Construct a k-regular binary pair with the prescribed column Gram for every t in D.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "A construction on a subfamily contributes exactly its proved coverage; full promotion needs all remaining multipliers.",
+      "evidence": [
+        "lemmas.md#pivot"
+      ]
+    },
+    {
+      "id": "SWITCH-DESCENT",
+      "role": "gate",
+      "status": "OPEN",
+      "scope": "every t in D",
+      "statement": "An energy-zero pair exists at every remaining order by regular switches.",
+      "all_of": [
+        "SWITCH-FORMULA",
+        "FOUR-CYCLE",
+        "SWITCH-LOW",
+        "SWITCH-HIGH"
+      ],
+      "any_of": [],
+      "composition": "Start at the regular circulant seed. Endpoint energies decrease in the positive integers, with the E=4 branch handled separately.",
+      "evidence": [
+        "lemmas.md#regular-switches"
+      ]
+    },
+    {
+      "id": "SWITCH-LOW",
+      "role": "obligation",
+      "status": "OPEN",
+      "scope": "each attainable E=4 pair, t in D",
+      "statement": "Prove a finite path of regular switches to zero with intermediate energy at most four, from every energy-four pair.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "This proposed plateau lemma is sufficient for the low band; the choice of this stronger statement is local to the descent route.",
+      "evidence": [
+        "lemmas.md#regular-switches"
+      ]
+    },
+    {
+      "id": "SWITCH-HIGH",
+      "role": "obligation",
+      "status": "OPEN",
+      "scope": "each attainable E>4 pair, t in D",
+      "statement": "Prove a finite path to lower endpoint energy with intermediates at most the starting energy.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "A switch may be neutral. The proof must establish termination of any neutral phase or construct a finite path directly.",
+      "evidence": [
+        "lemmas.md#regular-switches"
+      ]
+    },
+    {
+      "id": "CAPACITY",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "every admissible prefix and proposed column",
+      "statement": "The exact local count equations and zero/full deficit boundary bits characterize a fixed-witness append; restricting a terminal prefix gives all smaller widths.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "Use appendNext_valid_iff, capacity_appendNext_iff and prefix_of_le. Existential step lemmas may replace the prefix.",
+      "evidence": [
+        "../Rounding.lean"
+      ]
+    },
+    {
+      "id": "FRACTIONAL",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "every admissible prefix j<b",
+      "statement": "Deficit divided by remaining slots satisfies all next-column equations over the rationals.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "Double-count the remaining sizes and intersections. Integral existence remains a separate obligation.",
+      "evidence": [
+        "../Rounding.lean",
+        "../README.md#b--round-the-next-column"
+      ]
+    },
+    {
+      "id": "PREFIX-INDUCTION",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "every required integer t",
+      "statement": "Outer existence plus existential admissible growth at every 0≤j<h implies H(4t).",
+      "all_of": [
+        "ASSEMBLY",
+        "LAST-SEVEN"
+      ],
+      "any_of": [],
+      "composition": "A design starts at width zero. Finite induction, assembly and last-seven completion close the order. from_rounding supplies the corresponding global conditional theorem.",
+      "evidence": [
+        "../Rounding.lean",
+        "lemmas.md#rounding-bands-and-the-last-missing-direction"
+      ]
+    },
+    {
+      "id": "BANDS",
+      "role": "gate",
+      "status": "OPEN",
+      "scope": "every t in D",
+      "statement": "All required orders close through the capacity-prefix route.",
+      "all_of": [
+        "OUTER",
+        "FIRST",
+        "EARLY",
+        "MIDDLE",
+        "LAST-EIGHT",
+        "PREFIX-INDUCTION"
+      ],
+      "any_of": [],
+      "composition": "For a=min(t−1,h−1) the disjoint bands 0, [1,a), [a,h−1), and {h−1} cover all j<h. Induction takes existential outputs, allowing new witnesses.",
+      "evidence": [
+        "lemmas.md#rounding-bands-and-the-last-missing-direction"
+      ]
+    },
+    {
+      "id": "FIRST",
+      "role": "gate",
+      "status": "OPEN",
+      "scope": "j=0 at each t in D",
+      "statement": "Outer existence implies existence of a capacity-feasible prefix of width one.",
+      "all_of": [
+        "SIGNATURE",
+        "CAPACITY",
+        "COLLISION"
+      ],
+      "any_of": [],
+      "composition": "Apply an attainable common signature for a possibly different valid pair. The first chosen bits satisfy capacity automatically.",
+      "evidence": [
+        "lemmas.md#signature",
+        "lemmas.md#rounding-bands-and-the-last-missing-direction"
+      ]
+    },
+    {
+      "id": "COLLISION",
+      "role": "obligation",
+      "status": "OPEN",
+      "scope": "every t in D",
+      "statement": "If a valid pair exists at this t, some valid pair A,B admits k-subsets with common degree signature.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "A positive histogram overlap proves exactly this first step. A fixed pair with disjoint supports refutes the universal fixed-pair variant only.",
+      "evidence": [
+        "lemmas.md#signature"
+      ]
+    },
+    {
+      "id": "EARLY",
+      "role": "obligation",
+      "status": "OPEN",
+      "scope": "t in D, 1≤j<a",
+      "statement": "Existence of an admissible j-prefix implies existence at j+1 in the early band.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "Here j+1≤k, so the capacity box follows automatically. Maintain all inside and mixed intersections on each returned witness.",
+      "evidence": [
+        "lemmas.md#rounding-bands-and-the-last-missing-direction"
+      ]
+    },
+    {
+      "id": "MIDDLE",
+      "role": "obligation",
+      "status": "OPEN",
+      "scope": "t in D, a≤j<h−1",
+      "statement": "Existence of an admissible j-prefix implies existence at j+1 in the band where capacity can bind.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "Exact rounding on a suitable prefix with the forced boundary bits suffices. Both Y and the earlier X columns may be replaced.",
+      "evidence": [
+        "../Rounding.lean",
+        "lemmas.md#rounding-bands-and-the-last-missing-direction"
+      ]
+    },
+    {
+      "id": "KERNEL-EIGHT",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "one n×(n−8) orthogonal sign prefix",
+      "statement": "Sign extendibility is decidable with at most 128 rational tests; at most 29 independent quadratic coefficient rows suffice.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "Choose independent coordinate rows of the eight-dimensional rational kernel, fix the global sign, and expand each squared row equation in the pair characters.",
+      "evidence": [
+        "lemmas.md#rounding-bands-and-the-last-missing-direction"
+      ]
+    },
+    {
+      "id": "LAST-EIGHT",
+      "role": "gate",
+      "status": "OPEN",
+      "scope": "t in D, j=h−1",
+      "statement": "Existence of an admissible prefix one before the target implies existence at the target.",
+      "all_of": [
+        "ACCEPT-EIGHT",
+        "KERNEL-EIGHT",
+        "ASSEMBLY",
+        "LAST-SEVEN",
+        "EXTRACTION"
+      ],
+      "any_of": [],
+      "composition": "Some test-positive prefix supplies n−7 columns. Complete the square and extract the target prefix to recover capacity on one witness.",
+      "evidence": [
+        "lemmas.md#rounding-bands-and-the-last-missing-direction"
+      ]
+    },
+    {
+      "id": "ACCEPT-EIGHT",
+      "role": "gate",
+      "status": "OPEN",
+      "scope": "every t in D",
+      "statement": "Whenever an admissible h−1 prefix exists, some such prefix admits an accepting eight-coordinate sign pattern.",
+      "all_of": [
+        "KERNEL-EIGHT",
+        "TERMINAL-TYPES"
+      ],
+      "any_of": [
+        "GOOD-TYPE",
+        "GOOD-DIRECT"
+      ],
+      "composition": "A good pattern passes the exact kernel test. A common type factor supplies eight sign columns and in particular one passing pattern. Both alternatives must be uniform in t.",
+      "evidence": [
+        "lemmas.md#rounding-bands-and-the-last-missing-direction",
+        "lemmas.md#finite-row-types-at-defect-eight"
+      ]
+    },
+    {
+      "id": "CLIQUE-ROUTE",
+      "role": "gate",
+      "status": "OPEN",
+      "scope": "every t in D",
+      "statement": "Some valid pair with an h-clique is available at every unresolved order.",
+      "all_of": [
+        "CLIQUE-EQUIV"
+      ],
+      "any_of": [
+        "UNIFORM-CLIQUE",
+        "ALGEBRAIC"
+      ],
+      "composition": "Use the direct selector construction or the algebraic row construction. Each supplies one pair and its whole clique simultaneously.",
+      "evidence": [
+        "lemmas.md#signature"
+      ]
+    },
+    {
+      "id": "UNIFORM-CLIQUE",
+      "role": "obligation",
+      "status": "OPEN",
+      "scope": "every t in D",
+      "statement": "Construct or prove existence of some valid A,B and h pairwise adjacent matching selectors at every t in D.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "A construction may partition D if the subfamilies have a proved cover. A different pair may serve each multiplier.",
+      "evidence": [
+        "lemmas.md#signature"
+      ]
+    },
+    {
+      "id": "ROW-CONSTRUCTION",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "every t in D",
+      "statement": "A pair satisfying both Gram identities and AB=BA yields a b-clique and a full square.",
+      "all_of": [
+        "SIGNATURE",
+        "ASSEMBLY"
+      ],
+      "any_of": [],
+      "composition": "Take (Bᵀeᵢ,Aᵀeᵢ) for each i. The transposed commutation gives signatures and the row Gram gives adjacency.",
+      "evidence": [
+        "lemmas.md#a-common-algebraic-construction"
+      ]
+    },
+    {
+      "id": "ALGEBRAIC",
+      "role": "gate",
+      "status": "OPEN",
+      "scope": "every t in D",
+      "statement": "Construct full cliques uniformly from commuting representatives with both Gram identities.",
+      "all_of": [
+        "ROW-CONSTRUCTION",
+        "ALGEBRAIC-COVER"
+      ],
+      "any_of": [],
+      "composition": "The same representative with its chosen row labels must satisfy every identity. Commutative circulant data are a sufficient special case.",
+      "evidence": [
+        "lemmas.md#a-common-algebraic-construction"
+      ]
+    },
+    {
+      "id": "ALGEBRAIC-COVER",
+      "role": "obligation",
+      "status": "OPEN",
+      "scope": "every t in D",
+      "statement": "Cover D by explicit constructions of labelled regular pairs satisfying (1) and (3).",
+      "all_of": [],
+      "any_of": [],
+      "composition": "A parameterized family and an exact proof of its domain can be accumulated; complete coverage is a separate mathematical requirement.",
+      "evidence": [
+        "lemmas.md#a-common-algebraic-construction"
+      ]
+    },
+    {
+      "id": "DESIGN-EQUIV",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "every integer t≥2",
+      "statement": "H(4t) iff the edges of (t−1)K_(4t−1) decompose into copies of K_(2t−1).",
+      "all_of": [],
+      "any_of": [],
+      "composition": "Deleting the positive border gives the block design. Conversely pair counting forces the replication and the number of blocks; bordering gives the square.",
+      "evidence": [
+        "lemmas.md#unrestricted-disproof-and-the-finite-cutoff-alternative"
+      ]
+    },
+    {
+      "id": "DESIGN-ROUTE",
+      "role": "gate",
+      "status": "OPEN",
+      "scope": "every t in D",
+      "statement": "Full symmetric block decompositions give all required squares.",
+      "all_of": [
+        "DESIGN-EQUIV",
+        "DESIGN-UNIFORM"
+      ],
+      "any_of": [],
+      "composition": "Apply the uniform positive design theorem to each t in D and decode with DESIGN-EQUIV.",
+      "evidence": [
+        "lemmas.md#unrestricted-disproof-and-the-finite-cutoff-alternative"
+      ]
+    },
+    {
+      "id": "DESIGN-UNIFORM",
+      "role": "obligation",
+      "status": "OPEN",
+      "scope": "every t in D",
+      "statement": "Prove the block decomposition exists for all remaining t with growing block size 2t−1.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "A design theorem cited here needs its parameter and threshold hypotheses checked at these exact values.",
+      "evidence": [
+        "lemmas.md#unrestricted-disproof-and-the-finite-cutoff-alternative"
+      ]
+    },
+    {
+      "id": "TAIL-AND-BASE",
+      "role": "gate",
+      "status": "OPEN",
+      "scope": "every t in D",
+      "statement": "A proved cofinite theorem and verified finite remainder together cover D.",
+      "all_of": [
+        "TAIL",
+        "FINITE-BASE"
+      ],
+      "any_of": [],
+      "composition": "Use the same explicitly recorded T from TAIL in FINITE-BASE. For any t in D take the appropriate side of t≤T.",
+      "evidence": [
+        "lemmas.md#unrestricted-disproof-and-the-finite-cutoff-alternative"
+      ]
+    },
+    {
+      "id": "TAIL",
+      "role": "obligation",
+      "status": "OPEN",
+      "scope": "all t in D above one returned cutoff",
+      "statement": "Produce a concrete T with proof that H(4t) holds for every t in D greater than T.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "The deliverable is a dependent pair of the value and the tail theorem. Density one or a large finite interval is insufficient.",
+      "evidence": [
+        "lemmas.md#unrestricted-disproof-and-the-finite-cutoff-alternative"
+      ]
+    },
+    {
+      "id": "FINITE-BASE",
+      "role": "obligation",
+      "status": "OPEN",
+      "scope": "all t in D up to the exact cutoff from TAIL",
+      "statement": "For the supplied T, give checked squares or proofs for every t in D with t≤T.",
+      "all_of": [
+        "TAIL"
+      ],
+      "any_of": [],
+      "composition": "Consume TAIL and bind the manifest to its exact numerical cutoff. Normalize the order convention n=4t.",
+      "evidence": [
+        "lemmas.md#unrestricted-disproof-and-the-finite-cutoff-alternative"
+      ]
+    },
+    {
+      "id": "NO-DESIGN",
+      "role": "gate",
+      "status": "OPEN",
+      "scope": "one named t≥2",
+      "statement": "Exclude the unrestricted full block decomposition at a specific t.",
+      "all_of": [
+        "DESIGN-EQUIV"
+      ],
+      "any_of": [
+        "NO-INVARIANT",
+        "NO-CERTIFICATE"
+      ],
+      "composition": "A general arithmetic obstruction at that t or a complete checked search for the exact encoding would exclude every square.",
+      "evidence": [
+        "lemmas.md#unrestricted-disproof-and-the-finite-cutoff-alternative"
+      ]
+    },
+    {
+      "id": "NO-INVARIANT",
+      "role": "obligation",
+      "status": "OPEN",
+      "scope": "one named positive multiplier t≥2",
+      "statement": "Prove a contradiction for every full block design at the named multiplier.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "Every extra normalization or group hypothesis must be necessary for all candidate squares or removed.",
+      "evidence": [
+        "lemmas.md#unrestricted-disproof-and-the-finite-cutoff-alternative"
+      ]
+    },
+    {
+      "id": "NO-CERTIFICATE",
+      "role": "obligation",
+      "status": "OPEN",
+      "scope": "one named positive multiplier t≥2",
+      "statement": "Supply a certified UNSAT result for the complete v×v Boolean design encoding at t.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "Use an encoding with both directions proved, then replay a checker-verifiable certificate over all configurations, including any justified symmetry reductions.",
+      "evidence": [
+        "lemmas.md#unrestricted-disproof-and-the-finite-cutoff-alternative"
+      ]
+    },
+    {
+      "id": "NO-CLIQUES",
+      "role": "gate",
+      "status": "OPEN",
+      "scope": "one named t in D",
+      "statement": "At a fixed remaining multiplier, exclude an h-clique for every valid pair.",
+      "all_of": [
+        "CLIQUE-EQUIV",
+        "NO-PAIR-COVER"
+      ],
+      "any_of": [],
+      "composition": "Use the necessary direction of CLIQUE-EQUIV. The pair space, all selector sets and every symmetry class must be covered.",
+      "evidence": [
+        "lemmas.md#signature"
+      ]
+    },
+    {
+      "id": "NO-PAIR-COVER",
+      "role": "obligation",
+      "status": "OPEN",
+      "scope": "one named t in D and every admissible A,B at that t",
+      "statement": "Prove universal exclusion over the pivot-pair space, including the case that no valid pair exists.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "One universal obstruction or a complete certificate over all regular-pair cases suffices. A single fixed graph is a proper subset.",
+      "evidence": [
+        "lemmas.md#signature"
+      ]
+    },
+    {
+      "id": "FINITE-2396",
+      "role": "diagnostic",
+      "status": "CHECKED",
+      "scope": "one order, n=2396",
+      "statement": "There are 1196 explicit mutually orthogonal sign columns. The seven-column threshold is 2389.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "All 714610 pairwise inner products are replayed. The order and the universal statement stay open.",
+      "evidence": [
+        "../verify.py",
+        "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45567153247"
+      ]
+    },
+    {
+      "id": "FRACTIONAL-VERTEX",
+      "role": "diagnostic",
+      "status": "CHECKED",
+      "scope": "one known order, n=20",
+      "statement": "A first-step polytope has a genuine fractional vertex with eight nonintegral coordinates.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "The eight-coordinate minor has determinant 12; the same Paley example has integral choices.",
+      "evidence": [
+        "../verify.py"
+      ]
+    },
+    {
+      "id": "HALF-BOUND",
+      "role": "diagnostic",
+      "status": "PUBLISHED",
+      "scope": "context for all sufficiently large n=4t",
+      "statement": "The published unconditional asymptotic lower bound approaches n/2 orthogonal columns.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "Its error term and large-order quantifier give a benchmark; this is weaker than the n−7 threshold.",
+      "evidence": [
+        "https://arxiv.org/abs/0709.2704",
+        "https://arxiv.org/abs/1003.4003"
+      ]
+    },
+    {
+      "id": "ODD-CUT",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "odd t≥3",
+      "statement": "In each equal point partition of an outer design, at most one block can occupy an entire half.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "Its imbalance has squared value t², the total is 2t² and all odd imbalances are nonzero. For prime t≥5 this also excludes the two t-cycle symmetry by orbit counting.",
+      "evidence": [
+        "../OuterEnergy.lean",
+        "../README.md#r--choose-the-outside-blocks"
+      ]
+    },
+    {
+      "id": "ONE-ORDER",
+      "role": "diagnostic",
+      "status": "OPEN",
+      "scope": "a specific pair or a single order",
+      "statement": "Construct an exact finite witness or certify the precise boundary of a local hypothesis as a research handoff.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "A square closes the specified instance; a prefix, failure, or restricted UNSAT establishes only its stated scope.",
+      "evidence": [
+        "../README.md",
+        "../verify.py"
+      ]
+    },
+    {
+      "id": "AUGMENTED-KEY",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "one fixed feasible prefix at arbitrary width",
+      "statement": "Matching augmented signature keys with forced coordinates is equivalent to a legal fixed-witness next column.",
+      "all_of": [
+        "SIGNATURE",
+        "CAPACITY"
+      ],
+      "any_of": [],
+      "composition": "Append the inner overlaps to the A key and their required complements to the B key, and enforce local capacity boundaries on each half.",
+      "evidence": [
+        "lemmas.md#signature",
+        "../Rounding.lean"
+      ]
+    },
+    {
+      "id": "TERMINAL-TYPES",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "all real sign prefixes with defect eight and n divisible by four",
+      "statement": "An order-independent finite alphabet of pivot Grams G and row types r determines the exact 128-pattern test, with multiplicity moment Σmᵣrᵀr=nG.",
+      "all_of": [
+        "KERNEL-EIGHT"
+      ],
+      "any_of": [],
+      "composition": "Take the integral rank-eight matrix nI−CCᵀ and an invertible principal submatrix. Diagonal, parity and positivity bound all entries.",
+      "evidence": [
+        "lemmas.md#finite-row-types-at-defect-eight"
+      ]
+    },
+    {
+      "id": "TERMINAL-RANK",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "one defect-eight sign prefix at n=4t, t≥5, for the Verheiden implication",
+      "statement": "The quadratic tests have rank at most 28; a completable prefix has rank at most 21 and at most 256 distinct projected row types.",
+      "all_of": [
+        "TERMINAL-TYPES",
+        "LAST-SEVEN"
+      ],
+      "any_of": [],
+      "composition": "Use the pivot Gram for one annihilator; completion gives eight independent lifted sign vectors and one common 8×8 sign Gram factor for all realized types.",
+      "evidence": [
+        "lemmas.md#finite-row-types-at-defect-eight"
+      ]
+    },
+    {
+      "id": "GOOD-TYPE",
+      "role": "obligation",
+      "status": "OPEN",
+      "scope": "every t in D admitting an h−1 prefix",
+      "statement": "Guarantee some h−1 prefix whose realized row types at a single chosen Gram admit a common sign factor S.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "The factor simultaneously supports every realized row type. Projector moments and isolated good types are necessary tests only.",
+      "evidence": [
+        "lemmas.md#finite-row-types-at-defect-eight"
+      ]
+    },
+    {
+      "id": "GOOD-DIRECT",
+      "role": "obligation",
+      "status": "OPEN",
+      "scope": "every t in D admitting an h−1 prefix",
+      "statement": "Produce some h−1 prefix and one of its 128 patterns satisfying every row test.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "A proof may select a different prefix. The old one need not be extendible.",
+      "evidence": [
+        "lemmas.md#rounding-bands-and-the-last-missing-direction"
+      ]
+    },
+    {
+      "id": "SIGNATURE-ATLAS",
+      "role": "diagnostic",
+      "status": "OPEN",
+      "scope": "fixed known order 44, pivot index zero",
+      "statement": "A complete degree-signature inventory for both halves of the specified Paley example.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "This bounded artifact can test proposed uniform collision inequalities. Its certificate stays at one pair and one order.",
+      "evidence": [
+        "verify_pivot.py"
+      ]
+    },
+    {
+      "id": "TYPE-ATLAS",
+      "role": "diagnostic",
+      "status": "OPEN",
+      "scope": "fixed Gram G=8I, dimension eight",
+      "statement": "List every integral row type of norm constraint rG⁻¹rᵀ=8 and its exact 128-pattern mask, modulo reported signed symmetries.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "This is a finite input to GOOD-TYPE. Realizability of any collection by a sign prefix and the uniform selection theorem are independent obligations.",
+      "evidence": [
+        "lemmas.md#finite-row-types-at-defect-eight"
+      ]
+    },
+    {
+      "id": "ENCODING-PILOT",
+      "role": "diagnostic",
+      "status": "OPEN",
+      "scope": "restricted replay sizes with a satisfiable positive control",
+      "statement": "A small unrestricted encoding with bidirectional decoding and a certified contradiction on an explicitly perturbed test instance.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "The contradiction tests certificate correctness. To establish NO the original unperturbed formula at a named t must be certified UNSAT.",
+      "evidence": [
+        "lemmas.md#unrestricted-disproof-and-the-finite-cutoff-alternative"
+      ]
+    },
+    {
+      "id": "PIVOT-CONTROLS",
+      "role": "diagnostic",
+      "status": "CHECKED",
+      "scope": "orders 20, 44 and 60",
+      "statement": "All chosen outside pivots round-trip and their known full cliques are preserved; the order-20 pivot-zero graph was exhaustively checked.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "These are exact finite replays of the representation.",
+      "evidence": [
+        "verify_pivot.py"
+      ]
+    },
+    {
+      "id": "ENDGAME-CONTROLS",
+      "role": "diagnostic",
+      "status": "CHECKED",
+      "scope": "one order-20 and one order-12 defect-eight prefix",
+      "statement": "Paley H20 truncated to 12 columns accepts; H4 with each row tripled rejects.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "The two finite controls check the kernel tests on both sides of the local criterion.",
+      "evidence": [
+        "verify_endgame.py"
+      ]
+    },
+    {
+      "id": "EXCHANGE-NINE",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "one fixed n×(n−9) orthogonal sign prefix",
+      "statement": "At most 256 sign patterns modulo negation enumerate all extending directions. Two orthogonal returned signs yield n−7 columns.",
+      "all_of": [
+        "KERNEL-EIGHT"
+      ],
+      "any_of": [],
+      "composition": "Repeat the eight-dimensional coordinate argument in dimension nine and compare every pair. When applied after deleting one of n−8 columns this exactly tests two-column replacements over that retained prefix.",
+      "evidence": [
+        "lemmas.md#one-column-replacement"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-SIGNATURE-ATLAS",
+      "node": "SIGNATURE-ATLAS",
+      "mode": "research",
+      "priority": "P0",
+      "claim": null,
+      "title": "Inventory every first selector at order 44",
+      "needs": [
+        "SIGNATURE"
+      ],
+      "uses": [
+        "PIVOT-CONTROLS",
+        "COLLISION"
+      ],
+      "inputs": "Use the Paley H44 ordering and pivot zero from verify_pivot.py. Here t=11, b=21 and k=10. Start with its known 21-clique.",
+      "deliverable": "Produce two signature histograms, their intersection with multiplicities, N₁, and two decoded examples when available. Include the exact sign/row convention, replay code and deterministic digests.",
+      "acceptance": "Each half histogram sums to binomial(21,10)=352716. Rebuild both histograms independently or cross-check sampled fibers by exact enumeration. All known selectors appear; reproduce the order-20 control first. This completes the finite card.",
+      "fallback": "If a larger clique inventory is expensive, stop after the two complete histograms. Quote the fixed-pair scope and leave COLLISION open."
+    },
+    {
+      "id": "T-LOW-TRADES",
+      "node": "SWITCH-LOW",
+      "mode": "research",
+      "priority": "P0",
+      "claim": null,
+      "title": "Repair a single alternating four-cycle of defect",
+      "needs": [
+        "FOUR-CYCLE",
+        "SWITCH-FORMULA"
+      ],
+      "uses": [
+        "ODD-CUT"
+      ],
+      "inputs": "With four-cycle positive edges uw and vx, one switch repairs exactly when two rows of either A or B have respective set differences {u,w} and {v,x}. Use the exact switch formula to study neutral moves when neither matrix has that pair.",
+      "deliverable": "Give a uniform energy-four repair allowing neutral moves, or a certified trapped plateau. First classify a nontrivial family in which neutral moves create the proven one-switch row configuration.",
+      "acceptance": "A uniform proof covers every legal outside-row pattern and both matrices and keeps the promised energy bound. A counterexample supplies the regular matrices, exhaustive neutral closure and all exit energies. A bounded-radius search is labelled with its radius.",
+      "fallback": "Return a verified neutral-move implication strictly extending the known one-switch criterion, or a precise blocked row profile with replayable evidence."
+    },
+    {
+      "id": "T-FIRST-MATCH",
+      "node": "COLLISION",
+      "mode": "research",
+      "priority": "P0",
+      "claim": null,
+      "title": "Force the first equal integer signature",
+      "needs": [
+        "PIVOT",
+        "SIGNATURE"
+      ],
+      "uses": [
+        "SIGNATURE-ATLAS",
+        "FRACTIONAL-VERTEX"
+      ],
+      "inputs": "For k-subsets compare the two signature supports. N₁ is their multiplicity inner product; the two fractional barycentres already agree. The input assumption is existence of some valid Gram pair at this t.",
+      "deliverable": "Prove a positive coefficient in common for a specified family of valid pairs or show how to replace a given pair by one with positive overlap. Record the family as a predicate on t and on the two matrices.",
+      "acceptance": "Both subsets have size k, the equality holds in all b coordinates and any representative change preserves the joint Gram. To close COLLISION cover every t in D under its existential premise.",
+      "fallback": "A valid pair with N₁=0 refutes fixed-pair matching and becomes a replacement benchmark. Supply both full support certificates. A full solution at a known order remains a control."
+    },
+    {
+      "id": "T-TYPE-ATLAS",
+      "node": "TYPE-ATLAS",
+      "mode": "research",
+      "priority": "P0",
+      "claim": null,
+      "title": "Classify row tests for the diagonal defect-eight Gram",
+      "needs": [
+        "TERMINAL-TYPES"
+      ],
+      "uses": [
+        "TERMINAL-RANK",
+        "ENDGAME-CONTROLS"
+      ],
+      "inputs": "Fix G=8I. Enumerate r=2z with z in {−4,…,4}⁸ and sum zᵢ²=16. For a type compare |r·σ| with 8 on all 128 representatives σ₁=1.",
+      "deliverable": "Publish absolute-coordinate partitions, orbit sizes, and exact forbidden-pattern masks with representatives. Give a replay that transports a mask when signs or coordinates are permuted.",
+      "acceptance": "An independent count from the coefficient of x¹⁶ in (Σ₍ₐ₌₋₄₎⁴x^(a²))⁸ must agree with orbit totals. Verify masks before and after symmetry, including antipodal types. This closes the finite card.",
+      "fallback": "Record which type sets could share a single sign factor S and which fail. Actual prefixes realizing such sets and coverage of other Grams are separate."
+    },
+    {
+      "id": "T-PAIR-SEED",
+      "node": "PAIR-CONSTRUCTION",
+      "mode": "research",
+      "priority": "P1",
+      "claim": null,
+      "title": "Build nonsymmetric outside Gram pairs",
+      "needs": [
+        "PIVOT",
+        "SWITCH-FORMULA"
+      ],
+      "uses": [
+        "ODD-CUT",
+        "FINITE-2396"
+      ],
+      "inputs": "Start with A,B as unions of k disjoint permutation matchings of b points. A pair of matchings can be altered by alternating cycles without changing row/column degrees. t=23 is a control missed by the direct tests; a known H92 exists.",
+      "deliverable": "Give explicit permutations or an algebraic rule, calculate both column Grams, and identify the exact set of t for which their off-diagonal defects cancel. Test a family not forced to be circulant.",
+      "acceptance": "Prove row/column regularity, integrality and (1) for the same labelled pair. A worked finite example is entered as an instance; uniform promotion needs a coverage proof for D.",
+      "fallback": "Supply the residual formula for uncovered parameter values or show an invariant excludes the proposed permutation family; retain the invariant for revising the generator."
+    },
+    {
+      "id": "T-HIGH-DESCENT",
+      "node": "SWITCH-HIGH",
+      "mode": "research",
+      "priority": "P1",
+      "claim": null,
+      "title": "Find a descent above the four-cycle band",
+      "needs": [
+        "SWITCH-FORMULA",
+        "FOUR-CYCLE"
+      ],
+      "uses": [
+        "SWITCH-LOW"
+      ],
+      "inputs": "The defect has signed degree zero. Decompose its multiset of positive/negative unit edges into alternating closed walks and compare those walks to actual alternating switches in A or B.",
+      "deliverable": "Prove a switch-path descent for a nontrivial class of defects and identify what it takes to cover all E>4. Treat neutral moves with a well-founded secondary quantity or a finite-path construction.",
+      "acceptance": "Every proposed switch has the required two ones and two zeros in its actual matrix. Check all claimed changes with the energy formula and that a smaller integer endpoint is reached. Every intermediate energy must be at most the initial energy.",
+      "fallback": "A state with no immediate improving move refutes only strict one-switch descent. Publish the plateau boundary or the still-missing alternating-walk realizability statement."
+    },
+    {
+      "id": "T-EARLY",
+      "node": "EARLY",
+      "mode": "research",
+      "priority": "P1",
+      "claim": null,
+      "title": "Lift one selector to two, then handle the capacity-free band",
+      "needs": [
+        "AUGMENTED-KEY"
+      ],
+      "uses": [
+        "FIRST",
+        "PIVOT-CONTROLS"
+      ],
+      "inputs": "Start at j=1. The augmented signature keys add just one coordinate, the overlap with the old selector. At every width j+1≤k row capacity follows from the column count.",
+      "deliverable": "First prove the two-selector lift for an explicitly specified family, possibly replacing the first selector. Then give a uniform extension argument across 1≤j<a or state the exact residual subrange.",
+      "acceptance": "Return one compatible family at the new width. At j=1 certify both selectors and their combined intersection t−2. For a band proof give both endpoints of the induction and preserve all earlier counts.",
+      "fallback": "Find and certify a nonextendible fixed selector and search for a different selector on that pair. This tests the quantifier without claiming the existential step failed."
+    },
+    {
+      "id": "T-SATURATED",
+      "node": "MIDDLE",
+      "mode": "research",
+      "priority": "P1",
+      "claim": null,
+      "title": "Repair after deficits become zero or full",
+      "needs": [
+        "AUGMENTED-KEY",
+        "FRACTIONAL"
+      ],
+      "uses": [
+        "FRACTIONAL-VERTEX",
+        "EARLY"
+      ],
+      "inputs": "For a supplied admissible width j in the middle band, preassign forced bits. Form the remaining incidence matrix M and right hand side y after subtracting contributions of forced ones. The fractional numerators give Mp=sy. The order of the obstruction class of y in the integer cokernel divides s; primes coprime to s cannot obstruct.",
+      "deliverable": "Identify an integral binary repair or a replacement prefix. For a fixed failure, test primes dividing s=b−j or their powers. A first deliverable is wᵀM=0 and wᵀy≠0 over a stated modulus, verified after the forced bits are removed.",
+      "acceptance": "A witness must meet every reduced count and both row boundaries. To close MIDDLE prove existence of a suitable witness throughout a≤j<h−1; a dead fixed prefix leaves other witnesses available.",
+      "fallback": "Record the forced sets, rank/residue witness, precise t,j and the size of the smallest replacement tested. Preserve all row labels for replay."
+    },
+    {
+      "id": "T-GOOD-TYPE",
+      "node": "GOOD-TYPE",
+      "mode": "research",
+      "priority": "P1",
+      "claim": null,
+      "title": "Force a common sign factor at a suitable last prefix",
+      "needs": [
+        "KERNEL-EIGHT",
+        "TERMINAL-TYPES",
+        "TERMINAL-RANK"
+      ],
+      "uses": [
+        "TYPE-ATLAS",
+        "ENDGAME-CONTROLS"
+      ],
+      "inputs": "Use G, the realized types and the moment Σmᵣrᵀr=nG. At fixed G a factor S consists of eight independent sign columns modulo sign and order; all rows must lie in the same 256-type set {zSᵀ}.",
+      "deliverable": "Characterize a class of prefixes that admit a common factor, or develop a prefix replacement that removes a bad type while keeping the h−1 columns. Give an explicit parameter range.",
+      "acceptance": "Show the same S covers all positive-multiplicity types and verify its Gram. For uniform closure prove every required t admitting a prefix has at least one in the good class. Rank≤21 and moment feasibility alone do not suffice.",
+      "fallback": "Return a minimal rejecting subset of realized row types, checked against all 128 patterns, or a class of G excluded by rank. State exactly whether it comes from a real prefix."
+    },
+    {
+      "id": "T-COMMUTING",
+      "node": "ALGEBRAIC-COVER",
+      "mode": "research",
+      "priority": "P1",
+      "claim": null,
+      "title": "Construct a parameterized pair with a full clique",
+      "needs": [
+        "ROW-CONSTRUCTION",
+        "KNOWN-ORDERS"
+      ],
+      "uses": [
+        "ODD-CUT"
+      ],
+      "inputs": "Use the row-selector construction. Start with a circulant pair on b points or a commutative matrix algebra closed under transpose. Explore using more than one orbit if regularity holds.",
+      "deliverable": "Deliver a family with (1), AB=BA, and the row Gram in (3). Specify its coverage as a set of odd multipliers and compare with the Paley and Scarpis filters.",
+      "acceptance": "All identities hold for the same matrices under a named alignment of row and point labels. Record which orders are newly covered by this argument and which have pre-existing constructions.",
+      "fallback": "If an identity fails, retain the valid outside pair and target FIRST or UNIFORM-CLIQUE instead; provide the nonzero defect matrix and the surviving parameter class."
+    },
+    {
+      "id": "T-CLIQUE",
+      "node": "UNIFORM-CLIQUE",
+      "mode": "research",
+      "priority": "P1",
+      "claim": null,
+      "title": "Build a jointly compatible large selector family",
+      "needs": [
+        "CLIQUE-EQUIV",
+        "AUGMENTED-KEY"
+      ],
+      "uses": [
+        "SIGNATURE-ATLAS"
+      ],
+      "inputs": "Given a pair with many matching signatures, its vertices carry exact row labels and edges encode overlap. Split a candidate witness into two groups with all cross edges present.",
+      "deliverable": "Find cliques of certified sizes c,d with a common pair and complete cross adjacency. Give a mechanism for c+d≥h throughout a stated family of t or an exact deficit and the cases still missing.",
+      "acceptance": "Show every cross pair and all within-group pairs are adjacent on the same A,B. A proof using only two separate clique-number bounds is incomplete. The goal quantifies over all of D.",
+      "fallback": "Present a failed gluing example with cross-overlap histogram, or a rigorously justified smaller threshold c+d that new work can raise."
+    },
+    {
+      "id": "T-DESIGNS",
+      "node": "DESIGN-UNIFORM",
+      "mode": "research",
+      "priority": "P2",
+      "claim": null,
+      "title": "Test full symmetric design construction theorems",
+      "needs": [
+        "DESIGN-EQUIV",
+        "KNOWN-ORDERS"
+      ],
+      "uses": [
+        "TAIL"
+      ],
+      "inputs": "The exact parameters are v=4t−1, w=2t−1, λ=t−1. Pair counts force both replication and block count, so a nonnegative integral edge decomposition suffices.",
+      "deliverable": "Find a theorem or new composition rule producing these precise parameters on an infinite class. Derive explicitly its threshold, divisibility assumptions and coverage under parameter growth.",
+      "acceptance": "Any bound of the form v≥v₀(w,λ) must actually hold along the stated sequence. Cite the theorem and verify its other hypotheses or give an independent constructive proof.",
+      "fallback": "An explicit inequality showing a proposed theorem never reaches the growing-block regime closes that shortcut and identifies the additional estimate needed."
+    },
+    {
+      "id": "T-TAIL",
+      "node": "TAIL",
+      "mode": "research",
+      "priority": "P2",
+      "claim": null,
+      "title": "Derive a genuine cofinite construction",
+      "needs": [
+        "KNOWN-ORDERS",
+        "ODD-REDUCTION"
+      ],
+      "uses": [
+        "HALF-BOUND"
+      ],
+      "inputs": "Investigate a parametric construction or a finite cover of residue/exception classes. Known asymptotic partial matrices and known dense families are baselines.",
+      "deliverable": "Deliver an explicit T and an all-order argument on D above T, or an exact subfamily cover with a proven bound on its complement.",
+      "acceptance": "Check the order is exactly 4t at every use, including tensor-product factors. Link all classes to a mathematical cover. To close TAIL return one numerical cutoff plus proof.",
+      "fallback": "If a progression survives all substitutions, give it with a divisibility or density proof. It becomes a named new family rather than a false finite cutoff."
+    },
+    {
+      "id": "T-NO-PILOT",
+      "node": "ENCODING-PILOT",
+      "mode": "research",
+      "priority": "P2",
+      "claim": null,
+      "title": "Establish an unrestricted solver and certificate control",
+      "needs": [
+        "DESIGN-EQUIV"
+      ],
+      "uses": [
+        "FINITE-2396"
+      ],
+      "inputs": "Use the labelled design bits of DESIGN-EQUIV. Begin at order 8 or 12 with all row, column and pair counts. Normalizing further requires an explicit representative proof.",
+      "deliverable": "Give the encoder/decoder, replay a satisfiable positive control, then replay a proof of contradiction for a deliberately perturbed control (e.g. two points forced equal while pair counts are retained). Record the exact instance hashes.",
+      "acceptance": "Check encoding in both directions, decode the SAT square and verify all scalar products. Replay the UNSAT certificate independently and mark its extra constraint explicitly. This completes only the harness card.",
+      "fallback": "A solver verdict without a replayable proof stays an unverified experiment. Do not treat failure of the mutated control as a conjecture counterexample."
+    },
+    {
+      "id": "T-NO-OBSTRUCTION",
+      "node": "NO-INVARIANT",
+      "mode": "research",
+      "priority": "P2",
+      "claim": null,
+      "title": "Seek an unrestricted obstruction at one odd multiplier",
+      "needs": [
+        "DESIGN-EQUIV"
+      ],
+      "uses": [
+        "ODD-CUT",
+        "ENCODING-PILOT"
+      ],
+      "inputs": "Choose a named t in D and derive an invariant from the necessary design incidence identities alone. Check quickly whether the proposed parity or rational invariant also holds for known full designs.",
+      "deliverable": "Return a contradiction for every labelled decomposition at that t, or a rigorously identified reason the proposed obstruction cannot distinguish these parameters.",
+      "acceptance": "Cover all block families including noncyclic and asymmetric ones. Any dismissal of parameters or symmetry representatives comes with a completeness proof. A candidate counterexample gets independent replay.",
+      "fallback": "An exclusion on a subgroup, a single pivot or a capacity prefix remains a local obstruction; give an explicit assumption set and return it to that branch."
+    },
+    {
+      "id": "T-2396",
+      "node": "ONE-ORDER",
+      "mode": "research",
+      "priority": "P2",
+      "claim": null,
+      "title": "Produce a reproducible finite witness on the first recorded gap",
+      "needs": [
+        "SIGNATURE",
+        "ASSEMBLY"
+      ],
+      "uses": [
+        "FINITE-2396"
+      ],
+      "inputs": "Here b=1197, k=598, h=1190. Choose the exact pivot incidence constraints or the pre-existing cyclic search with its own multiplier and quotient assumptions. Reuse recorded masks if working on the cyclic branch.",
+      "deliverable": "Supply explicit labelled matrices and selectors with exact counts, an improvement of the verified 1196-column lower bound, or a full square. Record the representation and full certificate or bounded search coverage.",
+      "acceptance": "Compare like quantities: explicit orthogonal columns against 1196; numerical correlations against the specific cyclic witness. A full square requires ±1 entries and all off-diagonal scalar products zero.",
+      "fallback": "A failed search needs exact domain and bounds, plus a reusable invariant or certificate. Accumulate any full order under FINITE-BASE only with a matching cutoff."
+    },
+    {
+      "id": "T-ASSEMBLE-PREFIX",
+      "node": "BANDS",
+      "mode": "synthesis",
+      "priority": "P0",
+      "claim": null,
+      "title": "Integrate all four bands on their common domain",
+      "needs": [
+        "OUTER",
+        "FIRST",
+        "EARLY",
+        "MIDDLE",
+        "LAST-EIGHT",
+        "PREFIX-INDUCTION"
+      ],
+      "uses": [],
+      "inputs": "Use the verified outside construction, four growth bands, integer endpoints and from_rounding. A witness can be replaced between consecutive existential steps.",
+      "deliverable": "Submit the full uniform conditional instantiation including all small covered cases, band interfaces and the external last-seven theorem.",
+      "acceptance": "Every open input is supplied or linked to its accepted proof, with t ranging over all D. Compile the Lean theorem when formalized and audit equivalence to the original square target.",
+      "fallback": "If a band proves only a subfamily, record the exact residual t,j. Leave the global gate open."
+    },
+    {
+      "id": "T-FINITE-BASE",
+      "node": "FINITE-BASE",
+      "mode": "synthesis",
+      "priority": "P1",
+      "claim": null,
+      "title": "Check every order under the certified tail cutoff",
+      "needs": [
+        "TAIL",
+        "KNOWN-ORDERS"
+      ],
+      "uses": [],
+      "inputs": "Take the precise T from the approved TAIL artifact. Recompute D∩[1,T] from the same coverage definition.",
+      "deliverable": "Return an exhaustive manifest with t, n=4t and a checked square or theorem for each member; retain any open cases as named gaps.",
+      "acceptance": "Every t≤T is covered either by a proved filter or a checked manifest entry. The manifest, tail theorem and replay logs use the identical cutoff.",
+      "fallback": "A missing witness keeps this route open. Enumerate exactly the residual set and assign each remaining finite order."
+    },
+    {
+      "id": "T-COUNTER-CERT",
+      "node": "NO-CERTIFICATE",
+      "mode": "research",
+      "priority": "P2",
+      "claim": null,
+      "title": "Certify an actual unrestricted negative instance",
+      "needs": [
+        "DESIGN-EQUIV"
+      ],
+      "uses": [
+        "ENCODING-PILOT",
+        "NO-PAIR-COVER"
+      ],
+      "inputs": "Use DESIGN-EQUIV and a fully justified unperturbed unrestricted encoding for a named t. The small harness is a suggested control.",
+      "deliverable": "Supply the exact mathematical instance, encoder, complete split/representative argument where applicable, final proof artifact and independent checking procedure.",
+      "acceptance": "The replay certifies UNSAT on the exact unperturbed encoding at this t. Shards cover every assignment modulo only proved symmetries. A positive witness instead establishes that order.",
+      "fallback": "If exclusion is affordable only on a class, publish its precise scope; preserve NO as open."
+    },
+    {
+      "id": "T-TERMINAL-MOVE",
+      "node": "GOOD-DIRECT",
+      "mode": "research",
+      "priority": "P1",
+      "claim": null,
+      "title": "Replace one terminal column via a 256-pattern test",
+      "needs": [
+        "EXCHANGE-NINE",
+        "LAST-SEVEN"
+      ],
+      "uses": [
+        "TERMINAL-RANK",
+        "ENDGAME-CONTROLS"
+      ],
+      "inputs": "Given n−8 columns, delete one and keep all other n−9. Enumerate the signs in the nine-dimensional kernel modulo negation. Test pairs by their full scalar products; try other deletions with separate coverage records.",
+      "deliverable": "Return either two compatible columns yielding n−7 or a replayable certificate excluding every such replacement over each specified retained prefix. Then seek a condition guaranteeing a successful deletion on some prefix throughout a family.",
+      "acceptance": "Coordinate lifting is rank checked, includes all 256 patterns, and cross-products use full length n. To close GOOD-DIRECT, guarantee some good original or reconstructed prefix for every required t admitting one.",
+      "fallback": "A failed replacement atlas establishes its exact local radius and motivates changing two earlier columns. Give the old columns, identities of all deletions, and masks."
+    },
+    {
+      "id": "T-NO-PAIR-COVER",
+      "node": "NO-PAIR-COVER",
+      "mode": "research",
+      "priority": "P2",
+      "claim": null,
+      "title": "Certify coverage over all pivot pairs at one order",
+      "needs": [
+        "PIVOT",
+        "CLIQUE-EQUIV"
+      ],
+      "uses": [
+        "PIVOT-CONTROLS"
+      ],
+      "inputs": "At one t the raw space is all k-regular A,B satisfying (1). Permute rows separately and finite points jointly. Further identifications require an orbit-coverage proof.",
+      "deliverable": "Build a canonical augmentation or a theoretical cover of this entire pair space, with certificates for the clique bound on every terminal class. Start by verifying orbit transport and full positive examples at t=5.",
+      "acceptance": "Prove coverage, covariance of the matching graph and the bound clique number <h for every retained class at the named order. A known positive order validates the coverage pipeline only.",
+      "fallback": "If the cover is partial, specify exactly the omitted classes; a fully covered rejected symmetry subclass can still retire that approach."
+    },
+    {
+      "id": "T-YES",
+      "node": "YES",
+      "mode": "synthesis",
+      "priority": "P0",
+      "claim": null,
+      "title": "Assemble the all-order positive theorem",
+      "needs": [
+        "ALL-D",
+        "KNOWN-ORDERS",
+        "ODD-REDUCTION"
+      ],
+      "uses": [],
+      "inputs": "Consume a reviewed ALL-D proof with the Paley/Scarpis domain definition and the doubling theorem. This is the affirmative end of the DAG.",
+      "deliverable": "Give a standalone proof for every positive integer t, composing the accepted remaining-domain theorem with all covered small and even cases.",
+      "acceptance": "Every t is covered and every imported hypothesis has a matching source or verified proof. Review that the conclusion concerns real ±1 square matrices of exactly order 4t.",
+      "fallback": "List any uncovered domain explicitly and return the proof to its relevant gate; keep resolution OPEN."
+    },
+    {
+      "id": "T-RESOLVE",
+      "node": "RESOLUTION",
+      "mode": "synthesis",
+      "priority": "P0",
+      "claim": null,
+      "title": "Audit and record the definite answer",
+      "needs": [],
+      "uses": [],
+      "inputs": "A complete positive theorem or a single certified unrestricted counterexample is required. Follow the accepted branch down to the underlying proofs and witnesses.",
+      "deliverable": "Reproduce that branch from its pinned sources, independently review its quantifiers and scoped assumptions, and record a definite YES or NO with the proof.",
+      "acceptance": "A positive result covers every positive t. A negative result names t and excludes every square there. Update the entry point and graph together once independently reviewed.",
+      "fallback": "Any missing evidence or mismatched parameter reopens the affected parent, with a precise task reference."
+    }
+  ]
+}
