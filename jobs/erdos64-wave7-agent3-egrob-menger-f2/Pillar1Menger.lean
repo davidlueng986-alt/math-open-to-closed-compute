@@ -251,7 +251,7 @@ theorem minimal_bad2_two_cut_exact_two_components {V : Type*} [Fintype V]
   refine ⟨ha, hb, ?_, hall⟩
   intro hab_reach
   apply hcut
-  haveI : Nonempty {z : V // z ∈ (({x, y} : Finset V)ᶜ : Set V)} := ⟨⟨a, ha⟩⟩
+  have : Nonempty {z : V // z ∈ (({x, y} : Finset V)ᶜ : Set V)} := ⟨⟨a, ha⟩⟩
   refine Connected.mk (fun u v => ?_)
   rcases hall u with hua | hub <;> rcases hall v with hva | hvb
   · exact hua.trans hva.symm
