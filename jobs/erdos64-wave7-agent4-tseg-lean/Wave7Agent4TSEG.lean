@@ -544,11 +544,11 @@ private theorem internalSwitches_append_edge {V : Type*} {H : SimpleGraph V}
   | _, _, _, .nil, _, hp => by simp at hp
   | _, _, _, .cons _ .nil, _, _ => by
       simp only [Walk.append, internalSwitches, endSide, zero_add, add_zero]
+      split_ifs <;> rfl
   | _, _, _, .cons _ (.cons h₂ rest), hwz, _ => by
       have ih := internalSwitches_append_edge side (.cons h₂ rest) hwz (by simp)
       simp only [Walk.append, internalSwitches, endSide] at ih ⊢
-      rw [ih]
-      omega
+      rw [ih, ← Nat.add_assoc]
 
 private theorem startSide_append_edge {V : Type*} {H : SimpleGraph V}
     (side : V → V → Bool) :
