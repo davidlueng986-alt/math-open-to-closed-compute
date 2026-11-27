@@ -98,18 +98,16 @@ theorem nonBacktracking_lt_girth_add_two_isCyclicallyNonBacktracking {V : Type*}
                   exact isNonBacktracking_of_append_left hnb_rest
                 have hr_ge : g ≤ (Walk.cons hr₁ hr₂).length :=
                   girth_le_length_of_nonBacktracking_closed hg _ (.cons hr₁ hr₂) rfl (by simp) hr_nb
-                have hlen : (Walk.cons h₁ (.cons h₂ rest₂)).length = (Walk.cons hr₁ hr₂).length + 2 := by
-                  simp only [Walk.length_cons]
-                  rw [heq, Walk.length_append]
-                  simp
-                  omega
+                have hlen_heq := congrArg Walk.length heq
+                simp only [Walk.length_cons, Walk.length_append, Walk.length_nil] at hlen_heq hlt hr_ge
                 omega
           have hp_eq : Walk.cons h₁ (.cons h₂ rest₂) = (Walk.cons h₁ r).append (.cons hlast .nil) := by
             rw [Walk.cons_append, ← heq]
-          unfold IsCyclicallyNonBacktracking
-          conv_lhs => rw [hp_eq]
-          exact isNonBacktracking_append_last_cons (.cons h₁ r) hlast h₁ (.cons h₂ rest₂)
-            (hp_eq ▸ hnb) hnb hpuw.symm
+          have hgoal : IsNonBacktracking
+              (((Walk.cons h₁ r).append (.cons hlast .nil)).append (Walk.cons h₁ (.cons h₂ rest₂))) :=
+            isNonBacktracking_append_last_cons (.cons h₁ r) hlast h₁ (.cons h₂ rest₂)
+              (hp_eq ▸ hnb) hnb hpuw.symm
+          simpa only [IsCyclicallyNonBacktracking, ← hp_eq] using hgoal
 
 /-- Every nonempty non-backtracking closed walk (even without assuming taillessness)
 of length `< g + 2` in a graph of girth `≥ g ≥ 3` is a simple cycle. -/
@@ -202,7 +200,7 @@ private theorem isCycle_of_nb_nodup_tail' {V : Type*} {G : SimpleGraph V}
         refine ⟨?_⟩
         simp only [Walk.edges_cons, List.nodup_cons]
         exact ⟨hnotmem, hrest_path.isTrail.edges_nodup⟩
-      exact ⟨htrail, by simp, hnd⟩
+      exact ⟨⟨htrail, by simp⟩, hnd⟩
 
 private theorem exists_append_of_mem_support' {V : Type*} {G : SimpleGraph V} :
     ∀ {u v : V} (w : G.Walk u v) {x : V},
@@ -354,8 +352,8 @@ theorem erdos64_of_two_window_nonBacktracking
 def twoFactorSubgraph {V : Type*} (G : SimpleGraph V) (m : V → V)
     (hm_inv : ∀ v, m (m v) = v) : SimpleGraph V where
   Adj u v := G.Adj u v ∧ v ≠ m u
-  symm := fun _ _ h => ⟨h.1.symm, fun heq => h.2 (by rw [heq, hm_inv])⟩
-  loopless := fun _ h => G.ne_of_adj h.1 rfl
+  symm _ _ h := ⟨h.1.symm, fun heq => h.2 (by rw [heq, hm_inv])⟩
+  loopless _ h := G.loopless _ h.1
 
 /-- In any power-free graph `G` with perfect matching `m`, the 2-factor `G \ m` contains
 no `2^k`-cycle (`0`-switching exclusion). -/
