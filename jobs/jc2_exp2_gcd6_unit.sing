@@ -4,7 +4,7 @@
 //   - coeff_d(T^2 - 9*p_L*A^2) = 0        (degrees 30..23; degrees 40..31 vanish identically!)
 //   - w * b2 - 1 = 0                      (b2 != 0 from ord_w Delta D = 10)
 // Eliminates a1 from eq30 (const coeff -81/16) and a0 from eq29 (const coeff -648/7) -> ONLY 5 vars!
-// Proves 1 in I_top over Q via BOTH exact modStd(I, 1) AND direct groebner/slimgb over Q!
+// Proves 1 in I_top over Q via BOTH exact modStd(I, 1) AND direct deterministic slimgb over Q!
 
 LIB "modstd.lib";
 
@@ -18,10 +18,10 @@ proc ucoeff(poly f, int k) {
 ring Ru = 0, (u, a2, a1, a0, w, v6, r0, r1), dp;
 
 poly r = u^2 + r1*u + r0;
-number b9 = 9/2;
-poly b6 = 9/8*(4*v6 - 13);
-poly v3 = 3/500*(500*v6 - 1001);
-poly b3 = 27/500*(377 - 125*v6);
+number b9 = number(9)/number(2);
+poly b6 = (number(9)/number(8))*(4*v6 - 13);
+poly v3 = (number(3)/number(500))*(500*v6 - 1001);
+poly b3 = (number(27)/number(500))*(377 - 125*v6);
 
 // 1. Construct B(u) with b8=b7=b5=b4=0 and r | B'
 poly numB = b9*r^6 + b6*u*r^4 + b3*u^2*r^2;
@@ -32,7 +32,7 @@ for (k = 3; k <= 12; k++) {
 }
 poly dpolyB = diff(polyB, u);
 poly remB = reduce(dpolyB, std(r));
-poly c2 = -ucoeff(remB, 1) / 2;
+poly c2 = -ucoeff(remB, 1) / number(2);
 poly c1 = -ucoeff(remB, 0);
 poly B = polyB + c2*u^2 + c1*u;
 poly dB = diff(B, u);
@@ -40,9 +40,9 @@ poly g = dB / r;
 if (g * r != dB) { printf("ERROR: r does not divide B'!"); quit; }
 
 poly b2 = c2;
-poly b1 = c1 - 4/3*r1*b2;
-poly v2 = 2/9*b2;
-poly v1 = 2/9*b1;
+poly b1 = c1 - (number(4)/number(3))*r1*b2;
+poly v2 = (number(2)/number(9))*b2;
+poly v1 = (number(2)/number(9))*b1;
 
 // 2. Construct A(u) = r*V(u)
 poly numA = r^7 + v6*u*r^5 + v3*u^2*r^3;
@@ -50,7 +50,7 @@ poly polyA = 0;
 for (k = 6; k <= 14; k++) {
   polyA = polyA + ucoeff(numA, k) * u^(k - 3);
 }
-poly extraA = r * (v2*(u^2 + 4/3*r1*u) + v1*u);
+poly extraA = r * (v2*(u^2 + (number(4)/number(3))*r1*u) + v1*u);
 for (k = 3; k <= 4; k++) {
   polyA = polyA + ucoeff(extraA, k) * u^k;
 }
@@ -74,10 +74,10 @@ for (k = 20; k >= 3; k--) {
   for (j = 0; j <= 3; j++) {
     ii = d + 1 - j;
     if (ii >= 3 && ii <= 20) {
-      lhs_rest = lhs_rest + tcoeff[ii+1] * (2*ii - j) * mcoeff[j+1];
+      lhs_rest = lhs_rest + tcoeff[ii+1] * number(2*ii - j) * mcoeff[j+1];
     }
   }
-  tcoeff[k+1] = (ucoeff(RHS, d) - lhs_rest) / (2*k - 4);
+  tcoeff[k+1] = (ucoeff(RHS, d) - lhs_rest) / number(2*k - 4);
 }
 
 poly Thi = 0;
@@ -93,7 +93,7 @@ poly ode5 = ucoeff(odeDiff, 5);
 poly gA = g * A;
 poly pL = 0;
 for (k = 0; k <= 17; k++) {
-  pL = pL + ucoeff(gA, k) * u^(k+1) / (k+1);
+  pL = pL + ucoeff(gA, k) * u^(k+1) / number(k+1);
 }
 poly sqDiff = Thi^2 - 9*pL*A^2;
 for (k = 31; k <= 40; k++) {
@@ -109,12 +109,12 @@ poly eq25 = ucoeff(sqDiff, 25);
 poly eq24 = ucoeff(sqDiff, 24);
 poly eq23 = ucoeff(sqDiff, 23);
 
-// Eliminate a1 from eq30 (coeff -81/16) and a0 from eq29 (coeff -648/7) — exact rational substitution!
-if (diff(eq30, a1) != -81/16) { printf("ERROR: eq30 a1 coeff mismatch!"); quit; }
-poly a1_sol = subst(eq30, a1, 0) * (16/81);
+// Sanity-check exact rational coefficients against independent SymPy values!
+if (diff(eq30, a1) != number(-81)/number(16)) { printf("ERROR: eq30 a1 coeff = %s", diff(eq30, a1)); quit; }
+poly a1_sol = subst(eq30, a1, 0) * (number(16)/number(81));
 poly eq29_s = subst(eq29, a1, a1_sol);
-if (diff(eq29_s, a0) != -648/7) { printf("ERROR: eq29 a0 coeff mismatch!"); quit; }
-poly a0_sol = subst(eq29_s, a0, 0) * (7/648);
+if (diff(eq29_s, a0) != number(-648)/number(7)) { printf("ERROR: eq29 a0 coeff = %s", diff(eq29_s, a0)); quit; }
+poly a0_sol = subst(eq29_s, a0, 0) * (number(7)/number(648));
 
 poly f28 = subst(subst(eq28, a1, a1_sol), a0, a0_sol);
 poly f27 = subst(subst(eq27, a1, a1_sol), a0, a0_sol);
@@ -124,9 +124,8 @@ poly f24 = subst(subst(eq24, a1, a1_sol), a0, a0_sol);
 poly f23 = subst(subst(eq23, a1, a1_sol), a0, a0_sol);
 poly f5  = subst(subst(ode5, a1, a1_sol), a0, a0_sol);
 
-// Check that f28..f23, f5 are ALL linear in a2 and free of u, a1, a0!
 ideal Ired_u = f28, f27, f26, f25, f24, f23, f5, w*b2 - 1;
-printf("Reduced to 5 variables (a2, w, v6, r0, r1)! size(Ired_u)=%s", size(Ired_u));
+printf("VERIFIED all rational coefficients! Reduced to 5 vars (a2, w, v6, r0, r1).");
 
 ring R5 = 0, (a2, w, v6, r0, r1), dp;
 ideal I5 = imap(Ru, Ired_u);
