@@ -1,0 +1,20 @@
+name: E64 Wave 6 Agent 6 Dyadic Pinch & Brown Closure (Lean 4.36.0)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Wave6Agent6DyadicPinch in Lean 4.36.0
+        run: bash jobs/erdos64-wave6-agent6-dyadic-pinch/verify.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: erdos64-wave6-agent6-dyadic-pinch
+          path: out/
+          retention-days: 90
