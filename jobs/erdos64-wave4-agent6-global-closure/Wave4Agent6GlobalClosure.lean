@@ -565,7 +565,8 @@ theorem completion_min_deg_three {V : Type u} [Fintype V] [DecidableEq V]
     have h3 := hwfree a
     simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at ha hd h3
     change 3 ≤ Nat.card (H.neighborSet a)
-    omega
+    rw [ha.trans hd]
+    exact h3
   by_cases hvb : v = b
   · subst v
     have hd := induce_degree_add_out' G A b
@@ -574,7 +575,8 @@ theorem completion_min_deg_three {V : Type u} [Fintype V] [DecidableEq V]
     have h3 := hwfree b
     simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at hb hd h3
     change 3 ≤ Nat.card (H.neighborSet b)
-    omega
+    rw [hb.trans hd]
+    exact h3
   have hout : ((G.neighborFinset v.1).filter (fun z => z ∉ A)) = ∅ := by
     rw [Finset.filter_eq_empty_iff]
     intro z hz hn
@@ -597,7 +599,8 @@ theorem completion_min_deg_three {V : Type u} [Fintype V] [DecidableEq V]
   have h3 := hwfree v
   simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at hd h3
   change 3 ≤ Nat.card (H.neighborSet v)
-  omega
+  rw [heq.trans hd]
+  exact h3
 
 /-- Deleting the virtual edge `ab` from `Completion G A a b` recovers `G.induce A`. -/
 theorem completion_sdiff_edge {V : Type u} (G : SimpleGraph V) (A : Set V)
