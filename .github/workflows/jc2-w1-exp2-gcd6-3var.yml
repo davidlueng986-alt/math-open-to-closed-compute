@@ -1,0 +1,22 @@
+name: JC2 Exp2 DEGREE-135-IV-GCD-SIX 3-Var Exact Q-Proof
+on:
+  push:
+    branches: ['jc2-w1-exp2-gcd6-3var']
+    paths:
+      - 'jobs/jc2_exp2_gcd6_3var.py'
+      - '.github/workflows/jc2-w1-exp2-gcd6-3var.yml'
+  workflow_dispatch:
+
+jobs:
+  singular-gcd6-3var:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Singular and SymPy
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq singular python3-sympy
+          Singular --version
+      - name: Run 3-variable exact Q-proof for DEGREE-135-IV-GCD-SIX
+        run: python3 jobs/jc2_exp2_gcd6_3var.py
