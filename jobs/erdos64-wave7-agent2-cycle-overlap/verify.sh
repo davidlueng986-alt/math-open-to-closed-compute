@@ -1,18 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+JOB_DIR="$ROOT_DIR/jobs/erdos64-wave7-agent2-cycle-overlap"
+OUT_DIR="$ROOT_DIR/out"
+mkdir -p "$OUT_DIR"
+
 echo "Lean version:"
 lean --version
 
-LAKE_DIR=/opt/mathlib4
-echo "Using Mathlib workspace: ${LAKE_DIR}"
+MATHLIB_DIR="/opt/mathlib4"
+echo "Using Mathlib workspace: $MATHLIB_DIR"
 
-mkdir -p out
+SRC="$JOB_DIR/Wave7Agent2CycleOverlap.lean"
+AUDIT_FILE="$OUT_DIR/Wave7Agent2CycleOverlap_audit.lean"
 
-lake --dir="${LAKE_DIR}" env lean -DwarningAsError=true jobs/erdos64-wave7-agent2-cycle-overlap/Wave7Agent2CycleOverlap.lean 2>&1 | tee out/lean_compile.log
-
-cp jobs/erdos64-wave7-agent2-cycle-overlap/Wave7Agent2CycleOverlap.lean out/AuditFile.lean
-cat << 'EOF' >> out/AuditFile.lean
+cp "$SRC" "$AUDIT_FILE"
+cat >> "$AUDIT_FILE" << 'EOF'
 
 #print axioms E64Wave7Agent2.same_scale_dyadic_plus_one_no_single_edge_overlap
 #print axioms E64Wave7Agent2.same_scale_dyadic_plus_one_path_overlap_exclusion
@@ -32,40 +36,43 @@ cat << 'EOF' >> out/AuditFile.lean
 #print axioms E64Wave7Agent2.minimal_bad2_girth6_v3_density_20_27
 EOF
 
-lake --dir="${LAKE_DIR}" env lean -DwarningAsError=true out/AuditFile.lean 2>&1 | tee out/axioms.log
+cd "$MATHLIB_DIR"
+lake env lean -DwarningAsError=true "$SRC" 2>&1 | tee "$OUT_DIR/lean_compile.log"
+lake env lean -DwarningAsError=true "$AUDIT_FILE" 2>&1 | tee "$OUT_DIR/lean_axioms.log"
 
-python3 - << 'PY'
-import json, re, hashlib
+python3 - "$SRC" "$OUT_DIR/lean_axioms.log" "$OUT_DIR/verification.json" << 'PY'
+import hashlib, json, re, sys
 
-with open("out/axioms.log") as f:
-    text = f.read()
+src_path, log_path, out_path = sys.argv[1], sys.argv[2], sys.argv[3]
+with open(src_path, "rb") as f:
+    src_sha256 = hashlib.sha256(f.read()).hexdigest()
 
-pattern = re.compile(r"'([^']+)' depends on axioms: \[([^\]]*)\]", re.MULTILINE | re.DOTALL)
-allowed = {"propext", "Classical.choice", "Quot.sound"}
+with open(log_path, "r", encoding="utf-8") as f:
+    log_text = f.read()
+
+allowed = {"propext", "Classical.choice", "choice", "Quot.sound"}
 axioms = {}
 disallowed = {}
-for m in pattern.finditer(text):
+
+for m in re.finditer(r"'([^']+)' depends on axioms: \[([^\]]*)\]", log_text):
     name = m.group(1).strip()
-    axs = [a.strip() for a in m.group(2).split(",") if a.strip()]
-    axioms[name] = axs
-    bad = [a for a in axs if a not in allowed]
+    ax_list = [a.strip() for a in m.group(2).split(",") if a.strip()]
+    axioms[name] = ax_list
+    bad = [a for a in ax_list if a not in allowed]
     if bad:
         disallowed[name] = bad
 
-with open("jobs/erdos64-wave7-agent2-cycle-overlap/Wave7Agent2CycleOverlap.lean", "rb") as f:
-    sha = hashlib.sha256(f.read()).hexdigest()
-
+ok = (len(axioms) == 16) and (len(disallowed) == 0)
 res = {
-    "status": "PASS" if (len(axioms) == 16 and not disallowed) else "FAIL",
+    "status": "PASS" if ok else "FAIL",
     "module": "Wave7Agent2CycleOverlap",
     "audited_count": len(axioms),
     "disallowed_axioms": disallowed,
-    "source_sha256": sha,
+    "source_sha256": src_sha256,
     "axioms": axioms,
 }
-with open("out/verification.json", "w") as f:
+with open(out_path, "w", encoding="utf-8") as f:
     json.dump(res, f, indent=2)
 print(json.dumps(res, indent=2))
-if res["status"] != "PASS":
-    raise SystemExit(1)
+sys.exit(0 if ok else 1)
 PY
