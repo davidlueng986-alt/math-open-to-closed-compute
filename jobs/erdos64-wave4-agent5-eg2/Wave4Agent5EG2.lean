@@ -63,11 +63,12 @@ def EGRob : Prop :=
 theorem near2_of_min_deg_three {V : Type u} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hmin : G.minDegree ≥ 3) :
     Near2 G := by
-  rcases isEmpty_or_nonempty V with hempty | ⟨w⟩
+  rcases isEmpty_or_nonempty V with hempty | hne
   · let _ : IsEmpty V := hempty
     have hz : G.minDegree = 0 := SimpleGraph.minDegree_of_subsingleton G
     omega
-  · have hall : ∀ v, 3 ≤ G.degree v := fun v => hmin.trans (G.minDegree_le_degree v)
+  · obtain ⟨w⟩ := hne
+    have hall : ∀ v, 3 ≤ G.degree v := fun v => hmin.trans (G.minDegree_le_degree v)
     have hcard : 4 ≤ Fintype.card V := by
       have h1 := hall w
       have h2 := G.degree_lt_card_verts w
@@ -136,7 +137,9 @@ private theorem sdiff_edge_ne {V : Type u} [DecidableEq V]
     (G : SimpleGraph V) {a b : V} (hab : G.Adj a b) :
     G \ SimpleGraph.edge a b ≠ G := by
   intro hEq
-  have he : (G \ SimpleGraph.edge a b).Adj a b := hEq ▸ hab
+  have he : (G \ SimpleGraph.edge a b).Adj a b := by
+    rw [hEq]
+    exact hab
   have hno := (SimpleGraph.sdiff_adj G (SimpleGraph.edge a b) a b).mp he
   exact hno.2 ((SimpleGraph.edge_adj a b a b).mpr ⟨Or.inl ⟨rfl, rfl⟩, G.ne_of_adj hab⟩)
 
@@ -199,11 +202,9 @@ theorem minimal_bad2_not_one_defect {V : Type u} [Fintype V]
     rw [Fintype.card_subtype,
       show (Finset.univ.filter (fun x : V => x ≠ w)) = Finset.univ.erase w by ext x; simp]
     exact Finset.card_erase_add_one (Finset.mem_univ w)
-  -- Show 5 ≤ Fintype.card V (hence 4 ≤ Fintype.card W)
   have hV5 : 5 ≤ Fintype.card V := by
     by_contra hlt
     have hV4 : Fintype.card V = 4 := by have := hm.1.1; omega
-    -- There is a vertex c ∉ {w, a, b}
     have hex : ∃ c : V, c ≠ w ∧ c ≠ a ∧ c ≠ b := by
       by_contra hno
       push Not at hno
@@ -217,9 +218,10 @@ theorem minimal_bad2_not_one_defect {V : Type u} [Fintype V]
           · exact Or.inr (Or.inr (hno x h1 h2))
       have hc := Finset.card_le_card hsub
       have h3 : ({w, a, b} : Finset V).card ≤ 3 := by
-        calc ({w, a, b} : Finset V).card ≤ ({a, b} : Finset V).card + 1 := Finset.card_insert_le _ _
-          _ ≤ 2 + 1 := by omega
-          _ = 3 := rfl
+        have h1 := Finset.card_insert_le w ({a, b} : Finset V)
+        have h2 := Finset.card_insert_le a ({b} : Finset V)
+        simp only [Finset.card_singleton] at h2
+        omega
       rw [Finset.card_univ] at hc
       omega
     obtain ⟨c, hcw, hca, hcb⟩ := hex
@@ -340,11 +342,9 @@ private theorem not_minimal_bad2_of_proper_near2_induce {V : Type u} [Fintype V]
     (hdef : ∃ p q : S, ∀ x : S, x ≠ p → x ≠ q → 3 ≤ (G.induce S).degree x)
     (h3 : ∃ z : S, 3 ≤ (G.induce S).degree z) : False := by
   classical
-  let H := G.induce S
-  let _ : DecidableRel H.Adj := inferInstanceAs (DecidableRel (G.induce S).Adj)
   obtain ⟨z, hz⟩ := h3
   have hcard4 : 4 ≤ Fintype.card S := by
-    have hlt := H.degree_lt_card_verts z
+    have hlt := (G.induce S).degree_lt_card_verts z
     omega
   have hltV : Fintype.card S < Fintype.card V := by
     rw [Fintype.card_subtype]
@@ -352,12 +352,14 @@ private theorem not_minimal_bad2_of_proper_near2_induce {V : Type u} [Fintype V]
       rw [Finset.ssubset_iff_subset_ne]
       refine ⟨Finset.subset_univ _, ?_⟩
       intro heq
-      have hmem : w0 ∈ Finset.univ.filter (fun x : V => x ∈ S) := heq ▸ Finset.mem_univ w0
+      have hmem : w0 ∈ Finset.univ.filter (fun x : V => x ∈ S) := by
+        rw [heq]
+        exact Finset.mem_univ w0
       simp only [Finset.mem_filter] at hmem
       exact hw0 hmem.2
     exact Finset.card_lt_card hsub
-  have hnH : Near2 H := ⟨hcard4, hge2, hdef⟩
-  exact hm.2.1 (power_induce G S (hm.2.2.1 S H hltV hnH))
+  have hnH : Near2 (G.induce S) := ⟨hcard4, hge2, hdef⟩
+  exact hm.2.1 (power_induce G S (hm.2.2.1 S (G.induce S) hltV hnH))
 
 /-- In every `MinimalBad2` graph, the two degree-2 defects `u` and `v` are nonadjacent. -/
 theorem minimal_bad2_defects_nonadjacent {V : Type u} [Fintype V]
@@ -367,7 +369,6 @@ theorem minimal_bad2_defects_nonadjacent {V : Type u} [Fintype V]
     ¬G.Adj u v := by
   classical
   intro hadj
-  -- Find the unique other neighbor b of u, and c of v
   have hub_ex : ∃ b, G.Adj u b ∧ b ≠ v := by
     have hcard : ((G.neighborFinset u).erase v).card = 1 := by
       have h1 := Finset.card_erase_add_one ((G.mem_neighborFinset u v).mpr hadj)
@@ -384,9 +385,9 @@ theorem minimal_bad2_defects_nonadjacent {V : Type u} [Fintype V]
     have hsub : ({v, b} : Finset V) ⊆ G.neighborFinset u := by
       intro y hy
       simp only [Finset.mem_insert, Finset.mem_singleton] at hy
-      rcases hy with rfl | rfl
-      · exact (G.mem_neighborFinset u v).mpr hadj
-      · exact (G.mem_neighborFinset u b).mpr hub
+      rcases hy with h | h
+      · rw [h]; exact (G.mem_neighborFinset u v).mpr hadj
+      · rw [h]; exact (G.mem_neighborFinset u b).mpr hub
     have heq : ({v, b} : Finset V) = G.neighborFinset u := by
       apply Finset.eq_of_subset_of_card_le hsub
       rw [SimpleGraph.card_neighborFinset_eq_degree, hu2, Finset.card_pair (Ne.symm hbv)]
@@ -408,9 +409,9 @@ theorem minimal_bad2_defects_nonadjacent {V : Type u} [Fintype V]
     have hsub : ({u, c} : Finset V) ⊆ G.neighborFinset v := by
       intro y hy
       simp only [Finset.mem_insert, Finset.mem_singleton] at hy
-      rcases hy with rfl | rfl
-      · exact (G.mem_neighborFinset v u).mpr hadj.symm
-      · exact (G.mem_neighborFinset v c).mpr hvc
+      rcases hy with h | h
+      · rw [h]; exact (G.mem_neighborFinset v u).mpr hadj.symm
+      · rw [h]; exact (G.mem_neighborFinset v c).mpr hvc
     have heq : ({u, c} : Finset V) = G.neighborFinset v := by
       apply Finset.eq_of_subset_of_card_le hsub
       rw [SimpleGraph.card_neighborFinset_eq_degree, hv2, Finset.card_pair (Ne.symm hcu)]
@@ -419,8 +420,7 @@ theorem minimal_bad2_defects_nonadjacent {V : Type u} [Fintype V]
   by_cases hbc : b = c
   · subst hbc
     by_cases hb4 : 4 ≤ G.degree b
-    · -- Delete {u, v}; b drops by 2 to ≥ 2, all others keep ≥ 3
-      let S : Set V := {x | x ≠ u ∧ x ≠ v}
+    · let S : Set V := {x | x ≠ u ∧ x ≠ v}
       have hout : ∀ x : S,
           (Finset.univ.filter (fun y : V => y ∉ S ∧ G.Adj x.1 y)).card ≤
           if x.1 = b then 2 else 0 := by
@@ -429,14 +429,14 @@ theorem minimal_bad2_defects_nonadjacent {V : Type u} [Fintype V]
         · rw [ite_eq_left hxb]
           have hsub : Finset.univ.filter (fun y : V => y ∉ S ∧ G.Adj x.1 y) ⊆ {u, v} := by
             intro y hy
-            simp only [Finset.mem_filter, Set.mem_setOf_eq, not_and_or, not_not, S] at hy
+            simp only [Finset.mem_filter, Set.mem_ofPred_eq, not_and_or, not_not, S] at hy
             simp only [Finset.mem_insert, Finset.mem_singleton]
             exact hy.2.1
           exact (Finset.card_le_card hsub).trans (by rw [Finset.card_pair huv])
         · rw [ite_eq_right hxb]
           rw [Nat.le_zero, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
           intro y _ hy
-          simp only [Set.mem_setOf_eq, not_and_or, not_not, S] at hy
+          simp only [Set.mem_ofPred_eq, not_and_or, not_not, S] at hy
           rcases hy.1 with rfl | rfl
           · rcases (hNu x.1).mp hy.2.symm with h | h
             · exact x.2.2 h
@@ -449,8 +449,12 @@ theorem minimal_bad2_defects_nonadjacent {V : Type u} [Fintype V]
         have hd := induce_degree_add_out G S x
         have ho := hout x
         by_cases hxb : x.1 = b
-        · rw [ite_eq_left hxb] at ho; rw [hxb] at hd; omega
-        · rw [ite_eq_right hxb] at ho; have := hrest x.1 x.2.1 x.2.2; omega
+        · rw [ite_eq_left hxb] at ho
+          have hdeg : 4 ≤ G.degree x.1 := hxb.symm ▸ hb4
+          omega
+        · rw [ite_eq_right hxb] at ho
+          have := hrest x.1 x.2.1 x.2.2
+          omega
       have hdef : ∃ p q : S, ∀ x : S, x ≠ p → x ≠ q → 3 ≤ (G.induce S).degree x := by
         refine ⟨⟨b, hbu, hbv⟩, ⟨b, hbu, hbv⟩, ?_⟩
         intro x hxp _
@@ -460,7 +464,6 @@ theorem minimal_bad2_defects_nonadjacent {V : Type u} [Fintype V]
         rw [ite_eq_right hxb] at ho
         have := hrest x.1 x.2.1 x.2.2
         omega
-      -- b has ≥ 4 neighbors in G, at most 2 in {u, v}, so there is z ∈ S \ {b}
       have h3 : ∃ z : S, 3 ≤ (G.induce S).degree z := by
         have hcard_b : ((G.neighborFinset b).filter (fun y => y ≠ u ∧ y ≠ v)).card ≥ 2 := by
           have hsub : G.neighborFinset b ⊆
@@ -473,20 +476,22 @@ theorem minimal_bad2_defects_nonadjacent {V : Type u} [Fintype V]
               · simp [hy, hyu, hyv]
           have hc := Finset.card_le_card hsub
           have hle := Finset.card_union_le ((G.neighborFinset b).filter (fun y => y ≠ u ∧ y ≠ v)) {u, v}
-          rw [SimpleGraph.card_neighborFinset_eq_degree, Finset.card_pair huv] at hc hle
+          rw [SimpleGraph.card_neighborFinset_eq_degree] at hc
+          rw [Finset.card_pair huv] at hle
           omega
         obtain ⟨z, hz⟩ := Finset.card_pos.mp (by omega : 0 < ((G.neighborFinset b).filter (fun y => y ≠ u ∧ y ≠ v)).card)
         simp only [Finset.mem_filter, SimpleGraph.mem_neighborFinset] at hz
         have hzb : z ≠ b := (G.ne_of_adj hz.1).symm
-        refine ⟨⟨z, hz.2.1, hz.2.2⟩, ?_⟩
-        have hd := induce_degree_add_out G S ⟨z, hz.2.1, hz.2.2⟩
-        have ho := hout ⟨z, hz.2.1, hz.2.2⟩
-        rw [ite_eq_right hzb] at ho
-        have := hrest z hz.2.1 hz.2.2
+        let zs : S := ⟨z, hz.2.1, hz.2.2⟩
+        refine ⟨zs, ?_⟩
+        have hd := induce_degree_add_out G S zs
+        have ho := hout zs
+        have hzsb : zs.1 ≠ b := hzb
+        rw [ite_eq_right hzsb] at ho
+        have hz3 : 3 ≤ G.degree zs.1 := hrest z hz.2.1 hz.2.2
         omega
       exact not_minimal_bad2_of_proper_near2_induce G hm S u (by simp [S]) hge2 hdef h3
-    · -- Subcase 1b: deg(b) = 3; delete {u, v, b}, only unique 3rd neighbor z of b drops by 1
-      have hb3 : G.degree b = 3 := by have := hrest b hbu hbv; omega
+    · have hb3 : G.degree b = 3 := by have := hrest b hbu hbv; omega
       have hcard_z : (((G.neighborFinset b).erase u).erase v).card = 1 := by
         have h1 := Finset.card_erase_add_one ((G.mem_neighborFinset b u).mpr hub.symm)
         have hv_mem : v ∈ (G.neighborFinset b).erase u := by
@@ -506,10 +511,10 @@ theorem minimal_bad2_defects_nonadjacent {V : Type u} [Fintype V]
         have hsub : ({u, v, z} : Finset V) ⊆ G.neighborFinset b := by
           intro t ht
           simp only [Finset.mem_insert, Finset.mem_singleton] at ht
-          rcases ht with rfl | rfl | rfl
-          · exact (G.mem_neighborFinset b u).mpr hub.symm
-          · exact (G.mem_neighborFinset b v).mpr hvc.symm
-          · exact (G.mem_neighborFinset b z).mpr hbz
+          rcases ht with h | h | h
+          · rw [h]; exact (G.mem_neighborFinset b u).mpr hub.symm
+          · rw [h]; exact (G.mem_neighborFinset b v).mpr hvc.symm
+          · rw [h]; exact (G.mem_neighborFinset b z).mpr hbz
         have h3 : ({u, v, z} : Finset V).card = 3 := by
           simp [huv, Ne.symm hzu, Ne.symm hzv]
         have heq : ({u, v, z} : Finset V) = G.neighborFinset b := by
@@ -526,7 +531,7 @@ theorem minimal_bad2_defects_nonadjacent {V : Type u} [Fintype V]
         · rw [ite_eq_left hxz]
           have hsub : Finset.univ.filter (fun y : V => y ∉ S ∧ G.Adj x.1 y) ⊆ {b} := by
             intro y hy
-            simp only [Finset.mem_filter, Set.mem_setOf_eq, not_and_or, not_not, S] at hy
+            simp only [Finset.mem_filter, Set.mem_ofPred_eq, not_and_or, not_not, S] at hy
             simp only [Finset.mem_singleton]
             rcases hy.2.1 with rfl | rfl | rfl
             · rcases (hNu x.1).mp hy.2.2.symm with h | h
@@ -539,7 +544,7 @@ theorem minimal_bad2_defects_nonadjacent {V : Type u} [Fintype V]
           exact (Finset.card_le_card hsub).trans (by simp)
         · rw [ite_eq_right hxz, Nat.le_zero, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
           intro y _ hy
-          simp only [Set.mem_setOf_eq, not_and_or, not_not, S] at hy
+          simp only [Set.mem_ofPred_eq, not_and_or, not_not, S] at hy
           rcases hy.1 with rfl | rfl | rfl
           · rcases (hNu x.1).mp hy.2.symm with h | h
             · exact x.2.2.1 h
@@ -577,8 +582,7 @@ theorem minimal_bad2_defects_nonadjacent {V : Type u} [Fintype V]
         have := hrest y.1 y.2.1 y.2.2.1
         omega
       exact not_minimal_bad2_of_proper_near2_induce G hm S u (by simp [S]) hge2 hdef h3
-  · -- Case 2: b ≠ c; delete {u, v}, only b and c drop by 1
-    let S : Set V := {x | x ≠ u ∧ x ≠ v}
+  · let S : Set V := {x | x ≠ u ∧ x ≠ v}
     have hout : ∀ x : S,
         (Finset.univ.filter (fun y : V => y ∉ S ∧ G.Adj x.1 y)).card ≤
         if x.1 = b ∨ x.1 = c then 1 else 0 := by
@@ -587,7 +591,7 @@ theorem minimal_bad2_defects_nonadjacent {V : Type u} [Fintype V]
       · rw [ite_eq_left (Or.inl hxb)]
         have hsub : Finset.univ.filter (fun y : V => y ∉ S ∧ G.Adj x.1 y) ⊆ {u} := by
           intro y hy
-          simp only [Finset.mem_filter, Set.mem_setOf_eq, not_and_or, not_not, S] at hy
+          simp only [Finset.mem_filter, Set.mem_ofPred_eq, not_and_or, not_not, S] at hy
           simp only [Finset.mem_singleton]
           rcases hy.2.1 with rfl | rfl
           · rfl
@@ -599,7 +603,7 @@ theorem minimal_bad2_defects_nonadjacent {V : Type u} [Fintype V]
         · rw [ite_eq_left (Or.inr hxc)]
           have hsub : Finset.univ.filter (fun y : V => y ∉ S ∧ G.Adj x.1 y) ⊆ {v} := by
             intro y hy
-            simp only [Finset.mem_filter, Set.mem_setOf_eq, not_and_or, not_not, S] at hy
+            simp only [Finset.mem_filter, Set.mem_ofPred_eq, not_and_or, not_not, S] at hy
             simp only [Finset.mem_singleton]
             rcases hy.2.1 with rfl | rfl
             · rcases (hNu x.1).mp hy.2.2.symm with h | h
@@ -610,7 +614,7 @@ theorem minimal_bad2_defects_nonadjacent {V : Type u} [Fintype V]
         · rw [ite_eq_right (by push Not; exact ⟨hxb, hxc⟩), Nat.le_zero,
             Finset.card_eq_zero, Finset.filter_eq_empty_iff]
           intro y _ hy
-          simp only [Set.mem_setOf_eq, not_and_or, not_not, S] at hy
+          simp only [Set.mem_ofPred_eq, not_and_or, not_not, S] at hy
           rcases hy.1 with rfl | rfl
           · rcases (hNu x.1).mp hy.2.symm with h | h
             · exact x.2.2 h
@@ -634,13 +638,9 @@ theorem minimal_bad2_defects_nonadjacent {V : Type u} [Fintype V]
       rw [ite_eq_right (by push Not; exact ⟨hxb, hxc⟩)] at ho
       have := hrest x.1 x.2.1 x.2.2
       omega
-    -- b has ≥ 2 neighbors in S, so at least one neighbor z ∈ S with z ≠ c (and z ≠ b)
     have h3 : ∃ z : S, 3 ≤ (G.induce S).degree z := by
       have hdb : 2 ≤ (G.induce S).degree ⟨b, hbu, hbv⟩ := hge2 ⟨b, hbu, hbv⟩
       have hcard_er : (((G.induce S).neighborFinset ⟨b, hbu, hbv⟩).erase ⟨c, hcu, hcv⟩).card ≥ 1 := by
-        have h1 : (((G.induce S).neighborFinset ⟨b, hbu, hbv⟩).erase ⟨c, hcu, hcv⟩).card + 1 ≥
-            ((G.induce S).neighborFinset ⟨b, hbu, hbv⟩).card := Finset.card_erase_le.trans (by omega)
-        -- exact bound: card_erase ≥ card - 1
         by_cases hmem : ⟨c, hcu, hcv⟩ ∈ (G.induce S).neighborFinset ⟨b, hbu, hbv⟩
         · have he := Finset.card_erase_add_one hmem
           rw [SimpleGraph.card_neighborFinset_eq_degree] at he
@@ -668,7 +668,8 @@ theorem eg2_iff_eg_rob : EG2.{u} ↔ EGRob.{u} := by
     have hall : ∀ v, 3 ≤ G.degree v := fun v => hmin.trans (G.minDegree_le_degree v)
     let H := G \ SimpleGraph.edge a b
     let _ : DecidableRel H.Adj := inferInstanceAs (DecidableRel (G \ SimpleGraph.edge a b).Adj)
-    have hdegH := erase_edge_degree G a b hab
+    have hdegH : ∀ v, H.degree v + (if v = a ∨ v = b then 1 else 0) = G.degree v :=
+      erase_edge_degree G a b hab
     have hnH : Near2 H := by
       refine ⟨hnear.1, ?_, ⟨a, b, ?_⟩⟩
       · intro v
@@ -683,6 +684,7 @@ theorem eg2_iff_eg_rob : EG2.{u} ↔ EGRob.{u} := by
     exact heg V H hnH
   · intro hrob
     by_contra hnot
+    unfold EG2 at hnot
     push Not at hnot
     have hbad : ∃ (V : Type u) (_ : Fintype V) (G : SimpleGraph V)
         (_ : DecidableRel G.Adj), Near2 G ∧ ¬HasPower G := by
@@ -756,15 +758,14 @@ theorem minimal_bad2_defect_neighbors_cubic {V : Type u} [Fintype V]
   rw [Finset.mem_erase, SimpleGraph.mem_neighborFinset] at hb_mem
   obtain ⟨hba, hub⟩ := hb_mem
   have hbu : b ≠ u := (G.ne_of_adj hub).symm
-  have hbv : b ≠ v := fun h => hnotadj (h ▸ hub)
   have hNu : ∀ x, G.Adj u x ↔ x = a ∨ x = b := by
     intro x
     have hsub : ({a, b} : Finset V) ⊆ G.neighborFinset u := by
       intro y hy
       simp only [Finset.mem_insert, Finset.mem_singleton] at hy
-      rcases hy with rfl | rfl
-      · exact (G.mem_neighborFinset u a).mpr hua
-      · exact (G.mem_neighborFinset u b).mpr hub
+      rcases hy with h | h
+      · rw [h]; exact (G.mem_neighborFinset u a).mpr hua
+      · rw [h]; exact (G.mem_neighborFinset u b).mpr hub
     have heq : ({a, b} : Finset V) = G.neighborFinset u := by
       apply Finset.eq_of_subset_of_card_le hsub
       rw [SimpleGraph.card_neighborFinset_eq_degree, hu2, Finset.card_pair (Ne.symm hba)]
@@ -814,7 +815,8 @@ theorem minimal_bad2_high_independent {V : Type u} [Fintype V]
   obtain ⟨u, v, _, _, _, hrest⟩ := minimal_bad2_exact_two_defects G hm
   let H := G \ SimpleGraph.edge x y
   let _ : DecidableRel H.Adj := inferInstanceAs (DecidableRel (G \ SimpleGraph.edge x y).Adj)
-  have hdegH := erase_edge_degree G x y hxy
+  have hdegH : ∀ z, H.degree z + (if z = x ∨ z = y then 1 else 0) = G.degree z :=
+    erase_edge_degree G x y hxy
   have hnH : Near2 H := by
     refine ⟨hm.1.1, ?_, ⟨u, v, ?_⟩⟩
     · intro z
@@ -947,7 +949,6 @@ theorem minimal_bad2_no_defect_free_two_cut {V : Type u} [Fintype V]
   by_contra hlt
   have hle2 : Nat.card {e : V × V // e.1 ∈ S ∧ e.2 ∉ S ∧ G.Adj e.1 e.2} ≤ 2 := by omega
   let outDeg : S → ℕ := fun x => (Finset.univ.filter (fun y : V => y ∉ S ∧ G.Adj x.1 y)).card
-  -- Sum of outDeg equals boundary cardinality
   have hsum : (∑ x : S, outDeg x) =
       Nat.card {e : V × V // e.1 ∈ S ∧ e.2 ∉ S ∧ G.Adj e.1 e.2} := by
     rw [Nat.card_eq_fintype_card]
@@ -965,15 +966,13 @@ theorem minimal_bad2_no_defect_free_two_cut {V : Type u} [Fintype V]
     hrest x.1 (fun h => hu (h ▸ x.2)) (fun h => hv (h ▸ x.2))
   have hScard2 : 2 ≤ Fintype.card S := by rwa [Nat.card_eq_fintype_card] at hS2
   by_cases hall1 : ∀ x : S, outDeg x ≤ 1
-  · -- Case A: every vertex in S has at most 1 outgoing edge
-    have hge2 : ∀ x : S, 2 ≤ (G.induce S).degree x := by
+  · have hge2 : ∀ x : S, 2 ≤ (G.induce S).degree x := by
       intro x
       have hd := induce_degree_add_out G S x
       have ho := hall1 x
       have h3 := hS3 x
       change (G.induce S).degree x + outDeg x = G.degree x.1 at hd
       omega
-    -- The set of vertices in S with outDeg ≥ 1 has cardinality ≤ 2
     let B : Finset S := Finset.univ.filter (fun x : S => 1 ≤ outDeg x)
     have hBle2 : B.card ≤ 2 := by
       have h1 : B.card ≤ ∑ x ∈ B, outDeg x := by
@@ -1039,8 +1038,7 @@ theorem minimal_bad2_no_defect_free_two_cut {V : Type u} [Fintype V]
         change (G.induce S).degree x + outDeg x = G.degree x.1 at hd
         have := hS3 x; omega
     exact not_minimal_bad2_of_proper_near2_induce G hm S u hu hge2 hdef h3
-  · -- Case B: some vertex a ∈ S has outDeg a ≥ 2 (so outDeg a = 2 and all others have outDeg = 0)
-    push Not at hall1
+  · push Not at hall1
     obtain ⟨a, ha2⟩ := hall1
     have ha_eq : outDeg a = 2 := by
       have hle : outDeg a ≤ ∑ x : S, outDeg x :=
@@ -1050,13 +1048,13 @@ theorem minimal_bad2_no_defect_free_two_cut {V : Type u} [Fintype V]
       intro x hxa
       have hpair : outDeg a + outDeg x ≤ ∑ y : S, outDeg y := by
         have hsub : ({a, x} : Finset S) ⊆ Finset.univ := Finset.subset_univ _
-        have hs := Finset.sum_le_sum_of_subset_of_nonneg hsub (fun _ _ _ => Nat.zero_le _)
+        have hs : ∑ y ∈ ({a, x} : Finset S), outDeg y ≤ ∑ y ∈ (Finset.univ : Finset S), outDeg y :=
+          Finset.sum_le_sum_of_subset_of_nonneg hsub (fun _ _ _ => Nat.zero_le _)
         rw [Finset.sum_pair (Ne.symm hxa)] at hs
         exact hs
       omega
     by_cases ha4 : 4 ≤ G.degree a.1
-    · -- Subcase B1: deg(a) ≥ 4, so G.induce S is already Near2
-      have hge2 : ∀ x : S, 2 ≤ (G.induce S).degree x := by
+    · have hge2 : ∀ x : S, 2 ≤ (G.induce S).degree x := by
         intro x
         have hd := induce_degree_add_out G S x
         change (G.induce S).degree x + outDeg x = G.degree x.1 at hd
@@ -1081,8 +1079,7 @@ theorem minimal_bad2_no_defect_free_two_cut {V : Type u} [Fintype V]
         change (G.induce S).degree z + outDeg z = G.degree z.1 at hd
         have h0 := hother0 z hza; have := hS3 z; omega
       exact not_minimal_bad2_of_proper_near2_induce G hm S u hu hge2 hdef h3
-    · -- Subcase B2: deg(a) = 3, so a has a unique neighbor z inside S; delete a from S
-      have ha3 : G.degree a.1 = 3 := by have := hS3 a; omega
+    · have ha3 : G.degree a.1 = 3 := by have := hS3 a; omega
       have hda1 : (G.induce S).degree a = 1 := by
         have hd := induce_degree_add_out G S a
         change (G.induce S).degree a + outDeg a = G.degree a.1 at hd
@@ -1094,10 +1091,11 @@ theorem minimal_bad2_no_defect_free_two_cut {V : Type u} [Fintype V]
       have hza : z ≠ a := ((G.induce S).ne_of_adj hza_adj).symm
       have hNa : ∀ x : S, (G.induce S).Adj a x → x = z := by
         intro x hax
-        have hm : x ∈ (G.induce S).neighborFinset a := (SimpleGraph.mem_neighborFinset _ _ _).mpr hax
-        rw [hz_eq, Finset.mem_singleton] at hm
-        exact hm
+        have hmem : x ∈ (G.induce S).neighborFinset a := (SimpleGraph.mem_neighborFinset _ _ _).mpr hax
+        rw [hz_eq, Finset.mem_singleton] at hmem
+        exact hmem
       let T : Set V := {x | x ∈ S ∧ x ≠ a.1}
+      have hT3 : ∀ x : T, 3 ≤ G.degree x.1 := fun x => hS3 ⟨x.1, x.2.1⟩
       have houtT : ∀ x : T,
           (Finset.univ.filter (fun y : V => y ∉ T ∧ G.Adj x.1 y)).card ≤
           if x.1 = z.1 then 1 else 0 := by
@@ -1114,7 +1112,7 @@ theorem minimal_bad2_no_defect_free_two_cut {V : Type u} [Fintype V]
         · rw [ite_eq_left hxz]
           have hsub : Finset.univ.filter (fun y : V => y ∉ T ∧ G.Adj x.1 y) ⊆ {a.1} := by
             intro y hy
-            simp only [Finset.mem_filter, Set.mem_setOf_eq, not_and_or, not_not, T] at hy
+            simp only [Finset.mem_filter, Set.mem_ofPred_eq, not_and_or, not_not, T] at hy
             simp only [Finset.mem_singleton]
             rcases hy.2.1 with hyS | rfl
             · exact absurd hy.2.2 (hnoOut y hyS)
@@ -1122,7 +1120,7 @@ theorem minimal_bad2_no_defect_free_two_cut {V : Type u} [Fintype V]
           exact (Finset.card_le_card hsub).trans (by simp)
         · rw [ite_eq_right hxz, Nat.le_zero, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
           intro y _ hy
-          simp only [Set.mem_setOf_eq, not_and_or, not_not, T] at hy
+          simp only [Set.mem_ofPred_eq, not_and_or, not_not, T] at hy
           rcases hy.1 with hyS | rfl
           · exact hnoOut y hyS hy.2
           · have hax : (G.induce S).Adj a ⟨x.1, x.2.1⟩ := hy.2.symm
@@ -1132,7 +1130,7 @@ theorem minimal_bad2_no_defect_free_two_cut {V : Type u} [Fintype V]
         intro x
         have hd := induce_degree_add_out G T x
         have ho := houtT x
-        have := hS3 ⟨x.1, x.2.1⟩
+        have h3x := hT3 x
         split_ifs at ho <;> omega
       have hzT : z.1 ∈ T := ⟨z.2, fun h => hza (Subtype.ext h)⟩
       have hdef : ∃ p q : T, ∀ x : T, x ≠ p → x ≠ q → 3 ≤ (G.induce T).degree x := by
@@ -1141,7 +1139,7 @@ theorem minimal_bad2_no_defect_free_two_cut {V : Type u} [Fintype V]
         have hd := induce_degree_add_out G T x
         have ho := houtT x
         rw [ite_eq_right hxz'] at ho
-        have := hS3 ⟨x.1, x.2.1⟩
+        have h3x := hT3 x
         omega
       have h3 : ∃ y : T, 3 ≤ (G.induce T).degree y := by
         have hdz : 2 ≤ (G.induce T).degree ⟨z.1, hzT⟩ := hge2 ⟨z.1, hzT⟩
@@ -1151,9 +1149,10 @@ theorem minimal_bad2_no_defect_free_two_cut {V : Type u} [Fintype V]
         have hd := induce_degree_add_out G T y
         have ho := houtT y
         rw [ite_eq_right hyz] at ho
-        have := hS3 ⟨y.1, y.2.1⟩
+        have h3y := hT3 y
         omega
-      exact not_minimal_bad2_of_proper_near2_induce G hm T u (fun h => hu h.1) hge2 hdef h3
+      have huT : u ∉ T := fun h => hu h.1
+      exact not_minimal_bad2_of_proper_near2_induce G hm T u huT hge2 hdef h3
 
 #print axioms near2_of_min_deg_three
 #print axioms eg2_implies_erdos64
