@@ -114,9 +114,9 @@ section TaillessToSimpleCycle
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+omit [Fintype V] in
 /-- Theorem 1: Every closed non-backtracking walk of length `L ≥ 1` contains a simple cycle
     of length `m ≤ L`. -/
-omit [Fintype V] in
 theorem closed_nb_seq_has_simple_cycle_le (G : SimpleGraph V) :
     ∀ L : ℕ, ∀ f : Fin (L + 1) → V, IsClosedNBSeq G L f →
       ∃ m : ℕ, m ≤ L ∧ HasSimpleCycle G m := by
@@ -182,6 +182,7 @@ theorem closed_nb_seq_has_simple_cycle_le (G : SimpleGraph V) :
       obtain ⟨c, hcm, hcyc⟩ := ih m hmL g hg_closed
       exact ⟨c, le_trans hcm (le_of_lt hmL), hcyc⟩
 
+omit [Fintype V] in
 /-- Theorem 2: If `G` has girth `≥ 9`, then every tailless closed non-backtracking walk of length 16
     is a simple cycle `C16`. -/
 theorem girth9_tailless16_is_simple_cycle (G : SimpleGraph V)
@@ -698,7 +699,7 @@ lemma tailedCount_step (G : SimpleGraph V) [DecidableRel G.Adj]
                 hf_mid (i + 2) (by omega) (by omega)
               rw [h1, h2]
               have hstep := hg.2.2.2 (i - 1) (by omega)
-              convert hstep using 2 <;> (ext; simp; omega)
+              convert hstep using 2; ext; simp; omega
         · have h1 : f ⟨1, by omega⟩ = q.1 0 := by rw [hf_mid 1 (by omega) (by omega)]; rfl
           have h2 : f ⟨k + 2 - 1, by omega⟩ = q.1 (Fin.last k) := by
             have : (⟨k + 2 - 1, by omega⟩ : Fin (k + 3)) = ⟨k + 1, by omega⟩ := by ext; simp
