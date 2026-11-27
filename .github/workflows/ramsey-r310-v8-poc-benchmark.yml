@@ -1,0 +1,131 @@
+name: Ramsey R310 V8 controlled PoC benchmark (D9-C7 + Lean-CNF/SMS)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [jobs/ramsey-r310-v8-poc/launch.txt]
+permissions:
+  contents: read
+  packages: read
+  actions: read
+concurrency:
+  group: ramsey-r310-v8-poc-benchmark
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      cores: ${{ steps.prep.outputs.cores }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: prep
+        name: Verify Agent 1/6 selftests, reconstruct 279 tasks, and extract 4 McKay (3,8;27,85) cores
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          python3 jobs/ramsey-r310-v8-agent1-pruning/verify_agent1.py \
+            --cert jobs/ramsey-r310-v8-agent1-pruning/agent1_closed_tasks_certificates.json
+          python3 jobs/ramsey-r310-v8-agent6-d9-proof/d9c7_compact_cnf.py --selftest
+          python3 jobs/ramsey-r310-v8-agent3-encoding/reconstruct_tasks.py
+          mv all_tasks.json out/all_tasks.json
+          python3 - <<'PY'
+          import json, os, urllib.request
+          from pathlib import Path
+          import sys
+          sys.path.insert(0, 'jobs/ramsey-r310-v8-agent6-d9-proof')
+          import d9c7_compact_cnf as d9c7
+          url = 'https://users.cecs.anu.edu.au/~bdm/data/r38_27.g6.gz'
+          gz = Path('out/r38_27.g6.gz')
+          urllib.request.urlretrieve(url, gz)
+          cores = d9c7.extract_4_cores(gz)
+          gz.unlink()
+          Path('out/cores.json').write_text(json.dumps(cores, indent=2) + '\n')
+          matrix = {'include': [{'idx': i, 'g6': g} for i, g in enumerate(cores)]}
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write('cores=' + json.dumps(matrix, separators=(',', ':')) + '\n')
+          print(f'Extracted and verified {len(cores)} McKay (3,8;27,85) cores', flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v8-poc-inputs
+          path: out/
+          retention-days: 30
+
+  d9c7-poc:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix: ${{ fromJSON(needs.prepare.outputs.cores) }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Proof-First Kissat + DRAT/LRAT on D9-C7 core ${{ matrix.idx }}
+        run: |
+          set -euo pipefail
+          python3 jobs/ramsey-r310-v8-agent6-d9-proof/d9c7_compact_cnf.py \
+            --g6 "${{ matrix.g6 }}" --out out --seconds 1200
+          cat out/result.json >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v8-poc-d9c7-core-${{ matrix.idx }}
+          path: out/
+          retention-days: 30
+
+  d678-lean-poc:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        include:
+          - {task: D6-N9-B3-P002-T01, mode: proof-first-kissat}
+          - {task: D6-N9-B3-P000-T01, mode: proof-first-kissat}
+          - {task: D8-N8-B0-P000-T01, mode: proof-first-kissat}
+          - {task: D6-N9-B3-P002-T01, mode: sms-probe}
+          - {task: D8-N8-B0-P000-T01, mode: sms-probe}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: v8-poc-inputs
+          path: inputs/
+      - name: Run ${{ matrix.mode }} on ${{ matrix.task }}
+        run: |
+          set -euo pipefail
+          python3 jobs/ramsey-r310-v8-agent3-encoding/proof_first_runner.py \
+            --tasks-json inputs/all_tasks.json \
+            --task "${{ matrix.task }}" \
+            --mode "${{ matrix.mode }}" \
+            --out out \
+            --seconds 1200
+          cat out/summary.json >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v8-poc-${{ matrix.task }}-${{ matrix.mode }}
+          path: out/
+          retention-days: 30
