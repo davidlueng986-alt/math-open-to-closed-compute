@@ -115,7 +115,7 @@ def SimpleCycle.ofTwoArcs {V : Type*} {G : SimpleGraph V} (A B : List V)
     (isChain_append_of_link hchA hchB hneA hneB hAB)
     (by intro h; exact hneA (List.append_eq_nil_iff.mp h).1)
     (by
-      rw [List.getLast_append_of_ne_nil hneB, List.head_append_of_ne_nil hneA]
+      rw [List.getLast_append_of_ne_nil _ hneB, List.head_append_of_ne_nil hneA]
       exact hBA)
 
 /-! ### Part I: P3-Collapse (`G_y(u)`) & 3-Way Cubic Edge-Surgery (`G_∥`, `G_×1`, `G_×2`) -/
@@ -236,10 +236,10 @@ theorem cross_rewiring_crossed_pair_lifts_to_2k_plus_2 {V : Type*} {G : SimpleGr
     exact isChain_append_of_link (List.isChain_singleton v) hch2 (by simp) hne2 (by simp [h2_head]; exact hvb1)
   have hlastA : A.getLast hneA = b2 := by
     change ([u] ++ P1).getLast _ = b2
-    rw [List.getLast_append_of_ne_nil hne1, h1_last]
+    rw [List.getLast_append_of_ne_nil _ hne1, h1_last]
   have hlastB : B.getLast hneB = a2 := by
     change ([v] ++ P2).getLast _ = a2
-    rw [List.getLast_append_of_ne_nil hne2, h2_last]
+    rw [List.getLast_append_of_ne_nil _ hne2, h2_last]
   let C := SimpleCycle.ofTwoArcs A B hneA hneB
     (by simp [A, B]; omega)
     (List.nodup_cons.mpr ⟨hu1, hnd1⟩)
@@ -356,8 +356,8 @@ def outerCycle : SimpleCycle G :=
       · exact X.d24 h2 h4)
     (isChain_append_of_link X.hch1 X.hch2 X.hne1 X.hne2 X.link12)
     (isChain_append_of_link X.hch3 X.hch4 X.hne3 X.hne4 X.link34)
-    (by rw [List.getLast_append_of_ne_nil X.hne2, List.head_append_of_ne_nil X.hne3]; exact X.link23)
-    (by rw [List.getLast_append_of_ne_nil X.hne4, List.head_append_of_ne_nil X.hne1]; exact X.link41)
+    (by rw [List.getLast_append_of_ne_nil _ X.hne2, List.head_append_of_ne_nil X.hne3]; exact X.link23)
+    (by rw [List.getLast_append_of_ne_nil _ X.hne4, List.head_append_of_ne_nil X.hne1]; exact X.link41)
 
 theorem outerCycle_len :
     X.outerCycle.verts.length = X.A1.length + X.A2.length + X.A3.length + X.A4.length := by
@@ -380,13 +380,13 @@ def chord1CycleA : SimpleCycle G :=
       · exact X.d23 h2 hm3)
     (isChain_append_of_link X.hch1 X.hch2 X.hne1 X.hne2 X.link12)
     (List.isChain_singleton _)
-    (by rw [List.getLast_append_of_ne_nil X.hne2]; simpa using X.link23)
+    (by rw [List.getLast_append_of_ne_nil _ X.hne2]; simpa using X.link23)
     (by rw [List.head_append_of_ne_nil X.hne1]; simpa using (G.adj_comm _ _).mp X.chord1)
 
 theorem chord1CycleA_len :
     X.chord1CycleA.verts.length = X.A1.length + X.A2.length + 1 := by
   show ((X.A1 ++ X.A2) ++ [X.A3.head X.hne3]).length = _
-  simp
+  simp; omega
 
 /-- 3. Chord-1 Side B: `A3 ++ A4 ++ [A1.head]` of length `x3 + x4 + 1`. -/
 def chord1CycleB : SimpleCycle G :=
@@ -404,13 +404,13 @@ def chord1CycleB : SimpleCycle G :=
       · exact X.d14 hm1 h4)
     (isChain_append_of_link X.hch3 X.hch4 X.hne3 X.hne4 X.link34)
     (List.isChain_singleton _)
-    (by rw [List.getLast_append_of_ne_nil X.hne4]; simpa using X.link41)
+    (by rw [List.getLast_append_of_ne_nil _ X.hne4]; simpa using X.link41)
     (by rw [List.head_append_of_ne_nil X.hne3]; simpa using X.chord1)
 
 theorem chord1CycleB_len :
     X.chord1CycleB.verts.length = X.A3.length + X.A4.length + 1 := by
   show ((X.A3 ++ X.A4) ++ [X.A1.head X.hne1]).length = _
-  simp
+  simp; omega
 
 /-- 4. Chord-2 Side A: `A2 ++ A3 ++ [A4.head]` of length `x2 + x3 + 1`. -/
 def chord2CycleA : SimpleCycle G :=
@@ -428,13 +428,13 @@ def chord2CycleA : SimpleCycle G :=
       · exact X.d34 h3 hm4)
     (isChain_append_of_link X.hch2 X.hch3 X.hne2 X.hne3 X.link23)
     (List.isChain_singleton _)
-    (by rw [List.getLast_append_of_ne_nil X.hne3]; simpa using X.link34)
+    (by rw [List.getLast_append_of_ne_nil _ X.hne3]; simpa using X.link34)
     (by rw [List.head_append_of_ne_nil X.hne2]; simpa using (G.adj_comm _ _).mp X.chord2)
 
 theorem chord2CycleA_len :
     X.chord2CycleA.verts.length = X.A2.length + X.A3.length + 1 := by
   show ((X.A2 ++ X.A3) ++ [X.A4.head X.hne4]).length = _
-  simp
+  simp; omega
 
 /-- 5. Chord-2 Side B: `A4 ++ A1 ++ [A2.head]` of length `x4 + x1 + 1`. -/
 def chord2CycleB : SimpleCycle G :=
@@ -452,13 +452,13 @@ def chord2CycleB : SimpleCycle G :=
       · exact X.d12 h1 hm2)
     (isChain_append_of_link X.hch4 X.hch1 X.hne4 X.hne1 X.link41)
     (List.isChain_singleton _)
-    (by rw [List.getLast_append_of_ne_nil X.hne1]; simpa using X.link12)
+    (by rw [List.getLast_append_of_ne_nil _ X.hne1]; simpa using X.link12)
     (by rw [List.head_append_of_ne_nil X.hne4]; simpa using X.chord2)
 
 theorem chord2CycleB_len :
     X.chord2CycleB.verts.length = X.A4.length + X.A1.length + 1 := by
   show ((X.A4 ++ X.A1) ++ [X.A2.head X.hne2]).length = _
-  simp
+  simp; omega
 
 /-- 6. Cross Cycle A: `(A1 ++ [ua]) ++ ([uc] ++ A3.reverse)` of length `x1 + x3 + 2`. -/
 def crossCycleA : SimpleCycle G :=
@@ -476,20 +476,22 @@ def crossCycleA : SimpleCycle G :=
       exact X.d34 h3 (List.head_mem X.hne4)))
     (fun w hP hQ => by
       simp only [P, Q, List.mem_append, List.mem_singleton, List.mem_reverse] at hP hQ
-      rcases hP with h1 | rfl <;> rcases hQ with rfl | h3
-      · exact X.d14 h1 (List.head_mem X.hne4)
+      rcases hP with h1 | h2 <;> rcases hQ with h4 | h3
+      · subst h4; exact X.d14 h1 (List.head_mem X.hne4)
       · exact X.d13 h1 h3
-      · exact X.d24 (List.head_mem X.hne2) (List.head_mem X.hne4)
-      · exact X.d23 (List.head_mem X.hne2) h3)
+      · rw [h2] at h4
+        exact X.d24 (List.head_mem X.hne2) (h4 ▸ List.head_mem X.hne4)
+      · subst h2; exact X.d23 (List.head_mem X.hne2) h3)
     (isChain_append_of_link X.hch1 (List.isChain_singleton _) X.hne1 (by simp) (by simpa using X.link12))
     (isChain_append_of_link (List.isChain_singleton _) (isChain_reverse_adj X.hch3)
       (by simp) (by simpa using X.hne3)
       (by simp [head_reverse_eq_getLast X.hne3]; exact (G.adj_comm _ _).mp X.link34))
     (by
-      rw [List.getLast_append_of_ne_nil (by simp), List.head_append_of_ne_nil (by simp)]
+      rw [List.getLast_append_of_ne_nil _ (by simp), List.head_append_of_ne_nil (by simp)]
       simpa using X.chord2)
     (by
-      rw [List.getLast_append_of_ne_nil (by simpa using X.hne3), List.head_append_of_ne_nil X.hne1]
+      have hne3r : X.A3.reverse ≠ [] := by simpa using X.hne3
+      rw [List.getLast_append_of_ne_nil _ hne3r, List.head_append_of_ne_nil X.hne1]
       rw [getLast_reverse_eq_head X.hne3]
       exact (G.adj_comm _ _).mp X.chord1)
 
@@ -514,20 +516,22 @@ def crossCycleB : SimpleCycle G :=
       exact X.d14 (List.head_mem X.hne1) h4))
     (fun w hP hQ => by
       simp only [P, Q, List.mem_append, List.mem_singleton, List.mem_reverse] at hP hQ
-      rcases hP with h2 | rfl <;> rcases hQ with rfl | h4
-      · exact X.d12 (List.head_mem X.hne1) h2
+      rcases hP with h2 | h3 <;> rcases hQ with h1 | h4
+      · subst h1; exact X.d12 (List.head_mem X.hne1) h2
       · exact X.d24 h2 h4
-      · exact X.d13 (List.head_mem X.hne1) (List.head_mem X.hne3)
-      · exact X.d34 (List.head_mem X.hne3) h4)
+      · rw [h3] at h1
+        exact X.d13 (h1 ▸ List.head_mem X.hne1) (List.head_mem X.hne3)
+      · subst h3; exact X.d34 (List.head_mem X.hne3) h4)
     (isChain_append_of_link X.hch2 (List.isChain_singleton _) X.hne2 (by simp) (by simpa using X.link23))
     (isChain_append_of_link (List.isChain_singleton _) (isChain_reverse_adj X.hch4)
       (by simp) (by simpa using X.hne4)
       (by simp [head_reverse_eq_getLast X.hne4]; exact (G.adj_comm _ _).mp X.link41))
     (by
-      rw [List.getLast_append_of_ne_nil (by simp), List.head_append_of_ne_nil (by simp)]
+      rw [List.getLast_append_of_ne_nil _ (by simp), List.head_append_of_ne_nil (by simp)]
       simpa using (G.adj_comm _ _).mp X.chord1)
     (by
-      rw [List.getLast_append_of_ne_nil (by simpa using X.hne4), List.head_append_of_ne_nil X.hne2]
+      have hne4r : X.A4.reverse ≠ [] := by simpa using X.hne4
+      rw [List.getLast_append_of_ne_nil _ hne4r, List.head_append_of_ne_nil X.hne2]
       rw [getLast_reverse_eq_head X.hne4]
       exact (G.adj_comm _ _).mp X.chord2)
 
@@ -665,7 +669,7 @@ lemma botRun_exit (L : RungLadder G r) (i m : ℕ) (hm : 1 ≤ m) (him : i + m <
     unfold botRun
     split_ifs
     · exact L.bot_exit ⟨i, by omega⟩
-    · rw [List.getLast_append_of_ne_nil (L.bot_ne ⟨i, by omega⟩)]
+    · rw [List.getLast_append_of_ne_nil _ (L.bot_ne ⟨i, by omega⟩)]
       exact L.bot_exit ⟨i, by omega⟩
 
 lemma topRun_exit (L : RungLadder G r) :
@@ -685,7 +689,7 @@ lemma topRun_exit (L : RungLadder G r) :
       have hgl : (L.topRun i (m' + 1) him).getLast (L.topRun_ne i (m' + 1) (by omega) him) =
           (L.topRun (i + 1) m' (by omega)).getLast hne2 := by
         simp only [h1]
-        exact List.getLast_append_of_ne_nil hne2
+        exact List.getLast_append_of_ne_nil _ hne2
       rw [hgl]
       have hidx : (⟨i + 1 + m', by omega⟩ : Fin r) = ⟨i + (m' + 1), by omega⟩ := by
         ext; dsimp; omega
@@ -801,7 +805,7 @@ lemma topRun_length (L : RungLadder G r) :
     have hsplit : (Finset.univ : Finset (Fin (r - 1))).filter (fun t => i ≤ t.val ∧ t.val < i + (m' + 1)) =
         insert ⟨i, by omega⟩ ((Finset.univ : Finset (Fin (r - 1))).filter (fun t => i + 1 ≤ t.val ∧ t.val < i + 1 + m')) := by
       ext t; simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert, Fin.ext_iff]
-      dsimp; omega
+      omega
     have hnotmem : (⟨i, by omega⟩ : Fin (r - 1)) ∉
         (Finset.univ : Finset (Fin (r - 1))).filter (fun t => i + 1 ≤ t.val ∧ t.val < i + 1 + m') := by
       simp
@@ -825,7 +829,7 @@ lemma botRun_length (L : RungLadder G r) :
     have hsplit : (Finset.univ : Finset (Fin (r - 1))).filter (fun t => i ≤ t.val ∧ t.val < i + (m' + 1)) =
         insert ⟨i, by omega⟩ ((Finset.univ : Finset (Fin (r - 1))).filter (fun t => i + 1 ≤ t.val ∧ t.val < i + 1 + m')) := by
       ext t; simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert, Fin.ext_iff]
-      dsimp; omega
+      omega
     have hnotmem : (⟨i, by omega⟩ : Fin (r - 1)) ∉
         (Finset.univ : Finset (Fin (r - 1))).filter (fun t => i + 1 ≤ t.val ∧ t.val < i + 1 + m') := by
       simp
@@ -945,23 +949,23 @@ def windowCycle (L : RungLadder G r) (i m : ℕ) (hm : 1 ≤ m) (him : i + m < r
       exact L.v_start_not_botRun i m him hx1))
     (fun x hP hQ => by
       simp only [P, Q, List.mem_append, List.mem_singleton] at hP hQ
-      rcases hP with ht | rfl <;> rcases hQ with hb | rfl
+      rcases hP with ht | hu <;> rcases hQ with hb | hv
       · obtain ⟨t1, _, _, h1⟩ := L.mem_topRun m i him ht
         obtain ⟨t2, _, _, h2⟩ := L.mem_botRun m i him hb
         exact L.top_bot_disj t1 t2 h1 h2
-      · exact L.v_start_not_topRun i m him ht
-      · exact L.u_end_not_botRun i m him hb
-      · exact L.u_end_ne_v_start i m him rfl)
+      · subst hv; exact L.v_start_not_topRun i m him ht
+      · subst hu; exact L.u_end_not_botRun i m him hb
+      · rw [hu] at hv; exact L.u_end_ne_v_start i m him hv)
     (isChain_append_of_link (L.topRun_chain m i hm him) (List.isChain_singleton _)
       (L.topRun_ne i m hm him) (by simp) (by simpa using L.topRun_exit m i hm him))
     (isChain_append_of_link (L.botRun_chain m i hm him) (List.isChain_singleton _)
       (L.botRun_ne i m hm him) (by simp) (by simpa using L.botRun_exit i m hm him))
     (by
-      rw [List.getLast_append_of_ne_nil (by simp), List.head_append_of_ne_nil (L.botRun_ne i m hm him)]
+      rw [List.getLast_append_of_ne_nil _ (by simp), List.head_append_of_ne_nil (L.botRun_ne i m hm him)]
       rw [L.botRun_head m i hm him]
       simpa using L.rung ⟨i + m, him⟩)
     (by
-      rw [List.getLast_append_of_ne_nil (by simp), List.head_append_of_ne_nil (L.topRun_ne i m hm him)]
+      rw [List.getLast_append_of_ne_nil _ (by simp), List.head_append_of_ne_nil (L.topRun_ne i m hm him)]
       rw [L.topRun_head i m hm him]
       simpa using (G.adj_comm _ _).mp (L.rung ⟨i, by omega⟩))
 
@@ -978,12 +982,19 @@ theorem windowCycle_len (L : RungLadder G r) (i m : ℕ) (hm : 1 ≤ m) (him : i
 
 private lemma card_bay_filter {r i m : ℕ} (him : i + m < r) :
     ((Finset.univ : Finset (Fin (r - 1))).filter (fun t => i ≤ t.val ∧ t.val < i + m)).card = m := by
+  let f : {x // x ∈ Finset.range m} ↪ Fin (r - 1) :=
+    ⟨fun x => ⟨i + x.val, by have := Finset.mem_range.mp x.prop; omega⟩,
+     fun a b h => by
+       cases a with | mk av ap =>
+       cases b with | mk bv bp =>
+       simp only [Fin.mk.injEq] at h
+       have hav : av = bv := by omega
+       subst hav; rfl⟩
   have hbij : (Finset.univ : Finset (Fin (r - 1))).filter (fun t => i ≤ t.val ∧ t.val < i + m) =
-      (Finset.range m).attach.map ⟨fun x => ⟨i + x.val, by have := Finset.mem_range.mp x.prop; omega⟩,
-        fun a b h => by cases a; cases b; simp at h; subst h; rfl⟩ := by
+      (Finset.range m).attach.map f := by
     ext t
     simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_map,
-      Finset.mem_attach, true_and, Function.Embedding.coeFn_mk]
+      Finset.mem_attach, true_and, f, Function.Embedding.coeFn_mk]
     constructor
     · rintro ⟨h1, h2⟩
       exact ⟨⟨t.val - i, Finset.mem_range.mpr (by omega)⟩, by ext; dsimp; omega⟩
@@ -1021,8 +1032,8 @@ theorem ladder_girth_mod4_two_immunity {g m : ℕ} (hg : g % 4 = 2) :
     have h2 : 2 ^ 2 ∣ 2 ^ k := Nat.pow_dvd_pow 2 hk
     simpa using h2
   have h4g : 4 ∣ (g - 2) := by omega
-  obtain ⟨q, hq⟩ := h4g
-  rw [hq] at heq
+  have h4m : 4 ∣ m * (g - 2) := dvd_mul_of_dvd_right h4g m
+  obtain ⟨s, hs⟩ := h4m
   obtain ⟨t, ht⟩ := h4dvd
   omega
 
@@ -1131,7 +1142,11 @@ theorem ihara_chebyshev_b16_cage_thresholds :
     (∀ n : ℕ, n ≤ 258 → 511 * n < 2 * (2 ^ 8 + 1) ^ 2) := by
   refine ⟨fun n hn => by norm_num; omega, ?_, fun n hn => by norm_num; omega⟩
   intro n h2 h131
-  nlinarith
+  cases n with
+  | zero => omega
+  | succ m =>
+    simp only [Nat.add_sub_cancel]
+    nlinarith
 
 /-- Theorem 21 (`EGRob` Two-Copy Gluing Half-Power Path Exclusion):
     If two vertex-disjoint copies of `G = H - ab` glued at `{a, b}` are power-free,
