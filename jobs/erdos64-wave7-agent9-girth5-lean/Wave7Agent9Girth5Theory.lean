@@ -39,16 +39,27 @@ theorem pow2_in_interval_of_double_sub_one (a b : ℕ)
 theorem pow2_even_in_interval_of_double_sub_two (a b : ℕ)
     (ha : 2 ≤ a) (hgap : 2 * a - 1 ≤ b) :
     ∃ m : ℕ, 2 * a ≤ m ∧ m ≤ 2 * b ∧ Even m ∧ IsPow2Ge4 m := by
-  have hb4 : 4 ≤ 2 * b := by omega
-  have hgap2 : 2 * (2 * a) - 1 ≤ 2 * b := by omega
-  rcases pow2_in_interval_of_double_sub_one (2 * a) (2 * b) (by omega) hb4 hgap2 with
-    ⟨m, hlo, hhi, ⟨k, hk2, rfl⟩⟩
-  refine ⟨2 ^ k, hlo, hhi, ?_, ⟨k, hk2, rfl⟩⟩
-  have : 2 ^ k = 2 * 2 ^ (k - 1) := by
-    have hk1 : k = (k - 1) + 1 := by omega
-    conv_lhs => rw [hk1, Nat.pow_succ]
+  have h_exists : ∃ k : ℕ, a ≤ 2 ^ k := ⟨a, Nat.le_of_lt (Nat.lt_two_pow_self)⟩
+  classical
+  let k := Nat.find h_exists
+  have hk_ge : a ≤ 2 ^ k := Nat.find_spec h_exists
+  have hk1 : 1 ≤ k := by
+    by_contra h0
+    have hk0 : k = 0 := by omega
+    rw [hk0] at hk_ge
+    norm_num at hk_ge
+    omega
+  have hprev : ¬ (a ≤ 2 ^ (k - 1)) := Nat.find_min h_exists (by omega)
+  have hlt : 2 ^ (k - 1) < a := Nat.lt_of_not_ge hprev
+  have hpow : 2 ^ k = 2 * 2 ^ (k - 1) := by
+    have : k = (k - 1) + 1 := by omega
+    conv_lhs => rw [this, Nat.pow_succ]
     ring
-  exact ⟨2 ^ (k - 1), by omega⟩
+  have hk_le_b : 2 ^ k ≤ b := by omega
+  refine ⟨2 ^ (k + 1), ?_, ?_, ?_, ⟨k + 1, by omega, rfl⟩⟩
+  · rw [Nat.pow_succ]; omega
+  · rw [Nat.pow_succ]; omega
+  · exact ⟨2 ^ k, by rw [Nat.pow_succ]; ring⟩
 
 /-- Sum of positive parts of a signed shift list. -/
 def posSum : List ℤ → ℕ
@@ -121,7 +132,7 @@ theorem signed_adjuster_normalization (L : ℤ) (ds : List ℤ) (sel : List Bool
   induction ds generalizing sel with
   | nil =>
     cases sel with
-    | nil => simp [negSum, absSelSum, signedSelSum, toggleNegSel]
+    | nil => simp [negSum, absSelSum, signedSelSum]
     | cons _ _ => simp at hlen
   | cons d tl ih =>
     cases sel with
