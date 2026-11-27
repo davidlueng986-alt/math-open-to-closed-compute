@@ -271,28 +271,34 @@ theorem two_paths_form_simple_cycle {V : Type*} {G : SimpleGraph V}
           have : (⟨i.val, by omega⟩ : Fin (a + 1)) = ⟨0, by omega⟩ := Fin.ext hi0
           rw [this]; exact P.start_eq
         rw [hpi] at hij
-        exact hQ_not_x ⟨a + b - j.val, by omega⟩ (by omega) hij.symm
+        exact hQ_not_x ⟨a + b - j.val, by omega⟩ (show 0 < a + b - j.val by omega) hij.symm
       · by_cases hja : j.val = a
         · have hqj : Q.vert ⟨a + b - j.val, by omega⟩ = y := by
-            have : (⟨a + b - j.val, by omega⟩ : Fin (b + 1)) = ⟨b, by omega⟩ := Fin.ext (by omega)
+            have : (⟨a + b - j.val, by omega⟩ : Fin (b + 1)) = ⟨b, by omega⟩ :=
+              Fin.ext (show a + b - j.val = b by omega)
             rw [this]; exact Q.end_eq
           rw [hqj] at hij
           exact hP_not_y ⟨i.val, by omega⟩ hi hij
-        · exact hint ⟨i.val, by omega⟩ ⟨a + b - j.val, by omega⟩ (by omega) hi (by omega) (by omega) hij
+        · exact hint ⟨i.val, by omega⟩ ⟨a + b - j.val, by omega⟩
+            (show 0 < i.val by omega) (show i.val < a by omega)
+            (show 0 < a + b - j.val by omega) (show a + b - j.val < b by omega) hij
     · exfalso
       by_cases hj0 : j.val = 0
       · have hpj : P.vert ⟨j.val, by omega⟩ = x := by
           have : (⟨j.val, by omega⟩ : Fin (a + 1)) = ⟨0, by omega⟩ := Fin.ext hj0
           rw [this]; exact P.start_eq
         rw [hpj] at hij
-        exact hQ_not_x ⟨a + b - i.val, by omega⟩ (by omega) hij
+        exact hQ_not_x ⟨a + b - i.val, by omega⟩ (show 0 < a + b - i.val by omega) hij
       · by_cases hia : i.val = a
         · have hqi : Q.vert ⟨a + b - i.val, by omega⟩ = y := by
-            have : (⟨a + b - i.val, by omega⟩ : Fin (b + 1)) = ⟨b, by omega⟩ := Fin.ext (by omega)
+            have : (⟨a + b - i.val, by omega⟩ : Fin (b + 1)) = ⟨b, by omega⟩ :=
+              Fin.ext (show a + b - i.val = b by omega)
             rw [this]; exact Q.end_eq
           rw [hqi] at hij
           exact hP_not_y ⟨j.val, by omega⟩ hj hij.symm
-        · exact hint ⟨j.val, by omega⟩ ⟨a + b - i.val, by omega⟩ (by omega) hj (by omega) (by omega) hij.symm
+        · exact hint ⟨j.val, by omega⟩ ⟨a + b - i.val, by omega⟩
+            (show 0 < j.val by omega) (show j.val < a by omega)
+            (show 0 < a + b - i.val by omega) (show a + b - i.val < b by omega) hij.symm
     · have h : (⟨a + b - i.val, by omega⟩ : Fin (b + 1)) = ⟨a + b - j.val, by omega⟩ := Q.inj hij
       have hv : a + b - i.val = a + b - j.val := congrArg Fin.val h
       exact Fin.ext (by omega)
@@ -304,7 +310,8 @@ theorem two_paths_form_simple_cycle {V : Type*} {G : SimpleGraph V}
       dsimp only [f]
       rw [dite_eq_left (by omega), dite_eq_left (by omega)]
       have hpa := P.adj ⟨k.val, by omega⟩
-      have heq : (⟨(k.val + 1) % (a + b), by omega⟩ : Fin (a + 1)) = ⟨k.val + 1, by omega⟩ := Fin.ext hm
+      have heq : (⟨(k.val + 1) % (a + b), by omega⟩ : Fin (a + 1)) = ⟨k.val + 1, by omega⟩ :=
+        Fin.ext hm
       rw [heq]
       exact hpa
     · by_cases hk2 : k.val < a
@@ -317,7 +324,8 @@ theorem two_paths_form_simple_cycle {V : Type*} {G : SimpleGraph V}
           have : (⟨k.val + 1, by omega⟩ : Fin (a + 1)) = ⟨a, by omega⟩ := Fin.ext hka
           rw [this]; exact P.end_eq
         have hqend : Q.vert ⟨a + b - (k.val + 1) % (a + b), by omega⟩ = y := by
-          have : (⟨a + b - (k.val + 1) % (a + b), by omega⟩ : Fin (b + 1)) = ⟨b, by omega⟩ := Fin.ext (by omega)
+          have : (⟨a + b - (k.val + 1) % (a + b), by omega⟩ : Fin (b + 1)) = ⟨b, by omega⟩ :=
+            Fin.ext (show a + b - (k.val + 1) % (a + b) = b by omega)
           rw [this]; exact Q.end_eq
         rw [hpend] at hpa
         rw [hqend]
@@ -328,9 +336,9 @@ theorem two_paths_form_simple_cycle {V : Type*} {G : SimpleGraph V}
           rw [dite_eq_right hk2, dite_eq_right (by omega)]
           have hq := (Q.adj ⟨a + b - k.val - 1, by omega⟩).symm
           have heq1 : (⟨a + b - k.val - 1 + 1, by omega⟩ : Fin (b + 1)) = ⟨a + b - k.val, by omega⟩ :=
-            Fin.ext (by omega)
+            Fin.ext (show a + b - k.val - 1 + 1 = a + b - k.val by omega)
           have heq2 : (⟨a + b - (k.val + 1) % (a + b), by omega⟩ : Fin (b + 1)) = ⟨a + b - k.val - 1, by omega⟩ :=
-            Fin.ext (by omega)
+            Fin.ext (show a + b - (k.val + 1) % (a + b) = a + b - k.val - 1 by omega)
           rw [heq1] at hq
           rw [heq2]
           exact hq
@@ -344,7 +352,7 @@ theorem two_paths_form_simple_cycle {V : Type*} {G : SimpleGraph V}
             have : (⟨(k.val + 1) % (a + b), by omega⟩ : Fin (a + 1)) = ⟨0, by omega⟩ := Fin.ext hm
             rw [this]; exact P.start_eq
           have hq1 : Q.vert ⟨a + b - k.val, by omega⟩ = Q.vert ⟨1, by omega⟩ := by
-            congr 1; exact Fin.ext (by omega)
+            congr 1; exact Fin.ext (show a + b - k.val = 1 by omega)
           rw [hqstart] at hq0
           rw [hpstart, hq1]
           exact hq0
@@ -485,10 +493,11 @@ lemma AdjusterNecklace.seg_adj {V : Type*} {G : SimpleGraph V} {r : ℕ}
     (N : AdjusterNecklace G r) (choice : Fin r → Bool) (i : Fin r)
     (k : ℕ) (hk : k + 1 < (N.seg choice i).length) :
     G.Adj ((N.seg choice i)[k]) ((N.seg choice i)[k + 1]) := by
-  unfold seg at hk ⊢
-  split at hk ⊢
-  · exact N.h_long_adj i k hk
-  · exact N.h_short_adj i k hk
+  by_cases hc : choice i = true
+  · simp only [seg, hc, ↓reduceIte] at hk ⊢
+    exact N.h_long_adj i k hk
+  · simp only [seg, hc, ↓reduceIte] at hk ⊢
+    exact N.h_short_adj i k hk
 
 lemma list_chain_adj_append {V : Type*} {G : SimpleGraph V}
     (l1 l2 : List V) (h1 : l1 ≠ []) (h2 : l2 ≠ [])
@@ -759,19 +768,12 @@ private lemma sum_ofFn_prefix_jump (r t Δ : ℕ) (ht : t ≤ r) (a : Fin r → 
     cases t with
     | zero =>
       simp only [Nat.not_lt_zero, decide_false, Bool.false_eq_true, ↓reduceIte, zero_mul, add_zero]
-      have hsub : (fun i : Fin r => if decide (i.succ.val < 0) then a i.succ + Δ else a i.succ) =
-                  (fun i : Fin r => a i.succ) := by
-        funext i; simp
-      rw [hsub]
     | succ t' =>
       have h0 : decide ((0 : Fin (r + 1)).val < t' + 1) = true := by simp
       simp only [h0, ↓reduceIte]
       have hsub : (fun i : Fin r => if decide (i.succ.val < t' + 1) then a i.succ + Δ else a i.succ) =
                   (fun i : Fin r => if decide (i.val < t') then a i.succ + Δ else a i.succ) := by
-        funext i
-        have : (i.succ.val < t' + 1) ↔ (i.val < t') := by
-          show i.val + 1 < t' + 1 ↔ i.val < t'; omega
-        simp [this]
+        funext i; simp
       rw [hsub, ih t' (by omega) (fun i => a i.succ)]
       ring
 
