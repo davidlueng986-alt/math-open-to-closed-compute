@@ -1,0 +1,185 @@
+name: Ramsey R310 v7 continue all 232 unfinished tasks
+on:
+  push:
+    branches: [main]
+    paths: [jobs/ramsey-r310-cubes-v7/continue-launch.txt]
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: read
+  actions: read
+concurrency:
+  group: ramsey-r310-v7-continuation
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45713450151'
+          name: v7-exact-plan
+          path: sources/pilot/
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45715254768'
+          name: v7-rollout-exact-plan
+          path: sources/rollout/
+      - id: matrix
+        name: Account for all 279 tasks and select every unfinished checkpoint
+        run: |
+          set -euo pipefail
+          cmp sources/pilot/profile_cert.json sources/rollout/profile_cert.json
+          python3 jobs/ramsey-r310-cubes-v7/continuation.py --manifest jobs/ramsey-r310-cubes-v7/source-manifest.json --pilot-plan sources/pilot/plan.json --rollout-plan sources/rollout/plan.json --cert sources/rollout/profile_cert.json --out-dir evidence
+          python3 - <<'PY'
+          import json,os
+          matrix=json.load(open('evidence/matrix.json'))
+          assert len(matrix['include'])==232
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+              out.write('matrix='+json.dumps(matrix,separators=(',',':'))+'\n')
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as out:
+              out.write('279 original tasks accounted for: 47 certified CNF tasks retained at their source; all 232 OPEN tasks selected for mandatory checkpoint continuation. Mathematical encoding audit remains pending.\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v7-continuation-exact-plan
+          path: evidence/
+          retention-days: 90
+          if-no-files-found: error
+  resume-open:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: v7-continuation-exact-plan
+          path: evidence/
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: '45713450151'
+          name: checkpoint-D6-N9-B3-P000-T01
+          path: resume/
+      - name: Restore a real interrupted split tree without new solving
+        run: |
+          set -euo pipefail
+          python3 jobs/ramsey-r310-cubes-v7/continuation.py preflight --manifest evidence/source-manifest.json --plan evidence/plan.json --task D6-N9-B3-P000-T01 --resume resume
+          python3 jobs/ramsey-r310-cubes-v7/worker.py --plan evidence/plan.json --cert evidence/profile_cert.json --task D6-N9-B3-P000-T01 --out restored --resume resume --require-resume --seconds 0 --proof-seconds 120
+          python3 jobs/ramsey-r310-cubes-v7/resume_gate.py resume restored --expect open
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v7-open-resume-gate
+          path: restored/
+          retention-days: 90
+          if-no-files-found: error
+  cube:
+    needs: [plan, resume-open]
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 15
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: v7-continuation-exact-plan
+          path: evidence/
+      - name: Download the required prior checkpoint
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ matrix.source_run }}
+          name: ${{ matrix.artifact_name }}
+          path: resume/
+      - name: Validate the exact saved task and continue its proof tree
+        id: worker
+        env:
+          TASK: ${{ matrix.id }}
+          PROOF_SECONDS: ${{ matrix.proof_seconds }}
+        run: |
+          set -euo pipefail
+          python3 jobs/ramsey-r310-cubes-v7/continuation.py preflight --manifest evidence/source-manifest.json --plan evidence/plan.json --task "$TASK" --resume resume
+          python3 jobs/ramsey-r310-cubes-v7/worker.py --plan evidence/plan.json --cert evidence/profile_cert.json --task "$TASK" --out out --resume resume --require-resume --seconds 3000 --cube-seconds 180 --proof-seconds "$PROOF_SECONDS" --max-depth 7
+      - name: Check preserved progress and record the mathematical outcome
+        if: always()
+        env:
+          TASK: ${{ matrix.id }}
+          WORKER_OUTCOME: ${{ steps.worker.outcome }}
+        run: |
+          set -euo pipefail
+          mkdir -p result
+          python3 jobs/ramsey-r310-cubes-v7/continuation.py report --manifest evidence/source-manifest.json --plan evidence/plan.json --task "$TASK" --resume resume --out out --report-file result/result.json --worker-outcome "$WORKER_OUTCOME"
+          python3 - <<'PY'
+          import json,os
+          r=json.load(open('result/result.json'))
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as out:
+              out.write('## Solver checkpoint result\n\n')
+              out.write('```json\n'+json.dumps(r,indent=2)+'\n```\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: checkpoint-${{ matrix.id }}
+          path: out/
+          retention-days: 90
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: result-${{ matrix.id }}
+          path: result/
+          retention-days: 90
+          if-no-files-found: error
+  reconcile:
+    needs: [plan, resume-open, cube]
+    if: ${{ always() && needs.plan.result == 'success' && needs.resume-open.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: v7-continuation-exact-plan
+          path: evidence/
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: result-*
+          path: results/
+      - name: Reconcile every task without treating unfinished work as closure
+        env:
+          THIS_RUN: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          python3 jobs/ramsey-r310-cubes-v7/continuation.py aggregate --manifest evidence/source-manifest.json --plan evidence/plan.json --results-dir results --out-dir progress --run-id "$THIS_RUN"
+          cat progress/summary.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v7-progress-summary
+          path: progress/
+          retention-days: 90
+          if-no-files-found: error

@@ -39,8 +39,26 @@ def validate_tree(st):
    stack.extend([k+'0',k+'1'])
   else:assert n['status'] in ('OPEN','CERTIFIED_UNSAT','VERIFIED_WITNESS','UNSAT_UNCERTIFIED')
  assert seen==set(ns)
+def preflight_resume(path,required=False):
+ """Read required restore metadata before creating or overwriting output."""
+ resume=Path(path) if path else None
+ restored=None
+ if resume and (resume/'checkpoint.json').is_file():
+  restored=json.loads((resume/'checkpoint.json').read_text())
+  if restored.get('status')=='VERIFIED_WITNESS' or any(
+      n.get('status')=='VERIFIED_WITNESS' for n in restored.get('nodes',{}).values()):
+   raise RuntimeError('Resume contains a verified witness; preserve and independently verify its witness artifact before any continuation')
+ elif required:
+  raise RuntimeError('--require-resume needs an existing checkpoint.json')
+ elif resume and resume.exists() and any(resume.iterdir()):
+  raise RuntimeError('Nonempty resume directory has no checkpoint')
+ return resume,restored
 def solve(a):
- out=Path(a.out);out.mkdir(parents=True,exist_ok=True)
+ resume,restored=preflight_resume(a.resume,a.require_resume)
+ out=Path(a.out)
+ if resume is not None and out.resolve()==resume.resolve():
+  raise RuntimeError('Resume source and output must be different directories')
+ out.mkdir(parents=True,exist_ok=True)
  plan=json.loads(Path(a.plan).read_text())
  # Recompute exact source partition and verify supplied task identity.
  task=next(t for t in plan['tasks'] if t['id']==a.task)
@@ -63,11 +81,10 @@ def solve(a):
  f=z.f
  base=list(f.clauses);base_nv=f.nv;base_sha=cnf_digest(base_nv,base)
  (out/'task.json').write_text(json.dumps(task,indent=2)+'\n')
- resume=Path(a.resume) if a.resume else None
  st=dict(schema=1,task=task,base_sha256=base_sha,nodes={'r':dict(cube=[],status='OPEN',attempts=0)},models=0,cuts=0)
  prior_rows=[]
- if resume and (resume/'checkpoint.json').exists():
-  st=json.loads((resume/'checkpoint.json').read_text())
+ if restored is not None:
+  st=restored
   assert st['task']==task and st['base_sha256']==base_sha
   validate_tree(st)
   for line in (resume/'cuts.jsonl').read_text().splitlines():prior_rows.append(json.loads(line))
@@ -75,8 +92,6 @@ def solve(a):
   # atomic manifest update. They are still valid; never drop them.
   assert st['cuts']<=len(prior_rows)
   if (resume/'proofs').exists():shutil.copytree(resume/'proofs',out/'proofs',dirs_exist_ok=True)
- elif resume and resume.exists() and any(resume.iterdir()):
-  raise RuntimeError('Nonempty resume directory has no checkpoint')
  seen=set();rows=[];cutclauses=[]
  def append(s,fp,sol=None):
   s=list(s);c=project(z,s)
@@ -207,6 +222,8 @@ if __name__=='__main__':
  p=argparse.ArgumentParser()
  p.add_argument('--plan',required=True);p.add_argument('--cert',required=True);p.add_argument('--task',required=True);p.add_argument('--out',default='out')
  p.add_argument('--reuse',action='append',default=[]);p.add_argument('--resume')
+ p.add_argument('--require-resume',action='store_true',help='Fail before writing output unless an existing non-witness checkpoint is restored')
  p.add_argument('--seconds',type=int,default=3000);p.add_argument('--cube-seconds',type=int,default=180)
  p.add_argument('--proof-seconds',type=int,default=240);p.add_argument('--max-depth',type=int,default=7);p.add_argument('--cut-cap',type=int,default=800000)
  solve(p.parse_args())
+

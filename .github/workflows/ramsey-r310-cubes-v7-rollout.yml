@@ -189,7 +189,6 @@ jobs:
           path: old-v2/
       - uses: actions/download-artifact@v4
         if: ${{ inputs.resume_run != '' && inputs.resume_run != null }}
-        continue-on-error: true
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ inputs.resume_run }}
@@ -198,15 +197,17 @@ jobs:
       - name: Reuse valid cuts, solve, certify and recursively split
         env:
           TASK: ${{ matrix.id }}
+          RESUME_RUN: ${{ inputs.resume_run }}
         run: |
           set -euo pipefail
           # Preserve full same-band evidence. If no such cut stream exists,
           # reuse one full old rooted-leaf stream (all cuts are universal).
           args=()
+          if [ -n "$RESUME_RUN" ]; then args+=(--require-resume); fi
           for dir in old-v5 old-v6; do
             if [ -f "$dir/cuts.jsonl" ]; then args+=(--reuse "$dir/cuts.jsonl"); fi
           done
-          if [ "${#args[@]}" -eq 0 ]; then
+          if [ ! -f old-v5/cuts.jsonl ] && [ ! -f old-v6/cuts.jsonl ]; then
             for dir in old-v3 old-v2; do
               if [ -f "$dir/cuts.jsonl" ]; then args+=(--reuse "$dir/cuts.jsonl"); break; fi
             done
@@ -218,3 +219,4 @@ jobs:
           name: checkpoint-${{ matrix.id }}
           path: out/
           retention-days: 90
+

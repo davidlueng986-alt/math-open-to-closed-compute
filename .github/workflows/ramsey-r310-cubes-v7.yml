@@ -100,7 +100,6 @@ jobs:
           path: old/
       - uses: actions/download-artifact@v4
         if: ${{ inputs.resume_run != '' && inputs.resume_run != null }}
-        continue-on-error: true
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ inputs.resume_run }}
@@ -109,12 +108,16 @@ jobs:
       - name: Solve, certify and recursively split
         env:
           TASK: ${{ matrix.id }}
+          RESUME_RUN: ${{ inputs.resume_run }}
         run: |
           set -euo pipefail
-          python3 jobs/ramsey-r310-cubes-v7/worker.py --plan evidence/plan.json --cert evidence/profile_cert.json --task "$TASK" --out out --reuse old/cuts.jsonl --resume resume --seconds 3000 --cube-seconds 180 --proof-seconds 240 --max-depth 7
+          resume_args=()
+          if [ -n "$RESUME_RUN" ]; then resume_args+=(--require-resume); fi
+          python3 jobs/ramsey-r310-cubes-v7/worker.py --plan evidence/plan.json --cert evidence/profile_cert.json --task "$TASK" --out out --reuse old/cuts.jsonl --resume resume "${resume_args[@]}" --seconds 3000 --cube-seconds 180 --proof-seconds 240 --max-depth 7
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: checkpoint-${{ matrix.id }}
           path: out/
           retention-days: 90
+

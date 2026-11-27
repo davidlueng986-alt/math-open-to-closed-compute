@@ -1,0 +1,1 @@
+2026-11-27: User requested continuation of all unfinished Ramsey jobs. Resume exactly 232 v7 checkpoints; preserve 47 certified source tasks. One bounded wave, max parallel 15.
