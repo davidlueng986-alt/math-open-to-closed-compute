@@ -49,6 +49,18 @@ def C4Free (G : SimpleGraph V) : Prop :=
 def EvenCyclesOnly (G : SimpleGraph V) : Prop :=
   ∀ (L : ℕ), HasCycleOfLength G L → Even L
 
+private lemma dite_val_pos {P : Prop} [Decidable P] {α : Type*}
+    {t : P → α} {e : ¬ P → α} (h : P) : dite P t e = t h := by
+  split_ifs with h'
+  · rfl
+  · exact absurd h h'
+
+private lemma dite_val_neg {P : Prop} [Decidable P] {α : Type*}
+    {t : P → α} {e : ¬ P → α} (h : ¬ P) : dite P t e = e h := by
+  split_ifs with h'
+  · exact absurd h' h
+  · rfl
+
 end CoreDefinitions
 
 /-! ## Pillar 1: Parallel-Rewiring (`G_parallel`) & Triple-Rewiring Theory -/
@@ -160,13 +172,12 @@ theorem parallel_rewiring_min_degree_three
         by_cases hwu : w = u
         · have hcond : ¬ (w ≠ u ∧ w ≠ v) := fun h => h.1 hwu
           change H.Adj x (dite (w ≠ u ∧ w ≠ v) (fun h => ⟨w, h⟩) (fun _ => u₂'))
-          simp only [hcond, ↓reduceDIte]
+          rw [dite_val_neg hcond]
           exact Or.inr (Or.inl ⟨hEq1, rfl⟩)
-        · have hwv : w ≠ v := by
-            intro h; subst h; exact hxv hw.symm
+        · have hwv : w ≠ v := fun h => hxv (h ▸ hw.symm)
           have hcond : w ≠ u ∧ w ≠ v := ⟨hwu, hwv⟩
           change H.Adj x (dite (w ≠ u ∧ w ≠ v) (fun h => ⟨w, h⟩) (fun _ => u₂'))
-          simp only [hcond, ↓reduceDIte]
+          rw [dite_val_pos hcond]
           exact Or.inl hw
       · intro w₁ hw₁ w₂ hw₂ hfeq
         rw [Finset.mem_coe, SimpleGraph.mem_neighborFinset] at hw₁ hw₂
@@ -176,14 +187,14 @@ theorem parallel_rewiring_min_degree_three
           have hc1 : ¬ (w₁ ≠ u ∧ w₁ ≠ v) := fun h => h.1 h1
           have hc2 : w₂ ≠ u ∧ w₂ ≠ v := ⟨h2, hw₂v⟩
           change dite (w₁ ≠ u ∧ w₁ ≠ v) _ _ = dite (w₂ ≠ u ∧ w₂ ≠ v) _ _ at hfeq
-          simp only [hc1, hc2, ↓reduceDIte] at hfeq
+          rw [dite_val_neg hc1, dite_val_pos hc2] at hfeq
           have hu₂w₂ : u₂ = w₂ := congrArg Subtype.val hfeq
           exact absurd (hu₂w₂ ▸ (hEq1 ▸ hw₂)) hind.2.1
         · have hw₁v : w₁ ≠ v := fun h => hxv (h ▸ hw₁.symm)
           have hc1 : w₁ ≠ u ∧ w₁ ≠ v := ⟨h1, hw₁v⟩
           have hc2 : ¬ (w₂ ≠ u ∧ w₂ ≠ v) := fun h => h.1 h2
           change dite (w₁ ≠ u ∧ w₁ ≠ v) _ _ = dite (w₂ ≠ u ∧ w₂ ≠ v) _ _ at hfeq
-          simp only [hc1, hc2, ↓reduceDIte] at hfeq
+          rw [dite_val_pos hc1, dite_val_neg hc2] at hfeq
           have hw₁u₂ : w₁ = u₂ := congrArg Subtype.val hfeq
           exact absurd (hw₁u₂ ▸ (hEq1 ▸ hw₁)) hind.2.1
         · have hw₁v : w₁ ≠ v := fun h => hxv (h ▸ hw₁.symm)
@@ -191,7 +202,7 @@ theorem parallel_rewiring_min_degree_three
           have hc1 : w₁ ≠ u ∧ w₁ ≠ v := ⟨h1, hw₁v⟩
           have hc2 : w₂ ≠ u ∧ w₂ ≠ v := ⟨h2, hw₂v⟩
           change dite (w₁ ≠ u ∧ w₁ ≠ v) _ _ = dite (w₂ ≠ u ∧ w₂ ≠ v) _ _ at hfeq
-          simp only [hc1, hc2, ↓reduceDIte] at hfeq
+          rw [dite_val_pos hc1, dite_val_pos hc2] at hfeq
           exact congrArg Subtype.val hfeq
     · let u₁' : { y : V // y ≠ u ∧ y ≠ v } := ⟨u₁, hu₁u, hu₁v⟩
       let f : V → { y : V // y ≠ u ∧ y ≠ v } := fun w =>
@@ -202,12 +213,12 @@ theorem parallel_rewiring_min_degree_three
         by_cases hwu : w = u
         · have hcond : ¬ (w ≠ u ∧ w ≠ v) := fun h => h.1 hwu
           change H.Adj x (dite (w ≠ u ∧ w ≠ v) (fun h => ⟨w, h⟩) (fun _ => u₁'))
-          simp only [hcond, ↓reduceDIte]
+          rw [dite_val_neg hcond]
           exact Or.inr (Or.inr (Or.inl ⟨hEq2, rfl⟩))
         · have hwv : w ≠ v := fun h => hxv (h ▸ hw.symm)
           have hcond : w ≠ u ∧ w ≠ v := ⟨hwu, hwv⟩
           change H.Adj x (dite (w ≠ u ∧ w ≠ v) (fun h => ⟨w, h⟩) (fun _ => u₁'))
-          simp only [hcond, ↓reduceDIte]
+          rw [dite_val_pos hcond]
           exact Or.inl hw
       · intro w₁ hw₁ w₂ hw₂ hfeq
         rw [Finset.mem_coe, SimpleGraph.mem_neighborFinset] at hw₁ hw₂
@@ -217,14 +228,14 @@ theorem parallel_rewiring_min_degree_three
           have hc1 : ¬ (w₁ ≠ u ∧ w₁ ≠ v) := fun h => h.1 h1
           have hc2 : w₂ ≠ u ∧ w₂ ≠ v := ⟨h2, hw₂v⟩
           change dite (w₁ ≠ u ∧ w₁ ≠ v) _ _ = dite (w₂ ≠ u ∧ w₂ ≠ v) _ _ at hfeq
-          simp only [hc1, hc2, ↓reduceDIte] at hfeq
+          rw [dite_val_neg hc1, dite_val_pos hc2] at hfeq
           have hu₁w₂ : u₁ = w₂ := congrArg Subtype.val hfeq
           exact absurd (hu₁w₂ ▸ (hEq2 ▸ hw₂)).symm hind.2.1
         · have hw₁v : w₁ ≠ v := fun h => hxv (h ▸ hw₁.symm)
           have hc1 : w₁ ≠ u ∧ w₁ ≠ v := ⟨h1, hw₁v⟩
           have hc2 : ¬ (w₂ ≠ u ∧ w₂ ≠ v) := fun h => h.1 h2
           change dite (w₁ ≠ u ∧ w₁ ≠ v) _ _ = dite (w₂ ≠ u ∧ w₂ ≠ v) _ _ at hfeq
-          simp only [hc1, hc2, ↓reduceDIte] at hfeq
+          rw [dite_val_pos hc1, dite_val_neg hc2] at hfeq
           have hw₁u₁ : w₁ = u₁ := congrArg Subtype.val hfeq
           exact absurd (hw₁u₁ ▸ (hEq2 ▸ hw₁)).symm hind.2.1
         · have hw₁v : w₁ ≠ v := fun h => hxv (h ▸ hw₁.symm)
@@ -232,7 +243,7 @@ theorem parallel_rewiring_min_degree_three
           have hc1 : w₁ ≠ u ∧ w₁ ≠ v := ⟨h1, hw₁v⟩
           have hc2 : w₂ ≠ u ∧ w₂ ≠ v := ⟨h2, hw₂v⟩
           change dite (w₁ ≠ u ∧ w₁ ≠ v) _ _ = dite (w₂ ≠ u ∧ w₂ ≠ v) _ _ at hfeq
-          simp only [hc1, hc2, ↓reduceDIte] at hfeq
+          rw [dite_val_pos hc1, dite_val_pos hc2] at hfeq
           exact congrArg Subtype.val hfeq
   · by_cases hxv : G.Adj v x.1
     · rcases hNv x.1 hxv with hEqu | hEq1 | hEq2
@@ -246,12 +257,12 @@ theorem parallel_rewiring_min_degree_three
           by_cases hwv : w = v
           · have hcond : ¬ (w ≠ u ∧ w ≠ v) := fun h => h.2 hwv
             change H.Adj x (dite (w ≠ u ∧ w ≠ v) (fun h => ⟨w, h⟩) (fun _ => v₂'))
-            simp only [hcond, ↓reduceDIte]
+            rw [dite_val_neg hcond]
             exact Or.inr (Or.inr (Or.inr (Or.inl ⟨hEq1, rfl⟩)))
           · have hwu : w ≠ u := fun h => hxu (h ▸ hw.symm)
             have hcond : w ≠ u ∧ w ≠ v := ⟨hwu, hwv⟩
             change H.Adj x (dite (w ≠ u ∧ w ≠ v) (fun h => ⟨w, h⟩) (fun _ => v₂'))
-            simp only [hcond, ↓reduceDIte]
+            rw [dite_val_pos hcond]
             exact Or.inl hw
         · intro w₁ hw₁ w₂ hw₂ hfeq
           rw [Finset.mem_coe, SimpleGraph.mem_neighborFinset] at hw₁ hw₂
@@ -261,14 +272,14 @@ theorem parallel_rewiring_min_degree_three
             have hc1 : ¬ (w₁ ≠ u ∧ w₁ ≠ v) := fun h => h.2 h1
             have hc2 : w₂ ≠ u ∧ w₂ ≠ v := ⟨hw₂u, h2⟩
             change dite (w₁ ≠ u ∧ w₁ ≠ v) _ _ = dite (w₂ ≠ u ∧ w₂ ≠ v) _ _ at hfeq
-            simp only [hc1, hc2, ↓reduceDIte] at hfeq
+            rw [dite_val_neg hc1, dite_val_pos hc2] at hfeq
             have hv₂w₂ : v₂ = w₂ := congrArg Subtype.val hfeq
             exact absurd (hv₂w₂ ▸ (hEq1 ▸ hw₂)) hind.2.2.1
           · have hw₁u : w₁ ≠ u := fun h => hxu (h ▸ hw₁.symm)
             have hc1 : w₁ ≠ u ∧ w₁ ≠ v := ⟨hw₁u, h1⟩
             have hc2 : ¬ (w₂ ≠ u ∧ w₂ ≠ v) := fun h => h.2 h2
             change dite (w₁ ≠ u ∧ w₁ ≠ v) _ _ = dite (w₂ ≠ u ∧ w₂ ≠ v) _ _ at hfeq
-            simp only [hc1, hc2, ↓reduceDIte] at hfeq
+            rw [dite_val_pos hc1, dite_val_neg hc2] at hfeq
             have hw₁v₂ : w₁ = v₂ := congrArg Subtype.val hfeq
             exact absurd (hw₁v₂ ▸ (hEq1 ▸ hw₁)) hind.2.2.1
           · have hw₁u : w₁ ≠ u := fun h => hxu (h ▸ hw₁.symm)
@@ -276,7 +287,7 @@ theorem parallel_rewiring_min_degree_three
             have hc1 : w₁ ≠ u ∧ w₁ ≠ v := ⟨hw₁u, h1⟩
             have hc2 : w₂ ≠ u ∧ w₂ ≠ v := ⟨hw₂u, h2⟩
             change dite (w₁ ≠ u ∧ w₁ ≠ v) _ _ = dite (w₂ ≠ u ∧ w₂ ≠ v) _ _ at hfeq
-            simp only [hc1, hc2, ↓reduceDIte] at hfeq
+            rw [dite_val_pos hc1, dite_val_pos hc2] at hfeq
             exact congrArg Subtype.val hfeq
       · let v₁' : { y : V // y ≠ u ∧ y ≠ v } := ⟨v₁, hv₁u, hv₁v⟩
         let f : V → { y : V // y ≠ u ∧ y ≠ v } := fun w =>
@@ -287,12 +298,12 @@ theorem parallel_rewiring_min_degree_three
           by_cases hwv : w = v
           · have hcond : ¬ (w ≠ u ∧ w ≠ v) := fun h => h.2 hwv
             change H.Adj x (dite (w ≠ u ∧ w ≠ v) (fun h => ⟨w, h⟩) (fun _ => v₁'))
-            simp only [hcond, ↓reduceDIte]
+            rw [dite_val_neg hcond]
             exact Or.inr (Or.inr (Or.inr (Or.inr ⟨hEq2, rfl⟩)))
           · have hwu : w ≠ u := fun h => hxu (h ▸ hw.symm)
             have hcond : w ≠ u ∧ w ≠ v := ⟨hwu, hwv⟩
             change H.Adj x (dite (w ≠ u ∧ w ≠ v) (fun h => ⟨w, h⟩) (fun _ => v₁'))
-            simp only [hcond, ↓reduceDIte]
+            rw [dite_val_pos hcond]
             exact Or.inl hw
         · intro w₁ hw₁ w₂ hw₂ hfeq
           rw [Finset.mem_coe, SimpleGraph.mem_neighborFinset] at hw₁ hw₂
@@ -302,14 +313,14 @@ theorem parallel_rewiring_min_degree_three
             have hc1 : ¬ (w₁ ≠ u ∧ w₁ ≠ v) := fun h => h.2 h1
             have hc2 : w₂ ≠ u ∧ w₂ ≠ v := ⟨hw₂u, h2⟩
             change dite (w₁ ≠ u ∧ w₁ ≠ v) _ _ = dite (w₂ ≠ u ∧ w₂ ≠ v) _ _ at hfeq
-            simp only [hc1, hc2, ↓reduceDIte] at hfeq
+            rw [dite_val_neg hc1, dite_val_pos hc2] at hfeq
             have hv₁w₂ : v₁ = w₂ := congrArg Subtype.val hfeq
             exact absurd (hv₁w₂ ▸ (hEq2 ▸ hw₂)).symm hind.2.2.1
           · have hw₁u : w₁ ≠ u := fun h => hxu (h ▸ hw₁.symm)
             have hc1 : w₁ ≠ u ∧ w₁ ≠ v := ⟨hw₁u, h1⟩
             have hc2 : ¬ (w₂ ≠ u ∧ w₂ ≠ v) := fun h => h.2 h2
             change dite (w₁ ≠ u ∧ w₁ ≠ v) _ _ = dite (w₂ ≠ u ∧ w₂ ≠ v) _ _ at hfeq
-            simp only [hc1, hc2, ↓reduceDIte] at hfeq
+            rw [dite_val_pos hc1, dite_val_neg hc2] at hfeq
             have hw₁v₁ : w₁ = v₁ := congrArg Subtype.val hfeq
             exact absurd (hw₁v₁ ▸ (hEq2 ▸ hw₁)).symm hind.2.2.1
           · have hw₁u : w₁ ≠ u := fun h => hxu (h ▸ hw₁.symm)
@@ -317,7 +328,7 @@ theorem parallel_rewiring_min_degree_three
             have hc1 : w₁ ≠ u ∧ w₁ ≠ v := ⟨hw₁u, h1⟩
             have hc2 : w₂ ≠ u ∧ w₂ ≠ v := ⟨hw₂u, h2⟩
             change dite (w₁ ≠ u ∧ w₁ ≠ v) _ _ = dite (w₂ ≠ u ∧ w₂ ≠ v) _ _ at hfeq
-            simp only [hc1, hc2, ↓reduceDIte] at hfeq
+            rw [dite_val_pos hc1, dite_val_pos hc2] at hfeq
             exact congrArg Subtype.val hfeq
     · let f : V → { y : V // y ≠ u ∧ y ≠ v } := fun w =>
         if hw : w ≠ u ∧ w ≠ v then ⟨w, hw⟩ else x
@@ -328,14 +339,14 @@ theorem parallel_rewiring_min_degree_three
         have hwv : w ≠ v := fun h => hxv (h ▸ hw.symm)
         have hcond : w ≠ u ∧ w ≠ v := ⟨hwu, hwv⟩
         change H.Adj x (dite (w ≠ u ∧ w ≠ v) (fun h => ⟨w, h⟩) (fun _ => x))
-        simp only [hcond, ↓reduceDIte]
+        rw [dite_val_pos hcond]
         exact Or.inl hw
       · intro w₁ hw₁ w₂ hw₂ hfeq
         rw [Finset.mem_coe, SimpleGraph.mem_neighborFinset] at hw₁ hw₂
         have hc1 : w₁ ≠ u ∧ w₁ ≠ v := ⟨fun h => hxu (h ▸ hw₁.symm), fun h => hxv (h ▸ hw₁.symm)⟩
         have hc2 : w₂ ≠ u ∧ w₂ ≠ v := ⟨fun h => hxu (h ▸ hw₂.symm), fun h => hxv (h ▸ hw₂.symm)⟩
         change dite (w₁ ≠ u ∧ w₁ ≠ v) _ _ = dite (w₂ ≠ u ∧ w₂ ≠ v) _ _ at hfeq
-        simp only [hc1, hc2, ↓reduceDIte] at hfeq
+        rw [dite_val_pos hc1, dite_val_pos hc2] at hfeq
         exact congrArg Subtype.val hfeq
 
 /-- **Theorem 3**: Exact cycle-length lifting arithmetic for `G_parallel(uv)`:
@@ -671,7 +682,7 @@ lemma frobenius_two_coprime_representation
               (s₁ : ℤ) * (x - aZ) + (s₂ : ℤ) * y := by ring
     rw [h1, Int.add_emod, Int.mul_emod_right, add_zero, Int.emod_emod, Int.mul_emod]
     have hxa : (x - aZ) % (s₂ : ℤ) = 0 := by
-      simp [aZ, Int.sub_emod, Int.emod_emod]
+      simp [aZ, Int.sub_emod]
     rw [hxa, mul_zero, Int.zero_emod]
   have hdvd : (s₂ : ℤ) ∣ (N : ℤ) - (a : ℤ) * (s₁ : ℤ) := Int.dvd_of_emod_eq_zero hmod0
   rcases hdvd with ⟨q, hq⟩
