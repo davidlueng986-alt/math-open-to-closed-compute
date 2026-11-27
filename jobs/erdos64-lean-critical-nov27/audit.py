@@ -51,6 +51,13 @@ if module == "AllPairsObstruction":
     required = {"E64AllPairsObstruction." + s for s in
                 ("all_pairs_dyadic", "no_four", "no_eight", "no_power", "counterexample")}
     assert required <= set(audit), sorted(required - set(audit))
+if module == "MinimalCutCompletion":
+    required = {"E64MinimalCut." + s for s in
+                ("boundary_singleton_card", "side_minimal_of_nontrivial_minimal",
+                 "minimal_side_ports_nonadjacent", "completion_cubic",
+                 "cut_into_completion", "minimal_side_completion_three_edge_connected",
+                 "minimal_cut_completion", "minimal_nontrivial_cut_completion")}
+    assert required <= set(audit), sorted(required - set(audit))
 result = {"status": "PASS", "module": module,
           "source_commit": (out / "source-commit.txt").read_text().strip(),
           "lean_version": (out / "lean-version.txt").read_text().strip(),

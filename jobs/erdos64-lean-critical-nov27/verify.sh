@@ -10,7 +10,7 @@ cp "$base"/*.lean "$work/"
 cp "$src"/*.lean "$work/"
 cp "$base"/*.lean "$out/source/"
 cp "$src"/*.lean "$out/source/"
-git -C "$GITHUB_WORKSPACE" rev-parse HEAD | tee "$out/source-commit.txt"
+printf '%s\n' "$GITHUB_SHA" | tee "$out/source-commit.txt"
 cd /opt/mathlib4
 git rev-parse HEAD | tee "$out/mathlib-commit.txt"
 lake env lean --version | tee "$out/lean-version.txt"

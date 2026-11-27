@@ -22,6 +22,21 @@ The finite proof uses kernel reduction; no external executable's output is trust
 The independent Python witness file records all fourteen simple cycles and all
 sixty-six path witnesses. It is an independent cross-check, not a Lean premise.
 
+## MinimalCutCompletion
+
+For an inclusion-minimal nontrivial matching two-edge-cut side A of an arbitrary
+finite cubic graph, add an edge between its two internal boundary vertices.
+The proof establishes that this edge did not already exist, every resulting
+vertex has degree three, and every nonempty proper cut has at least three edges.
+The theorem is uniform in graph order. It does not assume a fixed finite bound
+or absence of power cycles, and therefore applies to the relevant MinimalBad
+cubic cut classes. A separate bridge converts ordinary inclusion-minimality
+among nontrivial two-cut sides into the exact internal SideMinimal predicate.
+
+This formalizes the structural completion step. It does not align the dyadic
+exponents on opposite sides, prove the original conjecture, or exclude either
+entire cubic two-cut terminal class. No new leaf status is assigned.
+
 ## Verification
 
 The workflow uses the existing pinned Lean 4.36.0 / Mathlib mathematical toolbox,
