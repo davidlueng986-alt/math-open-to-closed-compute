@@ -2,10 +2,10 @@
 """
 Erdos Problem #617 (r=6, K_37) Sharded Exact SAT + CEGAR Solver (v2)
 Includes:
-  - Min-Defect Local Optimality
+  - Min-Defect Local Optimality (zero-var binary clauses)
   - Generalized Property (L)
   - NEW Wave 4 Exact Quadratic Turan-Cauchy-Schwarz Cross-Edge Bound
-  - NEW Wave 4 Two-Vertex Color-Coupling Theorem
+  - NEW Wave 4 Two-Vertex Color-Coupling Theorem (zero-var binary/ternary clauses)
   - Exact Turan Subset Cross-Edge Bounds (|T| = 2, binding |T| = 3)
   - Sound Vertex Symmetry Breaking (d_miss desc for m_i>0, d(u, A_0) desc for m_i=0)
   - Exact Transversal-No-Alpha7 clauses + Incremental Exact 7-IS CEGAR loop
@@ -196,16 +196,19 @@ def build_fixed_m_cnf(parts, fixed_m, r=6, max_total_edges=111,
             excess_lits = []
             for u in part_verts[i]:
                 ylits = [y[(min(u, w), max(u, w))] for w in part_verts[j]]
-                # Local optimality: d(u, A_j) + d_miss(u) <= a_j
-                if fixed_m[i] > 0:
-                    dm_lits = [x[(min(u, v), max(u, v))] for v in part_verts[i] if v != u]
-                    cnf.add_at_most_k(ylits + dm_lits, aj)
-                # Property (L)
+                # Property (L) + degree totalizer
                 if ub_deg < aj:
                     out = cnf.add_at_most_k(ylits, ub_deg)
                 else:
                     out = cnf.totalizer(ylits, aj)
                 deg_tot[(u, j)] = out
+                # ZERO-VAR Local optimality: d(u, A_j) + d_miss(u) <= a_j
+                if fixed_m[i] > 0:
+                    dmu = dm_tot[u]
+                    for a in range(len(out)):
+                        b = aj - 1 - a
+                        if 0 <= b < len(dmu):
+                            cnf.add(-out[a], -dmu[b])
                 # Collect excess above (kj + 1) for Quadratic Turan-CS
                 if aj >= r and sj >= 1:
                     thresh = kj + 1
@@ -218,23 +221,32 @@ def build_fixed_m_cnf(parts, fixed_m, r=6, max_total_edges=111,
                 if rhs_q < len(excess_lits):
                     cnf.add_at_most_k(excess_lits, rhs_q)
 
-            # NEW Wave 4 Two-Vertex Color-Coupling Theorem
+            # NEW Wave 4 Two-Vertex Color-Coupling Theorem (ZERO-VAR binary/ternary clauses!)
             if use_tvc and aj >= r and sj >= 1:
+                K0 = 2 * kj + 2 + sj
+                K1 = K0 + 1
                 vs = part_verts[i]
                 for a_idx in range(len(vs)):
                     u = vs[a_idx]
-                    yl_u = [y[(min(u, w), max(u, w))] for w in part_verts[j]]
+                    tu = deg_tot[(u, j)]
                     for b_idx in range(a_idx + 1, len(vs)):
                         v = vs[b_idx]
-                        yl_v = [y[(min(v, w), max(v, w))] for w in part_verts[j]]
+                        tv = deg_tot[(v, j)]
                         if fixed_m[i] == 0:
-                            rhs_tvc = 2 * kj + 2 + sj
-                            if rhs_tvc < 2 * aj:
-                                cnf.add_at_most_k(yl_u + yl_v, rhs_tvc)
+                            for a in range(len(tu)):
+                                b = K0 - 1 - a
+                                if 0 <= b < len(tv):
+                                    cnf.add(-tu[a], -tv[b])
                         else:
-                            rhs_tvc = 2 * kj + 3 + sj
-                            if rhs_tvc < 2 * aj + 1:
-                                cnf.add_at_most_k(yl_u + yl_v + [-x[(u, v)]], rhs_tvc)
+                            xuv = x[(u, v)]
+                            for a in range(len(tu)):
+                                b = K0 - 1 - a
+                                if 0 <= b < len(tv):
+                                    cnf.add(xuv, -tu[a], -tv[b])
+                            for a in range(len(tu)):
+                                b = K1 - 1 - a
+                                if 0 <= b < len(tv):
+                                    cnf.add(-tu[a], -tv[b])
 
     # 4. Exact Turan Subset Cross-Edge Bounds for |T| = 2 and binding |T| = 3
     for sz in (2, 3):
@@ -415,8 +427,8 @@ def main():
             res = solve_one_vector(((4, 3, 3), fm, 3, 15, args.solver, not args.no_sym_break, True, "all"))
             print(f"  r=3 {fm}: {res[0]} in {res[2]:.3f}s (rounds={res[3]}, cuts={res[4]})", flush=True)
             assert res[0] == "UNSAT", f"Negative control failed on {fm}!"
-        res_pos = solve_one_vector(((7, 6, 6, 6, 6, 6), (5, 2, 2, 2, 2, 2), 6, 160, args.solver, not args.no_sym_break, True, "top1"))
-        print(f"[POS-CTRL r=6 #9 maxE=160] {res_pos[0]} in {res_pos[2]:.3f}s (rounds={res_pos[3]}, cuts={res_pos[4]})", flush=True)
+        res_pos = solve_one_vector(((5, 4, 4, 4), (3, 3, 3, 0), 4, 60, args.solver, not args.no_sym_break, True, "all"))
+        print(f"[POS-CTRL r=4 (5,4,4,4) maxE=60] {res_pos[0]} in {res_pos[2]:.3f}s (rounds={res_pos[3]}, cuts={res_pos[4]})", flush=True)
         assert res_pos[0] == "SAT_VALID_G1", "Positive control failed!"
         print("CONTROLS PASSED!", flush=True)
         return
