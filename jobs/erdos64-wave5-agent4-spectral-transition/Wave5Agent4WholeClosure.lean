@@ -76,12 +76,12 @@ theorem nonBacktracking_lt_girth_add_two_isCyclicallyNonBacktracking {V : Type*}
     {g : ℕ} (hg : GirthAtLeast G g) {v : V} (p : G.Walk v v)
     (hnb : IsNonBacktracking p) (hpos : 1 ≤ p.length) (hlt : p.length < g + 2) :
     IsCyclicallyNonBacktracking p := by
-  match p with
-  | .nil => simp at hpos
-  | @Walk.cons _ _ _ u _ h₁ rest =>
-      match rest with
-      | .nil => exact False.elim (G.ne_of_adj h₁ rfl)
-      | .cons h₂ rest₂ =>
+  cases p with
+  | nil => simp at hpos
+  | @cons _ u _ h₁ rest =>
+      cases rest with
+      | nil => exact False.elim (G.ne_of_adj h₁ rfl)
+      | cons h₂ rest₂ =>
           obtain ⟨w, r, hlast, heq⟩ := walk_eq_append_last (.cons h₂ rest₂) (by simp)
           have hpuw : u ≠ w := by
             intro huw
@@ -177,9 +177,9 @@ private theorem closed_nodup_support_eq_nil' {V : Type*} {G : SimpleGraph V}
 private theorem isCycle_of_nb_nodup_tail' {V : Type*} {G : SimpleGraph V}
     {v : V} (p : G.Walk v v) (hnb : IsNonBacktracking p) (hlen : 1 ≤ p.length)
     (hnd : p.support.tail.Nodup) : p.IsCycle := by
-  match p with
-  | .nil => simp at hlen
-  | @Walk.cons _ _ _ u _ h rest =>
+  cases p with
+  | nil => simp at hlen
+  | @cons _ u _ h rest =>
       have hrest_nd : rest.support.Nodup := by simpa [Walk.support_cons] using hnd
       have hrest_path : rest.IsPath := Walk.IsPath.mk' hrest_nd
       have hnotmem : s(v, u) ∉ rest.edges := by
@@ -198,9 +198,11 @@ private theorem isCycle_of_nb_nodup_tail' {V : Type*} {G : SimpleGraph V}
                 exact hnb.1 rfl
             · obtain ⟨_, hc⟩ := mem_support_of_mem_edges' hmem₂
               exact hrest_nd.1 hc
-      refine ⟨⟨?_⟩, by simp, hnd⟩
-      simp only [Walk.edges_cons, List.nodup_cons]
-      exact ⟨hnotmem, hrest_path.isTrail.edges_nodup⟩
+      have htrail : (Walk.cons h rest).IsTrail := by
+        refine ⟨?_⟩
+        simp only [Walk.edges_cons, List.nodup_cons]
+        exact ⟨hnotmem, hrest_path.isTrail.edges_nodup⟩
+      exact ⟨htrail, by simp, hnd⟩
 
 private theorem exists_append_of_mem_support' {V : Type*} {G : SimpleGraph V} :
     ∀ {u v : V} (w : G.Walk u v) {x : V},
@@ -352,8 +354,8 @@ theorem erdos64_of_two_window_nonBacktracking
 def twoFactorSubgraph {V : Type*} (G : SimpleGraph V) (m : V → V)
     (hm_inv : ∀ v, m (m v) = v) : SimpleGraph V where
   Adj u v := G.Adj u v ∧ v ≠ m u
-  symm := ⟨fun _ _ h => ⟨h.1.symm, fun heq => h.2 (by rw [heq, hm_inv])⟩⟩
-  loopless := ⟨fun _ h => G.ne_of_adj h.1 rfl⟩
+  symm := fun _ _ h => ⟨h.1.symm, fun heq => h.2 (by rw [heq, hm_inv])⟩
+  loopless := fun _ h => G.ne_of_adj h.1 rfl
 
 /-- In any power-free graph `G` with perfect matching `m`, the 2-factor `G \ m` contains
 no `2^k`-cycle (`0`-switching exclusion). -/
@@ -584,9 +586,8 @@ theorem mcontract_general_switching_lift {V : Type*} [DecidableEq V]
               · rw [List.getElem_append_left (by simp [List.length_take]; omega)]
                 simp
               · have hneq : n = k := by simp [List.length_take] at hn1; omega
-                subst hneq
                 rw [List.getElem_append_right (by simp [List.length_take]; omega)]
-                simp [List.length_take, Nat.min_eq_left (by omega : k ≤ L), ik]
+                simp [hneq, List.length_take, Nat.min_eq_left (by omega : k ≤ L), ik]
           rw [htake, List.flatMap_append, List.flatMap_cons, List.flatMap_nil, List.append_nil,
             List.append_assoc]
           have hprev_eq : prev ik = ik_prev := by
