@@ -139,7 +139,7 @@ theorem nonBacktracking_tail_peel {V : Type*} {G : SimpleGraph V} :
       · exact ⟨u, .nil, q, hcyc, hpos, by simp, by simp⟩
       · cases q with
         | nil => simp at hpos
-        | cons (v := b) h₁ rest =>
+        | @cons _ b _ h₁ rest =>
             cases rest with
             | nil => exact False.elim (G.loopless u h₁)
             | cons h₂ rest₂ =>
@@ -216,10 +216,10 @@ private theorem isCycle_of_nb_nodup_tail {V : Type*} {G : SimpleGraph V}
     (hnd : p.support.tail.Nodup) : p.IsCycle := by
   cases p with
   | nil => simp at hlen
-  | cons h rest =>
+  | @cons _ b _ h rest =>
       have hrest_nd : rest.support.Nodup := by simpa [Walk.support_cons] using hnd
       have hrest_path : rest.IsPath := Walk.IsPath.mk' hrest_nd
-      have hnotmem : s(v, _) ∉ rest.edges := by
+      have hnotmem : s(v, b) ∉ rest.edges := by
         intro hmem
         cases rest with
         | nil => simp at hmem
@@ -283,9 +283,9 @@ private theorem exists_split_of_not_nodup_tail' {V : Type*} {G : SimpleGraph V} 
             exact ⟨c, .cons h .nil, w₂, w₃, by simp [heq], by simp, hw₂⟩
           · have hnd₂' : ¬ (Walk.cons h₂ rest₂).support.tail.Nodup := by
               simpa [Walk.support_cons] using hnd₂
-            obtain ⟨x, w₁, w₂, w₃, heq, hw₁, hw₂⟩ :=
+            obtain ⟨x, w₁, w₂, w₃, heq, _, hw₂⟩ :=
               exists_split_of_not_nodup_tail' (.cons h₂ rest₂) hnd₂'
-            exact ⟨x, .cons h w₁, w₂, w₃, by simp [heq], by simp; omega, hw₂⟩
+            exact ⟨x, .cons h w₁, w₂, w₃, by simp [heq], by simp, hw₂⟩
 
 /-- **Exact Girth-Tripling Non-Backtracking Decomposition Theorem (`< 3g`, ALL graphs)**:
 In any simple graph of girth `≥ g`, every nonempty cyclically non-backtracking closed walk
@@ -312,10 +312,11 @@ theorem tailless_nonBacktracking_lt_three_girth_decomp {V : Type*} {G : SimpleGr
     have hpp : p.append p = p₁.append (p₂.append ((p₃.append p₁).append (p₂.append p₃))) := by
       conv_lhs => rw [heq]
       simp only [Walk.append_assoc]
+    have hcyc' : IsNonBacktracking (p.append p) := hcyc
     have hnb₃₁ : IsNonBacktracking (p₃.append p₁) :=
       isNonBacktracking_of_append_left
         (isNonBacktracking_of_append_right
-          (isNonBacktracking_of_append_right (hpp ▸ hcyc)))
+          (isNonBacktracking_of_append_right (hpp ▸ hcyc')))
     have hpos₃₁ : 1 ≤ (p₃.append p₁).length := by
       rw [Walk.length_append]
       omega
@@ -395,14 +396,14 @@ theorem unique_nonBacktracking_walk_of_sum_lt_girth {V : Type*} {G : SimpleGraph
                 girth_le_length_of_nonBacktracking_closed hg _ _ rfl (by simp) hnbq
               simp only [Walk.length_nil, zero_add] at hsum
               omega
-      | cons (v := b₁) hp p' =>
+      | @cons _ b₁ _ hp p' =>
           cases q with
           | nil =>
               have hp_ge : g ≤ (Walk.cons hp p').length :=
                 girth_le_length_of_nonBacktracking_closed hg _ _ rfl (by simp) hnbp
               simp only [Walk.length_nil, add_zero] at hsum
               omega
-          | cons (v := b₂) hq q' =>
+          | @cons _ b₂ _ hq q' =>
               by_cases hb : b₁ = b₂
               · subst hb
                 have hnbp' : IsNonBacktracking p' :=
@@ -489,14 +490,14 @@ private theorem isCyclicallyNonBacktracking_of_isCycle {V : Type*} {G : SimpleGr
       intro a b w
       induction w with
       | nil => intro _; trivial
-      | cons h₁ rest ih =>
+      | @cons a' _ _ h₁ rest ih =>
           intro htr'
           cases rest with
           | nil => trivial
-          | cons (v := c) h₂ rest₂ =>
+          | @cons _ c _ h₂ rest₂ =>
               have hnd := htr'.edges_nodup
               simp only [Walk.edges_cons, List.nodup_cons] at hnd
-              have hne : a ≠ c := by
+              have hne : a' ≠ c := by
                 intro heq
                 subst heq
                 apply hnd.1
@@ -510,7 +511,7 @@ private theorem isCyclicallyNonBacktracking_of_isCycle {V : Type*} {G : SimpleGr
   intro x y hx hy
   cases p with
   | nil => simp [firstNbr] at hy
-  | cons (v := b) h₁ rest =>
+  | @cons _ b _ h₁ rest =>
       simp only [firstNbr, Option.some.injEq] at hy
       subst hy
       cases rest with
@@ -566,7 +567,7 @@ theorem erdos64_of_nonBacktracking_surplus
 /-- A single transition step through a contracted matching edge `{u, m u}`:
 if the incoming endpoint equals the outgoing endpoint, it contributes 0 edges (turn);
 if they are opposite endpoints, it traverses the matching edge (1 edge, crossing). -/
-def transitionStep {V : Type*} {G : SimpleGraph V} (m : V → V)
+def transitionStep {V : Type*} [DecidableEq V] {G : SimpleGraph V} (m : V → V)
     (hm_adj : ∀ v, G.Adj v (m v)) (a b : V) (h : b = a ∨ b = m a) : G.Walk a b :=
   if hab : b = a then
     hab ▸ .nil
@@ -575,7 +576,7 @@ def transitionStep {V : Type*} {G : SimpleGraph V} (m : V → V)
     hbm ▸ .cons (hm_adj a) .nil
 
 /-- Length of a transition step is `0` on a turn (`b = a`) and `1` on a crossing (`b ≠ a`). -/
-theorem transitionStep_length {V : Type*} {G : SimpleGraph V} (m : V → V)
+theorem transitionStep_length {V : Type*} [DecidableEq V] {G : SimpleGraph V} (m : V → V)
     (hm_adj : ∀ v, G.Adj v (m v)) (a b : V) (h : b = a ∨ b = m a) :
     (transitionStep m hm_adj a b h).length = if b = a then 0 else 1 := by
   unfold transitionStep
@@ -586,7 +587,7 @@ theorem transitionStep_length {V : Type*} {G : SimpleGraph V} (m : V → V)
 
 /-- Exact length formula for concatenating a transition walk across `L` contracted matching edges
 with `crossings` crossing steps: `lift.length = L + crossings`. -/
-theorem transition_walk_lift_length {V : Type*} {G : SimpleGraph V} {u v : V}
+theorem transition_walk_lift_length {V : Type*} [DecidableEq V] {G : SimpleGraph V} {u v : V}
     (m : V → V) (hm_adj : ∀ x, G.Adj x (m x))
     (a b : V) (h : b = a ∨ b = m a) (hab : G.Adj b u) (rest : G.Walk u v) (L c : ℕ)
     (hrest : rest.length = L + c) :
