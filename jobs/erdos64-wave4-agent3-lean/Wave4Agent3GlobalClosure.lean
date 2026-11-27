@@ -357,20 +357,12 @@ lemma liftWalk_support_tail_mem_proj (cov : GraphCover G H d) {w₀ : W}
   apply hback c u.1 v.1 u.2 v.2 (i + 1) hk
   have hg1 : q1.getVert (i + 1) = x := by
     rw [Walk.getVert_eq_support_getElem _ (by rw [cov.liftWalk_length]; exact hk)]
-    have hstep : q1.support[i + 1]'(by rw [Walk.length_support, cov.liftWalk_length]; omega) =
-        q1.support.tail[i]'hi := by
-      cases hs : q1.support with
-      | nil => exact absurd hs (Walk.support_ne_nil q1)
-      | cons hd tl => simp
-    rw [hstep, hxi]
+    rw [← List.getElem_tail (i := i) (hi := hi)]
+    exact hxi
+  have hi2 : i < q2.support.tail.length := by rw [hlen2, ← hlen1]; exact hi
   have hg2 : q2.getVert (i + 1) = x := by
     rw [Walk.getVert_eq_support_getElem _ (by rw [cov.liftWalk_length]; exact hk)]
-    have hstep : q2.support[i + 1]'(by rw [Walk.length_support, cov.liftWalk_length]; omega) =
-        q2.support.tail[i]'(by omega) := by
-      cases hs : q2.support with
-      | nil => exact absurd hs (Walk.support_ne_nil q2)
-      | cons hd tl => simp
-    rw [hstep]
+    rw [← List.getElem_tail (i := i) (hi := hi2)]
     simpa [hij] using hxj
   exact hg1.trans hg2.symm
 
@@ -383,7 +375,7 @@ lemma liftRepeat_support_tail_nodup (cov : GraphCover G H d) {w₀ : W}
         ∃ i < r, x ∈ (cov.liftWalk c (((cov.monodromy c) ^ i) u).1 (((cov.monodromy c) ^ i) u).2).2.1.support.tail := by
   induction r generalizing u with
   | zero =>
-    refine ⟨by simp [liftRepeat], by simp [liftRepeat]⟩
+    refine ⟨by simp [liftRepeat, Walk.support_nil], by simp [liftRepeat, Walk.support_nil]⟩
   | succ r ih =>
     let step := cov.liftWalk c u.1 u.2
     let u1 : {x : V // cov.toFun x = w₀} := ⟨step.1, step.2.2⟩
@@ -403,7 +395,9 @@ lemma liftRepeat_support_tail_nodup (cov : GraphCover G H d) {w₀ : W}
       simp only [liftRepeat, Walk.support_append, Walk.support_copy]
       cases hs : step.2.1.support with
       | nil => exact absurd hs (Walk.support_ne_nil _)
-      | cons hd tl => simp
+      | cons hd tl =>
+        simp only [List.tail_cons, List.cons_append]
+        rfl
     rw [hsupp_tail]
     have hnd_step : step.2.1.support.tail.Nodup := cov.liftWalk_support_tail_nodup_of_cycle c hc u
     have hdisj : step.2.1.support.tail.Disjoint (cov.liftRepeat c r u1).support.tail := by
@@ -416,14 +410,15 @@ lemma liftRepeat_support_tail_nodup (cov : GraphCover G H d) {w₀ : W}
       have := hinj 0 (i + 1) (by omega) (by omega) h0
       omega
     refine ⟨List.nodup_append'.mpr ⟨hnd_step, hnd_rest, hdisj⟩, ?_⟩
+    have hmem_congr : ∀ {a b : {y : V // cov.toFun y = w₀}} {x : V}, a = b →
+        x ∈ (cov.liftWalk c a.1 a.2).2.1.support.tail →
+        x ∈ (cov.liftWalk c b.1 b.2).2.1.support.tail := by
+      rintro a _ x rfl h; exact h
     intro x hx
     rcases List.mem_append.mp hx with hx1 | hx2
-    · refine ⟨0, by omega, ?_⟩
-      simpa only [pow_zero, Equiv.Perm.one_apply] using hx1
+    · exact ⟨0, by omega, hmem_congr (by rw [pow_zero, Equiv.Perm.one_apply]) hx1⟩
     · obtain ⟨i, hi, hxi⟩ := hmem_rest x hx2
-      refine ⟨i + 1, by omega, ?_⟩
-      have hsub : ((cov.monodromy c) ^ (i + 1)) u = ((cov.monodromy c) ^ i) u1 := hpow_step i
-      simpa only [hsub] using hxi
+      exact ⟨i + 1, by omega, hmem_congr (hpow_step i).symm hxi⟩
 
 /-- On any finite type of cardinality `d ∈ {1, 2, 4}`, every permutation has an element
 whose minimal positive return time is a power of 2 (`1`, `2`, or `4`). -/
@@ -639,7 +634,7 @@ def contractTwoIndep {V : Type u} (G : SimpleGraph V) (I : Finset V) :
     intro a
     cases a with
     | none => simp
-    | some x => exact G.loopless x.1⟩
+    | some x => exact G.loopless.irrefl x.1⟩
 
 private lemma lift_walk_no_none {V : Type u} [DecidableEq V] (G : SimpleGraph V) (I : Finset V)
     {a b : Option {x : V // x ∉ I}} (p : (contractTwoIndep G I).Walk a b)
@@ -667,7 +662,8 @@ private lemma lift_walk_no_none {V : Type u} [DecidableEq V] (G : SimpleGraph V)
     | some b' =>
       have hno_q : none ∉ q.support := fun h => hno (by simp [Walk.support_cons, h])
       obtain ⟨q', hql, hqs, hqi⟩ := ih hno_q b' y rfl hy
-      refine ⟨.cons hadj q', ?_, ?_, ?_⟩
+      have hadjG : G.Adj x.1 b'.1 := hadj
+      refine ⟨Walk.cons hadjG q', ?_, ?_, ?_⟩
       · simp [hql]
       · simp only [Walk.support_cons, List.map_cons]
         rw [hqs]
@@ -719,7 +715,7 @@ theorem minimal_bad_two_indep_avoiding_dyadic_path
         left_inv := by
           intro ⟨y, hy⟩
           by_cases h : y ∈ I
-          · simp only [dite_eq_left_iff, h, not_true_eq_false, IsEmpty.forall_iff]
+          · simp only [h, ↓reduceDIte]
             apply Subtype.ext
             exact huniq _ (Exists.choose_spec (⟨y, h, hy⟩ : ∃ u ∈ I, G.Adj x.1 u)).1 y h
               (Exists.choose_spec (⟨y, h, hy⟩ : ∃ u ∈ I, G.Adj x.1 u)).2 hy
@@ -795,52 +791,57 @@ theorem minimal_bad_two_indep_avoiding_dyadic_path
   let c' := c.rotate none hnone_mem
   have hc' : c'.IsCycle := hc.rotate hnone_mem
   have hc'_len : c'.length = 2 ^ k := by rw [Walk.length_rotate]; exact hlen
-  cases c' with
-  | nil => exact absurd rfl hc'.ne_nil
+  cases hc'_eq : c' with
+  | nil =>
+    exact absurd hc'_eq hc'.ne_nil
   | @cons _ b _ h1 rest =>
     cases b with
     | none => exact False.elim h1
     | some x₁ =>
-      have hrest_nnil : ¬ rest.Nil := by intro h; cases h
       cases hrev : rest.reverse with
-      | nil =>
-        have : rest = .nil := by simpa using congrArg Walk.reverse hrev
-        exact hrest_nnil (by rw [this]; exact Walk.Nil.nil)
       | @cons _ b2 _ h2 mid_rev =>
         cases b2 with
         | none => exact False.elim h2
         | some xₘ =>
           let mid := mid_rev.reverse
-          have hrest_eq : rest = mid.concat h2.symm := by
+          have hrest_eq : rest = mid.append (Walk.cons h2.symm Walk.nil) := by
             have := congrArg Walk.reverse hrev
             simpa [mid, Walk.reverse_cons] using this
+          have hnd_tail : (mid.support ++ [none]).Nodup := by
+            have hnd : c'.support.tail.Nodup := hc'.support_nodup
+            rw [hc'_eq] at hnd
+            simp only [Walk.support_cons, List.tail_cons, hrest_eq, Walk.support_append,
+              Walk.support_nil] at hnd
+            exact hnd
           have hmid_no_none : none ∉ mid.support := by
             intro hmem
-            have hnd : (Walk.cons h1 rest).support.tail.Nodup := hc'.support_nodup
-            simp only [Walk.support_cons, List.tail_cons, hrest_eq, Walk.support_concat] at hnd
-            rw [List.nodup_concat] at hnd
-            exact hnd.1 hmem
+            rw [List.nodup_append] at hnd_tail
+            exact hnd_tail.2.2 none hmem none (by simp) rfl
           obtain ⟨qmid, hqmid_len, hqmid_supp, hqmid_notI⟩ :=
             lift_walk_no_none G I mid hmid_no_none x₁ xₘ rfl rfl
           obtain ⟨u, huI, hux1⟩ := h1
           obtain ⟨v, hvI, hvxm⟩ := h2
           let full : G.Walk u v := Walk.cons hux1 (qmid.concat hvxm.symm)
           have hfull_len : full.length = 2 ^ k := by
-            have hcl : (Walk.cons h1 rest).length = 2 ^ k := hc'_len
-            simp only [Walk.length_cons, hrest_eq, Walk.length_concat] at hcl
+            have hcl : c'.length = 2 ^ k := hc'_len
+            rw [hc'_eq] at hcl
+            simp only [Walk.length_cons, hrest_eq, Walk.length_append, Walk.length_nil] at hcl
             simp only [full, Walk.length_cons, Walk.length_concat, hqmid_len]
             exact hcl
           have hqmid_nodup : qmid.support.Nodup := by
-            have hnd : (Walk.cons h1 rest).support.tail.Nodup := hc'.support_nodup
-            simp only [Walk.support_cons, List.tail_cons, hrest_eq, Walk.support_concat] at hnd
-            rw [List.nodup_concat] at hnd
-            exact List.Nodup.of_map _ (hqmid_supp.symm ▸ hnd.2)
+            rw [List.nodup_append] at hnd_tail
+            exact List.Nodup.of_map _ (hqmid_supp.symm ▸ hnd_tail.1)
           have huv : u ≠ v := by
             intro heq
             subst heq
             have hcyc_tail : full.support.tail.Nodup := by
-              simp only [full, Walk.support_cons, List.tail_cons, Walk.support_concat, List.nodup_concat]
-              exact ⟨fun h => hqmid_notI u h huI, hqmid_nodup⟩
+              simp only [full, Walk.support_cons, List.tail_cons, Walk.support_concat]
+              rw [List.nodup_append]
+              refine ⟨hqmid_nodup, List.nodup_singleton u, ?_⟩
+              intro a ha b hb hab
+              simp only [List.mem_singleton] at hb
+              subst hb; subst hab
+              exact hqmid_notI a ha huI
             have hlen3 : 3 ≤ full.length := by
               rw [hfull_len]
               have h4 : 4 ≤ 2 ^ k := by
@@ -859,13 +860,19 @@ theorem minimal_bad_two_indep_avoiding_dyadic_path
             rwa [Walk.support_tail_of_not_nil _ hnnil]
           have hfull_path : full.IsPath := by
             apply Walk.IsPath.mk'
-            simp only [full, Walk.support_cons, Walk.support_concat, List.nodup_cons, List.nodup_concat]
-            refine ⟨?_, fun h => hqmid_notI v h hvI, hqmid_nodup⟩
-            intro hmem
-            rw [List.mem_concat] at hmem
-            rcases hmem with hmem | hEq
-            · exact hqmid_notI u hmem huI
-            · exact huv hEq
+            simp only [full, Walk.support_cons, Walk.support_concat, List.nodup_cons]
+            refine ⟨?_, ?_⟩
+            · intro hmem
+              rw [List.mem_append, List.mem_singleton] at hmem
+              rcases hmem with hmem | hEq
+              · exact hqmid_notI u hmem huI
+              · exact huv hEq
+            · rw [List.nodup_append]
+              refine ⟨hqmid_nodup, List.nodup_singleton v, ?_⟩
+              intro a ha b hb hab
+              simp only [List.mem_singleton] at hb
+              subst hb; subst hab
+              exact hqmid_notI a ha hvI
           refine ⟨u, v, k, full, huI, hvI, huv, hk, hfull_path, hfull_len, ?_⟩
           intro z hz
           have hdl : full.support.tail.dropLast = qmid.support := by
