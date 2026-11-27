@@ -70,8 +70,8 @@ noncomputable def frustDeg {V : Type u} [Fintype V] (G : SimpleGraph V) (f : V �
 /-- The bipartite spanning subgraph induced by a bipartition `f : V → Bool`. -/
 def bipSubgraph {V : Type u} (G : SimpleGraph V) (f : V → Bool) : SimpleGraph V where
   Adj u v := G.Adj u v ∧ f u ≠ f v
-  symm _ _ h := ⟨h.1.symm, h.2.symm⟩
-  loopless _ h := G.loopless _ h.1
+  symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
+  loopless := ⟨fun v h => G.loopless.irrefl v h.1⟩
 
 theorem bipSubgraph_le {V : Type u} (G : SimpleGraph V) (f : V → Bool) :
     bipSubgraph G f ≤ G := fun _ _ h => h.1
@@ -82,24 +82,39 @@ theorem bipSubgraph_bip {V : Type u} (G : SimpleGraph V) (f : V → Bool) :
 theorem bipDeg_add_frustDeg {V : Type u} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
     (f : V → Bool) (v : V) : bipDeg G f v + frustDeg G f v = G.degree v := by
   classical
-  unfold bipDeg frustDeg
-  have hdisj : Disjoint ((G.neighborFinset v).filter (fun u => f u ≠ f v))
-      ((G.neighborFinset v).filter (fun u => f u = f v)) := by
-    rw [Finset.disjoint_filter]
-    intro u _ h1 h2
-    exact h1 h2
-  rw [← Finset.card_union_of_disjoint hdisj]
-  have hunion : ((G.neighborFinset v).filter (fun u => f u ≠ f v)) ∪
-      ((G.neighborFinset v).filter (fun u => f u = f v)) = G.neighborFinset v := by
+  let e : G.neighborSet v ≃
+      {u : V // u ∈ (Finset.univ.filter (fun u => G.Adj v u ∧ f u ≠ f v))} ⊕
+      {u : V // u ∈ (Finset.univ.filter (fun u => G.Adj v u ∧ f u = f v))} :=
+    { toFun := fun u =>
+        if h : f u.1 = f v then
+          Sum.inr ⟨u.1, Finset.mem_filter.mpr ⟨Finset.mem_univ _, u.2, h⟩⟩
+        else
+          Sum.inl ⟨u.1, Finset.mem_filter.mpr ⟨Finset.mem_univ _, u.2, h⟩⟩
+      invFun := Sum.elim
+        (fun u => ⟨u.1, (Finset.mem_filter.mp u.2).2.1⟩)
+        (fun u => ⟨u.1, (Finset.mem_filter.mp u.2).2.1⟩)
+      left_inv := by intro u; by_cases h : f u.1 = f v <;> simp [h]
+      right_inv := by
+        rintro (u | u)
+        · have hne : f u.1 ≠ f v := (Finset.mem_filter.mp u.2).2.2
+          simp [hne]
+        · have heq : f u.1 = f v := (Finset.mem_filter.mp u.2).2.2
+          simp [heq] }
+  have hc := Fintype.card_congr e
+  rw [SimpleGraph.card_neighborSet_eq_degree, Fintype.card_sum,
+    Fintype.card_coe, Fintype.card_coe] at hc
+  have hb : bipDeg G f v = (Finset.univ.filter (fun u => G.Adj v u ∧ f u ≠ f v)).card := by
+    unfold bipDeg
+    congr 1
     ext u
-    simp only [Finset.mem_union, Finset.mem_filter]
-    constructor
-    · rintro (⟨h, _⟩ | ⟨h, _⟩) <;> exact h
-    · intro h
-      by_cases heq : f u = f v
-      · exact Or.inr ⟨h, heq⟩
-      · exact Or.inl ⟨h, heq⟩
-  rw [hunion, SimpleGraph.card_neighborFinset_eq_degree]
+    simp [SimpleGraph.mem_neighborFinset]
+  have hf : frustDeg G f v = (Finset.univ.filter (fun u => G.Adj v u ∧ f u = f v)).card := by
+    unfold frustDeg
+    congr 1
+    ext u
+    simp [SimpleGraph.mem_neighborFinset]
+  rw [hb, hf]
+  exact hc.symm
 
 /-- Every finite graph admits a Max-Cut bipartition maximizing `cutCard G f`. -/
 theorem exists_max_cut {V : Type u} [Fintype V] (G : SimpleGraph V) :
@@ -134,7 +149,7 @@ private theorem cutCard_flip {V : Type u} [Fintype V] [DecidableEq V]
       · have h1' := (Finset.mem_filter.mp hB1).2
         have hadj := (Finset.mem_filter.mp (Finset.mem_filter.mp hB1).1).2.1
         rw [h1', h2'] at hadj
-        exact G.loopless v hadj
+        exact G.loopless.irrefl v hadj
     have hu : (A g ∪ B1 g) ∪ B2 g = S g := by
       ext e
       simp only [Finset.mem_union, A, B1, B2, Finset.mem_filter]
@@ -174,7 +189,7 @@ private theorem cutCard_flip {V : Type u} [Fintype V] [DecidableEq V]
       have hmem := Finset.mem_filter.mp hu
       refine ⟨(v, u), ?_, rfl⟩
       simp only [B1, S, Finset.mem_filter, Finset.mem_univ, true_and]
-      exact ⟨⟨(G.mem_neighborFinset v u).mp hmem.1, hmem.2.symm⟩, rfl⟩
+      exact ⟨⟨(G.mem_neighborFinset v u).mp hmem.1, hmem.2.symm⟩, trivial⟩
   have hB2_f : (B2 f).card = bipDeg G f v := by
     unfold bipDeg
     refine Finset.card_bij (fun e _ => e.1) ?_ ?_ ?_
@@ -191,7 +206,7 @@ private theorem cutCard_flip {V : Type u} [Fintype V] [DecidableEq V]
       have hmem := Finset.mem_filter.mp hu
       refine ⟨(u, v), ?_, rfl⟩
       simp only [B2, S, Finset.mem_filter, Finset.mem_univ, true_and]
-      exact ⟨⟨((G.mem_neighborFinset v u).mp hmem.1).symm, hmem.2⟩, rfl⟩
+      exact ⟨⟨((G.mem_neighborFinset v u).mp hmem.1).symm, hmem.2⟩, trivial⟩
   have hflip_iff : ∀ u : V, u ≠ v → (f' v ≠ f' u ↔ f u = f v) := by
     intro u huv
     simp only [f', Function.update_self, Function.update_of_ne huv]
@@ -216,7 +231,7 @@ private theorem cutCard_flip {V : Type u} [Fintype V] [DecidableEq V]
       have huv : u ≠ v := (G.ne_of_adj hadj).symm
       refine ⟨(v, u), ?_, rfl⟩
       simp only [B1, S, Finset.mem_filter, Finset.mem_univ, true_and]
-      exact ⟨⟨hadj, (hflip_iff u huv).mpr hmem.2⟩, rfl⟩
+      exact ⟨⟨hadj, (hflip_iff u huv).mpr hmem.2⟩, trivial⟩
   have hB2_f' : (B2 f').card = frustDeg G f v := by
     unfold frustDeg
     refine Finset.card_bij (fun e _ => e.1) ?_ ?_ ?_
@@ -237,7 +252,7 @@ private theorem cutCard_flip {V : Type u} [Fintype V] [DecidableEq V]
       have huv : u ≠ v := (G.ne_of_adj hadj).symm
       refine ⟨(u, v), ?_, rfl⟩
       simp only [B2, S, Finset.mem_filter, Finset.mem_univ, true_and]
-      exact ⟨⟨hadj.symm, ((hflip_iff u huv).mpr hmem.2).symm⟩, rfl⟩
+      exact ⟨⟨hadj.symm, ((hflip_iff u huv).mpr hmem.2).symm⟩, trivial⟩
   change (S f').card + 2 * bipDeg G f v = (S f).card + 2 * frustDeg G f v
   rw [hpart f', hpart f, hAeq, hB1_f, hB2_f, hB1_f', hB2_f']
   omega
@@ -296,7 +311,7 @@ theorem original_of_max_cut_bipartite_power
   let _ : Fintype W := fW
   let _ : DecidableRel H.Adj := dH
   obtain ⟨f, _, hpow⟩ := h W H hm
-  exact hm.2.1 (power_mono (bipSubgraph_le H f) hpow)
+  exact False.elim (hm.2.1 (power_mono (bipSubgraph_le H f) hpow))
 
 /-! ## Pillar 2: Universal `w`-Free Minimal 2-Cut Completion (ALL 6 `*-2` Leaves) -/
 
@@ -384,7 +399,7 @@ theorem select_wfree_minimal_two_cut {V : Type u} [Fintype V]
       · intro hv; exact huniq v hv
       · intro hv; exact (hv : v = z).symm ▸ hz
     rw [hTsing, boundary_singleton_card] at hc
-    have hdeg3 := hwfree ⟨z, hTA hz⟩
+    have hdeg3 : 3 ≤ G.degree z := hwfree ⟨z, hTA hz⟩
     omega
 
 private theorem third_unique' {V : Type u} [Fintype V] [DecidableEq V]
@@ -519,7 +534,7 @@ theorem completion_min_deg_three {V : Type u} [Fintype V] [DecidableEq V]
     (hcut : ∀ z : A, ∀ t : V, t ∉ A → G.Adj z.1 t →
       (z = a ∧ t = x) ∨ (z = b ∧ t = y))
     (hnadj : ¬ G.Adj a.1 b.1) :
-    ∀ v : A, 3 ≤ @SimpleGraph.degree A (Completion G A a b) v _ (Classical.decRel _) := by
+    ∀ v : A, 3 ≤ Nat.card ((Completion G A a b).neighborSet v) := by
   classical
   let K := G.induce A
   let H := Completion G A a b
@@ -548,7 +563,8 @@ theorem completion_min_deg_three {V : Type u} [Fintype V] [DecidableEq V]
     rw [hout_a, Finset.card_singleton] at hd
     have ha := degree_add_new_edge_left K a b hab hnadj
     have h3 := hwfree a
-    simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at ha hd ⊢
+    simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at ha hd
+    change 3 ≤ Nat.card (H.neighborSet a)
     omega
   by_cases hvb : v = b
   · subst v
@@ -556,7 +572,8 @@ theorem completion_min_deg_three {V : Type u} [Fintype V] [DecidableEq V]
     rw [hout_b, Finset.card_singleton] at hd
     have hb := degree_add_new_edge_right K a b hab hnadj
     have h3 := hwfree b
-    simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at hb hd ⊢
+    simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at hb hd
+    change 3 ≤ Nat.card (H.neighborSet b)
     omega
   have hout : ((G.neighborFinset v.1).filter (fun z => z ∉ A)) = ∅ := by
     rw [Finset.filter_eq_empty_iff]
@@ -578,7 +595,8 @@ theorem completion_min_deg_three {V : Type u} [Fintype V] [DecidableEq V]
       right_inv := by intro z; rfl }
   have heq : Nat.card (H.neighborSet v) = Nat.card (K.neighborSet v) := Nat.card_congr e
   have h3 := hwfree v
-  simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at hd ⊢
+  simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at hd
+  change 3 ≤ Nat.card (H.neighborSet v)
   omega
 
 /-- Deleting the virtual edge `ab` from `Completion G A a b` recovers `G.induce A`. -/
@@ -605,9 +623,9 @@ theorem wfree_minimal_bad_two_cut_normal_form
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hm : MinimalBad G) (hcutG : SmallCut G 2) :
     ∃ (A : Set V) (a b : A),
-      Fintype.card A < Fintype.card V ∧
+      Nat.card A < Nat.card V ∧
       (Completion G A a b).Adj a b ∧
-      (∀ z : A, 3 ≤ @SimpleGraph.degree A (Completion G A a b) z _ (Classical.decRel _)) ∧
+      (∀ z : A, 3 ≤ Nat.card ((Completion G A a b).neighborSet z)) ∧
       (∀ S : Set A, S.Nonempty → Sᶜ.Nonempty →
         3 ≤ Nat.card (Boundary (Completion G A a b) S)) ∧
       HasPower (Completion G A a b) ∧
@@ -669,26 +687,31 @@ theorem wfree_minimal_bad_two_cut_normal_form
     exact hx (hz ▸ z.2)
   let H := Completion G A a b
   let _ : DecidableRel H.Adj := Classical.decRel _
-  have hnear : Near H := ⟨⟨a, hdeg3 a⟩, ⟨a, fun z _ => hdeg3 z⟩⟩
+  have hdeg3' : ∀ z : A, 3 ≤ H.degree z := by
+    intro z
+    have hz := hdeg3 z
+    rwa [Nat.card_eq_fintype_card, SimpleGraph.card_neighborSet_eq_degree] at hz
+  have hnear : Near H := ⟨⟨a, hdeg3' a⟩, ⟨a, fun z _ => hdeg3' z⟩⟩
   have hpower : HasPower H := hm.2.2.1 A H hsmall hnear
   have hfree : ¬ HasPower (H \ SimpleGraph.edge a b) := by
     rw [completion_sdiff_edge G A a b hnadj]
     exact fun hp => hm.2.1 (power_induce G A hp)
   have hadj_ab : H.Adj a b := Or.inr ((SimpleGraph.edge_adj a b a b).mpr ⟨Or.inl ⟨rfl, rfl⟩, hab⟩)
-  exact ⟨A, a, b, hsmall, hadj_ab, hdeg3, hthree, hpower, hfree⟩
+  exact ⟨A, a, b, by simpa only [Nat.card_eq_fintype_card] using hsmall,
+    hadj_ab, hdeg3, hthree, hpower, hfree⟩
 
 /-- Global Edge-Avoiding Power-Cycle Conjecture (`SEGC`): in every 3-edge-connected finite
     simple graph with `δ ≥ 3`, no single edge hits every power-of-2 cycle. -/
 def EdgeAvoidingPower : Prop :=
-  ∀ (V : Type u) (H : SimpleGraph V) [Fintype V] [DecidableEq V] [DecidableRel H.Adj],
-    (∀ v : V, 3 ≤ H.degree v) →
+  ∀ (V : Type u) (H : SimpleGraph V) [Fintype V],
+    (∀ v : V, 3 ≤ Nat.card (H.neighborSet v)) →
     (∀ S : Set V, S.Nonempty → Sᶜ.Nonempty → 3 ≤ Nat.card (Boundary H S)) →
     ∀ a b : V, H.Adj a b → HasPower (H \ SimpleGraph.edge a b)
 
 /-- `EdgeAvoidingPower` unconditionally excludes ANY `MinimalBad` graph with `SmallCut G 2`
     (all 6 `*-2` leaves simultaneously!). -/
 theorem no_minimal_bad_small_cut_two_of_edge_avoiding (hEAP : EdgeAvoidingPower.{u})
-    {V : Type u} [Fintype V] [DecidableEq V]
+    {V : Type u} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hm : MinimalBad G) (hcut : SmallCut G 2) : False := by
   classical
@@ -744,8 +767,11 @@ theorem exclude_cn_core_of_edge_avoiding (hEAP : EdgeAvoidingPower.{u}) :
   obtain ⟨v, hv⟩ := hm.1.1
   have hvpos : 0 < G.degree v := by omega
   obtain ⟨u, hvu⟩ := (G.degree_pos_iff_exists_adj v).mp hvpos
-  have hp := hEAP V G (fun x => (hC x).ge) h3conn v u hvu
-  exact hm.2.1 (power_mono (fun _ _ h => h.1) hp)
+  have hdeg3 : ∀ x : V, 3 ≤ Nat.card (G.neighborSet x) := by
+    intro x
+    rw [Nat.card_eq_fintype_card, SimpleGraph.card_neighborSet_eq_degree, hC x]
+  have hp := hEAP V G hdeg3 h3conn v u hvu
+  exact hm.2.1 (power_mono (show G \ SimpleGraph.edge v u ≤ G from fun _ _ h => h.1) hp)
 
 /-- Predicate identifying the 6 remaining `*-3` leaves after `EdgeAvoidingPower` closes
     all 6 `*-2` leaves and `C-N-R` (7/13 open leaves closed at once). -/
@@ -826,10 +852,8 @@ def MContract {V : Type u} (G : SimpleGraph V) (m : V → V) (hm_inv : ∀ v, m 
   Adj q1 q2 := q1 ≠ q2 ∧ ∃ u v : V,
     Quotient.mk (matchSetoid m hm_inv) u = q1 ∧
     Quotient.mk (matchSetoid m hm_inv) v = q2 ∧ G.Adj u v
-  symm _ _ := by
-    rintro ⟨hne, u, v, hu, hv, hadj⟩
-    exact ⟨hne.symm, v, u, hv, hu, hadj.symm⟩
-  loopless _ h := h.1 rfl
+  symm := ⟨fun _ _ h => ⟨h.1.symm, let ⟨u, v, hu, hv, hadj⟩ := h.2; ⟨v, u, hv, hu, hadj.symm⟩⟩⟩
+  loopless := ⟨fun _ h => h.1 rfl⟩
 
 /-- Four distinct vertices forming a 4-cycle witness `HasPower G`. -/
 private theorem hasPower_of_c4 {V : Type u} (G : SimpleGraph V) {a b c d : V}
@@ -940,9 +964,9 @@ theorem matching_contraction_simple_4reg_power {V : Type u} [Fintype V] [Decidab
         Fintype.card_congr (Equiv.ofBijective φ hφ_bij)
       have hA1 : Fintype.card A1 = 2 := by
         have h1 : Fintype.card A1 = ((G.neighborFinset u).erase (m u)).card := by
-          refine Fintype.card_congr (Equiv.ofBijective (fun x : A1 =>
+          refine (Fintype.card_congr (Equiv.ofBijective (fun x : A1 =>
             (⟨x.1, Finset.mem_erase.mpr ⟨x.2.2, (G.mem_neighborFinset u x.1).mpr x.2.1⟩⟩ :
-              {z // z ∈ (G.neighborFinset u).erase (m u)})) ?_)
+              {z // z ∈ (G.neighborFinset u).erase (m u)})) ?_)).trans (Fintype.card_coe _)
           constructor
           · intro x y h; exact Subtype.ext (congrArg Subtype.val h)
           · rintro ⟨z, hz⟩
@@ -952,9 +976,9 @@ theorem matching_contraction_simple_4reg_power {V : Type u} [Fintype V] [Decidab
           SimpleGraph.card_neighborFinset_eq_degree, hC u]
       have hA2 : Fintype.card A2 = 2 := by
         have h2 : Fintype.card A2 = ((G.neighborFinset (m u)).erase u).card := by
-          refine Fintype.card_congr (Equiv.ofBijective (fun y : A2 =>
+          refine (Fintype.card_congr (Equiv.ofBijective (fun y : A2 =>
             (⟨y.1, Finset.mem_erase.mpr ⟨y.2.2, (G.mem_neighborFinset (m u) y.1).mpr y.2.1⟩⟩ :
-              {z // z ∈ (G.neighborFinset (m u)).erase u})) ?_)
+              {z // z ∈ (G.neighborFinset (m u)).erase u})) ?_)).trans (Fintype.card_coe _)
           constructor
           · intro x y h; exact Subtype.ext (congrArg Subtype.val h)
           · rintro ⟨z, hz⟩
