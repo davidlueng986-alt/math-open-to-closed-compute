@@ -38,16 +38,16 @@ def quotientGraph {V : Type u} (G : SimpleGraph V) (I : Finset V) :
     | none, some y => ∃ u ∈ I, G.Adj u y.1
     | some x, none => ∃ u ∈ I, G.Adj x.1 u
     | some x, some y => G.Adj x.1 y.1
-  symm := by
+  symm := ⟨by
     rintro (_ | ⟨x, hx⟩) (_ | ⟨y, hy⟩) h
     · exact h
     · rcases h with ⟨u, hu, hadj⟩; exact ⟨u, hu, hadj.symm⟩
     · rcases h with ⟨u, hu, hadj⟩; exact ⟨u, hu, hadj.symm⟩
-    · exact h.symm
-  loopless := by
+    · exact h.symm⟩
+  loopless := ⟨by
     rintro (_ | ⟨x, hx⟩) h
     · exact h
-    · exact G.loopless x h
+    · exact G.loopless.irrefl x h⟩
 
 theorem card_qvert_lt {V : Type u} [Fintype V] [DecidableEq V]
     (I : Finset V) (hI : 2 ≤ I.card) :
@@ -159,7 +159,7 @@ def liftWalkAvoidNone {V : Type u} {G : SimpleGraph V} {I : Finset V}
     none ∉ p.support → G.Walk a.1 b.1
   | .nil, _ => .nil
   | .cons (v := none) _ _, h => absurd (by simp) h
-  | .cons (v := some c) hadj q, h =>
+  | .cons (v := some _) hadj q, h =>
       .cons hadj (liftWalkAvoidNone q (fun hm => h (by simp [hm])))
 
 theorem length_liftWalkAvoidNone {V : Type u} {G : SimpleGraph V} {I : Finset V}
@@ -168,7 +168,7 @@ theorem length_liftWalkAvoidNone {V : Type u} {G : SimpleGraph V} {I : Finset V}
       (liftWalkAvoidNone p h).length = p.length
   | .nil, _ => rfl
   | .cons (v := none) _ _, h => absurd (by simp) h
-  | .cons (v := some c) hadj q, h => by
+  | .cons (v := some _) _ q, h => by
       simp only [liftWalkAvoidNone, Walk.length_cons]
       rw [length_liftWalkAvoidNone q (fun hm => h (by simp [hm]))]
 
@@ -179,7 +179,7 @@ theorem support_liftWalkAvoidNone {V : Type u} [DecidableEq V] {G : SimpleGraph 
         p.support
   | .nil, _ => by simp [liftWalkAvoidNone, a.2]
   | .cons (v := none) _ _, h => absurd (by simp) h
-  | .cons (v := some c) hadj q, h => by
+  | .cons (v := some _) _ q, h => by
       simp only [liftWalkAvoidNone, Walk.support_cons, List.map_cons, a.2, ↓reduceDIte]
       congr 1
       exact support_liftWalkAvoidNone q (fun hm => h (by simp [hm]))
@@ -188,11 +188,11 @@ theorem mem_support_liftWalkAvoidNone_not_mem {V : Type u} {G : SimpleGraph V} {
     {a b : { v : V // v ∉ I }} :
     ∀ (p : (quotientGraph G I).Walk (some a) (some b)) (h : none ∉ p.support)
       {v : V}, v ∈ (liftWalkAvoidNone p h).support → v ∉ I
-  | .nil, _, v, hv => by
+  | .nil, _, _, hv => by
       simp only [liftWalkAvoidNone, Walk.support_nil, List.mem_singleton] at hv
       exact hv ▸ a.2
   | .cons (v := none) _ _, h, _, _ => absurd (by simp) h
-  | .cons (v := some c) hadj q, h, v, hv => by
+  | .cons (v := some _) _ q, h, _, hv => by
       simp only [liftWalkAvoidNone, Walk.support_cons, List.mem_cons] at hv
       rcases hv with rfl | hv'
       · exact a.2
@@ -211,7 +211,7 @@ theorem nodup_tail_liftWalkAvoidNone {V : Type u} [DecidableEq V] {G : SimpleGra
     (p : (quotientGraph G I).Walk (some a) (some b)) (h : none ∉ p.support)
     (hnd : p.support.tail.Nodup) : (liftWalkAvoidNone p h).support.tail.Nodup := by
   have hmap := congrArg List.tail (support_liftWalkAvoidNone p h)
-  rw [List.map_tail] at hmap
+  rw [← List.map_tail] at hmap
   rw [← hmap] at hnd
   exact List.Nodup.of_map _ hnd
 
@@ -220,8 +220,8 @@ from `some a` to `some b` avoiding `none`, followed by a final edge `some b → 
 theorem split_walk_to_none {V : Type u} {G : SimpleGraph V} {I : Finset V}
     {a : { v : V // v ∉ I }} :
     ∀ (q : (quotientGraph G I).Walk (some a) none), q.support.Nodup →
-      ∃ (b : { v : V // v ∉ I }) (q' : (quotientGraph G I).Walk (some a) (some b))
-        (hlast : (quotientGraph G I).Adj (some b) none),
+      ∃ (b : { v : V // v ∉ I }) (q' : (quotientGraph G I).Walk (some a) (some b)),
+        (quotientGraph G I).Adj (some b) none ∧
         none ∉ q'.support ∧ q'.support.Nodup ∧
         (∀ v ∈ q'.support, v ∈ q.support) ∧ q'.length + 1 = q.length
   | .cons (v := none) hadj .nil, _ =>
@@ -229,7 +229,7 @@ theorem split_walk_to_none {V : Type u} {G : SimpleGraph V} {I : Finset V}
   | .cons (v := none) _ (.cons _ r'), hnd => by
       simp only [Walk.support_cons, List.nodup_cons] at hnd
       exact absurd (Walk.end_mem_support r') hnd.2.1
-  | .cons (v := some c) hadj r, hnd => by
+  | .cons (v := some _) hadj r, hnd => by
       simp only [Walk.support_cons, List.nodup_cons] at hnd
       obtain ⟨b, q', hlast, hno, hnd', hsub, hlen⟩ := split_walk_to_none r hnd.2
       refine ⟨b, .cons hadj q', hlast, ?_, ?_, ?_, ?_⟩
@@ -272,8 +272,11 @@ theorem minimal_bad_two_packing_dyadic_path
     | @cons _ y _ h₁ q =>
       cases y with
       | none =>
-        exact absurd h₁ (H.loopless none)
+        exact absurd h₁ (H.loopless.irrefl none)
       | some a =>
+        have hcl : q.length + 1 = 2 ^ k := by
+          rw [hc', Walk.length_cons] at hlen'
+          exact hlen'
         have hnd_q : q.support.Nodup := by
           have ht := hcyc'.support_nodup
           rw [hc'] at ht
@@ -288,9 +291,6 @@ theorem minimal_bad_two_packing_dyadic_path
           fun v hv => mem_support_liftWalkAvoidNone_not_mem q' hno hv
         let p : G.Walk x y := Walk.cons hxadj (p'.concat hyadj)
         have hp_len : p.length = 2 ^ k := by
-          have hcl : q.length + 1 = 2 ^ k := by
-            rw [hc', Walk.length_cons] at hlen'
-            omega
           simp only [p, Walk.length_cons, Walk.length_concat, hp'_len]
           omega
         have hp_supp : p.support = x :: (p'.support ++ [y]) := by
