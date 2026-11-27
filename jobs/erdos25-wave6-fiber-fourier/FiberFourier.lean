@@ -41,7 +41,7 @@ theorem monotone_tail_bound (a : ℕ → ℝ) (B : ℕ → ℂ) (n : ℕ) (C : �
         (∑ k ∈ Finset.range n, ((a (k+1) - a k : ℝ) : ℂ) * B (k+1))‖
       ≤ ‖(a 0 : ℂ) * B 0‖ +
         (∑ k ∈ Finset.range n, ‖((a (k+1) - a k : ℝ) : ℂ) * B (k+1)‖) := by
-          exact (norm_add_le _ _).trans (add_le_add_left (norm_sum_le _ _) _)
+          exact (norm_add_le _ _).trans (add_le_add (le_refl _) (norm_sum_le _ _))
     _ ≤ a 0 * C + ∑ k ∈ Finset.range n, (a (k+1) - a k) * C := by
       apply add_le_add
       · rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg ha0]
