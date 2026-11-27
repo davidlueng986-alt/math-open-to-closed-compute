@@ -189,7 +189,8 @@ theorem induceFin_degree {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj
   rw [← SimpleGraph.card_neighborFinset_eq_degree]
   refine Finset.card_bij (fun j _ => (S.equivFin.symm j).1) ?_ ?_ ?_
   · intro j hj
-    have hadj : G.Adj (S.equivFin.symm i).1 (S.equivFin.symm j).1 := adj_of_mem_nb hj
+    have hadj0 : (induceFin G S).Adj i j := adj_of_mem_nb hj
+    have hadj : G.Adj (S.equivFin.symm i).1 (S.equivFin.symm j).1 := hadj0
     exact Finset.mem_inter.mpr ⟨mem_nb_of_adj hadj, (S.equivFin.symm j).2⟩
   · intro _ _ _ _ h; exact S.equivFin.symm.injective (Subtype.ext h)
   · intro y hy
@@ -457,7 +458,7 @@ theorem minimal_bad2_exact_two_defects {n : ℕ} {G : SimpleGraph (Fin n)} [Deci
       · by_cases hxa : x = a
         · subst hxa; rw [delEdge_degree_left G hab]; have := hall3 a; omega
         · by_cases hxb : x = b
-          · subst hxb; rw [delEdge_degree_right G hab]; have := hall3 b; omega
+          · rw [hxb, delEdge_degree_right G hab]; have := hall3 b; omega
           · rw [delEdge_degree_other G hxa hxb]; have := hall3 x; omega
       · refine (Finset.card_le_card (t := ({a, b} : Finset (Fin n))) ?_).trans Finset.card_le_two
         intro x hx; simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx
@@ -1160,7 +1161,8 @@ theorem minimal_bad2_no_defect_free_two_cut {n : ℕ} {G : SimpleGraph (Fin n)} 
       have h1 : D.card ≤ ∑ v ∈ D, (G.neighborFinset v \ S).card := by
         calc D.card = ∑ _v ∈ D, 1 := by simp
         _ ≤ ∑ v ∈ D, (G.neighborFinset v \ S).card := Finset.sum_le_sum (fun v hv => (Finset.mem_filter.mp hv).2)
-      have h2 := Finset.sum_le_sum_of_subset_of_nonneg (f := fun v => (G.neighborFinset v \ S).card) (Finset.filter_subset (fun v => 1 ≤ (G.neighborFinset v \ S).card) S) (fun _ _ _ => Nat.zero_le _)
+      have h2 : ∑ v ∈ D, (G.neighborFinset v \ S).card ≤ ∑ v ∈ S, (G.neighborFinset v \ S).card :=
+        Finset.sum_le_sum_of_subset_of_nonneg (f := fun v => (G.neighborFinset v \ S).card) (Finset.filter_subset (fun v => 1 ≤ (G.neighborFinset v \ S).card) S) (fun _ _ _ => Nat.zero_le _)
       omega
     have hminS : ∀ v ∈ S, 2 ≤ (G.neighborFinset v ∩ S).card := fun v hv => by
       have := inter_card_ge_of_sdiff_le G S v 1 (by have := hex2 v hv; omega); have := hS3 v hv; omega
@@ -1687,9 +1689,9 @@ theorem minimal_bad2_cubic_density_bound {n : ℕ} {G : SimpleGraph (Fin n)} [De
     have h1 : ∑ u ∈ Ndef, ((G.neighborFinset u).filter (fun v => 4 ≤ G.degree v)).card ≤ Ndef.card :=
       (Finset.sum_le_sum fun u hu => (Finset.mem_union.mp hu).elim
         (fun hua => minimal_bad2_defect_neighbor_at_most_one_high_neighbor hmb hab hda hdb hother (adj_of_mem_nb hua))
-        (fun hub => minimal_bad2_defect_neighbor_at_most_one_high_neighbor hmb hab.symm hdb hda (fun z hzb hza => hother z hza hzb) (adj_of_mem_nb hub))).trans (by simp [Finset.sum_const, smul_eq_mul])
+        (fun hub => minimal_bad2_defect_neighbor_at_most_one_high_neighbor hmb hab.symm hdb hda (fun z hzb hza => hother z hza hzb) (adj_of_mem_nb hub))).trans (by simp [Finset.sum_const, smul_eq_mul]; exact le_rfl)
     have h2 : ∑ u ∈ V3 \ Ndef, ((G.neighborFinset u).filter (fun v => 4 ≤ G.degree v)).card ≤ 2 * (V3 \ Ndef).card :=
-      (Finset.sum_le_sum fun u hu => minimal_bad2_cubic_at_most_two_high_neighbors hmb (Finset.mem_filter.mp (Finset.mem_sdiff.mp hu).1).2).trans (by simp [Finset.sum_const, smul_eq_mul, mul_comm])
+      (Finset.sum_le_sum fun u hu => minimal_bad2_cubic_at_most_two_high_neighbors hmb (Finset.mem_filter.mp (Finset.mem_sdiff.mp hu).1).2).trans (by simp [Finset.sum_const, smul_eq_mul, mul_comm]; exact le_rfl)
     have hcard_sdiff : (V3 \ Ndef).card + Ndef.card = V3.card := by
       have hs := Finset.card_sdiff_add_card_inter V3 Ndef
       rw [Finset.inter_eq_right.mpr hNdef_sub] at hs; exact hs
@@ -1713,6 +1715,7 @@ theorem minimal_bad2_cubic_density_bound {n : ℕ} {G : SimpleGraph (Fin n)} [De
     have hc := congrArg Finset.card hunion
     rw [Finset.card_union_of_disjoint hdisj2, Finset.card_union_of_disjoint hdisj,
       Finset.card_pair hab, Finset.card_univ, Fintype.card_fin] at hc; exact hc
+  have hNdef_le_V3 : Ndef.card ≤ V3.card := Finset.card_le_card hNdef_sub
   change 4 * n - 5 ≤ 6 * V3.card; omega
 
 end E64Wave5Agent2EGRob
