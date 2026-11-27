@@ -298,7 +298,7 @@ def build_d78_core_cnf(
     include_i7: bool = True,
     max_i7: int = 2000,
     include_lex: bool = True,
-    d78_strict: bool = True,
+    d78_strict: bool = False,
     verify_core: bool = True,
 ):
     """Build compact DIMACS CNF for a Tier-2 D78 branch (T*, du, dv) on fixed core adj_T.
@@ -721,7 +721,7 @@ def proof_first_solve_core(
     include_b2: bool = False,
     include_i7: bool = True,
     max_i7: int = 2000,
-    d78_strict: bool = True,
+    d78_strict: bool = False,
 ):
     """Proof-first single-pass Kissat + drat-trim (-L LRAT) + lrat-check loop for one core."""
     out_dir.mkdir(parents=True, exist_ok=True)

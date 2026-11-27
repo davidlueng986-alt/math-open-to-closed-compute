@@ -157,7 +157,7 @@ def run_shard(
             include_b2=False,
             include_i7=True,
             max_i7=max_i7,
-            d78_strict=True,
+            d78_strict=False,
         )
         completed[wid] = {
             'work_id': wid,
