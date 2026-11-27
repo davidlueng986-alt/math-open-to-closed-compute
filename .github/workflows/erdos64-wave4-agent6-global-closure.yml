@@ -1,0 +1,33 @@
+name: E64 Wave 4 Agent 6 Global Closure (Lean 4.36.0)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'jobs/erdos64-wave4-agent6-global-closure/**'
+      - '.github/workflows/erdos64-wave4-agent6-global-closure.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Wave4Agent6GlobalClosure and transitive axioms
+        run: bash jobs/erdos64-wave4-agent6-global-closure/verify.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos64-wave4-agent6-global-closure
+          path: out/
+          retention-days: 90
