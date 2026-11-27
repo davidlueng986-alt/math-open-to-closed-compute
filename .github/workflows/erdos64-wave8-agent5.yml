@@ -1,0 +1,44 @@
+name: E64 Wave 8 Agent 5 — Abelian-Cover Commutator & Tait 2-Factor Verification
+
+on:
+  push:
+    paths:
+      - 'jobs/wave8_agent5/**'
+      - '.github/workflows/erdos64-wave8-agent5.yml'
+  workflow_dispatch:
+
+jobs:
+  lean-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Lean 4.36.0 proofs and audit axioms
+        run: bash jobs/wave8_agent5/verify.sh
+      - name: Upload Lean verification artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wave8-agent5-lean-audit
+          path: out_wave8_agent5/
+
+  cpp-highgirth-hunter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and run OpenMP C++20 high-girth counterexample hunter
+        run: |
+          g++ -O3 -fopenmp -std=c++20 jobs/wave8_agent5/wave8_agent5_highgirth_hunter.cpp -o hunter
+          ./hunter 1200 | tee wave8_agent5_hunter.log
+      - name: Upload C++ hunter log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wave8-agent5-cpp-hunter
+          path: wave8_agent5_hunter.log
