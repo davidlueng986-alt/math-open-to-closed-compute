@@ -171,10 +171,13 @@ theorem closed_nb_seq_has_simple_cycle_le (G : SimpleGraph V) :
           rw [h1, h2, hfij]
         · intro t
           have hstep := hadj ⟨i.1 + t.1, by omega⟩
-          convert hstep using 2; ext; simp; omega
+          have hs1 : (⟨i.1 + t.1, by omega⟩ : Fin L).castSucc = ⟨i.1 + t.castSucc.1, by omega⟩ := by ext; rfl
+          have hs2 : (⟨i.1 + t.1, by omega⟩ : Fin L).succ = ⟨i.1 + t.succ.1, by omega⟩ := by ext; simp; omega
+          rw [hs1, hs2] at hstep; exact hstep
         · intro t ht
           have hstep := hnb (i.1 + t) (by omega)
-          convert hstep using 2; ext; simp; omega
+          have hs2 : (⟨i.1 + t + 2, by omega⟩ : Fin (L + 1)) = ⟨i.1 + (t + 2), by omega⟩ := by ext; omega
+          rw [hs2] at hstep; exact hstep
       obtain ⟨c, hcm, hcyc⟩ := ih m hmL g hg_closed
       exact ⟨c, le_trans hcm (le_of_lt hmL), hcyc⟩
 
@@ -222,10 +225,13 @@ theorem girth9_tailless16_is_simple_cycle (G : SimpleGraph V)
           rw [h1, h2, hfij]
         · intro t
           have hstep := hadj ⟨i.1 + t.1, by omega⟩
-          convert hstep using 2; ext; simp; omega
+          have hs1 : (⟨i.1 + t.1, by omega⟩ : Fin 16).castSucc = ⟨i.1 + t.castSucc.1, by omega⟩ := by ext; rfl
+          have hs2 : (⟨i.1 + t.1, by omega⟩ : Fin 16).succ = ⟨i.1 + t.succ.1, by omega⟩ := by ext; simp; omega
+          rw [hs1, hs2] at hstep; exact hstep
         · intro t ht
           have hstep := hnb (i.1 + t) (by omega)
-          convert hstep using 2; ext; simp; omega
+          have hs2 : (⟨i.1 + t + 2, by omega⟩ : Fin 17) = ⟨i.1 + (t + 2), by omega⟩ := by ext; omega
+          rw [hs2] at hstep; exact hstep
       obtain ⟨c, hcm, hcyc⟩ := closed_nb_seq_has_simple_cycle_le G m g hg_closed
       exact False.elim (hg c (by omega) hcyc)
     · let m2 := 16 - m
@@ -596,9 +602,12 @@ lemma tailedCount_step (G : SimpleGraph V) [DecidableRel G.Adj]
           show f ⟨0 + 1, _⟩ = f ⟨(Fin.last k).1 + 1, _⟩
           rw [h1, h2]; exact htail
         · have hstep := hadj ⟨i.1 + 1, by omega⟩
-          convert hstep using 2; ext; simp; omega
+          have hs1 : (⟨i.1 + 1, by omega⟩ : Fin (k + 2)).castSucc = ⟨i.castSucc.1 + 1, by omega⟩ := by ext; rfl
+          have hs2 : (⟨i.1 + 1, by omega⟩ : Fin (k + 2)).succ = ⟨i.succ.1 + 1, by omega⟩ := by ext; simp
+          rw [hs1, hs2] at hstep; exact hstep
         · have hstep := hnb (i + 1) (by omega)
-          convert hstep using 2; ext; simp; omega
+          have hs2 : (⟨i + 1 + 2, by omega⟩ : Fin (k + 3)) = ⟨i + 2 + 1, by omega⟩ := by ext; omega
+          rw [hs2] at hstep; exact hstep
       · simp only [Finset.mem_filter, Finset.mem_univ, true_and]
         refine ⟨?_, ?_, ?_⟩
         · have h01 := hadj ⟨0, by omega⟩
@@ -636,7 +645,10 @@ lemma tailedCount_step (G : SimpleGraph V) [DecidableRel G.Adj]
         else q.1 ⟨i.1 - 1, by omega⟩
       have hf_zero : f 0 = q.2 := by simp [f]
       have hf_last : f (Fin.last (k + 2)) = q.2 := by
-        dsimp [f]; split_ifs <;> rfl
+        dsimp [f]; split_ifs with h1 h2
+        · rfl
+        · rfl
+        · exact False.elim (h2 rfl)
       have hf_mid : ∀ m : ℕ, ∀ hm1 : 1 ≤ m, ∀ hm2 : m ≤ k + 1,
           f ⟨m, by omega⟩ = q.1 ⟨m - 1, by omega⟩ := by
         intro m hm1 hm2; dsimp [f]; split_ifs <;> [omega; omega; rfl]
@@ -662,9 +674,12 @@ lemma tailedCount_step (G : SimpleGraph V) [DecidableRel G.Adj]
               have h2 : f i.succ = q.1 ⟨i.1, by omega⟩ := by
                 have : i.succ = ⟨i.1 + 1, by omega⟩ := by ext; rfl
                 rw [this, hf_mid (i.1 + 1) (by omega) (by omega)]
+                exact congr_arg q.1 (Fin.ext (by simp))
               rw [h1, h2]
               have hstep := hg.2.2.1 ⟨i.1 - 1, by omega⟩
-              convert hstep using 2; ext; simp; omega
+              have hs1 : (⟨i.1 - 1, by omega⟩ : Fin k).castSucc = ⟨i.1 - 1, by omega⟩ := by ext; rfl
+              have hs2 : (⟨i.1 - 1, by omega⟩ : Fin k).succ = ⟨i.1, by omega⟩ := by ext; simp; omega
+              rw [hs1, hs2] at hstep; exact hstep
         · by_cases hi0 : i = 0
           · subst hi0
             have h1 : f ⟨0, by omega⟩ = q.2 := hf_zero
@@ -672,7 +687,8 @@ lemma tailedCount_step (G : SimpleGraph V) [DecidableRel G.Adj]
             rw [h1, h2]; exact hu.2.1
           · by_cases hik : i = k
             · have h1 : f ⟨i, by omega⟩ = q.1 ⟨k - 1, by omega⟩ := by
-                rw [hf_mid i (by omega) (by omega), hik]
+                rw [hf_mid i (by omega) (by omega)]
+                exact congr_arg q.1 (Fin.ext (by simp [hik]))
               have h2 : f ⟨i + 2, by omega⟩ = q.2 := by
                 have : (⟨i + 2, by omega⟩ : Fin (k + 3)) = Fin.last (k + 2) := by ext; simp [hik]
                 rw [this, hf_last]
@@ -690,6 +706,7 @@ lemma tailedCount_step (G : SimpleGraph V) [DecidableRel G.Adj]
           rw [h1, h2, hg.2.1]
       · refine Sigma.ext ?_ (heq_of_eq hf_zero)
         ext i; dsimp only; rw [hf_mid (i.1 + 1) (by omega) (by omega)]
+        exact congr_arg q.1 (Fin.ext (by simp))
   rw [hbij]
   let C_tl := C_k.filter (fun g => g ⟨1, by omega⟩ ≠ g ⟨k - 1, by omega⟩)
   let C_td := C_k.filter (fun g => g ⟨1, by omega⟩ = g ⟨k - 1, by omega⟩)
@@ -901,7 +918,7 @@ lemma sq_sum_le_card_mul_sum_sq (x : V → ℚ) :
         Finset.card_univ, nsmul_eq_mul, ← Finset.mul_sum]
     simp_rw [h1, Finset.sum_add_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum,
       ← Finset.sum_mul, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-    simp_rw [← Finset.sum_mul]; ring
+    simp_rw [← Finset.mul_sum]; ring
   linarith
 
 omit [DecidableEq V] in
@@ -1548,10 +1565,12 @@ section UnboundedNArbitraryGirthStructural
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-- Theorem 20 (Telescoping 4-Layer BFS Annulus Peak — Unbounded n, Arbitrary Girth):
-    For any finite layer-size sequence `a : ℕ → ℕ` supported on `[0..D]` (`D ≥ 1`, `a 0 ≥ 1`),
-    there exists `t < D` such that the 2-layer interior `a t + a (t + 1)` strictly exceeds
-    the 2-layer boundary `(if t = 0 then 0 else a (t - 1)) + (if t + 2 ≤ D then a (t + 2) else 0)`. -/
-theorem four_layer_annulus_telescoping_peak (D : ℕ) (hD : 1 ≤ D) (a : ℕ → ℕ) (ha0 : 1 ≤ a 0) :
+    For any finite connected BFS layer-size sequence `a : ℕ → ℕ` supported on `[0..D]`
+    (`D ≥ 1`, `∀ t ≤ D, 1 ≤ a t`), there exists `t < D` such that the 2-layer interior
+    `a t + a (t + 1)` strictly exceeds the 2-layer boundary
+    `(if t = 0 then 0 else a (t - 1)) + (if t + 2 ≤ D then a (t + 2) else 0)`. -/
+theorem four_layer_annulus_telescoping_peak (D : ℕ) (hD : 1 ≤ D) (a : ℕ → ℕ)
+    (ha : ∀ t ≤ D, 1 ≤ a t) :
     ∃ t < D, (if t = 0 then 0 else a (t - 1)) + (if t + 2 ≤ D then a (t + 2) else 0) <
       a t + a (t + 1) := by
   by_contra hall
@@ -1564,14 +1583,13 @@ theorem four_layer_annulus_telescoping_peak (D : ℕ) (hD : 1 ≤ D) (a : ℕ �
       (∑ t ∈ Finset.range M, ((a t : ℤ) + a (t + 1))) -
       (∑ t ∈ Finset.range M, ((if t = 0 then (0 : ℤ) else a (t - 1)) +
         (if t + 2 ≤ M then (a (t + 2) : ℤ) else 0))) =
-      (a 0 : ℤ) + a 1 + a (M - 1) + a M - (if M = 1 then (a 0 : ℤ) + a 1 else 0) := by
+      (if M = 1 then (a 0 : ℤ) + a 1 else (a 1 : ℤ) + a (M - 1)) := by
     intro M hM
     induction M with
     | zero => omega
     | succ m ih =>
       cases m with
-      | zero =>
-        simp
+      | zero => simp
       | succ k =>
         have hih := ih (by omega)
         have hshift :
@@ -1584,8 +1602,7 @@ theorem four_layer_annulus_telescoping_peak (D : ℕ) (hD : 1 ≤ D) (a : ℕ �
             (a (k + 2) : ℤ) + (a k : ℤ) := by
           rw [Finset.sum_range_succ]
           have hlast : (if k + 1 = 0 then (0 : ℤ) else a (k + 1 - 1)) +
-              (if k + 1 + 2 ≤ k + 2 then (a (k + 1 + 2) : ℤ) else 0) = (a k : ℤ) := by
-            simp
+              (if k + 1 + 2 ≤ k + 2 then (a (k + 1 + 2) : ℤ) else 0) = (a k : ℤ) := by simp
           rw [hlast]
           have hsplit : (∑ t ∈ Finset.range (k + 1),
               ((if t = 0 then (0 : ℤ) else a (t - 1)) +
@@ -1605,12 +1622,18 @@ theorem four_layer_annulus_telescoping_peak (D : ℕ) (hD : 1 ≤ D) (a : ℕ �
               simp [show t + 2 ≤ k + 2 by omega, show t + 2 ≤ k + 1 by omega]
             rw [hcongr]
             have hfalse : ¬ (k + 2 ≤ k + 1) := by omega
-            simp [hfalse]
+            simp [hfalse, add_assoc]
           rw [hsplit]; ring
         rw [Finset.sum_range_succ, hshift]
         by_cases hk0 : k = 0
         · subst hk0; simp; ring
-        · simp [hk0] at hih ⊢
+        · have hne1 : k + 1 ≠ 1 := by omega
+          have hne2 : k + 2 ≠ 1 := by omega
+          simp only [hne1, hne2, ite_false] at hih ⊢
+          have hksub1 : k + 1 - 1 = k := by omega
+          have hksub2 : k + 2 - 1 = k + 1 := by omega
+          rw [hksub1] at hih
+          rw [hksub2]
           linarith
   have htelD := htel D hD
   have hle_z : (∑ t ∈ Finset.range D, ((a t : ℤ) + a (t + 1))) ≤
@@ -1621,12 +1644,12 @@ theorem four_layer_annulus_telescoping_peak (D : ℕ) (hD : 1 ≤ D) (a : ℕ �
   by_cases hD1 : D = 1
   · subst hD1
     simp only [ite_true] at htelD
+    have h0 : (1 : ℤ) ≤ a 0 := by exact_mod_cast ha 0 (by omega)
+    have h1 : (1 : ℤ) ≤ a 1 := by exact_mod_cast ha 1 (by omega)
     linarith
-  · simp only [hD1, ite_false, sub_zero] at htelD
-    have ha0_z : (1 : ℤ) ≤ a 0 := by exact_mod_cast ha0
-    have hnn1 : (0 : ℤ) ≤ a 1 := Nat.cast_nonneg _
-    have hnn2 : (0 : ℤ) ≤ a (D - 1) := Nat.cast_nonneg _
-    have hnn3 : (0 : ℤ) ≤ a D := Nat.cast_nonneg _
+  · simp only [hD1, ite_false] at htelD
+    have h1 : (1 : ℤ) ≤ a 1 := by exact_mod_cast ha 1 (by omega)
+    have hD1' : (1 : ℤ) ≤ a (D - 1) := by exact_mod_cast ha (D - 1) (by omega)
     linarith
 
 /-- Theorem 21 (Unbounded-n, Arbitrary-Girth Interior-Boundary Edge Excess). -/
@@ -1708,9 +1731,11 @@ theorem k4_subdivision_parity_and_dyadic_sum (a₁ a₂ a₃ b₁ b₂ b₃ : �
     (Even Q₁ ∨ Even Q₂ ∨ Even Q₃) := by
   intro T₁ T₂ T₃ T₄ Q₁ Q₂ Q₃
   refine ⟨by omega, by omega, by omega, ?_⟩
-  have hev : Even (Q₁ + Q₂ + Q₃) := ⟨a₁ + a₂ + a₃ + b₁ + b₂ + b₃, by omega⟩
-  rw [Nat.even_iff] at hev ⊢
-  dsimp only [Q₁, Q₂, Q₃] at hev ⊢
+  by_contra h
+  push Not at h
+  rcases h with ⟨h1, h2, h3⟩
+  rw [Nat.even_iff] at h1 h2 h3
+  have hsum : Q₁ + Q₂ + Q₃ = 2 * (a₁ + a₂ + a₃ + b₁ + b₂ + b₃) := by omega
   omega
 
 end UnboundedNArbitraryGirthStructural
