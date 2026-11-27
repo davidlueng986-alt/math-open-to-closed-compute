@@ -29,6 +29,12 @@
       "job": "abc-wave3-agent4-lean",
       "toolbox": "lean",
       "image": "ghcr.io/davidlueng986-alt/math-compute-lean@sha256:44c699d748a9ff12ed4567acc24ce4f8c33ef6c41df3648d3404a362349b497b"
+    },
+    {
+      "agent": 5,
+      "job": "abc-wave3-agent5-root-kernel",
+      "toolbox": "sat",
+      "image": "ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc"
     }
   ]
 }

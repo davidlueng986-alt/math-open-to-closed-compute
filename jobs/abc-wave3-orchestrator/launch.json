@@ -1,8 +1,8 @@
 {
   "problem": "ABC",
   "wave": 3,
-  "batch": "agent4",
+  "batch": "agent5",
   "authorized_by": "explicit_user_continue_2026-11-28",
-  "request": "kernel-square-area-descent-and-fourth-difference",
-  "attempt": 2
+  "request": "exact-gaussian-root-kernel-and-nonintegral-j-family",
+  "attempt": 1
 }
