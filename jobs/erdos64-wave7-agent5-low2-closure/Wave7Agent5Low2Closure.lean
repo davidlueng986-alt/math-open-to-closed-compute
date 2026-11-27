@@ -286,7 +286,7 @@ theorem wfree_completion_degrees {V : Type u} [Fintype V] [DecidableEq V]
     have ha := degree_add_new_edge_left K a b hab hnadj
     have ha' : Nat.card (H.neighborSet a) = K.degree a + 1 := by
       rw [Nat.card_eq_fintype_card, SimpleGraph.card_neighborSet_eq_degree]
-      exact ha
+      convert ha
     exact ha'.trans hd
   by_cases hzb : z = b
   · rw [hzb]
@@ -295,7 +295,7 @@ theorem wfree_completion_degrees {V : Type u} [Fintype V] [DecidableEq V]
     have hb := degree_add_new_edge_right K a b hab hnadj
     have hb' : Nat.card (H.neighborSet b) = K.degree b + 1 := by
       rw [Nat.card_eq_fintype_card, SimpleGraph.card_neighborSet_eq_degree]
-      exact hb
+      convert hb
     exact hb'.trans hd
   have hout : ((G.neighborFinset z.1).filter (fun t => t ∉ A)) = ∅ := by
     rw [Finset.filter_eq_empty_iff]
@@ -396,7 +396,7 @@ theorem wfree_minimal_bad_two_cut_normal_form
     let S1 : Finset V := insert x A.toFinset
     let S2 : Finset V := (A.toFinset)ᶜ
     have hcov : S1 ∪ S2 = Finset.univ := by
-      ext v; simp [S1, S2]; tauto
+      ext v; simp [S1, S2]
     have hint : S1 ∩ S2 = {x} := by
       ext v
       simp only [S1, S2, Finset.mem_inter, Finset.mem_insert, Finset.mem_compl,
@@ -416,7 +416,7 @@ theorem wfree_minimal_bad_two_cut_normal_form
     have hS2_2 : 2 ≤ S2.card := by
       have h2 : S2.card = Nat.card (Aᶜ : Set V) := by
         rw [Nat.card_eq_fintype_card, Fintype.card_compl_set]
-        have h1 : A.toFinset.card = Fintype.card A := (Set.toFinset_card A).symm
+        have h1 : A.toFinset.card = Fintype.card A := Set.toFinset_card A
         rw [Finset.card_compl, h1]
       omega
     obtain ⟨u, hu, v, hv, huv⟩ := minimal_bad_no_cut_vertex G hm x S1 S2 hcov hint hS1_2 hS2_2
@@ -473,7 +473,6 @@ theorem wfree_two_cut_high_edge_avoided {V : Type u} [Fintype V] [DecidableEq V]
   classical
   let H := Completion G A a b
   let : DecidableRel H.Adj := Classical.decRel _
-  let H' := H \ SimpleGraph.edge u v
   have hHdeg : ∀ z : A, H.degree z = G.degree z.1 := by
     intro z
     have h1 := hdegs z
@@ -486,8 +485,8 @@ theorem wfree_two_cut_high_edge_avoided {V : Type u} [Fintype V] [DecidableEq V]
       intro p q hpq; cases p <;> cases q <;> simp_all [f]
     have hc := Fintype.card_le_of_injective f hf
     simpa using hc
-  have hnear : Near H' := by
-    apply near_of_except H' v hA2
+  have hnear : Near (H \ SimpleGraph.edge u v) := by
+    apply near_of_except (H \ SimpleGraph.edge u v) v hA2
     intro z hzv
     have hd := erase_edge_degree H u v huv z
     rw [hHdeg z] at hd
@@ -500,7 +499,7 @@ theorem wfree_two_cut_high_edge_avoided {V : Type u} [Fintype V] [DecidableEq V]
     intro hs
     obtain ⟨z, hz⟩ := hs z0
     exact hz0 (hz ▸ z.2)
-  exact hm.2.2.1 A H' hsmall hnear
+  exact hm.2.2.1 A (H \ SimpleGraph.edge u v) hsmall hnear
 
 /-- **Hitting-Edge Localization Inside `H_A[V_3]`**: Every edge `uv` of `H = Completion G A a b`
 whose deletion destroys all `2^k`-cycles MUST have both endpoints of exact degree 3. -/
@@ -750,7 +749,7 @@ theorem wfree_two_cut_ident_dyadic_path {V : Type u} [Fintype V] [DecidableEq V]
     have hva : v.1 ≠ a := fun h => hvz (Subtype.ext h)
     let f : K.neighborSet v.1 → H.neighborSet v := fun u =>
       if hub : u.1 = b then
-        ⟨z, ⟨hvz, Or.inr (Or.inr ⟨rfl, by rw [← hub]; exact u.2⟩)⟩⟩
+        ⟨z, ⟨hvz, Or.inr (Or.inr ⟨rfl, Eq.mp (congrArg (K.Adj v.1) hub) u.2⟩)⟩⟩
       else
         ⟨⟨u.1, hub⟩, ⟨fun h => (K.ne_of_adj u.2) (congrArg Subtype.val h), Or.inl u.2⟩⟩
     have hf : Function.Injective f := by
@@ -775,7 +774,7 @@ theorem wfree_two_cut_ident_dyadic_path {V : Type u} [Fintype V] [DecidableEq V]
         rintro c ⟨hac, hbc⟩
         by_contra hne
         exact hKfree (rectangle_power K (K.ne_of_adj hac0) hab (K.ne_of_adj hac)
-          (K.ne_of_adj hbc0).symm (Ne.symm hne) (K.ne_of_adj hbc).symm hac0 hbc0.symm hbc hac.symm)
+          (K.ne_of_adj hbc0).symm (Ne.symm hne) (K.ne_of_adj hbc) hac0 hbc0.symm hbc hac.symm)
       have hc0b : c0 ≠ b := (K.ne_of_adj hbc0).symm
       have hv1_ex : ∃ v1 : A, K.Adj b v1 ∧ v1 ≠ c0 := by
         have hcard2 : (K.neighborFinset b).card = 2 := by
@@ -887,7 +886,7 @@ theorem two_cut_no_matching_port_sum_pow2 {V : Type u}
     conv_lhs => rw [← pG.cons_tail_support]
     simp only [List.cons_append, List.tail_cons, List.append_assoc]
     conv_rhs => rw [← qG.cons_tail_support]
-    simp only [List.cons_append]
+    simp only [List.cons_append, List.nil_append]
   have hpG_tail_nd : pG.support.tail.Nodup := by
     have h4 : pG.support = a.1 :: pG.support.tail := (pG.cons_tail_support).symm
     rw [h4, List.nodup_cons] at hpG_nd
