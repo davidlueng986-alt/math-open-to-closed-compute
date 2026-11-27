@@ -809,6 +809,10 @@ theorem minimal_bad_two_indep_avoiding_dyadic_path
           have hrest_eq : rest = mid.append (Walk.cons h2.symm Walk.nil) := by
             have := congrArg Walk.reverse hrev
             simpa [mid, Walk.reverse_cons] using this
+          have hmid_len : mid.length + 2 = 2 ^ k := by
+            have hcl : c'.length = 2 ^ k := hc'_len
+            rw [hc'_eq, Walk.length_cons, hrest_eq, Walk.length_append, Walk.length_cons, Walk.length_nil] at hcl
+            omega
           have hnd_tail : (mid.support ++ [none]).Nodup := by
             have hnd : c'.support.tail.Nodup := hc'.support_nodup
             rw [hc'_eq] at hnd
@@ -825,11 +829,7 @@ theorem minimal_bad_two_indep_avoiding_dyadic_path
           obtain ⟨v, hvI, hvxm⟩ := h2
           let full : G.Walk u v := Walk.cons hux1 (qmid.concat hvxm.symm)
           have hfull_len : full.length = 2 ^ k := by
-            have hcl : c'.length = 2 ^ k := hc'_len
-            rw [hc'_eq, hrest_eq] at hcl
-            rw [Walk.length_cons, Walk.length_append, Walk.length_cons, Walk.length_nil] at hcl
-            rw [show full.length = (qmid.concat hvxm.symm).length + 1 from rfl,
-              Walk.length_concat, hqmid_len]
+            simp only [full, Walk.length_cons, Walk.length_concat, hqmid_len]
             omega
           have hqmid_nodup : qmid.support.Nodup := by
             rw [List.nodup_append] at hnd_tail
