@@ -103,8 +103,8 @@ private theorem length_eq_one_of_isPath_mem_edges_endpoints {G : SimpleGraph V} 
               have hnd2 := hnd.2
               rw [Walk.support_cons, List.nodup_cons] at hnd2
               exact hnd2.1 (Walk.end_mem_support rest2)
-        · exfalso
-          exact hnd.1 (huv ▸ Walk.end_mem_support rest)
+        · subst huv
+          exact absurd (Walk.end_mem_support rest) hnd.1
       · exfalso
         exact hnd.1 (mem_support_of_mem_edges hmem (by simp))
 
@@ -218,7 +218,7 @@ theorem fwdWalk_support {G : SimpleGraph V} {m r : ℕ} (C : ChordedEvenCycle G 
   | start, len + 1 => by
       simp only [fwdWalk, Walk.support_cons, Walk.support_copy]
       rw [fwdWalk_support C (start + 1) len]
-      rw [List.range_succ_eq_map, List.map_cons, List.map_map]
+      conv_rhs => rw [List.range_succ_eq_map, List.map_cons, List.map_map]
       congr 1
       · simp
       · apply List.map_congr_left
@@ -311,7 +311,9 @@ theorem exists_chord_path_type1 {G : SimpleGraph V} {m r : ℕ} (C : ChordedEven
     rw [List.mem_range] at ht1 ht2
     have hval := congrArg Fin.val (C.hv_inj hEq)
     dsimp only at hval
-    rw [Nat.mod_eq_of_lt (by omega), Nat.mod_eq_of_lt (by omega)] at hval
+    have hlt1 : (0 + t1) % (2 * m) = 0 + t1 := Nat.mod_eq_of_lt (by omega)
+    have hlt2 : (2 * r + 1 + t2) % (2 * m) = 2 * r + 1 + t2 := Nat.mod_eq_of_lt (by omega)
+    rw [hlt1, hlt2] at hval
     omega
   refine ⟨p.append (Walk.cons C.hadj_chord q), chord_bridge_isPath C p q hp_path hq_path hdisj, ?_, ?_⟩
   · simp only [Walk.length_append, Walk.length_cons, p, q, Walk.length_copy, p0, q0,
@@ -339,7 +341,9 @@ theorem exists_chord_path_type2 {G : SimpleGraph V} {m r : ℕ} (C : ChordedEven
   have h1 : (2 * m - 2 * a) % (2 * m) = 2 * ((m - a) % m) := by
     by_cases ha0 : a = 0
     · subst ha0; simp
-    · rw [Nat.mod_eq_of_lt (by omega), Nat.mod_eq_of_lt (by omega)]; omega
+    · have hlt1 : (2 * m - 2 * a) % (2 * m) = 2 * m - 2 * a := Nat.mod_eq_of_lt (by omega)
+      have hlt2 : (m - a) % m = m - a := Nat.mod_eq_of_lt (by omega)
+      rw [hlt1, hlt2]; omega
   have h2 : (2 * m - 2 * a + 2 * a) % (2 * m) = 0 := by
     have : 2 * m - 2 * a + 2 * a = 2 * m := by omega
     rw [this, Nat.mod_self]
@@ -367,15 +371,18 @@ theorem exists_chord_path_type2 {G : SimpleGraph V} {m r : ℕ} (C : ChordedEven
     rw [List.mem_range] at ht1 ht2
     have hval := congrArg Fin.val (C.hv_inj hEq)
     dsimp only at hval
-    have hq_lt : 2 * (r + 1 - b) + t2 < 2 * m := by omega
-    rw [Nat.mod_eq_of_lt hq_lt] at hval
+    have hq_lt : (2 * (r + 1 - b) + t2) % (2 * m) = 2 * (r + 1 - b) + t2 :=
+      Nat.mod_eq_of_lt (by omega)
+    rw [hq_lt] at hval
     by_cases ht1_end : t1 = 2 * a
     · subst ht1_end
       have : (2 * m - 2 * a + 2 * a) % (2 * m) = 0 := by
         have : 2 * m - 2 * a + 2 * a = 2 * m := by omega
         rw [this, Nat.mod_self]
       rw [this] at hval; omega
-    · rw [Nat.mod_eq_of_lt (by omega)] at hval; omega
+    · have hp_lt : (2 * m - 2 * a + t1) % (2 * m) = 2 * m - 2 * a + t1 :=
+        Nat.mod_eq_of_lt (by omega)
+      rw [hp_lt] at hval; omega
   refine ⟨p.append (Walk.cons C.hadj_chord q), chord_bridge_isPath C p q hp_path hq_path hdisj, ?_, ?_⟩
   · simp only [Walk.length_append, Walk.length_cons, p, q, Walk.length_copy, p0, q0,
       Walk.length_reverse, fwdWalk_length]
@@ -402,7 +409,9 @@ theorem exists_chord_path_type3 {G : SimpleGraph V} {m r : ℕ} (C : ChordedEven
   have h1 : (2 * m - 2 * a) % (2 * m) = 2 * ((m - a) % m) := by
     by_cases ha0 : a = 0
     · subst ha0; simp
-    · rw [Nat.mod_eq_of_lt (by omega), Nat.mod_eq_of_lt (by omega)]; omega
+    · have hlt1 : (2 * m - 2 * a) % (2 * m) = 2 * m - 2 * a := Nat.mod_eq_of_lt (by omega)
+      have hlt2 : (m - a) % m = m - a := Nat.mod_eq_of_lt (by omega)
+      rw [hlt1, hlt2]; omega
   have h2 : (2 * m - 2 * a + 2 * a) % (2 * m) = 0 := by
     have : 2 * m - 2 * a + 2 * a = 2 * m := by omega
     rw [this, Nat.mod_self]
@@ -429,14 +438,17 @@ theorem exists_chord_path_type3 {G : SimpleGraph V} {m r : ℕ} (C : ChordedEven
     rw [List.mem_range] at ht1 ht2
     have hval := congrArg Fin.val (C.hv_inj hEq)
     dsimp only at hval
-    rw [Nat.mod_eq_of_lt (by omega)] at hval
+    have hq_lt : (2 * r + 1 + t2) % (2 * m) = 2 * r + 1 + t2 := Nat.mod_eq_of_lt (by omega)
+    rw [hq_lt] at hval
     by_cases ht1_end : t1 = 2 * a
     · subst ht1_end
       have : (2 * m - 2 * a + 2 * a) % (2 * m) = 0 := by
         have : 2 * m - 2 * a + 2 * a = 2 * m := by omega
         rw [this, Nat.mod_self]
       rw [this] at hval; omega
-    · rw [Nat.mod_eq_of_lt (by omega)] at hval; omega
+    · have hp_lt : (2 * m - 2 * a + t1) % (2 * m) = 2 * m - 2 * a + t1 :=
+        Nat.mod_eq_of_lt (by omega)
+      rw [hp_lt] at hval; omega
   refine ⟨p.append (Walk.cons C.hadj_chord q), chord_bridge_isPath C p q hp_path hq_path hdisj, ?_, ?_⟩
   · simp only [Walk.length_append, Walk.length_cons, p, q, Walk.length_copy, p0, q0, fwdWalk_length]
     omega
@@ -460,12 +472,16 @@ def reflect {G : SimpleGraph V} {m r : ℕ} (C : ChordedEvenCycle G m r) :
     have hfin := C.hv_inj hEq
     have hval := congrArg Fin.val hfin
     dsimp only at hval
-    have hi := i.isLt; have hj := j.isLt
+    have hm := C.hm; have hi := i.isLt; have hj := j.isLt
     by_cases hi0 : i.val = 0 <;> by_cases hj0 : j.val = 0
     · exact Fin.ext (by omega)
-    · rw [hi0, Nat.sub_zero, Nat.mod_self, Nat.mod_eq_of_lt (by omega)] at hval; omega
-    · rw [hj0, Nat.sub_zero, Nat.mod_self, Nat.mod_eq_of_lt (by omega)] at hval; omega
-    · rw [Nat.mod_eq_of_lt (by omega), Nat.mod_eq_of_lt (by omega)] at hval
+    · have hj_lt : (2 * m - j.val) % (2 * m) = 2 * m - j.val := Nat.mod_eq_of_lt (by omega)
+      rw [hi0, Nat.sub_zero, Nat.mod_self, hj_lt] at hval; omega
+    · have hi_lt : (2 * m - i.val) % (2 * m) = 2 * m - i.val := Nat.mod_eq_of_lt (by omega)
+      rw [hj0, Nat.sub_zero, Nat.mod_self, hi_lt] at hval; omega
+    · have hi_lt : (2 * m - i.val) % (2 * m) = 2 * m - i.val := Nat.mod_eq_of_lt (by omega)
+      have hj_lt : (2 * m - j.val) % (2 * m) = 2 * m - j.val := Nat.mod_eq_of_lt (by omega)
+      rw [hi_lt, hj_lt] at hval
       exact Fin.ext (by omega)
   hadj_cyc := by
     intro i
@@ -474,8 +490,9 @@ def reflect {G : SimpleGraph V} {m r : ℕ} (C : ChordedEvenCycle G m r) :
     have hj_next : (j.val + 1) % (2 * m) = (2 * m - i.val) % (2 * m) := by
       dsimp only [j]
       by_cases hi_last : i.val + 1 = 2 * m
-      · rw [hi_last, Nat.mod_self, Nat.sub_zero, Nat.mod_self, Nat.zero_add,
-          Nat.mod_eq_of_lt (by omega), Nat.mod_eq_of_lt (by omega)]; omega
+      · have h1 : 1 % (2 * m) = 1 := Nat.mod_eq_of_lt (by omega)
+        have h2 : (2 * m - i.val) % (2 * m) = 2 * m - i.val := Nat.mod_eq_of_lt (by omega)
+        rw [hi_last, Nat.mod_self, Nat.sub_zero, Nat.mod_self, Nat.zero_add, h1, h2]; omega
       · have hstep1 : (i.val + 1) % (2 * m) = i.val + 1 := Nat.mod_eq_of_lt (by omega)
         rw [hstep1]
         have hstep2 : (2 * m - (i.val + 1)) % (2 * m) = 2 * m - (i.val + 1) :=
@@ -513,12 +530,19 @@ private theorem mod_add_cancel_right {d u v w : ℕ} (hd : 0 < d) (hu : u < d) (
   rw [hm1, hm2] at h
   split_ifs at h <;> omega
 
+private theorem add_sub_mod_cancel_any {d a b : ℕ} (hd : 0 < d) :
+    (a + (b + d - a % d) % d) % d = b % d := by
+  have ha : a % d < d := Nat.mod_lt _ hd
+  have h1 : (a + (b + d - a % d) % d) % d = (a % d + (b + d - a % d)) % d := by
+    rw [Nat.add_mod, Nat.mod_mod]
+    conv_rhs => rw [Nat.add_mod, Nat.mod_mod]
+  rw [h1]
+  have hsum : a % d + (b + d - a % d) = b + d := by omega
+  rw [hsum, Nat.add_mod_right]
+
 private theorem add_sub_mod_cancel {d a b : ℕ} (hd : 0 < d) (hb : b < d) :
     (a + (b + d - a % d) % d) % d = b := by
-  have ha : a % d < d := Nat.mod_lt _ hd
-  rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
-  have hsum : a % d + (b + d - a % d) = b + d := by omega
-  rw [hsum, Nat.add_mod_right, Nat.mod_eq_of_lt hb]
+  rw [add_sub_mod_cancel_any hd, Nat.mod_eq_of_lt hb]
 
 private theorem add_neg_mod_eq_zero {d x : ℕ} (hd : 0 < d) :
     (x + (d - x % d) % d) % d = 0 := by
@@ -543,7 +567,6 @@ private theorem bsv_periodic_coloring_const {m r k : ℕ} (hm : 3 ≤ m)
   have hd_pos : 0 < d := Nat.gcd_pos_of_pos_left m (by omega)
   have hd_dvd_k : d ∣ k := Nat.gcd_dvd_left k m
   have hd_dvd_m : d ∣ m := Nat.gcd_dvd_right k m
-  -- Periodicity by `d` via Bézout's identity
   have hper_d : ∀ x, f (x + d) = f x := by
     have hmul_m : ∀ t x, f (x + t * m) = f x := by
       intro t
@@ -618,7 +641,7 @@ private theorem bsv_periodic_coloring_const {m r k : ℕ} (hm : 3 ≤ m)
     have : r + b = r + k - a := by omega
     rwa [this] at h
   by_cases hd1 : d = 1
-  · intro x; exact hper_mod x 0 (by simp [hd1])
+  · intro x; exact hper_mod x 0 (by simp [hd1, Nat.mod_one])
   have hd2 : 2 ≤ d := by omega
   have hk_ge_d : d ≤ k := Nat.le_of_dvd (by omega) hd_dvd_k
   have hk_le_md : k ≤ m - d := by
@@ -653,6 +676,7 @@ private theorem bsv_periodic_coloring_const {m r k : ℕ} (hm : 3 ≤ m)
       have hT2 : f x1 = f (r + 1 - x1) :=
         htype2_mod (k - x1) x1 (by dsimp only [x1, lo2]; omega) hx1_ge_1 hx1_le_r (by omega)
       have hfx0_x1 : f x0 = f x1 := hper_mod x0 x1 (by rw [hx0_mod, hx1_mod])
+      have hyt : (y + target) % d = (r + k) % d := add_sub_mod_cancel_any hd_pos
       have hy_mod : (r + k - x0) % d = y % d := by
         apply mod_add_cancel_right hd_pos (Nat.mod_lt _ hd_pos) (Nat.mod_lt _ hd_pos) (w := target)
         have hL : ((r + k - x0) % d + target) % d = (r + k) % d := by
@@ -660,11 +684,9 @@ private theorem bsv_periodic_coloring_const {m r k : ℕ} (hm : 3 ≤ m)
           have : r + k - x0 + x0 = r + k := by omega
           rw [this]
         have hR : (y % d + target) % d = (r + k) % d := by
-          dsimp only [target]
-          rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
-          have hy_lt : y % d < d := Nat.mod_lt _ hd_pos
-          have : y % d + (r + k + d - y % d) = (r + k) + d := by omega
-          rw [this, Nat.add_mod_right]
+          have h1 : (y % d + target) % d = (y + target) % d := by
+            rw [Nat.add_mod, Nat.mod_mod]; conv_rhs => rw [Nat.add_mod]
+          rw [h1, hyt]
         rw [hL, hR]
       have hy1_mod : (r + 1 - x1) % d = (y + 1) % d := by
         apply mod_add_cancel_right hd_pos (Nat.mod_lt _ hd_pos) (Nat.mod_lt _ hd_pos) (w := target)
@@ -674,17 +696,11 @@ private theorem bsv_periodic_coloring_const {m r k : ℕ} (hm : 3 ≤ m)
           have : r + 1 - x1 + x1 = r + 1 := by omega
           rw [this]
         have hR : ((y + 1) % d + target) % d = (r + 1) % d := by
-          rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
-          have : (y + 1) + target = (y + target) + 1 := by omega
-          rw [this, Nat.add_mod]
-          have hyt : (y + target) % d = (r + k) % d := by
-            rw [Nat.add_mod]
-            dsimp only [target]
-            rw [Nat.mod_mod, ← Nat.add_mod]
-            have hy_lt : y % d < d := Nat.mod_lt _ hd_pos
-            have : y % d + (r + k + d - y % d) = (r + k) + d := by omega
-            rw [this, Nat.add_mod_right]
-          rw [hyt, ← Nat.add_mod]
+          have h1 : ((y + 1) % d + target) % d = ((y + target) + 1) % d := by
+            have h2 : ((y + 1) % d + target) % d = ((y + 1) + target) % d := by
+              rw [Nat.add_mod, Nat.mod_mod]; conv_rhs => rw [Nat.add_mod]
+            rw [h2]; congr 1; omega
+          rw [h1, Nat.add_mod, hyt, ← Nat.add_mod]
           have : r + k + 1 = (r + 1) + d * qk := by omega
           rw [this, Nat.add_mul_mod_self_left]
         rw [hL, hR]
@@ -727,23 +743,31 @@ private theorem bsv_periodic_coloring_const {m r k : ℕ} (hm : 3 ≤ m)
         apply mod_add_cancel_right hd_pos (Nat.mod_lt _ hd_pos) (Nat.mod_lt _ hd_pos) (w := a)
         rcases hd_dvd_m with ⟨qm, hqm⟩
         have hL : ((m - a) % d + a) % d = 0 := by
-          rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
+          have h1 : ((m - a) % d + a) % d = (m - a + a) % d := by
+            rw [Nat.add_mod, Nat.mod_mod]; conv_rhs => rw [Nat.add_mod]
+          rw [h1]
           have : m - a + a = d * qm := by omega
           rw [this, Nat.mul_mod_right]
         have hR : (x % d + a) % d = 0 := by
-          rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]; exact hxa0
+          have h1 : (x % d + a) % d = (x + a) % d := by
+            rw [Nat.add_mod, Nat.mod_mod]; conv_rhs => rw [Nat.add_mod]
+          rw [h1]; exact hxa0
         rw [hL, hR]
       have hxr_mod : (r + (k - a)) % d = (x + r) % d := by
         apply mod_add_cancel_right hd_pos (Nat.mod_lt _ hd_pos) (Nat.mod_lt _ hd_pos) (w := a)
         rcases hd_dvd_k with ⟨qk, hqk⟩
         have hL : ((r + (k - a)) % d + a) % d = r % d := by
-          rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
+          have h1 : ((r + (k - a)) % d + a) % d = (r + (k - a) + a) % d := by
+            rw [Nat.add_mod, Nat.mod_mod]; conv_rhs => rw [Nat.add_mod]
+          rw [h1]
           have : r + (k - a) + a = r + d * qk := by omega
           rw [this, Nat.add_mul_mod_self_left]
         have hR : ((x + r) % d + a) % d = r % d := by
-          rw [Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
-          have : x + r + a = (x + a) + r := by omega
-          rw [this, Nat.add_mod, hxa0, Nat.zero_add, Nat.mod_mod]
+          have h1 : ((x + r) % d + a) % d = ((x + a) + r) % d := by
+            have h2 : ((x + r) % d + a) % d = (x + r + a) % d := by
+              rw [Nat.add_mod, Nat.mod_mod]; conv_rhs => rw [Nat.add_mod]
+            rw [h2]; congr 1; omega
+          rw [h1, Nat.add_mod, hxa0, Nat.zero_add, Nat.mod_mod]
         rw [hL, hR]
       calc f (x + r) = f (r + (k - a)) := hper_mod _ _ hxr_mod.symm
         _ = f ((m - a) % m) := hT3.symm
@@ -882,7 +906,10 @@ theorem bsv_chorded_cycle_all_even_ab_paths {G : SimpleGraph V} {m r : ℕ}
       have hi := i.isLt
       by_cases hi0 : i.val = 0
       · simp [hi0]
-      · rw [Nat.mod_eq_of_lt (by omega), Nat.mod_eq_of_lt (by omega)]; omega
+      · have h1 : (m - i.val) % m = m - i.val := Nat.mod_eq_of_lt (by omega)
+        rw [h1]
+        have h2 : (m - (m - i.val)) % m = m - (m - i.val) := Nat.mod_eq_of_lt (by omega)
+        rw [h2]; omega
     have hnt' : ∃ i0 i1 : Fin m, col' i0 ≠ col' i1 := by
       rcases hnontriv with ⟨i0, i1, hne⟩
       refine ⟨refIdx i0, refIdx i1, ?_⟩
@@ -895,7 +922,9 @@ theorem bsv_chorded_cycle_all_even_ab_paths {G : SimpleGraph V} {m r : ℕ}
       congr 1; apply Fin.ext; dsimp only
       by_cases hu0 : u.val = 0
       · simp [hu0]
-      · rw [Nat.mod_eq_of_lt (by omega), Nat.mod_eq_of_lt (by omega)]; omega
+      · have h1 : (2 * m - 2 * u.val) % (2 * m) = 2 * m - 2 * u.val := Nat.mod_eq_of_lt (by omega)
+        have h2 : (m - u.val) % m = m - u.val := Nat.mod_eq_of_lt (by omega)
+        rw [h1, h2]; omega
     have hrange_eq : ∀ z, z ∈ Set.range C'.v → z ∈ Set.range C.v := by
       rintro z ⟨idx, rfl⟩; exact ⟨_, rfl⟩
     let p : G.Walk (C.v ⟨2 * (refIdx i').val, by omega⟩) (C.v ⟨2 * (refIdx j').val, by omega⟩) :=
@@ -1215,7 +1244,7 @@ private theorem mem_internals_of_mem_edges_ge2 {G : SimpleGraph V} :
         | cons h3 rest2 =>
             obtain ⟨z, hz, hze⟩ :=
               mem_internals_of_mem_edges_ge2 (Walk.cons h2 (Walk.cons h3 rest2)) (by simp) e
-                (by simp only [Walk.edges_cons, List.mem_cons]; exact Or.inr hrest)
+                (List.mem_cons_of_mem _ hrest)
             refine ⟨z, ?_, hze⟩
             simp only [walkInternals, Walk.support_cons, List.tail_cons] at hz ⊢
             rw [List.dropLast_cons_of_ne_nil (by simp)]
@@ -1373,9 +1402,9 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} {δ : ℕ} :
             simp only [baseWalk, support_append_tail, List.mem_append]
             exact Or.inr (Or.inr hbase)
           · exact hp1_rest_alt x hint x halt rfl
-        · rcases mem_realize_support_tail rest bs hlen w hyr with hbase | halt
-          · exact hp0_rb w hw_mem_p0 w hbase rfl
-          · apply hdisj w (by simp [altVertices, halt])
+        · rcases mem_realize_support_tail rest bs hlen x hyr with hbase | halt
+          · exact hp0_rb x hw_mem_p0 x hbase rfl
+          · apply hdisj x (by simp [altVertices, halt])
             simp only [baseWalk, support_append_tail, List.mem_append]
             exact Or.inr (Or.inl hw_mem_p0)
       · intro x hxs y hyr hxy; subst hxy
@@ -1387,7 +1416,7 @@ private theorem realize_support_tail_nodup {G : SimpleGraph V} {δ : ℕ} :
           · apply hdisj x (by simp [altVertices, hint])
             simp only [baseWalk, support_append_tail, List.mem_append]
             exact Or.inl hxs
-          · exact hseg_rest w hxs w (List.mem_append.mpr (Or.inl hw_mem_p0)) rfl
+          · exact hseg_rest x hxs x (List.mem_append.mpr (Or.inl hw_mem_p0)) rfl
         · rcases mem_realize_support_tail rest bs hlen x hxr with hbase | halt
           · exact hseg_rest x hxs x (List.mem_append.mpr (Or.inr hbase)) rfl
           · apply hdisj x (by simp [altVertices, halt])
@@ -1488,7 +1517,7 @@ private theorem realize_edges_nodup {G : SimpleGraph V} {δ : ℕ} (hδ : 1 ≤ 
         have hz_supp : z ∈ (rest.realize bs).support := mem_support_of_mem_edges her hze
         rw [support_eq_cons_start (rest.realize bs), List.mem_cons] at hz_supp
         rcases hz_supp with rfl | hws
-        · apply hdisj w (by simp [altVertices, hz_int])
+        · apply hdisj z (by simp [altVertices, hz_int])
           exact mem_append_support_right seg (p0.append rest.baseWalk)
             (mem_append_support_right p0 rest.baseWalk (Walk.start_mem_support rest.baseWalk))
         · rcases mem_realize_support_tail rest bs hlen z hws with hbase | halt
