@@ -4,30 +4,6 @@ import Wave5Agent5GirthTripling
 import Wave5Agent6ChebyshevGirth
 import ChebTraceEngine
 
-/-!
-# Wave 8 Agent #2 — Pillar 2: Exact Trace-Coupled Non-Simple CNB Walk Upper Bound (`L < 3g`)
-
-Proves unconditionally for EVERY cubic (`d = 3`), power-free (`¬ HasPower G`) simple graph `G`
-of girth `g ≥ 6` and target power-of-2 length `L = 2^k` (`k ≥ 4`, `L < 3 * g`, `L ≤ 64`):
-
-  `nonSimpleTaillessCount G L ≤ ∑ r ∈ Finset.range L, alphaCoeff g L r * taillessCount G r`
-
-where `alphaCoeff g L r = thetaTerm g L r + barbellTerm g L r` is the exact trace-coupled
-non-simple walk coefficient (with zero assumption that intersecting cycles share a single path!).
-
-Key components:
-1. `card_nbWalksAvoid_le`: at most `2^m` NB walks of length `m` starting at `u` avoiding `prev`.
-2. `card_nbWalksBetweenAvoid_le`: at most `2^(m - s)` NB walks of length `m` from `u` to `v`
-   avoiding `prev` at the start, where `s = (g - 1) / 2` (via `unique_nonBacktracking_walk_of_half_girth`).
-3. `tailless_nonSimple_exact_decomp`: upgrades `Wave5Agent5`'s girth-tripling decomposition to
-   retain the exact cyclic rotation `rot = c₁ ++ P ++ c₂ ++ P.reverse` with `c₁, c₂` simple cycles.
-4. `exists_maximal_shared_prefix`: for any zero-tail pair `c₁ ++ c₂` (`c₁.length < c₂.length`)
-   in a cubic graph, finds a rotation `c₁' ++ c₂'` sharing a maximal prefix `P_b` (`1 ≤ b < r₁`)
-   whose entry edges at `u` and exit edges at `v` are distinct (forcing the 3rd edge at both ends!).
-5. `nonSimpleTaillessCount_le_sum_alpha`: combines Barbell (including exact 2-to-1 symmetry when
-   `r₁ = r₂`) and Theta (`r₁ < r₂` forced by `¬ HasPower G`) surjection counts.
--/
-
 namespace E64Wave8Agent2
 open SimpleGraph Erdos64Closure E64NonBacktrackingGirth E64Wave5Agent5 E64Wave5Agent6
 
@@ -40,7 +16,7 @@ def nbWalksSub (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ) (u v : V) :
     Finset {p : G.Walk u v // p.length = k} :=
   let emb : {x : G.Walk u v // x ∈ nbWalks G k u v} ↪ {p : G.Walk u v // p.length = k} :=
     ⟨fun x => ⟨x.1, mem_finsetWalkLength_iff.mp (Finset.mem_filter.mp x.2).1⟩,
-     fun a b h => Subtype.ext (show a.1 = b.1 from congrArg Subtype.val h)⟩
+     fun _ _ h => Subtype.ext (by cases h; rfl)⟩
   (nbWalks G k u v).attach.map emb
 
 @[simp] theorem mem_nbWalksSub_iff {G : SimpleGraph V} [DecidableRel G.Adj]
@@ -133,7 +109,6 @@ theorem lastNbr_reverse {G : SimpleGraph V} {u v : V} (p : G.Walk u v) :
   rw [Walk.reverse_reverse] at h
   exact h.symm
 
-/-- Split a walk `p : G.Walk u v` at step `k ≤ p.length` into prefix of length `k` and suffix of length `p.length - k`. -/
 def splitWalk {G : SimpleGraph V} :
     ∀ {u v : V} (k : ℕ) (p : G.Walk u v), k ≤ p.length →
       Σ w : V, {q : G.Walk u w // q.length = k} × {r : G.Walk w v // r.length = p.length - k}
@@ -154,8 +129,6 @@ theorem splitWalk_append {G : SimpleGraph V} :
       congr 1
       exact splitWalk_append k rest (by simp at hk; omega)
 
-/-- Unrotate a closed walk `rot : G.Walk x x` of length `L` by shift `j : Fin L`:
-splits `rot` at `L - j.1` into `b : G.Walk x v` and `a : G.Walk v x`, returning `⟨v, a ++ b⟩`. -/
 def unrotate {G : SimpleGraph V} (L : ℕ) (j : Fin L) {x : V} (rot : G.Walk x x)
     (hrot : rot.length = L) : Σ v : V, {p : G.Walk v v // p.length = L} :=
   let s := splitWalk (L - j.1) rot (by omega)
@@ -198,13 +171,11 @@ theorem unrotate_append {G : SimpleGraph V} {L : ℕ} {v x : V}
   intro _
   rfl
 
-/-- Finset of all NB walks of length `m` starting at `u` whose first step `≠ prev`. -/
 def nbWalksAvoid (G : SimpleGraph V) [DecidableRel G.Adj] (m : ℕ) (u prev : V) :
     Finset (Σ v : V, {p : G.Walk u v // p.length = m}) :=
   ((Finset.univ : Finset V).sigma fun v => nbWalksSub G m u v).filter fun x =>
     firstNbr x.2.1 ≠ some prev
 
-/-- In a cubic graph, there are at most `2^m` NB walks of length `m` starting at `u` avoiding `prev` (`G.Adj u prev`). -/
 theorem card_nbWalksAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
     (hreg : ∀ x : V, G.degree x = 3) :
     ∀ (m : ℕ) (u prev : V), G.Adj u prev → (nbWalksAvoid G m u prev).card ≤ 2 ^ m
@@ -270,13 +241,10 @@ theorem card_nbWalksAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
                 rcases heq with ⟨rfl, rfl, rfl⟩
                 rfl
 
-/-- Finset of all NB walks of length `m` from `u` to `v` avoiding `prev` at the first step. -/
 def nbWalksBetweenAvoid (G : SimpleGraph V) [DecidableRel G.Adj] (m : ℕ) (u prev v : V) :
     Finset {p : G.Walk u v // p.length = m} :=
   (nbWalksSub G m u v).filter fun p => firstNbr p.1 ≠ some prev
 
-/-- **Exact Girth-Ball Fixed-Endpoint Bound**: In a cubic graph of girth `≥ g` (`s = (g - 1) / 2`),
-there are at most `2 ^ (m - s)` NB walks of length `m` from `u` to `v` avoiding `prev` (`G.Adj u prev`). -/
 theorem card_nbWalksBetweenAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
     {g : ℕ} (hg : GirthAtLeast G g) (hreg : ∀ x : V, G.degree x = 3)
     (m : ℕ) (u prev v : V) (hprev : G.Adj u prev) :
@@ -335,7 +303,6 @@ theorem card_nbWalksBetweenAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
       dsimp only
       rw [← happ₁, ← happ₂, hr_eq]
 
-/-- Unique third neighbor of a degree-3 vertex `u` given two distinct neighbors `a ≠ b`. -/
 theorem exists_unique_third_nbr (G : SimpleGraph V) [DecidableRel G.Adj]
     {u a b : V} (hdeg : G.degree u = 3) (ha : G.Adj u a) (hb : G.Adj u b) (hab : a ≠ b) :
     ∃! c : V, G.Adj u c ∧ c ≠ a ∧ c ≠ b := by
@@ -363,7 +330,6 @@ section ExactAlphaCounting
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- Exact theta-walk coefficient for cycle length `r₁` at girth `g` and walk length `L`. -/
 def thetaTerm (g L r₁ : ℕ) : ℕ :=
   let s := (g - 1) / 2
   let r₂ := L - r₁
@@ -373,7 +339,6 @@ def thetaTerm (g L r₁ : ℕ) : ℕ :=
         (fun b => L * 2 ^ (r₂ - b - 2 - s)) |>.sum
   else 0
 
-/-- Exact barbell-walk coefficient for cycle length `r₁` at girth `g` and walk length `L`. -/
 def barbellTerm (g L r₁ : ℕ) : ℕ :=
   let s := (g - 1) / 2
   ((List.range (L / 2)).filter fun p => 1 ≤ p ∧ 2 * g ≤ L - 2 * p).map (fun p =>
@@ -382,12 +347,10 @@ def barbellTerm (g L r₁ : ℕ) : ℕ :=
       (if r₁ = r₂ then L else 2 * L) * 2 ^ (p - 1 + (r₂ - 2 - s))
     else 0) |>.sum
 
-/-- Total trace-coupled non-simple walk coefficient `α_{r₁}` at girth `g` and walk length `L`. -/
 def alphaCoeff (g L r₁ : ℕ) : ℕ :=
   thetaTerm g L r₁ + barbellTerm g L r₁
 
 omit [Fintype V] [DecidableEq V] in
-/-- Helper: cyclic rotation preserves `IsCyclicallyNonBacktracking`. -/
 theorem isCyclicallyNonBacktracking_rotate {G : SimpleGraph V} {u v : V}
     (a : G.Walk u v) (b : G.Walk v u) (hcyc : IsCyclicallyNonBacktracking (a.append b)) :
     IsCyclicallyNonBacktracking (b.append a) := by
@@ -417,7 +380,6 @@ theorem isCyclicallyNonBacktracking_rotate {G : SimpleGraph V} {u v : V}
       exact hba_b.2.2 x y hx hy
 
 omit [Fintype V] [DecidableEq V] in
-/-- Helper: stripping first and last edges of a simple cycle `c` of length `≥ 3` at `v`. -/
 theorem strip_cycle_ends {G : SimpleGraph V} {v : V} (c : G.Walk v v)
     (hc : c.IsCycle) (h3 : 3 ≤ c.length) :
     ∃ (v₁ v₂ : V) (h₁ : G.Adj v v₁) (h₂ : G.Adj v₂ v) (mid : G.Walk v₁ v₂),
@@ -503,7 +465,6 @@ theorem strip_cycle_ends {G : SimpleGraph V} {v : V} (c : G.Walk v v)
       exact ⟨v₁, v₂, h₁, h₂, mid, hv12, by rw [hrest_eq], hmid_len, hnb_mid, hfn_mid⟩
 
 omit [Fintype V] [DecidableEq V] in
-/-- Helper: stripping first and last edges of any NB walk `q : G.Walk v u` of length `≥ 2`. -/
 theorem strip_walk_ends {G : SimpleGraph V} {v u : V} (q : G.Walk v u)
     (hnb : IsNonBacktracking q) (h2 : 2 ≤ q.length) :
     ∃ (v₁ u₁ : V) (h₁ : G.Adj v v₁) (h₂ : G.Adj u₁ u) (mid : G.Walk v₁ u₁),
