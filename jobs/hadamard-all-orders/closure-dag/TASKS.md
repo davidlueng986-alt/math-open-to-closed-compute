@@ -8,10 +8,10 @@ A card is ready when its target is open, it has no claimant, and its listed prer
 | Priority | Task | Status | Target |
 | --- | --- | --- | --- |
 | P0 | [T-ASSEMBLE-PREFIX](#t-assemble-prefix) | Blocked | [BANDS](GRAPH.md#bands) |
-| P0 | [T-FIRST-MATCH](#t-first-match) | Ready | [COLLISION](GRAPH.md#collision) |
+| P0 | [T-FIRST-MATCH](#t-first-match) | Claimed | [COLLISION](GRAPH.md#collision) |
 | P0 | [T-LOW-TRADES](#t-low-trades) | Ready | [SWITCH-LOW](GRAPH.md#switch-low) |
 | P0 | [T-RESOLVE](#t-resolve) | Blocked | [RESOLUTION](GRAPH.md#resolution) |
-| P0 | [T-SIGNATURE-ATLAS](#t-signature-atlas) | Ready | [SIGNATURE-ATLAS](GRAPH.md#signature-atlas) |
+| P0 | [T-SIGNATURE-ATLAS](#t-signature-atlas) | Claimed | [SIGNATURE-ATLAS](GRAPH.md#signature-atlas) |
 | P0 | [T-TYPE-ATLAS](#t-type-atlas) | Ready | [TYPE-ATLAS](GRAPH.md#type-atlas) |
 | P0 | [T-YES](#t-yes) | Blocked | [YES](GRAPH.md#yes) |
 | P1 | [T-CLIQUE](#t-clique) | Ready | [UNIFORM-CLIQUE](GRAPH.md#uniform-clique) |
@@ -63,7 +63,7 @@ If a band proves only a subfamily, record the exact residual t,j. Leave the glob
 
 **Force the first equal integer signature**
 
-P0 · research · Ready · Unclaimed
+P0 · research · Claimed · Codex · `hadamard/first-match-atlas` · 2026-11-27
 
 - **Target** · [COLLISION](GRAPH.md#collision)
 - **Prerequisites** · [PIVOT](GRAPH.md#pivot), [SIGNATURE](GRAPH.md#signature)
@@ -141,7 +141,7 @@ Any missing evidence or mismatched parameter reopens the affected parent, with a
 
 **Inventory every first selector at order 44**
 
-P0 · research · Ready · Unclaimed
+P0 · research · Claimed · Codex · `hadamard/first-match-atlas` · 2026-11-27
 
 - **Target** · [SIGNATURE-ATLAS](GRAPH.md#signature-atlas)
 - **Prerequisites** · [SIGNATURE](GRAPH.md#signature)

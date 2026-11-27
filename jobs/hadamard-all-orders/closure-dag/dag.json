@@ -928,7 +928,11 @@
       "node": "SIGNATURE-ATLAS",
       "mode": "research",
       "priority": "P0",
-      "claim": null,
+      "claim": {
+        "owner": "Codex",
+        "branch": "hadamard/first-match-atlas",
+        "claimed_at": "2026-11-27"
+      },
       "title": "Inventory every first selector at order 44",
       "needs": [
         "SIGNATURE"
@@ -966,7 +970,11 @@
       "node": "COLLISION",
       "mode": "research",
       "priority": "P0",
-      "claim": null,
+      "claim": {
+        "owner": "Codex",
+        "branch": "hadamard/first-match-atlas",
+        "claimed_at": "2026-11-27"
+      },
       "title": "Force the first equal integer signature",
       "needs": [
         "PIVOT",
