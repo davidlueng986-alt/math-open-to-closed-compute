@@ -1,6 +1,11 @@
 name: Erdos 617 W4 Exp3 r=6 Sharded SAT v2
 
 on:
+  push:
+    branches: [erdos617-w4-exp3-r6]
+    paths:
+      - 'jobs/erdos617-w4-exp3-r6/solve_r6_v2.py'
+      - '.github/workflows/erdos617-w4-exp3-r6-v2.yml'
   workflow_dispatch:
     inputs:
       solver:
