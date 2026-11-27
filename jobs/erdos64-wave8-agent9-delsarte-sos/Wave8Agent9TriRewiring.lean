@@ -24,16 +24,20 @@ theorem tri_rewiring_G0_nonadj_and_disjoint {V : Type*} (G : SimpleGraph V)
     ¬ G.Adj u1 u2 ∧ ¬ G.Adj v1 v2 ∧
       u1 ≠ v1 ∧ u1 ≠ v2 ∧ u2 ≠ v1 ∧ u2 ≠ v2 ∧
       ¬ G.Adj u1 v1 ∧ ¬ G.Adj u1 v2 ∧ ¬ G.Adj u2 v1 ∧ ¬ G.Adj u2 v2 := by
-  have hnu12 : ¬ G.Adj u1 u2 := fun h => hno3 u1 u u2 (G.symm hu1) hu2 h
-  have hnv12 : ¬ G.Adj v1 v2 := fun h => hno3 v1 v v2 (G.symm hv1) hv2 h
+  have hnu12 : ¬ G.Adj u1 u2 := fun h => hno3 u1 u u2 ((G.adj_comm u u1).mp hu1) hu2 h
+  have hnv12 : ¬ G.Adj v1 v2 := fun h => hno3 v1 v v2 ((G.adj_comm v v1).mp hv1) hv2 h
   have h11 : u1 ≠ v1 := fun h => hno3 u v v1 huv hv1 (h ▸ hu1)
   have h12 : u1 ≠ v2 := fun h => hno3 u v v2 huv hv2 (h ▸ hu1)
   have h21 : u2 ≠ v1 := fun h => hno3 u v v1 huv hv1 (h ▸ hu2)
   have h22 : u2 ≠ v2 := fun h => hno3 u v v2 huv hv2 (h ▸ hu2)
-  have ha11 : ¬ G.Adj u1 v1 := fun h => hno4 u v v1 u1 hv1u hu1v huv hv1 (G.symm h) (G.symm hu1)
-  have ha12 : ¬ G.Adj u1 v2 := fun h => hno4 u v v2 u1 hv2u hu1v huv hv2 (G.symm h) (G.symm hu1)
-  have ha21 : ¬ G.Adj u2 v1 := fun h => hno4 u v v1 u2 hv1u hu2v huv hv1 (G.symm h) (G.symm hu2)
-  have ha22 : ¬ G.Adj u2 v2 := fun h => hno4 u v v2 u2 hv2u hu2v huv hv2 (G.symm h) (G.symm hu2)
+  have ha11 : ¬ G.Adj u1 v1 := fun h =>
+    hno4 u v v1 u1 hv1u.symm hu1v.symm huv hv1 ((G.adj_comm u1 v1).mp h) ((G.adj_comm u u1).mp hu1)
+  have ha12 : ¬ G.Adj u1 v2 := fun h =>
+    hno4 u v v2 u1 hv2u.symm hu1v.symm huv hv2 ((G.adj_comm u1 v2).mp h) ((G.adj_comm u u1).mp hu1)
+  have ha21 : ¬ G.Adj u2 v1 := fun h =>
+    hno4 u v v1 u2 hv1u.symm hu2v.symm huv hv1 ((G.adj_comm u2 v1).mp h) ((G.adj_comm u u2).mp hu2)
+  have ha22 : ¬ G.Adj u2 v2 := fun h =>
+    hno4 u v v2 u2 hv2u.symm hu2v.symm huv hv2 ((G.adj_comm u2 v2).mp h) ((G.adj_comm u u2).mp hu2)
   exact ⟨hnu12, hnv12, h11, h12, h21, h22, ha11, ha12, ha21, ha22⟩
 
 /-- Degree preservation of `G_0 = (G - {u, v}) + {u1 u2, v1 v2}`:
@@ -47,14 +51,14 @@ theorem tri_rewiring_G0_degree_preserved {V : Type*} [DecidableEq V]
   refine ⟨?_, ?_, ?_⟩
   · rintro ⟨hu, _, hx⟩
     have hx' : x ∉ Nw.erase u := fun h => hx (Finset.mem_of_mem_erase h)
-    rw [Finset.card_insert_of_not_mem hx', Finset.card_erase_of_mem hu]
+    rw [Finset.card_insert_of_notMem hx', Finset.card_erase_of_mem hu]
     omega
   · rintro ⟨hv, _, hx⟩
     have hx' : x ∉ Nw.erase v := fun h => hx (Finset.mem_of_mem_erase h)
-    rw [Finset.card_insert_of_not_mem hx', Finset.card_erase_of_mem hv]
+    rw [Finset.card_insert_of_notMem hx', Finset.card_erase_of_mem hv]
     omega
   · rintro ⟨hu, hv⟩
-    rw [Finset.erase_eq_of_not_mem hu, Finset.erase_eq_of_not_mem hv]
+    rw [Finset.erase_eq_of_notMem hu, Finset.erase_eq_of_notMem hv]
     exact hdeg
 
 /-- **Girth-`≥ 7` `G_0` Scale-Forcing Theorem**:
