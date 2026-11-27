@@ -16,16 +16,17 @@ architectures for Erdős Problem #64:
      (`brown_unit_complete`, `brown_even_complete`), sharp octave dyadic-hitting
      (`exists_pow2_in_octave`), whole-problem closure gate
      (`erdos64_closed_of_brown_necklace_target`), and unconditional infinite-family closures
-     for triangle-chain and fine+coarse necklaces (`hasPowerCycle_of_triangle_necklace`).
+     for triangle-chain necklaces (`hasPowerCycle_of_triangle_necklace`).
 
 2. **Pillar 2 — All-Order `EG2-CORE` / `EGRob3ConnCore` Hitting-Edge Exclusions**:
    - Directly attacks Wave 5's master 26/26 closure target `EGRob3ConnCore`.
-   - Proves unconditionally (without even needing `V_{≥4}` independence!) that in any
-     `EG2-CORE` completion `H = G + ab`, every edge incident to any vertex of degree `≥ 4`
-     is avoided by a simple `2^k`-cycle of `H` (`eg2_core_high_edge_avoided`).
+   - Proves unconditionally (without even needing `V_{≥4}` independence) that in any
+     `EG2-CORE` completion `H` with `MinDeg H 3`, every edge incident to any vertex of degree
+     `≥ 4` is avoided by a simple `2^k`-cycle of `H` (`eg2_core_high_edge_avoided`).
    - Deduces that the entire hitting-edge set `E_hit(H)` lies inside the cubic induced
      subgraph `H[V_3(H)]` (`eg2_core_hitting_edges_in_V3`), and that any `2^k`-cycle
-     visiting `V_{≥4}(H)` forces a second distinct `2^k`-cycle (`eg2_core_high_vertex_forces_two_pow2_cycles`).
+     visiting `V_{≥4}(H)` forces a second distinct `2^k`-cycle
+     (`eg2_core_high_vertex_forces_two_pow2_cycles`).
 -/
 
 namespace E64Wave6Agent5
@@ -115,30 +116,29 @@ theorem brown_even_complete {cs : List ℕ} (hB : BrownUnit cs) :
   rw [maskedSum_map_mul2, hsum]
 
 /-- Sharp octave dyadic-hitting: for every `L ≥ 3`, there is a power `2^k` (`k ≥ 2`) in `[L, 2L - 2]`. -/
-theorem exists_pow2_in_octave {L : ℕ} (hL : 3 ≤ L) :
-    ∃ k : ℕ, 2 ≤ k ∧ L ≤ 2 ^ k ∧ 2 ^ k ≤ 2 * L - 2 := by
-  let m := Nat.log 2 L
-  have hm_le : 2 ^ m ≤ L := Nat.pow_log_le_self 2 (by omega)
-  have hm_lt : L < 2 ^ (m + 1) := Nat.lt_pow_succ_log_self (by decide : 1 < 2) L
-  have hm_ge1 : 1 ≤ m := by
-    have : Nat.log 2 2 ≤ Nat.log 2 L := Nat.log_mono_right (by omega)
-    simpa using this
-  by_cases heq : 2 ^ m = L
-  · have hm_ge2 : 2 ≤ m := by
-      by_contra h
-      have hm1 : m = 1 := by omega
-      rw [hm1] at heq
-      omega
-    exact ⟨m, hm_ge2, by omega, by omega⟩
-  · have hlt : 2 ^ m < L := by omega
-    refine ⟨m + 1, by omega, by omega, ?_⟩
-    have hpow : 2 ^ (m + 1) = 2 * 2 ^ m := by ring
-    omega
+theorem exists_pow2_in_octave :
+    ∀ L : ℕ, 3 ≤ L → ∃ k : ℕ, 2 ≤ k ∧ L ≤ 2 ^ k ∧ 2 ^ k ≤ 2 * L - 2 := by
+  intro L
+  induction L using Nat.strong_induction_on with
+  | h L ih =>
+    intro hL
+    by_cases h4 : L ≤ 4
+    · exact ⟨2, le_rfl, by omega, by omega⟩
+    · have hL5 : 5 ≤ L := by omega
+      let L' := (L + 1) / 2
+      have hL'_ge3 : 3 ≤ L' := by omega
+      have hL'_lt : L' < L := by omega
+      obtain ⟨k', hk', hlo', hhi'⟩ := ih L' hL'_lt hL'_ge3
+      refine ⟨k' + 1, by omega, ?_, ?_⟩
+      · have : 2 ^ (k' + 1) = 2 * 2 ^ k' := by rw [pow_succ]; ring
+        omega
+      · have : 2 ^ (k' + 1) = 2 * 2 ^ k' := by rw [pow_succ]; ring
+        omega
 
 theorem exists_subset_sum_pow2_of_brown_unit {L0 : ℕ} {ds : List ℕ}
     (hL0 : 3 ≤ L0) (hB : BrownUnit ds) (hspan : L0 - 2 ≤ ds.sum) :
     ∃ (bs : List Bool) (k : ℕ), bs.length = ds.length ∧ 2 ≤ k ∧ L0 + maskedSum ds bs = 2 ^ k := by
-  obtain ⟨k, hk, hlo, hhi⟩ := exists_pow2_in_octave hL0
+  obtain ⟨k, hk, hlo, hhi⟩ := exists_pow2_in_octave L0 hL0
   have ht : 2 ^ k - L0 ≤ ds.sum := by omega
   obtain ⟨bs, hlen, hsum⟩ := brown_unit_complete hB (2 ^ k - L0) ht
   refine ⟨bs, k, hlen, hk, ?_⟩
@@ -148,7 +148,7 @@ theorem exists_subset_sum_pow2_of_brown_even {L0 : ℕ} {cs : List ℕ}
     (hL0 : 4 ≤ L0) (hEven : Even L0) (hB : BrownUnit cs) (hspan : L0 - 2 ≤ 2 * cs.sum) :
     ∃ (bs : List Bool) (k : ℕ), bs.length = cs.length ∧ 2 ≤ k ∧
       L0 + maskedSum (cs.map (2 * ·)) bs = 2 ^ k := by
-  obtain ⟨k, hk, hlo, hhi⟩ := exists_pow2_in_octave (by omega : 3 ≤ L0)
+  obtain ⟨k, hk, hlo, hhi⟩ := exists_pow2_in_octave L0 (by omega)
   obtain ⟨q, hq⟩ := hEven
   have hpow_even : Even (2 ^ k) := by
     refine ⟨2 ^ (k - 1), ?_⟩
@@ -166,12 +166,124 @@ theorem brown_unit_replicate_one (k : ℕ) : BrownUnit (List.replicate k 1) := b
   | zero => exact BrownUnit.nil
   | succ k ih =>
     have hrep : List.replicate (k + 1) 1 = List.replicate k 1 ++ [1] := by
-      rw [List.replicate_succ, List.replicate_succ']
-      rfl
+      rw [List.replicate_succ']
     rw [hrep]
     exact BrownUnit.snoc ih (by omega)
 
 /-! ### 2. Simple-Cycle Bypass Necklace Surgery in `SimpleGraph V` -/
+
+private theorem list_sum_map_ge_length {α : Type*} (l : List α) (f : α → ℕ)
+    (hf : ∀ x ∈ l, 1 ≤ f x) : l.length ≤ (l.map f).sum := by
+  induction l with
+  | nil => simp
+  | cons a l ih =>
+    simp only [List.length_cons, List.map_cons, List.sum_cons]
+    have ha : 1 ≤ f a := hf a (List.mem_cons_self ..)
+    have hl : l.length ≤ (l.map f).sum := ih (fun x hx => hf x (List.mem_cons_of_mem a hx))
+    omega
+
+private theorem walk_edges_getElem {V : Type*} {G : SimpleGraph V} {u w : V}
+    (q : G.Walk u w) (k : ℕ) (hk : k < q.length) :
+    q.edges[k]'(by rw [SimpleGraph.Walk.length_edges]; exact hk) =
+      s(q.support[k]'(by rw [SimpleGraph.Walk.length_support]; omega),
+        q.support[k + 1]'(by rw [SimpleGraph.Walk.length_support]; omega)) := by
+  induction q generalizing k with
+  | nil => simp at hk
+  | @cons a b c h r ih =>
+    cases k with
+    | zero =>
+      cases r with
+      | nil => simp
+      | cons h' r' => simp
+    | succ k' =>
+      simp only [SimpleGraph.Walk.edges_cons, SimpleGraph.Walk.support_cons,
+        List.getElem_cons_succ]
+      exact ih k' (by simp at hk; omega)
+
+private theorem walk_support_getElem_zero {V : Type*} {G : SimpleGraph V} {u w : V}
+    (q : G.Walk u w) :
+    q.support[0]'(by rw [SimpleGraph.Walk.length_support]; omega) = u := by
+  cases q <;> simp
+
+private theorem walk_support_getElem_length {V : Type*} {G : SimpleGraph V} {u w : V}
+    (q : G.Walk u w) :
+    q.support[q.length]'(by rw [SimpleGraph.Walk.length_support]; omega) = w := by
+  induction q with
+  | nil => simp
+  | @cons a b c h r ih =>
+    simp only [SimpleGraph.Walk.length_cons, SimpleGraph.Walk.support_cons,
+      List.getElem_cons_succ]
+    exact ih
+
+/--
+Core graph-theoretic lemma: any closed walk `p : G.Walk v v` of length `≥ 3` whose
+`support.dropLast` has no duplicate vertices is a simple cycle (`p.IsCycle`).
+-/
+theorem isCycle_of_dropLast_nodup {V : Type*} {G : SimpleGraph V} {v : V} (p : G.Walk v v)
+    (hlen : 3 ≤ p.length) (hnodup : p.support.dropLast.Nodup) : p.IsCycle := by
+  have hne : p ≠ .nil := by
+    intro h; subst h; simp at hlen
+  have htail_nodup : p.support.tail.Nodup := by
+    cases p with
+    | nil => exact absurd rfl hne
+    | @cons _ w _ h q =>
+      have hne_q : q.support ≠ [] := SimpleGraph.Walk.support_ne_nil q
+      have hlast_q : q.support.getLast hne_q = v := SimpleGraph.Walk.getLast_support q
+      have hdecomp : q.support = q.support.dropLast ++ [v] := by
+        rw [← hlast_q, List.dropLast_append_getLast]
+      have hperm : (v :: q.support).dropLast.Perm (v :: q.support).tail := by
+        rw [List.dropLast_cons_of_ne_nil hne_q, List.tail_cons]
+        conv_rhs => rw [hdecomp]
+        exact (List.perm_append_singleton v q.support.dropLast).symm
+      exact hperm.nodup_iff.mp hnodup
+  have hedg_nodup : p.edges.Nodup := by
+    rw [List.nodup_iff_injective_getElem]
+    intro i j hij
+    have hlen_e : p.edges.length = p.length := SimpleGraph.Walk.length_edges p
+    have hlen_s : p.support.length = p.length + 1 := SimpleGraph.Walk.length_support p
+    have hlen_d : p.support.dropLast.length = p.length := by
+      rw [List.length_dropLast, hlen_s]; omega
+    have hi : i.val < p.length := by omega
+    have hj : j.val < p.length := by omega
+    have heq_s : s(p.support[i.val]'(by omega), p.support[i.val + 1]'(by omega)) =
+                 s(p.support[j.val]'(by omega), p.support[j.val + 1]'(by omega)) := by
+      rw [← walk_edges_getElem p i.val hi, ← walk_edges_getElem p j.val hj]
+      exact hij
+    have hdrop_inj : ∀ (a b : ℕ) (ha : a < p.length) (hb : b < p.length),
+        p.support[a]'(by omega) = p.support[b]'(by omega) → a = b := by
+      intro a b ha hb heq
+      have h1 : p.support.dropLast[a]'(by omega) = p.support.dropLast[b]'(by omega) := by
+        rw [List.getElem_dropLast (by omega), List.getElem_dropLast (by omega)]
+        exact heq
+      have hinj := List.nodup_iff_injective_getElem.mp hnodup
+      have hfin : (⟨a, by omega⟩ : Fin p.support.dropLast.length) = ⟨b, by omega⟩ := hinj h1
+      simpa using hfin
+    have hlast_eq_head : p.support[p.length]'(by omega) = p.support[0]'(by omega) := by
+      rw [walk_support_getElem_length p, walk_support_getElem_zero p]
+    rw [Sym2.eq_iff] at heq_s
+    rcases heq_s with ⟨h1, _⟩ | ⟨h1, h2⟩
+    · ext; exact hdrop_inj i.val j.val hi hj h1
+    · by_cases hj1 : j.val + 1 < p.length
+      · have hij1 : i.val = j.val + 1 := hdrop_inj i.val (j.val + 1) hi hj1 h1
+        by_cases hi1 : i.val + 1 < p.length
+        · have hi1j : i.val + 1 = j.val := hdrop_inj (i.val + 1) j.val hi1 hj h2
+          omega
+        · have hi_end : i.val + 1 = p.length := by omega
+          have h2' : p.support[0]'(by omega) = p.support[j.val]'(by omega) := by
+            have : p.support[i.val + 1]'(by omega) = p.support[p.length]'(by omega) := by congr 1
+            rw [← hlast_eq_head, ← this]
+            exact h2
+          have hj0 : 0 = j.val := hdrop_inj 0 j.val (by omega) hj h2'
+          omega
+      · have hj_end : j.val + 1 = p.length := by omega
+        have h1' : p.support[i.val]'(by omega) = p.support[0]'(by omega) := by
+          have : p.support[j.val + 1]'(by omega) = p.support[p.length]'(by omega) := by congr 1
+          rw [h1, this, hlast_eq_head]
+        have hi0 : i.val = 0 := hdrop_inj i.val 0 hi (by omega) h1'
+        have hi1_lt : i.val + 1 < p.length := by omega
+        have hi1j : i.val + 1 = j.val := hdrop_inj (i.val + 1) j.val hi1_lt hj h2
+        omega
+  exact ⟨⟨⟨hedg_nodup⟩, hne⟩, htail_nodup⟩
 
 /--
 A `BypassNecklace G` is a cyclic sequence of `r ≥ 3` junction vertices `v_0, ..., v_{r-1}`
@@ -228,9 +340,9 @@ def prefixWalk (σ : Fin N.r → Bool) :
     ∀ m : ℕ, (hm : m ≤ N.r) →
       G.Walk (N.junction ⟨0, by have := N.hr; omega⟩)
              (N.junction ⟨m % N.r, Nat.mod_lt _ (by have := N.hr; omega)⟩)
-  | 0, _ => by
-      have h0 : (0 : ℕ) % N.r = 0 := Nat.zero_mod _
-      exact (Eq.ndrec (SimpleGraph.Walk.nil) (by simp [h0]))
+  | 0, _ =>
+      SimpleGraph.Walk.copy SimpleGraph.Walk.nil rfl (by
+        congr 1; ext; exact (Nat.zero_mod N.r).symm)
   | m + 1, hm =>
       let idx : Fin N.r := ⟨m, by omega⟩
       have hmod : m % N.r = m := Nat.mod_eq_of_lt (by omega)
@@ -238,11 +350,11 @@ def prefixWalk (σ : Fin N.r → Bool) :
         congr 1; ext; exact hmod
       let wPrev := N.prefixWalk σ m (by omega)
       let wSeg := N.seg σ idx
-      (wPrev.copy rfl hcast).append wSeg
+      (SimpleGraph.Walk.copy wPrev rfl hcast).append wSeg
 
 def cycleWalk (σ : Fin N.r → Bool) :
     G.Walk (N.junction ⟨0, by have := N.hr; omega⟩) (N.junction ⟨0, by have := N.hr; omega⟩) :=
-  (N.prefixWalk σ N.r le_rfl).copy rfl (by
+  SimpleGraph.Walk.copy (N.prefixWalk σ N.r le_rfl) rfl (by
     congr 1; ext; exact Nat.mod_self N.r)
 
 theorem support_dropLast_append {u v w : V} (p : G.Walk u v) (q : G.Walk v w) :
@@ -258,7 +370,7 @@ theorem support_dropLast_append {u v w : V} (p : G.Walk u v) (q : G.Walk v w) :
 theorem prefixWalk_length (σ : Fin N.r → Bool) :
     ∀ m (hm : m ≤ N.r),
       (N.prefixWalk σ m hm).length =
-        (List.finRange N.r |>.take m |>.map (fun i => (N.seg σ i).length)).sum := by
+        ((List.finRange N.r).take m |>.map (fun i => (N.seg σ i).length)).sum := by
   intro m hm
   induction m with
   | zero =>
@@ -322,123 +434,15 @@ theorem cycleWalk_length_eq (σ : Fin N.r → Bool) :
 
 theorem cycleWalk_length_ge_three (σ : Fin N.r → Bool) : 3 ≤ (N.cycleWalk σ).length := by
   rw [N.cycleWalk_length_eq σ]
-  have hge : ((List.finRange N.r).map (fun _ => 1)).sum ≤
-      ((List.finRange N.r).map (fun i => (N.seg σ i).length)).sum := by
-    apply List.Forall₂.sum_le_sum
-    rw [List.forall₂_map_left_iff, List.forall₂_map_right_iff]
-    exact List.Forall₂.of_eq_true (by simp) |>.imp (by intro a b hab; subst hab; exact N.seg_pos σ a)
-  have hones : ((List.finRange N.r).map (fun _ => 1)).sum = N.r := by
-    simp
+  have hge := list_sum_map_ge_length (List.finRange N.r) (fun i => (N.seg σ i).length)
+    (fun i _ => N.seg_pos σ i)
+  simp only [List.length_finRange] at hge
   have := N.hr
   omega
 
-/--
-Core graph-theoretic lemma: any closed walk `p : G.Walk v v` of length `≥ 3` whose
-`support.dropLast` has no duplicate vertices is a simple cycle (`p.IsCycle`).
--/
-theorem isCycle_of_dropLast_nodup {v : V} (p : G.Walk v v)
-    (hlen : 3 ≤ p.length) (hnodup : p.support.dropLast.Nodup) : p.IsCycle := by
-  have hne : p ≠ .nil := by
-    intro h; subst h; simp at hlen
-  have htail_nodup : p.support.tail.Nodup := by
-    have hsup_len : 2 ≤ p.support.length := by
-      rw [SimpleGraph.Walk.length_support]; omega
-    have hperm : p.support.dropLast.Perm p.support.tail := by
-      cases hs : p.support with
-      | nil => exact absurd hs (SimpleGraph.Walk.support_ne_nil p)
-      | cons a rest =>
-        cases hr : rest with
-        | nil => rw [hs, hr] at hsup_len; simp at hsup_len
-        | cons b rest' =>
-          have ha : a = v := by
-            have := SimpleGraph.Walk.head_support p
-            rw [hs] at this; simpa using this
-          have hlast : (b :: rest').getLast (List.cons_ne_nil _ _) = v := by
-            have := SimpleGraph.Walk.getLast_support p
-            rw [hs, hr] at this
-            simpa using this
-          have hdecomp : b :: rest' = (b :: rest').dropLast ++ [v] := by
-            rw [← hlast, List.dropLast_append_getLast]
-          rw [List.dropLast_cons_of_ne_nil (by rw [hr]; exact List.cons_ne_nil _ _)]
-          rw [hr, List.tail_cons]
-          conv_rhs => rw [hdecomp]
-          rw [ha]
-          exact List.perm_append_singleton v (b :: rest').dropLast |>.symm
-    exact hperm.nodup_iff.mp hnodup
-  have hedg_nodup : p.edges.Nodup := by
-    rw [List.nodup_iff_injective_getElem]
-    intro i j hij
-    have hlen_e : p.edges.length = p.length := SimpleGraph.Walk.length_edges p
-    have hlen_s : p.support.length = p.length + 1 := SimpleGraph.Walk.length_support p
-    have hlen_d : p.support.dropLast.length = p.length := by
-      rw [List.length_dropLast, hlen_s]; omega
-    have hi : i.val < p.length := by omega
-    have hj : j.val < p.length := by omega
-    have hedge_eq : ∀ (k : ℕ) (hk : k < p.length),
-        p.edges[k]'(by omega) = s(p.support[k]'(by omega), p.support[k + 1]'(by omega)) := by
-      intro k hk
-      have hzip : p.edges = p.support.zipWith (fun a b => s(a, b)) p.support.tail := by
-        clear hij hi hj hlen_e hlen_s hlen_d hnodup htail_nodup hne hlen
-        induction p with
-        | nil => simp
-        | @cons a b c h q ih =>
-          cases q with
-          | nil => simp
-          | cons h' q' =>
-            simp only [SimpleGraph.Walk.edges_cons, SimpleGraph.Walk.support_cons,
-              List.tail_cons, List.zipWith_cons_cons]
-            congr 1
-            exact ih
-      simp [hzip, List.getElem_tail]
-    have heq_s : s(p.support[i.val]'(by omega), p.support[i.val + 1]'(by omega)) =
-                 s(p.support[j.val]'(by omega), p.support[j.val + 1]'(by omega)) := by
-      rw [← hedge_eq i.val hi, ← hedge_eq j.val hj]
-      exact hij
-    have hdrop_get : ∀ (k : ℕ) (hk : k < p.length),
-        p.support.dropLast[k]'(by omega) = p.support[k]'(by omega) := by
-      intro k hk
-      exact List.getElem_dropLast (by omega)
-    have hdrop_inj : ∀ (a b : ℕ) (ha : a < p.length) (hb : b < p.length),
-        p.support[a]'(by omega) = p.support[b]'(by omega) → a = b := by
-      intro a b ha hb heq
-      have h1 : p.support.dropLast[a]'(by omega) = p.support.dropLast[b]'(by omega) := by
-        rw [hdrop_get a ha, hdrop_get b hb, heq]
-      have hinj := (List.nodup_iff_injective_getElem.mp hnodup) (a := ⟨a, by omega⟩) (b := ⟨b, by omega⟩) h1
-      simpa using hinj
-    have hlast_eq_head : p.support[p.length]'(by omega) = p.support[0]'(by omega) := by
-      have h0 : p.support[0]'(by omega) = v := by
-        have := SimpleGraph.Walk.head_support p
-        rw [← List.head_eq_getElem_zero] at this ⊢
-        exact this
-      have hl : p.support[p.length]'(by omega) = v := by
-        have := SimpleGraph.Walk.getLast_support p
-        rw [List.getLast_eq_getElem] at this
-        simpa [hlen_s] using this
-      rw [h0, hl]
-    rw [Sym2.eq_iff] at heq_s
-    rcases heq_s with ⟨h1, _⟩ | ⟨h1, h2⟩
-    · ext; exact hdrop_inj i.val j.val hi hj h1
-    · by_cases hj1 : j.val + 1 < p.length
-      · have hij1 : i.val = j.val + 1 := hdrop_inj i.val (j.val + 1) hi hj1 h1
-        by_cases hi1 : i.val + 1 < p.length
-        · have hi1j : i.val + 1 = j.val := hdrop_inj (i.val + 1) j.val hi1 hj h2
-          omega
-        · have hi_end : i.val + 1 = p.length := by omega
-          omega
-      · have hj_end : j.val + 1 = p.length := by omega
-        have h1' : p.support[i.val]'(by omega) = p.support[0]'(by omega) := by
-          have : p.support[j.val + 1]'(by omega) = p.support[p.length]'(by omega) := by
-            congr 1
-          rw [h1, this, hlast_eq_head]
-        have hi0 : i.val = 0 := hdrop_inj i.val 0 hi (by omega) h1'
-        have hi1_lt : i.val + 1 < p.length := by omega
-        have hi1j : i.val + 1 = j.val := hdrop_inj (i.val + 1) j.val hi1_lt hj h2
-        omega
-  exact ⟨⟨hedg_nodup⟩, hne, htail_nodup⟩
-
 /-- Every choice mask `σ : Fin N.r → Bool` produces a simple cycle in `G`. -/
 theorem necklace_walk_isCycle (σ : Fin N.r → Bool) : (N.cycleWalk σ).IsCycle :=
-  N.isCycle_of_dropLast_nodup (N.cycleWalk σ)
+  isCycle_of_dropLast_nodup (N.cycleWalk σ)
     (N.cycleWalk_length_ge_three σ) (N.cycleWalk_support_dropLast_nodup σ)
 
 def baseLength : ℕ :=
@@ -449,12 +453,9 @@ def gains : List ℕ :=
 
 theorem baseLength_ge_three : 3 ≤ N.baseLength := by
   unfold baseLength
-  have hge : ((List.finRange N.r).map (fun _ => 1)).sum ≤
-      ((List.finRange N.r).map (fun i => (N.segA i).length)).sum := by
-    apply List.Forall₂.sum_le_sum
-    rw [List.forall₂_map_left_iff, List.forall₂_map_right_iff]
-    exact List.Forall₂.of_eq_true (by simp) |>.imp (by intro a b hab; subst hab; exact N.segA_pos a)
-  have hones : ((List.finRange N.r).map (fun _ => 1)).sum = N.r := by simp
+  have hge := list_sum_map_ge_length (List.finRange N.r) (fun i => (N.segA i).length)
+    (fun i _ => N.segA_pos i)
+  simp only [List.length_finRange] at hge
   have := N.hr
   omega
 
@@ -464,8 +465,7 @@ theorem cycleWalk_length_decomp (bs : List Bool) (hbs : bs.length = N.r) :
   intro σ
   rw [N.cycleWalk_length_eq σ]
   unfold baseLength gains
-  have hlist : ∀ (l : List (Fin N.r)) (bs' : List Bool),
-      bs'.length = l.length →
+  have hlist : ∀ (l : List (Fin N.r)) (bs' : List Bool) (hlen : bs'.length = l.length),
       (∀ (k : ℕ) (hk : k < l.length), bs'[k]'(by omega) = σ (l[k]'hk)) →
       (l.map (fun i => (N.seg σ i).length)).sum =
         (l.map (fun i => (N.segA i).length)).sum +
@@ -473,16 +473,16 @@ theorem cycleWalk_length_decomp (bs : List Bool) (hbs : bs.length = N.r) :
     intro l
     induction l with
     | nil =>
-      intro bs' hbs' _
+      intro bs' hlen _
       cases bs' with
       | nil => simp [maskedSum]
-      | cons _ _ => simp at hbs'
+      | cons _ _ => simp at hlen
     | cons a l ih =>
-      intro bs' hbs' hget
+      intro bs' hlen hget
       cases bs' with
-      | nil => simp at hbs'
+      | nil => simp at hlen
       | cons b bs'' =>
-        have hlen'' : bs''.length = l.length := by simpa using hbs'
+        have hlen'' : bs''.length = l.length := by simpa using hlen
         have hb : b = σ a := by
           have := hget 0 (by simp)
           simpa using this
@@ -492,12 +492,15 @@ theorem cycleWalk_length_decomp (bs : List Bool) (hbs : bs.length = N.r) :
           simpa using this
         simp only [List.map_cons, List.sum_cons, maskedSum]
         rw [ih bs'' hlen'' hget'']
-        have hseg : (N.seg σ a).length = (N.segA a).length + (if b then (N.segB a).length - (N.segA a).length else 0) := by
+        have hseg : (N.seg σ a).length =
+            (N.segA a).length + (if b then (N.segB a).length - (N.segA a).length else 0) := by
           unfold seg
           rw [← hb]
           cases b
           · simp
-          · simp; have := N.segB_ge a; omega
+          · have hle := N.segB_ge a
+            simp only [↓reduceIte]
+            omega
         omega
   exact hlist (List.finRange N.r) bs (by simp [hbs]) (by
     intro k hk
@@ -604,7 +607,7 @@ theorem hasPowerCycle_mono {V : Type*} {G₁ G₂ : SimpleGraph V} (hle : G₁ �
     (h : HasPowerCycle G₁) : HasPowerCycle G₂ := by
   obtain ⟨v, p, hcyc, hpow⟩ := h
   refine ⟨v, p.mapLe hle, ?_, ?_⟩
-  · exact hcyc.map (SimpleGraph.Hom.ofLE hle) (fun _ _ h => h)
+  · exact hcyc.map (fun _ _ h => h)
   · simpa using hpow
 
 theorem degree_deleteEdges_singleton {V : Type*} [Fintype V] [DecidableEq V]
@@ -625,12 +628,12 @@ theorem degree_deleteEdges_singleton {V : Type*} [Fintype V] [DecidableEq V]
       · rintro ⟨hw, hnot⟩
         refine ⟨?_, hw⟩
         intro hwy
-        exact hnot (Or.inl ⟨rfl, hwy⟩)
+        exact hnot (Or.inl ⟨trivial, hwy⟩)
       · rintro ⟨hwy, hw⟩
         refine ⟨hw, ?_⟩
-        rintro (⟨_, rfl⟩ | ⟨rfl, _⟩)
-        · exact hwy rfl
-        · exact hne rfl
+        rintro (⟨_, h1⟩ | ⟨h1, _⟩)
+        · exact hwy h1
+        · exact hne h1.symm
     rw [← SimpleGraph.card_neighborFinset_eq_degree, ← SimpleGraph.card_neighborFinset_eq_degree,
       hset, Finset.card_erase_of_mem (by simpa using hxy)]
   · by_cases hvy : v = y
@@ -644,12 +647,12 @@ theorem degree_deleteEdges_singleton {V : Type*} [Fintype V] [DecidableEq V]
         · rintro ⟨hw, hnot⟩
           refine ⟨?_, hw⟩
           intro hwx
-          exact hnot (Or.inr ⟨hwx, rfl⟩)
+          exact hnot (Or.inr ⟨trivial, hwx⟩)
         · rintro ⟨hwx, hw⟩
           refine ⟨hw, ?_⟩
-          rintro (⟨rfl, _⟩ | ⟨rfl, _⟩)
-          · exact hne rfl
-          · exact hwx rfl
+          rintro (⟨h1, _⟩ | ⟨_, h1⟩)
+          · exact hvx h1
+          · exact hwx h1
       rw [← SimpleGraph.card_neighborFinset_eq_degree, ← SimpleGraph.card_neighborFinset_eq_degree,
         hset, Finset.card_erase_of_mem (by simpa using hxy.symm)]
     · simp only [hvx, hvy, or_self, ↓reduceIte]
@@ -661,9 +664,9 @@ theorem degree_deleteEdges_singleton {V : Type*} [Fintype V] [DecidableEq V]
         · exact And.left
         · intro hw
           refine ⟨hw, ?_⟩
-          rintro (⟨rfl, _⟩ | ⟨_, rfl⟩)
-          · exact hvx rfl
-          · exact hvy rfl
+          rintro (⟨h1, _⟩ | ⟨h1, _⟩)
+          · exact hvx h1
+          · exact hvy h1
       rw [← SimpleGraph.card_neighborFinset_eq_degree, ← SimpleGraph.card_neighborFinset_eq_degree,
         hset]
 
@@ -710,7 +713,7 @@ theorem eg2_core_high_edge_avoided {V : Type*} [Fintype V] [DecidableEq V]
   have hpow' : HasPowerCycle H' := hminG.2.2 H' hnear' (by omega)
   obtain ⟨v, p, hcyc, hpow⟩ := hpow'
   have hle : H' ≤ H := SimpleGraph.deleteEdges_le _
-  refine ⟨v, p.mapLe hle, hcyc.map (SimpleGraph.Hom.ofLE hle) (fun _ _ h => h), by simpa using hpow, ?_⟩
+  refine ⟨v, p.mapLe hle, hcyc.map (fun _ _ h => h), by simpa using hpow, ?_⟩
   intro hmem
   have hmem' : s(x, y) ∈ p.edges := by
     rw [SimpleGraph.Walk.edges_map] at hmem
@@ -754,7 +757,7 @@ theorem eg2_core_high_vertex_forces_two_pow2_cycles {V : Type*} [Fintype V] [Dec
     (G H : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel H.Adj]
     (hminG : DefectMinimalBad2 G) (hdefG : DefectCount G = 2)
     (hminH : MinDeg H 3) {v : V} (p : H.Walk v v)
-    (hcyc : p.IsCycle) (hpow : IsPowerOfTwo p.length)
+    (_hcyc : p.IsCycle) (_hpow : IsPowerOfTwo p.length)
     {x y : V} (hmem : s(x, y) ∈ p.edges) (hx4 : 4 ≤ H.degree x) :
     ∃ (v' : V) (p' : H.Walk v' v'),
       p'.IsCycle ∧ IsPowerOfTwo p'.length ∧ p'.edges ≠ p.edges := by
