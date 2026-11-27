@@ -496,7 +496,7 @@ lemma AdjusterNecklace.seg_adj {V : Type*} {G : SimpleGraph V} {r : ℕ}
   by_cases hc : choice i = true
   · simp only [seg, hc] at hk ⊢
     exact N.h_long_adj i k hk
-  · simp only [seg, hc, ↓reduceIte] at hk ⊢
+  · simp only [seg, hc] at hk ⊢
     exact N.h_short_adj i k hk
 
 lemma list_chain_adj_append {V : Type*} {G : SimpleGraph V}
