@@ -58,10 +58,10 @@ def LocallyNB {V : Type*} {G : SimpleGraph V} : ∀ {u v : V}, G.Walk u v → Pr
   | _, _, .cons (u := a) _ (.cons (v := c) h₂ rest) =>
       a ≠ c ∧ LocallyNB (.cons h₂ rest)
 
-/-- First vertex after the start of a walk (or start vertex if `nil`). -/
+/-- First vertex immediately after the start of a walk (or start vertex if `nil`). -/
 def firstVert {V : Type*} {G : SimpleGraph V} : ∀ {u v : V}, G.Walk u v → V
   | u, _, .nil => u
-  | _, b, .cons _ _ => b
+  | _, _, .cons (v := b) _ _ => b
 
 /-- Penultimate vertex before the end of a walk (or start vertex if `nil`). -/
 def penultVert {V : Type*} {G : SimpleGraph V} : ∀ {u v : V}, G.Walk u v → V
@@ -209,7 +209,7 @@ theorem closedNB_lt_two_girth_isCycle {V : Type*} {G : SimpleGraph V} {g : ℕ}
   | cons h q =>
     apply Walk.isCycle_iff_isPath_tail_and_le_length.mpr
     refine ⟨Walk.IsPath.mk' ?_, h3⟩
-    simp only [Walk.tail_cons]
+    simp only [Walk.tail_cons, Walk.support_copy]
     by_contra hnd
     obtain ⟨x, p₁, sub, p₂, hsub_pos, hqeq⟩ := split_not_nodup q hnd
     have hnb_q : LocallyNB q := by
@@ -229,7 +229,8 @@ theorem closedNB_lt_two_girth_isCycle {V : Type*} {G : SimpleGraph V} {g : ℕ}
       exact locallyNB_append_left (Walk.cons h p₁) (sub.append p₂) hloc
     let r : G.Walk x x := p₂.append (Walk.cons h p₁)
     have hr_pos : 1 ≤ r.length := by
-      simp [r, Walk.length_append]
+      simp only [r, Walk.length_append, Walk.length_cons]
+      omega
     have hr_nb : LocallyNB r := by
       apply locallyNB_append_of_ne p₂ (Walk.cons h p₁) hnb_p₂ hnb_cons_p₁
       intro hp2_pos _
@@ -282,8 +283,8 @@ def nbPoly (q x : ℝ) : ℕ → ℝ
 
 /-- Perron eigenvalue evaluation: `T_m^{(q)}(q + 1) = q^m + 1` for all `m ∈ ℕ`. -/
 theorem nbPoly_perron (q : ℝ) : ∀ m : ℕ, nbPoly q (q + 1) m = q ^ m + 1
-  | 0 => by simp [nbPoly]; ring
-  | 1 => by simp [nbPoly]; ring
+  | 0 => by simp [nbPoly]; norm_num
+  | 1 => by simp [nbPoly]
   | n + 2 => by
       simp only [nbPoly]
       rw [nbPoly_perron q (n + 1), nbPoly_perron q n]
