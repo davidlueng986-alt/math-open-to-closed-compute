@@ -9,15 +9,8 @@ echo "Using Mathlib workspace: ${LAKE_DIR}"
 
 mkdir -p out
 
-# Copy file into temporary build location or run directly with lake env lean
 lake --dir="${LAKE_DIR}" env lean -DwarningAsError=true jobs/erdos64-wave6-agent1-egrob-closure/Wave6Agent1EGRob3ConnCore.lean 2>&1 | tee out/lean_compile.log
 
-cat << 'EOF' > out/Audit.lean
-import Mathlib
-import jobs.erdos64-wave6-agent1-egrob-closure.Wave6Agent1EGRob3ConnCore
-EOF
-
-# Run axiom audit by appending #print axioms to a temporary copy
 cp jobs/erdos64-wave6-agent1-egrob-closure/Wave6Agent1EGRob3ConnCore.lean out/AuditFile.lean
 cat << 'EOF' >> out/AuditFile.lean
 
@@ -35,8 +28,11 @@ cat << 'EOF' >> out/AuditFile.lean
 #print axioms E64Wave6Agent1.minimal_bad2_trifree_v3_density_8_11
 #print axioms E64Wave6Agent1.identGraph_cycle_lifts_to_dyadic_path
 #print axioms E64Wave6Agent1.minimal_bad2_dist3_all_pairs_dyadic_path
+#print axioms E64Wave6Agent1.minimal_bad2_defect_to_any_dyadic_path
 #print axioms E64Wave6Agent1.minimal_bad2_non_triangle_edge_dyadic_plus_one_cycle
 #print axioms E64Wave6Agent1.minimal_bad2_adjacent_two_vertex_cut_normal_form
+#print axioms E64Wave6Agent1.minimal_bad2_two_cut_fermat_disjoint
+#print axioms E64Wave6Agent1.eg_rob_3conn_core_sharp_implies_erdos64
 EOF
 
 lake --dir="${LAKE_DIR}" env lean -DwarningAsError=true out/AuditFile.lean 2>&1 | tee out/axioms.log
@@ -63,7 +59,7 @@ with open("jobs/erdos64-wave6-agent1-egrob-closure/Wave6Agent1EGRob3ConnCore.lea
     sha = hashlib.sha256(f.read()).hexdigest()
 
 res = {
-    "status": "PASS" if (len(axioms) >= 16 and not disallowed) else "FAIL",
+    "status": "PASS" if (len(axioms) == 19 and not disallowed) else "FAIL",
     "module": "Wave6Agent1EGRob3ConnCore",
     "audited_count": len(axioms),
     "disallowed_axioms": disallowed,
