@@ -21,22 +21,24 @@ theorem nonSimple_barbell_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
     {g k : ℕ} (hreg : ∀ v : V, G.degree v = 3) (hg : GirthAtLeast G g) (hg6 : 6 ≤ g)
     (hnp : ¬ HasPower G) (hk4 : 4 ≤ k) (hk6 : k ≤ 6) (hLt : 2 ^ k < 3 * g) :
     let L := 2 ^ k
-    let NS := ((Finset.univ : Finset V).sigma fun v => nbWalks G L v v).filter
+    haveI : DecidablePred (fun x : Σ v : V, {p : G.Walk v v // p.length = L} =>
+      IsCyclicallyNonBacktracking x.2.1 ∧ ¬ x.2.1.IsCycle) := Classical.decPred _
+    let NS := ((Finset.univ : Finset V).sigma fun v => nbWalksSub G L v v).filter
       fun x => IsCyclicallyNonBacktracking x.2.1 ∧ ¬ x.2.1.IsCycle
     haveI : DecidablePred (isBarbellElem G g L) := Classical.decPred _
     (NS.filter (isBarbellElem G g L)).card ≤
       ∑ r ∈ Finset.range L, barbellTerm g L r * taillessCount G r := by
-  intro L NS _
+  intro L _ NS _
   set s := (g - 1) / 2
   have hL1 : 1 ≤ L := Nat.one_le_two_pow
   have hnot_pow2_cycle : ∀ {z : V} (c : G.Walk z z), c.IsCycle → ¬ isPow2Small c.length = true := by
     intro z c hc hp2
     obtain ⟨m, hm, hlen⟩ := isPow2Small_spec hp2
     exact hnp ⟨m, z, c, hm, hc, hlen⟩
-  let TL (r : ℕ) := ((Finset.univ : Finset V).sigma fun v => nbWalks G r v v).filter
+  let TL (r : ℕ) := ((Finset.univ : Finset V).sigma fun v => nbWalksSub G r v v).filter
     fun x => IsCyclicallyNonBacktracking x.2.1
-  have hTL_card : ∀ r, (TL r).card = taillessCount G r := fun r => by
-    simp only [TL, taillessCount, Finset.filter_sigma, Finset.card_sigma]
+  have hTL_card : ∀ r, (TL r).card = taillessCount G r := fun r =>
+    taillessCount_eq_card_sub G r
   let NS_bar := NS.filter (isBarbellElem G g L)
   change NS_bar.card ≤ _
   let isBarPR (p r₁ : ℕ) (x : Σ v : V, {q : G.Walk v v // q.length = L}) : Prop :=
@@ -104,7 +106,7 @@ theorem nonSimple_barbell_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
   simp only [Finset.mem_filter, Finset.mem_range] at hp
   set r₂ := L - 2 * p - r₁
   by_cases hcond : g ≤ r₁ ∧ r₁ ≤ r₂ ∧ ¬ isPow2Small r₁ ∧ ¬ isPow2Small r₂
-  · rw [if_pos hcond]
+  · simp only [hcond, ↓reduceIte]
     let S_pr := NS_bar.filter (isBarPR p r₁)
     let u3Set (c1 : Σ u : V, {q : G.Walk u u // q.length = r₁}) : Finset V :=
       ((G.neighborFinset c1.1).erase c1.2.1.snd).erase c1.2.1.reverse.snd
@@ -130,7 +132,7 @@ theorem nonSimple_barbell_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
           2 * 2 ^ (p - 1 + (r₂ - 2 - s)) := by
         intro c1 hc1_mem
         have hu3_card : (u3Set c1).card ≤ 1 := by
-          simp only [TL, Finset.mem_filter, Finset.mem_sigma, Finset.mem_univ, true_and, nbWalks] at hc1_mem
+          simp only [TL, Finset.mem_filter, Finset.mem_sigma, Finset.mem_univ, true_and, mem_nbWalksSub_iff] at hc1_mem
           have hcyc1 := hc1_mem.2
           have hsnd_adj : G.Adj c1.1 c1.2.1.snd := by
             cases hq : c1.2.1 with
@@ -341,13 +343,14 @@ theorem nonSimple_barbell_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
               ⟨j₀, ⟨u₀, ⟨c₁₀, hc₁₀⟩⟩, u3, ⟨w₀, ⟨Ptail, hPtail_len⟩⟩, v1, v2, ⟨mid, by omega⟩⟩
             refine ⟨y, ?_, ?_, rfl⟩
             · simp only [Param, Finset.mem_sigma, Finset.mem_univ, true_and, TL, Finset.mem_filter,
-                nbWalks, mem_finsetWalkLength_iff, u3Set, Finset.mem_erase, SimpleGraph.mem_neighborFinset,
+                mem_nbWalksSub_iff, u3Set, Finset.mem_erase, SimpleGraph.mem_neighborFinset,
                 nbWalksAvoid, nbWalksBetweenAvoid]
-              refine ⟨⟨⟨hc₁₀, hnb_c1⟩, hc₁₀_cnb⟩, ⟨hu3_ne_rev, hu3_ne_snd, hu3⟩,
-                ⟨⟨hPtail_len, hnb_Ptail⟩, hfn_Ptail⟩, ⟨hv1_ne_prev, hv1⟩,
-                ⟨hv12.symm, hv2_ne_prev, hv2.symm⟩, ⟨⟨by omega, hmid_nb⟩, hmid_fn⟩⟩
+              refine ⟨⟨hnb_c1, hc₁₀_cnb⟩, ⟨hu3_ne_rev, hu3_ne_snd, hu3⟩,
+                ⟨hnb_Ptail, hfn_Ptail⟩, ⟨hv1_ne_prev, hv1⟩,
+                ⟨hv12.symm, hv2_ne_prev, hv2.symm⟩, ⟨hmid_nb, hmid_fn⟩⟩
             · dsimp only [evalParam, y]
-              rw [dif_pos ⟨hu3, hv1, hv2⟩]
+              have hcond_e : G.Adj u₀ u3 ∧ G.Adj w₀ v1 ∧ G.Adj v2 w₀ := ⟨hu3, hv1, hv2⟩
+              simp only [hcond_e, ↓reduceDIte]
               congr 1
               have hc2_eq' : Walk.cons hv1 (mid.append (Walk.cons hv2 .nil)) = c₂₀ := hc₂_eq.symm
               simpa only [hc2_eq'] using hunr₀
@@ -433,7 +436,7 @@ theorem nonSimple_barbell_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
       refine ⟨y', hy'_mem, hy'_ev, fun heq => hj'_ne ?_⟩
       rw [← hy'_j, ← hy_j, heq]
     by_cases heq12 : r₁ = r₂
-    · rw [if_pos heq12]
+    · simp only [heq12, ↓reduceIte]
       have h2le : 2 * S_pr.card ≤ Param.card := by
         have hcard_prod : (S_pr.product (Finset.univ : Finset (Fin 2))).card = 2 * S_pr.card := by
           rw [Finset.card_product, Finset.card_univ, Fintype.card_fin, mul_comm]
@@ -451,18 +454,18 @@ theorem nonSimple_barbell_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
           · rintro ⟨x, b⟩ hxb
             simp only [Finset.mem_product, Finset.mem_univ, and_true] at hxb
             dsimp only [f']
-            rw [dif_pos hxb]
+            simp only [hxb, ↓reduceDIte]
             split_ifs
             · exact (Classical.choose_spec (hpre x hxb)).1
             · exact (Classical.choose_spec ((Classical.choose_spec (hpre x hxb)).2.2 heq12)).1
           · rintro ⟨x₁, b₁⟩ h₁ ⟨x₂, b₂⟩ h₂ heq
             simp only [Finset.mem_product, Finset.mem_univ, and_true] at h₁ h₂
             have hev1 : evalParam (f' (x₁, b₁)) = some x₁ := by
-              dsimp only [f']; rw [dif_pos h₁]; split_ifs
+              dsimp only [f']; simp only [h₁, ↓reduceDIte]; split_ifs
               · exact (Classical.choose_spec (hpre x₁ h₁)).2.1
               · exact (Classical.choose_spec ((Classical.choose_spec (hpre x₁ h₁)).2.2 heq12)).2.1
             have hev2 : evalParam (f' (x₂, b₂)) = some x₂ := by
-              dsimp only [f']; rw [dif_pos h₂]; split_ifs
+              dsimp only [f']; simp only [h₂, ↓reduceDIte]; split_ifs
               · exact (Classical.choose_spec (hpre x₂ h₂)).2.1
               · exact (Classical.choose_spec ((Classical.choose_spec (hpre x₂ h₂)).2.2 heq12)).2.1
             have hx_eq : x₁ = x₂ := by
@@ -474,13 +477,11 @@ theorem nonSimple_barbell_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
               · rfl
               · exfalso
                 dsimp only [f'] at heq
-                rw [dif_pos h₁] at heq
-                simp only [↓reduceIte, Fin.one_eq_zero_iff, OfNat.one_ne_ofNat] at heq
+                simp only [h₁, ↓reduceDIte, ↓reduceIte, Fin.one_eq_zero_iff, OfNat.one_ne_ofNat] at heq
                 exact (Classical.choose_spec ((Classical.choose_spec (hpre x₁ h₁)).2.2 heq12)).2.2 heq.symm
               · exfalso
                 dsimp only [f'] at heq
-                rw [dif_pos h₁] at heq
-                simp only [↓reduceIte, Fin.one_eq_zero_iff, OfNat.one_ne_ofNat] at heq
+                simp only [h₁, ↓reduceDIte, ↓reduceIte, Fin.one_eq_zero_iff, OfNat.one_ne_ofNat] at heq
                 exact (Classical.choose_spec ((Classical.choose_spec (hpre x₁ h₁)).2.2 heq12)).2.2 heq
               · rfl
             rw [hb_eq]
@@ -491,7 +492,7 @@ theorem nonSimple_barbell_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
           _ ≤ 2 * L * 2 ^ (p - 1 + (r₂ - 2 - s)) * taillessCount G r₁ := hParam_card
           _ = 2 * (L * 2 ^ (p - 1 + (r₂ - 2 - s)) * taillessCount G r₁) := by ring
       omega
-    · rw [if_neg heq12]
+    · simp only [heq12, ↓reduceIte]
       by_cases hne : S_pr.Nonempty
       · obtain ⟨x0, hx0⟩ := hne
         let y0 := Classical.choose (hpre x0 hx0)
@@ -499,16 +500,16 @@ theorem nonSimple_barbell_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
           if h : x ∈ S_pr then Classical.choose (hpre x h) else y0
         have hle1 : S_pr.card ≤ Param.card := by
           refine Finset.card_le_card_of_injOn f' ?_ ?_
-          · intro x hx; dsimp only [f']; rw [dif_pos hx]; exact (Classical.choose_spec (hpre x hx)).1
+          · intro x hx; dsimp only [f']; simp only [hx, ↓reduceDIte]; exact (Classical.choose_spec (hpre x hx)).1
           · intro x₁ h₁ x₂ h₂ heq
             have hev1 : evalParam (f' x₁) = some x₁ := by
-              dsimp only [f']; rw [dif_pos h₁]; exact (Classical.choose_spec (hpre x₁ h₁)).2.1
+              dsimp only [f']; simp only [h₁, ↓reduceDIte]; exact (Classical.choose_spec (hpre x₁ h₁)).2.1
             have hev2 : evalParam (f' x₂) = some x₂ := by
-              dsimp only [f']; rw [dif_pos h₂]; exact (Classical.choose_spec (hpre x₂ h₂)).2.1
+              dsimp only [f']; simp only [h₂, ↓reduceDIte]; exact (Classical.choose_spec (hpre x₂ h₂)).2.1
             exact Option.some.inj (hev1.symm.trans (congrArg evalParam heq |>.trans hev2))
         exact le_trans hle1 hParam_card
       · rw [Finset.not_nonempty_iff_eq_empty] at hne; simp [hne]
-  · rw [if_neg hcond, zero_mul]
+  · simp only [hcond, ↓reduceIte, zero_mul]
     have hemp : NS_bar.filter (isBarPR p r₁) = ∅ := by
       rw [Finset.eq_empty_iff_forall_notMem]
       intro x hx
