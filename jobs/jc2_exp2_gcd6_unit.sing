@@ -3,7 +3,7 @@
 //   - 2*M*T' - M'*T = 18*A*(A'*r - A*r')  (degrees 23..5; t20..t3 solved uniquely with integer denoms)
 //   - coeff_d(T^2 - 9*p_L*A^2) = 0        (degrees 30..23; degrees 40..31 vanish identically!)
 //   - w * b2 - 1 = 0                      (b2 != 0 from ord_w Delta D = 10)
-// Eliminates a1 from eq30 (const coeff -81/16) and a0 from eq29 (const coeff -648/7) -> ONLY 5 vars!
+// Eliminates a1 from eq30 (const coeff -81/16) and a0 from eq29 (const coeff -81/7) -> ONLY 5 vars!
 // Proves 1 in I_top over Q via BOTH exact modStd(I, 1) AND direct deterministic slimgb over Q!
 
 LIB "modstd.lib";
@@ -109,12 +109,12 @@ poly eq25 = ucoeff(sqDiff, 25);
 poly eq24 = ucoeff(sqDiff, 24);
 poly eq23 = ucoeff(sqDiff, 23);
 
-// Sanity-check exact rational coefficients against independent SymPy values!
+// Exact rational elimination of a1 from eq30 and a0 from eq29 (constant pivots!)
 if (diff(eq30, a1) != number(-81)/number(16)) { printf("ERROR: eq30 a1 coeff = %s", diff(eq30, a1)); quit; }
 poly a1_sol = subst(eq30, a1, 0) * (number(16)/number(81));
 poly eq29_s = subst(eq29, a1, a1_sol);
-if (diff(eq29_s, a0) != number(-648)/number(7)) { printf("ERROR: eq29 a0 coeff = %s", diff(eq29_s, a0)); quit; }
-poly a0_sol = subst(eq29_s, a0, 0) * (number(7)/number(648));
+if (diff(eq29_s, a0) != number(-81)/number(7)) { printf("ERROR: eq29 a0 coeff = %s", diff(eq29_s, a0)); quit; }
+poly a0_sol = subst(eq29_s, a0, 0) * (number(7)/number(81));
 
 poly f28 = subst(subst(eq28, a1, a1_sol), a0, a0_sol);
 poly f27 = subst(subst(eq27, a1, a1_sol), a0, a0_sol);
