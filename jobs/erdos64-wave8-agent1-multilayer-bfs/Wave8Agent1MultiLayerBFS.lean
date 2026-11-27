@@ -753,18 +753,18 @@ private theorem realize_edges_nodup {G : SimpleGraph V} :
         | nil =>
             rw [hrb, Walk.support_nil, List.mem_singleton] at hm
             subst hm
-            have hend : w ∈ p0.support.tail := by
+            have hend : z ∈ p0.support.tail := by
               rw [support_tail_eq_internals_append_end' p0 hp0, List.mem_append]
               exact Or.inr (List.mem_singleton.mpr rfl)
             exact Or.inr (Or.inl hend)
         | cons h1 r1 =>
             rw [hrb, Walk.support_cons, List.mem_cons] at hm
             rcases hm with rfl | hws
-            · have hend : w ∈ p0.support.tail := by
+            · have hend : z ∈ p0.support.tail := by
                 rw [support_tail_eq_internals_append_end' p0 hp0, List.mem_append]
                 exact Or.inr (List.mem_singleton.mpr rfl)
               exact Or.inr (Or.inl hend)
-            · exact Or.inr (Or.inr (by rw [hrb, Walk.support_cons, List.tail_cons]; exact hws))
+            · exact Or.inr (Or.inr (by rw [Walk.support_cons, List.tail_cons]; exact hws))
       have ih := realize_edges_nodup rest bs hlen hrb_nd halt_nd.2.1 hrest_disj
       simp only [realize, Walk.edges_append, List.nodup_append]
       refine ⟨hseg_nd, ⟨hp0_nd, ih, ?_⟩, ?_⟩
@@ -783,7 +783,7 @@ private theorem realize_edges_nodup {G : SimpleGraph V} :
               rw [hps, Walk.support_cons, List.mem_cons] at hz_p0
               rcases hz_p0 with rfl | ht
               · exact Or.inl (Walk.end_mem_support seg)
-              · exact Or.inr (Or.inl (by rw [hps, Walk.support_cons, List.tail_cons]; exact ht))
+              · exact Or.inr (Or.inl (by rw [Walk.support_cons, List.tail_cons]; exact ht))
       · intro e hes e' her hee; subst hee
         rw [List.mem_append] at her
         rcases her with hep0 | her
@@ -807,18 +807,18 @@ private theorem realize_edges_nodup {G : SimpleGraph V} :
         | nil =>
             rw [hrb, Walk.support_nil, List.mem_singleton] at hm
             subst hm
-            have hend : w ∈ p0.support.tail := by
+            have hend : z ∈ p0.support.tail := by
               rw [support_tail_eq_internals_append_end' p0 hp0, List.mem_append]
               exact Or.inr (List.mem_singleton.mpr rfl)
             exact Or.inr (Or.inl hend)
         | cons h1 r1 =>
             rw [hrb, Walk.support_cons, List.mem_cons] at hm
             rcases hm with rfl | hws
-            · have hend : w ∈ p0.support.tail := by
+            · have hend : z ∈ p0.support.tail := by
                 rw [support_tail_eq_internals_append_end' p0 hp0, List.mem_append]
                 exact Or.inr (List.mem_singleton.mpr rfl)
               exact Or.inr (Or.inl hend)
-            · exact Or.inr (Or.inr (by rw [hrb, Walk.support_cons, List.tail_cons]; exact hws))
+            · exact Or.inr (Or.inr (by rw [Walk.support_cons, List.tail_cons]; exact hws))
       have ih := realize_edges_nodup rest bs hlen hrb_nd hrest_alt_nd hrest_disj
       simp only [realize, Walk.edges_append, List.nodup_append]
       refine ⟨hseg_nd, ⟨hp1_path.edges_nodup, ih, ?_⟩, ?_⟩
@@ -829,7 +829,7 @@ private theorem realize_edges_nodup {G : SimpleGraph V} :
         | nil =>
             rw [hr, Walk.support_nil, List.mem_singleton] at hz_supp
             subst hz_supp
-            apply hdisj w (by simp [altVertices, hz_int])
+            apply hdisj z (by simp [altVertices, hz_int])
             rw [baseWalk, Walk.support_append, List.mem_append, support_append_tail', List.mem_append]
             right; left
             rw [support_tail_eq_internals_append_end' p0 hp0, List.mem_append]
@@ -837,7 +837,7 @@ private theorem realize_edges_nodup {G : SimpleGraph V} :
         | cons h1 r1 =>
             rw [hr, Walk.support_cons, List.mem_cons] at hz_supp
             rcases hz_supp with rfl | hws
-            · apply hdisj w (by simp [altVertices, hz_int])
+            · apply hdisj z (by simp [altVertices, hz_int])
               rw [baseWalk, Walk.support_append, List.mem_append, support_append_tail', List.mem_append]
               right; left
               rw [support_tail_eq_internals_append_end' p0 hp0, List.mem_append]
