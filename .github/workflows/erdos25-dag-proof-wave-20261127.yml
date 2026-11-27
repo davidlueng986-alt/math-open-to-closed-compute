@@ -1,0 +1,58 @@
+name: Erdős 25 DAG proof wave 2026-11-27
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'jobs/erdos25-dag-proof-wave-20261127/**'
+      - '.github/workflows/erdos25-dag-proof-wave-20261127.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: read
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        module: [BoundedGcdSignature, BoundedQuotient, AffineResidues]
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile proof and audit transitive axioms
+        run: bash jobs/erdos25-dag-proof-wave-20261127/verify.sh '${{ matrix.module }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos25-lean-${{ matrix.module }}
+          path: out/
+          retention-days: 30
+  crt-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install numpy==2.2.6
+      - name: Reproduce finite CRT checks supporting two-prime proof
+        run: |
+          mkdir -p out
+          python jobs/erdos25-dag-proof-wave-20261127/check_two_primes.py | tee out/crt-replay.json
+          sha256sum jobs/erdos25-dag-proof-wave-20261127/check_two_primes.py > out/source.sha256
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos25-crt-replay
+          path: out/
+          retention-days: 30
