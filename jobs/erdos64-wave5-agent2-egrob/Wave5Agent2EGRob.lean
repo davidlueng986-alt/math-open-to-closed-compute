@@ -1124,8 +1124,8 @@ theorem minimal_bad2_no_cut_vertex {n : ℕ} {G : SimpleGraph (Fin n)} [Decidabl
   · exact hside A B hAne hBne hAB hAv hBv hunion hnoedge hbothA
 
 theorem minimal_bad2_no_defect_free_two_cut {n : ℕ} {G : SimpleGraph (Fin n)} [DecidableRel G.Adj]
-    (hmb : MinimalBad2 n G) {a b : Fin n} (hab : a ≠ b)
-    (hda : G.degree a = 2) (hdb : G.degree b = 2)
+    (hmb : MinimalBad2 n G) {a b : Fin n} (_hab : a ≠ b)
+    (_hda : G.degree a = 2) (_hdb : G.degree b = 2)
     (hother : ∀ x : Fin n, x ≠ a → x ≠ b → 3 ≤ G.degree x)
     {S : Finset (Fin n)} (hS2 : 2 ≤ S.card) (hSuniv : S ≠ Finset.univ)
     (haS : a ∉ S) (hbS : b ∉ S) : 3 ≤ cutSize G S := by
