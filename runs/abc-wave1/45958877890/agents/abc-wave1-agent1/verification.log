@@ -1,0 +1,8 @@
+{
+  "status": "CHECKED",
+  "max_c": 60,
+  "coprime_triples_checked": 1101,
+  "both_odd_inputs_checked": 373,
+  "sage_available": true,
+  "sage_minimal_conductor_cases": 240
+}

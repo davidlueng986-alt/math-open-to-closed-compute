@@ -1,0 +1,15 @@
+{
+  "agent": 3,
+  "job": "abc-wave1-agent3-transfer",
+  "toolbox": "sat",
+  "source_commit": "520fd9b55d73d5d82bc17ede0e5180d8350a9829",
+  "run_id": "45958877890",
+  "run_attempt": "1",
+  "python": "3.10.12",
+  "file_sha256": {
+    "jobs/abc-wave1-agent3-transfer/README.md": "dd9231d32988cb2c2d5289b3ec48f130d25c6c22114af71ca2c3d56293bdbe5c",
+    "jobs/abc-wave1-agent3-transfer/run.sh": "abdba8ef2b57db44fbc894abafdf56d8858efdd845953266e2c54dffc6d8f885",
+    "jobs/abc-wave1-agent3-transfer/setup.sh": "1341ea1d53595d858a8efef69142af0ee322bbeb82e4207a4250c8132b53c503",
+    "jobs/abc-wave1-agent3-transfer/verify.py": "6783cb5e46f1bc0fcd9b7223589647924fea81b89f7733758bdb8b5c0d594eba"
+  }
+}

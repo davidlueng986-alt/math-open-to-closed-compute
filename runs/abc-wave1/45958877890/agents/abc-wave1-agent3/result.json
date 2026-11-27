@@ -1,0 +1,16 @@
+{
+  "all_assertions_passed": true,
+  "certificate_sha256": "35d9e92056c6a339d57c3f29c899a32bb087819b83747c0e6e049afb314bd839",
+  "claim_status": "CHECKED",
+  "job": "abc-wave1-agent3-transfer",
+  "polynomial_cases_checked": 330,
+  "polynomial_cases_skipped": 11,
+  "python": "3.10.12",
+  "scalar_shadow_prime_parameters_checked": 13,
+  "scope": "Finite exact symbolic checks; full specialization obstruction is proved in REPORT.md. No verification of IUT or arithmetic abc.",
+  "shard": 0,
+  "shards": 1,
+  "source_sha256": "6783cb5e46f1bc0fcd9b7223589647924fea81b89f7733758bdb8b5c0d594eba",
+  "specialization_cases_checked": 40,
+  "sympy": "1.14.0"
+}

@@ -1,0 +1,219 @@
+{
+  "status": "CHECKED",
+  "claim_scope": "symbolic identities and stated finite sample only",
+  "abc_status": "BLOCKED",
+  "max_c": 60,
+  "shard": 0,
+  "shards": 1,
+  "coprime_triples_checked": 1101,
+  "both_odd_inputs_checked": 373,
+  "symbolic_identities_checked": 8,
+  "sage_available": true,
+  "sage_minimal_conductor_cases": 240,
+  "semistable_model_family_samples": [
+    {
+      "abc": [
+        1,
+        1,
+        2
+      ],
+      "signed_frey": [
+        -289,
+        288,
+        -1
+      ],
+      "radical": 102,
+      "predicted_conductor": 102,
+      "minimal_discriminant": 27060804
+    },
+    {
+      "abc": [
+        1,
+        2,
+        3
+      ],
+      "signed_frey": [
+        -49,
+        -32,
+        -81
+      ],
+      "radical": 42,
+      "predicted_conductor": 42,
+      "minimal_discriminant": 63011844
+    },
+    {
+      "abc": [
+        2,
+        1,
+        3
+      ],
+      "signed_frey": [
+        -49,
+        -32,
+        -81
+      ],
+      "radical": 42,
+      "predicted_conductor": 42,
+      "minimal_discriminant": 63011844
+    },
+    {
+      "abc": [
+        1,
+        3,
+        4
+      ],
+      "signed_frey": [
+        -1681,
+        1600,
+        -81
+      ],
+      "radical": 1230,
+      "predicted_conductor": 1230,
+      "minimal_discriminant": 185398179210000
+    },
+    {
+      "abc": [
+        3,
+        1,
+        4
+      ],
+      "signed_frey": [
+        -9409,
+        9408,
+        -1
+      ],
+      "radical": 4074,
+      "predicted_conductor": 4074,
+      "minimal_discriminant": 30608467730064
+    }
+  ],
+  "epsilon_conversions": [
+    {
+      "epsilon": "1/100",
+      "abc_to_ms_delta": "1/3605",
+      "ms_to_abc_theta": "1/403"
+    },
+    {
+      "epsilon": "1/10",
+      "abc_to_ms_delta": "1/365",
+      "ms_to_abc_theta": "1/43"
+    },
+    {
+      "epsilon": "1",
+      "abc_to_ms_delta": "1/41",
+      "ms_to_abc_theta": "1/7"
+    },
+    {
+      "epsilon": "3",
+      "abc_to_ms_delta": "1/17",
+      "ms_to_abc_theta": "3/13"
+    }
+  ],
+  "archimedean_obstruction_samples": [
+    {
+      "n": 5,
+      "N": 62,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 6,
+      "N": 42,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 7,
+      "N": 254,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 8,
+      "N": 510,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 9,
+      "N": 1022,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 10,
+      "N": 2046,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 11,
+      "N": 4094,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 12,
+      "N": 2730,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 13,
+      "N": 16382,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 14,
+      "N": 32766,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 15,
+      "N": 65534,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 16,
+      "N": 131070,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 17,
+      "N": 262142,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 18,
+      "N": 58254,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 19,
+      "N": 1048574,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 20,
+      "N": 419430,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 21,
+      "N": 599186,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 22,
+      "N": 8388606,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 23,
+      "N": 16777214,
+      "j_ge_8_N_squared": true
+    },
+    {
+      "n": 24,
+      "N": 11184810,
+      "j_ge_8_N_squared": true
+    }
+  ],
+  "limitations": [
+    "Finite testing does not prove a conductor theorem or abc.",
+    "Universal elementary proofs are in REPORT.md.",
+    "Sage conductor checks are skipped, explicitly, if Sage is unavailable."
+  ]
+}

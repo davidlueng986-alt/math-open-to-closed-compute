@@ -1,0 +1,1 @@
+{"counts": {"balanced_fourth_power_free": 23192, "balanced_triples": 27373, "exponent_tail_checks": 273750, "primitive_triples": 54750}, "family_certificates": 23, "n2plus1_largest_prime": 89, "source_sha256": "20db9ebb16c038c10af9b3beb6ac20a574580390bef7108975dcf7034b9f9b5c", "status": "CHECKED"}

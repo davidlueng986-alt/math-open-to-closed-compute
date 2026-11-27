@@ -1,0 +1,326 @@
+{
+  "task": "abc-wave1-agent2-bounds",
+  "status": "CHECKED",
+  "proof_scope": "finite exact checks of structural lemmas and explicit obstruction family; no abc closure",
+  "shard": 0,
+  "shards": 1,
+  "c_bound": 600,
+  "counts": {
+    "primitive_triples": 54750,
+    "balanced_triples": 27373,
+    "balanced_fourth_power_free": 23192,
+    "exponent_tail_checks": 273750
+  },
+  "failed_auxiliary_claim": "cube_excess <= K_delta * R^delta for every balanced abc triple and every delta>0",
+  "counterexample_family": [
+    {
+      "m": 2,
+      "a": 3,
+      "b": 5,
+      "c": 8,
+      "R": 30,
+      "cube_excess": 1,
+      "violates_U_le_R_quarter": false
+    },
+    {
+      "m": 3,
+      "a": 7,
+      "b": 9,
+      "c": 16,
+      "R": 42,
+      "cube_excess": 2,
+      "violates_U_le_R_quarter": false
+    },
+    {
+      "m": 4,
+      "a": 15,
+      "b": 17,
+      "c": 32,
+      "R": 510,
+      "cube_excess": 4,
+      "violates_U_le_R_quarter": false
+    },
+    {
+      "m": 5,
+      "a": 31,
+      "b": 33,
+      "c": 64,
+      "R": 2046,
+      "cube_excess": 8,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 6,
+      "a": 63,
+      "b": 65,
+      "c": 128,
+      "R": 2730,
+      "cube_excess": 16,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 7,
+      "a": 127,
+      "b": 129,
+      "c": 256,
+      "R": 32766,
+      "cube_excess": 32,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 8,
+      "a": 255,
+      "b": 257,
+      "c": 512,
+      "R": 131070,
+      "cube_excess": 64,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 9,
+      "a": 511,
+      "b": 513,
+      "c": 1024,
+      "R": 58254,
+      "cube_excess": 128,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 10,
+      "a": 1023,
+      "b": 1025,
+      "c": 2048,
+      "R": 419430,
+      "cube_excess": 256,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 11,
+      "a": 2047,
+      "b": 2049,
+      "c": 4096,
+      "R": 8388606,
+      "cube_excess": 512,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 12,
+      "a": 4095,
+      "b": 4097,
+      "c": 8192,
+      "R": 11184810,
+      "cube_excess": 1024,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 13,
+      "a": 8191,
+      "b": 8193,
+      "c": 16384,
+      "R": 134217726,
+      "cube_excess": 2048,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 14,
+      "a": 16383,
+      "b": 16385,
+      "c": 32768,
+      "R": 536870910,
+      "cube_excess": 4096,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 15,
+      "a": 32767,
+      "b": 32769,
+      "c": 65536,
+      "R": 715827882,
+      "cube_excess": 8192,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 16,
+      "a": 65535,
+      "b": 65537,
+      "c": 131072,
+      "R": 8589934590,
+      "cube_excess": 16384,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 17,
+      "a": 131071,
+      "b": 131073,
+      "c": 262144,
+      "R": 34359738366,
+      "cube_excess": 32768,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 18,
+      "a": 262143,
+      "b": 262145,
+      "c": 524288,
+      "R": 15270994830,
+      "cube_excess": 65536,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 19,
+      "a": 524287,
+      "b": 524289,
+      "c": 1048576,
+      "R": 549755813886,
+      "cube_excess": 131072,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 20,
+      "a": 1048575,
+      "b": 1048577,
+      "c": 2097152,
+      "R": 439804651110,
+      "cube_excess": 262144,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 21,
+      "a": 2097151,
+      "b": 2097153,
+      "c": 4194304,
+      "R": 418861572486,
+      "cube_excess": 524288,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 22,
+      "a": 4194303,
+      "b": 4194305,
+      "c": 8388608,
+      "R": 35184372088830,
+      "cube_excess": 1048576,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 23,
+      "a": 8388607,
+      "b": 8388609,
+      "c": 16777216,
+      "R": 140737488355326,
+      "cube_excess": 2097152,
+      "violates_U_le_R_quarter": true
+    },
+    {
+      "m": 24,
+      "a": 16777215,
+      "b": 16777217,
+      "c": 33554432,
+      "R": 187649984473770,
+      "cube_excess": 4194304,
+      "violates_U_le_R_quarter": true
+    }
+  ],
+  "factorization_only_models": [
+    {
+      "prime": 101,
+      "radical": 202,
+      "exponents": [
+        14,
+        1
+      ],
+      "product_of_exponents": 14,
+      "logM_over_logR": 2.6975242887036024,
+      "scope": "factorization model, not an additive triple"
+    },
+    {
+      "prime": 1009,
+      "radical": 2018,
+      "exponents": [
+        44,
+        1
+      ],
+      "product_of_exponents": 44,
+      "logM_over_logR": 4.9166712848623675,
+      "scope": "factorization model, not an additive triple"
+    },
+    {
+      "prime": 10007,
+      "radical": 20014,
+      "exponents": [
+        141,
+        1
+      ],
+      "product_of_exponents": 141,
+      "logM_over_logR": 10.797937202119975,
+      "scope": "factorization model, not an additive triple"
+    },
+    {
+      "prime": 100003,
+      "radical": 200006,
+      "exponents": [
+        447,
+        1
+      ],
+      "product_of_exponents": 447,
+      "logM_over_logR": 26.32697385224265,
+      "scope": "factorization model, not an additive triple"
+    },
+    {
+      "prime": 1000003,
+      "radical": 2000006,
+      "exponents": [
+        1414,
+        1
+      ],
+      "product_of_exponents": 1414,
+      "logM_over_logR": 68.50567704232708,
+      "scope": "factorization model, not an additive triple"
+    }
+  ],
+  "n2plus1_example": {
+    "n": 24208144,
+    "factorization": {
+      "29": 3,
+      "37": 2,
+      "53": 1,
+      "61": 2,
+      "89": 1
+    },
+    "rad": 308741801,
+    "largest_prime": 89,
+    "exponent_product": 12,
+    "cube_excess": 1,
+    "max_exponent": 3
+  },
+  "envelope_diagnostics": [
+    {
+      "log_R": 100,
+      "illustrative_kappa": 1,
+      "log_Pasten_envelope_over_abc_log_scale": "16.8544900769053810283258527935317455894973899536240499870184",
+      "log_Pasten_trivial_q_envelope_over_SY": "7.6441497049291982922538869747942887590929839991089580828851"
+    },
+    {
+      "log_R": 1000,
+      "illustrative_kappa": 1,
+      "log_Pasten_envelope_over_abc_log_scale": "76.2051515344733591999007460107775774492054041927352801070380",
+      "log_Pasten_trivial_q_envelope_over_SY": "62.3896409765090850957927972826713922035987952609626422508381"
+    },
+    {
+      "log_R": 10000,
+      "illustrative_kappa": 1,
+      "log_Pasten_envelope_over_abc_log_scale": "294.275085505053087436522512891238234648311846454204694286655",
+      "log_Pasten_trivial_q_envelope_over_SY": "275.854404761100721964378581253763320987503034545174510478388"
+    },
+    {
+      "log_R": 1000000,
+      "illustrative_kappa": 1,
+      "log_Pasten_envelope_over_abc_log_scale": "3703.10667829187417284829881257637697504670948208807002303824",
+      "log_Pasten_trivial_q_envelope_over_SY": "3675.47565717594562464008291512016460455549626422452474732584"
+    }
+  ],
+  "python": "3.10.12",
+  "source_sha256": "20db9ebb16c038c10af9b3beb6ac20a574580390bef7108975dcf7034b9f9b5c",
+  "github_run_id": "45958877890",
+  "github_sha": "520fd9b55d73d5d82bc17ede0e5180d8350a9829"
+}

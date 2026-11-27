@@ -1,0 +1,15 @@
+{
+  "agent": 1,
+  "job": "abc-wave1-agent1-frey",
+  "toolbox": "sage",
+  "source_commit": "520fd9b55d73d5d82bc17ede0e5180d8350a9829",
+  "run_id": "45958877890",
+  "run_attempt": "1",
+  "python": "3.10.12",
+  "file_sha256": {
+    "jobs/abc-wave1-agent1-frey/README.md": "7e9390191bb9509eff02ffb56f27b3e3593b870c93722f73991aa7512219a8a0",
+    "jobs/abc-wave1-agent1-frey/run.sh": "8ae7de6e05e1a526b8ef5dbb11dee07bf6738ce1d34dbcbfe880c11e39bcc9a5",
+    "jobs/abc-wave1-agent1-frey/setup.sh": "3fae40600a1f201092f614b29351f1d603e09ce96119c30ff3212b0bbe554e33",
+    "jobs/abc-wave1-agent1-frey/verify.py": "f4d8a954151281b2f03237a3ae39826a4e44dcb62cdb02f302b779704485dbd6"
+  }
+}
