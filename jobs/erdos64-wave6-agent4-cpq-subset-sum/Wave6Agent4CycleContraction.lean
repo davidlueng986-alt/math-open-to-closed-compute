@@ -143,9 +143,9 @@ theorem exists_pow2_in_octave (L : ℕ) (hL : 2 ≤ L) :
   | ind n ih =>
     by_cases h4 : n ≤ 4
     · exact ⟨2, le_rfl, by omega, by omega⟩
-    · have hhalf : 2 ≤ n / 2 := by omega
-      have hlt : n / 2 < n := by omega
-      obtain ⟨k, hk, hlo, hhi⟩ := ih (n / 2) hlt hhalf
+    · have hhalf : 2 ≤ (n + 1) / 2 := by omega
+      have hlt : (n + 1) / 2 < n := by omega
+      obtain ⟨k, hk, hlo, hhi⟩ := ih ((n + 1) / 2) hlt hhalf
       by_cases hcov : n ≤ 2 ^ k
       · exact ⟨k, hk, hcov, by omega⟩
       · refine ⟨k + 1, by omega, ?_, ?_⟩
@@ -250,22 +250,14 @@ theorem isCycle_of_support_tail_nodup {V : Type*} {G : SimpleGraph V} {v : V}
           cases w'' with
           | nil => simp at hlen''
           | @cons _ y _ h2 w''' =>
-            have hhead_not : v ∉ w'''.support := by
-              have htmp := (List.nodup_cons.mp hsup'').1
-              simp only [Walk.support_cons] at htmp
-              exact htmp
-            exact hhead_not (Walk.end_mem_support w''')
+            exact (List.nodup_cons.mp hsup'').1 (Walk.end_mem_support w''')
         · intro hmem
           have hu_in : u ∈ w''.support :=
             mem_support_of_mem_edges_sym2 w'' hmem (by simp)
-          have hu_not : u ∉ w''.support := by
-            have htmp := (List.nodup_cons.mp hsup').1
-            simp only [Walk.support_cons] at htmp
-            exact htmp
-          exact hu_not hu_in
-    refine ⟨⟨?_⟩, Walk.cons_ne_nil h w', hnodup⟩
-    rw [Walk.edges_cons]
-    exact List.nodup_cons.mpr ⟨hnotmem, hpath'.isTrail.edges_nodup⟩
+          exact (List.nodup_cons.mp hsup').1 hu_in
+    have htrail : (Walk.cons h w').IsTrail :=
+      Walk.IsTrail.mk (by rw [Walk.edges_cons]; exact List.nodup_cons.mpr ⟨hnotmem, hpath'.isTrail.edges_nodup⟩)
+    exact Walk.IsCycle.mk (Walk.IsCircuit.mk htrail (Walk.cons_ne_nil h w')) hnodup
 
 /-- A single switchable cluster segment from `u` to `v` in `G` (modeling entry/exit of a contracted
     cycle plus the connecting path to the next cluster). -/
