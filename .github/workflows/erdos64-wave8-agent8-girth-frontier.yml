@@ -1,0 +1,49 @@
+name: E64 Wave 8 Agent 8 Girth 9..15 SOS & Unbounded-n 4-Layer BFS (Lean 4.36.0 + OpenMP)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  lean-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Verify Wave8Agent8GirthFrontier (24 theorems) and transitive axioms
+        run: bash jobs/erdos64-wave8-agent8/verify.sh
+      - name: Upload Lean verification artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos64-wave8-agent8-lean
+          path: out/
+          retention-days: 90
+
+  cpp-siege:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Compile and run OpenMP C++20 High-Girth (g=9..14) Adversarial Siege
+        run: |
+          mkdir -p out_cpp
+          g++ -O3 -fopenmp -std=c++20 -Wall -Wextra jobs/erdos64-wave8-agent8/wave8_agent8_girth9_14_siege.cpp -o out_cpp/siege
+          ./out_cpp/siege 40000 3000 | tee out_cpp/siege.log
+      - name: Upload OpenMP siege artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erdos64-wave8-agent8-cpp-siege
+          path: out_cpp/
+          retention-days: 90
