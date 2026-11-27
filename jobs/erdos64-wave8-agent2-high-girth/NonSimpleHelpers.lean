@@ -40,7 +40,7 @@ def nbWalksSub (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ) (u v : V) :
     Finset {p : G.Walk u v // p.length = k} :=
   (nbWalks G k u v).attach.map
     ⟨fun x => ⟨x.1, (mem_finsetWalkLength_iff.mp (Finset.mem_filter.mp x.2).1)⟩,
-     fun a b h => Subtype.ext (congrArg Subtype.val h)⟩
+     fun a b h => by dsimp only at h; exact Subtype.ext (congrArg Subtype.val h)⟩
 
 @[simp] theorem mem_nbWalksSub_iff {G : SimpleGraph V} [DecidableRel G.Adj]
     {k : ℕ} {u v : V} {p : {q : G.Walk u v // q.length = k}} :
@@ -77,7 +77,6 @@ theorem nonSimpleTaillessCount_eq_card_sub (G : SimpleGraph V) [DecidableRel G.A
     (((Finset.univ : Finset V).sigma fun v => nbWalksSub G k v v).filter
       fun x => IsCyclicallyNonBacktracking x.2.1 ∧ ¬ x.2.1.IsCycle).card =
       nonSimpleTaillessCount G k := by
-  intro _
   classical
   unfold nonSimpleTaillessCount
   simp only [Finset.filter_sigma, Finset.card_sigma]
@@ -91,6 +90,7 @@ theorem nonSimpleTaillessCount_eq_card_sub (G : SimpleGraph V) [DecidableRel G.A
     simp only [Finset.mem_filter, mem_nbWalksSub_iff]
     exact ⟨hq.1.2, hq.2⟩
 
+omit [Fintype V] [DecidableEq V] in
 theorem firstNbr_append_of_pos {G : SimpleGraph V} {u v w : V}
     (p : G.Walk u v) (q : G.Walk v w) (hp : 1 ≤ p.length) :
     firstNbr (p.append q) = firstNbr p := by
@@ -98,6 +98,7 @@ theorem firstNbr_append_of_pos {G : SimpleGraph V} {u v w : V}
   | nil => simp at hp
   | cons _ _ => rfl
 
+omit [Fintype V] [DecidableEq V] in
 theorem lastNbr_append_of_pos {G : SimpleGraph V} {u v w : V}
     (p : G.Walk u v) (q : G.Walk v w) (hq : 1 ≤ q.length) :
     lastNbr (p.append q) = lastNbr q := by
@@ -110,18 +111,20 @@ theorem lastNbr_append_of_pos {G : SimpleGraph V} {u v w : V}
           | nil => simp at hq
           | cons _ _ => rfl
       | cons h₂ rest₂ =>
-          exact ih
+          exact ih q hq
 
+omit [Fintype V] [DecidableEq V] in
 theorem firstNbr_reverse {G : SimpleGraph V} :
     ∀ {u v : V} (p : G.Walk u v), firstNbr p.reverse = lastNbr p
   | _, _, .nil => rfl
   | _, _, .cons _ .nil => rfl
   | _, _, .cons h₁ (.cons h₂ rest) => by
-      rw [Walk.reverse_cons,
-          firstNbr_append_of_pos (.cons h₂ rest).reverse (.cons h₁.symm .nil)
-            (by simp [Walk.length_reverse])]
+      rw [Walk.reverse_cons]
+      have hlen : 1 ≤ (Walk.cons h₂ rest).reverse.length := by simp [Walk.length_reverse]
+      rw [firstNbr_append_of_pos _ _ hlen]
       exact firstNbr_reverse (.cons h₂ rest)
 
+omit [Fintype V] [DecidableEq V] in
 theorem lastNbr_reverse {G : SimpleGraph V} {u v : V} (p : G.Walk u v) :
     lastNbr p.reverse = firstNbr p := by
   have h := firstNbr_reverse p.reverse
@@ -138,6 +141,7 @@ def splitWalk {G : SimpleGraph V} :
       let ⟨w, ⟨q, hq⟩, ⟨r, hr⟩⟩ := splitWalk k rest (by simp at hk; omega)
       ⟨w, ⟨.cons h q, by simp [hq]⟩, ⟨r, by simp [hr]⟩⟩
 
+omit [Fintype V] [DecidableEq V] in
 theorem splitWalk_append {G : SimpleGraph V} :
     ∀ {u v : V} (k : ℕ) (p : G.Walk u v) (hk : k ≤ p.length),
       (splitWalk k p hk).2.1.1.append (splitWalk k p hk).2.2.1 = p
@@ -158,6 +162,7 @@ def unrotate {G : SimpleGraph V} (L : ℕ) (j : Fin L) {x : V} (rot : G.Walk x x
     have := j.2
     omega⟩⟩
 
+omit [Fintype V] [DecidableEq V] in
 theorem unrotate_append {G : SimpleGraph V} {L : ℕ} {v x : V}
     (a : G.Walk v x) (b : G.Walk x v) (hL : (a.append b).length = L) (ha : a.length < L) :
     unrotate L ⟨a.length, ha⟩ (b.append a) (by rw [Walk.length_append] at hL ⊢; omega) =
@@ -186,11 +191,10 @@ theorem unrotate_append {G : SimpleGraph V} {L : ℕ} {v x : V}
   have hs := hsplit b a (L - a.length) hb_len.symm
   dsimp only
   generalize_proofs h1 h2
-  have hs' : splitWalk (L - a.length) (b.append a) h1 =
-      ⟨v, ⟨b, hb_len⟩, ⟨a, by rw [Walk.length_append]; omega⟩⟩ := hs
-  refine Sigma.ext (congrArg Sigma.fst hs') ?_
-  refine heq_of_eqRec_eq ?_ rfl
-  simp only [hs']
+  revert h2
+  rw [hs]
+  intro _
+  rfl
 
 /-- Finset of all NB walks of length `m` starting at `u` whose first step `≠ prev`. -/
 def nbWalksAvoid (G : SimpleGraph V) [DecidableRel G.Adj] (m : ℕ) (u prev : V) :
@@ -324,7 +328,8 @@ theorem card_nbWalksBetweenAvoid_le (G : SimpleGraph V) [DecidableRel G.Adj]
       have hr₂_nb : IsNonBacktracking r₂ := isNonBacktracking_of_append_right (happ₂ ▸ h₂.1)
       have hr_eq : r₁ = r₂ :=
         unique_nonBacktracking_walk_of_half_girth hg r₁ r₂ (by omega) (by omega) hr₁_nb hr₂_nb
-      ext
+      apply Subtype.ext
+      dsimp only
       rw [← happ₁, ← happ₂, hr_eq]
 
 /-- Unique third neighbor of a degree-3 vertex `u` given two distinct neighbors `a ≠ b`. -/
@@ -379,6 +384,7 @@ def alphaCoeff (g L r₁ : ℕ) : ℕ :=
   thetaTerm g L r₁ + barbellTerm g L r₁
 
 /-- Helper: cyclic rotation preserves `IsCyclicallyNonBacktracking`. -/
+omit [Fintype V] [DecidableEq V] in
 theorem isCyclicallyNonBacktracking_rotate {G : SimpleGraph V} {u v : V}
     (a : G.Walk u v) (b : G.Walk v u) (hcyc : IsCyclicallyNonBacktracking (a.append b)) :
     IsCyclicallyNonBacktracking (b.append a) := by
@@ -408,6 +414,7 @@ theorem isCyclicallyNonBacktracking_rotate {G : SimpleGraph V} {u v : V}
       exact hba_b.2.2 x y hx hy
 
 /-- Helper: stripping first and last edges of a simple cycle `c` of length `≥ 3` at `v`. -/
+omit [Fintype V] [DecidableEq V] in
 theorem strip_cycle_ends {G : SimpleGraph V} {v : V} (c : G.Walk v v)
     (hc : c.IsCycle) (h3 : 3 ≤ c.length) :
     ∃ (v₁ v₂ : V) (h₁ : G.Adj v v₁) (h₂ : G.Adj v₂ v) (mid : G.Walk v₁ v₂),
@@ -493,6 +500,7 @@ theorem strip_cycle_ends {G : SimpleGraph V} {v : V} (c : G.Walk v v)
       exact ⟨v₁, v₂, h₁, h₂, mid, hv12, by rw [hrest_eq], hmid_len, hnb_mid, hfn_mid⟩
 
 /-- Helper: stripping first and last edges of any NB walk `q : G.Walk v u` of length `≥ 2`. -/
+omit [Fintype V] [DecidableEq V] in
 theorem strip_walk_ends {G : SimpleGraph V} {v u : V} (q : G.Walk v u)
     (hnb : IsNonBacktracking q) (h2 : 2 ≤ q.length) :
     ∃ (v₁ u₁ : V) (h₁ : G.Adj v v₁) (h₂ : G.Adj u₁ u) (mid : G.Walk v₁ u₁),
@@ -538,10 +546,6 @@ theorem strip_walk_ends {G : SimpleGraph V} {v u : V} (q : G.Walk v u)
         simp only [Walk.length_append, Walk.length_cons, Walk.length_nil] at this ⊢
         omega
       exact ⟨v₁, u₁, h₁, h₂, mid, by rw [hrest_eq], rfl, hlast, hmid_len, hnb_mid, hfn_mid⟩
-
-/-- Exact rotation decomposition of a non-simple CNB walk of length `< 3 * g`:
-produces a rotation `rot = c₁ ++ P ++ c₂ ++ P.reverse` with `c₁, c₂` simple cycles of lengths
-in `[g, 2g - 1]` and `P` a NB walk with `c₁.length + c₂.length + 2 * P.length = L`. -/
 
 end ExactAlphaCounting
 

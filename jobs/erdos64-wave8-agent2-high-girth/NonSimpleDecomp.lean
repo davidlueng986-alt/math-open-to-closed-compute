@@ -12,6 +12,7 @@ section NonSimpleDecomp
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+omit [Fintype V] [DecidableEq V] in
 theorem tailless_nonSimple_rotation_decomp {G : SimpleGraph V}
     {g L : ℕ} (hg : GirthAtLeast G g) (hLt : L < 3 * g)
     {v : V} (p : G.Walk v v) (hcyc : IsCyclicallyNonBacktracking p) (hns : ¬ p.IsCycle)
@@ -67,6 +68,7 @@ theorem tailless_nonSimple_rotation_decomp {G : SimpleGraph V}
           simp only [Walk.edges_cons, List.nodup_cons]
           exact ⟨hnotmem, hrest_path.isTrail.edges_nodup⟩
         exact ⟨htrail, by simp, hnd⟩
+  -- Now split `p` at a repeated vertex in `p.support.tail`
   have hsplit_rep : ∀ {a b : V} (w : G.Walk a b), ¬ w.support.tail.Nodup →
       ∃ (x : V) (w₁ : G.Walk a x) (w₂ : G.Walk x x) (w₃ : G.Walk x b),
         w = w₁.append (w₂.append w₃) ∧ 1 ≤ w₁.length ∧ 1 ≤ w₂.length := by
@@ -358,7 +360,7 @@ theorem exists_maximal_shared_prefix {G : SimpleGraph V} [DecidableRel G.Adj]
         | cons _ r ih => intro ht; cases r with
           | nil => trivial
           | cons _ _ =>
-              have hnd := ht.edges_nodup; simp only [Walk.edges_cons, List.nodup_cons] at hnd
+              have hnd := ht.edges_nodup; rw [Walk.edges_cons, List.nodup_cons] at hnd
               exact ⟨fun h => by subst h; exact hnd.1 (by simp [Sym2.eq_swap]), ih (Walk.IsTrail.mk hnd.2)⟩
       exact aux _ htr
     have hnb_c2' : IsNonBacktracking c₂' := by
@@ -369,7 +371,7 @@ theorem exists_maximal_shared_prefix {G : SimpleGraph V} [DecidableRel G.Adj]
         | cons _ r ih => intro ht; cases r with
           | nil => trivial
           | cons _ _ =>
-              have hnd := ht.edges_nodup; simp only [Walk.edges_cons, List.nodup_cons] at hnd
+              have hnd := ht.edges_nodup; rw [Walk.edges_cons, List.nodup_cons] at hnd
               exact ⟨fun h => by subst h; exact hnd.1 (by simp [Sym2.eq_swap]), ih (Walk.IsTrail.mk hnd.2)⟩
       exact aux _ htr
     have hnb_Q1 : IsNonBacktracking Q₁ := isNonBacktracking_of_append_right (hc₁'_eq ▸ hnb_c1')
@@ -422,6 +424,7 @@ theorem exists_maximal_shared_prefix {G : SimpleGraph V} [DecidableRel G.Adj]
       hfn_ne, hln_ne, hQ12_cyc, ?_⟩
     simpa only [hba_eq, hab_eq] using hunrot
 
+
 /-- A non-simple walk `x` of length `L` is a barbell element if it admits a cyclic rotation
 `c₁ ++ P ++ c₂ ++ P.reverse` with `P.length ≥ 1`, `c₁, c₂` simple cycles, `g ≤ |c₁| ≤ |c₂|`. -/
 def isBarbellElem (G : SimpleGraph V) (g L : ℕ)
@@ -433,6 +436,7 @@ def isBarbellElem (G : SimpleGraph V) (g L : ℕ)
     IsCyclicallyNonBacktracking (c₁.append (P.append (c₂.append P.reverse))) ∧
     unrotate L j (c₁.append (P.append (c₂.append P.reverse)))
       (by simp only [Walk.length_append, Walk.length_reverse]; omega) = x
+
 
 end NonSimpleDecomp
 
