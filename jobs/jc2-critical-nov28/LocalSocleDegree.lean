@@ -1,7 +1,7 @@
 import Mathlib.Algebra.Algebra.Bilinear
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 import Mathlib.LinearAlgebra.Dimension.RankNullity
-import Mathlib.Tactic.Omega
+import Mathlib.Tactic
 
 /-!
 # Nilpotent chains and the local boundary-degree bound
@@ -136,6 +136,59 @@ end Algebra
 #print axioms nilpotent_range_codimension_bound
 #print axioms nilpotent_element_quotient_bound
 #print axioms local_degree_bound_from_socle_power
+
+
+section Arithmetic
+
+/-- The weighted finite-cover degree formula forces strictly more than one
+extra sheet per five generic missing sheets. This is an algebraic consequence
+over the rationals; the geometric degree formula is an explicit hypothesis. -/
+theorem monomial_cusp_surplus_fifth (a b r e d : ℚ)
+    (ha : 2 ≤ a) (hb : 3 ≤ b) (hr : 1 ≤ r) (he : 0 < e)
+    (hdegree : d * (r * (a + b) - 1) = e * a * b * r ^ 2) :
+    e * r < 5 * (d - e * r) := by
+  have hrpos : 0 < r := by linarith
+  have hab : 0 ≤ 5 * a * b - 6 * (a + b) := by
+    have hp : 0 ≤ (a - 2) * (b - 3) :=
+      mul_nonneg (by linarith) (by linarith)
+    nlinarith
+  have hden : 0 < r * (a + b) - 1 := by nlinarith
+  have hinner : 0 < r * (5 * a * b - 6 * (a + b)) + 6 := by
+    have hp := mul_nonneg (le_of_lt hrpos) hab
+    linarith
+  have hpositive :
+      0 < e * r * (r * (5 * a * b - 6 * (a + b)) + 6) :=
+    mul_pos (mul_pos he hrpos) hinner
+  have hid :
+      (5 * d - 6 * e * r) * (r * (a + b) - 1) =
+        e * r * (r * (5 * a * b - 6 * (a + b)) + 6) := by
+    calc
+      (5 * d - 6 * e * r) * (r * (a + b) - 1) =
+          5 * (d * (r * (a + b) - 1)) -
+            6 * e * r * (r * (a + b) - 1) := by ring
+      _ = 5 * (e * a * b * r ^ 2) -
+            6 * e * r * (r * (a + b) - 1) := by rw [hdegree]
+      _ = e * r * (r * (5 * a * b - 6 * (a + b)) + 6) := by ring
+  rw [← hid] at hpositive
+  have hgap : 0 < 5 * d - 6 * e * r :=
+    (mul_pos_iff_of_pos_right hden).mp hpositive
+  linarith
+
+/-- Global integer assembly, with all geometric input exposed in hlarge:
+a component heavier than half the cover has another component of weight
+at least one and a cusp excess C with 5*C>M. -/
+theorem affine_sheet_bound_from_ledger (μ M C : ℤ) (hμ : 6 ≤ μ)
+    (hlarge : μ < 2 * M → M < 5 * C ∧ M + 1 + C ≤ μ - 1) :
+    6 * M ≤ 5 * μ - 11 ∧ μ + 11 ≤ 6 * (μ - M) := by
+  by_cases h : 2 * M ≤ μ
+  · omega
+  · obtain ⟨hstrict, hledger⟩ := hlarge (by omega)
+    omega
+
+end Arithmetic
+
+#print axioms monomial_cusp_surplus_fifth
+#print axioms affine_sheet_bound_from_ledger
 
 end JC2.LocalDefect
 
