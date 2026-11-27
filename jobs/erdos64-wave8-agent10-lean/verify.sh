@@ -52,8 +52,8 @@ import Erdos64Wave8Agent10
 EOF
 
 pushd "$LAKE_DIR" > /dev/null
-lake env lean -DwarningAsError=true Erdos64Wave8Agent10.lean
-lake env lean -DwarningAsError=true AuditWave8Agent10.lean > /tmp/axioms.txt
+lake env lean -DwarningAsError=true -o Erdos64Wave8Agent10.olean Erdos64Wave8Agent10.lean
+LEAN_PATH="$LAKE_DIR:$(lake env printenv LEAN_PATH)" lake env lean -DwarningAsError=true AuditWave8Agent10.lean > /tmp/axioms.txt
 popd > /dev/null
 
 cat /tmp/axioms.txt
@@ -68,7 +68,8 @@ with open("out/axioms.txt") as f:
 axioms = {}
 allowed = {"propext", "Classical.choice", "Quot.sound"}
 for line in text.splitlines():
-    m = re.match(r"'([^']+)' depends on axioms: \[([^\]]*)\]", line.strip())
+    s = line.strip()
+    m = re.match(r"'([^']+)' depends on axioms: \[([^\]]*)\]", s)
     if m:
         name = m.group(1)
         ax_list = [a.strip() for a in m.group(2).split(",") if a.strip()]
@@ -76,6 +77,10 @@ for line in text.splitlines():
             if a not in allowed:
                 raise SystemExit(f"FORBIDDEN AXIOM {a} in {name}")
         axioms[name] = sorted(ax_list)
+        continue
+    m0 = re.match(r"'([^']+)' does not depend on any axioms", s)
+    if m0:
+        axioms[m0.group(1)] = []
 
 if len(axioms) != 30:
     raise SystemExit(f"Expected 30 audited declarations, got {len(axioms)}")
