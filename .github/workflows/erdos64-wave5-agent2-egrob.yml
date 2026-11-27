@@ -8,21 +8,23 @@ permissions:
   packages: read
 
 jobs:
-  verify:
+  inspect:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
-    container:
-      image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Verify Wave5Agent2EGRob and transitive axioms
-        run: bash jobs/erdos64-wave5-agent2-egrob/verify.sh
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: erdos64-wave5-agent2-egrob
-          path: out/
-          retention-days: 90
+      - name: Print error line contexts
+        run: |
+          nl -ba jobs/erdos64-wave5-agent2-egrob/Wave5Agent2EGRob.lean | sed -n '185,238p'
+          echo "=== 310-342 ==="
+          nl -ba jobs/erdos64-wave5-agent2-egrob/Wave5Agent2EGRob.lean | sed -n '310,342p'
+          echo "=== 448-468 ==="
+          nl -ba jobs/erdos64-wave5-agent2-egrob/Wave5Agent2EGRob.lean | sed -n '448,468p'
+          echo "=== 760-780 ==="
+          nl -ba jobs/erdos64-wave5-agent2-egrob/Wave5Agent2EGRob.lean | sed -n '760,780p'
+          echo "=== 1068-1090 ==="
+          nl -ba jobs/erdos64-wave5-agent2-egrob/Wave5Agent2EGRob.lean | sed -n '1068,1090p'
+          echo "=== 1152-1172 ==="
+          nl -ba jobs/erdos64-wave5-agent2-egrob/Wave5Agent2EGRob.lean | sed -n '1152,1172p'
+          echo "=== 1682-1718 ==="
+          nl -ba jobs/erdos64-wave5-agent2-egrob/Wave5Agent2EGRob.lean | sed -n '1682,1718p'
