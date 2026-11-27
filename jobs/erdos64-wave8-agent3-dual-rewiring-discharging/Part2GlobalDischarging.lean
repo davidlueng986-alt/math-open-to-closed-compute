@@ -6,12 +6,6 @@ import Mathlib.Tactic
 /-!
 # Erdős Problem #64 — Wave 8 Guided Agent #3 (`wave8_agent3`)
 ## Part 2: Universal Girth-`g` Safe `V₃`-Component Deletion & Global Discharging on `H[V₃]`
-
-Unconditionally proves for every girth `g ≥ 4` that every edge-and-vertex-minimal `MinimalBad2`
-graph satisfies:
-  `(5g - 3) * |V₃(G)| ≥ 4(g - 1) * |V(G)| - 6(g - 1) * |D|`
-unifying `8/11` (`g=5`), `20/27` (`g=6`), and strictly improving to `3/4` (`g=7`) and
-`16/21` (`g=8 → 9`, automatically via `PowerFree`).
 -/
 
 namespace E64Wave8Agent3P2
@@ -40,9 +34,6 @@ noncomputable def V4 {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G
     Finset V :=
   Finset.univ.filter (fun v => 4 ≤ G.degree v)
 
-/-- `MinimalBad2EV G`: an edge-and-vertex-minimal `PowerFree` graph with `δ(G) ≥ 2` and
-at most 2 defects (as realized by `G = H - ab` for any edge-and-vertex-minimal counterexample
-to `EGRob3ConnCore`). -/
 structure MinimalBad2EV {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] : Prop where
   power_free : PowerFree G
@@ -62,18 +53,13 @@ structure MinimalBad2EV {V : Type*} [Fintype V] [DecidableEq V]
     (Defects H).card ≤ 2 →
     HasPow2Cycle H
 
-/-- Lift a simple cycle from an induced subgraph `G.induce S` back to `G`. -/
 lemma hasPow2Cycle_of_induce {V : Type*} (G : SimpleGraph V) (S : Set V)
     (h : HasPow2Cycle (G.induce S)) : HasPow2Cycle G := by
   rcases h with ⟨v, p, hcyc, hpow⟩
-  let f : G.induce S →g G :=
-    ⟨Subtype.val, fun h => h⟩
-  have hinj : Function.Injective f := Subtype.val_injective
-  refine ⟨v.1, p.map f, ?_, ?_⟩
-  · exact hcyc.map hinj
-  · simpa [Walk.length_map] using hpow
+  let f : G.induce S →g G := ⟨Subtype.val, fun h => h⟩
+  refine ⟨v.1, p.map f, hcyc.map Subtype.val_injective, ?_⟩
+  simpa [Walk.length_map] using hpow
 
-/-- Lift a simple cycle from a subgraph `H ≤ G` back to `G`. -/
 lemma hasPow2Cycle_of_le {V : Type*} {H G : SimpleGraph V} (hle : H ≤ G)
     (h : HasPow2Cycle H) : HasPow2Cycle G := by
   rcases h with ⟨v, p, hcyc, hpow⟩
@@ -81,11 +67,6 @@ lemma hasPow2Cycle_of_le {V : Type*} {H G : SimpleGraph V} (hle : H ≤ G)
   refine ⟨v, p.map f, hcyc.map Function.injective_id, ?_⟩
   simpa [Walk.length_map] using hpow
 
-/--
-Theorem 1 (`minimal_bad2_vge4_independent`):
-In any edge-and-vertex-minimal `MinimalBad2EV` graph `G`, `V₄(G)` is an independent set:
-no two vertices of degree `≥ 4` are adjacent.
--/
 theorem minimal_bad2_vge4_independent {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) {u v : V}
@@ -95,8 +76,7 @@ theorem minimal_bad2_vge4_independent {V : Type*} [Fintype V] [DecidableEq V]
   intro huv
   let H : SimpleGraph V := G.deleteEdges {s(u, v)}
   have hle : H ≤ G := deleteEdges_le {s(u, v)}
-  have hnot_adj : ¬ H.Adj u v := by
-    simp [H, deleteEdges_adj]
+  have hnot_adj : ¬ H.Adj u v := by simp [H, deleteEdges_adj]
   have hdeg_ge : ∀ w : V, (w ≠ u ∧ w ≠ v → H.degree w = G.degree w) ∧
       (w = u → G.degree u - 1 ≤ H.degree u) ∧
       (w = v → G.degree v - 1 ≤ H.degree v) := by
@@ -163,8 +143,6 @@ theorem minimal_bad2_vge4_independent {V : Type*} [Fintype V] [DecidableEq V]
     (le_trans hH_def hmb.defects_le_two)
   exact hmb.power_free (hasPow2Cycle_of_le hle hpow)
 
-/-- Helper: deleting a subset `S ⊆ V₃(G)` whose external boundary lies in `V₄(G)` with each
-`w ∈ V₄(G)` having at most 1 neighbor in `S` is impossible in `MinimalBad2EV`. -/
 lemma safe_delete_v3_subset_impossible {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) (S : Finset V) (hSne : S.Nonempty)
@@ -236,16 +214,12 @@ lemma safe_delete_v3_subset_impossible {V : Type*} [Fintype V] [DecidableEq V]
   have hpow := hmb.vertex_minimal H hneW hcard_lt hH_min2 (le_trans hH_def hmb.defects_le_two)
   exact hmb.power_free (hasPow2Cycle_of_induce G {w : V | w ∉ S} hpow)
 
-/--
-Theorem 2 (`minimal_bad2_v3_no_all_high_neighbors`):
-In any `MinimalBad2EV` graph `G`, no vertex `u ∈ V₃(G)` can have all 3 of its neighbors in `V₄(G)`.
--/
 theorem minimal_bad2_v3_no_all_high_neighbors {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) {u : V} (hu : G.degree u = 3) :
     ∃ w : V, G.Adj u w ∧ G.degree w < 4 := by
   by_contra hall
-  push_neg at hall
+  push Not at hall
   have hex : ∃ z : V, z ∉ ({u} : Finset V) := by
     have hpos : 0 < (G.neighborFinset u).card := by
       rw [card_neighborFinset_eq_degree, hu]; omega
@@ -261,8 +235,6 @@ theorem minimal_bad2_v3_no_all_high_neighbors {V : Type*} [Fintype V] [Decidable
       intro y _ _
       exact le_trans (Finset.card_le_card Finset.inter_subset_right) (by simp))
 
-/-- Helper: closing a simple path `p : a ↝ b` (length ≥ 1) via a single cherry `a - w - b`
-avoiding `p.support` gives a simple `(p.length + 2)`-cycle. -/
 private lemma cycle_of_path_and_cherry' {V : Type*} (G : SimpleGraph V)
     {w a b : V} (p : G.Walk a b) (hp : p.IsPath) (hab : a ≠ b)
     (hwa : G.Adj w a) (hwb : G.Adj w b) (hw_not : w ∉ p.support) :
@@ -274,9 +246,9 @@ private lemma cycle_of_path_and_cherry' {V : Type*} (G : SimpleGraph V)
   have htail_nodup : q.support.tail.Nodup := by
     rw [hsup, List.tail_cons, List.nodup_append]
     refine ⟨hp.support_nodup, List.nodup_singleton w, ?_⟩
-    intro x hx hxw
-    rw [List.mem_singleton] at hxw
-    exact hw_not (hxw ▸ hx)
+    intro x hx y hy rfl
+    rw [List.mem_singleton] at hy
+    exact hw_not (hy ▸ hx)
   have h_no_w : ∀ e ∈ p.edges, w ∉ e := fun e he hm => by
     rcases Sym2.mem_iff_exists.mp hm with ⟨z, rfl⟩
     exact hw_not (Walk.fst_mem_support_of_mem_edges p he)
@@ -288,27 +260,18 @@ private lemma cycle_of_path_and_cherry' {V : Type*} (G : SimpleGraph V)
         simp [q, Walk.edges_cons, Walk.edges_append, Walk.edges_nil]
       rw [heq, List.nodup_cons]
       refine ⟨?_, ?_⟩
-      · simp only [List.mem_append, List.mem_singleton, not_or, Sym2.eq_iff]
-        refine ⟨fun hm => h_no_w s(w, a) hm (Sym2.mem_mk_left w a), ?_⟩
-        rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
-        · exact hw_not (Walk.end_mem_support p)
-        · exact hab rfl
+      · simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false, not_or, Sym2.eq_iff]
+        exact ⟨fun hm => h_no_w s(w, a) hm (Sym2.mem_mk_left w a),
+          ⟨fun ⟨h, _⟩ => hw_not (h ▸ Walk.end_mem_support p), fun ⟨_, h⟩ => hab h⟩⟩
       · rw [List.nodup_append]
         refine ⟨hp.isTrail.edges_nodup, List.nodup_singleton _, ?_⟩
-        intro e he hbw
-        rw [List.mem_singleton] at hbw
-        subst hbw
+        intro e he e' he' rfl
+        rw [List.mem_singleton] at he'
+        subst he'
         exact h_no_w s(b, w) he (Sym2.mem_mk_right b w)
     · simp [q]
   exact ⟨q, hq_cyc, hlen⟩
 
-/--
-Theorem 3 (`minimal_bad2_v3_component_size_ge_girth_sub_one`):
-**Universal Girth-`g` Component Size Lower Bound**:
-In any `MinimalBad2EV` graph `G` with `GirthGe G g` (`g ≥ 4`) and `(V4 G).Nonempty`,
-every nonempty connected subset `S ⊆ V₃(G)` whose external neighbors all lie in `V₄(G)`
-satisfies `g - 1 ≤ S.card`.
--/
 theorem minimal_bad2_v3_component_size_ge_girth_sub_one {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) {g : ℕ} (hg : GirthGe G g)
@@ -328,7 +291,7 @@ theorem minimal_bad2_v3_component_size_ge_girth_sub_one {V : Type*} [Fintype V] 
     have h4 : 4 ≤ G.degree z := (Finset.mem_filter.mp hz).2
     omega
   refine safe_delete_v3_subset_impossible G hmb S hSne hcomp_ne hno_nonV4 ?_
-  intro y hyS hy4
+  intro y hyS _
   by_contra hgt1
   have hge2 : 1 < (G.neighborFinset y ∩ S).card := by omega
   rcases Finset.one_lt_card.mp hge2 with ⟨a, ha, b, hb, hab⟩
@@ -361,7 +324,6 @@ theorem minimal_bad2_v3_component_size_ge_girth_sub_one {V : Type*} [Fintype V] 
   have hqg := hg y q hq_cyc
   omega
 
-/-- Helper: in any nonempty connected finset `S`, `2 * (S.card - 1) ≤ ∑ v ∈ S, deg_S(v)`. -/
 lemma connected_sum_deg_ge {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Finset V) (hSne : S.Nonempty)
@@ -440,7 +402,6 @@ lemma connected_sum_deg_ge {V : Type*} [Fintype V] [DecidableEq V]
   have hTeq : T = S := Finset.eq_of_subset_of_card_le hTS (by omega)
   rwa [hTeq] at hTsum
 
-/-- Helper: double-counting edges between two finsets `A, B`. -/
 lemma sum_inter_card_comm {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (A B : Finset V) :
     ∑ a ∈ A, (G.neighborFinset a ∩ B).card = ∑ b ∈ B, (G.neighborFinset b ∩ A).card := by
@@ -458,12 +419,6 @@ lemma sum_inter_card_comm {V : Type*} [Fintype V] [DecidableEq V]
   simp_rw [h1, h2]
   exact Finset.sum_comm
 
-/--
-Theorem 4 (`minimal_bad2_girth_g_v3_density_universal`):
-**Master Universal Girth-`g` Global Discharging Theorem**:
-In any `MinimalBad2EV` graph `G` with `GirthGe G g` (`g ≥ 4`):
-  `(5 * g - 3) * (V3 G).card + 6 * (g - 1) * (Defects G).card ≥ 4 * (g - 1) * Fintype.card V`.
--/
 theorem minimal_bad2_girth_g_v3_density_universal {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) {g : ℕ} (hg4 : 4 ≤ g) (hg : GirthGe G g) :
@@ -486,7 +441,14 @@ theorem minimal_bad2_girth_g_v3_density_universal {V : Type*} [Fintype V] [Decid
     rw [← Finset.card_union_of_disjoint hdisj1, ← Finset.card_union_of_disjoint hdisj2,
       hunion, Finset.card_univ]
   by_cases hV4_empty : (V4 G).card = 0
-  · omega
+  · have hmul : 4 * (g - 1) * Fintype.card V =
+        4 * (g - 1) * (Defects G).card + 4 * (g - 1) * (V3 G).card := by
+      rw [← hpart, hV4_empty]; ring
+    have h1 : 4 * (g - 1) * (V3 G).card ≤ (5 * g - 3) * (V3 G).card :=
+      Nat.mul_le_mul_right _ (by omega)
+    have h2 : 4 * (g - 1) * (Defects G).card ≤ 6 * (g - 1) * (Defects G).card :=
+      Nat.mul_le_mul_right _ (by omega)
+    omega
   · have hV4_ne : (V4 G).Nonempty := Finset.card_pos.mp (by omega)
     have hV4_edges : 4 * (V4 G).card ≤
         (∑ v ∈ V3 G, (G.neighborFinset v ∩ V4 G).card) +
@@ -718,11 +680,6 @@ theorem minimal_bad2_girth_g_v3_density_universal {V : Type*} [Fintype V] [Decid
         _ = (5 * g - 3) * (V3 G).card := by rw [hcoeff]
     linarith
 
-/--
-Theorem 5 (`minimal_bad2_girth7_v3_density_3_4`):
-Explicit girth-`≥ 7` corollary: `3 * |V(G)| ≤ 4 * |V₃(G)| + 9` (`|V₃| ≥ 3/4 n - 9/4`),
-strictly tightening Wave 7 Agent #2's `20/27` (`0.7407`) bound to `3/4` (`0.7500`).
--/
 theorem minimal_bad2_girth7_v3_density_3_4 {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) (hg : GirthGe G 7) :
@@ -731,11 +688,6 @@ theorem minimal_bad2_girth7_v3_density_3_4 {V : Type*} [Fintype V] [DecidableEq 
   have hd := hmb.defects_le_two
   omega
 
-/--
-Theorem 6 (`minimal_bad2_girth8_auto_girth9_v3_density_16_21`):
-Because `PowerFree G` forbids `C₈`, girth `≥ 8` automatically implies girth `≥ 9`, giving
-`16 * |V(G)| ≤ 21 * |V₃(G)| + 48` (`|V₃| ≥ 16/21 n - 16/7 ≈ 0.7619 n`).
--/
 theorem minimal_bad2_girth8_auto_girth9_v3_density_16_21 {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) (hg8 : GirthGe G 8) :
@@ -750,12 +702,6 @@ theorem minimal_bad2_girth8_auto_girth9_v3_density_16_21 {V : Type*} [Fintype V]
   have hd := hmb.defects_le_two
   omega
 
-/--
-Theorem 7 (`minimal_bad2_girth_g_v3_internal_degree_bound`):
-Universal internal degree lower bound on `G[V₃]`: for every girth `g ≥ 4`,
-  `2 * (g - 2) * |V₃(G)| ≤ (g - 1) * (∑ v ∈ V₃(G), deg_{V₃}(v)) + 4 * (g - 1) * |D|`,
-forcing average internal degree `≥ 2 - 2/(g - 1) - O(1/n)` inside `G[V₃]`.
--/
 theorem minimal_bad2_girth_g_v3_internal_degree_bound {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) {g : ℕ} (hg4 : 4 ≤ g) (hg : GirthGe G g) :
