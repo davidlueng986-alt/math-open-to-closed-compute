@@ -185,8 +185,7 @@ theorem wfree_minimal_side_ports_nonadjacent {V : Type u} [Fintype V] [Decidable
   have hend (e : Boundary G T) : e.1.2 = a.1 ∨ e.1.2 = b.1 := by
     by_cases hEA : e.1.2 ∈ A
     · by_contra h
-      push Not at h
-      exact e.2.2.1 ⟨hEA, h.1, h.2⟩
+      exact e.2.2.1 ⟨hEA, fun h1 => h (Or.inl h1), fun h2 => h (Or.inr h2)⟩
     · rcases hcut ⟨e.1.1, e.2.1.1⟩ e.1.2 hEA e.2.2.2 with ⟨h, _⟩ | ⟨h, _⟩
       · exact False.elim (e.2.1.2.1 (congrArg Subtype.val h))
       · exact False.elim (e.2.1.2.2 (congrArg Subtype.val h))
@@ -564,6 +563,29 @@ private theorem support_liftWalkAvoidEdge {W : Type u} {K : SimpleGraph W} {a b 
     simp only [liftWalkAvoidEdge, Walk.support_cons]
     rw [ih]
 
+private theorem last_edge_of_mem_edges_end {W : Type u} {H : SimpleGraph W}
+    {a b : W} :
+    ∀ {z : W} (w : H.Walk z a), w.support.Nodup → s(a, b) ∈ w.edges →
+      ∃ (p : H.Walk z b) (hba : H.Adj b a), w = p.append (.cons hba .nil) := by
+  intro z w hnd hme
+  induction w with
+  | nil => simp at hme
+  | @cons x y _ hxy rest ih =>
+    simp only [Walk.support_cons, List.nodup_cons] at hnd
+    rw [Walk.edges_cons, List.mem_cons] at hme
+    rcases hme with htop | htail
+    · rcases Sym2.eq_iff.mp htop with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+      · exact False.elim (hnd.1 (Walk.end_mem_support rest))
+      · cases rest with
+        | nil => exact ⟨.nil, hxy, rfl⟩
+        | cons _ rest2 =>
+          exfalso
+          have hnd2 := hnd.2
+          simp only [Walk.support_cons, List.nodup_cons] at hnd2
+          exact hnd2.1 (Walk.end_mem_support rest2)
+    · obtain ⟨p, hba, rfl⟩ := ih hnd.2 htail
+      exact ⟨.cons hxy p, hba, rfl⟩
+
 /-- If adding a single new edge `ab` to a power-free graph `K` creates a `2^k`-cycle,
 then `K` contains a simple `a`–`b` path of length `2^k - 1` (`k ≥ 2`). -/
 theorem cycle_using_new_edge_gives_path {W : Type u} {K : SimpleGraph W}
@@ -618,97 +640,27 @@ theorem cycle_using_new_edge_gives_path {W : Type u} {K : SimpleGraph W}
     · subst hub
       obtain ⟨p, hp, hplen⟩ := extract_from_first d hd hdlen ⟨hau, q, hd_eq⟩
       exact ⟨k, p, hk, hp, hplen⟩
-    · -- s(a, b) is in q.edges, so a must appear at the end of q (since d is a simple cycle)
-      have hmem_q : s(a, b) ∈ q.edges := by
+    · have hmem_q : s(a, b) ∈ q.edges := by
         rw [hd_eq, Walk.edges_cons, List.mem_cons] at hd_edge
         refine hd_edge.resolve_left ?_
         intro heq
         rcases Sym2.eq_iff.mp heq with ⟨_, h2⟩ | ⟨h1, _⟩
         · exact hub h2.symm
         · exact hab h1.symm
-      -- In d.reverse, the first edge must be s(a, b)!
-      have hrev_is : d.reverse.IsCycle := hd.reverse
+      have hq_nd : q.support.Nodup := by
+        have hnd := hd.support_nodup
+        rw [hd_eq] at hnd
+        simpa [Walk.support_cons] using hnd
+      obtain ⟨p0, hba, hq_eq⟩ := last_edge_of_mem_edges_end q hq_nd hmem_q
+      have hd_app : d = (Walk.cons hau p0).append (.cons hba .nil) := by
+        rw [hd_eq, hq_eq]; rfl
+      have hrev_eq : d.reverse = .cons hba.symm (Walk.cons hau p0).reverse := by
+        rw [hd_app, Walk.reverse_append]
+        rfl
       have hrev_len : d.reverse.length = 2 ^ k := by rw [Walk.length_reverse]; exact hdlen
-      cases hr_eq : d.reverse with
-      | nil => exact False.elim (hrev_is.ne_nil hr_eq)
-      | @cons _ v _ hav r =>
-        have hvb : v = b := by
-          -- If v ≠ b, then s(a, b) ∈ r.edges, so a ∈ r.support.dropLast — contradicting r.support.Nodup!
-          have hmem_rev : s(a, b) ∈ d.reverse.edges := by
-            rw [Walk.edges_reverse, List.mem_reverse]
-            exact hd_edge
-          rw [hr_eq, Walk.edges_cons, List.mem_cons] at hmem_rev
-          rcases hmem_rev with hfirst | hrest
-          · rcases Sym2.eq_iff.mp hfirst with ⟨_, h2⟩ | ⟨h1, _⟩
-            · exact h2.symm
-            · exact False.elim (hab h1.symm)
-          · exfalso
-            -- s(a, b) ∈ r.edges means r splits at an edge s(a, b), so a appears strictly before the end of r
-            -- Wait: r : H.Walk v a has r.support.Nodup and r ends at a, so the ONLY occurrence of a in r.support is the last vertex!
-            -- Wait: if s(a, b) ∈ r.edges, then a ∈ r.support AND b ∈ r.support, and in fact a is adjacent to b along r.
-            -- Let's check: r.reverse starts at a, and s(a, b) ∈ r.reverse.edges!
-            -- Even simpler: d = (d.reverse).reverse = r.reverse.append (.cons hav.symm .nil)
-            -- so d.support.tail = q.support is Nodup and ends at a.
-            -- In r : H.Walk v a, r.support.Nodup (since d.reverse.support.tail = r.support).
-            -- Every edge in r.edges has its first vertex in r.support.dropLast!
-            have ha_in_q : a ∈ q.support.dropLast := by
-              -- Use induction on any walk w : Walk x y with s(a, b) ∈ w.edges and w.support.Nodup
-              -- Actually: prove a small helper: if s(a, b) ∈ r.edges and r : Walk v a,
-              -- then either r has length 1 (so v = b!) or a appears in r.support.dropLast!
-              clear hmem_q
-              have haux : ∀ {z : W} (w : H.Walk z a), w.support.Nodup → s(a, b) ∈ w.edges →
-                  (z = b ∧ w.length = 1) ∨ (a ∈ w.support.dropLast) := by
-                intro z w hnd hme
-                induction w with
-                | nil => simp at hme
-                | @cons x y _ hxy rest ih =>
-                  rw [Walk.edges_cons, List.mem_cons] at hme
-                  rcases hme with htop | htail
-                  · rcases Sym2.eq_iff.mp htop with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-                    · right
-                      simp [Walk.support_cons]
-                    · cases rest with
-                      | nil => left; exact ⟨rfl, rfl⟩
-                      | cons _ _ =>
-                        -- y = a appears in (a :: rest.support) AND rest ends at a, impossible by Nodup!
-                        exfalso
-                        simp only [Walk.support_cons, List.nodup_cons] at hnd
-                        have ha_end : a ∈ (Walk.cons _ _ : H.Walk a a).support :=
-                          Walk.end_mem_support _
-                        -- Wait: hnd.2 says (a :: _).Nodup, which already fails since a is at start AND end!
-                        have hnd2 := hnd.2
-                        simp only [Walk.support_cons, List.nodup_cons] at hnd2
-                        exact hnd2.1 (Walk.end_mem_support _)
-                  · have hnd_rest : rest.support.Nodup := (List.nodup_cons.mp (by simpa [Walk.support_cons] using hnd)).2
-                    rcases ih hnd_rest htail with ⟨rfl, _⟩ | hdl
-                    · -- rest : Walk b a of length 1, so y = b, and x ≠ a
-                      -- Wait: then rest = .cons hba .nil, so s(a, b) IS the last edge of w = d.reverse,
-                      -- which means s(a, b) IS the first edge of d, contradicting hub!
-                      exfalso
-                      have hrest_eq : rest.support = [b, a] := by
-                        cases rest with
-                        | nil => simp at htail
-                        | @cons _ t _ _ rest2 =>
-                          cases rest2 with
-                          | nil => rfl
-                          | cons _ _ => simp at *
-                      -- We don't even need hub here if we just know a ∈ r.support.dropLast!
-                      -- Wait: if rest : Walk b a has length 1, then a IS at the very end of r, so b is the penultimate vertex of r,
-                      -- which means the LAST edge of r is s(b, a), which IS the FIRST edge of d = r.reverse ++ ...
-                      -- Let's avoid this branch by using d.reverse directly!
-                      sorry
-                    · right
-                      simp only [Walk.support_cons]
-                      cases hsupp_r : rest.support with
-                      | nil => exact False.elim (Walk.support_ne_nil rest hsupp_r)
-                      | cons _ _ =>
-                        simp only [List.dropLast_cons_of_ne_nil (by simp [hsupp_r] : rest.support ≠ [])]
-                        exact List.mem_cons_of_mem x (by rwa [hsupp_r] at hdl)
-              sorry
-            sorry
-        subst hvb
-        obtain ⟨p, hp, hplen⟩ := extract_from_first d.reverse hrev_is hrev_len ⟨hav, r, hr_eq⟩
-        exact ⟨k, p, hk, hp, hplen⟩
+      obtain ⟨p, hp, hplen⟩ :=
+        extract_from_first d.reverse hd.reverse hrev_len ⟨hba.symm, (Walk.cons hau p0).reverse, hrev_eq⟩
+      exact ⟨k, p, hk, hp, hplen⟩
 
 /-- On the minimal `w`-free 2-cut side `A`, `G.induce A` contains a simple `a`–`b` path
 of Fermat length `2^k - 1` (`k ≥ 2`). -/
@@ -818,7 +770,6 @@ theorem wfree_two_cut_ident_dyadic_path {V : Type u} [Fintype V] [DecidableEq V]
         exact hKfree (rectangle_power K (K.ne_of_adj hac0) hab (K.ne_of_adj hac)
           (K.ne_of_adj hbc0).symm hne.symm (K.ne_of_adj hbc).symm hac0 hbc0.symm hbc hac.symm)
       have hc0b : c0 ≠ b := (K.ne_of_adj hbc0).symm
-      -- b has a second neighbor v1 ≠ c0 since K.degree b = 2
       have hv1_ex : ∃ v1 : A, K.Adj b v1 ∧ v1 ≠ c0 := by
         have hcard2 : (K.neighborFinset b).card = 2 := by
           rw [K.card_neighborFinset_eq_degree, hKb]
@@ -853,7 +804,7 @@ theorem wfree_two_cut_ident_dyadic_path {V : Type u} [Fintype V] [DecidableEq V]
       by_cases hvz : v = z
       · rw [hvz]; exact hz_deg
       · exact hv_deg_of_not_common v hvz (fun h => hvc (Subtype.ext (huniq v.1 h)))
-    · push Not at hcom
+    · have hnc : ∀ c : A, ¬ (K.Adj a c ∧ K.Adj b c) := fun c hc => hcom ⟨c, hc⟩
       have hz_deg : 3 ≤ H.degree z := by
         let f : K.neighborSet a ⊕ K.neighborSet b → H.neighborSet z :=
           Sum.elim
@@ -866,16 +817,16 @@ theorem wfree_two_cut_ident_dyadic_path {V : Type u} [Fintype V] [DecidableEq V]
           rintro (u | u) (v | v) heq
           · exact congrArg Sum.inl (Subtype.ext (congrArg (fun t => t.1.1) heq))
           · have hval : u.1 = v.1 := congrArg (fun t => t.1.1) heq
-            exact False.elim (hcom u.1 ⟨u.2, hval ▸ v.2⟩)
+            exact False.elim (hnc u.1 ⟨u.2, hval ▸ v.2⟩)
           · have hval : u.1 = v.1 := congrArg (fun t => t.1.1) heq
-            exact False.elim (hcom u.1 ⟨hval ▸ v.2, u.2⟩)
+            exact False.elim (hnc u.1 ⟨hval ▸ v.2, u.2⟩)
           · exact congrArg Sum.inr (Subtype.ext (congrArg (fun t => t.1.1) heq))
         have hc := Fintype.card_le_of_injective f hf
         rw [Fintype.card_sum, SimpleGraph.card_neighborSet_eq_degree,
           SimpleGraph.card_neighborSet_eq_degree, SimpleGraph.card_neighborSet_eq_degree,
           hKa, hKb] at hc
         omega
-      refine ⟨⟨z, hz_deg⟩, ⟨z, fun v hvz => hv_deg_of_not_common v hvz (hcom v.1)⟩⟩
+      refine ⟨⟨z, hz_deg⟩, ⟨z, fun v hvz => hv_deg_of_not_common v hvz (hnc v.1)⟩⟩
   obtain ⟨k, v0, c, hk, hc, hlen⟩ := hm.2.2.1 W H hWcard hnear
   obtain ⟨p, hp, hplen, _⟩ := lift_ident_cycle hab hKfree hk c hc hlen
   exact ⟨k, p, hk, hp, hplen⟩
