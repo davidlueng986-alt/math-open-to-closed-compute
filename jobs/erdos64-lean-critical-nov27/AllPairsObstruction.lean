@@ -1798,7 +1798,7 @@ def pathData : Array PathCert := #[
   pc0, pc1, pc2, pc3, pc4, pc5, pc6, pc7, pc8, pc9, pc10, pc11, pc12, pc13, pc14, pc15, pc16, pc17, pc18, pc19, pc20, pc21, pc22, pc23, pc24, pc25, pc26, pc27, pc28, pc29, pc30, pc31, pc32, pc33, pc34, pc35, pc36, pc37, pc38, pc39, pc40, pc41, pc42, pc43, pc44, pc45, pc46, pc47, pc48, pc49, pc50, pc51, pc52, pc53, pc54, pc55, pc56, pc57, pc58, pc59, pc60, pc61, pc62, pc63, pc64, pc65, pc66, pc67, pc68, pc69, pc70, pc71, pc72, pc73, pc74, pc75, pc76, pc77, pc78, pc79, pc80, pc81, pc82, pc83, pc84, pc85, pc86, pc87, pc88, pc89, pc90, pc91, pc92, pc93, pc94, pc95, pc96, pc97, pc98, pc99, pc100, pc101, pc102, pc103, pc104, pc105, pc106, pc107, pc108, pc109, pc110, pc111, pc112, pc113, pc114, pc115, pc116, pc117, pc118, pc119, pc120, pc121, pc122, pc123, pc124, pc125, pc126, pc127, pc128, pc129, pc130, pc131, pc132, pc133, pc134, pc135, pc136, pc137, pc138, pc139, pc140, pc141, pc142, pc143, pc144, pc145, pc146, pc147, pc148, pc149, pc150, pc151, pc152, pc153, pc154, pc155, pc156, pc157, pc158, pc159, pc160, pc161, pc162, pc163, pc164, pc165, pc166, pc167, pc168, pc169, pc170, pc171, pc172, pc173, pc174, pc175, pc176, pc177, pc178, pc179, pc180, pc181, pc182, pc183, pc184, pc185, pc186, pc187, pc188, pc189, pc190, pc191, pc192, pc193, pc194, pc195, pc196, pc197, pc198, pc199, pc200, pc201, pc202, pc203, pc204, pc205, pc206, pc207, pc208, pc209, pc210, pc211, pc212, pc213, pc214, pc215, pc216, pc217, pc218, pc219, pc220, pc221, pc222, pc223, pc224, pc225, pc226, pc227, pc228, pc229, pc230, pc231, pc232, pc233, pc234, pc235, pc236, pc237, pc238, pc239, pc240, pc241, pc242, pc243, pc244, pc245, pc246, pc247, pc248, pc249, pc250, pc251, pc252, pc253, pc254, pc255, pc256, pc257, pc258, pc259, pc260, pc261, pc262, pc263, pc264, pc265, pc266, pc267, pc268, pc269, pc270, pc271, pc272, pc273, pc274, pc275, pc276, pc277, pc278, pc279, pc280, pc281, pc282, pc283, pc284, pc285, pc286, pc287, pc288, pc289, pc290, pc291, pc292, pc293, pc294, pc295, pc296, pc297, pc298, pc299, pc300, pc301, pc302, pc303, pc304, pc305, pc306, pc307, pc308, pc309, pc310, pc311, pc312, pc313, pc314, pc315, pc316, pc317, pc318, pc319, pc320, pc321, pc322, pc323, pc324, pc325, pc326, pc327, pc328, pc329, pc330, pc331, pc332, pc333, pc334, pc335, pc336, pc337, pc338, pc339, pc340, pc341, pc342, pc343, pc344, pc345, pc346, pc347, pc348, pc349
 ]
 def pathAt (i : Fin 350) : PathCert :=
-  pathData[i.val]'(by simpa [pathData] using i.isLt)
+  pathData[i.val]'(by simp [pathData])
 
 def firstIndex (u v : V) : Fin 350 :=
   ((#[
@@ -2134,7 +2134,7 @@ def cycleData : Array CycleCert := #[
   cc0, cc1, cc2, cc3, cc4, cc5, cc6, cc7, cc8, cc9, cc10, cc11, cc12, cc13, cc14, cc15, cc16, cc17, cc18, cc19, cc20, cc21, cc22, cc23, cc24, cc25, cc26, cc27, cc28
 ]
 def cycleAt (i : Fin 29) : CycleCert :=
-  cycleData[i.val]'(by simpa [cycleData] using i.isLt)
+  cycleData[i.val]'(by simp [cycleData])
 
 def fermatIndex (x a b : V) : Fin 29 :=
   match x.val,a.val,b.val with
@@ -2336,16 +2336,16 @@ theorem simpleReach_of_path {u v : V} (p : G.Walk u v) :
     p.IsPath → ∀ (seen : List V), (∀ x ∈ p.support, x ∉ seen) →
       simpleReach p.length u v seen = true := by
   induction p with
-  | nil =>
+  | @nil z =>
     intro _ seen havoid
-    have hnot : u ∉ seen := havoid u (by simp)
+    have hnot : z ∉ seen := havoid z (by simp)
     simp [simpleReach,hnot]
   | @cons a b c hab q ih =>
     intro hp seen havoid
     have hanot : a ∉ seen := havoid a (by simp)
     change (if a ∈ seen then false else
       (neighbors a).any fun w => simpleReach q.length w c (a::seen)) = true
-    rw [if_neg hanot]
+    rw [ite_eq_right hanot]
     apply List.any_eq_true.mpr
     refine ⟨b, (neighbors_correct a b).mpr hab, ?_⟩
     apply ih (Walk.IsPath.of_cons hp) (a::seen)

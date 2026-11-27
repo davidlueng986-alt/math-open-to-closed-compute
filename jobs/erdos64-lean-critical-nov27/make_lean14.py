@@ -67,7 +67,7 @@ for i,d in enumerate(paths):
 '''
 s+='def pathData : Array PathCert := #[\n  '+', '.join('pc'+str(i)for i in range(N))+'\n]\n'
 s+=f'''def pathAt (i : Fin {N}) : PathCert :=
-  pathData[i.val]'(by simpa [pathData] using i.isLt)
+  pathData[i.val]'(by simp [pathData])
 
 '''
 by_pair={}
@@ -158,7 +158,7 @@ for i,c in enumerate(cycles):
 '''
 s+='def cycleData : Array CycleCert := #[\n  '+', '.join('cc'+str(i)for i in range(C))+'\n]\n'
 s+=f'''def cycleAt (i : Fin {C}) : CycleCert :=
-  cycleData[i.val]'(by simpa [cycleData] using i.isLt)
+  cycleData[i.val]'(by simp [cycleData])
 
 '''
 for name,lengths in [('fermatIndex',{9}),('plusTwoIndex',{6,10})]:
@@ -248,16 +248,16 @@ theorem simpleReach_of_path {u v : V} (p : G.Walk u v) :
     p.IsPath → ∀ (seen : List V), (∀ x ∈ p.support, x ∉ seen) →
       simpleReach p.length u v seen = true := by
   induction p with
-  | nil =>
+  | @nil z =>
     intro _ seen havoid
-    have hnot : u ∉ seen := havoid u (by simp)
+    have hnot : z ∉ seen := havoid z (by simp)
     simp [simpleReach,hnot]
   | @cons a b c hab q ih =>
     intro hp seen havoid
     have hanot : a ∉ seen := havoid a (by simp)
     change (if a ∈ seen then false else
       (neighbors a).any fun w => simpleReach q.length w c (a::seen)) = true
-    rw [if_neg hanot]
+    rw [ite_eq_right hanot]
     apply List.any_eq_true.mpr
     refine ⟨b, (neighbors_correct a b).mpr hab, ?_⟩
     apply ih (Walk.IsPath.of_cons hp) (a::seen)
