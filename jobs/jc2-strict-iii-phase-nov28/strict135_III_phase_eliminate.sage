@@ -2,7 +2,7 @@
 """Exact characteristic-zero two-stage strict-III elimination.
 
 sage strict135_III_eliminate.sage OUTPUT_DIRECTORY
-Eight variables, necessary equations only. Includes three independently checked common-fibre phase equations.
+Twelve variables, including four independent monic-divisor coefficients; no expanded inverse-W substitution. Includes three independently checked common-fibre phase equations.
 First try W|H (degree7), then if
 nonunit or timed out add W|p' (degree11). Total internal budget20 minutes;
 recommended Actions timeout30 minutes, always below the six-hour limit.
@@ -33,11 +33,12 @@ def sing(f):
     return str(f).replace('**','^')
 
 try:
-    vars=['r4','r3','s4','s3','s2','s1','s0','z']
+    vars=['r4','r3','s4','s3','s2','s1','s0','d3','d2','d1','d0','z']
     C=PolynomialRing(QQ,names=vars,order='degrevlex')
     g=C.gens_dict()
     A=PolynomialRing(C,'t');t=A.gen()
-    r4,r3,s4,s3,s2,s1,s0,z=[g[v] for v in vars]
+    r4,r3,s4,s3,s2,s1,s0=[g[v] for v in vars[:7]]
+    d3,d2,d1,d0,z=[g[v] for v in vars[7:]]
     r2=(3*s1+6*s4*s2+3*s3**2+3*s3*s4**2+3*r4**2-6*r3*s4-6*r4*s3-6*r4*s4**2)/2
     S=t**5+s4*t**4+s3*t**3+s2*t**2+s1*t+s0
     Rbase=t**6+r4*t**4+r3*t**3+r2*t**2
@@ -63,12 +64,15 @@ try:
     base.append(('common_fibre_canonical_T9',C(TT[9])))
     base.append(('common_fibre_canonical_T7_times12',C(12*TT[7]-9*TT[9]*P[10]-10*TT[10]*P[9])))
     base.append(('common_fibre_canonical_T5_times288',C(288*TT[5]-168*TT[7]*P[10]-192*TT[8]*P[9]-216*TT[9]*P[8]+153*TT[9]*P[10]**2-240*TT[10]*P[7]+340*TT[10]*P[10]*P[9])))
-    D=t**5-z/24*sum(W[i]*t**i for i in range(5))
+    base.append(('W_degree4_zero',C(W[4])))
+    for i,di in enumerate([d0,d1,d2,d3]):
+        base.append((f'W_equals_minus24lambdaD_coeff_{i}',C(W[i]+24*lam*di)))
+    D=t**5+d3*t**3+d2*t**2+d1*t+d0
     H=U*U.derivative()-4*S*V.derivative()
     assert H.degree()<=7 and H[7]==4-12*V[3]
     assert 3*H==(U+4*S*R)*(8*Q).derivative()-3*(4*R*(U+4*S*R)+8*S**2)*P.derivative()
     meta={'field':'QQ','variables':vars,'order':'degrevlex','internal_total_seconds':TOTAL_SECONDS,
-          'normalizations':['R monic sextic','R5=0','S monic quintic'],
+          'normalizations':['R monic sextic','R5=0','S monic quintic','independent monic D5 with D4=0'],
           'triangular_eliminations':['r1 from V5=0','r0 from V4=0','r2 from E11 after E15,E14,E13'],
           'saturation':['z*lambda=1'],'stages':['W divides H','W divides H and Pprime'],
           'scope':'StrictIII residual target plus audited COMMON-FIBRES135 section5 same-P phase contact; W!=0 follows from zlambda=1 and W5=-24lambda.'}
