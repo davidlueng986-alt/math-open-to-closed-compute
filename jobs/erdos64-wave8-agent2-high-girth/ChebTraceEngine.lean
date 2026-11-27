@@ -48,7 +48,7 @@ theorem taillessCount_eq_chebMat_trace_odd (G : SimpleGraph V) [DecidableRel G.A
           | nil => simp at hp
           | cons h rest =>
               cases rest with
-              | nil => exact G.loopless v h
+              | nil => exact G.ne_of_adj h rfl
               | cons _ _ => simp at hp
         have ht1 : taillessCount G 1 = 0 := by
           unfold taillessCount
@@ -452,9 +452,8 @@ theorem cert_trace_surplus_of_two_square (G : SimpleGraph V) [DecidableRel G.Adj
     push_cast
     rw [sub_mul, Finset.sum_mul]
     congr 1
-    · ring
-    · refine Finset.sum_congr rfl fun k _ => ?_
-      split_ifs <;> ring
+    refine Finset.sum_congr rfl fun k _ => ?_
+    split_ifs <;> ring
   have hsum_le : (∑ k ∈ Finset.range S.length,
         if 1 ≤ k then ((S.getD k 0 : ℤ) : ℚ) * (taillessCount G k : ℚ) else 0) ≤
       ((lead : ℤ) : ℚ) * (taillessCount G L : ℚ) -
