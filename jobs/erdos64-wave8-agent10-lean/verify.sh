@@ -67,20 +67,16 @@ with open("out/axioms.txt") as f:
 
 axioms = {}
 allowed = {"propext", "Classical.choice", "Quot.sound"}
-for line in text.splitlines():
-    s = line.strip()
-    m = re.match(r"'([^']+)' depends on axioms: \[([^\]]*)\]", s)
-    if m:
-        name = m.group(1)
-        ax_list = [a.strip() for a in m.group(2).split(",") if a.strip()]
-        for a in ax_list:
-            if a not in allowed:
-                raise SystemExit(f"FORBIDDEN AXIOM {a} in {name}")
-        axioms[name] = sorted(ax_list)
-        continue
-    m0 = re.match(r"'([^']+)' does not depend on any axioms", s)
-    if m0:
-        axioms[m0.group(1)] = []
+for m in re.finditer(r"'([^']+)' depends on axioms: \[([^\]]*)\]", text, re.S):
+    name = m.group(1)
+    ax_list = [a.strip() for a in m.group(2).split(",") if a.strip()]
+    for a in ax_list:
+        if a not in allowed:
+            raise SystemExit(f"FORBIDDEN AXIOM {a} in {name}")
+    axioms[name] = sorted(ax_list)
+
+for m0 in re.finditer(r"'([^']+)' does not depend on any axioms", text):
+    axioms[m0.group(1)] = []
 
 if len(axioms) != 30:
     raise SystemExit(f"Expected 30 audited declarations, got {len(axioms)}")
