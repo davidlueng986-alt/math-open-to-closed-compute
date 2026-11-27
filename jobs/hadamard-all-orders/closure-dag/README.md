@@ -5,13 +5,15 @@
 | 要查什麼 | 入口 |
 | --- | --- |
 | 每個命題、量詞、AND/OR 依賴、證據及結案規則 | [完整 DAG](GRAPH.md) · [機讀版本](dag.json) |
-| 可以交給其他 agent 的工作、交付物、驗收、失敗時保留什麼 | [23 張任務卡](TASKS.md) |
+| 可以交給其他 agent 的工作、交付物、驗收、失敗時保留什麼 | [24 張任務卡](TASKS.md) |
 | 為什麼這些節點可以接回原題 | [數學推導](lemmas.md) · [前一輪全階歸約](../README.md) |
 | Lean 證到哪裡、驗證如何重跑 | [審核和重現紀錄](../VERIFICATION.md) · [GitHub Actions](https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/workflows/hadamard-all-orders.yml) |
 
 ## 全題還缺甚麼
 
 先用倍增處理偶數乘子，用 Paley 和 Scarpis–Đoković 處理已知類別。記 $D$ 為這些測試餘下的奇數 $t\ge5$。$D$ 可以包含已有其他構造的階數，例如 $t=23$ 可用已知 $H(92)$ 做對照。對每個 $t\in D$，目前最直接的兩個缺口是構造一個外部區塊設計，以及在同一組行標籤上找到足夠多條互相相容的內欄。每一步可改選較早的資料，但輸出的所有交數必須在同一份見證上成立。[全階範圍和已知類別](../README.md#dependency-table) · [Lean 條件式推論](../Rounding.lean)
+
+現有一族可以從原本的 $D$ 劃去。對每個 $j\ge0$，Mathon 的 45 點圖配合 Turyn 的冪次定理給出 $4t=2(45^{12j+1}+1)$ 的完整方陣，首項是 92 階。在任一外部設計中，兩個只差一點的區組會給出一條與其他合法內欄自動相容的內欄。若同一點可分別與 $2t-8$ 個不同的點作這類交換，就可以補成方陣。2396 階須要至少 1190 個交換，此路線只剩 1190 至 1195 這六種度數待判定。[構造、證明及 2396 階限制](../first-match/README.md)
 
 以下箭嘴由前提指向結論。完整圖把共同依賴、可替代的充分路線和只供實驗的紀錄逐一列明。[完整節點及依賴](GRAPH.md)
 
@@ -24,6 +26,7 @@ flowchart BT
     endg["只欠八欄時找到可延伸前綴"] --> bands
     bands --> rem["OR · 覆蓋所有 t ∈ D"]
     clique["同一個規則矩陣對上構造 h-clique"] --> rem
+    cert["45 冪次族 AND 餘下各階有 h 個相容證書"] --> rem
     design["全參數的完整區塊分解"] --> rem
     tail["同一個 T 的尾端定理 AND 全部有限餘例"] --> rem
     rem --> yes["AND · 每個正整數 t 都有 H(4t)"]
@@ -47,12 +50,13 @@ flowchart BT
 
 尾段已經有一個規模與階數無關的檢查。對一份固定的 $n\times(n-8)$ 前綴，其正交補空間只有八維。固定整體正負號，最多試 **128** 個符號向量。不同階數的檢查還可共用一個有限的八維行類型集合。因此可把「這份前綴能否延伸」交給精確程式，把「每個所需階數總能找到至少一份成功前綴」交給研究幾何結構的 agent。12 階的對照例說明為甚麼要容許改選舊欄。原來四欄完全無法加欄；刪去指定一欄後，精確枚舉找到 1,296 對可以補入的正交欄。[有限行類型和秩界](lemmas.md#finite-row-types-at-defect-eight) · [正反對照](verify_endgame.py)
 
-## 第一批可領取的工作
+## 第一批任務進度
 
 | Agent 任務卡 | 可以獨立交付的第一份成果 |
 | --- | --- |
-| [T-SIGNATURE-ATLAS](TASKS.md#t-signature-atlas) | 在已知的 44 階矩陣，兩側各枚舉全部 352,716 個選法，交出兩份計數向量表、共有向量及其重數。 |
-| [T-FIRST-MATCH](TASKS.md#t-first-match) | 為一個明確的參數族證明兩表一定有共同的整數向量。可同時開工，之後用上一項的結果測試。 |
+| [T-SIGNATURE-ATLAS](TASKS.md#t-signature-atlas) | 已完成。兩側各 352,716 個選法，正好 21 個共有向量，每個重數均為一。[完整圖冊](../first-match/atlas.json) |
+| [T-FIRST-MATCH](TASKS.md#t-first-match) | 已認領。兩個只差一點的外部區組足以構造內欄，45 冪次族已有全解。餘下階數的存在性仍待證。 |
+| [T-CERTIFICATE-SUPPLY](TASKS.md#t-certificate-supply) | 可認領。在 2396 階判定近滿星形的六種度數，或構造更多整數係數證書。[剩餘行的秩界及交數](../first-match/README.md#the-unpaired-rows-when-the-star-misses-at-most-seven-points) |
 | [T-LOW-TRADES](TASKS.md#t-low-trades) | 最小正誤差只能是一個交替四邊形。證明哪類保持誤差的局部交換，可以製造出一次交換就修復它的兩行。 |
 | [T-TYPE-ATLAS](TASKS.md#t-type-atlas) | 先固定八維 Gram 矩陣 $G=8I$，列全行類型及各自排除的 128 位候選遮罩，並獨立核對計數。 |
 
@@ -64,7 +68,7 @@ flowchart BT
 
 ## 如何讀進度
 
-目前有 19 張卡可直接領取，另有 4 張要等上游成果，包括使用同一個已證截止值的有限覆核，以及最終結案審核。逐欄路線仍須補上上述兩個全稱缺口。以 2396 階為例，已重現 1,196 條正交欄，七欄補全的門檻是 2,389 條。此階的循環方程、任一固定前綴的失敗，以及一個真的 2396 階完整方陣，在全圖各有不同的結論。[單階證據](../README.md#what-is-known-about-the-distance) · [循環證書](../../hadamard-2396-coverage/README.md)
+目前有 18 張卡可直接領取，1 張已認領，1 張已完成，另有 4 張要等上游成果，包括使用同一個已證截止值的有限覆核，以及最終結案審核。逐欄路線仍須補上上述兩個全稱缺口。以 2396 階為例，另一研究分支的 1,218 條正交欄已重跑，全部 741,153 個內積為零。七欄補全門檻是 2,389 條，兩者相差 1,171 條。[1,218 欄見證](https://github.com/davidlueng986-alt/math-open-to-closed-compute/blob/78f36d65c9df0beb8659394e0a43b0f95d331fe9/jobs/hadamard-all-orders/R_PALEY_FULL92_EIGHTEEN.md) 此階的循環方程、任一固定前綴的失敗，以及一個真的 2396 階完整方陣，在全圖各有不同的結論。[單階證據](../README.md#what-is-known-about-the-distance) · [循環證書](../../hadamard-2396-coverage/README.md)
 
 從 repo 根目錄可執行下列指令，檢查結案邏輯、任務依賴及目前可認領清單。
 

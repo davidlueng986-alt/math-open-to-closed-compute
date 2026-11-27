@@ -11,9 +11,10 @@ A card is ready when its target is open, it has no claimant, and its listed prer
 | P0 | [T-FIRST-MATCH](#t-first-match) | Claimed | [COLLISION](GRAPH.md#collision) |
 | P0 | [T-LOW-TRADES](#t-low-trades) | Ready | [SWITCH-LOW](GRAPH.md#switch-low) |
 | P0 | [T-RESOLVE](#t-resolve) | Blocked | [RESOLUTION](GRAPH.md#resolution) |
-| P0 | [T-SIGNATURE-ATLAS](#t-signature-atlas) | Claimed | [SIGNATURE-ATLAS](GRAPH.md#signature-atlas) |
+| P0 | [T-SIGNATURE-ATLAS](#t-signature-atlas) | Checked | [SIGNATURE-ATLAS](GRAPH.md#signature-atlas) |
 | P0 | [T-TYPE-ATLAS](#t-type-atlas) | Ready | [TYPE-ATLAS](GRAPH.md#type-atlas) |
 | P0 | [T-YES](#t-yes) | Blocked | [YES](GRAPH.md#yes) |
+| P1 | [T-CERTIFICATE-SUPPLY](#t-certificate-supply) | Ready | [CERTIFICATE-SUPPLY](GRAPH.md#certificate-supply) |
 | P1 | [T-CLIQUE](#t-clique) | Ready | [UNIFORM-CLIQUE](GRAPH.md#uniform-clique) |
 | P1 | [T-COMMUTING](#t-commuting) | Ready | [ALGEBRAIC-COVER](GRAPH.md#algebraic-cover) |
 | P1 | [T-EARLY](#t-early) | Ready | [EARLY](GRAPH.md#early) |
@@ -67,7 +68,7 @@ P0 · research · Claimed · Codex · `hadamard/first-match-atlas` · 2026-11-27
 
 - **Target** · [COLLISION](GRAPH.md#collision)
 - **Prerequisites** · [PIVOT](GRAPH.md#pivot), [SIGNATURE](GRAPH.md#signature)
-- **Related results** · [SIGNATURE-ATLAS](GRAPH.md#signature-atlas), [FRACTIONAL-VERTEX](GRAPH.md#fractional-vertex)
+- **Related results** · [SIGNATURE-ATLAS](GRAPH.md#signature-atlas), [FRACTIONAL-VERTEX](GRAPH.md#fractional-vertex), [SIGNED-FIRST](GRAPH.md#signed-first), [UNIVERSAL-CERTIFICATE](GRAPH.md#universal-certificate), [PAIR-DEFECT](GRAPH.md#pair-defect), [POWER45-COVER](GRAPH.md#power45-cover), [ONE-COLUMN-28](GRAPH.md#one-column-28)
 
 **Inputs**
 
@@ -75,7 +76,7 @@ For k-subsets compare the two signature supports. N₁ is their multiplicity inn
 
 **Deliverable**
 
-Prove a positive coefficient in common for a specified family of valid pairs or show how to replace a given pair by one with positive overlap. Record the family as a predicate on t and on the two matrices.
+Prove a positive coefficient in common for a specified family of valid pairs or show how to replace a given pair by one with positive overlap. Record the family as a predicate on t and on the two matrices. The row-pair class and the power-45 progression are established. Extend coverage to a different part of D or prove the general existential statement.
 
 **Acceptance**
 
@@ -141,7 +142,7 @@ Any missing evidence or mismatched parameter reopens the affected parent, with a
 
 **Inventory every first selector at order 44**
 
-P0 · research · Claimed · Codex · `hadamard/first-match-atlas` · 2026-11-27
+P0 · research · Checked · Codex · `hadamard/first-match-atlas` · 2026-11-27
 
 - **Target** · [SIGNATURE-ATLAS](GRAPH.md#signature-atlas)
 - **Prerequisites** · [SIGNATURE](GRAPH.md#signature)
@@ -153,7 +154,7 @@ Use the Paley H44 ordering and pivot zero from verify_pivot.py. Here t=11, b=21 
 
 **Deliverable**
 
-Produce two signature histograms, their intersection with multiplicities, N₁, and two decoded examples when available. Include the exact sign/row convention, replay code and deterministic digests.
+Produce two signature histograms, their intersection with multiplicities, N₁, and two decoded examples when available. Include the exact sign/row convention, replay code and deterministic digests. Completed in ../first-match/ with both archives and an independent verifier.
 
 **Acceptance**
 
@@ -216,6 +217,32 @@ Every t is covered and every imported hypothesis has a matching source or verifi
 List any uncovered domain explicitly and return the proof to its relevant gate; keep resolution OPEN.
 
 ## P1
+
+### T-CERTIFICATE-SUPPLY
+
+**Build enough distinct universally compatible columns**
+
+P1 · research · Ready · Unclaimed
+
+- **Target** · [CERTIFICATE-SUPPLY](GRAPH.md#certificate-supply)
+- **Prerequisites** · [UNIVERSAL-CERTIFICATE](GRAPH.md#universal-certificate), [PAIR-DEFECT](GRAPH.md#pair-defect)
+- **Related results** · [STAR-CRITERION](GRAPH.md#star-criterion), [POWER45-COVER](GRAPH.md#power45-cover), [ONE-COLUMN-28](GRAPH.md#one-column-28), [ASSEMBLY](GRAPH.md#assembly)
+
+**Inputs**
+
+At one t in D outside the 45-power family use integral c of sum two and Z(c)=(YYᵀ−tI)c−(t−1)1. For t=599 the sufficient degree is 1190. A full or one-short star is impossible. For r missing star exchanges, first quotient by equal-half incidence words on the 2r leftover rows and use the binary rank bound 2r−2.
+
+**Deliverable**
+
+Resolve a residual case, starting with the two allowed exceptional-word patterns for degree 1195 at t=599, or construct distinct binary images from more general c on one verified design. A parametric construction may target any uncovered subfamily.
+
+**Acceptance**
+
+Verify the outside Gram, integrality, coefficient sums, all output bits and distinct images on a common Y. For complete order coverage reach h=2t−8 and cite completion. For the global node cover every t in its stated remainder.
+
+**Fallback**
+
+An exclusion must name its degree, coefficient support or family of designs. Record the exact residual cases and a reusable obstruction.
 
 ### T-CLIQUE
 

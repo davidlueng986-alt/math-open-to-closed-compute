@@ -22,6 +22,10 @@ jobs:
         run: python3 -B jobs/hadamard-all-orders/closure-dag/render.py --check
       - name: Replay the pivot-to-clique correspondence
         run: python3 -B jobs/hadamard-all-orders/closure-dag/verify_pivot.py
+      - name: Verify the archived H44 signatures and all modular collisions
+        run: python3 -B jobs/hadamard-all-orders/first-match/verify_first_match.py
+      - name: Replay the H28 obstruction and construct H92 from 45 block pairs
+        run: python3 -B jobs/hadamard-all-orders/first-match/verify_designs.py
       - name: Replay codimension-eight extension and exclusion controls
         run: python3 -B jobs/hadamard-all-orders/closure-dag/verify_endgame.py
       - name: Reconstruct the incidence examples and the 2396 by 1196 matrix
@@ -35,7 +39,11 @@ jobs:
           export LEAN_PATH="$RUNNER_TEMP/hadamard-all-orders"
           mkdir -p "$LEAN_PATH"
           lean -DwarningAsError=true -o "$LEAN_PATH/Triples.olean" jobs/hadamard-2396-projections/Triples.lean
-          for module in Assembly Reductions Constructions OuterEnergy Rounding; do
-            lean -DwarningAsError=true -o "$LEAN_PATH/$module.olean" "jobs/hadamard-all-orders/$module.lean" | tee "$RUNNER_TEMP/$module.log"
+          proof_dir=jobs/hadamard-all-orders
+          for source in "$proof_dir"/{Assembly,Reductions,Constructions,OuterEnergy,Rounding}.lean \
+            "$proof_dir"/first-match/{Lattice,PairDefect,SwitchParity,Coverage45}.lean; do
+            module=${source##*/}
+            module=${module%.lean}
+            lean -DwarningAsError=true -o "$LEAN_PATH/$module.olean" "$source" | tee "$RUNNER_TEMP/$module.log"
             if grep -q 'sorryAx' "$RUNNER_TEMP/$module.log"; then exit 1; fi
           done

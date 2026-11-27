@@ -2,6 +2,8 @@
 
 Write $H(n)$ for existence of an $n\times n$ sign matrix with orthogonal columns. For a square real matrix this is equivalent to $HH^{\mathsf T}=nI$. Let $D$ be the odd $t\ge5$ left after the two direct Paley tests and the Scarpis–Đoković test in the [all-order reduction](../README.md). Put $n=4t$, $b=2t-1$, $k=t-1$, $m=2b$, $h=2t-8$. Below, $J$ is an all-ones matrix of the indicated size. The two copies of the row set $[b]$ have separate labels. Point labels within $[b]$ are common.
 
+A proved subfamily inside the original $D$ is $4t=2(45^{12j+1}+1)$ for $j\ge0$. The certificate route uses this family and asks for enough distinct binary images on each remaining order. [Family and proof](../first-match/README.md#an-infinite-subfamily-inside-d)
+
 ## Pivot
 
 An outside design $Y$ has $2b$ blocks of size $t$ on $2t$ points, every point has degree $b$ and every distinct pair has codegree $k$. Mark any point $\infty$. Exactly $b$ blocks contain it. Delete $\infty$ from those blocks to form the rows of $A$. For the other $b$ blocks take their complements in the $b$ finite points to form the rows of $B$. Both are $b\times b$ binary matrices with all row and column sums $k$. For a finite point, its degree in $A$ is its codegree with $\infty$, and its degree in $J-B$ is $b-k=t$.

@@ -14,6 +14,7 @@ Diagrams use solid arrows for required dependencies and dotted arrows for altern
 - [Pivot clique route](#pivot-clique-route)
 - [Full symmetric design route](#full-symmetric-design-route)
 - [Cofinite construction route](#cofinite-construction-route)
+- [Integral certificates and the 45-power family](#integral-certificates-and-the-45-power-family)
 - [Unrestricted design exclusion](#unrestricted-design-exclusion)
 - [Unrestricted pivot pair exclusion](#unrestricted-pivot-pair-exclusion)
 - [Shared mathematical lemmas](#shared-mathematical-lemmas)
@@ -36,6 +37,7 @@ flowchart BT
     N_38["TAIL-AND-BASE"]
     N_41["NO-DESIGN"]
     N_44["NO-CLIQUES"]
+    N_67["CERTIFICATE-ROUTE"]
     N_1 -.-> N_0
     N_2 -.-> N_0
     N_3 --> N_1
@@ -47,8 +49,9 @@ flowchart BT
     N_30 -.-> N_5
     N_36 -.-> N_5
     N_38 -.-> N_5
+    N_67 -.-> N_5
     classDef external stroke-dasharray:4 3;
-    class N_22,N_30,N_36,N_38,N_41,N_44 external;
+    class N_22,N_30,N_36,N_38,N_41,N_44,N_67 external;
 ~~~
 
 ### RESOLUTION
@@ -118,10 +121,10 @@ Use q=4t−1, q=2t−1, or 4t=q(q+1) with the specified prime-power and congruen
 H(4t) exists on the entire remaining domain.
 
 - **Required** · None
-- **Alternatives** · [BANDS](#bands), [CLIQUE-ROUTE](#clique-route), [DESIGN-ROUTE](#design-route), [TAIL-AND-BASE](#tail-and-base)
+- **Alternatives** · [BANDS](#bands), [CLIQUE-ROUTE](#clique-route), [DESIGN-ROUTE](#design-route), [TAIL-AND-BASE](#tail-and-base), [CERTIFICATE-ROUTE](#certificate-route)
 - **Evidence** · [lemmas.md](<lemmas.md>)
 
-Capacity induction, a uniform clique theorem, the full symmetric design, or a matched tail plus finite proof each suffice on its own. Each route quantifies over the same D.
+Capacity induction, a uniform clique theorem, the full symmetric design, or a matched tail plus finite proof each suffice on its own. Each route quantifies over the same D. The certificate route joins a published infinite subfamily to a separate supply obligation on its complement in the original D.
 
 ## Capacity-prefix route
 
@@ -325,9 +328,9 @@ If a valid pair exists at this t, some valid pair A,B admits k-subsets with comm
 
 - **Required** · None
 - **Alternatives** · None
-- **Evidence** · [lemmas.md#signature](<lemmas.md#signature>)
+- **Evidence** · [lemmas.md#signature](<lemmas.md#signature>), [../first-match/README.md](<../first-match/README.md>)
 
-A positive histogram overlap proves exactly this first step. A fixed pair with disjoint supports refutes the universal fixed-pair variant only.
+A positive histogram overlap proves the first step. An intersecting row pair of size t−1 supplies it on that same design. The cited power progression gives a positive answer at infinitely many t in D. The remaining existential orders are open.
 
 ### EARLY
 
@@ -592,6 +595,118 @@ For the supplied T, give checked squares or proofs for every t in D with t≤T.
 - **Evidence** · [lemmas.md#unrestricted-disproof-and-the-finite-cutoff-alternative](<lemmas.md#unrestricted-disproof-and-the-finite-cutoff-alternative>)
 
 Consume TAIL and bind the manifest to its exact numerical cutoff. Normalize the order convention n=4t.
+
+## Integral certificates and the 45-power family
+
+~~~mermaid
+flowchart BT
+    N_6["ASSEMBLY"]
+    N_8["LAST-SEVEN"]
+    N_62["SIGNED-FIRST"]
+    N_63["UNIVERSAL-CERTIFICATE"]
+    N_64["PAIR-DEFECT"]
+    N_65["STAR-CRITERION"]
+    N_66["POWER45-COVER"]
+    N_67["CERTIFICATE-ROUTE"]
+    N_68["CERTIFICATE-SUPPLY"]
+    N_62 --> N_63
+    N_63 --> N_64
+    N_64 --> N_65
+    N_6 --> N_65
+    N_8 --> N_65
+    N_65 --> N_66
+    N_66 --> N_67
+    N_68 --> N_67
+    N_63 --> N_67
+    N_6 --> N_67
+    N_8 --> N_67
+    classDef external stroke-dasharray:4 3;
+    class N_6,N_8 external;
+~~~
+
+### SIGNED-FIRST
+
+**PROVED** · lemma · every outside design, t≥2
+
+For any integer c with sum 2, Z(c)=(YYᵀ−tI)c−(t−1)1 has all first-column counts and the correct total. There is also a signed integral vector with unit point counts.
+
+- **Required** · None
+- **Alternatives** · None
+- **Evidence** · [../first-match/README.md#a-signed-solution-at-every-order](<../first-match/README.md#a-signed-solution-at-every-order>), [../first-match/Lattice.lean](<../first-match/Lattice.lean>), [../first-match/PairDefect.lean](<../first-match/PairDefect.lean>)
+
+Use the outer Gram for exact counts. A single chosen row gives explicit integer vectors on the constant line.
+
+### UNIVERSAL-CERTIFICATE
+
+**PROVED** · lemma · one outside design, every t≥2
+
+Every binary Z(c) from integral coefficients of sum two intersects every other distinct legal first column in t−2 rows.
+
+- **Required** · [SIGNED-FIRST](#signed-first)
+- **Alternatives** · None
+- **Evidence** · [../first-match/README.md#a-certificate-compatible-with-every-other-column](<../first-match/README.md#a-certificate-compatible-with-every-other-column>), [../first-match/PairDefect.lean](<../first-match/PairDefect.lean>)
+
+The intersection is 2(t−1) modulo t and lies strictly below 2(t−1). Distinct binary images therefore form a clique without further edge tests.
+
+### PAIR-DEFECT
+
+**PROVED** · lemma · distinct outside rows at every t≥2
+
+The defect of Z(e_p+e_q) is 2t(t−1−|R_p∩R_q|). At intersection t−1 it is a binary universal vertex and yields a feasible width-one prefix.
+
+- **Required** · [UNIVERSAL-CERTIFICATE](#universal-certificate)
+- **Alternatives** · None
+- **Evidence** · [../first-match/README.md#a-certificate-compatible-with-every-other-column](<../first-match/README.md#a-certificate-compatible-with-every-other-column>), [../first-match/PairDefect.lean](<../first-match/PairDefect.lean>)
+
+The defect sums nonnegative integers zᵢ(zᵢ−1), which vanish exactly at binary values.
+
+### STAR-CRITERION
+
+**PROVED** · lemma · odd t≥5, one outside design
+
+A single point exchanged with d different points in near-twin row pairs supplies d distinct universal columns. Degree 2t−8 suffices for a square. A star missing one of its 2t−1 neighbors completes to a full star. With r missing neighbors, the known adjacency asymmetry has binary rank at most 2r−2 for r≥1.
+
+- **Required** · [PAIR-DEFECT](#pair-defect), [ASSEMBLY](#assembly), [LAST-SEVEN](#last-seven)
+- **Alternatives** · None
+- **Evidence** · [../first-match/README.md#several-pairs-at-one-point](<../first-match/README.md#several-pairs-at-one-point>), [../first-match/README.md#when-all-exchanges-share-a-point](<../first-match/README.md#when-all-exchanges-share-a-point>), [../first-match/README.md#the-unpaired-rows-when-the-star-misses-at-most-seven-points](<../first-match/README.md#the-unpaired-rows-when-the-star-misses-at-most-seven-points>)
+
+The xor of the exchanged point memberships distinguishes the images at other seed pairs. For one missing neighbor use the point degrees on the two leftover rows.
+
+### POWER45-COVER
+
+**PROVED** · lemma · j≥0, 4t=2(45^(12j+1)+1)
+
+H(4t) exists on this unbounded subfamily of the original D. The first member is order 92.
+
+- **Required** · [STAR-CRITERION](#star-criterion)
+- **Alternatives** · None
+- **Evidence** · [../first-match/README.md#an-infinite-subfamily-inside-d](<../first-match/README.md#an-infinite-subfamily-inside-d>), [../first-match/Coverage45.lean](<../first-match/Coverage45.lean>), [../first-match/verify_designs.py](<../first-match/verify_designs.py>), [doi.org](<https://doi.org/10.4153/CJM-1978-029-1>), [doi.org](<https://doi.org/10.4153/CJM-1971-056-0>)
+
+Mathon supplies the 45-vertex conference graph and Turyn supplies its positive powers. A full star constructs the square. Divisors 3 and 5, divisors 7 and 13, and the consecutive-product residues mod 7 exclude the three original shortcuts.
+
+### CERTIFICATE-ROUTE
+
+**OPEN** · gate · every t in the original D
+
+Combine the 45-power family with enough integral binary certificates on the other orders.
+
+- **Required** · [POWER45-COVER](#power45-cover), [CERTIFICATE-SUPPLY](#certificate-supply), [UNIVERSAL-CERTIFICATE](#universal-certificate), [ASSEMBLY](#assembly), [LAST-SEVEN](#last-seven)
+- **Alternatives** · None
+- **Evidence** · [../first-match/README.md#a-certificate-compatible-with-every-other-column](<../first-match/README.md#a-certificate-compatible-with-every-other-column>)
+
+On the power family use the full square. On the complement collect h distinct images on one design, border and complete the last seven columns.
+
+### CERTIFICATE-SUPPLY
+
+**OPEN** · obligation · every t in D outside the POWER45-COVER progression
+
+Construct a single valid outside design and at least h distinct binary Z(c) with integral coefficients of sum two.
+
+- **Required** · None
+- **Alternatives** · None
+- **Evidence** · [../first-match/README.md#several-pairs-at-one-point](<../first-match/README.md#several-pairs-at-one-point>)
+
+A sufficient research route. Row-pair stars give two-sparse coefficients. Larger supports and different designs are allowed.
 
 ## Unrestricted design exclusion
 
@@ -915,15 +1030,15 @@ A square closes the specified instance; a prefix, failure, or restricted UNSAT e
 
 ### SIGNATURE-ATLAS
 
-**OPEN** · diagnostic · fixed known order 44, pivot index zero
+**CHECKED** · diagnostic · fixed known order 44, pivot index zero
 
-A complete degree-signature inventory for both halves of the specified Paley example.
+Both prescribed H44 histograms have 352716 entries of multiplicity one. Their overlap gives exactly the 21 original inner columns and 210 edges.
 
 - **Required** · None
 - **Alternatives** · None
-- **Evidence** · [verify_pivot.py](<verify_pivot.py>)
+- **Evidence** · [../first-match/README.md#complete-order-44-atlas](<../first-match/README.md#complete-order-44-atlas>), [../first-match/atlas.json](<../first-match/atlas.json>), [../first-match/verify_first_match.py](<../first-match/verify_first_match.py>)
 
-This bounded artifact can test proposed uniform collision inequalities. Its certificate stays at one pair and one order.
+All archive lines and all collision masks have an independent replay. This completes the fixed-pair card.
 
 ### TYPE-ATLAS
 
@@ -972,3 +1087,15 @@ Paley H20 truncated to 12 columns accepts; H4 with each row tripled rejects.
 - **Evidence** · [verify_endgame.py](<verify_endgame.py>)
 
 The two finite controls check the kernel tests on both sides of the local criterion.
+
+### ONE-COLUMN-28
+
+**CHECKED** · diagnostic · one switched outside design at order 28
+
+Three exact four-row switches leave just one legal first column. No second legal column can be added to this outside design.
+
+- **Required** · None
+- **Alternatives** · None
+- **Evidence** · [../first-match/README.md#a-fixed-outside-design-that-stops-at-one-column](<../first-match/README.md#a-fixed-outside-design-that-stops-at-one-column>), [../first-match/verify_designs.py](<../first-match/verify_designs.py>)
+
+The two complete pivot supports give 13, 13, 5 and 1 first columns along the switch sequence. The only surviving column also has a two-row certificate.

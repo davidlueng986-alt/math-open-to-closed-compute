@@ -10,6 +10,8 @@ From the root of the compute repository, use Python 3.10 or later and Lean 4.36.
 python3 jobs/hadamard-all-orders/closure-dag/check_dag.py --check-tasks
 python3 -B jobs/hadamard-all-orders/closure-dag/render.py --check
 python3 -B jobs/hadamard-all-orders/closure-dag/verify_pivot.py
+python3 -B jobs/hadamard-all-orders/first-match/verify_first_match.py
+python3 -B jobs/hadamard-all-orders/first-match/verify_designs.py
 python3 -B jobs/hadamard-all-orders/closure-dag/verify_endgame.py
 python3 jobs/hadamard-all-orders/verify.py
 ```
@@ -22,6 +24,10 @@ lean -DwarningAsError=true -o "$LEAN_PATH/Triples.olean" jobs/hadamard-2396-proj
 for module in Assembly Reductions Constructions OuterEnergy Rounding
 do
   lean -DwarningAsError=true -o "$LEAN_PATH/$module.olean" "jobs/hadamard-all-orders/$module.lean"
+done
+for module in Lattice PairDefect SwitchParity Coverage45
+do
+  lean -DwarningAsError=true -o "$LEAN_PATH/$module.olean" "jobs/hadamard-all-orders/first-match/$module.lean"
 done
 ```
 
@@ -39,6 +45,11 @@ $$
 $$
 
 Each stage implication permits both witness families to change. Its reverse direction uses the terminal witness restricted to the required width. Fixed-witness binary extension would be a stronger sufficient result. Lean's `fractional_next` proves the exact integer numerators of a feasible fractional column and `from_rounding` takes the unresolved integral step family as a hypothesis. The covered odd multipliers and seven-column completion also enter `from_rounding` as explicit hypotheses. The axiom audit of the new statements reports `propext`, `Classical.choice` and `Quot.sound`. [Rounding statements](Rounding.lean) · [Published completion theorem](https://doi.org/10.1016/0097-3165(80)90028-X)
+
+## First-column certificates and the 45-power family
+
+- Lean verifies exact signed counts, the two-row defect, binary existence at overlap $t-1$, and universal compatibility for any binary certificate with integral coefficients summing to two. A separate Lean arithmetic proof excludes both direct Paley tests and every consecutive-product order throughout the unbounded 45-power progression. The conference-matrix existence theorems and the star construction are cited and proved in the research record. [Lattice](first-match/Lattice.lean) · [Binary columns](first-match/PairDefect.lean) · [Family arithmetic](first-match/Coverage45.lean) · [Written proofs and primary sources](first-match/README.md)
+- The independent H44 checker reconstructs both archives and every shared vector. The design replay builds H92 and checks every column pair, exhausts the switched order-28 designs, and enumerates the possible residual word classes for one through seven missing star pairs. [Atlas verifier](first-match/verify_first_match.py) · [Design verifier](first-match/verify_designs.py)
 
 ## Written reductions and finite controls
 

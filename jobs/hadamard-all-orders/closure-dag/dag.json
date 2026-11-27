@@ -93,9 +93,10 @@
         "BANDS",
         "CLIQUE-ROUTE",
         "DESIGN-ROUTE",
-        "TAIL-AND-BASE"
+        "TAIL-AND-BASE",
+        "CERTIFICATE-ROUTE"
       ],
-      "composition": "Capacity induction, a uniform clique theorem, the full symmetric design, or a matched tail plus finite proof each suffice on its own. Each route quantifies over the same D.",
+      "composition": "Capacity induction, a uniform clique theorem, the full symmetric design, or a matched tail plus finite proof each suffice on its own. Each route quantifies over the same D. The certificate route joins a published infinite subfamily to a separate supply obligation on its complement in the original D.",
       "evidence": [
         "lemmas.md"
       ]
@@ -379,9 +380,10 @@
       "statement": "If a valid pair exists at this t, some valid pair A,B admits k-subsets with common degree signature.",
       "all_of": [],
       "any_of": [],
-      "composition": "A positive histogram overlap proves exactly this first step. A fixed pair with disjoint supports refutes the universal fixed-pair variant only.",
+      "composition": "A positive histogram overlap proves the first step. An intersecting row pair of size t−1 supplies it on that same design. The cited power progression gives a positive answer at infinitely many t in D. The remaining existential orders are open.",
       "evidence": [
-        "lemmas.md#signature"
+        "lemmas.md#signature",
+        "../first-match/README.md"
       ]
     },
     {
@@ -844,14 +846,16 @@
     {
       "id": "SIGNATURE-ATLAS",
       "role": "diagnostic",
-      "status": "OPEN",
+      "status": "CHECKED",
       "scope": "fixed known order 44, pivot index zero",
-      "statement": "A complete degree-signature inventory for both halves of the specified Paley example.",
+      "statement": "Both prescribed H44 histograms have 352716 entries of multiplicity one. Their overlap gives exactly the 21 original inner columns and 210 edges.",
       "all_of": [],
       "any_of": [],
-      "composition": "This bounded artifact can test proposed uniform collision inequalities. Its certificate stays at one pair and one order.",
+      "composition": "All archive lines and all collision masks have an independent replay. This completes the fixed-pair card.",
       "evidence": [
-        "verify_pivot.py"
+        "../first-match/README.md#complete-order-44-atlas",
+        "../first-match/atlas.json",
+        "../first-match/verify_first_match.py"
       ]
     },
     {
@@ -920,6 +924,137 @@
       "evidence": [
         "lemmas.md#one-column-replacement"
       ]
+    },
+    {
+      "id": "SIGNED-FIRST",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "every outside design, t≥2",
+      "statement": "For any integer c with sum 2, Z(c)=(YYᵀ−tI)c−(t−1)1 has all first-column counts and the correct total. There is also a signed integral vector with unit point counts.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "Use the outer Gram for exact counts. A single chosen row gives explicit integer vectors on the constant line.",
+      "evidence": [
+        "../first-match/README.md#a-signed-solution-at-every-order",
+        "../first-match/Lattice.lean",
+        "../first-match/PairDefect.lean"
+      ]
+    },
+    {
+      "id": "UNIVERSAL-CERTIFICATE",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "one outside design, every t≥2",
+      "statement": "Every binary Z(c) from integral coefficients of sum two intersects every other distinct legal first column in t−2 rows.",
+      "all_of": [
+        "SIGNED-FIRST"
+      ],
+      "any_of": [],
+      "composition": "The intersection is 2(t−1) modulo t and lies strictly below 2(t−1). Distinct binary images therefore form a clique without further edge tests.",
+      "evidence": [
+        "../first-match/README.md#a-certificate-compatible-with-every-other-column",
+        "../first-match/PairDefect.lean"
+      ]
+    },
+    {
+      "id": "PAIR-DEFECT",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "distinct outside rows at every t≥2",
+      "statement": "The defect of Z(e_p+e_q) is 2t(t−1−|R_p∩R_q|). At intersection t−1 it is a binary universal vertex and yields a feasible width-one prefix.",
+      "all_of": [
+        "UNIVERSAL-CERTIFICATE"
+      ],
+      "any_of": [],
+      "composition": "The defect sums nonnegative integers zᵢ(zᵢ−1), which vanish exactly at binary values.",
+      "evidence": [
+        "../first-match/README.md#a-certificate-compatible-with-every-other-column",
+        "../first-match/PairDefect.lean"
+      ]
+    },
+    {
+      "id": "STAR-CRITERION",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "odd t≥5, one outside design",
+      "statement": "A single point exchanged with d different points in near-twin row pairs supplies d distinct universal columns. Degree 2t−8 suffices for a square. A star missing one of its 2t−1 neighbors completes to a full star. With r missing neighbors, the known adjacency asymmetry has binary rank at most 2r−2 for r≥1.",
+      "all_of": [
+        "PAIR-DEFECT",
+        "ASSEMBLY",
+        "LAST-SEVEN"
+      ],
+      "any_of": [],
+      "composition": "The xor of the exchanged point memberships distinguishes the images at other seed pairs. For one missing neighbor use the point degrees on the two leftover rows.",
+      "evidence": [
+        "../first-match/README.md#several-pairs-at-one-point",
+        "../first-match/README.md#when-all-exchanges-share-a-point",
+        "../first-match/README.md#the-unpaired-rows-when-the-star-misses-at-most-seven-points"
+      ]
+    },
+    {
+      "id": "POWER45-COVER",
+      "role": "lemma",
+      "status": "PROVED",
+      "scope": "j≥0, 4t=2(45^(12j+1)+1)",
+      "statement": "H(4t) exists on this unbounded subfamily of the original D. The first member is order 92.",
+      "all_of": [
+        "STAR-CRITERION"
+      ],
+      "any_of": [],
+      "composition": "Mathon supplies the 45-vertex conference graph and Turyn supplies its positive powers. A full star constructs the square. Divisors 3 and 5, divisors 7 and 13, and the consecutive-product residues mod 7 exclude the three original shortcuts.",
+      "evidence": [
+        "../first-match/README.md#an-infinite-subfamily-inside-d",
+        "../first-match/Coverage45.lean",
+        "../first-match/verify_designs.py",
+        "https://doi.org/10.4153/CJM-1978-029-1",
+        "https://doi.org/10.4153/CJM-1971-056-0"
+      ]
+    },
+    {
+      "id": "CERTIFICATE-ROUTE",
+      "role": "gate",
+      "status": "OPEN",
+      "scope": "every t in the original D",
+      "statement": "Combine the 45-power family with enough integral binary certificates on the other orders.",
+      "all_of": [
+        "POWER45-COVER",
+        "CERTIFICATE-SUPPLY",
+        "UNIVERSAL-CERTIFICATE",
+        "ASSEMBLY",
+        "LAST-SEVEN"
+      ],
+      "any_of": [],
+      "composition": "On the power family use the full square. On the complement collect h distinct images on one design, border and complete the last seven columns.",
+      "evidence": [
+        "../first-match/README.md#a-certificate-compatible-with-every-other-column"
+      ]
+    },
+    {
+      "id": "CERTIFICATE-SUPPLY",
+      "role": "obligation",
+      "status": "OPEN",
+      "scope": "every t in D outside the POWER45-COVER progression",
+      "statement": "Construct a single valid outside design and at least h distinct binary Z(c) with integral coefficients of sum two.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "A sufficient research route. Row-pair stars give two-sparse coefficients. Larger supports and different designs are allowed.",
+      "evidence": [
+        "../first-match/README.md#several-pairs-at-one-point"
+      ]
+    },
+    {
+      "id": "ONE-COLUMN-28",
+      "role": "diagnostic",
+      "status": "CHECKED",
+      "scope": "one switched outside design at order 28",
+      "statement": "Three exact four-row switches leave just one legal first column. No second legal column can be added to this outside design.",
+      "all_of": [],
+      "any_of": [],
+      "composition": "The two complete pivot supports give 13, 13, 5 and 1 first columns along the switch sequence. The only surviving column also has a two-row certificate.",
+      "evidence": [
+        "../first-match/README.md#a-fixed-outside-design-that-stops-at-one-column",
+        "../first-match/verify_designs.py"
+      ]
     }
   ],
   "tasks": [
@@ -942,7 +1077,7 @@
         "COLLISION"
       ],
       "inputs": "Use the Paley H44 ordering and pivot zero from verify_pivot.py. Here t=11, b=21 and k=10. Start with its known 21-clique.",
-      "deliverable": "Produce two signature histograms, their intersection with multiplicities, N₁, and two decoded examples when available. Include the exact sign/row convention, replay code and deterministic digests.",
+      "deliverable": "Produce two signature histograms, their intersection with multiplicities, N₁, and two decoded examples when available. Include the exact sign/row convention, replay code and deterministic digests. Completed in ../first-match/ with both archives and an independent verifier.",
       "acceptance": "Each half histogram sums to binomial(21,10)=352716. Rebuild both histograms independently or cross-check sampled fibers by exact enumeration. All known selectors appear; reproduce the order-20 control first. This completes the finite card.",
       "fallback": "If a larger clique inventory is expensive, stop after the two complete histograms. Quote the fixed-pair scope and leave COLLISION open."
     },
@@ -982,10 +1117,15 @@
       ],
       "uses": [
         "SIGNATURE-ATLAS",
-        "FRACTIONAL-VERTEX"
+        "FRACTIONAL-VERTEX",
+        "SIGNED-FIRST",
+        "UNIVERSAL-CERTIFICATE",
+        "PAIR-DEFECT",
+        "POWER45-COVER",
+        "ONE-COLUMN-28"
       ],
       "inputs": "For k-subsets compare the two signature supports. N₁ is their multiplicity inner product; the two fractional barycentres already agree. The input assumption is existence of some valid Gram pair at this t.",
-      "deliverable": "Prove a positive coefficient in common for a specified family of valid pairs or show how to replace a given pair by one with positive overlap. Record the family as a predicate on t and on the two matrices.",
+      "deliverable": "Prove a positive coefficient in common for a specified family of valid pairs or show how to replace a given pair by one with positive overlap. Record the family as a predicate on t and on the two matrices. The row-pair class and the power-45 progression are established. Extend coverage to a different part of D or prove the general existential statement.",
       "acceptance": "Both subsets have size k, the equality holds in all b coordinates and any representative change preserves the joint Gram. To close COLLISION cover every t in D under its existential premise.",
       "fallback": "A valid pair with N₁=0 refutes fixed-pair matching and becomes a replacement benchmark. Supply both full support certificates. A full solution at a known order remains a control."
     },
@@ -1366,6 +1506,28 @@
       "deliverable": "Reproduce that branch from its pinned sources, independently review its quantifiers and scoped assumptions, and record a definite YES or NO with the proof.",
       "acceptance": "A positive result covers every positive t. A negative result names t and excludes every square there. Update the entry point and graph together once independently reviewed.",
       "fallback": "Any missing evidence or mismatched parameter reopens the affected parent, with a precise task reference."
+    },
+    {
+      "id": "T-CERTIFICATE-SUPPLY",
+      "node": "CERTIFICATE-SUPPLY",
+      "mode": "research",
+      "priority": "P1",
+      "claim": null,
+      "title": "Build enough distinct universally compatible columns",
+      "needs": [
+        "UNIVERSAL-CERTIFICATE",
+        "PAIR-DEFECT"
+      ],
+      "uses": [
+        "STAR-CRITERION",
+        "POWER45-COVER",
+        "ONE-COLUMN-28",
+        "ASSEMBLY"
+      ],
+      "inputs": "At one t in D outside the 45-power family use integral c of sum two and Z(c)=(YYᵀ−tI)c−(t−1)1. For t=599 the sufficient degree is 1190. A full or one-short star is impossible. For r missing star exchanges, first quotient by equal-half incidence words on the 2r leftover rows and use the binary rank bound 2r−2.",
+      "deliverable": "Resolve a residual case, starting with the two allowed exceptional-word patterns for degree 1195 at t=599, or construct distinct binary images from more general c on one verified design. A parametric construction may target any uncovered subfamily.",
+      "acceptance": "Verify the outside Gram, integrality, coefficient sums, all output bits and distinct images on a common Y. For complete order coverage reach h=2t−8 and cite completion. For the global node cover every t in its stated remainder.",
+      "fallback": "An exclusion must name its degree, coefficient support or family of designs. Record the exact residual cases and a reusable obstruction."
     }
   ]
 }

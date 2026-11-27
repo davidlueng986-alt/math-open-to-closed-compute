@@ -11,6 +11,7 @@ from check_dag import HERE, ancestors, prerequisites, proved, ready_tasks
 ROUTE_TITLES = {
     "BANDS": "Capacity-prefix route",
     "CLIQUE-ROUTE": "Pivot clique route",
+    "CERTIFICATE-ROUTE": "Integral certificates and the 45-power family",
     "DESIGN-ROUTE": "Full symmetric design route",
     "TAIL-AND-BASE": "Cofinite construction route",
     "NO-DESIGN": "Unrestricted design exclusion",

@@ -1,0 +1,440 @@
+{
+  "order20_control": {
+    "N1": 9,
+    "N2": 36
+  },
+  "order44": {
+    "order": 44,
+    "pivot_index_in_outside": 0,
+    "original_pivot_column": 1,
+    "original_finite_point_columns": [
+      3,
+      4,
+      6,
+      8,
+      9,
+      13,
+      19,
+      20,
+      21,
+      23,
+      27,
+      28,
+      29,
+      30,
+      31,
+      33,
+      34,
+      35,
+      38,
+      40,
+      43
+    ],
+    "positive_original_rows": [
+      3,
+      4,
+      6,
+      8,
+      9,
+      13,
+      19,
+      20,
+      21,
+      23,
+      27,
+      28,
+      29,
+      30,
+      31,
+      33,
+      34,
+      35,
+      38,
+      40,
+      43
+    ],
+    "negative_original_rows": [
+      2,
+      5,
+      7,
+      10,
+      11,
+      12,
+      14,
+      15,
+      16,
+      17,
+      18,
+      22,
+      24,
+      25,
+      26,
+      32,
+      36,
+      37,
+      39,
+      41,
+      42
+    ],
+    "sides": {
+      "a": {
+        "subsets": 352716,
+        "distinct": 352716,
+        "multiplicity_counts": {
+          "1": 352716
+        },
+        "uncompressed_bytes": 8465184,
+        "sha256": "6e6e03f22b674755a3d0fa1bccc783f95def5294070c0e5439ab56f4d1f2fe9b",
+        "filename": "h44-a.tsv.xz"
+      },
+      "b": {
+        "subsets": 352716,
+        "distinct": 352716,
+        "multiplicity_counts": {
+          "1": 352716
+        },
+        "uncompressed_bytes": 8465184,
+        "sha256": "332bbc12d22722ec3a76a44991f17d4ae21b0dbbed45be99d27529cc0f3162d7",
+        "filename": "h44-b.tsv.xz"
+      }
+    },
+    "shared_signatures": 21,
+    "N1": 21,
+    "N2": 210,
+    "known_clique_size": 21,
+    "extra_vertices": 0,
+    "matches": [
+      {
+        "signature": "366555544444564465546",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          383153
+        ],
+        "b_masks": [
+          11195
+        ]
+      },
+      {
+        "signature": "434455546665664545445",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          1183983
+        ],
+        "b_masks": [
+          473365
+        ]
+      },
+      {
+        "signature": "444654443555466665554",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          1452000
+        ],
+        "b_masks": [
+          846002
+        ]
+      },
+      {
+        "signature": "445455555635446464466",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          1092954
+        ],
+        "b_masks": [
+          168441
+        ]
+      },
+      {
+        "signature": "446446545456545356645",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          1671531
+        ],
+        "b_masks": [
+          1690378
+        ]
+      },
+      {
+        "signature": "454365645544544654665",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          1070777
+        ],
+        "b_masks": [
+          1164508
+        ]
+      },
+      {
+        "signature": "456644566654454445553",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          1849398
+        ],
+        "b_masks": [
+          1543840
+        ]
+      },
+      {
+        "signature": "465464464563555455644",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          1510213
+        ],
+        "b_masks": [
+          1119407
+        ]
+      },
+      {
+        "signature": "465536456454556544464",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          1279638
+        ],
+        "b_masks": [
+          1707603
+        ]
+      },
+      {
+        "signature": "543464665445565446455",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          318790
+        ],
+        "b_masks": [
+          648725
+        ]
+      },
+      {
+        "signature": "544656434564554456465",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          227730
+        ],
+        "b_masks": [
+          890958
+        ]
+      },
+      {
+        "signature": "554546665354445665444",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          795547
+        ],
+        "b_masks": [
+          221799
+        ]
+      },
+      {
+        "signature": "554666455646435444545",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          1731717
+        ],
+        "b_masks": [
+          194314
+        ]
+      },
+      {
+        "signature": "555445464456364644556",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          758869
+        ],
+        "b_masks": [
+          1007848
+        ]
+      },
+      {
+        "signature": "556654644456645534454",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          509482
+        ],
+        "b_masks": [
+          1487404
+        ]
+      },
+      {
+        "signature": "564544554545646546346",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          876749
+        ],
+        "b_masks": [
+          1872593
+        ]
+      },
+      {
+        "signature": "644545556445655464634",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          577444
+        ],
+        "b_masks": [
+          1399137
+        ]
+      },
+      {
+        "signature": "645543644564456544655",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          603452
+        ],
+        "b_masks": [
+          1586486
+        ]
+      },
+      {
+        "signature": "646455454644643655554",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          740184
+        ],
+        "b_masks": [
+          413588
+        ]
+      },
+      {
+        "signature": "655564456465444553446",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          440843
+        ],
+        "b_masks": [
+          1605056
+        ]
+      },
+      {
+        "signature": "665444345546454556564",
+        "a_multiplicity": 1,
+        "b_multiplicity": 1,
+        "a_masks": [
+          1897056
+        ],
+        "b_masks": [
+          918863
+        ]
+      }
+    ],
+    "decoded_examples": [
+      {
+        "a_rows": [
+          0,
+          4,
+          5,
+          7,
+          11,
+          12,
+          14,
+          15,
+          16,
+          18
+        ],
+        "b_rows": [
+          0,
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          11,
+          13
+        ],
+        "selected_original_zero_based_rows": [
+          2,
+          3,
+          5,
+          9,
+          10,
+          11,
+          12,
+          13,
+          15,
+          16,
+          17,
+          20,
+          22,
+          25,
+          28,
+          29,
+          31,
+          33,
+          34,
+          38
+        ],
+        "original_inner_column": 26
+      },
+      {
+        "a_rows": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          12,
+          17,
+          20
+        ],
+        "b_rows": [
+          0,
+          2,
+          4,
+          8,
+          11,
+          12,
+          13,
+          16,
+          17,
+          18
+        ],
+        "selected_original_zero_based_rows": [
+          2,
+          3,
+          4,
+          6,
+          7,
+          8,
+          11,
+          13,
+          16,
+          19,
+          20,
+          22,
+          24,
+          25,
+          29,
+          35,
+          36,
+          37,
+          39,
+          43
+        ],
+        "original_inner_column": 17
+      }
+    ]
+  }
+}
