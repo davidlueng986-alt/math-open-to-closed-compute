@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-27",
+  "agent": "Agent 6 (D9 Specialist & Proof-First Certificate Pipeline)",
+  "environment": {
+    "cpu": "2x Intel Xeon Platinum 8481C",
+    "compiler": "g++ 12.2.0 (-O3 -std=c++20 -march=native)",
+    "python_solvers": ["ortools (CP-SAT)"],
+    "outbound_internet": false
+  },
+  "real_r38_27_85_graph": {
+    "source": "Local C++ tabu/SA search (independently verified: 27 vertices, 85 edges, triangle-free, alpha <= 7)",
+    "graph6": "ZI_eD@@EOCG@dGO?OBGCeC?GRDC?gQW?yOCOI@a?gQCd@WOIGH_@g?L@oh??",
+    "degree_distribution": {"5": 4, "6": 11, "7": 12},
+    "I7_count": 750,
+    "I6_count": 2833,
+    "I6_zero_ext_count": 16,
+    "I6_max_ext": 2,
+    "I7_per_vertex_range": [130, 266],
+    "I7_compatible_pairs_le5": "278442 / 280875 (99.1%)",
+    "nontrivial_nonadjacent_T_pair_codeg_caps": "0 / 266 (100% redundant!)"
+  },
+  "d9_c7_cnf_comparison": {
+    "kaggle_v4_d9_py_estimate": {
+      "primary_edge_vars": 780,
+      "unfixed_edge_vars": 297,
+      "estimated_total_vars": "~65,000+",
+      "estimated_total_clauses": "~250,000+",
+      "notes": "Includes 673 pair codegree seqcounters (266 redundant T-pairs) and 1,004 Hall k=0..7 subsets (~30,120 AND gates); lacks S-domination, explicit U_X & U_Y = empty, and I7 hitting-set constraints."
+    },
+    "v8_compact_base_plus_b1": {"vars": 16535, "clauses": 34930},
+    "v8_compact_base_plus_b1_b2": {"vars": 23885, "clauses": 49350},
+    "v8_compact_base_plus_b1_b2_I7": {"vars": 56135, "clauses": 114600}
+  },
+  "d9_c7_local_benchmarks": [
+    {"solver": "CP-SAT 6470-var set-cover (S-only + all 750 I7)", "status": "FEASIBLE", "solve_s": 2.924, "conflicts": 0, "branches": 440},
+    {"solver": "CP-SAT 6470-var set-cover (FULL + all 750 I7)", "status": "UNKNOWN (60s)", "solve_s": 60.504, "conflicts": 0, "branches": 956, "note": "3.7M linear nonzeros bottlenecked LP/presolve"},
+    {"solver": "CP-SAT 297-var compact (no I7, with T-codeg)", "status": "FEASIBLE", "solve_s": 0.457, "conflicts": 1, "branches": 29942},
+    {"solver": "CP-SAT 297-var compact (Hall b1 only)", "status": "FEASIBLE", "solve_s": 0.433, "conflicts": 180, "branches": 15272},
+    {"solver": "CP-SAT 297-var compact (Hall b1+b2)", "status": "FEASIBLE", "solve_s": 1.230, "conflicts": 706, "branches": 45791, "note": "First model still had 69 A-side & 95 B-side I7 violations and 500+ I10s"},
+    {"solver": "CP-SAT 297-var compact (all 750 I7, no T-codeg)", "status": "UNKNOWN (60s)", "solve_s": 60.121, "conflicts": 21163, "branches": 299389},
+    {"solver": "CP-SAT 297-var compact (lin=0 CDCL + b1 + 750 I7)", "status": "UNKNOWN (30s)", "solve_s": 30.130, "conflicts": 6093, "branches": 180452},
+    {"solver": "C++20 bitmask I7 gluing DFS (d9c7_gluer.cpp)", "status": "TIMEOUT (30s)", "note": "Branching factor ~130 at depth 0 due to |I7|=750 and 99.1% pairwise compatibility"}
+  ],
+  "d9_c6_skeleton_classification": {
+    "total_nonempty_3x3_bipartite_graphs": 511,
+    "exact_isomorphism_classes": 25,
+    "e_xy_range": [1, 9],
+    "e_T_range": [73, 81],
+    "orbit_counts_by_e_xy": {"1": 1, "2": 2, "3": 4, "4": 5, "5": 5, "6": 4, "7": 2, "8": 1, "9": 1}
+  }
+}
