@@ -1,0 +1,10 @@
+{
+  "problem": "ABC",
+  "wave": 2,
+  "batch": "agent6",
+  "request_id": "abc-wave2-lean-initial-2026-11-27",
+  "authorized_by": "explicit_user_request_2026-11-27",
+  "purpose": "Verify 14 structural and quantified composition declarations; no full abc closure claimed.",
+  "paid_resources": false,
+  "schedule": false
+}
