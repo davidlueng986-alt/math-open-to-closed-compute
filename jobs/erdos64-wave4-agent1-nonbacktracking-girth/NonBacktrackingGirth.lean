@@ -63,7 +63,9 @@ theorem isNonBacktracking_of_append_right {V : Type*} {G : SimpleGraph V} :
       exact hnb.2
   | _, _, _, .cons h₁ (.cons h₂ rest), q, hnb => by
       simp only [Walk.cons_append, IsNonBacktracking] at hnb
-      exact isNonBacktracking_of_append_right hnb.2
+      have hsub : IsNonBacktracking ((Walk.cons h₂ rest).append q) := by
+        simpa [Walk.cons_append] using hnb.2
+      exact isNonBacktracking_of_append_right hsub
 
 private theorem mem_support_of_mem_edges {V : Type*} {G : SimpleGraph V} :
     ∀ {u v : V} {w : G.Walk u v} {a b : V},
@@ -92,11 +94,11 @@ private theorem isCycle_of_nonBacktracking_nodup_tail {V : Type*} {G : SimpleGra
     (hnd : p.support.tail.Nodup) : p.IsCycle := by
   cases p with
   | nil => simp at hlen
-  | cons h rest =>
+  | @cons _ c _ h rest =>
       have hrest_nd : rest.support.Nodup := by
         simpa [Walk.support_cons] using hnd
       have hrest_path : rest.IsPath := Walk.IsPath.mk' hrest_nd
-      have hnotmem : s(v, _) ∉ rest.edges := by
+      have hnotmem : s(v, c) ∉ rest.edges := by
         intro hmem
         cases rest with
         | nil => simp at hmem
@@ -162,7 +164,7 @@ private theorem exists_split_of_not_nodup_support_tail {V : Type*} {G : SimpleGr
               simpa [Walk.support_cons] using hnd₂
             obtain ⟨x, w₁, w₂, w₃, heq, hw₁, hw₂⟩ :=
               exists_split_of_not_nodup_support_tail (.cons h₂ rest₂) hnd₂'
-            exact ⟨x, .cons h w₁, w₂, w₃, by simp [heq], by simp; omega, hw₂⟩
+            exact ⟨x, .cons h w₁, w₂, w₃, by simp [heq], by simp, hw₂⟩
 
 /-- Every nonempty non-backtracking closed walk in a graph of girth ≥ g has length ≥ g. -/
 theorem girth_le_length_of_nonBacktracking_closed {V : Type*} {G : SimpleGraph V}
@@ -193,7 +195,8 @@ theorem tailless_nonBacktracking_lt_two_girth_isCycle {V : Type*} {G : SimpleGra
     {g : ℕ} (hg : GirthAtLeast G g) {v : V} (p : G.Walk v v)
     (hcyc : IsCyclicallyNonBacktracking p) (hpos : 1 ≤ p.length) (hlt : p.length < 2 * g) :
     p.IsCycle := by
-  have hnb : IsNonBacktracking p := isNonBacktracking_of_append_left hcyc
+  have hcyc' : IsNonBacktracking (p.append p) := hcyc
+  have hnb : IsNonBacktracking p := isNonBacktracking_of_append_left hcyc'
   by_cases hnd : p.support.tail.Nodup
   · exact isCycle_of_nonBacktracking_nodup_tail p hnb hpos hnd
   · exfalso
@@ -207,7 +210,7 @@ theorem tailless_nonBacktracking_lt_two_girth_isCycle {V : Type*} {G : SimpleGra
     have hnb₃₁ : IsNonBacktracking (p₃.append p₁) :=
       isNonBacktracking_of_append_left
         (isNonBacktracking_of_append_right
-          (isNonBacktracking_of_append_right (hpp ▸ hcyc)))
+          (isNonBacktracking_of_append_right (hpp ▸ hcyc')))
     have hg₂ : g ≤ p₂.length :=
       girth_le_length_of_nonBacktracking_closed hg p₂.length p₂ rfl hp₂ hnb₂
     have hpos₃₁ : 1 ≤ (p₃.append p₁).length := by
@@ -227,14 +230,23 @@ theorem exists_pow2_in_girth_window (g : ℕ) (hg : 3 ≤ g) :
   | ind g ih =>
       by_cases h4 : g ≤ 4
       · exact ⟨2, le_rfl, by omega, by omega⟩
-      · have hhalf_ge : 3 ≤ (g + 1) / 2 := by omega
-        have hhalf_lt : (g + 1) / 2 < g := by omega
-        obtain ⟨k, hk2, hlo, hhi⟩ := ih ((g + 1) / 2) hhalf_lt hhalf_ge
-        refine ⟨k + 1, by omega, ?_, ?_⟩
-        · have : 2 ^ (k + 1) = 2 * 2 ^ k := by ring
-          omega
-        · have : 2 ^ (k + 1) = 2 * 2 ^ k := by ring
-          omega
+      · by_cases h5 : g = 5
+        · subst h5
+          exact ⟨3, by omega, by omega, by omega⟩
+        · have hhalf_ge : 3 ≤ g / 2 := by omega
+          have hhalf_lt : g / 2 < g := by omega
+          obtain ⟨k, hk2, hlo, hhi⟩ := ih (g / 2) hhalf_lt hhalf_ge
+          by_cases hfit : g ≤ 2 * 2 ^ k
+          · refine ⟨k + 1, by omega, ?_, ?_⟩
+            · have : 2 ^ (k + 1) = 2 * 2 ^ k := by ring
+              omega
+            · have : 2 ^ (k + 1) = 2 * 2 ^ k := by ring
+              omega
+          · refine ⟨k + 2, by omega, ?_, ?_⟩
+            · have : 2 ^ (k + 2) = 4 * 2 ^ k := by ring
+              omega
+            · have : 2 ^ (k + 2) = 4 * 2 ^ k := by ring
+              omega
 
 /-- Any cyclically non-backtracking closed walk of length `2^k < 2g` (`k ≥ 2`) in a graph
 of girth ≥ g immediately certifies the exact original `Erdos64Closure.HasPower G` predicate. -/
