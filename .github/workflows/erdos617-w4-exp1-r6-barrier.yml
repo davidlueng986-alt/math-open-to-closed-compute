@@ -1,0 +1,33 @@
+name: Erdos 617 W4 Exp1 r=6 Strict G1-Only Barrier Audit
+
+on:
+  push:
+    branches: [erdos617-w4-exp1-r6]
+    paths:
+      - 'jobs/erdos617-w4-exp1-r6/barrier_audit.py'
+      - '.github/workflows/erdos617-w4-exp1-r6-barrier.yml'
+  workflow_dispatch:
+
+jobs:
+  barrier-matrix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        case:
+          - p7_barrier
+          - p7_barrier_m14
+          - p8_barrier
+          - p8_barrier_m14
+          - p9_barrier
+          - p9_barrier_m15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install python-sat
+        run: pip install --quiet python-sat
+      - name: Run Strict Wave-3 G1 Barrier Audit for ${{ matrix.case }}
+        run: python3 jobs/erdos617-w4-exp1-r6/barrier_audit.py --case "${{ matrix.case }}" --time-limit 300
