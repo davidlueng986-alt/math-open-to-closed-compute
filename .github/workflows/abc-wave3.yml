@@ -1,0 +1,157 @@
+name: ABC Wave 3 verification
+
+on:
+  workflow_dispatch:
+    inputs:
+      batch:
+        description: Which independent agent bundles to verify
+        type: choice
+        options: [all, math, agent0, agent1, agent2, agent3, agent4, agent5, agent6]
+        default: all
+        required: true
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: abc-wave3-${{ inputs.batch }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.select.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - id: select
+        env:
+          BATCH: ${{ inputs.batch }}
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import os,json
+          rows=json.load(open('jobs/abc-wave3-orchestrator/matrix.json'))['include']
+          assert rows and len({r['agent'] for r in rows})==len(rows)
+          for r in rows:
+            assert r['job'].startswith('abc-wave3-agent'+str(r['agent'])+'-')
+            assert r['toolbox'] in ('sat','sage','lean')
+            assert r['image'].startswith('ghcr.io/davidlueng986-alt/math-compute-'+r['toolbox']+'@sha256:')
+          batch=os.environ['BATCH']
+          assert batch in ('all','math',*[f'agent{i}' for i in range(0,7)])
+          selected=[r for r in rows if batch=='all' or (batch=='math' and r['toolbox']!='lean') or batch=='agent'+str(r['agent'])]
+          assert selected
+          print('matrix='+json.dumps({'include':selected},separators=(',',':')))
+          PY
+
+  verify:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    container:
+      image: ${{ matrix.image }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Environment and source provenance
+        env:
+          AGENT: ${{ matrix.agent }}
+          JOB: ${{ matrix.job }}
+          TOOLBOX: ${{ matrix.toolbox }}
+        run: |
+          mkdir -p out
+          python3 - <<'PY'
+          import os,json,hashlib,pathlib,platform
+          p=pathlib.Path('jobs')/os.environ['JOB']
+          assert p.is_dir(),f'Missing agent bundle: {p}'
+          files={str(f):hashlib.sha256(f.read_bytes()).hexdigest() for f in sorted(p.rglob('*')) if f.is_file()}
+          out=dict(agent=int(os.environ['AGENT']),job=os.environ['JOB'],toolbox=os.environ['TOOLBOX'],source_commit=os.environ['GITHUB_SHA'],run_id=os.environ['GITHUB_RUN_ID'],run_attempt=os.environ['GITHUB_RUN_ATTEMPT'],python=platform.python_version(),file_sha256=files)
+          pathlib.Path('out/provenance.json').write_text(json.dumps(out,indent=2)+'\n')
+          print(json.dumps(out,indent=2))
+          PY
+      - name: Agent setup
+        env:
+          JOB: ${{ matrix.job }}
+        run: |
+          set -euo pipefail
+          if [ -f "jobs/$JOB/setup.sh" ]; then bash "jobs/$JOB/setup.sh"; fi
+      - name: Verify mathematical certificates
+        env:
+          JOB: ${{ matrix.job }}
+        run: |
+          set -euo pipefail
+          bash "jobs/$JOB/run.sh" 0 1 "$GITHUB_WORKSPACE/out" 2>&1 | tee out/verification.log
+          test -s out/result.json
+      - name: Archive exact evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: abc-wave3-agent${{ matrix.agent }}
+          path: out/
+          retention-days: 14
+          if-no-files-found: error
+
+  publish:
+    needs: [plan, verify]
+    if: ${{ always() && needs.plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: abc-wave3-agent*
+          path: summary/agents
+      - name: Preserve finite and conditional scope
+        env:
+          BATCH: ${{ inputs.batch }}
+          VERIFY_RESULT: ${{ needs.verify.result }}
+        run: |
+          python3 - <<'PY'
+          import os,json,pathlib
+          p=pathlib.Path('summary');p.mkdir(exist_ok=True)
+          rows=json.load(open('jobs/abc-wave3-orchestrator/matrix.json'))['include']
+          batch=os.environ['BATCH']
+          expected=[r['agent'] for r in rows if batch=='all' or (batch=='math' and r['toolbox']!='lean') or batch=='agent'+str(r['agent'])]
+          records={}
+          for a in expected:
+            folder=p/'agents'/f'abc-wave3-agent{a}'
+            r=folder/'result.json'; prov=folder/'provenance.json'
+            records[str(a)]={'result':json.loads(r.read_text()) if r.exists() else None,'provenance':json.loads(prov.read_text()) if prov.exists() else None}
+          out=dict(problem='ABC',resolution='unknown',batch=os.environ['BATCH'],workflow_result=os.environ['VERIFY_RESULT'],source_commit=os.environ['GITHUB_SHA'],run_id=os.environ['GITHUB_RUN_ID'],agents=records,scope='Successful jobs verify only their exact structural lemmas or bounded searches, never the original abc conjecture.')
+          (p/'summary.json').write_text(json.dumps(out,indent=2)+'\n')
+          print(json.dumps(out,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: abc-wave3-summary
+          path: summary/
+          retention-days: 30
+      - name: Commit evidence to existing results branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JOB: abc-wave3
+        run: bash scripts/commit_results.sh
+      - name: Fail if an agent verification failed
+        env:
+          VERIFY_RESULT: ${{ needs.verify.result }}
+        run: test "$VERIFY_RESULT" = success

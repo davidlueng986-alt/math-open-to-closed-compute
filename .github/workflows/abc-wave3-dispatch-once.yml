@@ -1,0 +1,39 @@
+name: One-shot ABC Wave 3 dispatch
+
+on:
+  push:
+    branches: [main]
+    paths: ['jobs/abc-wave3-orchestrator/launch.json']
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: abc-wave3-dispatch-once
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate the explicit one-shot request
+        id: request
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          r=json.load(open('jobs/abc-wave3-orchestrator/launch.json'))
+          assert r['problem']=='ABC' and r['wave']==3
+          assert r['batch'] in ('all','math',*[f'agent{i}' for i in range(0,7)])
+          assert r['authorized_by']=='explicit_user_continue_2026-11-28'
+          print('batch='+r['batch'])
+          PY
+      - name: Dispatch the manual verification workflow once
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ABC_BATCH: ${{ steps.request.outputs.batch }}
+        run: gh workflow run abc-wave3.yml --repo "$GITHUB_REPOSITORY" --ref main -f batch="$ABC_BATCH"
