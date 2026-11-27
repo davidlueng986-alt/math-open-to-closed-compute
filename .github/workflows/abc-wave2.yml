@@ -29,6 +29,9 @@ jobs:
     outputs:
       matrix: ${{ steps.select.outputs.matrix }}
     steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - id: select
         env:
           BATCH: ${{ inputs.batch }}
