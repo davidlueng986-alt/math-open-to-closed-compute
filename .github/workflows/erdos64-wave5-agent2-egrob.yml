@@ -15,47 +15,26 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Apply final 5 one-line fixes to Wave5Agent2EGRob.lean
+      - name: Silence 3 unused variable warnings in minimal_bad2_no_defect_free_two_cut
         run: |
           python3 - << 'PYEOF'
           from pathlib import Path
           p = Path("jobs/erdos64-wave5-agent2-egrob/Wave5Agent2EGRob.lean")
           s = p.read_text()
-
-          replacements = [
-              (
-                  "    have hadj : G.Adj (S.equivFin.symm i).1 (S.equivFin.symm j).1 := adj_of_mem_nb hj",
-                  "    have hadj0 : (induceFin G S).Adj i j := adj_of_mem_nb hj\n    have hadj : G.Adj (S.equivFin.symm i).1 (S.equivFin.symm j).1 := hadj0",
-              ),
-              (
-                  "          · subst hxb; rw [delEdge_degree_right G hab]; have := hall3 b; omega",
-                  "          · rw [hxb, delEdge_degree_right G hab]; have := hall3 b; omega",
-              ),
-              (
-                  "      have h2 := Finset.sum_le_sum_of_subset_of_nonneg (f := fun v => (G.neighborFinset v \\ S).card) (Finset.filter_subset (fun v => 1 ≤ (G.neighborFinset v \\ S).card) S) (fun _ _ _ => Nat.zero_le _)\n      omega",
-                  "      have h2 : ∑ v ∈ D, (G.neighborFinset v \\ S).card ≤ ∑ v ∈ S, (G.neighborFinset v \\ S).card :=\n        Finset.sum_le_sum_of_subset_of_nonneg (f := fun v => (G.neighborFinset v \\ S).card) (Finset.filter_subset (fun v => 1 ≤ (G.neighborFinset v \\ S).card) S) (fun _ _ _ => Nat.zero_le _)\n      omega",
-              ),
-              (
-                  "        (fun hub => minimal_bad2_defect_neighbor_at_most_one_high_neighbor hmb hab.symm hdb hda (fun z hzb hza => hother z hza hzb) (adj_of_mem_nb hub))).trans (by simp [Finset.sum_const, smul_eq_mul])\n    have h2 : ∑ u ∈ V3 \\ Ndef, ((G.neighborFinset u).filter (fun v => 4 ≤ G.degree v)).card ≤ 2 * (V3 \\ Ndef).card :=\n      (Finset.sum_le_sum fun u hu => minimal_bad2_cubic_at_most_two_high_neighbors hmb (Finset.mem_filter.mp (Finset.mem_sdiff.mp hu).1).2).trans (by simp [Finset.sum_const, smul_eq_mul, mul_comm])",
-                  "        (fun hub => minimal_bad2_defect_neighbor_at_most_one_high_neighbor hmb hab.symm hdb hda (fun z hzb hza => hother z hza hzb) (adj_of_mem_nb hub))).trans (by simp [Finset.sum_const, smul_eq_mul]; exact le_rfl)\n    have h2 : ∑ u ∈ V3 \\ Ndef, ((G.neighborFinset u).filter (fun v => 4 ≤ G.degree v)).card ≤ 2 * (V3 \\ Ndef).card :=\n      (Finset.sum_le_sum fun u hu => minimal_bad2_cubic_at_most_two_high_neighbors hmb (Finset.mem_filter.mp (Finset.mem_sdiff.mp hu).1).2).trans (by simp [Finset.sum_const, smul_eq_mul, mul_comm]; exact le_rfl)",
-              ),
-              (
-                  "  change 4 * n - 5 ≤ 6 * V3.card; omega",
-                  "  have hNdef_le_V3 : Ndef.card ≤ V3.card := Finset.card_le_card hNdef_sub\n  change 4 * n - 5 ≤ 6 * V3.card; omega",
-              ),
-          ]
-
-          for i, (old, new) in enumerate(replacements):
-              assert old in s, f"Replacement {i} not found: {old[:80]!r}"
-              s = s.replace(old, new, 1)
-
-          p.write_text(s)
-          print(f"Applied all {len(replacements)} final fixes successfully.")
+          old = """theorem minimal_bad2_no_defect_free_two_cut {n : ℕ} {G : SimpleGraph (Fin n)} [DecidableRel G.Adj]
+    (hmb : MinimalBad2 n G) {a b : Fin n} (hab : a ≠ b)
+    (hda : G.degree a = 2) (hdb : G.degree b = 2)"""
+          new = """theorem minimal_bad2_no_defect_free_two_cut {n : ℕ} {G : SimpleGraph (Fin n)} [DecidableRel G.Adj]
+    (hmb : MinimalBad2 n G) {a b : Fin n} (_hab : a ≠ b)
+    (_hda : G.degree a = 2) (_hdb : G.degree b = 2)"""
+          assert old in s, "Target header not found"
+          p.write_text(s.replace(old, new, 1))
+          print("Fixed unused variable warnings.")
           PYEOF
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add jobs/erdos64-wave5-agent2-egrob/Wave5Agent2EGRob.lean
-          git commit -m "Fix final 5 lines in Wave5Agent2EGRob.lean for full Lean 4.36.0 PASS"
+          git commit -m "Silence 3 unused variable warnings in minimal_bad2_no_defect_free_two_cut"
           git push origin main
 
   verify:
