@@ -150,7 +150,6 @@ def IsSubsetSum (ws : List ℕ) (t : ℕ) : Prop :=
   ∃ sel : List Bool, sel.length = ws.length ∧
     t = (ws.zip sel).foldr (fun p acc => (if p.2 then p.1 else 0) + acc) 0
 
-/-- Helper: foldr of zip over `ws` with all-false is 0. -/
 private lemma foldr_zip_cons (w : ℕ) (ws : List ℕ) (b : Bool) (bs : List Bool) :
     ((w :: ws).zip (b :: bs)).foldr (fun p acc => (if p.2 then p.1 else 0) + acc) 0 =
       (if b then w else 0) + (ws.zip bs).foldr (fun p acc => (if p.2 then p.1 else 0) + acc) 0 := by
@@ -182,7 +181,6 @@ theorem brown_subset_sum_complete (ws : List ℕ) (hB : IsBrownComplete ws) :
       simp only [↓reduceIte]
       omega
 
-/-- Helper relating `absSelSum ds sel` to `zip`/`foldr` on `ds.map Int.natAbs`. -/
 private lemma absSelSum_eq_foldr_map (ds : List ℤ) (sel : List Bool) :
     absSelSum ds sel =
       ((ds.map Int.natAbs).zip sel).foldr (fun p acc => (if p.2 then p.1 else 0) + acc) 0 := by
@@ -195,7 +193,6 @@ private lemma absSelSum_eq_foldr_map (ds : List ℤ) (sel : List Bool) :
       simp only [absSelSum, List.map_cons, foldr_zip_cons]
       rw [ih bs]
 
-/-- Helper: `(ds.map Int.natAbs).sum = absSum ds`. -/
 private lemma sum_map_natAbs_eq_absSum (ds : List ℤ) :
     (ds.map Int.natAbs).sum = absSum ds := by
   induction ds with
@@ -267,74 +264,6 @@ theorem parity_flip_even_brown_pow2 (L_min w0 : ℕ) (hs : List ℕ)
     refine ⟨true, c - a, brown_subset_sum_complete hs hB (c - a) ht_le, ?_⟩
     have heq : L_min + w0 + 2 * (c - a) = m := by omega
     simpa [heq] using hpow
-
-/-- Modular Dyadic Arithmetic Progression Hitting Theorem:
-    For any modulus `m ≥ 1` and period `e ≥ 1` with `2^e ≡ 1 [MOD m]`,
-    if `L_min ≥ 4` satisfies `L_min ≡ 2^j [MOD m]` for some `j ≥ 2`, and
-    `L_min + m * r ≥ 2^e * (L_min - 1)`, then `{L_min + m * t | t ≤ r}`
-    unconditionally contains a power of two `2^k` (`k ≥ 2`). -/
-theorem modular_dyadic_ap_hit (m e j L_min r : ℕ)
-    (hm : 1 ≤ m) (he : 1 ≤ e) (hj : 2 ≤ j) (hL : 4 ≤ L_min)
-    (hord : 2 ^ e % m = 1 % m) (hres : L_min % m = 2 ^ j % m)
-    (hbound : 2 ^ e * (L_min - 1) ≤ L_min + m * r) :
-    ∃ t : ℕ, t ≤ r ∧ IsPow2Ge4 (L_min + m * t) := by
-  have hex : ∃ q : ℕ, L_min ≤ 2 ^ (j + q * e) := by
-    refine ⟨L_min, ?_⟩
-    have h1 : L_min ≤ j + L_min * e := by
-      have : L_min ≤ L_min * e := Nat.le_mul_of_pos_right L_min (by omega)
-      omega
-    exact le_trans h1 (Nat.le_of_lt Nat.lt_two_pow_self)
-  classical
-  let q := Nat.find hex
-  have hq_ge : L_min ≤ 2 ^ (j + q * e) := Nat.find_spec hex
-  have hmod_step : ∀ n : ℕ, 2 ^ (j + n * e) % m = 2 ^ j % m := by
-    intro n
-    induction n with
-    | zero => simp
-    | succ n ih =>
-      have hadd : j + (n + 1) * e = (j + n * e) + e := by ring
-      rw [hadd, Nat.pow_add, Nat.mul_mod, ih, hord]
-      simp [Nat.mul_mod]
-  have hq_mod : 2 ^ (j + q * e) % m = L_min % m := by
-    rw [hmod_step q, hres]
-  have hdiv : m ∣ (2 ^ (j + q * e) - L_min) := by
-    rw [Nat.dvd_iff_mod_eq_zero]
-    have hsub : (2 ^ (j + q * e) - L_min + L_min) % m = L_min % m := by
-      rw [Nat.sub_add_cancel hq_ge]
-      exact hq_mod
-    have h1 := Nat.add_mod (2 ^ (j + q * e) - L_min) L_min m
-    omega
-  have hq_le : 2 ^ (j + q * e) ≤ 2 ^ e * (L_min - 1) ∨ q = 0 := by
-    by_cases hq0 : q = 0
-    · exact Or.inr hq0
-    · left
-      have hprev : ¬ (L_min ≤ 2 ^ (j + (q - 1) * e)) :=
-        Nat.find_min hex (by omega)
-      have hlt : 2 ^ (j + (q - 1) * e) ≤ L_min - 1 := by omega
-      have hpow : 2 ^ (j + q * e) = 2 ^ e * 2 ^ (j + (q - 1) * e) := by
-        have hidx : j + q * e = e + (j + (q - 1) * e) := by
-          have : q = (q - 1) + 1 := by omega
-          calc j + q * e = j + ((q - 1) + 1) * e := by rw [← this]
-            _ = e + (j + (q - 1) * e) := by ring
-        rw [hidx, Nat.pow_add]
-      rw [hpow]
-      exact Nat.mul_le_mul_left (2 ^ e) hlt
-  -- Note: if q = 0, we only need j to be minimal mod e, which we handle in specializations;
-  -- here we require 2^j ≤ 2^e * (L_min - 1) or directly handle q = 0 via j < 2 + e.
-  -- Wait: if j is arbitrary, 2^j could be huge! Let's check: in fact we can assume j ≤ e + 1,
-  -- or reduce j mod e inside the theorem! Let's do j % e + 2!
-  rcases hdiv with ⟨t, ht⟩
-  have hsum : L_min + m * t = 2 ^ (j + q * e) := by omega
-  by_cases hle : 2 ^ (j + q * e) ≤ L_min + m * r
-  · refine ⟨t, ?_, ⟨j + q * e, by omega, hsum⟩⟩
-    have : m * t ≤ m * r := by omega
-    exact Nat.le_of_mul_le_mul_left this (by omega)
-  · -- Only possible if q = 0 and 2^j > L_min + m * r; reduce j by subtracting e!
-    exfalso
-    rcases hq_le with hle2 | hq0
-    · omega
-    · -- Wait: if j is large, 2^j could exceed 2^e*(L_min-1). So add hypothesis `j ≤ e + 1`!
-      omega
 
 /-- Clean Modular Dyadic AP Hitting Theorem with canonical representative `2 ≤ j ≤ e + 1`. -/
 theorem modular_dyadic_ap_hit_canon (m e j L_min r : ℕ)
