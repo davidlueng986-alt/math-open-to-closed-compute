@@ -116,7 +116,7 @@ lemma degree_induce_eq {V : Type*} [Fintype V] (G : SimpleGraph V) (S : Finset V
   rw [← SimpleGraph.card_neighborFinset_eq_degree]
   apply Finset.card_bij (fun v _ => v.1)
   · intro v hv
-    have hv' : (G.induce (S : Set V)).Adj u v := mem_nb.mp hv
+    have hv' : (G.induce (S : Set V)).Adj u v := (SimpleGraph.mem_neighborFinset _ _ _).mp hv
     rw [Finset.mem_inter, mem_nb]
     exact ⟨hv', v.2⟩
   · intro _ _ _ _ h
@@ -124,8 +124,7 @@ lemma degree_induce_eq {V : Type*} [Fintype V] (G : SimpleGraph V) (S : Finset V
   · intro w hw
     rw [Finset.mem_inter, mem_nb] at hw
     refine ⟨⟨w, hw.2⟩, ?_, rfl⟩
-    rw [mem_nb]
-    exact hw.1
+    exact (SimpleGraph.mem_neighborFinset _ _ _).mpr hw.1
 
 /-- PILLAR 1.1: Universal Safe-Deletion Principle on EG2-CORE. -/
 theorem minimal_bad2_no_safe_deletion {V : Type} [Fintype V] {G : SimpleGraph V}
