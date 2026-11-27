@@ -83,13 +83,13 @@ theorem chebMat_comm_A (A : Matrix V V ℚ) (d : ℕ) :
   induction k using Nat.strong_induction_on with
   | ind k ih =>
     match k with
-    | 0 => simp [chebMat, Matrix.mul_smul, Matrix.smul_mul]
+    | 0 => simp [chebMat]
     | 1 => simp [chebMat]
     | m + 2 =>
       have h1 := ih (m + 1) (by omega)
       have h2 := ih m (by omega)
       simp only [chebMat, Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_smul, Matrix.smul_mul]
-      rw [← Matrix.mul_assoc, h1, h2]
+      rw [h2, h1, ← Matrix.mul_assoc, h1]
 
 /-- Every `chebMat A d k` is symmetric when `A` is symmetric. -/
 theorem chebMat_symm (A : Matrix V V ℚ) (d : ℕ) (hA : A.transpose = A) :
@@ -214,7 +214,7 @@ theorem chebMat_mul_any (A : Matrix V V ℚ) (d : ℕ) (j k : ℕ) :
       | ind a ih =>
         intro b
         match a with
-        | 0 => simp [chebMat, Matrix.mul_smul, Matrix.smul_mul]
+        | 0 => simp [chebMat]
         | 1 => exact chebMat_comm_A A d b
         | m + 2 =>
           simp only [chebMat, Matrix.sub_mul, Matrix.mul_sub, Matrix.smul_mul, Matrix.mul_smul]
@@ -305,6 +305,7 @@ theorem bessel_multi_cluster_sq_trace_ge {ι : Type*} [DecidableEq ι]
     exact clusterSum_sq_div_le M (S i) (hne i hi)
   have hpair : Set.PairwiseDisjoint (J : Set ι) (fun i => S i ×ˢ S i) := by
     intro i hi j hj hij
+    dsimp [Function.onFun]
     rw [Finset.disjoint_left]
     intro p hp1 hp2
     have hdj := hdisj hi hj hij
@@ -405,7 +406,7 @@ theorem polyMat_sq_trace_eq (A : Matrix V V ℚ) (d L : ℕ) (c : List ℤ)
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [Finset.mul_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
-    simp only [Matrix.smul_mul, Matrix.mul_smul, smul_smul]
+    simp only [Matrix.smul_mul, Matrix.mul_smul, smul_smul, mul_comm]
   rw [hexp]
   simp only [Matrix.trace_sum, Matrix.trace_smul, smul_eq_mul]
   have hterm : ∀ j ∈ Finset.range c.length, ∀ l ∈ Finset.range c.length,
@@ -450,7 +451,6 @@ theorem polyMat_sq_trace_eq (A : Matrix V V ℚ) (d L : ℕ) (c : List ℤ)
       rw [Finset.sum_congr rfl this, Finset.sum_ite_eq]
       simp [hdiff_mem]
     rw [hs1, hs2]
-    ring
   calc
     ∑ j ∈ Finset.range c.length, ∑ l ∈ Finset.range c.length,
         (c.getD j 0 : ℚ) * (c.getD l 0 : ℚ) * Matrix.trace (chebMat A d j * chebMat A d l)
@@ -460,20 +460,24 @@ theorem polyMat_sq_trace_eq (A : Matrix V V ℚ) (d L : ℕ) (c : List ℤ)
                (if (if l ≤ j then j - l else l - j) = k then ((d : ℚ) - 1) ^ (min j l) else 0)) *
               Matrix.trace (chebMat A d k) :=
           Finset.sum_congr rfl fun j hj => Finset.sum_congr rfl fun l hl => hterm j hj l hl
+    _ = ∑ j ∈ Finset.range c.length, ∑ k ∈ Finset.range (L + 1), ∑ l ∈ Finset.range c.length,
+            (c.getD j 0 : ℚ) * (c.getD l 0 : ℚ) *
+              ((if j + l = k then (1 : ℚ) else 0) +
+               (if (if l ≤ j then j - l else l - j) = k then ((d : ℚ) - 1) ^ (min j l) else 0)) *
+              Matrix.trace (chebMat A d k) :=
+          Finset.sum_congr rfl fun _ _ => Finset.sum_comm
     _ = ∑ k ∈ Finset.range (L + 1), ∑ j ∈ Finset.range c.length, ∑ l ∈ Finset.range c.length,
             (c.getD j 0 : ℚ) * (c.getD l 0 : ℚ) *
               ((if j + l = k then (1 : ℚ) else 0) +
                (if (if l ≤ j then j - l else l - j) = k then ((d : ℚ) - 1) ^ (min j l) else 0)) *
-              Matrix.trace (chebMat A d k) := by
-          rw [Finset.sum_comm]
-          refine Finset.sum_congr rfl fun j _ => Finset.sum_comm
+              Matrix.trace (chebMat A d k) :=
+          Finset.sum_comm
     _ = ∑ k ∈ Finset.range (L + 1), (sqCoeffAtZ d c k : ℚ) * Matrix.trace (chebMat A d k) := by
           refine Finset.sum_congr rfl fun k _ => ?_
           simp only [sqCoeffAtZ, sumRangeZ_cast, Finset.sum_mul]
           refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun l _ => ?_
           push_cast
-          congr 1
-          split_ifs <;> simp
+          rfl
 
 theorem trace_sum_eq_kmDenom_add_walks (A : Matrix V V ℚ) (d L : ℕ) (F : ℕ → ℤ) (b : ℕ → ℚ)
     (htr0 : Matrix.trace (chebMat A d 0) = 2 * (Fintype.card V : ℚ))
@@ -589,9 +593,9 @@ theorem delsarte_bessel_unbounded_n_forces_bL {ι : Type*} [DecidableEq ι]
   have hleadq : (0 : ℚ) < (twoSqCoeffAtZ d c1 c2 L : ℚ) := by exact_mod_cast hlead
   have hFbL : 0 < (twoSqCoeffAtZ d c1 c2 L : ℚ) * b L := by linarith
   by_contra hle
-  push_neg at hle
+  have hle' : b L ≤ 0 := not_lt.mp hle
   have : (twoSqCoeffAtZ d c1 c2 L : ℚ) * b L ≤ 0 :=
-    mul_nonpos_of_nonneg_of_nonpos (le_of_lt hleadq) hle
+    mul_nonpos_of_nonneg_of_nonpos (le_of_lt hleadq) hle'
   linarith
 
 /-- **Master Finite-`n` Delsarte 2-Square SOS Forcing Theorem** (Single Full-Graph Cluster). -/
