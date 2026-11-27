@@ -148,7 +148,9 @@ theorem quality_margin_identity (H k : ℝ) (hH : 0 < H)
   have hd : 0 < 4 * H - k := by linarith
   have he : 0 < H - k / 4 := by linarith
   constructor
-  · field_simp [ne_of_gt hd, ne_of_gt he] <;> ring
+  · have hnormalized : H * 4 - k ≠ 0 := by nlinarith
+    field_simp [ne_of_gt hd, ne_of_gt he, hnormalized] <;>
+      field_simp [hnormalized] <;> ring
   · exact div_pos hk hd
 
 end ABCWave2
