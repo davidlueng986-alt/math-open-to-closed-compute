@@ -50,7 +50,7 @@ theorem pentagram_p3_closes_c8 {V : Type*} {G : SimpleGraph V}
     all_goals try exact False.elim (hdisj _ _ hab)
     all_goals try exact False.elim (hdisj _ _ hab.symm)
     all_goals try (have h := hv_inj hab; revert h; fin_cases i <;> decide)
-    all_goals try (have h := hu_inj hab; revert h; fin_cases i <;> decide)
+    all_goals (have h := hu_inj hab; revert h; fin_cases i <;> decide)
   have hadj : ∀ j : Fin 8, G.Adj (f j) (f ⟨(j.val + 1) % 8, Nat.mod_lt _ (by omega)⟩) := by
     intro j
     fin_cases j <;> dsimp [f]
@@ -170,7 +170,7 @@ theorem c5_external_neighbors_distinct_of_girth5 {V : Type*} {G : SimpleGraph V}
       all_goals try rfl
       all_goals try exact False.elim (hdisj _ _ hpq)
       all_goals try exact False.elim (hdisj _ _ hpq.symm)
-      all_goals try (have h := hv_inj hpq; revert h; fin_cases x <;> decide)
+      all_goals (have h := hv_inj hpq; revert h; fin_cases x <;> decide)
     · intro p
       fin_cases p <;> dsimp [f]
       · exact hc5 x
@@ -186,7 +186,7 @@ theorem c5_external_neighbors_distinct_of_girth5 {V : Type*} {G : SimpleGraph V}
       all_goals try rfl
       all_goals try exact False.elim (hdisj _ _ hpq)
       all_goals try exact False.elim (hdisj _ _ hpq.symm)
-      all_goals try (have h := hv_inj hpq; revert h; fin_cases x <;> decide)
+      all_goals (have h := hv_inj hpq; revert h; fin_cases x <;> decide)
     · intro p
       fin_cases p <;> dsimp [f]
       · exact hc5 x
@@ -263,7 +263,7 @@ theorem two_paths_form_simple_cycle {V : Type*} {G : SimpleGraph V}
     dsimp [f] at hij
     split_ifs at hij with hi hj hj
     · have h : (⟨i.val, by omega⟩ : Fin (a + 1)) = ⟨j.val, by omega⟩ := P.inj hij
-      have hv : i.val = j.val := congrArg Fin.val h
+      have hv : i.val = j.val := congrArg (Fin.val : Fin (a + 1) → ℕ) h
       exact Fin.ext hv
     · exfalso
       by_cases hi0 : i.val = 0
@@ -300,7 +300,7 @@ theorem two_paths_form_simple_cycle {V : Type*} {G : SimpleGraph V}
             (show 0 < j.val by omega) (show j.val < a by omega)
             (show 0 < a + b - i.val by omega) (show a + b - i.val < b by omega) hij.symm
     · have h : (⟨a + b - i.val, by omega⟩ : Fin (b + 1)) = ⟨a + b - j.val, by omega⟩ := Q.inj hij
-      have hv : a + b - i.val = a + b - j.val := congrArg Fin.val h
+      have hv : a + b - i.val = a + b - j.val := congrArg (Fin.val : Fin (b + 1) → ℕ) h
       exact Fin.ext (by omega)
   have hadj : ∀ k : Fin (a + b), G.Adj (f k) (f ⟨(k.val + 1) % (a + b), Nat.mod_lt _ (by omega)⟩) := by
     intro k
@@ -494,7 +494,7 @@ lemma AdjusterNecklace.seg_adj {V : Type*} {G : SimpleGraph V} {r : ℕ}
     (k : ℕ) (hk : k + 1 < (N.seg choice i).length) :
     G.Adj ((N.seg choice i)[k]) ((N.seg choice i)[k + 1]) := by
   by_cases hc : choice i = true
-  · simp only [seg, hc, ↓reduceIte] at hk ⊢
+  · simp only [seg, hc] at hk ⊢
     exact N.h_long_adj i k hk
   · simp only [seg, hc, ↓reduceIte] at hk ⊢
     exact N.h_short_adj i k hk
