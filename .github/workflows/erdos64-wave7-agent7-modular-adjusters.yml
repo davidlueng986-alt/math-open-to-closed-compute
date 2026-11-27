@@ -1,0 +1,34 @@
+name: E64 Wave 7 Agent 7 Modular Adjusters, Cross-Rewiring & Girth>=5 Siege
+
+on:
+  workflow_dispatch:
+
+jobs:
+  verify-lean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Wave7Agent7ModularAdjustersAndRewiring in Lean 4.36.0
+        run: bash jobs/erdos64-wave7-agent7-modular-adjusters/verify.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: erdos64-wave7-agent7-lean-audit
+          path: out/
+
+  girth5-siege:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and run OpenMP C++20 Girth>=5 Siege
+        run: |
+          mkdir -p out
+          g++ -O3 -fopenmp -std=c++20 jobs/erdos64-wave7-agent7-modular-adjusters/girth5_frontier_siege.cpp -o girth5_frontier_siege
+          ./girth5_frontier_siege | tee out/girth5_siege.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: erdos64-wave7-agent7-girth5-siege
+          path: out/
