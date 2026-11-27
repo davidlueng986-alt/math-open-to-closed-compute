@@ -34,7 +34,15 @@ def ContractSet {V : Type u} (G : SimpleGraph V) (S : Set V) :
     | some x, some y => G.Adj x.1 y.1
   symm := ⟨by
     intro a b h
-    cases a <;> cases b <;> simp_all [G.symm]⟩
+    cases a with
+    | none =>
+      cases b with
+      | none => exact h
+      | some y => exact h
+    | some x =>
+      cases b with
+      | none => exact h
+      | some y => exact G.symm h⟩
   loopless := ⟨by
     intro a h
     cases a with
@@ -89,15 +97,13 @@ theorem contractSet_degree_some {V : Type u} [Fintype V] [DecidableEq V]
       right_inv := by
         intro q
         rcases q with ⟨w, hw⟩
-        by_cases hwS : w ∈ S
-        · dsimp only
-          rw [dif_pos hwS]
-          apply Subtype.ext
+        dsimp only
+        split_ifs with hwS
+        · apply Subtype.ext
           have h : ∃ u ∈ S, G.Adj u x.1 := ⟨w, hwS, hw.symm⟩
           have hspec := Classical.choose_spec h
           exact hnm x.1 x.2 (Classical.choose h) hspec.1 w hwS hspec.2.symm hw
-        · dsimp only
-          rw [dif_neg hwS] }
+        · rfl }
   calc
     (ContractSet G S).degree (some x)
         = Nat.card ((ContractSet G S).neighborSet (some x)) := by
@@ -156,17 +162,18 @@ def liftWalkAvoiding {V : Type u} {G : SimpleGraph V} {S : Set V} :
   | _, _, .nil, _ => .nil
   | _, _, .cons (v := none) _ _, h => absurd (by simp) h
   | _, _, .cons (v := some _) hadj q, h =>
-      .cons hadj (liftWalkAvoiding q (fun hm => h (by simp [hm])))
+      .cons (hadj : G.Adj _ _) (liftWalkAvoiding q (fun hm => h (by simp [hm])))
 
 theorem liftWalkAvoiding_length {V : Type u} {G : SimpleGraph V} {S : Set V} :
     ∀ {x y : {v : V // v ∉ S}} (p : (ContractSet G S).Walk (some x) (some y))
       (h : none ∉ p.support),
       (liftWalkAvoiding p h).length = p.length
-  | _, _, .nil, _ => rfl
+  | _, _, .nil, _ => by simp [liftWalkAvoiding]
   | _, _, .cons (v := none) _ _, h => absurd (by simp) h
   | _, _, .cons (v := some _) _ q, h => by
-      simp only [liftWalkAvoiding, Walk.length_cons]
-      rw [liftWalkAvoiding_length q (fun hm => h (by simp [hm]))]
+      dsimp [liftWalkAvoiding]
+      rw [Walk.length_cons, Walk.length_cons,
+          liftWalkAvoiding_length q (fun hm => h (by simp [hm]))]
 
 theorem liftWalkAvoiding_support_map {V : Type u} {G : SimpleGraph V} {S : Set V} :
     ∀ {x y : {v : V // v ∉ S}} (p : (ContractSet G S).Walk (some x) (some y))
@@ -183,19 +190,23 @@ theorem liftWalkAvoiding_support_map {V : Type u} {G : SimpleGraph V} {S : Set V
         cases o with
         | none => exact absurd ho hq
         | some t => rfl
-      simp only [liftWalkAvoiding, Walk.support_cons, List.map_cons]
-      rw [hmap, liftWalkAvoiding_support_map q hq]
+      dsimp [liftWalkAvoiding]
+      rw [Walk.support_cons, Walk.support_cons, List.map_cons, hmap,
+          liftWalkAvoiding_support_map q hq]
+      rfl
 
 theorem liftWalkAvoiding_mem_compl {V : Type u} {G : SimpleGraph V} {S : Set V} :
     ∀ {x y : {v : V // v ∉ S}} (p : (ContractSet G S).Walk (some x) (some y))
       (h : none ∉ p.support),
       ∀ v ∈ (liftWalkAvoiding p h).support, v ∉ S
   | x, _, .nil, _, v, hv => by
-      simp only [liftWalkAvoiding, Walk.support_nil, List.mem_singleton] at hv
+      dsimp [liftWalkAvoiding] at hv
+      rw [Walk.support_nil, List.mem_singleton] at hv
       exact hv ▸ x.2
   | _, _, .cons (v := none) _ _, h, _, _ => absurd (by simp) h
   | x, _, .cons (v := some _) _ q, h, v, hv => by
-      simp only [liftWalkAvoiding, Walk.support_cons, List.mem_cons] at hv
+      dsimp [liftWalkAvoiding] at hv
+      rw [Walk.support_cons, List.mem_cons] at hv
       rcases hv with rfl | hv
       · exact x.2
       · exact liftWalkAvoiding_mem_compl q (fun hm => h (by simp [hm])) v hv
@@ -386,7 +397,7 @@ theorem minimal_bad_contractSet_dyadic_ear {V : Type u} [Fintype V] [DecidableEq
           rcases hw with rfl | hmq | hmv
           · exact absurd rfl hwu
           · exact hqG_compl w hmq
-          · simp only [List.mem_singleton] at hmv
+          · simp at hmv
             exact absurd hmv hwv
 
 /-- **Universal 2-Packing Dyadic-Avoidance Theorem (ALL 13 Remaining Leaves)**:
@@ -515,7 +526,7 @@ theorem erdos64_closed_of_global_target
     by_contra hempty
     have hemp : IsEmpty V := not_nonempty_iff.mp hempty
     have h0 : G.minDegree = 0 := by
-      simp [SimpleGraph.minDegree, Finset.univ_eq_empty_iff.mpr hemp]
+      simp [SimpleGraph.minDegree]
     omega
   obtain ⟨v0⟩ := hne
   have hnear : Near G :=
