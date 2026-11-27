@@ -141,7 +141,7 @@ theorem nonBacktracking_tail_peel {V : Type*} {G : SimpleGraph V} :
         | nil => simp at hpos
         | @cons _ b _ h₁ rest =>
             cases rest with
-            | nil => exact False.elim (G.loopless u h₁)
+            | nil => exact False.elim (G.ne_of_adj h₁ rfl)
             | cons h₂ rest₂ =>
                 obtain ⟨x, mid, hx, hmid, hlast_rest⟩ :=
                   walk_split_last (.cons h₂ rest₂) (by simp)
@@ -166,11 +166,12 @@ theorem nonBacktracking_tail_peel {V : Type*} {G : SimpleGraph V} :
                   cases mid with
                   | nil =>
                       simp only [Walk.nil_append] at hmid
-                      have hnb1 := hnb.1
                       have hrest_eq : (Walk.cons h₂ rest₂).support = (Walk.cons hx .nil).support :=
                         congrArg Walk.support hmid
                       simp only [Walk.support_cons, Walk.support_nil, List.cons.injEq] at hrest_eq
-                      exact False.elim (hnb1 hrest_eq.2.1.symm)
+                      have hmem := Walk.start_mem_support rest₂
+                      rw [hrest_eq.2, List.mem_singleton] at hmem
+                      exact False.elim (hnb.1 hmem.symm)
                   | cons _ _ => simp
                 have hmid_nb : IsNonBacktracking mid := by
                   have hnb_rest : IsNonBacktracking (Walk.cons h₂ rest₂) := hnb.2
@@ -239,7 +240,7 @@ private theorem isCycle_of_nb_nodup_tail {V : Type*} {G : SimpleGraph V}
         refine ⟨?_⟩
         simp only [Walk.edges_cons, List.nodup_cons]
         exact ⟨hnotmem, hrest_path.isTrail.edges_nodup⟩
-      exact ⟨htrail, by simp, hnd⟩
+      exact ⟨⟨htrail, by simp⟩, hnd⟩
 
 private theorem exists_append_of_mem_support' {V : Type*} {G : SimpleGraph V} :
     ∀ {u v : V} (w : G.Walk u v) {x : V},
@@ -427,7 +428,7 @@ theorem unique_nonBacktracking_walk_of_sum_lt_girth {V : Type*} {G : SimpleGraph
                     isNonBacktracking_of_append_left (hq_eq ▸ hnbq)
                   have hlp := congrArg Walk.length hp_eq
                   have hlq := congrArg Walk.length hq_eq
-                  simp only [Walk.length_append, Walk.length_cons, Walk.length_nil] at hlp hlq
+                  simp only [Walk.length_append, Walk.length_cons, Walk.length_nil] at hlp hlq hsum
                   have hlt' : p_init.length + q_init.length < m := by omega
                   have heq' := ih (p_init.length + q_init.length) hlt' p_init q_init rfl
                     (by omega) hnbpi hnbqi
@@ -504,7 +505,7 @@ private theorem isCyclicallyNonBacktracking_of_isCycle {V : Type*} {G : SimpleGr
                 simp only [List.mem_cons]
                 left
                 exact Sym2.eq_swap
-              exact ⟨hne, ih (Walk.IsTrail.mk hnd.2)⟩
+              exact ⟨hne, ih (Walk.IsTrail.mk (by simpa [Walk.edges_cons] using hnd.2))⟩
     exact aux p htr
   rw [isNonBacktracking_append_iff]
   refine ⟨hnb, hnb, ?_⟩
@@ -515,7 +516,7 @@ private theorem isCyclicallyNonBacktracking_of_isCycle {V : Type*} {G : SimpleGr
       simp only [firstNbr, Option.some.injEq] at hy
       subst hy
       cases rest with
-      | nil => exact False.elim (G.loopless _ h₁)
+      | nil => exact False.elim (G.ne_of_adj h₁ rfl)
       | cons h₂ rest₂ =>
           obtain ⟨z, mid, hz, hmid, hlast⟩ := walk_split_last (.cons h₂ rest₂) (by simp)
           have hxz : x = z := by
@@ -528,6 +529,7 @@ private theorem isCyclicallyNonBacktracking_of_isCycle {V : Type*} {G : SimpleGr
           have hnd := hc.isTrail.edges_nodup
           simp only [Walk.edges_cons, List.nodup_cons] at hnd
           apply hnd.1
+          change s(v, x) ∈ (Walk.cons h₂ rest₂).edges
           rw [hmid, Walk.edges_append]
           simp only [List.mem_append, Walk.edges_cons, List.mem_cons]
           right; left
