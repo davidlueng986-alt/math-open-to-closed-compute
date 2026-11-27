@@ -44,6 +44,17 @@ lemma path_endpoints_ne_of_pos {V : Type*} {G : SimpleGraph V} {u v : V}
   | @cons _ _ _ _ p' =>
     exact (List.nodup_cons.mp hp).1 (Walk.end_mem_support p')
 
+lemma walk_append_single {V : Type*} {G : SimpleGraph V} {u v w : V}
+    (p : G.Walk u v) (h : G.Adj v w) :
+    p.append (Walk.cons h Walk.nil) = p.concat h := by
+  induction p with
+  | nil => rfl
+  | cons _ _ ih => exact congrArg (Walk.cons _) ih
+
+lemma walk_support_head {V : Type*} {G : SimpleGraph V} {u v : V} (p : G.Walk u v) :
+    p.support.head? = some u := by
+  cases p <;> rfl
+
 lemma mem_support_of_edge {V : Type*} {G : SimpleGraph V} {u v w : V} {e : Sym2 V}
     (p : G.Walk u v) (he : e ∈ p.edges) (hw : w ∈ e) : w ∈ p.support := by
   induction p with
@@ -365,7 +376,7 @@ lemma addEdge_cycle_lifts_to_fermat_path {V : Type*} {G : SimpleGraph V}
           simp only [Walk.edges_cons, List.mem_cons] at hmem_r
           rcases hmem_r with heq | hmem_rest'
           · rw [Sym2.eq_iff] at heq
-            rcases heq with ⟨_, rfl⟩ | ⟨h1, _⟩
+            rcases heq with ⟨_, rfl⟩ | ⟨_, h1⟩
             · rfl
             · exact False.elim (hxy h1.symm)
           · have hrest'_path : rest'.IsPath := Walk.IsPath.mk' (by
@@ -373,7 +384,7 @@ lemma addEdge_cycle_lifts_to_fermat_path {V : Type*} {G : SimpleGraph V}
             have hmem_rr : s(x, y) ∈ rest'.reverse.edges := by
               simpa [Walk.edges_reverse] using hmem_rest'
             have h1 : (Walk.cons hxb' rest').reverse = rest'.reverse.concat hxb'.symm := by
-              simp [Walk.reverse_cons]
+              rw [Walk.reverse_cons, walk_append_single]
             rw [← hcr, Walk.reverse_reverse, hc_eq] at h1
             cases hrr : rest'.reverse with
             | nil => rw [hrr] at hmem_rr; simp at hmem_rr
@@ -383,11 +394,13 @@ lemma addEdge_cycle_lifts_to_fermat_path {V : Type*} {G : SimpleGraph V}
               have hzb : z = b := by
                 have hsupp := congrArg Walk.support h1
                 simp only [Walk.support_cons] at hsupp
-                exact (List.cons.inj (List.cons.inj hsupp).2).1.symm
+                have htail := congrArg List.head? (List.cons.inj hsupp).2
+                rw [walk_support_head rest, walk_support_head (q.concat _)] at htail
+                exact (Option.some.inj htail).symm
               simp only [Walk.edges_cons, List.mem_cons] at hmem_rr
               rcases hmem_rr with heq | hmq
               · rw [Sym2.eq_iff] at heq
-                rcases heq with ⟨_, rfl⟩ | ⟨hxy', _⟩
+                rcases heq with ⟨_, rfl⟩ | ⟨_, hxy'⟩
                 · exact False.elim (hby hzb.symm)
                 · exact False.elim (hxy hxy'.symm)
               · have hx_in' : x ∈ q.support := mem_support_of_edge q hmq (by simp)
@@ -497,9 +510,9 @@ lemma identGraph_cycle_lifts_to_dyadic_path {V : Type*} {G : SimpleGraph V}
                 List.nodup_cons, List.mem_append, List.mem_singleton, not_or]
               refine ⟨⟨fun h => hw_not_edges _ h (by simp), ?_⟩, ?_⟩
               · intro heq; rw [Sym2.eq_iff] at heq
-                rcases heq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-                · exact G.ne_of_adj hwd rfl
-                · exact hdb_ne rfl
+                rcases heq with ⟨_, hdw'⟩ | ⟨_, hdb'⟩
+                · exact G.ne_of_adj hwd hdw'.symm
+                · exact hdb_ne hdb'
               · rw [List.nodup_append]
                 refine ⟨hq_edges_nodup, List.nodup_singleton _, ?_⟩
                 intro e he e' he' heq
@@ -797,13 +810,14 @@ theorem minimal_bad2_nonadj_two_cut_torso_fermat_path {V : Type} [Fintype V]
   let f : GS →g G := (SimpleGraph.Embedding.induce (S : Set V)).toHom
   have hp_len : (pS.map f).length = 2 ^ k - 1 := (Walk.length_map f pS).trans hplen
   have hp_supp : (pS.map f).support = pS.support.map f := Walk.support_map f pS
-  refine ⟨pS.map f, hpS.map Subtype.val_injective, ?_, k, hk2, hp_len⟩
-  intro w hw
-  rw [hp_supp] at hw
-  rcases List.mem_map.mp hw with ⟨u, _, rfl⟩
-  have := u.2
-  simp only [S, Finset.mem_coe, Finset.mem_union, Finset.mem_insert, Finset.mem_singleton] at this
-  exact this
+  have hp_in : ∀ w ∈ (pS.map f).support, w ∈ Ca ∨ w = x ∨ w = y := by
+    intro w hw
+    rw [hp_supp] at hw
+    rcases List.mem_map.mp hw with ⟨u, _, rfl⟩
+    have := u.2
+    simp only [S, Finset.mem_coe, Finset.mem_union, Finset.mem_insert, Finset.mem_singleton] at this
+    exact this
+  exact ⟨pS.map f, hpS.map Subtype.val_injective, hp_in, k, hk2, hp_len⟩
 
 /-- PILLAR 2.2: One-Sided Non-Adjacent 2-Cut Cubic Normal Form. -/
 theorem minimal_bad2_nonadj_two_cut_one_sided_cubic {V : Type} [Fintype V]
@@ -1036,13 +1050,14 @@ theorem minimal_bad2_nonadj_two_cut_contraction_dyadic_path {V : Type} [Fintype 
   let f : GS →g G := (SimpleGraph.Embedding.induce (S : Set V)).toHom
   have hp_len : IsPowerOfTwo (pS.map f).length := (Walk.length_map f pS).symm ▸ hpow
   have hp_supp : (pS.map f).support = pS.support.map f := Walk.support_map f pS
-  refine ⟨pS.map f, hpS.map Subtype.val_injective, ?_, hp_len⟩
-  intro w hw
-  rw [hp_supp] at hw
-  rcases List.mem_map.mp hw with ⟨u, _, rfl⟩
-  have := u.2
-  simp only [S, Finset.mem_coe, Finset.mem_union, Finset.mem_insert, Finset.mem_singleton] at this
-  exact this
+  have hp_in : ∀ w ∈ (pS.map f).support, w ∈ Ca ∨ w = x ∨ w = y := by
+    intro w hw
+    rw [hp_supp] at hw
+    rcases List.mem_map.mp hw with ⟨u, _, rfl⟩
+    have := u.2
+    simp only [S, Finset.mem_coe, Finset.mem_union, Finset.mem_insert, Finset.mem_singleton] at this
+    exact this
+  exact ⟨pS.map f, hpS.map Subtype.val_injective, hp_in, hp_len⟩
 
 /-- PILLAR 2.4: Tutte 2-Cut Dyadic Scale Asymmetry Theorem (`ka ≠ kb`). -/
 theorem minimal_bad2_nonadj_two_cut_scale_asymmetry {V : Type} [Fintype V]
