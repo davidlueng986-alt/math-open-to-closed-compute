@@ -42,7 +42,7 @@ def ContractSet {V : Type u} (G : SimpleGraph V) (S : Set V) :
     | some x =>
       cases b with
       | none => exact h
-      | some y => exact G.symm h⟩
+      | some y => exact h.symm⟩
   loopless := ⟨by
     intro a h
     cases a with
@@ -162,7 +162,7 @@ def liftWalkAvoiding {V : Type u} {G : SimpleGraph V} {S : Set V} :
   | _, _, .nil, _ => .nil
   | _, _, .cons (v := none) _ _, h => absurd (by simp) h
   | _, _, .cons (v := some _) hadj q, h =>
-      .cons (hadj : G.Adj _ _) (liftWalkAvoiding q (fun hm => h (by simp [hm])))
+      .cons hadj (liftWalkAvoiding q (fun hm => h (by simp [hm])))
 
 theorem liftWalkAvoiding_length {V : Type u} {G : SimpleGraph V} {S : Set V} :
     ∀ {x y : {v : V // v ∉ S}} (p : (ContractSet G S).Walk (some x) (some y))
@@ -171,7 +171,7 @@ theorem liftWalkAvoiding_length {V : Type u} {G : SimpleGraph V} {S : Set V} :
   | _, _, .nil, _ => by simp [liftWalkAvoiding]
   | _, _, .cons (v := none) _ _, h => absurd (by simp) h
   | _, _, .cons (v := some _) _ q, h => by
-      dsimp [liftWalkAvoiding]
+      unfold liftWalkAvoiding
       rw [Walk.length_cons, Walk.length_cons,
           liftWalkAvoiding_length q (fun hm => h (by simp [hm]))]
 
@@ -190,7 +190,7 @@ theorem liftWalkAvoiding_support_map {V : Type u} {G : SimpleGraph V} {S : Set V
         cases o with
         | none => exact absurd ho hq
         | some t => rfl
-      dsimp [liftWalkAvoiding]
+      unfold liftWalkAvoiding
       rw [Walk.support_cons, Walk.support_cons, List.map_cons, hmap,
           liftWalkAvoiding_support_map q hq]
       rfl
@@ -200,12 +200,12 @@ theorem liftWalkAvoiding_mem_compl {V : Type u} {G : SimpleGraph V} {S : Set V} 
       (h : none ∉ p.support),
       ∀ v ∈ (liftWalkAvoiding p h).support, v ∉ S
   | x, _, .nil, _, v, hv => by
-      dsimp [liftWalkAvoiding] at hv
+      unfold liftWalkAvoiding at hv
       rw [Walk.support_nil, List.mem_singleton] at hv
       exact hv ▸ x.2
   | _, _, .cons (v := none) _ _, h, _, _ => absurd (by simp) h
   | x, _, .cons (v := some _) _ q, h, v, hv => by
-      dsimp [liftWalkAvoiding] at hv
+      unfold liftWalkAvoiding at hv
       rw [Walk.support_cons, List.mem_cons] at hv
       rcases hv with rfl | hv
       · exact x.2
