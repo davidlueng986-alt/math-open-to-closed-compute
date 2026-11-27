@@ -1,0 +1,37 @@
+name: erdos151-w4-exp4-n40-close
+on:
+  workflow_dispatch:
+  push:
+    branches: [erdos151-w4-exp4-n40-close]
+
+jobs:
+  verify-28-clean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and run clean-room 28-link verifier
+        run: |
+          g++ -O3 erdos151_exp4/verify_28_clean.cpp -o verify_28_clean
+          ./verify_28_clean
+
+  verify-f9-cpsat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install OR-Tools
+        run: pip install ortools
+      - name: Verify 6-vertex lemma and 7 CP-SAT exclusions in F_9
+        run: python3 erdos151_exp4/verify_f9_cpsat.py
+
+  attack-f2-global:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [30, 33, 36, 39]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install OR-Tools
+        run: pip install ortools
+      - name: Global {1, 2}-local search for n=${{ matrix.n }}
+        run: python3 erdos151_exp4/attack_f2_global.py ${{ matrix.n }}
