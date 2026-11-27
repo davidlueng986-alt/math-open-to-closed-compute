@@ -1,0 +1,34 @@
+name: erdos617-w4-exp4-v2-clique-collision
+on:
+  push:
+    branches:
+      - 'erdos617-w4-exp4-v2'
+
+jobs:
+  audit-v2:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { profile: p7, shard: 0, total: 2, tl: 15 }
+          - { profile: p7, shard: 1, total: 2, tl: 15 }
+          - { profile: p8, shard: 0, total: 2, tl: 15 }
+          - { profile: p8, shard: 1, total: 2, tl: 15 }
+          - { profile: p9, shard: 0, total: 6, tl: 15 }
+          - { profile: p9, shard: 1, total: 6, tl: 15 }
+          - { profile: p9, shard: 2, total: 6, tl: 15 }
+          - { profile: p9, shard: 3, total: 6, tl: 15 }
+          - { profile: p9, shard: 4, total: 6, tl: 15 }
+          - { profile: p9, shard: 5, total: 6, tl: 15 }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install ortools
+        run: pip install --quiet ortools
+      - name: Compile gen_sub_pareto_v2
+        run: g++ -O3 erdos617_exp4/gen_sub_pareto_v2.cpp -o gen_sub_pareto_v2
+      - name: Run V2 macro audit
+        run: python3 erdos617_exp4/r6_macro_audit_v2.py ${{ matrix.profile }} ${{ matrix.shard }} ${{ matrix.total }} ${{ matrix.tl }}
