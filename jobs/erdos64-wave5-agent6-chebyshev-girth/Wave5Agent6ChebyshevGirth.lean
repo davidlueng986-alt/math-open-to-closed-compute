@@ -958,7 +958,7 @@ theorem one_step_tail_strip (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
                     rw [hq_eq] at hqlen; simp at hqlen; omega
                 | cons h₁ q' =>
                     rw [hp', hq_eq, Walk.cons_append] at hnb_p
-                    exact hnb_p.1
+                    simpa [Walk.snd_cons] using hnb_p.1
               have hne_rev : u ≠ q.reverse.snd := by
                 have hnb_rev := isNonBacktracking_reverse hnb_p
                 rw [Walk.reverse_cons, hrv] at hnb_rev
