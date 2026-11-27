@@ -1,0 +1,18 @@
+{
+  "status": "CHECKED",
+  "scope": "Exact finite implementation checks only; not proof of ROOT or full abc.",
+  "limit": 240,
+  "counts": {
+    "odd_primitive_triples": 5841,
+    "independent_output_factorizations": 491,
+    "even_parity_transports": 1037,
+    "epsilon_identities": 200,
+    "triangle_identities": 5841,
+    "product_cusp_lower_bounds": 2923
+  },
+  "source_sha256": "885bbb77b5209675d0d0fd4df3e086d3c0258fec02eb6bae5ace0b329d9820fc",
+  "original_abc_closed": false,
+  "new_global_core_estimates_proved": 0,
+  "root_core_premise": "W2-A2-ROOT-BOUND",
+  "root_core_premise_status": "BLOCKED"
+}

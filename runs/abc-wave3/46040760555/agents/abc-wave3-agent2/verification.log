@@ -1,0 +1,83 @@
+Lean (version 4.36.0, x86_64-unknown-linux-gnu, commit 611c117bfaf7b7ae1cfcf246ce6fba31e8f509e9, Release)
+'ABCWave3Orbit.triple_composition' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave3Orbit.squarefree_certificate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave3Orbit.no_common_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave3Orbit.homogeneous_triple' depends on axioms: [propext, Quot.sound]
+'ABCWave3Orbit.square_part_exponent_budget' depends on axioms: [propext, Classical.choice, Quot.sound]
+{
+  "status": "CHECKED",
+  "problem_status": "BLOCKED",
+  "scope": "Exact finite algebraic, rank and witness checks only; no proof of Faltings, Darmon-Granville or an asymptotic radical estimate.",
+  "counts": {
+    "polynomial_certificates": 3,
+    "seeds": 106,
+    "lucas_trace_identities": 530,
+    "lucas_product_identities": 530,
+    "exact_rank_checks": 418,
+    "primewise_budgets": 10000
+  },
+  "python": "3.10.12",
+  "source_sha256": "57a5ffb11d6d2476a35ead07278cbbf5e5c70a905136dedf24adce3eac6a2da5",
+  "certificates_sha256": "7a06fca46b140825daa00d400f475193c10debde803abfbc77de93f225445b4e",
+  "github_run_id": "46040760555",
+  "github_sha": "03cbd0a1991144457cc014443cd4d9cf4b2520dd"
+}
+{
+  "agent": 2,
+  "wave": 3,
+  "status": "LEAN_VERIFIED",
+  "problem_resolution": "unknown",
+  "lean_version": "Lean (version 4.36.0, x86_64-unknown-linux-gnu, commit 611c117bfaf7b7ae1cfcf246ce6fba31e8f509e9, Release)",
+  "mathlib_commit": "fc4f59e577feb1a4956671bc04ac18aaaf8cd842",
+  "source_sha256": "be37b3150e94a73fd0fb77b8582bf55f09601157bf0b737549239fe514fff15f",
+  "kernel_log_sha256": "0cae0f3c53b1b9a6ea20bbe51f9490d2d12d456473ec6e020e958b21ee42a06b",
+  "theorem_count": 5,
+  "axioms": {
+    "ABCWave3Orbit.triple_composition": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave3Orbit.squarefree_certificate": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave3Orbit.no_common_zero": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave3Orbit.homogeneous_triple": [
+      "propext",
+      "Quot.sound"
+    ],
+    "ABCWave3Orbit.square_part_exponent_budget": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  "github_run_id": "46040760555",
+  "github_sha": "03cbd0a1991144457cc014443cd4d9cf4b2520dd",
+  "scope": "Five exact complex-polynomial, integer-polynomial and valuation-exponent declarations. No kernel proof of Darmon-Granville, rational-point finiteness, all orbit identities, the global ROOT estimate, or abc is claimed. The separate finite Python checks are CHECKED only.",
+  "finite_checks": {
+    "status": "CHECKED",
+    "problem_status": "BLOCKED",
+    "scope": "Exact finite algebraic, rank and witness checks only; no proof of Faltings, Darmon-Granville or an asymptotic radical estimate.",
+    "counts": {
+      "polynomial_certificates": 3,
+      "seeds": 106,
+      "lucas_trace_identities": 530,
+      "lucas_product_identities": 530,
+      "exact_rank_checks": 418,
+      "primewise_budgets": 10000
+    },
+    "python": "3.10.12",
+    "source_sha256": "57a5ffb11d6d2476a35ead07278cbbf5e5c70a905136dedf24adce3eac6a2da5",
+    "certificates_sha256": "7a06fca46b140825daa00d400f475193c10debde803abfbc77de93f225445b4e",
+    "github_run_id": "46040760555",
+    "github_sha": "03cbd0a1991144457cc014443cd4d9cf4b2520dd"
+  },
+  "original_abc_closed": false
+}

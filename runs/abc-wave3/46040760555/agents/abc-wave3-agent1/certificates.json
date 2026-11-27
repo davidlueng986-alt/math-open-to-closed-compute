@@ -1,0 +1,347 @@
+[
+  {
+    "input": [
+      1,
+      2,
+      3
+    ],
+    "output": [
+      65,
+      16,
+      81
+    ],
+    "input_radical": 6,
+    "output_radical": 390,
+    "new_factors": [
+      5,
+      13
+    ],
+    "root_certificate": {
+      "height_square": 9,
+      "odd_leg_isqrt": 8,
+      "odd_leg_nonsquare": true
+    }
+  },
+  {
+    "input": [
+      3,
+      2,
+      5
+    ],
+    "output": [
+      609,
+      16,
+      625
+    ],
+    "input_radical": 30,
+    "output_radical": 6090,
+    "new_factors": [
+      7,
+      29
+    ],
+    "root_certificate": {
+      "height_square": 25,
+      "odd_leg_isqrt": 24,
+      "odd_leg_nonsquare": true
+    }
+  },
+  {
+    "input": [
+      1,
+      4,
+      5
+    ],
+    "output": [
+      369,
+      256,
+      625
+    ],
+    "input_radical": 10,
+    "output_radical": 1230,
+    "new_factors": [
+      9,
+      41
+    ],
+    "root_certificate": {
+      "height_square": 25,
+      "odd_leg_isqrt": 19,
+      "odd_leg_nonsquare": true
+    }
+  },
+  {
+    "input": [
+      5,
+      2,
+      7
+    ],
+    "output": [
+      2385,
+      16,
+      2401
+    ],
+    "input_radical": 70,
+    "output_radical": 11130,
+    "new_factors": [
+      9,
+      53
+    ],
+    "root_certificate": {
+      "height_square": 49,
+      "odd_leg_isqrt": 48,
+      "odd_leg_nonsquare": true
+    }
+  },
+  {
+    "input": [
+      3,
+      4,
+      7
+    ],
+    "output": [
+      2145,
+      256,
+      2401
+    ],
+    "input_radical": 42,
+    "output_radical": 30030,
+    "new_factors": [
+      11,
+      65
+    ],
+    "root_certificate": {
+      "height_square": 49,
+      "odd_leg_isqrt": 46,
+      "odd_leg_nonsquare": true
+    }
+  },
+  {
+    "input": [
+      1,
+      6,
+      7
+    ],
+    "output": [
+      1105,
+      1296,
+      2401
+    ],
+    "input_radical": 42,
+    "output_radical": 46410,
+    "new_factors": [
+      13,
+      85
+    ],
+    "root_certificate": {
+      "height_square": 49,
+      "odd_leg_isqrt": 33,
+      "odd_leg_nonsquare": true
+    }
+  },
+  {
+    "input": [
+      7,
+      2,
+      9
+    ],
+    "output": [
+      6545,
+      16,
+      6561
+    ],
+    "input_radical": 42,
+    "output_radical": 39270,
+    "new_factors": [
+      11,
+      85
+    ],
+    "root_certificate": {
+      "height_square": 81,
+      "odd_leg_isqrt": 80,
+      "odd_leg_nonsquare": true
+    }
+  },
+  {
+    "input": [
+      5,
+      4,
+      9
+    ],
+    "output": [
+      6305,
+      256,
+      6561
+    ],
+    "input_radical": 30,
+    "output_radical": 37830,
+    "new_factors": [
+      13,
+      97
+    ],
+    "root_certificate": {
+      "height_square": 81,
+      "odd_leg_isqrt": 79,
+      "odd_leg_nonsquare": true
+    }
+  },
+  {
+    "input": [
+      1,
+      8,
+      9
+    ],
+    "output": [
+      2465,
+      4096,
+      6561
+    ],
+    "input_radical": 6,
+    "output_radical": 14790,
+    "new_factors": [
+      17,
+      145
+    ],
+    "root_certificate": {
+      "height_square": 81,
+      "odd_leg_isqrt": 49,
+      "odd_leg_nonsquare": true
+    }
+  },
+  {
+    "input": [
+      9,
+      2,
+      11
+    ],
+    "output": [
+      14625,
+      16,
+      14641
+    ],
+    "input_radical": 66,
+    "output_radical": 4290,
+    "new_factors": [
+      13,
+      125
+    ],
+    "root_certificate": {
+      "height_square": 121,
+      "odd_leg_isqrt": 120,
+      "odd_leg_nonsquare": true
+    }
+  },
+  {
+    "input": [
+      7,
+      4,
+      11
+    ],
+    "output": [
+      14385,
+      256,
+      14641
+    ],
+    "input_radical": 154,
+    "output_radical": 316470,
+    "new_factors": [
+      15,
+      137
+    ],
+    "root_certificate": {
+      "height_square": 121,
+      "odd_leg_isqrt": 119,
+      "odd_leg_nonsquare": true
+    }
+  },
+  {
+    "input": [
+      5,
+      6,
+      11
+    ],
+    "output": [
+      13345,
+      1296,
+      14641
+    ],
+    "input_radical": 330,
+    "output_radical": 880770,
+    "new_factors": [
+      17,
+      157
+    ],
+    "root_certificate": {
+      "height_square": 121,
+      "odd_leg_isqrt": 115,
+      "odd_leg_nonsquare": true
+    }
+  },
+  {
+    "input": [
+      1,
+      80,
+      81
+    ],
+    "output": [
+      2086721,
+      40960000,
+      43046721
+    ],
+    "input_radical": 30,
+    "output_radical": 62601630,
+    "new_factors": [
+      161,
+      12961
+    ],
+    "root_certificate": {
+      "height_square": 6561,
+      "odd_leg_isqrt": 1444,
+      "odd_leg_nonsquare": true
+    }
+  },
+  {
+    "input": [
+      1,
+      124,
+      125
+    ],
+    "output": [
+      7719249,
+      236421376,
+      244140625
+    ],
+    "input_radical": 310,
+    "output_radical": 2392967190,
+    "new_factors": [
+      249,
+      31001
+    ],
+    "root_certificate": {
+      "height_square": 15625,
+      "odd_leg_isqrt": 2778,
+      "odd_leg_nonsquare": true
+    }
+  },
+  {
+    "input": [
+      1,
+      224,
+      225
+    ],
+    "output": [
+      45259649,
+      2517630976,
+      2562890625
+    ],
+    "input_radical": 210,
+    "output_radical": 9504526290,
+    "new_factors": [
+      449,
+      100801
+    ],
+    "root_certificate": {
+      "height_square": 50625,
+      "odd_leg_isqrt": 6727,
+      "odd_leg_nonsquare": true
+    }
+  }
+]

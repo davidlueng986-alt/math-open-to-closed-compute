@@ -1,0 +1,14 @@
+{
+  "agent": 1,
+  "job": "abc-wave3-agent1-quartic-root",
+  "toolbox": "sat",
+  "source_commit": "03cbd0a1991144457cc014443cd4d9cf4b2520dd",
+  "run_id": "46040760555",
+  "run_attempt": "1",
+  "python": "3.10.12",
+  "file_sha256": {
+    "jobs/abc-wave3-agent1-quartic-root/README.md": "f56a04381acda617f844a9bac115e0946a5af6db9b1b837e997fa5d0d5c0d2ad",
+    "jobs/abc-wave3-agent1-quartic-root/run.sh": "57beec9c6f7e3c4ae493d7279bc7405bc063faff336d2020e09abc53829154a3",
+    "jobs/abc-wave3-agent1-quartic-root/verify.py": "885bbb77b5209675d0d0fd4df3e086d3c0258fec02eb6bae5ace0b329d9820fc"
+  }
+}

@@ -1,0 +1,1 @@
+{"identities": 8, "map_counts": {"cubic_escapes": 18, "nonroots": 20, "odd_primitive_triples": 3283, "quartic_needed": 2}, "sage": {"E_torsion_affine": [["0", "0"], ["3", "-6"], ["3", "6"]], "available": true, "conductor": 96, "genus": 2, "rank_method": "mwrank_lib, proof=True, use_database=False", "ranks": [0, 0], "required": true, "version": "10.6"}, "status": "CHECKED"}

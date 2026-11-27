@@ -1,0 +1,352 @@
+{
+  "problem": "ABC",
+  "resolution": "unknown",
+  "batch": "research",
+  "workflow_result": "success",
+  "source_commit": "03cbd0a1991144457cc014443cd4d9cf4b2520dd",
+  "run_id": "46040760555",
+  "agents": {
+    "1": {
+      "result": {
+        "status": "CHECKED",
+        "scope": "Exact finite implementation checks only; not proof of ROOT or full abc.",
+        "limit": 240,
+        "counts": {
+          "odd_primitive_triples": 5841,
+          "independent_output_factorizations": 491,
+          "even_parity_transports": 1037,
+          "epsilon_identities": 200,
+          "triangle_identities": 5841,
+          "product_cusp_lower_bounds": 2923
+        },
+        "source_sha256": "885bbb77b5209675d0d0fd4df3e086d3c0258fec02eb6bae5ace0b329d9820fc",
+        "original_abc_closed": false,
+        "new_global_core_estimates_proved": 0,
+        "root_core_premise": "W2-A2-ROOT-BOUND",
+        "root_core_premise_status": "BLOCKED"
+      },
+      "provenance": {
+        "agent": 1,
+        "job": "abc-wave3-agent1-quartic-root",
+        "toolbox": "sat",
+        "source_commit": "03cbd0a1991144457cc014443cd4d9cf4b2520dd",
+        "run_id": "46040760555",
+        "run_attempt": "1",
+        "python": "3.10.12",
+        "file_sha256": {
+          "jobs/abc-wave3-agent1-quartic-root/README.md": "f56a04381acda617f844a9bac115e0946a5af6db9b1b837e997fa5d0d5c0d2ad",
+          "jobs/abc-wave3-agent1-quartic-root/run.sh": "57beec9c6f7e3c4ae493d7279bc7405bc063faff336d2020e09abc53829154a3",
+          "jobs/abc-wave3-agent1-quartic-root/verify.py": "885bbb77b5209675d0d0fd4df3e086d3c0258fec02eb6bae5ace0b329d9820fc"
+        }
+      }
+    },
+    "2": {
+      "result": {
+        "agent": 2,
+        "wave": 3,
+        "status": "LEAN_VERIFIED",
+        "problem_resolution": "unknown",
+        "lean_version": "Lean (version 4.36.0, x86_64-unknown-linux-gnu, commit 611c117bfaf7b7ae1cfcf246ce6fba31e8f509e9, Release)",
+        "mathlib_commit": "fc4f59e577feb1a4956671bc04ac18aaaf8cd842",
+        "source_sha256": "be37b3150e94a73fd0fb77b8582bf55f09601157bf0b737549239fe514fff15f",
+        "kernel_log_sha256": "0cae0f3c53b1b9a6ea20bbe51f9490d2d12d456473ec6e020e958b21ee42a06b",
+        "theorem_count": 5,
+        "axioms": {
+          "ABCWave3Orbit.triple_composition": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave3Orbit.squarefree_certificate": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave3Orbit.no_common_zero": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "ABCWave3Orbit.homogeneous_triple": [
+            "propext",
+            "Quot.sound"
+          ],
+          "ABCWave3Orbit.square_part_exponent_budget": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ]
+        },
+        "github_run_id": "46040760555",
+        "github_sha": "03cbd0a1991144457cc014443cd4d9cf4b2520dd",
+        "scope": "Five exact complex-polynomial, integer-polynomial and valuation-exponent declarations. No kernel proof of Darmon-Granville, rational-point finiteness, all orbit identities, the global ROOT estimate, or abc is claimed. The separate finite Python checks are CHECKED only.",
+        "finite_checks": {
+          "status": "CHECKED",
+          "problem_status": "BLOCKED",
+          "scope": "Exact finite algebraic, rank and witness checks only; no proof of Faltings, Darmon-Granville or an asymptotic radical estimate.",
+          "counts": {
+            "polynomial_certificates": 3,
+            "seeds": 106,
+            "lucas_trace_identities": 530,
+            "lucas_product_identities": 530,
+            "exact_rank_checks": 418,
+            "primewise_budgets": 10000
+          },
+          "python": "3.10.12",
+          "source_sha256": "57a5ffb11d6d2476a35ead07278cbbf5e5c70a905136dedf24adce3eac6a2da5",
+          "certificates_sha256": "7a06fca46b140825daa00d400f475193c10debde803abfbc77de93f225445b4e",
+          "github_run_id": "46040760555",
+          "github_sha": "03cbd0a1991144457cc014443cd4d9cf4b2520dd"
+        },
+        "original_abc_closed": false
+      },
+      "provenance": {
+        "agent": 2,
+        "job": "abc-wave3-agent2-orbit",
+        "toolbox": "lean",
+        "source_commit": "03cbd0a1991144457cc014443cd4d9cf4b2520dd",
+        "run_id": "46040760555",
+        "run_attempt": "1",
+        "python": "3.10.12",
+        "file_sha256": {
+          "jobs/abc-wave3-agent2-orbit/README.md": "ddfed3b3575e7f856c970e9bd65562a3e5fe97b7dbb72d8ccb0a53e08d9f0b43",
+          "jobs/abc-wave3-agent2-orbit/Structural.lean": "be37b3150e94a73fd0fb77b8582bf55f09601157bf0b737549239fe514fff15f",
+          "jobs/abc-wave3-agent2-orbit/audit.py": "35dab6d574ae78b398cb20a022418939a030d1b6c3548cf7c2a4dcfb11054c45",
+          "jobs/abc-wave3-agent2-orbit/run.sh": "a4300960888921b804d12c14d41aca371ace29210745b45c5026115f3e489540",
+          "jobs/abc-wave3-agent2-orbit/verify.py": "57a5ffb11d6d2476a35ead07278cbbf5e5c70a905136dedf24adce3eac6a2da5"
+        }
+      }
+    },
+    "3": {
+      "result": {
+        "status": "CHECKED",
+        "original_problem": "ABC",
+        "original_resolution": "unknown",
+        "scope": "Exact polynomial/descent certificates, finite arithmetic map regression, optional certified Sage rank. No proof of global ROOT/LOW/CUSP estimates.",
+        "source_sha256": "47b223cfb7d0ec835ac5dec578b227ab713ccb774798d6d89bd846f45942e1bf",
+        "symbolic_zero_identities": [
+          "factorization",
+          "bezout",
+          "elliptic_quotient",
+          "cubic_sum",
+          "quartic_sum",
+          "cubic_radical_budget",
+          "quartic_positivity",
+          "quartic_function"
+        ],
+        "sextic_discriminant": 35831808,
+        "mod3_complete_nonzero_pairs": [
+          {
+            "u": 0,
+            "v": 1,
+            "class2": 2,
+            "class_minus1": 2
+          },
+          {
+            "u": 0,
+            "v": 2,
+            "class2": 2,
+            "class_minus1": 2
+          },
+          {
+            "u": 1,
+            "v": 0,
+            "class2": 2,
+            "class_minus1": 2
+          },
+          {
+            "u": 1,
+            "v": 1,
+            "class2": 2,
+            "class_minus1": 2
+          },
+          {
+            "u": 1,
+            "v": 2,
+            "class2": 2,
+            "class_minus1": 2
+          },
+          {
+            "u": 2,
+            "v": 0,
+            "class2": 2,
+            "class_minus1": 2
+          },
+          {
+            "u": 2,
+            "v": 1,
+            "class2": 2,
+            "class_minus1": 2
+          },
+          {
+            "u": 2,
+            "v": 2,
+            "class2": 2,
+            "class_minus1": 2
+          }
+        ],
+        "reductions": {
+          "5": {
+            "count": 4,
+            "affine_points": [
+              [
+                0,
+                0
+              ],
+              [
+                3,
+                1
+              ],
+              [
+                3,
+                4
+              ]
+            ]
+          },
+          "7": {
+            "count": 12,
+            "affine_points": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                1,
+                6
+              ],
+              [
+                2,
+                2
+              ],
+              [
+                2,
+                5
+              ],
+              [
+                3,
+                1
+              ],
+              [
+                3,
+                6
+              ],
+              [
+                5,
+                1
+              ],
+              [
+                5,
+                6
+              ],
+              [
+                6,
+                3
+              ],
+              [
+                6,
+                4
+              ]
+            ]
+          }
+        },
+        "map_domain": "all positive primitive odd-c triples with c<=180 and first summand odd",
+        "map_counts": {
+          "odd_primitive_triples": 3283,
+          "nonroots": 20,
+          "cubic_escapes": 18,
+          "quartic_needed": 2
+        },
+        "quartic_gcd_values": [
+          1,
+          3,
+          9,
+          27,
+          81
+        ],
+        "quartic_needed_witnesses": [
+          {
+            "input": [
+              1,
+              8,
+              9
+            ],
+            "cubic": [
+              25,
+              704,
+              729
+            ],
+            "quartic": [
+              139,
+              2048,
+              2187
+            ],
+            "gcd": 3
+          },
+          {
+            "input": [
+              1,
+              120,
+              121
+            ],
+            "cubic": [
+              361,
+              1771200,
+              1771561
+            ],
+            "quartic": [
+              86881,
+              214272000,
+              214358881
+            ],
+            "gcd": 1
+          }
+        ],
+        "sage": {
+          "available": true,
+          "required": true,
+          "version": "10.6",
+          "ranks": [
+            0,
+            0
+          ],
+          "rank_method": "mwrank_lib, proof=True, use_database=False",
+          "E_torsion_affine": [
+            [
+              "0",
+              "0"
+            ],
+            [
+              "3",
+              "-6"
+            ],
+            [
+              "3",
+              "6"
+            ]
+          ],
+          "conductor": 96,
+          "genus": 2
+        }
+      },
+      "provenance": {
+        "agent": 3,
+        "job": "abc-wave3-agent3-root-escape",
+        "toolbox": "sage",
+        "source_commit": "03cbd0a1991144457cc014443cd4d9cf4b2520dd",
+        "run_id": "46040760555",
+        "run_attempt": "1",
+        "python": "3.10.12",
+        "file_sha256": {
+          "jobs/abc-wave3-agent3-root-escape/README.md": "ae0a011e2ae5592ec03cefd1cc20568c05a521de8eeac501db4183c308031cd8",
+          "jobs/abc-wave3-agent3-root-escape/run.sh": "78b0dd38ff42ae76b2e3f846a8b290865783c1118c03e68951af8b30112687c6",
+          "jobs/abc-wave3-agent3-root-escape/verify.py": "47b223cfb7d0ec835ac5dec578b227ab713ccb774798d6d89bd846f45942e1bf"
+        }
+      }
+    }
+  },
+  "scope": "Successful jobs verify only their exact structural lemmas or bounded searches, never the original abc conjecture."
+}
