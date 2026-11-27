@@ -49,7 +49,7 @@ lemma walk_append_single {V : Type*} {G : SimpleGraph V} {u v w : V}
     p.append (Walk.cons h Walk.nil) = p.concat h := by
   induction p with
   | nil => rfl
-  | cons _ _ ih => exact congrArg (Walk.cons _) ih
+  | cons _ _ ih => exact congrArg (Walk.cons _) (ih h)
 
 lemma walk_support_head {V : Type*} {G : SimpleGraph V} {u v : V} (p : G.Walk u v) :
     p.support.head? = some u := by

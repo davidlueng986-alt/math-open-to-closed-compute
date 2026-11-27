@@ -806,29 +806,29 @@ theorem minimal_bad2_cubic_triangle_dual_cycle_lifting {V : Type} [Fintype V]
           · exact False.elim (h2 ⟨hbt, hw'⟩)
     · intro b1 _ b2 _ heq
       by_cases h1v : b1 = t ∧ G.Adj a.1 v
-      · rw [ite_cond_eq_true _ _ (eq_true h1v)] at heq
+      · rw [ite_eq_left_of_eq_true _ _ (eq_true h1v)] at heq
         by_cases h2v : b2 = t ∧ G.Adj a.1 v
         · exact h1v.1.trans h2v.1.symm
-        · rw [ite_cond_eq_false _ _ (eq_false h2v)] at heq
+        · rw [ite_eq_right_of_eq_false _ _ (eq_false h2v)] at heq
           by_cases h2w : b2 = t ∧ G.Adj a.1 w
-          · rw [ite_cond_eq_true _ _ (eq_true h2w)] at heq; exact False.elim (hvw_ne heq)
-          · rw [ite_cond_eq_false _ _ (eq_false h2w)] at heq; exact False.elim (b2.2.1 heq.symm)
-      · rw [ite_cond_eq_false _ _ (eq_false h1v)] at heq
+          · rw [ite_eq_left_of_eq_true _ _ (eq_true h2w)] at heq; exact False.elim (hvw_ne heq)
+          · rw [ite_eq_right_of_eq_false _ _ (eq_false h2w)] at heq; exact False.elim (b2.2.1 heq.symm)
+      · rw [ite_eq_right_of_eq_false _ _ (eq_false h1v)] at heq
         by_cases h1w : b1 = t ∧ G.Adj a.1 w
-        · rw [ite_cond_eq_true _ _ (eq_true h1w)] at heq
+        · rw [ite_eq_left_of_eq_true _ _ (eq_true h1w)] at heq
           by_cases h2v : b2 = t ∧ G.Adj a.1 v
-          · rw [ite_cond_eq_true _ _ (eq_true h2v)] at heq; exact False.elim (hvw_ne heq.symm)
-          · rw [ite_cond_eq_false _ _ (eq_false h2v)] at heq
+          · rw [ite_eq_left_of_eq_true _ _ (eq_true h2v)] at heq; exact False.elim (hvw_ne heq.symm)
+          · rw [ite_eq_right_of_eq_false _ _ (eq_false h2v)] at heq
             by_cases h2w : b2 = t ∧ G.Adj a.1 w
             · exact h1w.1.trans h2w.1.symm
-            · rw [ite_cond_eq_false _ _ (eq_false h2w)] at heq; exact False.elim (b2.2.2 heq.symm)
-        · rw [ite_cond_eq_false _ _ (eq_false h1w)] at heq
+            · rw [ite_eq_right_of_eq_false _ _ (eq_false h2w)] at heq; exact False.elim (b2.2.2 heq.symm)
+        · rw [ite_eq_right_of_eq_false _ _ (eq_false h1w)] at heq
           by_cases h2v : b2 = t ∧ G.Adj a.1 v
-          · rw [ite_cond_eq_true _ _ (eq_true h2v)] at heq; exact False.elim (b1.2.1 heq)
-          · rw [ite_cond_eq_false _ _ (eq_false h2v)] at heq
+          · rw [ite_eq_left_of_eq_true _ _ (eq_true h2v)] at heq; exact False.elim (b1.2.1 heq)
+          · rw [ite_eq_right_of_eq_false _ _ (eq_false h2v)] at heq
             by_cases h2w : b2 = t ∧ G.Adj a.1 w
-            · rw [ite_cond_eq_true _ _ (eq_true h2w)] at heq; exact False.elim (b1.2.2 heq)
-            · rw [ite_cond_eq_false _ _ (eq_false h2w)] at heq; exact Subtype.ext heq
+            · rw [ite_eq_left_of_eq_true _ _ (eq_true h2w)] at heq; exact False.elim (b1.2.2 heq)
+            · rw [ite_eq_right_of_eq_false _ _ (eq_false h2w)] at heq; exact Subtype.ext heq
     · intro y hy; rw [SimpleGraph.mem_neighborFinset] at hy
       by_cases hyv : y = v
       · subst hyv; refine ⟨t, ?_, by simp [hy]⟩
