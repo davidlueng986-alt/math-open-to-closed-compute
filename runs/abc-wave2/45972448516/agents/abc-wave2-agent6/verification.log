@@ -1,0 +1,113 @@
+Lean (version 4.36.0, x86_64-unknown-linux-gnu, commit 611c117bfaf7b7ae1cfcf246ce6fba31e8f509e9, Release)
+/opt/mathlib4/ABCWave2Agent6_haOc2LRH.lean:57:23: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/opt/mathlib4/ABCWave2Agent6_haOc2LRH.lean:57:23: warning: Unused tactic linter: `<;>` can be replaced with `;`.
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/opt/mathlib4/ABCWave2Agent6_haOc2LRH.lean:152:55: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/opt/mathlib4/ABCWave2Agent6_haOc2LRH.lean:152:55: warning: Unused tactic linter: `<;>` can be replaced with `;`.
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+'ABCWave2.parity_transform_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave2.inverse_identities' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave2.cutoff_exponent_identity' depends on axioms: [propext, Quot.sound]
+'ABCWave2.compensation_budget' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave2.budget_log_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave2.epsilon_choice' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave2.uniform_root_orbit_composition' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave2.cubic_compensation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave2.cube_free_integer_bridge' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave2.cube_free_natural_bridge' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave2.mass_prefix_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave2.one_level_controls_next' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave2.positive_mass_log_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ABCWave2.quality_margin_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
+{
+  "agent": 6,
+  "wave": 2,
+  "status": "LEAN_VERIFIED",
+  "problem_resolution": "unknown",
+  "lean_version": "Lean (version 4.36.0, x86_64-unknown-linux-gnu, commit 611c117bfaf7b7ae1cfcf246ce6fba31e8f509e9, Release)",
+  "mathlib_commit": "fc4f59e577feb1a4956671bc04ac18aaaf8cd842",
+  "source_sha256": "ce99bf57d6a0c16ed7ed3c4369147ab7af1ab639d0525bed3b36086e34b2b58f",
+  "kernel_log_sha256": "9fe7a7b63433713a5c57eb27aa86e445d8b6988da13ab281f32f448f5980c248",
+  "theorem_count": 14,
+  "axioms": {
+    "ABCWave2.parity_transform_identity": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave2.inverse_identities": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave2.cutoff_exponent_identity": [
+      "propext",
+      "Quot.sound"
+    ],
+    "ABCWave2.compensation_budget": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave2.budget_log_bound": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave2.epsilon_choice": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave2.uniform_root_orbit_composition": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave2.cubic_compensation": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave2.cube_free_integer_bridge": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave2.cube_free_natural_bridge": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave2.mass_prefix_step": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave2.one_level_controls_next": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave2.positive_mass_log_bound": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "ABCWave2.quality_margin_identity": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  "github_run_id": "45972448516",
+  "github_sha": "7d8d57d6f0c749b1303c4a9e23cabd13be2bb1df",
+  "scope": "Fourteen exact algebraic, integer and quantified real-array composition declarations. The uniform theorem retains both uniform root and growth premises. The cube-free bridge assumes a*b*c<=R^2 and does not identify an arbitrary R with rad(abc). No proof of prime-factorization identities, orbit coverage, quadratic lifting, limsup analysis, full abc, or either open global inequality is claimed by this kernel run.",
+  "original_abc_closed": false
+}
