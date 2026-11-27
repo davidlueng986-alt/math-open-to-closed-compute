@@ -1,0 +1,75 @@
+{
+  "agent": "Agent 5 (Witness Hunter)",
+  "date": "2026-11-27",
+  "witness_found": false,
+  "best_overall_i10": 10,
+  "best_overall_source": "seed31002.txt (undefeated; independent fresh-portfolio best = 24)",
+  "exhaustive_algebraic_scans": {
+    "cayley_order_40_all_14_groups_deg_7_to_9": {
+      "exhausted": true,
+      "groups_checked": 14,
+      "total_triangle_free_graphs_checked": 1780640,
+      "witnesses": 0,
+      "best_i10": 80,
+      "best_groups": [
+        "C4 x D5",
+        "D5 x C2^2",
+        "C5 x D4",
+        "D20",
+        "C5 |x_{r->-1,s->1} D4"
+      ],
+      "per_group": [
+        {"id": 1, "name": "C40 (C5 x C8)", "pairs": 20, "deg7_9_tf": 1988, "best_i10": 240, "best_deg": 9},
+        {"id": 2, "name": "C20 x C2", "pairs": 21, "deg7_9_tf": 4224, "best_i10": 240, "best_deg": 9},
+        {"id": 3, "name": "C10 x C2^2", "pairs": 23, "deg7_9_tf": 16884, "best_i10": 240, "best_deg": 9},
+        {"id": 4, "name": "C5 |x_2 C8", "pairs": 20, "deg7_9_tf": 1976, "best_i10": 160, "best_deg": 9},
+        {"id": 5, "name": "C5 |x_4 C8", "pairs": 20, "deg7_9_tf": 1120, "best_i10": 3488, "best_deg": 9},
+        {"id": 6, "name": "(C5 |x_2 C4) x C2", "pairs": 21, "deg7_9_tf": 4412, "best_i10": 240, "best_deg": 9},
+        {"id": 7, "name": "C4 x D5", "pairs": 25, "deg7_9_tf": 38236, "best_i10": 80, "best_deg": 9},
+        {"id": 8, "name": "(C5 |x_4 C4) x C2", "pairs": 25, "deg7_9_tf": 20880, "best_i10": 124, "best_deg": 9},
+        {"id": 9, "name": "D5 x C2^2", "pairs": 31, "deg7_9_tf": 953152, "best_i10": 80, "best_deg": 9},
+        {"id": 10, "name": "C5 x D4", "pairs": 22, "deg7_9_tf": 6668, "best_i10": 80, "best_deg": 9},
+        {"id": 11, "name": "D20", "pairs": 30, "deg7_9_tf": 663296, "best_i10": 80, "best_deg": 9},
+        {"id": 12, "name": "C5 |x_{r->-1,s->1} D4", "pairs": 26, "deg7_9_tf": 65312, "best_i10": 80, "best_deg": 9},
+        {"id": 13, "name": "C5 x Q8", "pairs": 20, "deg7_9_tf": 1696, "best_i10": 160, "best_deg": 9},
+        {"id": 14, "name": "C5 |x Q8", "pairs": 20, "deg7_9_tf": 1796, "best_i10": 1368, "best_deg": 8}
+      ]
+    },
+    "bicirculant_2x20_c20_deg_6_to_9": {
+      "exhausted": true,
+      "valid_orbit_sets_in_z20": 67,
+      "total_triangle_free_graphs_checked": 157280,
+      "witnesses": 0,
+      "best_i10": 80,
+      "best_params": {"S0_sz": 2, "S1_sz": 2, "T_sz": 7}
+    }
+  },
+  "block_circulant_sa": {
+    "4x10": {"orbits": 80, "evals": 49313, "best_i10": 70, "edges": 180},
+    "5x8": {"orbits": 100, "evals": 50908, "best_i10": 160, "edges": 180},
+    "8x5": {"orbits": 156, "evals": 47252, "best_i10": 145, "edges": 180},
+    "10x4": {"orbits": 200, "evals": 45470, "best_i10": 168, "edges": 180}
+  },
+  "energy_barrier_audits": {
+    "seed31002": {"base_i10": 10, "valid_tf_2switches": 5, "min_neighbor_i10": 304, "max_neighbor_i10": 304},
+    "best_bc_4x10": {"base_i10": 70, "valid_tf_2switches": 0}
+  },
+  "local_search_runs": {
+    "witness_hunter_v2_120s": {
+      "seed31002_deep": {"iters": 239473, "accepted": 4416, "restarts": 53, "best_i10": 10},
+      "portfolio_fresh": {"iters": 308127, "accepted": 3342, "restarts": 61, "best_i10": 24}
+    },
+    "soft_tf_hunter_60s": {
+      "total_iters": 5713079,
+      "tf_hits": 404,
+      "best_tf_i10": 462,
+      "best_tf_edges": 177
+    }
+  },
+  "verified_candidates": {
+    "seed31002.txt": {"n": 40, "edges": 180, "triangles": 0, "independent_10_sets": 10, "alpha": 10, "closure_witness": false},
+    "best_bc_4x10.txt": {"n": 40, "edges": 180, "triangles": 0, "independent_10_sets": 70, "alpha": 10, "closure_witness": false},
+    "best_cayley.txt": {"n": 40, "edges": 180, "triangles": 0, "independent_10_sets": 80, "alpha": 10, "closure_witness": false},
+    "best_2x20.txt": {"n": 40, "edges": 180, "triangles": 0, "independent_10_sets": 80, "alpha": 10, "closure_witness": false}
+  }
+}
