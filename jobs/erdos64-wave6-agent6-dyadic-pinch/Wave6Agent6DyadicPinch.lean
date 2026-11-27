@@ -317,20 +317,7 @@ theorem defect_triangle_outer_distinct_nonadj {V : Type*} (G : SimpleGraph V)
             (SimpleGraph.Walk.cons haa2.symm SimpleGraph.Walk.nil)))
     have hcyc : w.IsCycle := by
       refine ⟨⟨⟨?_⟩, ?_⟩, ?_⟩
-      · simp [w, Sym2.eq_iff]
-        refine ⟨⟨?_, ?_, ?_⟩, ⟨?_, ?_⟩, ?_⟩ <;> intro h <;> first
-          | exact ha_ne_a1 h.1 | exact ha_ne_a1 h.1.symm
-          | exact ha_ne_a2 h.1 | exact ha_ne_a2 h.1.symm
-          | exact ha1_ne_a2 h.1 | exact ha1_ne_a2 h.1.symm
-          | exact ha1_ne_x1 h.1 | exact ha1_ne_x1 h.1.symm
-          | exact hx1_ne_a h.1 | exact hx1_ne_a h.1.symm
-          | exact hx1_ne_a2 h.1 | exact hx1_ne_a2 h.1.symm
-          | exact ha_ne_a1 h.2 | exact ha_ne_a1 h.2.symm
-          | exact ha_ne_a2 h.2 | exact ha_ne_a2 h.2.symm
-          | exact ha1_ne_a2 h.2 | exact ha1_ne_a2 h.2.symm
-          | exact ha1_ne_x1 h.2 | exact ha1_ne_x1 h.2.symm
-          | exact hx1_ne_a h.2 | exact hx1_ne_a h.2.symm
-          | exact hx1_ne_a2 h.2 | exact hx1_ne_a2 h.2.symm
+      · simp [w]; grind
       · intro hnil; simp [w] at hnil
       · simp [w]
         exact ⟨⟨ha1_ne_x1, ha1_ne_a2, ha_ne_a1.symm⟩, ⟨hx1_ne_a2, hx1_ne_a⟩, ha_ne_a2.symm⟩
@@ -344,20 +331,7 @@ theorem defect_triangle_outer_distinct_nonadj {V : Type*} (G : SimpleGraph V)
             (SimpleGraph.Walk.cons hx1.symm SimpleGraph.Walk.nil)))
     have hcyc : w.IsCycle := by
       refine ⟨⟨⟨?_⟩, ?_⟩, ?_⟩
-      · simp [w, Sym2.eq_iff]
-        refine ⟨⟨?_, ?_, ?_⟩, ⟨?_, ?_⟩, ?_⟩ <;> intro h <;> first
-          | exact ha1_ne_a2 h.1 | exact ha1_ne_a2 h.1.symm
-          | exact ha1_ne_x1 h.1 | exact ha1_ne_x1 h.1.symm
-          | exact ha2_ne_x2 h.1 | exact ha2_ne_x2 h.1.symm
-          | exact hx1_ne_a2 h.1 | exact hx1_ne_a2 h.1.symm
-          | exact hx2_ne_a1 h.1 | exact hx2_ne_a1 h.1.symm
-          | exact hx1_ne_x2 h.1 | exact hx1_ne_x2 h.1.symm
-          | exact ha1_ne_a2 h.2 | exact ha1_ne_a2 h.2.symm
-          | exact ha1_ne_x1 h.2 | exact ha1_ne_x1 h.2.symm
-          | exact ha2_ne_x2 h.2 | exact ha2_ne_x2 h.2.symm
-          | exact hx1_ne_a2 h.2 | exact hx1_ne_a2 h.2.symm
-          | exact hx2_ne_a1 h.2 | exact hx2_ne_a1 h.2.symm
-          | exact hx1_ne_x2 h.2 | exact hx1_ne_x2 h.2.symm
+      · simp [w]; grind
       · intro hnil; simp [w] at hnil
       · simp [w]
         exact ⟨⟨ha2_ne_x2, hx1_ne_a2.symm, ha1_ne_a2.symm⟩, ⟨hx1_ne_x2.symm, hx2_ne_a1⟩, ha1_ne_x1.symm⟩
