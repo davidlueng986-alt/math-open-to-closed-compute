@@ -1,0 +1,393 @@
+{
+  "problem": "ABC",
+  "resolution": "unknown",
+  "batch": "all",
+  "workflow_result": "failure",
+  "source_commit": "1edcf5a2a6ed3616e6c7180064b9083c3cb42be0",
+  "run_id": "45971075783",
+  "agents": {
+    "1": {
+      "result": {
+        "status": "CHECKED",
+        "scope": "finite exact structural checks only; infinite mass remains BLOCKED",
+        "python": "3.10.12",
+        "counts": {
+          "seeds": 394,
+          "integer_states": 1970,
+          "fully_factored_differences": 1193,
+          "prime_valuation_identities": 1697,
+          "repeated_prime_cases": 82,
+          "varying_seed_lifts": 25,
+          "exact_weighted_sum_cases": 256
+        },
+        "source_sha256": "d31cf912ceb980199c243ce5f357a38f8495b5301f42c0282821f557c23e35ff",
+        "certificate_sha256": "641a114610fc0afa7a1af8903430883da3fdd36ea0e5658b6d1a0df4309f4f87",
+        "github_run_id": "45971075783",
+        "github_sha": "1edcf5a2a6ed3616e6c7180064b9083c3cb42be0"
+      },
+      "provenance": {
+        "agent": 1,
+        "job": "abc-wave2-agent1-orbit-local",
+        "toolbox": "sat",
+        "source_commit": "1edcf5a2a6ed3616e6c7180064b9083c3cb42be0",
+        "run_id": "45971075783",
+        "run_attempt": "1",
+        "python": "3.10.12",
+        "file_sha256": {
+          "jobs/abc-wave2-agent1-orbit-local/README.md": "73425f69a753a175c9ce55280ff463a98b89c29c038a7d02c339b3a4a7685081",
+          "jobs/abc-wave2-agent1-orbit-local/run.sh": "3c505d80aafd6b939c29534155ac884b3ad92e8a752d030fc89d56d685145823",
+          "jobs/abc-wave2-agent1-orbit-local/verify.py": "d31cf912ceb980199c243ce5f357a38f8495b5301f42c0282821f557c23e35ff"
+        }
+      }
+    },
+    "2": {
+      "result": {
+        "backend": "Python 3.10.12",
+        "certificate_sha256": "87d893acece1eae27b2ae97762ec401a200848839973de81a03abf2d690aabd7",
+        "counts": {
+          "adjacent_deficit_identity_instances": 100,
+          "descent_reconstructions": 36468,
+          "distinct_roots_in_domain": 36410,
+          "epsilon_conversion_instances": 100,
+          "even_c_triples": 18282,
+          "explicit_root_family_instances": 200,
+          "image_classifications": 36468,
+          "image_radical_relations": 36468,
+          "image_triples": 58,
+          "inverse_steps": 59,
+          "nonroot_triples": 58,
+          "odd_c_triples": 36468,
+          "parity_radical_relations": 18282,
+          "primitive_triples": 54750,
+          "quality_margin_implications": 11,
+          "rational_composition_instances": 31005,
+          "root_triples": 36410
+        },
+        "domain": {
+          "a_le_b": true,
+          "c_max": 600,
+          "positive_primitive": true
+        },
+        "github": {
+          "GITHUB_REPOSITORY": "davidlueng986-alt/math-open-to-closed-compute",
+          "GITHUB_RUN_ATTEMPT": "1",
+          "GITHUB_RUN_ID": "45971075783",
+          "GITHUB_SHA": "1edcf5a2a6ed3616e6c7180064b9083c3cb42be0"
+        },
+        "scope": "Exact finite instances and rational algebra models only; no uniform ROOT or COMPENSATED-GROWTH estimate proved by computation.",
+        "source_sha256": "33c0461ba43db808d4459dd73db78a91626a9edbcdbd0ca0a040b4db315c5212",
+        "status": "CHECKED",
+        "unproved": [
+          "W2-A2-ROOT-BOUND",
+          "W2-A2-GROWTH-BOUND"
+        ]
+      },
+      "provenance": {
+        "agent": 2,
+        "job": "abc-wave2-agent2-cover",
+        "toolbox": "sat",
+        "source_commit": "1edcf5a2a6ed3616e6c7180064b9083c3cb42be0",
+        "run_id": "45971075783",
+        "run_attempt": "1",
+        "python": "3.10.12",
+        "file_sha256": {
+          "jobs/abc-wave2-agent2-cover/README.md": "1a332d635a0b70e2cf3a9795819fe2379dd1804197a8a30bcc3cb8e98ac52f07",
+          "jobs/abc-wave2-agent2-cover/run.sh": "ef6988228d5d50728fbc46abc31966c65f8b04faad8b48704b0dc1766c33d2e3",
+          "jobs/abc-wave2-agent2-cover/verify.py": "33c0461ba43db808d4459dd73db78a91626a9edbcdbd0ca0a040b4db315c5212"
+        }
+      }
+    },
+    "3": {
+      "result": {
+        "task": "VALUATION-BUDGET",
+        "agent": "wave2_agent3",
+        "status": "CHECKED",
+        "scope": "finite exact arithmetic only; no open global estimate proved",
+        "parameters": {
+          "max_c": 1200,
+          "epsilon_for_regime_checks": "1/6",
+          "shard": 0,
+          "shards": 1
+        },
+        "source_sha256": "b271becf85c4e1682eab81914dd00269e5d169f0881c4d61cf098829c83ab76b",
+        "counts": {
+          "balanced": 109447,
+          "balanced_composition_instances": 109447,
+          "cube_free_global_height_checks": 145997,
+          "cubic_compensation_identities": 218893,
+          "general_cutoff_identities": 1094465,
+          "geometry_identities": 218893,
+          "moderate": 74594,
+          "moderate_composition_instances": 74594,
+          "power_free_tradeoff_checks": 141,
+          "primitive_triples": 218893,
+          "regime_partition_checks": 218893,
+          "thin": 34852,
+          "thin_composition_instances": 34843
+        },
+        "cube_free_examples": [
+          {
+            "a": 1,
+            "b": 1,
+            "c": 2,
+            "R": 2
+          },
+          {
+            "a": 1,
+            "b": 2,
+            "c": 3,
+            "R": 6
+          },
+          {
+            "a": 1,
+            "b": 3,
+            "c": 4,
+            "R": 6
+          },
+          {
+            "a": 1,
+            "b": 4,
+            "c": 5,
+            "R": 10
+          },
+          {
+            "a": 2,
+            "b": 3,
+            "c": 5,
+            "R": 30
+          },
+          {
+            "a": 1,
+            "b": 5,
+            "c": 6,
+            "R": 30
+          }
+        ],
+        "geometry_obstruction_examples": [
+          {
+            "a": 1,
+            "b": 1,
+            "c": 2,
+            "geometry_factor_numerator": 4,
+            "geometry_factor_denominator": 1,
+            "strict_lower_bound": 1
+          },
+          {
+            "a": 1,
+            "b": 2,
+            "c": 3,
+            "geometry_factor_numerator": 9,
+            "geometry_factor_denominator": 2,
+            "strict_lower_bound": 2
+          },
+          {
+            "a": 1,
+            "b": 3,
+            "c": 4,
+            "geometry_factor_numerator": 16,
+            "geometry_factor_denominator": 3,
+            "strict_lower_bound": 3
+          },
+          {
+            "a": 1,
+            "b": 10,
+            "c": 11,
+            "geometry_factor_numerator": 121,
+            "geometry_factor_denominator": 10,
+            "strict_lower_bound": 10
+          },
+          {
+            "a": 1,
+            "b": 100,
+            "c": 101,
+            "geometry_factor_numerator": 10201,
+            "geometry_factor_denominator": 100,
+            "strict_lower_bound": 100
+          },
+          {
+            "a": 1,
+            "b": 1000,
+            "c": 1001,
+            "geometry_factor_numerator": 1002001,
+            "geometry_factor_denominator": 1000,
+            "strict_lower_bound": 1000
+          },
+          {
+            "a": 1,
+            "b": 10000,
+            "c": 10001,
+            "geometry_factor_numerator": 100020001,
+            "geometry_factor_denominator": 10000,
+            "strict_lower_bound": 10000
+          },
+          {
+            "a": 1,
+            "b": 1000000,
+            "c": 1000001,
+            "geometry_factor_numerator": 1000002000001,
+            "geometry_factor_denominator": 1000000,
+            "strict_lower_bound": 1000000
+          }
+        ],
+        "open_obligations": [
+          "W2-A3-PRODUCT-BOUND",
+          "W2-A3-THIN-BOUND"
+        ],
+        "original_abc_closed": false,
+        "all_checks_passed": true
+      },
+      "provenance": {
+        "agent": 3,
+        "job": "abc-wave2-agent3-valuations",
+        "toolbox": "sat",
+        "source_commit": "1edcf5a2a6ed3616e6c7180064b9083c3cb42be0",
+        "run_id": "45971075783",
+        "run_attempt": "1",
+        "python": "3.10.12",
+        "file_sha256": {
+          "jobs/abc-wave2-agent3-valuations/README.md": "41010354095c4d433c98c67c410ef1a4745c4cd2d964fc425cbced0126cc3ec7",
+          "jobs/abc-wave2-agent3-valuations/run.sh": "fb0281cc63165f9c90bcce662d51d98927088702cc376da2dc6bde1207e22ffc",
+          "jobs/abc-wave2-agent3-valuations/verify.py": "b271becf85c4e1682eab81914dd00269e5d169f0881c4d61cf098829c83ab76b"
+        }
+      }
+    },
+    "4": {
+      "result": {
+        "status": "CHECKED",
+        "passed": true,
+        "problem": "ABC",
+        "resolution": "unknown",
+        "agent": "wave2_agent4",
+        "source_sha256": "a5e095cdc28fefa04ca9b859298e799136a6325cd07b42679d92712d173bc637",
+        "certificate_sha256": "4e0f0edd7c53fe983926da9be205611e91c3a5c91f7523e9e2e19bafc4f522f7",
+        "counts": {
+          "generic_primitive_gcd": 102400,
+          "primitive_relations": 94446,
+          "exact_conditional_exponent": 12580,
+          "abc_embeddings": 109592,
+          "varying_base_obstructions": 32,
+          "sharp_gcd_witnesses": 1
+        },
+        "python": "3.10.12",
+        "github_run_id": "45971075783",
+        "source_commit": "1edcf5a2a6ed3616e6c7180064b9083c3cb42be0",
+        "scope": "Exact bounded integer checks of the stated structural identities and conditional algebra; no infinite sequence or global abc estimate is established.",
+        "closed_core_bottlenecks": 0,
+        "remaining_fixed_base_disproof_core_obligations": 1
+      },
+      "provenance": {
+        "agent": 4,
+        "job": "abc-wave2-agent4-lattice",
+        "toolbox": "sat",
+        "source_commit": "1edcf5a2a6ed3616e6c7180064b9083c3cb42be0",
+        "run_id": "45971075783",
+        "run_attempt": "1",
+        "python": "3.10.12",
+        "file_sha256": {
+          "jobs/abc-wave2-agent4-lattice/README.md": "57ae658d2c4654490cc8653972d18e510a06ff745fbf8ce28a120f321e464dde",
+          "jobs/abc-wave2-agent4-lattice/run.sh": "93641abc00a8732be6ebc56a86a08b778fdafbf8d81f3ce10dbac002b81bb18e",
+          "jobs/abc-wave2-agent4-lattice/verify.py": "a5e095cdc28fefa04ca9b859298e799136a6325cd07b42679d92712d173bc637"
+        }
+      }
+    },
+    "5": {
+      "result": {
+        "status": "CHECKED",
+        "problem": "ABC",
+        "original_resolution": "unknown",
+        "agent": "wave2_agent5",
+        "source_sha256": "52e6b6e3b8e8cd7f0e99e7e705d7320cd8c92329e3ae1df5a41d37ff92bee0a3",
+        "certificate_sha256": "5839fa81c72069d2e29be5145f975c5a86a4f9418971c9c4eaeccf342238a180",
+        "counts": {
+          "general_weierstrass_models": 5780,
+          "nonzero_discriminant_models": 5747,
+          "signed_budget_identities": 5747,
+          "semistable_criterion_models": 3536,
+          "factor_vector_budgets": 729,
+          "restricted_budget_cases": 882,
+          "low_j_family": 128,
+          "sage_minimal_conductor_cases": 32,
+          "exact_regime_compositions": 2048,
+          "reverse_half_epsilon_cases": 1024,
+          "unbounded_local_multiplicity_instances": 28
+        },
+        "python_version": "3.12.5",
+        "sage_available": true,
+        "sage_version": "10.6",
+        "sage_required": true,
+        "run_id": "45971075783",
+        "source_commit": "1edcf5a2a6ed3616e6c7180064b9083c3cb42be0",
+        "domain": {
+          "general_coefficients": {
+            "a1": [
+              0,
+              1
+            ],
+            "a2": [
+              -2,
+              2
+            ],
+            "a3": [
+              0,
+              1
+            ],
+            "a4": [
+              -8,
+              8
+            ],
+            "a6": [
+              -8,
+              8
+            ]
+          },
+          "low_j_family_m": [
+            1,
+            128
+          ],
+          "sage_m": [
+            1,
+            32
+          ]
+        },
+        "limitations": [
+          "Finite checks do not prove either open height estimate.",
+          "The local reduction criterion is a classical import.",
+          "No Lean verification claimed."
+        ]
+      },
+      "provenance": {
+        "agent": 5,
+        "job": "abc-wave2-agent5-height",
+        "toolbox": "sage",
+        "source_commit": "1edcf5a2a6ed3616e6c7180064b9083c3cb42be0",
+        "run_id": "45971075783",
+        "run_attempt": "1",
+        "python": "3.10.12",
+        "file_sha256": {
+          "jobs/abc-wave2-agent5-height/README.md": "ee6f30b6031ae3ac0787ff4e8acc6a7b5ba2d1910277048323615ca7a29e0a2d",
+          "jobs/abc-wave2-agent5-height/run.sh": "7fb9947fd9c742822a4909eef3a2e40e55fd5611d587f71d2becc3e9df97d005",
+          "jobs/abc-wave2-agent5-height/verify.py": "52e6b6e3b8e8cd7f0e99e7e705d7320cd8c92329e3ae1df5a41d37ff92bee0a3"
+        }
+      }
+    },
+    "6": {
+      "result": null,
+      "provenance": {
+        "agent": 6,
+        "job": "abc-wave2-agent6-lean",
+        "toolbox": "lean",
+        "source_commit": "1edcf5a2a6ed3616e6c7180064b9083c3cb42be0",
+        "run_id": "45971075783",
+        "run_attempt": "1",
+        "python": "3.10.12",
+        "file_sha256": {
+          "jobs/abc-wave2-agent6-lean/README.md": "d1b33ce5c98b2a3ddcfb59ce9642ef8f6999b445f15184f98eefcb582ef1d3c8",
+          "jobs/abc-wave2-agent6-lean/Structural.lean": "4c5701f2f01abcf9a1b97ccc2440c88f1892622f9bf674d3c12aacff8e51f720",
+          "jobs/abc-wave2-agent6-lean/audit.py": "712b55ed720dc1bd7c61109bc97a380a59fb212213854c50c5a1aa5d406fe866",
+          "jobs/abc-wave2-agent6-lean/run.sh": "fac219a255c2b554dce213c26dc278263c78bc99621b190905f67dcc8aff5cad"
+        }
+      }
+    }
+  },
+  "scope": "Successful jobs verify only their exact structural lemmas or bounded searches, never the original abc conjecture."
+}

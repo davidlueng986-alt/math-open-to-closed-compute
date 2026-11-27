@@ -1,0 +1,185 @@
+{
+  "case_digest_sha256": "2295f9517dd2916c82dc38f584bab347be36d8d7c35b07102eda530d6a6968e1",
+  "counts": {
+    "generic_primitive_gcd": 102400,
+    "primitive_relations": 94446,
+    "exact_conditional_exponent": 12580,
+    "abc_embeddings": 109592,
+    "varying_base_obstructions": 32,
+    "sharp_gcd_witnesses": 1
+  },
+  "varying_base_witnesses": [
+    {
+      "n": 1,
+      "bases": [
+        2,
+        3,
+        5
+      ],
+      "coefficients": [
+        15,
+        10,
+        -12
+      ],
+      "g": 30,
+      "normalized": [
+        1,
+        1,
+        2
+      ]
+    },
+    {
+      "n": 2,
+      "bases": [
+        4,
+        9,
+        25
+      ],
+      "coefficients": [
+        225,
+        100,
+        -72
+      ],
+      "g": 900,
+      "normalized": [
+        1,
+        1,
+        2
+      ]
+    },
+    {
+      "n": 3,
+      "bases": [
+        8,
+        27,
+        125
+      ],
+      "coefficients": [
+        3375,
+        1000,
+        -432
+      ],
+      "g": 27000,
+      "normalized": [
+        1,
+        1,
+        2
+      ]
+    },
+    {
+      "n": 4,
+      "bases": [
+        16,
+        81,
+        625
+      ],
+      "coefficients": [
+        50625,
+        10000,
+        -2592
+      ],
+      "g": 810000,
+      "normalized": [
+        1,
+        1,
+        2
+      ]
+    },
+    {
+      "n": 5,
+      "bases": [
+        32,
+        243,
+        3125
+      ],
+      "coefficients": [
+        759375,
+        100000,
+        -15552
+      ],
+      "g": 24300000,
+      "normalized": [
+        1,
+        1,
+        2
+      ]
+    }
+  ],
+  "domains": {
+    "generic_gcd": {
+      "bases": [
+        1,
+        8
+      ],
+      "nonzero_coefficients": [
+        -3,
+        -2,
+        -1,
+        1,
+        2,
+        3
+      ]
+    },
+    "relations": {
+      "bases": [
+        1,
+        9
+      ],
+      "nonzero_x_y": [
+        -12,
+        12
+      ],
+      "z": "determined by relation"
+    },
+    "embedding": {
+      "c_max": 300,
+      "a_le_b": true,
+      "fixed_bases": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          2,
+          3,
+          5
+        ],
+        [
+          4,
+          6,
+          9
+        ],
+        [
+          8,
+          8,
+          8
+        ],
+        [
+          2,
+          8,
+          32
+        ],
+        [
+          12,
+          5,
+          18
+        ],
+        [
+          7,
+          11,
+          13
+        ],
+        [
+          9,
+          4,
+          25
+        ]
+      ]
+    },
+    "varying_base_n": [
+      1,
+      32
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "status": "CHECKED",
+  "scope": "finite exact structural checks only; infinite mass remains BLOCKED",
+  "python": "3.10.12",
+  "counts": {
+    "seeds": 394,
+    "integer_states": 1970,
+    "fully_factored_differences": 1193,
+    "prime_valuation_identities": 1697,
+    "repeated_prime_cases": 82,
+    "varying_seed_lifts": 25,
+    "exact_weighted_sum_cases": 256
+  },
+  "source_sha256": "d31cf912ceb980199c243ce5f357a38f8495b5301f42c0282821f557c23e35ff",
+  "certificate_sha256": "641a114610fc0afa7a1af8903430883da3fdd36ea0e5658b6d1a0df4309f4f87",
+  "github_run_id": "45971075783",
+  "github_sha": "1edcf5a2a6ed3616e6c7180064b9083c3cb42be0"
+}

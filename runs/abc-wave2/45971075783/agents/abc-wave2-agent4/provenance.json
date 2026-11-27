@@ -1,0 +1,14 @@
+{
+  "agent": 4,
+  "job": "abc-wave2-agent4-lattice",
+  "toolbox": "sat",
+  "source_commit": "1edcf5a2a6ed3616e6c7180064b9083c3cb42be0",
+  "run_id": "45971075783",
+  "run_attempt": "1",
+  "python": "3.10.12",
+  "file_sha256": {
+    "jobs/abc-wave2-agent4-lattice/README.md": "57ae658d2c4654490cc8653972d18e510a06ff745fbf8ce28a120f321e464dde",
+    "jobs/abc-wave2-agent4-lattice/run.sh": "93641abc00a8732be6ebc56a86a08b778fdafbf8d81f3ce10dbac002b81bb18e",
+    "jobs/abc-wave2-agent4-lattice/verify.py": "a5e095cdc28fefa04ca9b859298e799136a6325cd07b42679d92712d173bc637"
+  }
+}

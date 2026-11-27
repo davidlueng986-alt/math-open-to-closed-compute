@@ -1,0 +1,138 @@
+{
+  "task": "VALUATION-BUDGET",
+  "agent": "wave2_agent3",
+  "status": "CHECKED",
+  "scope": "finite exact arithmetic only; no open global estimate proved",
+  "parameters": {
+    "max_c": 1200,
+    "epsilon_for_regime_checks": "1/6",
+    "shard": 0,
+    "shards": 1
+  },
+  "source_sha256": "b271becf85c4e1682eab81914dd00269e5d169f0881c4d61cf098829c83ab76b",
+  "counts": {
+    "balanced": 109447,
+    "balanced_composition_instances": 109447,
+    "cube_free_global_height_checks": 145997,
+    "cubic_compensation_identities": 218893,
+    "general_cutoff_identities": 1094465,
+    "geometry_identities": 218893,
+    "moderate": 74594,
+    "moderate_composition_instances": 74594,
+    "power_free_tradeoff_checks": 141,
+    "primitive_triples": 218893,
+    "regime_partition_checks": 218893,
+    "thin": 34852,
+    "thin_composition_instances": 34843
+  },
+  "cube_free_examples": [
+    {
+      "a": 1,
+      "b": 1,
+      "c": 2,
+      "R": 2
+    },
+    {
+      "a": 1,
+      "b": 2,
+      "c": 3,
+      "R": 6
+    },
+    {
+      "a": 1,
+      "b": 3,
+      "c": 4,
+      "R": 6
+    },
+    {
+      "a": 1,
+      "b": 4,
+      "c": 5,
+      "R": 10
+    },
+    {
+      "a": 2,
+      "b": 3,
+      "c": 5,
+      "R": 30
+    },
+    {
+      "a": 1,
+      "b": 5,
+      "c": 6,
+      "R": 30
+    }
+  ],
+  "geometry_obstruction_examples": [
+    {
+      "a": 1,
+      "b": 1,
+      "c": 2,
+      "geometry_factor_numerator": 4,
+      "geometry_factor_denominator": 1,
+      "strict_lower_bound": 1
+    },
+    {
+      "a": 1,
+      "b": 2,
+      "c": 3,
+      "geometry_factor_numerator": 9,
+      "geometry_factor_denominator": 2,
+      "strict_lower_bound": 2
+    },
+    {
+      "a": 1,
+      "b": 3,
+      "c": 4,
+      "geometry_factor_numerator": 16,
+      "geometry_factor_denominator": 3,
+      "strict_lower_bound": 3
+    },
+    {
+      "a": 1,
+      "b": 10,
+      "c": 11,
+      "geometry_factor_numerator": 121,
+      "geometry_factor_denominator": 10,
+      "strict_lower_bound": 10
+    },
+    {
+      "a": 1,
+      "b": 100,
+      "c": 101,
+      "geometry_factor_numerator": 10201,
+      "geometry_factor_denominator": 100,
+      "strict_lower_bound": 100
+    },
+    {
+      "a": 1,
+      "b": 1000,
+      "c": 1001,
+      "geometry_factor_numerator": 1002001,
+      "geometry_factor_denominator": 1000,
+      "strict_lower_bound": 1000
+    },
+    {
+      "a": 1,
+      "b": 10000,
+      "c": 10001,
+      "geometry_factor_numerator": 100020001,
+      "geometry_factor_denominator": 10000,
+      "strict_lower_bound": 10000
+    },
+    {
+      "a": 1,
+      "b": 1000000,
+      "c": 1000001,
+      "geometry_factor_numerator": 1000002000001,
+      "geometry_factor_denominator": 1000000,
+      "strict_lower_bound": 1000000
+    }
+  ],
+  "open_obligations": [
+    "W2-A3-PRODUCT-BOUND",
+    "W2-A3-THIN-BOUND"
+  ],
+  "original_abc_closed": false,
+  "all_checks_passed": true
+}

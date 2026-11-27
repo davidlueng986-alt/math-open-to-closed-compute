@@ -1,0 +1,23 @@
+{
+  "status": "CHECKED",
+  "passed": true,
+  "problem": "ABC",
+  "resolution": "unknown",
+  "agent": "wave2_agent4",
+  "source_sha256": "a5e095cdc28fefa04ca9b859298e799136a6325cd07b42679d92712d173bc637",
+  "certificate_sha256": "4e0f0edd7c53fe983926da9be205611e91c3a5c91f7523e9e2e19bafc4f522f7",
+  "counts": {
+    "generic_primitive_gcd": 102400,
+    "primitive_relations": 94446,
+    "exact_conditional_exponent": 12580,
+    "abc_embeddings": 109592,
+    "varying_base_obstructions": 32,
+    "sharp_gcd_witnesses": 1
+  },
+  "python": "3.10.12",
+  "github_run_id": "45971075783",
+  "source_commit": "1edcf5a2a6ed3616e6c7180064b9083c3cb42be0",
+  "scope": "Exact bounded integer checks of the stated structural identities and conditional algebra; no infinite sequence or global abc estimate is established.",
+  "closed_core_bottlenecks": 0,
+  "remaining_fixed_base_disproof_core_obligations": 1
+}

@@ -1,0 +1,64 @@
+{
+  "status": "CHECKED",
+  "problem": "ABC",
+  "original_resolution": "unknown",
+  "agent": "wave2_agent5",
+  "source_sha256": "52e6b6e3b8e8cd7f0e99e7e705d7320cd8c92329e3ae1df5a41d37ff92bee0a3",
+  "certificate_sha256": "5839fa81c72069d2e29be5145f975c5a86a4f9418971c9c4eaeccf342238a180",
+  "counts": {
+    "general_weierstrass_models": 5780,
+    "nonzero_discriminant_models": 5747,
+    "signed_budget_identities": 5747,
+    "semistable_criterion_models": 3536,
+    "factor_vector_budgets": 729,
+    "restricted_budget_cases": 882,
+    "low_j_family": 128,
+    "sage_minimal_conductor_cases": 32,
+    "exact_regime_compositions": 2048,
+    "reverse_half_epsilon_cases": 1024,
+    "unbounded_local_multiplicity_instances": 28
+  },
+  "python_version": "3.12.5",
+  "sage_available": true,
+  "sage_version": "10.6",
+  "sage_required": true,
+  "run_id": "45971075783",
+  "source_commit": "1edcf5a2a6ed3616e6c7180064b9083c3cb42be0",
+  "domain": {
+    "general_coefficients": {
+      "a1": [
+        0,
+        1
+      ],
+      "a2": [
+        -2,
+        2
+      ],
+      "a3": [
+        0,
+        1
+      ],
+      "a4": [
+        -8,
+        8
+      ],
+      "a6": [
+        -8,
+        8
+      ]
+    },
+    "low_j_family_m": [
+      1,
+      128
+    ],
+    "sage_m": [
+      1,
+      32
+    ]
+  },
+  "limitations": [
+    "Finite checks do not prove either open height estimate.",
+    "The local reduction criterion is a classical import.",
+    "No Lean verification claimed."
+  ]
+}
