@@ -1,11 +1,11 @@
 {
   "problem": "ABC",
   "wave": 2,
-  "batch": "all",
-  "request_id": "abc-wave2-all-six-2026-11-27",
+  "batch": "agent6",
+  "request_id": "abc-wave2-lean-proof-retry-2026-11-27",
   "authorized_by": "explicit_user_request_2026-11-27",
-  "purpose": "Verify five exact finite/symbolic math packages and 14 Lean4.36 declarations after plan checkout correction.",
+  "purpose": "Rerun only Lean after correcting one denominator simplification; theorem statements unchanged; other five jobs already successful.",
   "paid_resources": false,
   "schedule": false,
-  "supersedes_infrastructure_failure": 45970801916
+  "previous_kernel_attempt": 45971075783
 }
