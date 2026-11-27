@@ -1,0 +1,777 @@
+{
+  "schema_version": "r310-closure-ledger-v8.0",
+  "project": "Ramsey R(3,10) = 40 Closure Project",
+  "repositories": {
+    "compute": "https://github.com/davidlueng986-alt/math-open-to-closed-compute",
+    "ledger": "https://github.com/davidlueng986-alt/math-open-to-closed"
+  },
+  "architecture_notes": [
+    "D678 is logically structured as any_of(D678_V8_NA_COVER, D678_V7_COVER): both covers independently partition all 542 surviving D678 degree profiles (333 D6 + 209 D78) with zero coverage gaps.",
+    "Legacy v7 closures (4 empty bands + 61/279 pure-integer Agent 1 tasks) are preserved immutably inside D678_V7_COVER and are NEVER mixed to skip any V8 Unified NA-DAG branch.",
+    "All D5 double-encoding DRAT certificates, MIN6 arithmetic proofs, and D9-C7 4/4 DRAT certificates are preserved with full provenance and SHA-256 digests."
+  ],
+  "nodes": [
+    {
+      "id": "ROOT",
+      "title": "Determine exact value of Ramsey number R(3,10)",
+      "status": "OPEN",
+      "any_of": ["YES", "NO"],
+      "description": "Either a (3,10;40)-Ramsey graph exists (YES -> R(3,10)=41) or none exists (NO -> R(3,10)=40)."
+    },
+    {
+      "id": "YES",
+      "title": "Existence branch: R(3,10) = 41",
+      "status": "OPEN",
+      "all_of": ["B41", "W"],
+      "description": "Requires upper bound R(3,10) <= 41 plus an independently verified 40-vertex triangle-free alpha <= 9 witness."
+    },
+    {
+      "id": "B41",
+      "title": "Upper bound R(3,10) <= 41",
+      "status": "PROVED_MATH",
+      "description": "Goedgebeur & Radziszowski (2013) proved R(3,10) <= 41 (improving Radziszowski & Kreher 1988, R(3,10) <= 42).",
+      "provenance": {
+        "dag_ref": "https://github.com/davidlueng986-alt/math-open-to-closed/commit/2bcbce99f8cc0882e3ecb89eeb3b24dbf0eb79c8"
+      }
+    },
+    {
+      "id": "W",
+      "title": "40-vertex triangle-free alpha <= 9 witness",
+      "status": "OPEN",
+      "description": "Any SAT witness emitted by any solver job must pass zero-dependency verify_sat_witness.py."
+    },
+    {
+      "id": "NO",
+      "title": "Non-existence branch: R(3,10) = 40",
+      "status": "OPEN",
+      "all_of": [
+        "B39",
+        "SATURATE",
+        "D10_PLUS",
+        "D0_3",
+        "D4",
+        "D5_MIN6",
+        "PROFILE_V6",
+        "D678",
+        "D9"
+      ],
+      "description": "Exhaustive partition of all possible 40-vertex triangle-free alpha <= 9 graphs by minimum/maximum vertex degrees."
+    },
+    {
+      "id": "B39",
+      "title": "Lower bound R(3,10) >= 40 via Exoo (3,10;39) witness",
+      "status": "PROVED_MATH",
+      "description": "Exoo (1989) constructed a 39-vertex triangle-free graph with alpha = 9 (exoo39.g6).",
+      "provenance": {
+        "commit": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/commit/185260dbdf1c59352230cab01a9d31983ebc6b48"
+      }
+    },
+    {
+      "id": "SATURATE",
+      "title": "Triangle-free edge saturation preserves alpha <= 9",
+      "status": "PROVED_MATH",
+      "description": "Adding edges without creating triangles can only decrease or preserve alpha(G); WLOG G is maximal triangle-free."
+    },
+    {
+      "id": "D10_PLUS",
+      "title": "Maximum degree Delta(G) <= 9",
+      "status": "PROVED_MATH",
+      "description": "In a triangle-free graph, N(v) is an independent set, so deg(v) >= 10 immediately yields I_10."
+    },
+    {
+      "id": "D0_3",
+      "title": "Minimum degree delta(G) >= 4",
+      "status": "PROVED_MATH",
+      "description": "If deg(v) <= 3, then |H_v| = 39 - deg(v) >= 36 = R(3,9), forcing I_9 in H_v and hence I_10 with v."
+    },
+    {
+      "id": "D4",
+      "title": "No vertex of degree 4",
+      "status": "PROVED_MATH",
+      "description": "If deg(v) = 4, H_v is a (3,9;35)-graph (unique Kalbfleisch graph); Goedgebeur & Radziszowski (2013) proved no 40-vertex extension exists."
+    },
+    {
+      "id": "D5_MIN6",
+      "title": "No vertex of degree 5 (Double-encoding DRAT + Direct MIN6 arithmetic proof)",
+      "status": "CERTIFIED_DRAT",
+      "all_of": ["D5-N5", "D5-N6", "D5-N7", "D5-N8", "D5-N9", "MIN6-DIRECT"],
+      "description": "Closes all degree-5 cases via both independent double-encoding DRAT proofs (D5-N5..N9) and the direct MIN6 singleton-capacity theorem (43 > 40)."
+    },
+    {
+      "id": "MIN6-DIRECT",
+      "title": "Direct MIN6 theorem: delta(G) >= 6",
+      "status": "PROVED_MATH",
+      "description": "For a degree-5 vertex v, e(N(v), H_v) >= 2(34) - 5(5) = 43 > 40 = 8*5, contradiction; independently closes D5, D6-N5, D7-N5, D8-N5.",
+      "provenance": {
+        "compute_tree": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/tree/6cef263aeeb658fad57e53ae06e7fbd241c8cdb2/jobs/ramsey-r310-d678-v6",
+        "ledger_commit": "https://github.com/davidlueng986-alt/math-open-to-closed/commit/af81181a379c721fa4a2132e222ec079777c983e"
+      }
+    },
+    {
+      "id": "D5-N5",
+      "title": "D5-N5 double-encoding DRAT UNSAT",
+      "status": "CERTIFIED_DRAT",
+      "certificates": [
+        {
+          "encoding": "primary",
+          "run_id": 45681007261,
+          "job_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45681007261/job/139441501513",
+          "artifact_id": 15054965885,
+          "ledger_commit": "https://github.com/davidlueng986-alt/math-open-to-closed/commit/82c8943ddb02ae8ea2a93ea9d7b50fa7471dd5d9"
+        },
+        {
+          "encoding": "alternate",
+          "run_id": 45681429646,
+          "job_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45681429646/job/139442680061",
+          "artifact_id": 15053997580,
+          "ledger_commit": "https://github.com/davidlueng986-alt/math-open-to-closed/commit/82c8943ddb02ae8ea2a93ea9d7b50fa7471dd5d9"
+        }
+      ]
+    },
+    {
+      "id": "D5-N6",
+      "title": "D5-N6 double-encoding DRAT UNSAT",
+      "status": "CERTIFIED_DRAT",
+      "certificates": [
+        {
+          "encoding": "primary",
+          "run_id": 45681007261,
+          "job_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45681007261/job/139441501597",
+          "artifact_id": 15054246117,
+          "ledger_commit": "https://github.com/davidlueng986-alt/math-open-to-closed/commit/82c8943ddb02ae8ea2a93ea9d7b50fa7471dd5d9"
+        },
+        {
+          "encoding": "alternate",
+          "run_id": 45681429646,
+          "job_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45681429646/job/139442680260",
+          "artifact_id": 15055410256,
+          "ledger_commit": "https://github.com/davidlueng986-alt/math-open-to-closed/commit/82c8943ddb02ae8ea2a93ea9d7b50fa7471dd5d9"
+        }
+      ]
+    },
+    {
+      "id": "D5-N7",
+      "title": "D5-N7 double-encoding DRAT UNSAT",
+      "status": "CERTIFIED_DRAT",
+      "certificates": [
+        {
+          "encoding": "primary",
+          "run_id": 45681007261,
+          "job_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45681007261/job/139441501471",
+          "artifact_id": 15053912458,
+          "ledger_commit": "https://github.com/davidlueng986-alt/math-open-to-closed/commit/82c8943ddb02ae8ea2a93ea9d7b50fa7471dd5d9"
+        },
+        {
+          "encoding": "alternate",
+          "run_id": 45681429646,
+          "job_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45681429646/job/139442680083",
+          "artifact_id": 15054466955,
+          "ledger_commit": "https://github.com/davidlueng986-alt/math-open-to-closed/commit/82c8943ddb02ae8ea2a93ea9d7b50fa7471dd5d9"
+        }
+      ]
+    },
+    {
+      "id": "D5-N8",
+      "title": "D5-N8 double-encoding DRAT UNSAT",
+      "status": "CERTIFIED_DRAT",
+      "certificates": [
+        {
+          "encoding": "primary",
+          "run_id": 45681007261,
+          "job_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45681007261/job/139441501494",
+          "artifact_id": 15054092008,
+          "ledger_commit": "https://github.com/davidlueng986-alt/math-open-to-closed/commit/82c8943ddb02ae8ea2a93ea9d7b50fa7471dd5d9"
+        },
+        {
+          "encoding": "alternate",
+          "run_id": 45681429646,
+          "job_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45681429646/job/139442679496",
+          "artifact_id": 15053339728,
+          "ledger_commit": "https://github.com/davidlueng986-alt/math-open-to-closed/commit/82c8943ddb02ae8ea2a93ea9d7b50fa7471dd5d9"
+        }
+      ]
+    },
+    {
+      "id": "D5-N9",
+      "title": "D5-N9 double-encoding DRAT UNSAT",
+      "status": "CERTIFIED_DRAT",
+      "certificates": [
+        {
+          "encoding": "primary",
+          "run_id": 45681007261,
+          "job_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45681007261/job/139441501577",
+          "artifact_id": 15053433942,
+          "ledger_commit": "https://github.com/davidlueng986-alt/math-open-to-closed/commit/82c8943ddb02ae8ea2a93ea9d7b50fa7471dd5d9"
+        },
+        {
+          "encoding": "alternate",
+          "run_id": 45681429646,
+          "job_url": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/actions/runs/45681429646/job/139442680173",
+          "artifact_id": 15054910877,
+          "ledger_commit": "https://github.com/davidlueng986-alt/math-open-to-closed/commit/82c8943ddb02ae8ea2a93ea9d7b50fa7471dd5d9"
+        }
+      ]
+    },
+    {
+      "id": "PROFILE_V6",
+      "title": "Exact degree-profile enumeration & Farkas elimination for degrees in {6,7,8,9}",
+      "status": "CERTIFIED_INT",
+      "metrics": {
+        "initial_profiles": 931,
+        "farkas_excluded": 388,
+        "surviving_profiles": 543,
+        "d6_profiles": 333,
+        "d78_profiles": 209,
+        "d9_profiles": 1
+      },
+      "provenance": {
+        "commit": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/commit/1f4691d213285a078c990a645ba237efb89cf594"
+      }
+    },
+    {
+      "id": "D678",
+      "title": "All non-9-regular graphs with delta(G) in {6,7,8} (542 surviving profiles)",
+      "status": "OPEN",
+      "any_of": ["D678_V8_NA_COVER", "D678_V7_COVER"],
+      "description": "Disjunction of two independently complete covers: active V8 Unified NA-DAG (32 branches) and preserved legacy v7 cover (48 bands / 279 tasks)."
+    },
+    {
+      "id": "D678_V8_NA_COVER",
+      "title": "V8 Unified Non-Adjacent-Pair DAG (active primary cover for all 542 D678 profiles)",
+      "status": "OPEN",
+      "all_of": ["NA-T1", "NA-T2"],
+      "provenance": {
+        "commit": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/commit/1f4691d213285a078c990a645ba237efb89cf594"
+      }
+    },
+    {
+      "id": "NA-T1",
+      "title": "Tier 1: n_6 >= 1 (333 D6 profiles, 9 non-adjacent pair branches)",
+      "status": "OPEN",
+      "all_of": [
+        "NA-T1-R5-Q6",
+        "NA-T1-R5-Q7",
+        "NA-T1-R5-Q8",
+        "NA-T1-R5-Q9",
+        "NA-T1-R6-Q7",
+        "NA-T1-R6-Q8",
+        "NA-T1-R6-Q9",
+        "NA-T1-R7-Q8",
+        "NA-T1-R7-Q9"
+      ],
+      "metrics": {
+        "d6_profiles": 333,
+        "hybrid_gluing_fast_path_profiles": 207
+      }
+    },
+    {
+      "id": "NA-T1-R5-Q6",
+      "title": "NA-T1 r=5, q=6 (nT=27, c=1, eT in [85,92])",
+      "status": "OPEN",
+      "params": {"r": 5, "q": 6, "nT": 27, "c": 1, "eT_min": 85, "eT_cap": 92}
+    },
+    {
+      "id": "NA-T1-R5-Q7",
+      "title": "NA-T1 r=5, q=7 (nT=27, c=2, eT in [85,92])",
+      "status": "OPEN",
+      "params": {"r": 5, "q": 7, "nT": 27, "c": 2, "eT_min": 85, "eT_cap": 92}
+    },
+    {
+      "id": "NA-T1-R5-Q8",
+      "title": "NA-T1 r=5, q=8 (nT=27, c=3, eT in [85,92])",
+      "status": "OPEN",
+      "params": {"r": 5, "q": 8, "nT": 27, "c": 3, "eT_min": 85, "eT_cap": 92}
+    },
+    {
+      "id": "NA-T1-R5-Q9",
+      "title": "NA-T1 r=5, q=9 (nT=27, c=4, eT in [85,92])",
+      "status": "OPEN",
+      "params": {"r": 5, "q": 9, "nT": 27, "c": 4, "eT_min": 85, "eT_cap": 92}
+    },
+    {
+      "id": "NA-T1-R6-Q7",
+      "title": "NA-T1 r=6, q=7 (nT=26, c=1, eT in [73,84])",
+      "status": "OPEN",
+      "params": {"r": 6, "q": 7, "nT": 26, "c": 1, "eT_min": 73, "eT_cap": 84}
+    },
+    {
+      "id": "NA-T1-R6-Q8",
+      "title": "NA-T1 r=6, q=8 (nT=26, c=2, eT in [73,84])",
+      "status": "OPEN",
+      "params": {"r": 6, "q": 8, "nT": 26, "c": 2, "eT_min": 73, "eT_cap": 84}
+    },
+    {
+      "id": "NA-T1-R6-Q9",
+      "title": "NA-T1 r=6, q=9 (nT=26, c=3, eT in [73,84])",
+      "status": "OPEN",
+      "params": {"r": 6, "q": 9, "nT": 26, "c": 3, "eT_min": 73, "eT_cap": 84}
+    },
+    {
+      "id": "NA-T1-R7-Q8",
+      "title": "NA-T1 r=7, q=8 (nT=25, c=1, eT in [65,76])",
+      "status": "OPEN",
+      "params": {"r": 7, "q": 8, "nT": 25, "c": 1, "eT_min": 65, "eT_cap": 76}
+    },
+    {
+      "id": "NA-T1-R7-Q9",
+      "title": "NA-T1 r=7, q=9 (nT=25, c=2, eT in [65,76])",
+      "status": "OPEN",
+      "params": {"r": 7, "q": 9, "nT": 25, "c": 2, "eT_min": 65, "eT_cap": 76}
+    },
+    {
+      "id": "NA-T2",
+      "title": "Tier 2: n_6 = 0, n_7 + n_8 > 0 (209 D78 profiles, 23 algebraic branches: 1 Farkas-empty + 22 open)",
+      "status": "OPEN",
+      "all_of": [
+        "NA-T2-T27-D9-D9",
+        "NA-T2-T27-D8-D9",
+        "NA-T2-T27-D8-D8",
+        "NA-T2-T27-D7-D9",
+        "NA-T2-T27-D7-D8",
+        "NA-T2-T27-D7-D7",
+        "NA-T2-T26-D9-D9",
+        "NA-T2-T26-D8-D9",
+        "NA-T2-T26-D8-D8",
+        "NA-T2-T26-D7-D9",
+        "NA-T2-T26-D7-D8",
+        "NA-T2-T26-D7-D7",
+        "NA-T2-T25-D9-D9",
+        "NA-T2-T25-D8-D9",
+        "NA-T2-T25-D8-D8",
+        "NA-T2-T25-D7-D9",
+        "NA-T2-T25-D7-D8",
+        "NA-T2-T25-D7-D7",
+        "NA-T2-T24-D9-D9",
+        "NA-T2-T24-D8-D9",
+        "NA-T2-T24-D8-D8",
+        "NA-T2-T24-D7-D9",
+        "NA-T2-T24-D7-D8"
+      ],
+      "metrics": {
+        "d78_profiles": 209,
+        "farkas_empty_branches": 1,
+        "open_branches": 22
+      }
+    },
+    {
+      "id": "NA-T2-T27-D9-D9",
+      "title": "NA-T2 T*=27, (du,dv)=(9,9), c=7 (209 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 27, "du": 9, "dv": 9, "c": 7, "surviving_profiles": 209}
+    },
+    {
+      "id": "NA-T2-T27-D8-D9",
+      "title": "NA-T2 T*=27, (du,dv)=(8,9), c=6 (190 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 27, "du": 8, "dv": 9, "c": 6, "surviving_profiles": 190}
+    },
+    {
+      "id": "NA-T2-T27-D8-D8",
+      "title": "NA-T2 T*=27, (du,dv)=(8,8), c=5 (190 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 27, "du": 8, "dv": 8, "c": 5, "surviving_profiles": 190}
+    },
+    {
+      "id": "NA-T2-T27-D7-D9",
+      "title": "NA-T2 T*=27, (du,dv)=(7,9), c=5 (190 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 27, "du": 7, "dv": 9, "c": 5, "surviving_profiles": 190}
+    },
+    {
+      "id": "NA-T2-T27-D7-D8",
+      "title": "NA-T2 T*=27, (du,dv)=(7,8), c=4 (171 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 27, "du": 7, "dv": 8, "c": 4, "surviving_profiles": 171}
+    },
+    {
+      "id": "NA-T2-T27-D7-D7",
+      "title": "NA-T2 T*=27, (du,dv)=(7,7), c=3 (171 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 27, "du": 7, "dv": 7, "c": 3, "surviving_profiles": 171}
+    },
+    {
+      "id": "NA-T2-T26-D9-D9",
+      "title": "NA-T2 T*=26, (du,dv)=(9,9), c=6 (209 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 26, "du": 9, "dv": 9, "c": 6, "surviving_profiles": 209}
+    },
+    {
+      "id": "NA-T2-T26-D8-D9",
+      "title": "NA-T2 T*=26, (du,dv)=(8,9), c=5 (190 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 26, "du": 8, "dv": 9, "c": 5, "surviving_profiles": 190}
+    },
+    {
+      "id": "NA-T2-T26-D8-D8",
+      "title": "NA-T2 T*=26, (du,dv)=(8,8), c=4 (190 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 26, "du": 8, "dv": 8, "c": 4, "surviving_profiles": 190}
+    },
+    {
+      "id": "NA-T2-T26-D7-D9",
+      "title": "NA-T2 T*=26, (du,dv)=(7,9), c=4 (190 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 26, "du": 7, "dv": 9, "c": 4, "surviving_profiles": 190}
+    },
+    {
+      "id": "NA-T2-T26-D7-D8",
+      "title": "NA-T2 T*=26, (du,dv)=(7,8), c=3 (171 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 26, "du": 7, "dv": 8, "c": 3, "surviving_profiles": 171}
+    },
+    {
+      "id": "NA-T2-T26-D7-D7",
+      "title": "NA-T2 T*=26, (du,dv)=(7,7), c=2 (171 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 26, "du": 7, "dv": 7, "c": 2, "surviving_profiles": 171}
+    },
+    {
+      "id": "NA-T2-T25-D9-D9",
+      "title": "NA-T2 T*=25, (du,dv)=(9,9), c=5 (198 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 25, "du": 9, "dv": 9, "c": 5, "surviving_profiles": 198}
+    },
+    {
+      "id": "NA-T2-T25-D8-D9",
+      "title": "NA-T2 T*=25, (du,dv)=(8,9), c=4 (183 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 25, "du": 8, "dv": 9, "c": 4, "surviving_profiles": 183}
+    },
+    {
+      "id": "NA-T2-T25-D8-D8",
+      "title": "NA-T2 T*=25, (du,dv)=(8,8), c=3 (183 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 25, "du": 8, "dv": 8, "c": 3, "surviving_profiles": 183}
+    },
+    {
+      "id": "NA-T2-T25-D7-D9",
+      "title": "NA-T2 T*=25, (du,dv)=(7,9), c=3 (179 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 25, "du": 7, "dv": 9, "c": 3, "surviving_profiles": 179}
+    },
+    {
+      "id": "NA-T2-T25-D7-D8",
+      "title": "NA-T2 T*=25, (du,dv)=(7,8), c=2 (164 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 25, "du": 7, "dv": 8, "c": 2, "surviving_profiles": 164}
+    },
+    {
+      "id": "NA-T2-T25-D7-D7",
+      "title": "NA-T2 T*=25, (du,dv)=(7,7), c=1 (70 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 25, "du": 7, "dv": 7, "c": 1, "surviving_profiles": 70}
+    },
+    {
+      "id": "NA-T2-T24-D9-D9",
+      "title": "NA-T2 T*=24, (du,dv)=(9,9), c=4 (43 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 24, "du": 9, "dv": 9, "c": 4, "surviving_profiles": 43}
+    },
+    {
+      "id": "NA-T2-T24-D8-D9",
+      "title": "NA-T2 T*=24, (du,dv)=(8,9), c=3 (41 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 24, "du": 8, "dv": 9, "c": 3, "surviving_profiles": 41}
+    },
+    {
+      "id": "NA-T2-T24-D8-D8",
+      "title": "NA-T2 T*=24, (du,dv)=(8,8), c=2 (36 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 24, "du": 8, "dv": 8, "c": 2, "surviving_profiles": 36}
+    },
+    {
+      "id": "NA-T2-T24-D7-D9",
+      "title": "NA-T2 T*=24, (du,dv)=(7,9), c=2 (2 profiles)",
+      "status": "OPEN",
+      "params": {"T_star": 24, "du": 7, "dv": 9, "c": 2, "surviving_profiles": 2}
+    },
+    {
+      "id": "NA-T2-T24-D7-D8",
+      "title": "NA-T2 T*=24, (du,dv)=(7,8), c=1 (0 surviving profiles; 171/171 Farkas-pruned)",
+      "status": "CERTIFIED_INT",
+      "params": {"T_star": 24, "du": 7, "dv": 8, "c": 1, "surviving_profiles": 0},
+      "provenance": {
+        "commit": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/commit/1f4691d213285a078c990a645ba237efb89cf594"
+      }
+    },
+    {
+      "id": "D678_V7_COVER",
+      "title": "Legacy v7 Band/Task Cover (preserved immutably; 4/48 bands empty + 61/279 Agent 1 closed + 218 open)",
+      "status": "OPEN",
+      "all_of": ["D678_V7_EMPTY_BANDS_4", "D678_V7_AGENT1_61", "D678_V7_OPEN_218"],
+      "metrics": {
+        "total_bands": 48,
+        "empty_bands": 4,
+        "total_tasks": 279,
+        "closed_tasks": 61,
+        "open_tasks": 218
+      }
+    },
+    {
+      "id": "D678_V7_EMPTY_BANDS_4",
+      "title": "4/48 bands mathematically empty via N6-M166 (D6-N6-B0, D6-N7-B0, D7-N6-B0, D8-N6-B0) + v5 DRAT certs",
+      "status": "CERTIFIED_INT",
+      "bands": ["D6-N6-B0", "D6-N7-B0", "D7-N6-B0", "D8-N6-B0"],
+      "certificates": [
+        {
+          "band": "D6-N6-B0",
+          "cnf_sha256": "e3b6617d4109050c6ef08cd0104869a231e4d4f7111f2b59a4f47b7b5c8565a5",
+          "proof_sha256": "3d1ba0728a156bb0e3958693d3b52a5073f54ccdad95eb1adea54ece784ff431",
+          "artifact_id": 15061657224,
+          "ledger_commit": "https://github.com/davidlueng986-alt/math-open-to-closed/commit/af81181a379c721fa4a2132e222ec079777c983e"
+        },
+        {
+          "band": "D6-N7-B0",
+          "cnf_sha256": "40b57d1cb2021d4fb306c62cf6e242c22dcd3549c867d0d606bf1f53e952d83b",
+          "proof_sha256": "8731862a09f4f2cbea6e5f0d5b34d56dad67075ab8e87d52392354e4dba997fa",
+          "artifact_id": 15062280285,
+          "ledger_commit": "https://github.com/davidlueng986-alt/math-open-to-closed/commit/af81181a379c721fa4a2132e222ec079777c983e"
+        }
+      ]
+    },
+    {
+      "id": "D678_V7_AGENT1_61",
+      "title": "Agent 1 pure-integer closure of 61/279 v7 tasks (48 old CNF-certified + 13 newly closed)",
+      "status": "CERTIFIED_INT",
+      "metrics": {
+        "closed_tasks": 61,
+        "old_cnf_certified_tasks": 48,
+        "newly_closed_tasks": 13,
+        "profile_instances_verified": 406,
+        "ci_verify_seconds": 0.526
+      },
+      "newly_closed_task_ids": [
+        "D7-N6-B3-P000-T01",
+        "D7-N6-B3-P001-T01",
+        "D7-N6-B3-P002-T01",
+        "D7-N6-B3-P003-T01",
+        "D7-N6-B3-P004-T01",
+        "D8-N6-B3-P000-T01",
+        "D8-N6-B3-P001-T01",
+        "D8-N6-B3-P002-T01",
+        "D8-N6-B3-P003-T01",
+        "D8-N6-B3-P004-T01",
+        "D8-N7-B0-P000-T01",
+        "D8-N7-B0-P001-T01",
+        "D8-N7-B0-P002-T01"
+      ],
+      "certificates": [
+        {
+          "certificates_sha256": "01a839d78d99aafd9ce9ed52413e031a87721d158bce52a553999d72cc4fca17",
+          "run_id": 45992251635,
+          "job_id": 140482749954,
+          "verdict": "INDEPENDENT_PURE_INTEGER_VERIFICATION_PASSED",
+          "commit": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/commit/89faecc9d10cda3af7c10ef389d33345dea24fce"
+        }
+      ]
+    },
+    {
+      "id": "D678_V7_OPEN_218",
+      "title": "Remaining 218/279 v7 tasks (superseded by V8 Unified NA-DAG; retained as independent fallback)",
+      "status": "OPEN",
+      "metrics": {"open_tasks": 218}
+    },
+    {
+      "id": "D9",
+      "title": "9-regular 40-vertex triangle-free alpha <= 9 graphs (partitioned by max non-adjacent codegree c in {3..7})",
+      "status": "OPEN",
+      "all_of": ["D9-C3", "D9-C4", "D9-C5", "D9-C6", "D9-C7"],
+      "description": "Every 9-regular graph on 40 vertices has sum of codegrees 9*8=72 over 30 non-neighbors (so c_max >= 3) and |T|=20+c <= R(3,8)-1=27 (so c_max <= 7)."
+    },
+    {
+      "id": "D9-C7",
+      "title": "9-regular max codegree c = 7 (4/4 cores DRAT-verified UNSAT)",
+      "status": "CERTIFIED_DRAT",
+      "all_of": ["D9-C7-CORE-0", "D9-C7-CORE-1", "D9-C7-CORE-2", "D9-C7-CORE-3"],
+      "provenance": {
+        "run_id": 45992251635,
+        "commit": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/commit/b90493bb43a7b997fe9f81b80de1f729d26bc3ae",
+        "ledger_commit": "https://github.com/davidlueng986-alt/math-open-to-closed/commit/cfbca7e8d8e578d42e70ddd88f059bece75c720b"
+      }
+    },
+    {
+      "id": "D9-C7-CORE-0",
+      "title": "D9-C7 Core 0 DRAT UNSAT",
+      "status": "CERTIFIED_DRAT",
+      "certificates": [
+        {
+          "run_id": 45992251635,
+          "commit": "b90493bb43a7b997fe9f81b80de1f729d26bc3ae",
+          "artifact_id": 15195163314,
+          "cnf_sha256": "64678058b9db6371135e71a861fdb9bdb692a758b238c8dd9c4d2d822e27b79e",
+          "drat_sha256": "fe0249b2e678dc81d14bb6ab135e785595b5b91d435b8b25e00dd9776c5daa8e",
+          "solve_seconds": 513.991,
+          "verify_seconds": 523.936
+        }
+      ]
+    },
+    {
+      "id": "D9-C7-CORE-1",
+      "title": "D9-C7 Core 1 DRAT UNSAT",
+      "status": "CERTIFIED_DRAT",
+      "certificates": [
+        {
+          "run_id": 45992251635,
+          "commit": "b90493bb43a7b997fe9f81b80de1f729d26bc3ae",
+          "artifact_id": 15194863751,
+          "cnf_sha256": "0daa8bbfd0274569a379b22e19cf7599dc2a64f4f5952ffd54dfb414fe51755a",
+          "drat_sha256": "faf58be4d7dd5238704984b17e53e77034c0f0624e598981b00293f1fde6494b",
+          "solve_seconds": 436.969,
+          "verify_seconds": 443.302
+        }
+      ]
+    },
+    {
+      "id": "D9-C7-CORE-2",
+      "title": "D9-C7 Core 2 DRAT UNSAT",
+      "status": "CERTIFIED_DRAT",
+      "certificates": [
+        {
+          "run_id": 45992251635,
+          "commit": "b90493bb43a7b997fe9f81b80de1f729d26bc3ae",
+          "artifact_id": 15195445236,
+          "cnf_sha256": "b3141f63fabaa764aa1008421092bc5f4a99396d4d3f9ee4cdf02b0aae2998ba",
+          "drat_sha256": "caac90cd4e718b07cd20ae7bad17f221f6c27bb98b547d0c00a47e4c9fce94bb",
+          "solve_seconds": 150.707,
+          "verify_seconds": 169.275
+        }
+      ]
+    },
+    {
+      "id": "D9-C7-CORE-3",
+      "title": "D9-C7 Core 3 DRAT UNSAT",
+      "status": "CERTIFIED_DRAT",
+      "certificates": [
+        {
+          "run_id": 45992251635,
+          "commit": "b90493bb43a7b997fe9f81b80de1f729d26bc3ae",
+          "artifact_id": 15194486824,
+          "cnf_sha256": "84078b5d92f4b86271ecdf78607e746b6f01380717aae76858e6c92e3b5d4670",
+          "drat_sha256": "c72f4fa6469197784ace266c85901faaea7a086b05c8880c7e202a428f5b5b83",
+          "solve_seconds": 146.202,
+          "verify_seconds": 136.542
+        }
+      ]
+    },
+    {
+      "id": "D9-C6",
+      "title": "9-regular max codegree c = 6 (|T|=26, 25 skeleton orbits covering 511 nonempty 3x3 skeletons)",
+      "status": "OPEN",
+      "metrics": {
+        "skeleton_orbits": 25,
+        "total_nonempty_skeletons": 511,
+        "eT_range": [73, 81]
+      },
+      "provenance": {
+        "commit": "https://github.com/davidlueng986-alt/math-open-to-closed-compute/commit/af84e6b436ee821f56c10933a8586ec4d729946a"
+      }
+    },
+    {
+      "id": "D9-C5",
+      "title": "9-regular max codegree c = 5 (|T|=25, alpha(T) <= 7)",
+      "status": "OPEN"
+    },
+    {
+      "id": "D9-C4",
+      "title": "9-regular max codegree c = 4 (|T|=24, alpha(T) <= 7)",
+      "status": "OPEN"
+    },
+    {
+      "id": "D9-C3",
+      "title": "9-regular max codegree c = 3 (|T|=23, alpha(T) <= 7)",
+      "status": "OPEN"
+    }
+  ],
+  "wave_execution_plan": [
+    {
+      "wave": "W3A",
+      "title": "Quickest High-Leverage Closures: NA-T2 T*=24 (4 open) + D9-C6 (25 skeleton orbits batched)",
+      "max_parallel_jobs": 10,
+      "max_hours_per_job": 6,
+      "target_obligations": [
+        "NA-T2-T24-D7-D9",
+        "NA-T2-T24-D8-D8",
+        "NA-T2-T24-D8-D9",
+        "NA-T2-T24-D9-D9",
+        "D9-C6"
+      ],
+      "rationale": "NA-T2 T*=24 has only 2..43 surviving profiles per branch (highest Farkas/SAT pruning density); D9-C6 is pre-partitioned into 25 canonical orbits (3-4 orbits per job across 6 jobs)."
+    },
+    {
+      "wave": "W3B",
+      "title": "Unified NA-DAG Tier 1 (all 9 D6 branches, leveraging 207-profile hybrid gluing fast-path)",
+      "max_parallel_jobs": 9,
+      "max_hours_per_job": 6,
+      "target_obligations": [
+        "NA-T1-R5-Q6",
+        "NA-T1-R5-Q7",
+        "NA-T1-R5-Q8",
+        "NA-T1-R5-Q9",
+        "NA-T1-R6-Q7",
+        "NA-T1-R6-Q8",
+        "NA-T1-R6-Q9",
+        "NA-T1-R7-Q8",
+        "NA-T1-R7-Q9"
+      ],
+      "rationale": "9 parallel jobs (1 per (r,q) branch); closes all 333 D6 profiles cleanly with zero overlap with legacy v7."
+    },
+    {
+      "wave": "W3C",
+      "title": "Unified NA-DAG Tier 2 T*=25 (6 branches)",
+      "max_parallel_jobs": 6,
+      "max_hours_per_job": 6,
+      "target_obligations": [
+        "NA-T2-T25-D7-D7",
+        "NA-T2-T25-D7-D8",
+        "NA-T2-T25-D7-D9",
+        "NA-T2-T25-D8-D8",
+        "NA-T2-T25-D8-D9",
+        "NA-T2-T25-D9-D9"
+      ],
+      "rationale": "6 parallel jobs covering T*=25 (70..198 profiles per branch)."
+    },
+    {
+      "wave": "W3D",
+      "title": "Unified NA-DAG Tier 2 T*=26 (6 branches)",
+      "max_parallel_jobs": 6,
+      "max_hours_per_job": 6,
+      "target_obligations": [
+        "NA-T2-T26-D7-D7",
+        "NA-T2-T26-D7-D8",
+        "NA-T2-T26-D7-D9",
+        "NA-T2-T26-D8-D8",
+        "NA-T2-T26-D8-D9",
+        "NA-T2-T26-D9-D9"
+      ],
+      "rationale": "6 parallel jobs covering T*=26 (171..209 profiles per branch)."
+    },
+    {
+      "id_note": "W3E",
+      "wave": "W3E",
+      "title": "Unified NA-DAG Tier 2 T*=27 (6 branches) -> Complete D678 Closure",
+      "max_parallel_jobs": 6,
+      "max_hours_per_job": 6,
+      "target_obligations": [
+        "NA-T2-T27-D7-D7",
+        "NA-T2-T27-D7-D8",
+        "NA-T2-T27-D7-D9",
+        "NA-T2-T27-D8-D8",
+        "NA-T2-T27-D8-D9",
+        "NA-T2-T27-D9-D9"
+      ],
+      "rationale": "6 parallel jobs covering T*=27 (highest c=3..7, strongest core constraints); finishes D678_V8_NA_COVER."
+    },
+    {
+      "wave": "W3F",
+      "title": "D9 Final Regular Closure: D9-C5, D9-C4, D9-C3 (cube-and-conquer / orbit-sharded <=10 jobs)",
+      "max_parallel_jobs": 10,
+      "max_hours_per_job": 6,
+      "target_obligations": [
+        "D9-C5",
+        "D9-C4",
+        "D9-C3"
+      ],
+      "rationale": "Remaining 9-regular cases after D9-C7 (closed) and D9-C6 (W3A); shard each c in {5,4,3} across <=10 parallel jobs with <=6h budget and DRAT/LRAT proof certification."
+    }
+  ]
+}
