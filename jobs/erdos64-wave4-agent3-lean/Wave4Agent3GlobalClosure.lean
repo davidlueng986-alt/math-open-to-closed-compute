@@ -172,12 +172,6 @@ lemma liftStep_unique (cov : GraphCover G H d) (u : V) {w : W} (h : H.Adj (cov.t
     v = cov.liftStep u h :=
   (cov.unique_lift u h).choose_spec.2 v ⟨hadj, hproj⟩
 
-lemma liftStep_symm (cov : GraphCover G H d) (u : V) {w : W} (h : H.Adj (cov.toFun u) w) :
-    cov.liftStep (cov.liftStep u h)
-      (by rw [cov.liftStep_proj u h]; exact h.symm) = u := by
-  symm
-  exact cov.liftStep_unique (cov.liftStep u h) _ (cov.liftStep_adj u h).symm rfl
-
 /-- Unique lifting of any walk in `H` starting from a fiber point `u` above `a`. -/
 noncomputable def liftWalk (cov : GraphCover G H d) :
     ∀ {a b : W}, H.Walk a b → (u : V) → cov.toFun u = a →
@@ -315,17 +309,23 @@ lemma liftWalk_support_tail_mem_proj (cov : GraphCover G H d) {w₀ : W}
     rw [← htail1, List.length_map]
   have hlen2 : q2.support.tail.length = c.support.tail.length := by
     rw [← htail2, List.length_map]
-  have hci : c.support.tail[i]'(hlen1 ▸ hi) = cov.toFun x := by
-    rw [← hxi]
-    have := congrArg (fun l => l[i]'(by rw [htail1]; exact hlen1 ▸ hi)) htail1
-    simpa [List.getElem_map] using this.symm
-  have hcj : c.support.tail[j]'(hlen2 ▸ hj) = cov.toFun x := by
-    rw [← hxj]
-    have := congrArg (fun l => l[j]'(by rw [htail2]; exact hlen2 ▸ hj)) htail2
-    simpa [List.getElem_map] using this.symm
+  have hi_c : i < c.support.tail.length := hlen1 ▸ hi
+  have hj_c : j < c.support.tail.length := hlen2 ▸ hj
+  have hci : c.support.tail[i]'hi_c = cov.toFun x := by
+    have hget : (q1.support.tail.map cov.toFun)[i]'(by rw [List.length_map]; exact hi) =
+        c.support.tail[i]'hi_c := by
+      simp only [htail1]
+    rw [← hget, List.getElem_map, hxi]
+  have hcj : c.support.tail[j]'hj_c = cov.toFun x := by
+    have hget : (q2.support.tail.map cov.toFun)[j]'(by rw [List.length_map]; exact hj) =
+        c.support.tail[j]'hj_c := by
+      simp only [htail2]
+    rw [← hget, List.getElem_map, hxj]
   have hij : i = j := by
     have hnd := List.nodup_iff_injective_getElem.mp hc.support_nodup
-    exact congrArg Fin.val (hnd (hci.trans hcj.symm))
+    have heq : (⟨i, hi_c⟩ : Fin c.support.tail.length) = ⟨j, hj_c⟩ :=
+      hnd (hci.trans hcj.symm)
+    exact congrArg Fin.val heq
   have hback : ∀ {a b : W} (p : H.Walk a b) (u1 u2 : V) (hu1 : cov.toFun u1 = a) (hu2 : cov.toFun u2 = a)
       (k : ℕ) (hk : k ≤ p.length),
       (cov.liftWalk p u1 hu1).2.1.getVert k = (cov.liftWalk p u2 hu2).2.1.getVert k → u1 = u2 := by
@@ -342,13 +342,16 @@ lemma liftWalk_support_tail_mem_proj (cov : GraphCover G H d) {w₀ : W}
       | zero => simpa [liftWalk] using heq
       | succ k' =>
         simp only [liftWalk, Walk.getVert_cons_succ] at heq
-        have hstep := ih _ _ _ _ k' (by simp at hk; omega) heq
-        have hu1' : u1 = cov.liftStep (cov.liftStep u1 (hu1.symm ▸ h))
-            (by rw [cov.liftStep_proj]; exact h.symm) := (cov.liftStep_symm u1 (hu1.symm ▸ h)).symm
-        have hu2' : u2 = cov.liftStep (cov.liftStep u2 (hu2.symm ▸ h))
-            (by rw [cov.liftStep_proj]; exact h.symm) := (cov.liftStep_symm u2 (hu2.symm ▸ h)).symm
-        rw [hu1', hu2']
-        congr 1
+        have hstep : cov.liftStep u1 (hu1.symm ▸ h) = cov.liftStep u2 (hu2.symm ▸ h) :=
+          ih _ _ _ _ k' (by simp at hk; omega) heq
+        let s := cov.liftStep u1 (hu1.symm ▸ h)
+        have hs_proj : cov.toFun s = _ := cov.liftStep_proj u1 (hu1.symm ▸ h)
+        have hback1 : u1 = cov.liftStep s (hs_proj.symm ▸ h.symm) :=
+          cov.liftStep_unique s (hs_proj.symm ▸ h.symm) (cov.liftStep_adj u1 (hu1.symm ▸ h)).symm hu1
+        have hback2 : u2 = cov.liftStep s (hs_proj.symm ▸ h.symm) :=
+          cov.liftStep_unique s (hs_proj.symm ▸ h.symm)
+            (hstep ▸ (cov.liftStep_adj u2 (hu2.symm ▸ h)).symm) hu2
+        exact hback1.trans hback2.symm
   apply Subtype.ext
   have hk : i + 1 ≤ c.length := by
     have hcl : c.support.tail.length = c.length := by
@@ -357,12 +360,12 @@ lemma liftWalk_support_tail_mem_proj (cov : GraphCover G H d) {w₀ : W}
   apply hback c u.1 v.1 u.2 v.2 (i + 1) hk
   have hg1 : q1.getVert (i + 1) = x := by
     rw [Walk.getVert_eq_support_getElem _ (by rw [cov.liftWalk_length]; exact hk)]
-    rw [← List.getElem_tail (i := i) (hi := hi)]
+    rw [← List.getElem_tail (h := hi)]
     exact hxi
   have hi2 : i < q2.support.tail.length := by rw [hlen2, ← hlen1]; exact hi
   have hg2 : q2.getVert (i + 1) = x := by
     rw [Walk.getVert_eq_support_getElem _ (by rw [cov.liftWalk_length]; exact hk)]
-    rw [← List.getElem_tail (i := i) (hi := hi2)]
+    rw [← List.getElem_tail (h := hi2)]
     simpa [hij] using hxj
   exact hg1.trans hg2.symm
 
@@ -375,7 +378,9 @@ lemma liftRepeat_support_tail_nodup (cov : GraphCover G H d) {w₀ : W}
         ∃ i < r, x ∈ (cov.liftWalk c (((cov.monodromy c) ^ i) u).1 (((cov.monodromy c) ^ i) u).2).2.1.support.tail := by
   induction r generalizing u with
   | zero =>
-    refine ⟨by simp [liftRepeat, Walk.support_nil], by simp [liftRepeat, Walk.support_nil]⟩
+    change ([] : List V).Nodup ∧
+      ∀ x ∈ ([] : List V), ∃ i < 0, x ∈ (cov.liftWalk c (((cov.monodromy c) ^ i) u).1 (((cov.monodromy c) ^ i) u).2).2.1.support.tail
+    exact ⟨List.nodup_nil, fun _ h => absurd h (List.not_mem_nil _)⟩
   | succ r ih =>
     let step := cov.liftWalk c u.1 u.2
     let u1 : {x : V // cov.toFun x = w₀} := ⟨step.1, step.2.2⟩
@@ -824,10 +829,10 @@ theorem minimal_bad_two_indep_avoiding_dyadic_path
           let full : G.Walk u v := Walk.cons hux1 (qmid.concat hvxm.symm)
           have hfull_len : full.length = 2 ^ k := by
             have hcl : c'.length = 2 ^ k := hc'_len
-            rw [hc'_eq] at hcl
-            simp only [Walk.length_cons, hrest_eq, Walk.length_append, Walk.length_nil] at hcl
+            rw [hc'_eq, hrest_eq] at hcl
+            simp only [Walk.length_cons, Walk.length_append, Walk.length_nil] at hcl
             simp only [full, Walk.length_cons, Walk.length_concat, hqmid_len]
-            exact hcl
+            omega
           have hqmid_nodup : qmid.support.Nodup := by
             rw [List.nodup_append] at hnd_tail
             exact List.Nodup.of_map _ (hqmid_supp.symm ▸ hnd_tail.1)
