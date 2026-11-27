@@ -74,7 +74,7 @@ try:
           'stages':['D divides W,H','add D divides Pprime','add D divides Qprime'],
           'certificate_acceptance':['No Singular interpreter errors','Correct lift dimensions',
               'Independent exact QQ Sage polynomial identity','Fresh Singular replay'],
-          'term_budget_per_remainder':350000,
+          'term_budget_per_remainder':int(350000),
           'scope':'Complete necessary strictIV target: a quartic divisor exists whenever derivative gcd degree is4 or6.'}
     (out/'system_metadata.json').write_text(json.dumps(meta,indent=2))
     save({'ring':C,'R':R,'S':S,'U':U,'V':V,'P':P,'E':E,'W':W,'D':D,'H':H,
