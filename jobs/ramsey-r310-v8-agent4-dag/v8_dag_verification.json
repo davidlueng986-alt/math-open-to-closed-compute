@@ -1,0 +1,56 @@
+{
+  "status": "ALL_EXACT_FARKAS_AND_COVERAGE_CHECKS_PASSED",
+  "elapsed_seconds": 79.34,
+  "profiles": {
+    "initial": 931,
+    "farkas_excluded": 388,
+    "surviving": 543,
+    "d6": 333,
+    "d78": 209,
+    "d9": 1
+  },
+  "exact_farkas_theorems": {
+    "d678_Tmax_le_23_impossible": 542,
+    "d6_Tmax_le_24_impossible": 333,
+    "tier2_T24_7_8_empty_certified": 171,
+    "d6_forced_eH_le_121_certified": 207
+  },
+  "tier2_nonempty_branches": 22,
+  "tier2_empty_branches": [
+    {
+      "Tstar": 24,
+      "du": 7,
+      "dv": 8,
+      "c": 1,
+      "nx": 6,
+      "ny": 7,
+      "lp_kept": 0,
+      "farkas_pruned": 171
+    }
+  ],
+  "tier2_branches": [
+    {"Tstar": 27, "du": 9, "dv": 9, "c": 7, "nx": 2, "ny": 2, "lp_kept": 209, "farkas_pruned": 0},
+    {"Tstar": 27, "du": 8, "dv": 9, "c": 6, "nx": 2, "ny": 3, "lp_kept": 190, "farkas_pruned": 0},
+    {"Tstar": 27, "du": 8, "dv": 8, "c": 5, "nx": 3, "ny": 3, "lp_kept": 190, "farkas_pruned": 0},
+    {"Tstar": 27, "du": 7, "dv": 9, "c": 5, "nx": 2, "ny": 4, "lp_kept": 190, "farkas_pruned": 0},
+    {"Tstar": 27, "du": 7, "dv": 8, "c": 4, "nx": 3, "ny": 4, "lp_kept": 171, "farkas_pruned": 0},
+    {"Tstar": 27, "du": 7, "dv": 7, "c": 3, "nx": 4, "ny": 4, "lp_kept": 171, "farkas_pruned": 0},
+    {"Tstar": 26, "du": 9, "dv": 9, "c": 6, "nx": 3, "ny": 3, "lp_kept": 209, "farkas_pruned": 0},
+    {"Tstar": 26, "du": 8, "dv": 9, "c": 5, "nx": 3, "ny": 4, "lp_kept": 190, "farkas_pruned": 0},
+    {"Tstar": 26, "du": 8, "dv": 8, "c": 4, "nx": 4, "ny": 4, "lp_kept": 190, "farkas_pruned": 0},
+    {"Tstar": 26, "du": 7, "dv": 9, "c": 4, "nx": 3, "ny": 5, "lp_kept": 190, "farkas_pruned": 0},
+    {"Tstar": 26, "du": 7, "dv": 8, "c": 3, "nx": 4, "ny": 5, "lp_kept": 171, "farkas_pruned": 0},
+    {"Tstar": 26, "du": 7, "dv": 7, "c": 2, "nx": 5, "ny": 5, "lp_kept": 171, "farkas_pruned": 0},
+    {"Tstar": 25, "du": 9, "dv": 9, "c": 5, "nx": 4, "ny": 4, "lp_kept": 198, "farkas_pruned": 11},
+    {"Tstar": 25, "du": 8, "dv": 9, "c": 4, "nx": 4, "ny": 5, "lp_kept": 183, "farkas_pruned": 7},
+    {"Tstar": 25, "du": 8, "dv": 8, "c": 3, "nx": 5, "ny": 5, "lp_kept": 183, "farkas_pruned": 7},
+    {"Tstar": 25, "du": 7, "dv": 9, "c": 3, "nx": 4, "ny": 6, "lp_kept": 179, "farkas_pruned": 11},
+    {"Tstar": 25, "du": 7, "dv": 8, "c": 2, "nx": 5, "ny": 6, "lp_kept": 164, "farkas_pruned": 7},
+    {"Tstar": 25, "du": 7, "dv": 7, "c": 1, "nx": 6, "ny": 6, "lp_kept": 70, "farkas_pruned": 101},
+    {"Tstar": 24, "du": 9, "dv": 9, "c": 4, "nx": 5, "ny": 5, "lp_kept": 43, "farkas_pruned": 166},
+    {"Tstar": 24, "du": 8, "dv": 9, "c": 3, "nx": 5, "ny": 6, "lp_kept": 41, "farkas_pruned": 149},
+    {"Tstar": 24, "du": 8, "dv": 8, "c": 2, "nx": 6, "ny": 6, "lp_kept": 36, "farkas_pruned": 154},
+    {"Tstar": 24, "du": 7, "dv": 9, "c": 2, "nx": 5, "ny": 7, "lp_kept": 2, "farkas_pruned": 188},
+    {"Tstar": 24, "du": 7, "dv": 8, "c": 1, "nx": 6, "ny": 7, "lp_kept": 0, "farkas_pruned": 171}
+  ]
+}
