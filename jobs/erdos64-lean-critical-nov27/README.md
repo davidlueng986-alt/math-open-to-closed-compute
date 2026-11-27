@@ -1,45 +1,40 @@
 # Erdős 64: closure-critical Lean investigation, 2026-11-27
 
-The exact original problem and all thirteen unresolved terminal classes remain OPEN.
-This package develops and checks specific mathematical steps and route obstructions.
-Compilation status is determined by actual Actions logs, never by this source file.
+The original problem and all thirteen remaining terminal classes remain OPEN.
+Actual successful Actions logs determine verification status.
 
-## AllPairsObstruction
+## Cubic minimal two-cut completion
 
-An explicit twelve-vertex triangle-free subcubic graph has a simple path of length
-four or eight between every pair of distinct vertices, but has no power-of-two
-simple cycle. Six vertices have degree two, so it is not Near and is not an
-Erdős–Gyárfás counterexample. It refutes the proposed implication from all-pairs
-dyadic-path existence alone to a dyadic cycle. Full degree and minimality
-hypotheses cannot be discarded when applying the existing Wave 2 path theorem.
+`CutCompletionApplication.lean` starts with exactly `MinimalBad G`, `Cubic G`,
+and `SmallCut G 2`. It selects an inclusion-minimal nontrivial cut side,
+proves the boundary is a matching of size two, and adds the previously absent
+edge between its inside ports. The resulting strictly smaller simple cubic
+graph has every nonempty proper edge cut of size at least three and contains
+a power-of-two cycle; the original induced side contains none. This is uniform
+in graph order. `MinimalCutCompletion.lean` supplies the structural proof.
+See `CUT_PROOF.md` for the full argument and remaining port-length coupling gap.
+This does not exclude either entire cubic two-cut terminal class.
 
-Lean constructs all sixty-six unordered-pair paths, reverses them for the other
-orientations, checks every closed walk of lengths four and eight using Mathlib's
-finite walk enumeration, and proves that every simple cycle has length at most
-twelve. The bound connects the finite checks to the unbounded HasPower predicate.
-The finite proof uses kernel reduction; no external executable's output is trusted.
+## Path-consequence obstruction
 
-The independent Python witness file records all fourteen simple cycles and all
-sixty-six path witnesses. It is an independent cross-check, not a Lean premise.
+`AllPairsObstruction.lean` constructs a fourteen-vertex triangle-free subcubic
+graph with all-pairs dyadic paths, two distinct dyadic-path exits for every
+distant pair, and both Fermat and dyadic-plus-two cycles through every induced
+P3. Nevertheless it has no power-of-two cycle. Six vertices have degree two,
+so it is not Near and is not an original counterexample. The full minimum-degree
+and global-minimality information cannot be discarded. See `PATH_OBSTRUCTION.md`.
 
-## MinimalCutCompletion
-
-For an inclusion-minimal nontrivial matching two-edge-cut side A of an arbitrary
-finite cubic graph, add an edge between its two internal boundary vertices.
-The proof establishes that this edge did not already exist, every resulting
-vertex has degree three, and every nonempty proper cut has at least three edges.
-The theorem is uniform in graph order. It does not assume a fixed finite bound
-or absence of power cycles, and therefore applies to the relevant MinimalBad
-cubic cut classes. A separate bridge converts ordinary inclusion-minimality
-among nontrivial two-cut sides into the exact internal SideMinimal predicate.
-
-This formalizes the structural completion step. It does not align the dyadic
-exponents on opposite sides, prove the original conjecture, or exclude either
-entire cubic two-cut terminal class. No new leaf status is assigned.
+All finite certificates are actual SimpleGraph.Walk proofs checked by ordinary
+kernel reduction. Lengths four and eight are checked, and the simple-cycle
+order bound excludes every larger power. `verify_witness.py` independently
+checks `witness14.json`; its output is not a Lean premise. `make_lean14.py`
+regenerates the certificate. Earlier exploratory witnesses are superseded.
 
 ## Verification
 
-The workflow uses the existing pinned Lean 4.36.0 / Mathlib mathematical toolbox,
-sets each job's timeout to forty-five minutes, treats Lean warnings as errors,
-audits the named declarations' transitive axioms, and saves source hashes and logs.
-It runs only on changes to this package or by explicit manual dispatch.
+The workflow reuses the existing Lean 4.36.0 / pinned Mathlib GHCR toolbox,
+limits each job to forty-five minutes, treats warnings as errors, rejects
+proof placeholders/custom axioms/native_decide, prints transitive axiom lists,
+and records source hashes, toolchain and actual logs. Only standard Lean
+axioms (propext, Classical.choice, Quot.sound) are allowed. No new leaf status
+follows merely from this package compiling.

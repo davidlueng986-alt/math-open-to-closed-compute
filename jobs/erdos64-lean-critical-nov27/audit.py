@@ -37,7 +37,8 @@ for path in sorted((out / "source").glob("*.lean")):
     for token in ("sorry", "admit", "axiom", "native_decide"):
         assert not re.search(r"\b" + token + r"\b", source), (path.name, token)
     source_hashes[path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
-text = (out / (module + ".log")).read_text()
+modules = ["MinimalCutCompletion", module] if module == "CutCompletionApplication" else [module]
+text = "\n".join((out / (m + ".log")).read_text() for m in modules)
 assert not re.search(r"(?:error|warning):", text)
 audit = {}
 for name, values in re.findall(r"'([^']+)' depends on axioms:\s*\[([^\]]*)\]", text):
@@ -49,14 +50,17 @@ for name in re.findall(r"'([^']+)' does not depend on any axioms", text):
 assert audit, "No transitive axiom audit was printed"
 if module == "AllPairsObstruction":
     required = {"E64AllPairsObstruction." + s for s in
-                ("all_pairs_dyadic", "no_four", "no_eight", "no_power", "counterexample")}
+                ("all_pairs_dyadic", "two_distinct_exits", "p3_fermat", "p3_plus_two", "no_four", "no_eight", "no_power", "counterexample")}
     assert required <= set(audit), sorted(required - set(audit))
-if module == "MinimalCutCompletion":
+if module in {"MinimalCutCompletion", "CutCompletionApplication"}:
     required = {"E64MinimalCut." + s for s in
                 ("boundary_singleton_card", "side_minimal_of_nontrivial_minimal",
                  "minimal_side_ports_nonadjacent", "completion_cubic",
                  "cut_into_completion", "minimal_side_completion_three_edge_connected",
                  "minimal_cut_completion", "minimal_nontrivial_cut_completion")}
+    assert required <= set(audit), sorted(required - set(audit))
+if module == "CutCompletionApplication":
+    required = {"E64MinimalCut.select_minimal_two_cut", "E64MinimalCut.cubic_minimal_bad_two_cut_normal_form"}
     assert required <= set(audit), sorted(required - set(audit))
 result = {"status": "PASS", "module": module,
           "source_commit": (out / "source-commit.txt").read_text().strip(),

@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        module: [MinimalCutCompletion, AllPairsObstruction]
+        module: [CutCompletionApplication, AllPairsObstruction]
     container:
       image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
       credentials:

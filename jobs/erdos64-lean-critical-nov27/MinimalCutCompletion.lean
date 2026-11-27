@@ -12,7 +12,7 @@ namespace E64MinimalCut
 open SimpleGraph Erdos64Closure E64Core E64Leaves Erdos64Descent
 universe u
 
-def Boundary {V : Type u} (G : SimpleGraph V) (S : Set V) :=
+abbrev Boundary {V : Type u} (G : SimpleGraph V) (S : Set V) :=
   {e : V × V // e.1 ∈ S ∧ e.2 ∉ S ∧ G.Adj e.1 e.2}
 
 def SideMinimal {V : Type u} (G : SimpleGraph V) (A : Set V) : Prop :=
@@ -60,7 +60,7 @@ theorem side_minimal_of_nontrivial_minimal {V : Type u} [Fintype V] [DecidableEq
     let f : (Aᶜ : Set V) → (Tᶜ : Set V) := fun z => ⟨z.1, fun hz => z.2 (hTA hz)⟩
     have hf : Function.Injective f := by
       intro p q h
-      exact Subtype.ext (congrArg Subtype.val h)
+      exact Subtype.ext (congrArg (fun z : (Tᶜ : Set V) => z.1) h)
     exact hAc.trans (Nat.card_le_card_of_injective f hf)
   by_cases hT2 : 2 ≤ Nat.card T
   · exact hmin T hTA hne hT2 hTc hc
@@ -245,16 +245,14 @@ theorem completion_cubic {V : Type u} [Fintype V] [DecidableEq V]
     have hd := induce_degree_add_out G A a
     rw [hout_a, Finset.card_singleton, hG a.1] at hd
     have ha := degree_add_new_edge_left K a b hab hnadj
-    change H.degree a = 3
-    change H.degree a = K.degree a + 1 at ha
+    simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at ha hd ⊢
     exact ha.trans hd
   by_cases hvb : v = b
   · subst v
     have hd := induce_degree_add_out G A b
     rw [hout_b, Finset.card_singleton, hG b.1] at hd
     have hb := degree_add_new_edge_right K a b hab hnadj
-    change H.degree b = 3
-    change H.degree b = K.degree b + 1 at hb
+    simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at hb hd ⊢
     exact hb.trans hd
   have hout : ((G.neighborFinset v.1).filter (fun z => z ∉ A)) = ∅ := by
     rw [Finset.filter_eq_empty_iff]
@@ -264,12 +262,19 @@ theorem completion_cubic {V : Type u} [Fintype V] [DecidableEq V]
     · exact hvb h
   have hd := induce_degree_add_out G A v
   rw [hout, Finset.card_empty, add_zero, hG v.1] at hd
-  have hn : H.neighborFinset v = K.neighborFinset v := by
-    ext z
-    simp [H, Completion, K, SimpleGraph.edge_adj, hva, hvb]
-  change H.degree v = 3
-  rw [← H.card_neighborFinset_eq_degree, hn, K.card_neighborFinset_eq_degree]
-  exact hd
+  let e : H.neighborSet v ≃ K.neighborSet v :=
+    { toFun := fun z => ⟨z.1, by
+        rcases z.2 with h | h
+        · exact h
+        · rcases ((SimpleGraph.edge_adj a b v z.1).mp h).1 with ⟨hva', _⟩ | ⟨hvb', _⟩
+          · exact False.elim (hva hva')
+          · exact False.elim (hvb hvb')⟩
+      invFun := fun z => ⟨z.1, Or.inl z.2⟩
+      left_inv := by intro z; rfl
+      right_inv := by intro z; rfl }
+  have heq : Nat.card (H.neighborSet v) = Nat.card (K.neighborSet v) := Nat.card_congr e
+  simp only [← SimpleGraph.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card] at hd ⊢
+  exact heq.trans hd
 
 private def liftSide {V : Type u} {A : Set V} (S : Set A) : Set V :=
   Subtype.val '' S
