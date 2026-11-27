@@ -73,7 +73,8 @@ theorem chebVal_closed (d : ℕ) : ∀ k : ℕ, 1 ≤ k → chebVal d k = ((d : 
     | m + 3 =>
       have h1 := ih (m + 2) (by omega) (by omega)
       have h2 := ih (m + 1) (by omega) (by omega)
-      simp only [chebVal, h1, h2]
+      have hdef : chebVal d (m + 3) = (d : ℚ) * chebVal d (m + 2) - ((d : ℚ) - 1) * chebVal d (m + 1) := rfl
+      rw [hdef, h1, h2]
       ring
 
 /-- `A` commutes with every `chebMat A d k`. -/
