@@ -1,0 +1,81 @@
+{
+  "agent": "Agent 2 (C++20 Bitmask Gluing & Exact Combinatorial Engine)",
+  "date": "2026-11-27",
+  "hardware": {
+    "cpu": "Intel Xeon Platinum 8481C (2 cores, AVX-512, BMI2, POPCNT)",
+    "compiler": "g++ 12.2.0 (-std=c++20 -O3 -march=native)"
+  },
+  "selftest": {
+    "target": "R(3,4) <= 9 (no triangle-free 9-vertex graph with alpha <= 3)",
+    "status": "PASS_VERIFIED_RUP",
+    "wall_ms": 608.249,
+    "conflicts": 14079,
+    "rup_steps_verified": 14079
+  },
+  "exact_theorems": {
+    "theorem_1_alpha_xy_lower_bound": "t = e(X,Y) >= max(0, d + q - 11); for D6-N9 gives t >= 4 (eliminates T00 [0..2] and t=3 of T01)",
+    "theorem_2_ab_singleton_upper_bound": "t <= min(sx-(d-1)-2*nt+(d-1)*(10-d), sy-(q-1)-2*nt+(q-1)*(10-q)); for D6-N9 gives t <= 10 (eliminates T04..T07 [12..24] and t=11 of T03)",
+    "d6_n9_b3_effective_t_range": [4, 10],
+    "d6_n9_b3_tasks_mathematically_closed": 20,
+    "d6_n9_b3_open_tasks": 12
+  },
+  "d6_n9_b3_skeleton_census": {
+    "enum_time_sec": 177.55,
+    "v8_filter_time_sec": 25.40,
+    "total_raw_canonical_t0_24": 118491,
+    "by_t": {
+      "0..3": 0,
+      "4": 1,
+      "5": 4,
+      "6": 16,
+      "7": 64,
+      "8": 206,
+      "9": 510,
+      "10": 1154,
+      "11_killed_by_thm2": 2276
+    },
+    "target_tasks": {
+      "D6-N9-B3-P000-T01": {"m": 177, "profile": [1,0,3,36], "t_range": [3,5], "effective_t": [4,5], "canonical_skeletons": 5, "deg_labeled_orbits": 79, "avg_valid_masks": 1932.6, "v7_baseline": "TIMEOUT 50m (20 models, 147k cuts, OPEN:16)"},
+      "D6-N9-B3-P000-T02": {"m": 177, "profile": [1,0,3,36], "t_range": [6,8], "effective_t": [6,8], "canonical_skeletons": 286, "deg_labeled_orbits": 7699, "avg_valid_masks": 1270.7, "v7_baseline": "TIMEOUT 50m (OPEN)"},
+      "D6-N9-B3-P002-T01": {"m": 177, "profile": [2,0,0,38], "t_range": [3,5], "effective_t": [4,5], "canonical_skeletons": 5, "deg_labeled_orbits": 10, "avg_valid_masks": 1932.6, "v7_baseline": "TIMEOUT 50m (0 models, OPEN:16)"}
+    },
+    "all_12_open_tasks_orbits": {
+      "T01_t4_5": {"P000": 79, "P001": 65, "P002": 10, "P003": 19, "skeletons": 5},
+      "T02_t6_8": {"P000": 7699, "P001": 5303, "P002": 564, "P003": 1437, "skeletons": 286},
+      "T03_t9_10": {"skeletons_effective": 1664, "skeletons_raw_with_t11": 3940}
+    }
+  },
+  "cdcl_v2_benchmarks_15s": [
+    {"case": "P002-T01 t=4#0 deg6_in_Y", "status": "TIMEOUT", "time_s": 15.514, "edge_vars": 572, "total_vars": 23443, "clauses": 68764, "models": 163, "cuts": 21136, "conflicts": 40960, "m_props_per_s": 2.78},
+    {"case": "P002-T01 t=5#3 (5K2) deg6_in_Y", "status": "TIMEOUT", "time_s": 15.529, "edge_vars": 572, "total_vars": 22167, "clauses": 66037, "models": 185, "cuts": 23872, "conflicts": 40960, "m_props_per_s": 2.65},
+    {"case": "P000-T01 t=4#0 3xdeg8_in_Y", "status": "TIMEOUT", "time_s": 15.172, "edge_vars": 572, "total_vars": 23443, "clauses": 68776, "models": 148, "cuts": 19152, "conflicts": 33792, "m_props_per_s": 2.38},
+    {"case": "P000-T02 t=8 sample 3xdeg8_in_Y", "status": "TIMEOUT", "time_s": 15.535, "edge_vars": 572, "total_vars": 21200, "clauses": 64018, "models": 155, "cuts": 19924, "conflicts": 34816, "m_props_per_s": 2.13}
+  ],
+  "codegree_ablation_p002_t01_t4": [
+    {"config": "XY-codeg only", "status": "SAT_MODEL", "time_s": 0.048, "vars": 22531, "clauses": 65282, "conflicts": 79, "props": 101304},
+    {"config": "XY + XT/YT codeg", "status": "SAT_MODEL", "time_s": 0.797, "vars": 73331, "clauses": 172649, "conflicts": 1442, "props": 2805735},
+    {"config": "FULL codeg (v7-equiv on fixed skeleton)", "status": "TIMEOUT", "time_s": 15.926, "vars": 145487, "clauses": 328305, "conflicts": 14336, "props": 47599125}
+  ],
+  "cpsat_comparison_p002_t01_t4": {
+    "status": "TIMEOUT",
+    "time_s": 25.053,
+    "models": 14,
+    "cuts": 4480,
+    "models_per_s": 0.56,
+    "note": "Rebuilds/re-presolves CP-SAT on each lazy cut iteration; 19x slower than native C++20 CDCL(T)"
+  },
+  "d678_t_bounds_pruning_pct": {
+    "D6-N6": "1..4 (75.0% pruned)",
+    "D6-N7": "2..6 (73.7% pruned)",
+    "D6-N8": "3..8 (72.7% pruned)",
+    "D6-N9": "4..10 (72.0% pruned)",
+    "D7-N6": "2..6 (73.7% pruned)",
+    "D7-N7": "3..14 (52.0% pruned)",
+    "D7-N8": "4..16 (55.2% pruned)",
+    "D7-N9": "5..18 (57.6% pruned)",
+    "D8-N6": "3..8 (72.7% pruned)",
+    "D8-N7": "4..16 (55.2% pruned)",
+    "D8-N8": "5..22 (50.0% pruned)",
+    "D8-N9": "6..24 (53.7% pruned)"
+  }
+}
