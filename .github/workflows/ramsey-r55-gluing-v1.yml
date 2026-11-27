@@ -1,0 +1,81 @@
+name: Ramsey R55 structural gluing proof-first pilot
+on:
+  push:
+    branches: [main]
+    paths: ['jobs/ramsey-r55-gluing-v1/launch.txt']
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: read
+defaults:
+  run:
+    shell: bash
+jobs:
+  catalog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          python3 jobs/ramsey-r55-gluing-v1/solve.py --control
+          mkdir -p out
+          curl --fail --location --retry 2 --max-time 120 'https://users.cecs.anu.edu.au/~bdm/data/r45_24.g6' -o out/r45_24.g6
+          python3 jobs/ramsey-r55-gluing-v1/solve.py --select out/r45_24.g6 --out out/selected.json
+          rm out/r45_24.g6
+      - uses: actions/upload-artifact@v4
+        with:
+          name: r55-dense-core-pilot
+          path: out/
+          if-no-files-found: error
+  glue:
+    needs: catalog
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        index: [0,1,2,3,4]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: r55-dense-core-pilot
+          path: evidence/
+      - run: python3 jobs/ramsey-r55-gluing-v1/solve.py --kind catalog --catalog evidence/selected.json --index ${{ matrix.index }} --seconds 240 --proof-seconds 120 --out out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r55-d18-fixed-core-${{ matrix.index }}
+          path: out/
+          retention-days: 90
+          if-no-files-found: error
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        delete: [7,8,9]
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 jobs/ramsey-r55-gluing-v1/solve.py --kind repair --delete ${{ matrix.delete }} --seconds 240 --proof-seconds 120 --out out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r55-seed42-delete-${{ matrix.delete }}
+          path: out/
+          retention-days: 90
+          if-no-files-found: error
