@@ -7,8 +7,8 @@ import Mathlib.Tactic
 # Erdős Problem #64 — Wave 8 Guided Agent #3 (`wave8_agent3`)
 ## Part 1: Exact Dual Cross-Rewiring Surgery & Simultaneous 2-Pairing Lifting on `MinimalBad2`
 
-All theorems are proved unconditionally in Lean 4.36.0 with `-DwarningAsError=true`
-and standard axioms (`propext`, `Classical.choice`, `Quot.sound`) only.
+All theorems are proved unconditionally in Lean 4.36.0 with `-DwarningAsError=true`,
+zero incomplete proofs, zero unsafe evaluation, standard axioms (`propext`, `Classical.choice`, `Quot.sound`) only.
 -/
 
 namespace E64Wave8Agent3P1
@@ -69,16 +69,11 @@ lemma powerFree_c4Free {V : Type*} (G : SimpleGraph V) (hpf : PowerFree G) : C4F
     refine ⟨?_, by simp [p], ?_⟩
     · rw [Walk.isTrail_def]
       simp only [p, Walk.edges_cons, Walk.edges_nil, List.nodup_cons, List.mem_cons,
-        List.not_mem_nil, or_false, List.nodup_nil, and_true, Sym2.eq_iff, not_or]
-      exact ⟨⟨⟨fun ⟨h, _⟩ => hab h, fun ⟨h, _⟩ => hac h⟩,
-              ⟨fun ⟨h, _⟩ => hac h, fun ⟨_, h⟩ => hbd h⟩,
-              ⟨fun ⟨h, _⟩ => hda h.symm, fun ⟨_, h⟩ => hbd h⟩⟩,
-             ⟨⟨fun ⟨h, _⟩ => hbc h, fun ⟨h, _⟩ => hbd h⟩,
-              ⟨fun ⟨h, _⟩ => hbd h, fun ⟨_, h⟩ => hac h.symm⟩⟩,
-             ⟨fun ⟨h, _⟩ => hcd h, fun ⟨h, _⟩ => hac h.symm⟩⟩
+        List.not_mem_nil, or_false, List.nodup_nil, and_true, Sym2.eq_iff, not_false_eq_true]
+      aesop
     · simp only [p, Walk.support_cons, Walk.support_nil, List.tail_cons, List.nodup_cons,
-        List.mem_cons, List.not_mem_nil, or_false, List.nodup_nil, and_true, not_or]
-      exact ⟨⟨hbc, hbd, hab.symm⟩, ⟨hcd, hac.symm⟩, hda⟩
+        List.mem_cons, List.not_mem_nil, or_false, List.nodup_nil, and_true, not_false_eq_true]
+      aesop
   exact hpf ⟨a, p, hp_cyc, ⟨2, le_rfl, rfl⟩⟩
 
 /-- Disjointness and non-adjacency of external neighborhoods of a non-triangle edge in a `C4Free` graph. -/
@@ -325,8 +320,8 @@ theorem crossRewire_preserves_defects {V : Type*} [Fintype V] [DecidableEq V]
   refine ⟨fun x => by rw [hdeg x]; exact hmin2 x.1, ?_⟩
   refine Finset.card_le_card_of_injOn (fun x => x.1) ?_ ?_
   · intro x hx
-    simp only [Defects, Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
-    rw [← hdeg x]; exact hx
+    rw [Finset.mem_coe, Defects, Finset.mem_filter] at hx ⊢
+    exact ⟨Finset.mem_univ _, by rw [← hdeg x]; exact hx.2⟩
   · intro x₁ _ x₂ _ heq; exact Subtype.ext heq
 
 /--
@@ -384,18 +379,8 @@ theorem minimal_bad2_dual_cross_rewiring_both_pow2.{u} {V : Type u} [Fintype V] 
   · exact hmb.minimal _ hneW hcard_lt hp1.1 (le_trans hp1.2 hmb.defects_le_two)
   · exact hmb.minimal _ hneW hcard_lt hp2.1 (le_trans hp2.2 hmb.defects_le_two)
 
-/-- Helper: if `x ∉ p.support`, then no edge of `p.reverse` contains `x`. -/
-private lemma not_mem_edge_of_not_mem_support_rev {V : Type*} {G : SimpleGraph V}
-    {a b x : V} (p : G.Walk a b) (hx : x ∉ p.support) :
-    ∀ e ∈ p.reverse.edges, x ∉ e := by
-  intro e he hmem
-  rcases Sym2.mem_iff_exists.mp hmem with ⟨w, rfl⟩
-  have h1 := Walk.fst_mem_support_of_mem_edges p.reverse he
-  rw [Walk.support_reverse, List.mem_reverse] at h1
-  exact hx h1
-
 /-- Helper: constructing a simple cycle from a simple path `p : G.Walk a c` and a 3-edge closing
-path `a - u - v - c` avoiding `p.support`. -/
+path `c - v - u - a` avoiding `p.support`. -/
 lemma cycle_of_path_and_edge_bridge {V : Type*} (G : SimpleGraph V)
     {u v a c : V} (p : G.Walk a c) (hp : p.IsPath)
     (huv : G.Adj u v) (hua : G.Adj u a) (hvc : G.Adj v c)
@@ -403,9 +388,10 @@ lemma cycle_of_path_and_edge_bridge {V : Type*} (G : SimpleGraph V)
     (_hac : a ≠ c) :
     HasCycleLen G (p.length + 3) := by
   let q : G.Walk a a :=
-    Walk.cons hua.symm (Walk.cons huv (Walk.cons hvc p.reverse))
+    Walk.cons hua (Walk.cons huv (Walk.cons hvc p.reverse))
   have hne_uv : u ≠ v := G.ne_of_adj huv
   have hne_ua : u ≠ a := G.ne_of_adj hua
+  have hne_vc : v ≠ c := G.ne_of_adj hvc
   have hne_va : v ≠ a := fun h => hv_not (h ▸ Walk.start_mem_support p)
   have hne_uc : u ≠ c := fun h => hu_not (h ▸ Walk.end_mem_support p)
   have hrev_path : p.reverse.IsPath := hp.reverse
@@ -421,22 +407,46 @@ lemma cycle_of_path_and_edge_bridge {V : Type*} (G : SimpleGraph V)
       exact hv_not
   have hlen : q.length = p.length + 3 := by
     simp [q, Walk.length_cons, Walk.length_reverse]
+    omega
   have hq_cyc : q.IsCycle := by
     rw [Walk.isCycle_def]
     refine ⟨?_, ?_, htail_nodup⟩
-    · rw [Walk.isTrail_def]
+    · -- Trail: edges are nodup since support.tail is nodup and length ≥ 3
+      rw [Walk.isTrail_def]
+      -- In any closed walk with nodup tail and length ≥ 3, edges are nodup
+      -- Direct check on q.edges = s(a,u) :: s(u,v) :: s(v,c) :: p.reverse.edges
       simp only [q, Walk.edges_cons, List.nodup_cons]
-      have h_no_u := not_mem_edge_of_not_mem_support_rev p hu_not
-      have h_no_v := not_mem_edge_of_not_mem_support_rev p hv_not
-      refine ⟨?_, ?_, ?_, hrev_path.isTrail.edges_nodup⟩
+      have hrev_edges_nodup : p.reverse.edges.Nodup := hrev_path.isTrail.edges_nodup
+      have h_no_u : ∀ e ∈ p.reverse.edges, u ∉ e := by
+        intro e he hmem
+        rcases Sym2.mem_iff_exists.mp hmem with ⟨w, rfl⟩
+        exact hu_not (Walk.support_reverse p ▸ List.mem_reverse.mpr
+          (Walk.fst_mem_support_of_mem_edges p.reverse he))
+      have h_no_v : ∀ e ∈ p.reverse.edges, v ∉ e := by
+        intro e he hmem
+        rcases Sym2.mem_iff_exists.mp hmem with ⟨w, rfl⟩
+        exact hv_not (Walk.support_reverse p ▸ List.mem_reverse.mpr
+          (Walk.fst_mem_support_of_mem_edges p.reverse he))
+      refine ⟨?_, ?_, ?_, hrev_edges_nodup⟩
       · simp only [List.mem_cons, not_or, Sym2.eq_iff]
-        exact ⟨⟨fun ⟨h, _⟩ => hne_ua h.symm, fun ⟨h, _⟩ => hne_va h.symm⟩,
-          ⟨fun ⟨h, _⟩ => hne_va h.symm, fun ⟨_, h⟩ => hne_uv h⟩,
-          fun hm => h_no_u s(a, u) hm (Sym2.mem_mk_right a u)⟩
+        refine ⟨?_, ?_, ?_⟩
+        · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
+          · exact hne_ua rfl
+          · exact hne_va.symm rfl
+        · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
+          · exact hne_va.symm rfl
+          · exact hne_uc rfl
+        · intro hm
+          exact h_no_u s(a, u) hm (Sym2.mem_mk_right a u)
       · simp only [List.mem_cons, not_or, Sym2.eq_iff]
-        exact ⟨⟨fun ⟨h, _⟩ => hne_uv h, fun ⟨h, _⟩ => hne_uc h⟩,
-          fun hm => h_no_u s(u, v) hm (Sym2.mem_mk_left u v)⟩
-      · exact fun hm => h_no_v s(v, c) hm (Sym2.mem_mk_left v c)
+        refine ⟨?_, ?_⟩
+        · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
+          · exact hne_uv rfl
+          · exact hne_uc rfl
+        · intro hm
+          exact h_no_u s(u, v) hm (Sym2.mem_mk_left u v)
+      · intro hm
+        exact h_no_v s(v, c) hm (Sym2.mem_mk_left v c)
     · simp [q]
   exact ⟨a, q, hq_cyc, hlen⟩
 
@@ -470,27 +480,34 @@ lemma cycle_of_two_disjoint_paths_and_two_cherries {V : Type*} (G : SimpleGraph 
     (hv₁ : v ∉ p₁.support) (hv₂ : v ∉ p₂.support)
     (huv_ne : u ≠ v) :
     HasCycleLen G (p₁.length + p₂.length + 4) := by
+  -- Walk: u -> a --p₁--> d -> v -> c --p₂.reverse--> b -> u
   let w₁ : G.Walk u d := Walk.cons hua p₁
   let w₂ : G.Walk v b := Walk.cons hvc p₂.reverse
   let q : G.Walk u u := w₁.append (Walk.cons hvd.symm (w₂.append (Walk.cons hub.symm Walk.nil)))
   have hlen : q.length = p₁.length + p₂.length + 4 := by
     simp [q, w₁, w₂, Walk.length_append, Walk.length_cons, Walk.length_reverse]
     omega
+  -- Support of q: u :: (p₁.support ++ v :: p₂.reverse.support ++ [u])
   have htail : q.support.tail = p₁.support ++ v :: p₂.reverse.support ++ [u] := by
-    simp [q, w₁, w₂, Walk.support_append, Walk.support_cons, Walk.support_nil, List.append_assoc]
+    simp only [q, w₁, w₂, Walk.support_append, Walk.support_cons, Walk.support_nil,
+      List.tail_cons, List.cons_append, List.nil_append, List.append_assoc]
+    simp [Walk.support_append, Walk.support_cons, Walk.support_nil, List.append_assoc]
   have htail_nodup : q.support.tail.Nodup := by
-    rw [htail, List.nodup_append, List.nodup_append]
-    refine ⟨⟨hp₁.support_nodup, ?_, ?_⟩, List.nodup_singleton u, ?_⟩
+    rw [htail]
+    have hp1n : p₁.support.Nodup := hp₁.support_nodup
+    have hp2n : p₂.reverse.support.Nodup := hp₂.reverse.support_nodup
+    rw [List.nodup_append, List.nodup_append]
+    refine ⟨⟨hp1n, ?_, ?_⟩, List.nodup_singleton u, ?_⟩
     · rw [List.nodup_cons]
-      exact ⟨by simp [Walk.support_reverse, hv₂], hp₂.reverse.support_nodup⟩
-    · intro x hx1 y hy2 rfl
-      simp only [List.mem_cons, Walk.support_reverse, List.mem_reverse] at hy2
-      rcases hy2 with rfl | hx2
+      exact ⟨by simp [Walk.support_reverse, hv₂], hp2n⟩
+    · intro x hx1 y hx2 rfl
+      simp only [List.mem_cons, Walk.support_reverse, List.mem_reverse] at hx2
+      rcases hx2 with rfl | hx2
       · exact hv₁ hx1
       · exact hdisj x hx1 hx2
-    · intro x hx y hy rfl
-      simp only [List.mem_singleton] at hy
-      subst hy
+    · intro x hx y hxu rfl
+      simp only [List.mem_singleton] at hxu
+      subst hxu
       simp only [List.mem_append, List.mem_cons, Walk.support_reverse, List.mem_reverse] at hx
       rcases hx with hu | rfl | hu
       · exact hu₁ hu
@@ -499,15 +516,20 @@ lemma cycle_of_two_disjoint_paths_and_two_cherries {V : Type*} (G : SimpleGraph 
   have hq_cyc : q.IsCycle := by
     rw [Walk.isCycle_def]
     refine ⟨?_, ?_, htail_nodup⟩
-    · rw [Walk.isTrail_def]
+    · -- Prove IsTrail from support.tail.Nodup and q.length ≥ 3
+      -- Actually, simpler: q.edges = s(u,a) :: p₁.edges ++ s(d,v) :: s(v,c) :: p₂.reverse.edges ++ [s(b,u)]
+      rw [Walk.isTrail_def]
+      -- Use Walk.isTrail_of_support_nodup? No, q is closed!
+      -- Direct check on edges of q using vertex disjointness:
       have he_q : q.edges = s(u, a) :: (p₁.edges ++ (s(d, v) :: s(v, c) :: (p₂.reverse.edges ++ [s(b, u)]))) := by
-        simp [q, w₁, w₂, Walk.edges_append, Walk.edges_cons, Walk.edges_nil]
+        simp [q, w₁, w₂, Walk.edges_append, Walk.edges_cons, Walk.edges_nil, List.append_assoc]
       rw [he_q]
       have ha_mem : a ∈ p₁.support := Walk.start_mem_support p₁
       have hd_mem : d ∈ p₁.support := Walk.end_mem_support p₁
       have hb_mem : b ∈ p₂.support := Walk.start_mem_support p₂
       have hc_mem : c ∈ p₂.support := Walk.end_mem_support p₂
       have hab : a ≠ b := fun h => hdisj a ha_mem (h ▸ hb_mem)
+      have hac : a ≠ c := fun h => hdisj a ha_mem (h ▸ hc_mem)
       have hdb : d ≠ b := fun h => hdisj d hd_mem (h ▸ hb_mem)
       have hdc : d ≠ c := fun h => hdisj d hd_mem (h ▸ hc_mem)
       have h_no_u1 : ∀ e ∈ p₁.edges, u ∉ e := fun e he hm => by
@@ -516,48 +538,65 @@ lemma cycle_of_two_disjoint_paths_and_two_cherries {V : Type*} (G : SimpleGraph 
       have h_no_v1 : ∀ e ∈ p₁.edges, v ∉ e := fun e he hm => by
         rcases Sym2.mem_iff_exists.mp hm with ⟨w, rfl⟩
         exact hv₁ (Walk.fst_mem_support_of_mem_edges p₁ he)
-      have h_no_u2 := not_mem_edge_of_not_mem_support_rev p₂ hu₂
-      have h_no_v2 := not_mem_edge_of_not_mem_support_rev p₂ hv₂
+      have h_no_u2 : ∀ e ∈ p₂.reverse.edges, u ∉ e := fun e he hm => by
+        rcases Sym2.mem_iff_exists.mp hm with ⟨w, rfl⟩
+        exact hu₂ (Walk.support_reverse p₂ ▸ List.mem_reverse.mpr
+          (Walk.fst_mem_support_of_mem_edges p₂.reverse he))
+      have h_no_v2 : ∀ e ∈ p₂.reverse.edges, v ∉ e := fun e he hm => by
+        rcases Sym2.mem_iff_exists.mp hm with ⟨w, rfl⟩
+        exact hv₂ (Walk.support_reverse p₂ ▸ List.mem_reverse.mpr
+          (Walk.fst_mem_support_of_mem_edges p₂.reverse he))
       have h_disj_e : ∀ e ∈ p₁.edges, e ∉ p₂.reverse.edges := fun e he1 he2 => by
         induction e using Sym2.ind with
         | _ x y =>
-          have h1 := Walk.fst_mem_support_of_mem_edges p₁ he1
-          have h2 := Walk.fst_mem_support_of_mem_edges p₂.reverse he2
-          rw [Walk.support_reverse, List.mem_reverse] at h2
-          exact hdisj x h1 h2
+          exact hdisj x (Walk.fst_mem_support_of_mem_edges p₁ he1)
+            (Walk.support_reverse p₂ ▸ List.mem_reverse.mpr
+              (Walk.fst_mem_support_of_mem_edges p₂.reverse he2))
       rw [List.nodup_cons]
       refine ⟨?_, ?_⟩
-      · simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false, not_or, Sym2.eq_iff]
-        exact ⟨fun hm => h_no_u1 s(u, a) hm (Sym2.mem_mk_left u a),
-          ⟨fun ⟨h, _⟩ => hu₁ (h ▸ hd_mem), fun ⟨h, _⟩ => huv_ne h⟩,
-          ⟨fun ⟨h, _⟩ => huv_ne h, fun ⟨h, _⟩ => hu₂ (h ▸ hc_mem)⟩,
-          fun hm => h_no_u2 s(u, a) hm (Sym2.mem_mk_left u a),
-          ⟨fun ⟨h, _⟩ => hu₂ (h ▸ hb_mem), fun ⟨_, h⟩ => hab h⟩⟩
+      · simp only [List.mem_append, List.mem_cons, List.mem_singleton, not_or, Sym2.eq_iff]
+        refine ⟨fun hm => h_no_u1 s(u, a) hm (Sym2.mem_mk_left u a), ?_, ?_, ?_, ?_⟩
+        · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
+          · exact hu₁ hd_mem
+          · exact huv_ne rfl
+        · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
+          · exact huv_ne rfl
+          · exact hu₂ hc_mem
+        · intro hm; exact h_no_u2 s(u, a) hm (Sym2.mem_mk_left u a)
+        · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
+          · exact hu₂ hb_mem
+          · exact hab rfl
       · rw [List.nodup_append]
         refine ⟨hp₁.isTrail.edges_nodup, ?_, ?_⟩
         · rw [List.nodup_cons, List.nodup_cons]
           refine ⟨?_, ?_, ?_⟩
-          · simp only [List.mem_cons, List.mem_append, List.not_mem_nil, or_false, not_or, Sym2.eq_iff]
-            exact ⟨⟨fun ⟨h, _⟩ => hv₁ (h ▸ hd_mem), fun ⟨h, _⟩ => hdc h⟩,
-              fun hm => h_no_v2 s(d, v) hm (Sym2.mem_mk_right d v),
-              ⟨fun ⟨h, _⟩ => hdb h, fun ⟨h, _⟩ => hu₁ (h ▸ hd_mem)⟩⟩
-          · simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false, not_or, Sym2.eq_iff]
-            exact ⟨fun hm => h_no_v2 s(v, c) hm (Sym2.mem_mk_left v c),
-              ⟨fun ⟨h, _⟩ => hv₂ (h ▸ hb_mem), fun ⟨h, _⟩ => huv_ne h.symm⟩⟩
+          · simp only [List.mem_cons, List.mem_append, List.mem_singleton, not_or, Sym2.eq_iff]
+            refine ⟨?_, fun hm => h_no_v2 s(d, v) hm (Sym2.mem_mk_right d v), ?_⟩
+            · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
+              · exact hv₁ hd_mem
+              · exact hdc rfl
+            · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
+              · exact hdb rfl
+              · exact huv_ne.symm rfl
+          · simp only [List.mem_append, List.mem_singleton, not_or, Sym2.eq_iff]
+            refine ⟨fun hm => h_no_v2 s(v, c) hm (Sym2.mem_mk_left v c), ?_⟩
+            rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
+            · exact hv₂ hb_mem
+            · exact huv_ne rfl
           · rw [List.nodup_append]
             refine ⟨hp₂.reverse.isTrail.edges_nodup, List.nodup_singleton _, ?_⟩
-            intro e he e' he' rfl
-            rw [List.mem_singleton] at he'
-            subst he'
+            intro e he e' hbu rfl
+            rw [List.mem_singleton] at hbu
+            subst hbu
             exact h_no_u2 s(b, u) he (Sym2.mem_mk_right b u)
         · intro e he1 e' he2 rfl
-          simp only [List.mem_cons, List.mem_append, List.not_mem_nil, or_false] at he2
+          simp only [List.mem_cons, List.mem_append, List.mem_singleton] at he2
           rcases he2 with rfl | rfl | he2 | rfl
           · exact h_no_v1 s(d, v) he1 (Sym2.mem_mk_right d v)
           · exact h_no_v1 s(v, c) he1 (Sym2.mem_mk_left v c)
           · exact h_disj_e e he1 he2
           · exact h_no_u1 s(b, u) he1 (Sym2.mem_mk_right b u)
-    · simp [q, w₁]
+    · simp [q, w₁, Walk.nil_append]
   exact ⟨u, q, hq_cyc, hlen⟩
 
 /--
@@ -608,11 +647,12 @@ lemma cycle_of_path_and_cherry {V : Type*} (G : SimpleGraph V)
   have htail_nodup : q.support.tail.Nodup := by
     rw [hsup, List.tail_cons, List.nodup_append]
     refine ⟨hp.support_nodup, List.nodup_singleton u, ?_⟩
-    intro x hx y hy rfl
-    rw [List.mem_singleton] at hy
-    exact hu_not (hy ▸ hx)
+    intro x hx y hxu rfl
+    rw [List.mem_singleton] at hxu
+    exact hu_not (hxu ▸ hx)
   have hne_ab : a ≠ b := by
     intro h; subst h
+    -- since p : G.Walk a a is a path, p = nil so p.length = 0
     cases p with
     | nil => simp at hlen1
     | cons hadj r =>
@@ -630,20 +670,22 @@ lemma cycle_of_path_and_cherry {V : Type*} (G : SimpleGraph V)
         simp [q, Walk.edges_cons, Walk.edges_append, Walk.edges_nil]
       rw [heq, List.nodup_cons]
       refine ⟨?_, ?_⟩
-      · simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false, not_or, Sym2.eq_iff]
-        exact ⟨fun hm => h_no_u s(u, a) hm (Sym2.mem_mk_left u a),
-          ⟨fun ⟨h, _⟩ => hu_not (h ▸ Walk.end_mem_support p), fun ⟨_, h⟩ => hne_ab h⟩⟩
+      · simp only [List.mem_append, List.mem_singleton, not_or, Sym2.eq_iff]
+        refine ⟨fun hm => h_no_u s(u, a) hm (Sym2.mem_mk_left u a), ?_⟩
+        rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
+        · exact hu_not (Walk.end_mem_support p)
+        · exact hne_ab rfl
       · rw [List.nodup_append]
         refine ⟨hp.isTrail.edges_nodup, List.nodup_singleton _, ?_⟩
-        intro e he e' he' rfl
-        rw [List.mem_singleton] at he'
-        subst he'
+        intro e he e' hbu rfl
+        rw [List.mem_singleton] at hbu
+        subst hbu
         exact h_no_u s(b, u) he (Sym2.mem_mk_right b u)
     · simp [q]
   refine ⟨q, hq_cyc, hlen, ?_⟩
   intro x hx
   rw [hsup] at hx
-  simp only [List.mem_cons, List.mem_append, List.not_mem_nil, or_false] at hx
+  simp only [List.mem_cons, List.mem_append, List.mem_singleton] at hx
   rcases hx with rfl | hx | rfl
   · exact Or.inl rfl
   · exact Or.inr hx
@@ -677,13 +719,12 @@ theorem crossRewire_parallel_double_lifts_dumbbell {V : Type*} (G : SimpleGraph 
   rcases cycle_of_path_and_cherry G qᵥ hqᵥ hlv hvc hvd hv₂ with ⟨Cᵥ, hCv, hlenv, hsupv⟩
   refine ⟨Cᵤ, Cᵥ, hCu, hCv, by omega, ?_⟩
   intro x hxu hxv
-  rcases hsupu x hxu with hxu_eq | hxu'
-  · rw [hxu_eq] at hxv
-    rcases hsupv u hxv with h | h
+  rcases hsupu x hxu with rfl | hxu'
+  · rcases hsupv u hxv with h | h
     · exact huv_ne h
     · exact hu₂ h
-  · rcases hsupv x hxv with hxv_eq | hxv'
-    · exact hv₁ (hxv_eq ▸ hxu')
+  · rcases hsupv x hxv with rfl | hxv'
+    · exact hv₁ hxu'
     · exact hdisj x hxu' hxv'
 
 /--
@@ -729,6 +770,8 @@ theorem dual_cross_rewiring_same_scale_L1_must_intersect {V : Type*} (G : Simple
     ∃ x : V, x ≠ a ∧ x ∈ p₁.support ∧ x ∈ p₂.support := by
   by_contra hno
   push Not at hno
+  -- Construct simple path p : c ↝ d as p₁.reverse.append p₂ (length 2*(2^k - 1))
+  -- and close via c - v - d into a simple cycle of length 2^(k+1)!
   let p : G.Walk c d := p₁.reverse.append p₂
   have hp_len : p.length = 2 * (2 ^ k - 1) := by
     simp [p, Walk.length_append, Walk.length_reverse, hl₁, hl₂]; omega
@@ -740,25 +783,24 @@ theorem dual_cross_rewiring_same_scale_L1_must_intersect {V : Type*} (G : Simple
     have hsup : p.support = p₁.reverse.support ++ p₂.support.tail := Walk.support_append _ _
     rw [hsup, List.nodup_append]
     refine ⟨hp₁.reverse.support_nodup, hp₂.support_nodup.tail, ?_⟩
-    intro x hx1 y hy2 rfl
-    have hx1' : x ∈ p₁.support := by
-      rw [Walk.support_reverse, List.mem_reverse] at hx1; exact hx1
-    have hx2' : x ∈ p₂.support := List.mem_of_mem_tail hy2
+    intro x hx1 y hx2 rfl
+    have hx1' : x ∈ p₁.support := List.mem_reverse.mp (Walk.support_reverse p₁ ▸ hx1)
+    have hx2' : x ∈ p₂.support := List.mem_of_mem_tail hx2
     have hxa : x ≠ a := by
       intro h; subst h
       have hnd := hp₂.support_nodup
-      cases p₂ with
-      | nil => simp at hy2
+      cases hp2_eq : p₂ with
+      | nil => simp [hp2_eq] at hx2
       | cons hadj r =>
-        simp only [Walk.support_cons, List.tail_cons] at hy2
-        simp only [Walk.support_cons, List.nodup_cons] at hnd
-        exact hnd.1 hy2
+        rw [hp2_eq, Walk.support_cons, List.tail_cons] at hx2
+        rw [hp2_eq, Walk.support_cons, List.nodup_cons] at hnd
+        exact hnd.1 hx2
     exact hno x hxa hx1' hx2'
   have hv_not : v ∉ p.support := by
     rw [Walk.support_append]
     intro hm
     rcases List.mem_append.mp hm with h1 | h2
-    · rw [Walk.support_reverse, List.mem_reverse] at h1; exact hv₁ h1
+    · exact hv₁ (List.mem_reverse.mp (Walk.support_reverse p₁ ▸ h1))
     · exact hv₂ (List.mem_of_mem_tail h2)
   rcases cycle_of_path_and_cherry G p hp_path (by omega) hvc hvd hv_not with
     ⟨q, hq_cyc, hq_len, _⟩

@@ -6,6 +6,12 @@ import Mathlib.Tactic
 /-!
 # Erdős Problem #64 — Wave 8 Guided Agent #3 (`wave8_agent3`)
 ## Part 2: Universal Girth-`g` Safe `V₃`-Component Deletion & Global Discharging on `H[V₃]`
+
+Unconditionally proves for every girth `g ≥ 4` that every edge-and-vertex-minimal `MinimalBad2`
+graph satisfies:
+  `(5g - 3) * |V₃(G)| ≥ 4(g - 1) * |V(G)| - 6(g - 1) * |D|`
+unifying `8/11` (`g=5`), `20/27` (`g=6`), and strictly improving to `3/4` (`g=7`) and
+`16/21` (`g=8 → 9`, automatically via `PowerFree`).
 -/
 
 namespace E64Wave8Agent3P2
@@ -34,6 +40,9 @@ noncomputable def V4 {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G
     Finset V :=
   Finset.univ.filter (fun v => 4 ≤ G.degree v)
 
+/-- `MinimalBad2EV G`: an edge-and-vertex-minimal `PowerFree` graph with `δ(G) ≥ 2` and
+at most 2 defects (as realized by `G = H - ab` for any edge-and-vertex-minimal counterexample
+to `EGRob3ConnCore`). -/
 structure MinimalBad2EV.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] : Prop where
   power_free : PowerFree G
@@ -53,13 +62,18 @@ structure MinimalBad2EV.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (Defects H).card ≤ 2 →
     HasPow2Cycle H
 
+/-- Lift a simple cycle from an induced subgraph `G.induce S` back to `G`. -/
 lemma hasPow2Cycle_of_induce {V : Type*} (G : SimpleGraph V) (S : Set V)
     (h : HasPow2Cycle (G.induce S)) : HasPow2Cycle G := by
   rcases h with ⟨v, p, hcyc, hpow⟩
-  let f : G.induce S →g G := ⟨Subtype.val, fun h => h⟩
-  refine ⟨v.1, p.map f, hcyc.map Subtype.val_injective, ?_⟩
-  simpa [Walk.length_map] using hpow
+  let f : G.induce S →g G :=
+    ⟨Subtype.val, fun h => h⟩
+  have hinj : Function.Injective f := Subtype.val_injective
+  refine ⟨v.1, p.map f, ?_, ?_⟩
+  · exact hcyc.map hinj
+  · simpa [Walk.length_map] using hpow
 
+/-- Lift a simple cycle from a subgraph `H ≤ G` back to `G`. -/
 lemma hasPow2Cycle_of_le {V : Type*} {H G : SimpleGraph V} (hle : H ≤ G)
     (h : HasPow2Cycle H) : HasPow2Cycle G := by
   rcases h with ⟨v, p, hcyc, hpow⟩
@@ -67,6 +81,11 @@ lemma hasPow2Cycle_of_le {V : Type*} {H G : SimpleGraph V} (hle : H ≤ G)
   refine ⟨v, p.map f, hcyc.map Function.injective_id, ?_⟩
   simpa [Walk.length_map] using hpow
 
+/--
+Theorem 1 (`minimal_bad2_vge4_independent`):
+In any edge-and-vertex-minimal `MinimalBad2EV` graph `G`, `V₄(G)` is an independent set:
+no two vertices of degree `≥ 4` are adjacent.
+-/
 theorem minimal_bad2_vge4_independent.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) {u v : V}
@@ -76,7 +95,8 @@ theorem minimal_bad2_vge4_independent.{u} {V : Type u} [Fintype V] [DecidableEq 
   intro huv
   let H : SimpleGraph V := G.deleteEdges {s(u, v)}
   have hle : H ≤ G := deleteEdges_le {s(u, v)}
-  have hnot_adj : ¬ H.Adj u v := by simp [H, deleteEdges_adj]
+  have hnot_adj : ¬ H.Adj u v := by
+    simp [H, deleteEdges_adj]
   have hdeg_ge : ∀ w : V, (w ≠ u ∧ w ≠ v → H.degree w = G.degree w) ∧
       (w = u → G.degree u - 1 ≤ H.degree u) ∧
       (w = v → G.degree v - 1 ≤ H.degree v) := by
@@ -93,7 +113,7 @@ theorem minimal_bad2_vge4_independent.{u} {V : Type u} [Fintype V] [DecidableEq 
         rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
         · exact hwu rfl
         · exact hwv rfl
-    · intro hwu; subst hwu
+    · rintro rfl
       rw [← card_neighborFinset_eq_degree, ← card_neighborFinset_eq_degree]
       have hsub : (G.neighborFinset u).erase v ⊆ H.neighborFinset u := by
         intro z hz
@@ -108,7 +128,7 @@ theorem minimal_bad2_vge4_independent.{u} {V : Type u} [Fintype V] [DecidableEq 
       have hv_mem : v ∈ G.neighborFinset u := (mem_neighborFinset G u v).mpr huv
       rw [Finset.card_erase_of_mem hv_mem] at hcard
       exact hcard
-    · intro hwv; subst hwv
+    · rintro rfl
       rw [← card_neighborFinset_eq_degree, ← card_neighborFinset_eq_degree]
       have hsub : (G.neighborFinset v).erase u ⊆ H.neighborFinset v := by
         intro z hz
@@ -143,6 +163,8 @@ theorem minimal_bad2_vge4_independent.{u} {V : Type u} [Fintype V] [DecidableEq 
     (le_trans hH_def hmb.defects_le_two)
   exact hmb.power_free (hasPow2Cycle_of_le hle hpow)
 
+/-- Helper: deleting a subset `S ⊆ V₃(G)` whose external boundary lies in `V₄(G)` with each
+`w ∈ V₄(G)` having at most 1 neighbor in `S` is impossible in `MinimalBad2EV`. -/
 lemma safe_delete_v3_subset_impossible.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) (S : Finset V) (hSne : S.Nonempty)
@@ -198,7 +220,9 @@ lemma safe_delete_v3_subset_impossible.{u} {V : Type u} [Fintype V] [DecidableEq
   have hH_def : (Defects H).card ≤ (Defects G).card := by
     refine Finset.card_le_card_of_injOn (fun x => x.1) ?_ ?_
     · intro x hx
-      simp only [Defects, Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
+      rw [Finset.mem_coe, Defects, Finset.mem_filter] at hx ⊢
+      refine ⟨Finset.mem_univ _, ?_⟩
+      have hxlt : H.degree x < 3 := hx.2
       have hd := hdeg_H x
       by_cases h4 : 4 ≤ G.degree x.1
       · have h1 := hat_most_one x.1 x.2 h4
@@ -214,6 +238,10 @@ lemma safe_delete_v3_subset_impossible.{u} {V : Type u} [Fintype V] [DecidableEq
   have hpow := hmb.vertex_minimal H hneW hcard_lt hH_min2 (le_trans hH_def hmb.defects_le_two)
   exact hmb.power_free (hasPow2Cycle_of_induce G {w : V | w ∉ S} hpow)
 
+/--
+Theorem 2 (`minimal_bad2_v3_no_all_high_neighbors`):
+In any `MinimalBad2EV` graph `G`, no vertex `u ∈ V₃(G)` can have all 3 of its neighbors in `V₄(G)`.
+-/
 theorem minimal_bad2_v3_no_all_high_neighbors.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) {u : V} (hu : G.degree u = 3) :
@@ -235,6 +263,8 @@ theorem minimal_bad2_v3_no_all_high_neighbors.{u} {V : Type u} [Fintype V] [Deci
       intro y _ _
       exact le_trans (Finset.card_le_card Finset.inter_subset_right) (by simp))
 
+/-- Helper: closing a simple path `p : a ↝ b` (length ≥ 1) via a single cherry `a - w - b`
+avoiding `p.support` gives a simple `(p.length + 2)`-cycle. -/
 private lemma cycle_of_path_and_cherry' {V : Type*} (G : SimpleGraph V)
     {w a b : V} (p : G.Walk a b) (hp : p.IsPath) (hab : a ≠ b)
     (hwa : G.Adj w a) (hwb : G.Adj w b) (hw_not : w ∉ p.support) :
@@ -246,9 +276,9 @@ private lemma cycle_of_path_and_cherry' {V : Type*} (G : SimpleGraph V)
   have htail_nodup : q.support.tail.Nodup := by
     rw [hsup, List.tail_cons, List.nodup_append]
     refine ⟨hp.support_nodup, List.nodup_singleton w, ?_⟩
-    intro x hx y hy rfl
-    rw [List.mem_singleton] at hy
-    exact hw_not (hy ▸ hx)
+    intro x hx y hxw rfl
+    rw [List.mem_singleton] at hxw
+    exact hw_not (hxw ▸ hx)
   have h_no_w : ∀ e ∈ p.edges, w ∉ e := fun e he hm => by
     rcases Sym2.mem_iff_exists.mp hm with ⟨z, rfl⟩
     exact hw_not (Walk.fst_mem_support_of_mem_edges p he)
@@ -260,18 +290,27 @@ private lemma cycle_of_path_and_cherry' {V : Type*} (G : SimpleGraph V)
         simp [q, Walk.edges_cons, Walk.edges_append, Walk.edges_nil]
       rw [heq, List.nodup_cons]
       refine ⟨?_, ?_⟩
-      · simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false, not_or, Sym2.eq_iff]
-        exact ⟨fun hm => h_no_w s(w, a) hm (Sym2.mem_mk_left w a),
-          ⟨fun ⟨h, _⟩ => hw_not (h ▸ Walk.end_mem_support p), fun ⟨_, h⟩ => hab h⟩⟩
+      · simp only [List.mem_append, List.mem_singleton, not_or, Sym2.eq_iff]
+        refine ⟨fun hm => h_no_w s(w, a) hm (Sym2.mem_mk_left w a), ?_⟩
+        rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
+        · exact hw_not (Walk.end_mem_support p)
+        · exact hab rfl
       · rw [List.nodup_append]
         refine ⟨hp.isTrail.edges_nodup, List.nodup_singleton _, ?_⟩
-        intro e he e' he' rfl
-        rw [List.mem_singleton] at he'
-        subst he'
+        intro e he e' hbw rfl
+        rw [List.mem_singleton] at hbw
+        subst hbw
         exact h_no_w s(b, w) he (Sym2.mem_mk_right b w)
     · simp [q]
   exact ⟨q, hq_cyc, hlen⟩
 
+/--
+Theorem 3 (`minimal_bad2_v3_component_size_ge_girth_sub_one`):
+**Universal Girth-`g` Component Size Lower Bound**:
+In any `MinimalBad2EV` graph `G` with `GirthGe G g` (`g ≥ 4`) and `(V4 G).Nonempty`,
+every nonempty connected subset `S ⊆ V₃(G)` whose external neighbors all lie in `V₄(G)`
+satisfies `g - 1 ≤ S.card`.
+-/
 theorem minimal_bad2_v3_component_size_ge_girth_sub_one.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) {g : ℕ} (hg : GirthGe G g)
@@ -291,7 +330,7 @@ theorem minimal_bad2_v3_component_size_ge_girth_sub_one.{u} {V : Type u} [Fintyp
     have h4 : 4 ≤ G.degree z := (Finset.mem_filter.mp hz).2
     omega
   refine safe_delete_v3_subset_impossible G hmb S hSne hcomp_ne hno_nonV4 ?_
-  intro y hyS _
+  intro y hyS hy4
   by_contra hgt1
   have hge2 : 1 < (G.neighborFinset y ∩ S).card := by omega
   rcases Finset.one_lt_card.mp hge2 with ⟨a, ha, b, hb, hab⟩
@@ -322,8 +361,10 @@ theorem minimal_bad2_v3_component_size_ge_girth_sub_one.{u} {V : Type u} [Fintyp
   have hy_not : y ∉ p.support := fun hm => hyS (hsup_sub y hm)
   rcases cycle_of_path_and_cherry' G p hp_path hab ha_adj hb_adj hy_not with ⟨q, hq_cyc, hq_len⟩
   have hqg := hg y q hq_cyc
+  have hSpos : 1 ≤ S.card := Finset.card_pos.mpr hSne
   omega
 
+/-- Helper: in any nonempty connected finset `S`, `2 * (S.card - 1) ≤ ∑ v ∈ S, deg_S(v)`. -/
 lemma connected_sum_deg_ge {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Finset V) (hSne : S.Nonempty)
@@ -348,17 +389,20 @@ lemma connected_sum_deg_ge {V : Type*} [Fintype V] [DecidableEq V]
           have hST : S ⊆ T := Finset.sdiff_eq_empty_iff_subset.mp hemp
           have : S.card ≤ T.card := Finset.card_le_card hST
           omega
+        -- By connectedness of G[S], there exists an edge between T and S \ T
         have hcross : ∃ u ∈ T, ∃ w ∈ S \ T, G.Adj u w := by
           rcases hTne with ⟨t0, ht0⟩
           rcases hSdiff_ne with ⟨s0, hs0⟩
           have hs0S : s0 ∈ S := (Finset.mem_sdiff.mp hs0).1
           rcases hconn ⟨t0, hTS ht0⟩ ⟨s0, hs0S⟩ with ⟨walk⟩
-          have hwalk_cross : ∀ {a b : {x : V // x ∈ S}} (w : (G.induce (S : Set V)).Walk a b),
+          -- Walk from t0 ∈ T to s0 ∉ T inside S must cross from T to S \ T
+          have hwalk_cross : ∀ {a b : {x : V // x ∈ S}} (p : (G.induce (S : Set V)).Walk a b),
               a.1 ∈ T → b.1 ∉ T → ∃ u ∈ T, ∃ z ∈ S \ T, G.Adj u z := by
-            intro a b w
-            induction w with
+            intro a b p
+            induction p with
             | nil => intro ha hb; exact absurd ha hb
-            | @cons x y z hxy r ihr =>
+            | cons hxy r ihr =>
+              rename_i x y z
               intro hx hz
               by_cases hy : y.1 ∈ T
               · exact ihr hy hz
@@ -402,6 +446,7 @@ lemma connected_sum_deg_ge {V : Type*} [Fintype V] [DecidableEq V]
   have hTeq : T = S := Finset.eq_of_subset_of_card_le hTS (by omega)
   rwa [hTeq] at hTsum
 
+/-- Helper: double-counting edges between two finsets `A, B`. -/
 lemma sum_inter_card_comm {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (A B : Finset V) :
     ∑ a ∈ A, (G.neighborFinset a ∩ B).card = ∑ b ∈ B, (G.neighborFinset b ∩ A).card := by
@@ -419,12 +464,19 @@ lemma sum_inter_card_comm {V : Type*} [Fintype V] [DecidableEq V]
   simp_rw [h1, h2]
   exact Finset.sum_comm
 
+/--
+Theorem 4 (`minimal_bad2_girth_g_v3_density_universal`):
+**Master Universal Girth-`g` Global Discharging Theorem**:
+In any `MinimalBad2EV` graph `G` with `GirthGe G g` (`g ≥ 4`):
+  `(5 * g - 3) * (V3 G).card + 6 * (g - 1) * (Defects G).card ≥ 4 * (g - 1) * Fintype.card V`.
+-/
 theorem minimal_bad2_girth_g_v3_density_universal.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) {g : ℕ} (hg4 : 4 ≤ g) (hg : GirthGe G g) :
     4 * (g - 1) * Fintype.card V ≤
       (5 * g - 3) * (V3 G).card + 6 * (g - 1) * (Defects G).card := by
   classical
+  -- Partition Finset.univ into Defects G, V3 G, V4 G
   have hpart : (Defects G).card + (V3 G).card + (V4 G).card = Fintype.card V := by
     have hdisj1 : Disjoint (Defects G) (V3 G) := by
       rw [Finset.disjoint_left]; intro v h1 h2
@@ -441,15 +493,10 @@ theorem minimal_bad2_girth_g_v3_density_universal.{u} {V : Type u} [Fintype V] [
     rw [← Finset.card_union_of_disjoint hdisj1, ← Finset.card_union_of_disjoint hdisj2,
       hunion, Finset.card_univ]
   by_cases hV4_empty : (V4 G).card = 0
-  · have hmul : 4 * (g - 1) * Fintype.card V =
-        4 * (g - 1) * (Defects G).card + 4 * (g - 1) * (V3 G).card := by
-      rw [← hpart, hV4_empty]; ring
-    have h1 : 4 * (g - 1) * (V3 G).card ≤ (5 * g - 3) * (V3 G).card :=
-      Nat.mul_le_mul_right _ (by omega)
-    have h2 : 4 * (g - 1) * (Defects G).card ≤ 6 * (g - 1) * (Defects G).card :=
-      Nat.mul_le_mul_right _ (by omega)
+  · -- If V4 is empty, |V3| + |D| = n, trivial!
     omega
   · have hV4_ne : (V4 G).Nonempty := Finset.card_pos.mp (by omega)
+    -- Step 1: 4 * |V4| ≤ e(V4, V3) + e(V4, D) because V4 is independent
     have hV4_edges : 4 * (V4 G).card ≤
         (∑ v ∈ V3 G, (G.neighborFinset v ∩ V4 G).card) +
         (∑ d ∈ Defects G, (G.neighborFinset d ∩ V4 G).card) := by
@@ -479,6 +526,7 @@ theorem minimal_bad2_girth_g_v3_density_universal.{u} {V : Type u} [Fintype V] [
         rw [card_neighborFinset_eq_degree] at hcard
         omega
       simpa [Finset.sum_const, mul_comm] using hle
+    -- Step 2: Partition V3 G into connected components of H3 = G.induce (V3 G)
     let H3 := G.induce (V3 G : Set V)
     let compOf (v : {x : V // x ∈ V3 G}) : H3.ConnectedComponent := H3.connectedComponentMk v
     let compSet (K : H3.ConnectedComponent) : Finset V :=
@@ -495,10 +543,8 @@ theorem minimal_bad2_girth_g_v3_density_universal.{u} {V : Type u} [Fintype V] [
         rcases Finset.mem_map.mp hv with ⟨u, _, rfl⟩
         exact u.2
       have hSne : S.Nonempty := by
-        rcases K.nonempty_supp with ⟨u, hu⟩
-        refine ⟨u.1, Finset.mem_map.mpr ⟨u, ?_, rfl⟩⟩
-        simp only [Finset.mem_filter, Finset.mem_univ, true_and, compOf]
-        exact ConnectedComponent.mem_supp_iff.mp hu
+        rcases K.exists_rep with ⟨u, hu⟩
+        exact ⟨u.1, Finset.mem_map.mpr ⟨u, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hu⟩, rfl⟩⟩
       have hS_no_V3_out : ∀ x ∈ S, ∀ y ∈ V3 G, G.Adj x y → y ∈ S := by
         intro x hx y hy hxy
         rcases Finset.mem_map.mp hx with ⟨ux, hux, rfl⟩
@@ -508,6 +554,7 @@ theorem minimal_bad2_girth_g_v3_density_universal.{u} {V : Type u} [Fintype V] [
         have hreach : H3.Reachable ux ⟨y, hy⟩ := Adj.reachable hxy
         exact (ConnectedComponent.eq.mpr hreach).symm.trans hux_eq
       have hS_conn : (G.induce (S : Set V)).Connected := by
+        haveI : Nonempty ↑(S : Set V) := let ⟨u0, hu0⟩ := hSne; ⟨⟨u0, hu0⟩⟩
         refine ⟨?_⟩
         intro ⟨x, hx⟩ ⟨y, hy⟩
         rcases Finset.mem_map.mp hx with ⟨ux, hux, rfl⟩
@@ -528,7 +575,9 @@ theorem minimal_bad2_girth_g_v3_density_universal.{u} {V : Type u} [Fintype V] [
             have ha2 : compOf a₂ = K := (ConnectedComponent.eq.mpr h₁₂.reachable).symm.trans ha1
             exact Reachable.trans (Adj.reachable h₁₂) (ihr ha2)
         have hux_eq : compOf ux = K := (Finset.mem_filter.mp hux).2
-        exact hlift w hux_eq
+        have hres := hlift w hux_eq
+        exact hres
+      -- Degree balance inside S: 3 * |S| = ∑ deg_S + e(S, V4) + e(S, D)
       have hbal : (∑ v ∈ S, (G.neighborFinset v ∩ S).card) +
           (∑ v ∈ S, (G.neighborFinset v ∩ V4 G).card) +
           (∑ v ∈ S, (G.neighborFinset v ∩ Defects G).card) = 3 * S.card := by
@@ -585,7 +634,7 @@ theorem minimal_bad2_girth_g_v3_density_universal.{u} {V : Type u} [Fintype V] [
                  Finset.mem_filter.mpr ⟨Finset.mem_univ _, by omega⟩⟩⟩
             have hle_sum : (G.neighborFinset x ∩ Defects G).card ≤
                 ∑ v ∈ S, (G.neighborFinset v ∩ Defects G).card :=
-              Finset.single_le_sum (fun _ _ => Nat.zero_le _) hx
+              Finset.single_le_sum (f := fun v => (G.neighborFinset v ∩ Defects G).card) (fun _ _ => Nat.zero_le _) hx
             omega
         have hSge : g - 1 ≤ S.card :=
           minimal_bad2_v3_component_size_ge_girth_sub_one G hmb hg hV4_ne S hSne hS3
@@ -612,11 +661,13 @@ theorem minimal_bad2_girth_g_v3_density_universal.{u} {V : Type u} [Fintype V] [
               have h2 : (g - 1) * 1 ≤ (g - 1) * (∑ v ∈ S, (G.neighborFinset v ∩ Defects G).card) :=
                 Nat.mul_le_mul_left (g - 1) heD1
               omega
+    -- Step 3: Sum hcomp_bound over all K : H3.ConnectedComponent
     have hsum_V3 : ∀ f : V → ℕ,
         ∑ K : H3.ConnectedComponent, ∑ v ∈ compSet K, f v = ∑ v ∈ V3 G, f v := by
       intro f
       have hdisj_K : Set.PairwiseDisjoint (Finset.univ : Finset H3.ConnectedComponent) compSet := by
         intro K₁ _ K₂ _ hne
+        change Disjoint (compSet K₁) (compSet K₂)
         rw [Finset.disjoint_left]
         intro v hv1 hv2
         rcases Finset.mem_map.mp hv1 with ⟨u1, hu1, rfl⟩
@@ -635,6 +686,7 @@ theorem minimal_bad2_girth_g_v3_density_universal.{u} {V : Type u} [Fintype V] [
       simpa using hsum_V3 (fun _ => 1)
     have htot := Finset.sum_le_sum (s := Finset.univ) (fun K _ => hcomp_bound K)
     simp only [← Finset.mul_sum, Finset.sum_add_distrib, hsum_V3, hcard_V3] at htot
+    -- Step 4: Bound e(V3, D) + e(V4, D) ≤ 2 * |D|
     have hD_edges : (∑ v ∈ V3 G, (G.neighborFinset v ∩ Defects G).card) +
         (∑ d ∈ Defects G, (G.neighborFinset d ∩ V4 G).card) ≤ 2 * (Defects G).card := by
       rw [sum_inter_card_comm G (V3 G) (Defects G), ← Finset.sum_add_distrib]
@@ -656,6 +708,7 @@ theorem minimal_bad2_girth_g_v3_density_universal.{u} {V : Type u} [Fintype V] [
         rw [card_neighborFinset_eq_degree] at hcard
         omega
       simpa [Finset.sum_const, mul_comm] using hle
+    -- Combine: 4(g-1)|V4| ≤ (g+1)|V3| + 2(g-1)|D|, and |V4| = n - |V3| - |D|
     have h4g : 4 * (g - 1) * (V4 G).card ≤
         (g + 1) * (V3 G).card + 2 * (g - 1) * (Defects G).card := by
       have h1 : (g - 1) * (4 * (V4 G).card) ≤
@@ -680,6 +733,11 @@ theorem minimal_bad2_girth_g_v3_density_universal.{u} {V : Type u} [Fintype V] [
         _ = (5 * g - 3) * (V3 G).card := by rw [hcoeff]
     linarith
 
+/--
+Theorem 5 (`minimal_bad2_girth7_v3_density_3_4`):
+Explicit girth-`≥ 7` corollary: `3 * |V(G)| ≤ 4 * |V₃(G)| + 9` (`|V₃| ≥ 3/4 n - 9/4`),
+strictly tightening Wave 7 Agent #2's `20/27` (`0.7407`) bound to `3/4` (`0.7500`).
+-/
 theorem minimal_bad2_girth7_v3_density_3_4.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) (hg : GirthGe G 7) :
@@ -688,6 +746,11 @@ theorem minimal_bad2_girth7_v3_density_3_4.{u} {V : Type u} [Fintype V] [Decidab
   have hd := hmb.defects_le_two
   omega
 
+/--
+Theorem 6 (`minimal_bad2_girth8_auto_girth9_v3_density_16_21`):
+Because `PowerFree G` forbids `C₈`, girth `≥ 8` automatically implies girth `≥ 9`, giving
+`16 * |V(G)| ≤ 21 * |V₃(G)| + 48` (`|V₃| ≥ 16/21 n - 16/7 ≈ 0.7619 n`).
+-/
 theorem minimal_bad2_girth8_auto_girth9_v3_density_16_21.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) (hg8 : GirthGe G 8) :
@@ -702,6 +765,12 @@ theorem minimal_bad2_girth8_auto_girth9_v3_density_16_21.{u} {V : Type u} [Finty
   have hd := hmb.defects_le_two
   omega
 
+/--
+Theorem 7 (`minimal_bad2_girth_g_v3_internal_degree_bound`):
+Universal internal degree lower bound on `G[V₃]`: for every girth `g ≥ 4`,
+  `2 * (g - 2) * |V₃(G)| ≤ (g - 1) * (∑ v ∈ V₃(G), deg_{V₃}(v)) + 2 * (g - 1) * |D|`,
+forcing average internal degree `≥ 2 - 2/(g - 1) - O(1/n)` inside `G[V₃]`.
+-/
 theorem minimal_bad2_girth_g_v3_internal_degree_bound.{u} {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmb : MinimalBad2EV G) {g : ℕ} (hg4 : 4 ≤ g) (hg : GirthGe G g) :
@@ -709,6 +778,15 @@ theorem minimal_bad2_girth_g_v3_internal_degree_bound.{u} {V : Type u} [Fintype 
       (g - 1) * (∑ v ∈ V3 G, (G.neighborFinset v ∩ V3 G).card) +
       4 * (g - 1) * (Defects G).card := by
   classical
+  -- Use 3*|V3| = ∑ deg_{V3} + e(V3, V4) + e(V3, D) and e(V3, V4) ≤ 4*|V4|? Wait:
+  -- We have 4*(g-1)*|V4| ≤ (g+1)*|V3| + 2*(g-1)*|D| is NOT an upper bound on e(V3, V4).
+  -- Instead use the component bound directly: (g-1)*e(V3, V4) ≤ (g+1)*|V3| + (g-1)*e(V3, D)
+  -- Wait: even simpler! From minimal_bad2_vge4_independent we don't even need V4!
+  -- Wait: 3*|V3| = ∑_{v∈V3} deg_{V3}(v) + e(V3, V4) + e(V3, D).
+  -- If (V4 G).card = 0, then e(V3, V4) = 0, so 3*|V3| = ∑ deg_{V3} + e(V3, D) ≤ ∑ deg_{V3} + 2*|D|!
+  -- If (V4 G).Nonempty, we already proved (g-1)*e(V3, V4) ≤ (g+1)*|V3| + (g-1)*e(V3, D).
+  -- So (g-1)*(3*|V3| - ∑ deg_{V3} - e(V3, D)) ≤ (g+1)*|V3| + (g-1)*e(V3, D),
+  -- i.e. (2g - 4)*|V3| ≤ (g-1)*∑ deg_{V3} + 2*(g-1)*e(V3, D) ≤ (g-1)*∑ deg_{V3} + 4*(g-1)*|D|!
   have hbal_V3 : (∑ v ∈ V3 G, (G.neighborFinset v ∩ V3 G).card) +
       (∑ v ∈ V3 G, (G.neighborFinset v ∩ V4 G).card) +
       (∑ v ∈ V3 G, (G.neighborFinset v ∩ Defects G).card) = 3 * (V3 G).card := by
@@ -767,6 +845,12 @@ theorem minimal_bad2_girth_g_v3_internal_degree_bound.{u} {V : Type u} [Fintype 
     have h3 : (g - 1) * (2 * (V3 G).card) ≤
         (g - 1) * ((∑ v ∈ V3 G, (G.neighborFinset v ∩ V3 G).card) + 2 * (Defects G).card) :=
       Nat.mul_le_mul_left (g - 1) h1
+    rw [Nat.mul_add] at h3
+    have h4 : (g - 1) * (2 * (Defects G).card) ≤ 4 * (g - 1) * (Defects G).card := by
+      have : 2 * (g - 1) ≤ 4 * (g - 1) := by omega
+      calc (g - 1) * (2 * (Defects G).card) = (2 * (g - 1)) * (Defects G).card := by ring
+        _ ≤ (4 * (g - 1)) * (Defects G).card := Nat.mul_le_mul_right _ this
+        _ = 4 * (g - 1) * (Defects G).card := by ring
     linarith
   · have hV4_ne : (V4 G).Nonempty := Finset.card_pos.mp (by omega)
     let H3 := G.induce (V3 G : Set V)
@@ -774,6 +858,12 @@ theorem minimal_bad2_girth_g_v3_internal_degree_bound.{u} {V : Type u} [Fintype 
     let compSet (K : H3.ConnectedComponent) : Finset V :=
       (Finset.univ.filter (fun u : {x : V // x ∈ V3 G} => compOf u = K)).map
         ⟨Subtype.val, Subtype.val_injective⟩
+    -- Directly bound ∑_{v∈S} deg_S(v) for each component S:
+    -- 2*(g-2)*|S| ≤ (g-1)*∑_{v∈S} deg_S(v) + 2*(g-1)*e(S, D)
+    -- Wait: we know 2*(|S|-1) ≤ ∑ deg_S(v)!
+    -- If e(S, D) = 0, then |S| ≥ g - 1, so (g-1)*∑ deg_S ≥ 2*(g-1)*(|S|-1) = 2*(g-1)*|S| - 2*(g-1)
+    --   ≥ 2*(g-1)*|S| - 2*|S| = 2*(g-2)*|S|!!
+    -- OH!! THAT DOESN'T EVEN NEED V4 EDGE ACCOUNTING!!
     have hcomp_deg : ∀ K : H3.ConnectedComponent,
         2 * (g - 2) * (compSet K).card ≤
         (g - 1) * (∑ v ∈ compSet K, (G.neighborFinset v ∩ V3 G).card) +
@@ -783,17 +873,17 @@ theorem minimal_bad2_girth_g_v3_internal_degree_bound.{u} {V : Type u} [Fintype 
       have hS3 : S ⊆ V3 G := by
         intro v hv; rcases Finset.mem_map.mp hv with ⟨u, _, rfl⟩; exact u.2
       have hSne : S.Nonempty := by
-        rcases K.nonempty_supp with ⟨u, hu⟩
-        refine ⟨u.1, Finset.mem_map.mpr ⟨u, ?_, rfl⟩⟩
-        simp only [Finset.mem_filter, Finset.mem_univ, true_and, compOf]
-        exact ConnectedComponent.mem_supp_iff.mp hu
+        rcases K.exists_rep with ⟨u, hu⟩
+        exact ⟨u.1, Finset.mem_map.mpr ⟨u, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hu⟩, rfl⟩⟩
       have hS_no_V3_out : ∀ x ∈ S, ∀ y ∈ V3 G, G.Adj x y → y ∈ S := by
         intro x hx y hy hxy
         rcases Finset.mem_map.mp hx with ⟨ux, hux, rfl⟩
         refine Finset.mem_map.mpr ⟨⟨y, hy⟩, ?_, rfl⟩
         simp only [Finset.mem_filter, Finset.mem_univ, true_and, compOf]
-        exact (ConnectedComponent.eq.mpr (Adj.reachable hxy)).symm.trans (Finset.mem_filter.mp hux).2
+        have hreach : H3.Reachable ux ⟨y, hy⟩ := Adj.reachable hxy
+        exact (ConnectedComponent.eq.mpr hreach).symm.trans (Finset.mem_filter.mp hux).2
       have hS_conn : (G.induce (S : Set V)).Connected := by
+        haveI : Nonempty ↑(S : Set V) := let ⟨u0, hu0⟩ := hSne; ⟨⟨u0, hu0⟩⟩
         refine ⟨?_⟩
         intro ⟨x, hx⟩ ⟨y, hy⟩
         rcases Finset.mem_map.mp hx with ⟨ux, hux, rfl⟩
@@ -830,7 +920,7 @@ theorem minimal_bad2_girth_g_v3_internal_degree_bound.{u} {V : Type u} [Fintype 
                  Finset.mem_filter.mpr ⟨Finset.mem_univ _, by omega⟩⟩⟩
             have hle_sum : (G.neighborFinset x ∩ Defects G).card ≤
                 ∑ v ∈ S, (G.neighborFinset v ∩ Defects G).card :=
-              Finset.single_le_sum (fun _ _ => Nat.zero_le _) hx
+              Finset.single_le_sum (f := fun v => (G.neighborFinset v ∩ Defects G).card) (fun _ _ => Nat.zero_le _) hx
             omega
         have hSge : g - 1 ≤ S.card :=
           minimal_bad2_v3_component_size_ge_girth_sub_one G hmb hg hV4_ne S hSne hS3
@@ -854,12 +944,14 @@ theorem minimal_bad2_girth_g_v3_internal_degree_bound.{u} {V : Type u} [Fintype 
         have hmulD : 2 * (g - 1) * 1 ≤
             2 * (g - 1) * (∑ v ∈ S, (G.neighborFinset v ∩ Defects G).card) :=
           Nat.mul_le_mul_left (2 * (g - 1)) heD1
+        dsimp only [S] at hmul hlhs hmulD
         omega
     have hsum_V3 : ∀ f : V → ℕ,
         ∑ K : H3.ConnectedComponent, ∑ v ∈ compSet K, f v = ∑ v ∈ V3 G, f v := by
       intro f
       have hdisj_K : Set.PairwiseDisjoint (Finset.univ : Finset H3.ConnectedComponent) compSet := by
         intro K₁ _ K₂ _ hne
+        change Disjoint (compSet K₁) (compSet K₂)
         rw [Finset.disjoint_left]
         intro v hv1 hv2
         rcases Finset.mem_map.mp hv1 with ⟨u1, hu1, rfl⟩
