@@ -558,7 +558,7 @@ theorem nbWalks_rec_card (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
         Finset.mem_erase, G.mem_neighborFinset] at hy
       simp only [bad, S, Finset.mem_filter, Finset.mem_sigma, G.mem_neighborFinset,
         nbWalks, mem_finsetWalkLength_iff, Walk.snd_cons]
-      refine ⟨⟨hy.2.2, ⟨by simp [hy.1.1], ?_⟩⟩, rfl⟩
+      refine ⟨⟨hy.2.2, ⟨by simp [hy.1.1], ?_⟩⟩, trivial⟩
       cases p with
       | nil => simp at hy; omega
       | cons h₃ rest₃ =>
@@ -719,32 +719,35 @@ private theorem reverse_snd_cons_cons {G : SimpleGraph V} {x y z w : V}
   | cons _ _ => simp [Walk.cons_append]
 
 omit [Fintype V] [DecidableEq V] in
+private theorem isNonBacktracking_append_cons_iff {G : SimpleGraph V} :
+    ∀ {x y z w : V} (q : G.Walk x y) (h₁ : G.Adj y z) (r : G.Walk z w),
+      IsNonBacktracking q → IsNonBacktracking (Walk.cons h₁ r) → 1 ≤ q.length →
+      (IsNonBacktracking (q.append (Walk.cons h₁ r)) ↔ z ≠ q.reverse.snd) := by
+  intro x y z w q
+  induction q with
+  | nil => intro _ _ _ _ hqlen; simp at hqlen
+  | cons hyz qrest ih =>
+      intro h₁ r hq hr _
+      cases qrest with
+      | nil =>
+          simp only [Walk.cons_append, Walk.nil_append, IsNonBacktracking, Walk.reverse_cons,
+            Walk.reverse_nil, Walk.nil_append, Walk.snd_cons]
+          exact ⟨fun h => Ne.symm h.1, fun h => ⟨Ne.symm h, hr⟩⟩
+      | cons hzw qrest₂ =>
+          simp only [Walk.cons_append, IsNonBacktracking] at hq ⊢
+          have ih' := ih h₁ r hq.2 hr (by simp)
+          rw [reverse_snd_cons_cons hyz hzw qrest₂]
+          exact ⟨fun h => ih'.mp h.2, fun h => ⟨hq.1, ih'.mpr h⟩⟩
+
+omit [Fintype V] [DecidableEq V] in
 private theorem isCyclicallyNonBacktracking_iff_snd_ne_rev_snd {G : SimpleGraph V} {v : V}
     (p : G.Walk v v) (hnb : IsNonBacktracking p) (hlen : 1 ≤ p.length) :
     IsCyclicallyNonBacktracking p ↔ p.snd ≠ p.reverse.snd := by
   cases p with
   | nil => simp at hlen
   | cons h₁ rest =>
-      rename_i a
-      have hgen : ∀ {x : V} (q : G.Walk x v),
-          IsNonBacktracking q → 1 ≤ q.length →
-          (IsNonBacktracking (q.append (Walk.cons h₁ rest)) ↔ a ≠ q.reverse.snd) := by
-        intro x q
-        induction q with
-        | nil => intro _ hqlen; simp at hqlen
-        | cons hyz qrest ih =>
-            intro hq _
-            cases qrest with
-            | nil =>
-                simp only [Walk.cons_append, Walk.nil_append, IsNonBacktracking, Walk.reverse_cons,
-                  Walk.reverse_nil, Walk.nil_append, Walk.snd_cons]
-                exact ⟨fun h => Ne.symm h.1, fun h => ⟨Ne.symm h, hnb⟩⟩
-            | cons hzw qrest₂ =>
-                simp only [Walk.cons_append, IsNonBacktracking] at hq ⊢
-                have ih' := ih hq.2 (by simp)
-                rw [reverse_snd_cons_cons hyz hzw qrest₂]
-                exact ⟨fun h => ih'.mp h.2, fun h => ⟨hq.1, ih'.mpr h⟩⟩
-      simpa [IsCyclicallyNonBacktracking, Walk.snd_cons] using hgen (Walk.cons h₁ rest) hnb hlen
+      simpa [IsCyclicallyNonBacktracking, Walk.snd_cons] using
+        isNonBacktracking_append_cons_iff (Walk.cons h₁ rest) h₁ rest hnb hnb hlen
 
 omit [Fintype V] [DecidableEq V] in
 private theorem isNonBacktracking_append_single {G : SimpleGraph V} :
@@ -818,14 +821,18 @@ theorem one_step_tail_strip (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
       have hsnd_mem : q.snd ∈ G.neighborFinset w := by
         cases q with
         | nil => simp at hqpos
-        | cons h₁ _ => exact (G.mem_neighborFinset w _).mpr h₁
+        | cons h₁ _ =>
+            simp only [Walk.snd_cons]
+            exact (G.mem_neighborFinset w _).mpr h₁
       have hrev_mem : q.reverse.snd ∈ G.neighborFinset w := by
         cases hrv : q.reverse with
         | nil =>
             have h0 := congrArg Walk.length hrv
             simp only [Walk.length_reverse, Walk.length_nil] at h0
             omega
-        | cons h₁ _ => exact (G.mem_neighborFinset w _).mpr h₁
+        | cons h₁ _ =>
+            simp only [Walk.snd_cons]
+            exact (G.mem_neighborFinset w _).mpr h₁
       have hiff := isCyclicallyNonBacktracking_iff_snd_ne_rev_snd q hqnb hqpos
       by_cases hcyc : IsCyclicallyNonBacktracking q
       · have hne : q.snd ≠ q.reverse.snd := hiff.mp hcyc
@@ -913,7 +920,8 @@ theorem one_step_tail_strip (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
         by_contra hne; exact hnotcyc hne
       cases p with
       | nil => simp at hplen
-      | @cons _ w _ huw rest =>
+      | cons huw rest =>
+          rename_i w
           have hrev_len : rest.reverse.length = k + 1 := by
             simp only [Walk.length_reverse]
             simp only [Walk.length_cons] at hplen
@@ -921,14 +929,15 @@ theorem one_step_tail_strip (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
           cases hrv : rest.reverse with
           | nil =>
               rw [hrv] at hrev_len; simp at hrev_len
-          | @cons _ w' _ huw' qrev =>
+          | cons huw' qrev =>
+              rename_i w'
               have hww' : w' = w := by
                 have h1 : (Walk.cons huw rest).reverse.snd = w' := by
                   rw [Walk.reverse_cons, hrv]; simp [Walk.cons_append]
                 have h2 : (Walk.cons huw rest).snd = w := rfl
                 rw [h2, h1] at hsnd_eq
                 exact hsnd_eq.symm
-              subst hww'
+              subst w'
               let q : G.Walk w w := qrev.reverse
               have hrest_eq : rest = q.append (Walk.cons huw'.symm Walk.nil) := by
                 have := congrArg Walk.reverse hrv
@@ -1046,12 +1055,14 @@ theorem taillessCount_eq_chebMat_trace (G : SimpleGraph V) [DecidableRel G.Adj] 
               have h1not : 1 ∉ Finset.Icc 2 (r + 1) := by simp
               rw [Finset.sum_insert h1not]
               congr 1
-              · congr 2; omega
+              · rw [show 2 * (r + 2) - 2 * 1 = 2 * (r + 1) by omega]
               · refine Finset.sum_bij (fun j _ => j - 1) ?_ ?_ ?_ ?_
                 · intro j hj; simp only [Finset.mem_Icc] at hj ⊢; omega
                 · intro j₁ hj₁ j₂ hj₂ h; simp only [Finset.mem_Icc] at hj₁ hj₂; omega
                 · intro b hb; refine ⟨b + 1, ?_, by omega⟩; simp only [Finset.mem_Icc] at hb ⊢; omega
-                · intro j hj; simp only [Finset.mem_Icc] at hj; congr 2; omega
+                · intro j hj
+                  simp only [Finset.mem_Icc] at hj
+                  rw [show 2 * (r + 2) - 2 * j = 2 * (r + 1) - 2 * (j - 1) by omega]
             have hsub_r : r + 2 - 1 = r + 1 := by omega
             have hsub_r1 : r + 1 - 1 = r := by omega
             rw [hsub_r, hsum_shift]
