@@ -1,0 +1,97 @@
+name: Ramsey R310 V8 Wave 2 D9-C345 (Exact Pruner + Proof-First Kissat)
+
+on:
+  workflow_dispatch:
+    inputs:
+      case:
+        description: "D9 subcase to run (C5, C4, C3, or ALL)"
+        required: true
+        default: "C5"
+        type: choice
+        options:
+          - C5
+          - C4
+          - C3
+          - ALL
+      budget_seconds:
+        description: "Wall-clock solve budget per shard in seconds (max 19800 = 5.5h)"
+        required: false
+        default: "19200"
+        type: string
+      per_orbit_seconds:
+        description: "Solve budget per canonical skeleton orbit in seconds"
+        required: false
+        default: "600"
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run local selftest, verify 353 pure-integer Farkas certs, and build manifest
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          python3 jobs/ramsey-r310-v8-w2-d9c345/selftest_d9c345.py
+          python3 jobs/ramsey-r310-v8-w2-d9c345/d9c345_pruner.py \
+            --verify --out-dir jobs/ramsey-r310-v8-w2-d9c345/certificates
+          python3 jobs/ramsey-r310-v8-w2-d9c345/d9c345_pruner.py \
+            --build-manifest "${{ inputs.case }}" \
+            --out-dir jobs/ramsey-r310-v8-w2-d9c345/certificates \
+            --manifest-out out/orbits_manifest.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: d9c345-${{ inputs.case }}-manifest
+          path: out/orbits_manifest.json
+          retention-days: 7
+
+  solve:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sat@sha256:fa5d94d4e8dc2aaccec31230adea72967257f9bbe732db9f4c7df6046f2a6dbc
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: d9c345-${{ inputs.case }}-manifest
+          path: inputs/
+      - name: Run D9-${{ inputs.case }} shard ${{ matrix.shard }}/10
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          python3 jobs/ramsey-r310-v8-w2-d9c345/d9c345_batch_runner.py \
+            --certs inputs/orbits_manifest.json \
+            --case "${{ inputs.case }}" \
+            --shard-index "${{ matrix.shard }}" \
+            --num-shards 10 \
+            --out out \
+            --budget-seconds "${{ inputs.budget_seconds }}" \
+            --per-orbit-seconds "${{ inputs.per_orbit_seconds }}"
+          cat out/shard_summary.json >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: d9c345-${{ inputs.case }}-shard-${{ matrix.shard }}
+          path: out/
+          retention-days: 30
