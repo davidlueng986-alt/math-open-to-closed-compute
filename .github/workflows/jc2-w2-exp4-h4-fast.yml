@@ -1,0 +1,24 @@
+name: JC2 W2 Exp4 SECANT-H4 Fast Exact Q Proofs
+
+on:
+  push:
+    branches: [ jc2-w2-exp4-gcd4 ]
+    paths:
+      - 'jobs/jc2_w2_exp4_h4_fast.sing'
+      - '.github/workflows/jc2-w2-exp4-h4-fast.yml'
+  workflow_dispatch:
+
+jobs:
+  singular-h4-fast-exact-q:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Singular
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq singular
+          Singular --version
+      - name: Run fast exact Q Singular proofs for H4 d=5 and d=6 (a0=0)
+        run: |
+          Singular -q jobs/jc2_w2_exp4_h4_fast.sing
