@@ -1,0 +1,31 @@
+name: JC2 W2 Exp6 SECANT-HEIGHT-FOUR Turbo Exact Q-Proofs (d=5 direct, d=6,7 general, d=6..8 delta=0)
+on:
+  push:
+    branches: ['jc2-w2-exp6-secant-h4']
+    paths:
+      - 'jobs/jc2_w2_exp6_secant_h4_turbo.sing'
+      - '.github/workflows/jc2-w2-exp6-secant-h4-turbo.yml'
+  workflow_dispatch:
+
+jobs:
+  singular-secant-h4-turbo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { d: 5, d0: 0, label: "d5-general-direct-Q" }
+          - { d: 6, d0: 0, label: "d6-general-Q" }
+          - { d: 6, d0: 1, label: "d6-delta0-Q" }
+          - { d: 7, d0: 1, label: "d7-delta0-Q" }
+          - { d: 8, d0: 1, label: "d8-delta0-Q" }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Singular
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq singular
+          Singular --version
+      - name: Run turbo SECANT-HEIGHT-FOUR proof (${{ matrix.label }})
+        run: Singular -q -c "int D_VAL=${{ matrix.d }}; int DELTA_ZERO=${{ matrix.d0 }};" jobs/jc2_w2_exp6_secant_h4_turbo.sing
