@@ -15,22 +15,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: case1_d234_q
-            cmd: 'int r; r=run_case1(2,0); r=run_case1(3,0); r=run_case1(4,0);'
-          - name: case2_d234_q
-            cmd: 'int r; r=run_case2(2,0); r=run_case2(3,0); r=run_case2(4,0);'
-          - name: case1_d5_q
-            cmd: 'int r; r=run_case1(5,32003); r=run_case1(5,0);'
+          - name: case1_d2345_q_modstd
+            cmd: 'int r; r=run_case1(2,0,0); r=run_case1(3,0,0); r=run_case1(4,0,0); r=run_case1(5,32003,0); r=run_case1(5,0,1);'
+          - name: case2_d234_q_modstd
+            cmd: 'int r; r=run_case2(2,0,0); r=run_case2(3,0,0); r=run_case2(4,32003,0); r=run_case2(4,0,1);'
           - name: case2_d5_fp
-            cmd: 'int r; r=run_case2(5,32003);'
-          - name: case2_d5_q
-            cmd: 'int r; r=run_case2(5,0);'
-          - name: case1_d6_fp
-            cmd: 'int r; r=run_case1(6,32003);'
-          - name: case1_d6_q
-            cmd: 'int r; r=run_case1(6,0);'
-          - name: case2_d6_fp
-            cmd: 'int r; r=run_case2(6,32003);'
+            cmd: 'int r; r=run_case2(5,32003,0);'
+          - name: case2_d5_q_modstd
+            cmd: 'int r; r=run_case2(5,0,1);'
+          - name: case1_d6_q_modstd
+            cmd: 'int r; r=run_case1(6,0,1);'
+          - name: case1_d7_fp
+            cmd: 'int r; r=run_case1(7,32003,0);'
     steps:
       - uses: actions/checkout@v4
       - name: Install Singular
