@@ -1,6 +1,12 @@
 // Pure-Singular COMPLETE EXACT Q-PROOF for SECANT-HEIGHT-FOUR-REALIZATION at d = 5 (j = 4)!
-// Covers ALL m2 in C (both m2 != 0 via m2 = 1, AND m2 = 0 via c4=1 / c4=0,c3=1 / c4=c3=0,c2=1)!
-// Uses weighted degrevlex wp(1, 2, 3, 5, 5, 1) + fast F_32009 + exact Q-verified modStd(I, 1)!
+// Uses EXACT algebraic factorization of ODE[V^0] & ODE[V^1] into 5 exhaustive branches (cutting deg 20 -> deg 9..11!):
+//   Branch 0a: c0 = 0, x0 = 0, x1 = 0
+//   Branch 0b: c0 = 0, x0 = 0, x1 = m2
+//   Branch 1 : 4*x0 - c0^2 = 0, (c0 - 3*m3)*x1 - c0*m2 = 0
+//   Branch 2a: 4*x0 - c0^2 + 2*c0*m3 = 0, x1 - m2 = 0
+//   Branch 2b: c0 + m3 = 0, 4*x0 - 3*m3^2 = 0
+// Covers ALL m2 in C: Case 1 (m2 = 1) and Case 2 (m2 = 0, subcases c4=1; c4=0,c3=1; c4=c3=0,c2=1)!
+// Tests BOTH ODE ALONE and ODE + (m0*m3 + m1*m2 = 0), with F_32009 + exact Q-verified modStd(I, 1)!
 
 LIB "modstd.lib";
 option(prot);
@@ -85,114 +91,122 @@ poly eq3 = redS(subst(getc(odec, 3), m1, m1_sol), 15);
 if (diff(eq3, m0) != number(-48)) { printf("ERROR: m0 pivot!"); quit; }
 poly m0_sol = subst(eq3, m0, 0) / number(48);
 
-ideal I_gen =
+poly x0_p = xc[1, 1];
+poly x1_p = xc[2, 1];
+
+// Core equations ODE[V^9, V^8, V^6, V^5, V^4, V^2] + (s^2 - 15)
+ideal I_core =
   redS(getc(odec, 9), 15),
   redS(getc(odec, 8), 15),
   redS(subst(getc(odec, 6), m1, m1_sol), 15),
   redS(subst(getc(odec, 5), m1, m1_sol), 15),
   redS(subst(getc(odec, 4), m1, m1_sol), 15),
   redS(subst(getc(odec, 2), m1, m1_sol), 15),
-  redS(getc(odec, 1), 15),
-  redS(getc(odec, 0), 15),
   s^2 - 15;
 poly eq_mu = redS(m0_sol * m3 + m1_sol * m2, 15);
 
-// ======================== CASE 1: m2 = 1 (all m2 != 0) ========================
-printf("============================================================");
-printf("CASE 1: d = 5, m2 = 1 (all m2 != 0)");
-printf("============================================================");
-ideal I_m2_1_u = subst(I_gen, m2, 1);
-poly mu_m2_1_u = subst(eq_mu, m2, 1);
+// 5 exhaustive V=0 branch pairs:
+ideal B0a = c0, x0_p, x1_p;
+ideal B0b = c0, x0_p, x1_p - m2;
+ideal B1  = 4*x0_p - c0^2, redS((c0 - 3*m3)*x1_p - c0*m2, 15);
+ideal B2a = 4*x0_p - c0^2 + 2*c0*m3, x1_p - m2;
+ideal B2b = c0 + m3, 4*x0_p - 3*m3^2;
 
-ring Rq1 = 0, (c4, c3, c2, c0, m3, s), wp(1, 2, 3, 5, 5, 1);
-ideal I1_ode = imap(R5u, I_m2_1_u);
-ideal I1_coup = I1_ode, imap(R5u, mu_m2_1_u);
+// Helper ring for testing each branch over F_32009 and exact Q modStd(I, 1)!
+ring Rq = 0, (c4, c3, c2, c0, m3, s), wp(1, 2, 3, 5, 5, 1);
+ring Rp = 32009, (c4, c3, c2, c0, m3, s), wp(1, 2, 3, 5, 5, 1);
 
-ring Rp1 = 32009, (c4, c3, c2, c0, m3, s), wp(1, 2, 3, 5, 5, 1);
-ideal G1_ode_p = slimgb(imap(Rq1, I1_ode));
-printf("CASE 1A (ODE ALONE) F_32009: size=%s, G[1]=%s, dim=%s, vdim=%s",
-       size(G1_ode_p), G1_ode_p[1], dim(G1_ode_p), vdim(G1_ode_p));
-ideal G1_coup_p = slimgb(imap(Rq1, I1_coup));
-printf("CASE 1B (COUPLED)   F_32009: size=%s, G[1]=%s, dim=%s, vdim=%s",
-       size(G1_coup_p), G1_coup_p[1], dim(G1_coup_p), vdim(G1_coup_p));
-
-setring Rq1;
-if (size(G1_ode_p) == 1 && G1_ode_p[1] == 1) {
-  ideal G1_ode_q = modStd(I1_ode, 1);
-  printf("CASE 1A EXACT Q modStd(I,1): size=%s, G[1]=%s", size(G1_ode_q), G1_ode_q[1]);
-  if (size(G1_ode_q) == 1 && G1_ode_q[1] == 1) {
-    printf("CERTIFIED_MODSTD_Q: D5_M2_NEQ_0_ODE_ALONE_EMPTY");
-  }
-} else {
-  if (size(G1_coup_p) == 1 && G1_coup_p[1] == 1) {
-    ideal G1_coup_q = modStd(I1_coup, 1);
-    printf("CASE 1B EXACT Q modStd(I,1): size=%s, G[1]=%s", size(G1_coup_q), G1_coup_q[1]);
-    if (size(G1_coup_q) == 1 && G1_coup_q[1] == 1) {
-      printf("CERTIFIED_MODSTD_Q: D5_M2_NEQ_0_COUPLED_EMPTY");
+proc testBranch(string label, ideal I_ode_q, poly mu_q) {
+  setring Rp;
+  ideal Iop = imap(Rq, I_ode_q);
+  ideal Gop = slimgb(Iop);
+  if (size(Gop) == 1 && Gop[1] == 1) {
+    printf("  [%s] F_32009 ODE ALONE = [1]! Running exact Q modStd(I, 1)...", label);
+    setring Rq;
+    ideal Goq = modStd(I_ode_q, 1);
+    if (size(Goq) == 1 && Goq[1] == 1) {
+      printf("  CERTIFIED_MODSTD_Q [%s]: ODE_ALONE_EMPTY!", label);
+    } else {
+      printf("  WARNING [%s]: Q modStd ODE ALONE size=%s, G[1]=%s", label, size(Goq), Goq[1]);
     }
+    return();
   }
+  printf("  [%s] F_32009 ODE ALONE: size=%s, G[1]=%s, dim=%s, vdim=%s",
+         label, size(Gop), Gop[1], dim(Gop), vdim(Gop));
+  ideal Icp = Iop, imap(Rq, mu_q);
+  ideal Gcp = slimgb(Icp);
+  if (size(Gcp) == 1 && Gcp[1] == 1) {
+    printf("  [%s] F_32009 COUPLED = [1]! Running exact Q modStd(I, 1)...", label);
+    setring Rq;
+    ideal Ic_q = I_ode_q, mu_q;
+    ideal Gcq = modStd(Ic_q, 1);
+    if (size(Gcq) == 1 && Gcq[1] == 1) {
+      printf("  CERTIFIED_MODSTD_Q [%s]: COUPLED_EMPTY!", label);
+    } else {
+      printf("  WARNING [%s]: Q modStd COUPLED size=%s, G[1]=%s", label, size(Gcq), Gcq[1]);
+    }
+    return();
+  }
+  printf("  [%s] F_32009 COUPLED: size=%s, G[1]=%s, dim=%s, vdim=%s",
+         label, size(Gcp), Gcp[1], dim(Gcp), vdim(Gcp));
 }
 
-// ======================== CASE 2: m2 = 0 (3 subcases: c4=1; c4=0,c3=1; c4=c3=0,c2=1) ========================
+// ======================== CASE 1: m2 = 1 ========================
 printf("============================================================");
-printf("CASE 2: d = 5, m2 = 0 (a1 not in C[V^5])");
+printf("CASE 1: d = 5 (j = 4), m2 = 1 (all m2 != 0)");
 printf("============================================================");
 setring R5u;
-ideal I_m2_0_u = subst(I_gen, m2, 0);
-poly mu_m2_0_u = subst(eq_mu, m2, 0);
+ideal C1_0a = subst(I_core + B0a, m2, 1);
+ideal C1_0b = subst(I_core + B0b, m2, 1);
+ideal C1_1  = subst(I_core + B1,  m2, 1);
+ideal C1_2a = subst(I_core + B2a, m2, 1);
+ideal C1_2b = subst(I_core + B2b, m2, 1);
+poly  M1    = subst(eq_mu, m2, 1);
 
-// Subcase 2a: c4 = 1
-setring Rq1;
-ideal I2a_ode = subst(imap(R5u, I_m2_0_u), c4, 1);
-ideal I2a_coup = I2a_ode, subst(imap(R5u, mu_m2_0_u), c4, 1);
-ideal I2b_ode = subst(subst(imap(R5u, I_m2_0_u), c4, 0), c3, 1);
-ideal I2b_coup = I2b_ode, subst(subst(imap(R5u, mu_m2_0_u), c4, 0), c3, 1);
-ideal I2c_ode = subst(subst(subst(imap(R5u, I_m2_0_u), c4, 0), c3, 0), c2, 1);
-ideal I2c_coup = I2c_ode, subst(subst(subst(imap(R5u, mu_m2_0_u), c4, 0), c3, 0), c2, 1);
+setring Rq;
+testBranch("m2=1 / B0a", imap(R5u, C1_0a), imap(R5u, M1));
+testBranch("m2=1 / B0b", imap(R5u, C1_0b), imap(R5u, M1));
+testBranch("m2=1 / B2b", imap(R5u, C1_2b), imap(R5u, M1));
+testBranch("m2=1 / B2a", imap(R5u, C1_2a), imap(R5u, M1));
+testBranch("m2=1 / B1 ", imap(R5u, C1_1),  imap(R5u, M1));
 
-setring Rp1;
-ideal G2a_ode_p = slimgb(imap(Rq1, I2a_ode));
-ideal G2a_coup_p = slimgb(imap(Rq1, I2a_coup));
-ideal G2b_ode_p = slimgb(imap(Rq1, I2b_ode));
-ideal G2b_coup_p = slimgb(imap(Rq1, I2b_coup));
-ideal G2c_ode_p = slimgb(imap(Rq1, I2c_ode));
-ideal G2c_coup_p = slimgb(imap(Rq1, I2c_coup));
-printf("CASE 2a (m2=0,c4=1)       F_32009: ODE=%s, COUPLED=%s", G2a_ode_p[1], G2a_coup_p[1]);
-printf("CASE 2b (m2=0,c4=0,c3=1)  F_32009: ODE=%s, COUPLED=%s", G2b_ode_p[1], G2b_coup_p[1]);
-printf("CASE 2c (m2=0,c4=c3=0,c2=1) F_32009: ODE=%s, COUPLED=%s", G2c_ode_p[1], G2c_coup_p[1]);
+// ======================== CASE 2: m2 = 0 (3 subcases) ========================
+printf("============================================================");
+printf("CASE 2: d = 5 (j = 4), m2 = 0 (a1 not in C[V^5])");
+printf("============================================================");
+setring R5u;
+ideal C2_0a = subst(I_core + B0a, m2, 0);
+ideal C2_0b = subst(I_core + B0b, m2, 0);
+ideal C2_1  = subst(I_core + B1,  m2, 0);
+ideal C2_2a = subst(I_core + B2a, m2, 0);
+ideal C2_2b = subst(I_core + B2b, m2, 0);
+poly  M2    = subst(eq_mu, m2, 0);
 
-setring Rq1;
-if (size(G2a_ode_p) == 1 && G2a_ode_p[1] == 1) {
-  ideal G2a_q = modStd(I2a_ode, 1);
-  printf("CASE 2a ODE ALONE Q: G[1]=%s", G2a_q[1]);
-  if (size(G2a_q) == 1 && G2a_q[1] == 1) { printf("CERTIFIED_MODSTD_Q: D5_M2_0_2A_ODE_EMPTY"); }
-} else {
-  if (size(G2a_coup_p) == 1 && G2a_coup_p[1] == 1) {
-    ideal G2a_q = modStd(I2a_coup, 1);
-    printf("CASE 2a COUPLED Q: G[1]=%s", G2a_q[1]);
-    if (size(G2a_q) == 1 && G2a_q[1] == 1) { printf("CERTIFIED_MODSTD_Q: D5_M2_0_2A_COUPLED_EMPTY"); }
-  }
-}
-if (size(G2b_ode_p) == 1 && G2b_ode_p[1] == 1) {
-  ideal G2b_q = modStd(I2b_ode, 1);
-  printf("CASE 2b ODE ALONE Q: G[1]=%s", G2b_q[1]);
-  if (size(G2b_q) == 1 && G2b_q[1] == 1) { printf("CERTIFIED_MODSTD_Q: D5_M2_0_2B_ODE_EMPTY"); }
-} else {
-  if (size(G2b_coup_p) == 1 && G2b_coup_p[1] == 1) {
-    ideal G2b_q = modStd(I2b_coup, 1);
-    printf("CASE 2b COUPLED Q: G[1]=%s", G2b_q[1]);
-    if (size(G2b_q) == 1 && G2b_q[1] == 1) { printf("CERTIFIED_MODSTD_Q: D5_M2_0_2B_COUPLED_EMPTY"); }
-  }
-}
-if (size(G2c_ode_p) == 1 && G2c_ode_p[1] == 1) {
-  ideal G2c_q = modStd(I2c_ode, 1);
-  printf("CASE 2c ODE ALONE Q: G[1]=%s", G2c_q[1]);
-  if (size(G2c_q) == 1 && G2c_q[1] == 1) { printf("CERTIFIED_MODSTD_Q: D5_M2_0_2C_ODE_EMPTY"); }
-} else {
-  if (size(G2c_coup_p) == 1 && G2c_coup_p[1] == 1) {
-    ideal G2c_q = modStd(I2c_coup, 1);
-    printf("CASE 2c COUPLED Q: G[1]=%s", G2c_q[1]);
-    if (size(G2c_q) == 1 && G2c_q[1] == 1) { printf("CERTIFIED_MODSTD_Q: D5_M2_0_2C_COUPLED_EMPTY"); }
-  }
-}
+setring Rq;
+ideal I2_0a = imap(R5u, C2_0a);
+ideal I2_0b = imap(R5u, C2_0b);
+ideal I2_1  = imap(R5u, C2_1);
+ideal I2_2a = imap(R5u, C2_2a);
+ideal I2_2b = imap(R5u, C2_2b);
+poly  M2q   = imap(R5u, M2);
+
+testBranch("m2=0,c4=1 / B0a", subst(I2_0a, c4, 1), subst(M2q, c4, 1));
+testBranch("m2=0,c4=1 / B0b", subst(I2_0b, c4, 1), subst(M2q, c4, 1));
+testBranch("m2=0,c4=1 / B2b", subst(I2_2b, c4, 1), subst(M2q, c4, 1));
+testBranch("m2=0,c4=1 / B2a", subst(I2_2a, c4, 1), subst(M2q, c4, 1));
+testBranch("m2=0,c4=1 / B1 ", subst(I2_1,  c4, 1), subst(M2q, c4, 1));
+
+testBranch("m2=0,c4=0,c3=1 / B0a", subst(subst(I2_0a, c4, 0), c3, 1), subst(subst(M2q, c4, 0), c3, 1));
+testBranch("m2=0,c4=0,c3=1 / B0b", subst(subst(I2_0b, c4, 0), c3, 1), subst(subst(M2q, c4, 0), c3, 1));
+testBranch("m2=0,c4=0,c3=1 / B2b", subst(subst(I2_2b, c4, 0), c3, 1), subst(subst(M2q, c4, 0), c3, 1));
+testBranch("m2=0,c4=0,c3=1 / B2a", subst(subst(I2_2a, c4, 0), c3, 1), subst(subst(M2q, c4, 0), c3, 1));
+testBranch("m2=0,c4=0,c3=1 / B1 ", subst(subst(I2_1,  c4, 0), c3, 1), subst(subst(M2q, c4, 0), c3, 1));
+
+testBranch("m2=0,c4=c3=0,c2=1 / B0a", subst(subst(subst(I2_0a, c4, 0), c3, 0), c2, 1), subst(subst(subst(M2q, c4, 0), c3, 0), c2, 1));
+testBranch("m2=0,c4=c3=0,c2=1 / B0b", subst(subst(subst(I2_0b, c4, 0), c3, 0), c2, 1), subst(subst(subst(M2q, c4, 0), c3, 0), c2, 1));
+testBranch("m2=0,c4=c3=0,c2=1 / B2b", subst(subst(subst(I2_2b, c4, 0), c3, 0), c2, 1), subst(subst(subst(M2q, c4, 0), c3, 0), c2, 1));
+testBranch("m2=0,c4=c3=0,c2=1 / B2a", subst(subst(subst(I2_2a, c4, 0), c3, 0), c2, 1), subst(subst(subst(M2q, c4, 0), c3, 0), c2, 1));
+testBranch("m2=0,c4=c3=0,c2=1 / B1 ", subst(subst(subst(I2_1,  c4, 0), c3, 0), c2, 1), subst(subst(subst(M2q, c4, 0), c3, 0), c2, 1));
+
+printf("ALL_D5_BRANCHES_COMPLETED");
 quit;
