@@ -17,12 +17,12 @@ all-d structural identities for OPPOSITE-EDGE.md Eq. (83):
    `48*mu3*(mu0*mu3 + mu1*mu2) = 0`.
 4. `mu2_zero_excluded_all_d`: Over any field of characteristic 0 (e.g. `ℂ` or `ℚ`),
    if `mu2 = 0` and `mu0 ≠ 0`, the `[V^3]` ODE identity is impossible for all `d ≥ 2`.
-5. `topdown_pivot_norm_strictly_negative`: For all `d ≥ 4` and all `k : ℕ`,
+5. `topdown_pivot_norm_strictly_negative`: For all `d ≥ 4` and all `k ≥ 0`,
    `3*(2*d - k)^2 < d*(4*d + 2*k - 6)^2` (in `ℤ`), proving every top-down linear
    pivot in `ℚ(√(3d))` has strictly nonzero norm for all `d ≥ 4`, while `d = 3, k = 0`
    is the unique resonance (`topdown_pivot_resonance_d3_k0`).
 6. `scaling_det_nonzero` and `mu0_independent_all_d_ge_3`:
-   The 2-parameter scaling determinant `-2*d + 1 ≠ 0` for all `d ≥ 1`, and
+   The 2-parameter scaling determinant `-2*d + 1 ≠ 0` for all `d : ℤ`, and
    `2*d + k > d + 2` for all `d ≥ 3, k ≥ 0`, proving `x_0..x_{2d}` are completely
    independent of `mu0` and `mu0 = x_2 / 3` eliminates `mu0` with zero denominators.
 -/
@@ -38,7 +38,7 @@ theorem symplectic_decoupling_factor {R : Type*} [CommRing R]
     2 * V * X4' - 3 * X4 + 6 * a1 ^ 2 - 6 * mu3 * a1 + 4 * mu2 * V =
       3 * (4 * V ^ 2 * a0' - 2 * V * a1 * a1' + a1 ^ 2) := by
   dsimp only
-  linear_combination -6 * a1 * hE3 - 4 * V * hE2
+  linear_combination 6 * a1 * hE3 - 4 * V * hE2
 
 theorem cubic_coeff_pure_ode_vanishes {R : Type*} [CommRing R]
     (x0 x1 x2 x3 : R) :
@@ -60,7 +60,7 @@ theorem initial_value_identities {R : Type*} [CommRing R]
   have h1 : 16 * (mu2 * x2 - 3 * mu0) = 0 := by
     linear_combination hV3 - 6 * mu3 * c3 * hx0 - 24 * mu3 * c2 * hx1
   have h2 : 8 * mu3 * (mu3 * x2 + 3 * mu1) = 0 := by
-    linear_combination hV2 + 8 * x2 * hx0 - 6 * mu3 * c2 * hx0 + 16 * (x1 - mu2) * hx1
+    linear_combination hV2 + 8 * x2 * hx0 - 6 * mu3 * c2 * hx0 + 16 * x1 * hx1
   have h3 : 48 * mu3 * (mu0 * mu3 + mu1 * mu2) = 0 := by
     linear_combination 2 * mu2 * h2 - mu3 ^ 2 * h1
   exact ⟨h1, h2, h3⟩
@@ -91,7 +91,7 @@ theorem topdown_pivot_resonance_d3_k0 :
     3 * (2 * (3 : ℤ) - 0) ^ 2 = 3 * (4 * 3 + 2 * 0 - 6) ^ 2 := by
   norm_num
 
-theorem scaling_det_nonzero (d : ℤ) (hd : 1 ≤ d) : -2 * d + 1 ≠ 0 := by
+theorem scaling_det_nonzero (d : ℤ) : -2 * d + 1 ≠ 0 := by
   omega
 
 theorem mu0_independent_all_d_ge_3 (d k : ℤ) (hd : 3 ≤ d) (hk : 0 ≤ k) :
