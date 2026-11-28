@@ -54,22 +54,26 @@ theorem top_down_pivot_strict_pos (d k : ℤ)
     nlinarith [sq_nonneg (d - 2)]
   nlinarith
 
-/-- Theorem 4b: All-d binomial exclusion core contradiction:
-for all d >= 2, no rational (or complex, via the exact polynomial identity)
+/-- Theorem 4b: Exact CommRing resultant identity eliminating x between
+(8d - 4)*x + 3 = 0 and 16*(4d - 3)*x^2 + 24*x - 3 = 0, yielding -12*(d^2 - d + 1).
+Holds over any commutative ring (in particular C). -/
+theorem binomial_resultant_identity {R : Type*} [CommRing R] (d x : R) :
+    (2 * d - 1) ^ 2 * (16 * (4 * d - 3) * x ^ 2 + 24 * x - 3)
+      - ((4 * d - 3) * ((8 * d - 4) * x - 3) + 6 * (2 * d - 1)) * ((8 * d - 4) * x + 3) =
+    -12 * (d ^ 2 - d + 1) := by
+  ring
+
+/-- Theorem 4c: All-d binomial exclusion core contradiction:
+for all d >= 2, no rational (and by binomial_resultant_identity, no complex)
 x can satisfy both (8d - 4)*x + 3 = 0 and 16*(4d - 3)*x^2 + 24*x - 3 = 0. -/
 theorem binomial_leading_contradiction (d : ℤ) (hd : 2 ≤ d) (x : ℚ)
     (hlin : (8 * (d : ℚ) - 4) * x + 3 = 0)
     (hquad : 16 * (4 * (d : ℚ) - 3) * x ^ 2 + 24 * x - 3 = 0) : False := by
-  have hpoly :
-      (4 * (d : ℚ) - 2) ^ 2 * (16 * (4 * (d : ℚ) - 3) * x ^ 2 + 24 * x - 3)
-      - (4 * (4 * (d : ℚ) - 3) * x + 12 * (d : ℚ)) * ((8 * (d : ℚ) - 4) * x + 3)
-      = -12 * (4 * (d : ℚ) ^ 3 - 7 * (d : ℚ) ^ 2 + 7 * (d : ℚ) - 3) := by
-    ring
+  have hpoly := binomial_resultant_identity (d : ℚ) x
   rw [hquad, hlin] at hpoly
-  have hzero : 4 * (d : ℚ) ^ 3 - 7 * (d : ℚ) ^ 2 + 7 * (d : ℚ) - 3 = 0 := by linarith
+  have hzero : (d : ℚ) ^ 2 - (d : ℚ) + 1 = 0 := by linarith
   have hdq : (2 : ℚ) ≤ (d : ℚ) := by exact_mod_cast hd
-  have hpos : 0 < 4 * (d : ℚ) ^ 3 - 7 * (d : ℚ) ^ 2 + 7 * (d : ℚ) - 3 := by
-    nlinarith [sq_nonneg ((d : ℚ) - 2)]
+  have hpos : 0 < (d : ℚ) ^ 2 - (d : ℚ) + 1 := by nlinarith
   linarith
 
 /-- Theorem 3: Exact cusp-divisor factorization identity along t = 0. -/
@@ -111,6 +115,7 @@ theorem symplectic_ode_decoupling {R : Type*} [CommRing R]
 #print axioms exact_d_eq_j_succ
 #print axioms exact_q_v_degree_rigidity
 #print axioms top_down_pivot_strict_pos
+#print axioms binomial_resultant_identity
 #print axioms binomial_leading_contradiction
 #print axioms cusp_divisor_factorization
 #print axioms square_completion_cancellation
