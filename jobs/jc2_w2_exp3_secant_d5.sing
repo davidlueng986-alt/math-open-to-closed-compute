@@ -3,8 +3,8 @@
 // Normalized c5 = 1, mu2 = 1 (valid since c5 != 0 and mu2 != 0), a1'(0) = 0 -> a1 = V^5 + c4*V^4 + c3*V^3 + c2*V^2 + c0.
 // Leading coeff of X is kap with 272*kap^2 + 24*kap - 3 = 0.
 // Tests BOTH:
-//   (A) Coupled with mu0*mu3 + mu1*mu2 = 0 (i.e. mu1 = -mu0*mu3) -> 6 vars (c4, c3, c2, c0, mu3, mu0) + kap
-//   (B) Pure ODE (mu1 free, mu2 = 1) -> 7 vars (c4, c3, c2, c0, mu3, mu1, mu0) + kap
+//   (A) Coupled with mu0*mu3 + mu1*mu2 = 0 (i.e. mu1 = -mu0*mu3) -> 6 vars (c4, c3, c2, c0, mu3, mu0) over Q(kap)
+//   (B) Pure ODE (mu1 free, mu2 = 1) -> 7 vars (c4, c3, c2, c0, mu3, mu1, mu0) over Q(kap)
 
 LIB "modstd.lib";
 
@@ -21,21 +21,17 @@ poly a1 = V^5 + c4*V^4 + c3*V^3 + c2*V^2 + c0;
 poly RHS = 3*(a1^4 - 2*mu3*a1^3 + 4*V*a1^2 - 8*mu1*V^2*a1 + 16*mu0*V^3);
 poly B = (number(3)/number(2))*a1^2 - (number(3)/number(2))*mu3*a1 + V;
 
-// Solve x[9]..x[0] from degrees 19..10 of 16*X*(2*V*X' - 3*X + B) = RHS
 list xc;
-int k, m, deg, i, j;
+int k, m, dg, i, j;
 for (k = 1; k <= 11; k++) { xc[k] = poly(0); }
-xc[11] = poly(kap); // x[10] = kap
+xc[11] = poly(kap);
 
 for (m = 1; m <= 10; m++) {
-  // Solve for x[10 - m] from degree 20 - m
-  deg = 20 - m;
-  // Build current X with x[10-m] = 0
+  dg = 20 - m;
   poly Xcur = 0;
   for (k = 10 - m + 1; k <= 10; k++) { Xcur = Xcur + xc[k + 1] * V^k; }
   poly curLHS = 16 * Xcur * (2*V*diff(Xcur, V) - 3*Xcur + B);
-  poly rem = vcoeff(RHS, deg) - vcoeff(curLHS, deg);
-  // Pivot is 16 * ((8*5 - 2*m - 6)*kap + 3/2) = 16 * ((34 - 2*m)*kap + 3/2)
+  poly rem = vcoeff(RHS, dg) - vcoeff(curLHS, dg);
   number piv = 16 * ((34 - 2*m)*kap + number(3)/number(2));
   xc[10 - m + 1] = rem / piv;
 }
@@ -54,7 +50,7 @@ ideal I_all_v =
   vcoeff(odeDiff, 4), vcoeff(odeDiff, 3), vcoeff(odeDiff, 2), vcoeff(odeDiff, 1), vcoeff(odeDiff, 0);
 
 // === CASE A: Coupled with mu0*mu3 + mu1*mu2 = 0 (mu1 = -mu0*mu3) ===
-printf("\n=== CASE A: d=5 (j=4) WITH mu0*mu3 + mu1*mu2 = 0 (6 vars over Q(kap)) ===");
+printf("=== CASE A: d=5 (j=4) WITH mu0*mu3 + mu1*mu2 = 0 (6 vars over Q(kap)) ===");
 ideal I_A_v = subst(I_all_v, mu1, -mu0*mu3);
 
 ring RA = (0, kap), (c4, c3, c2, c0, mu3, mu0), dp;
@@ -68,11 +64,10 @@ if (size(GA) == 1 && GA[1] == 1) {
   printf("CERTIFIED_Q_KAP_A: SECANT_H4_D5_COUPLED_PROVED_EMPTY_OVER_C");
 } else {
   if (dim(GA) == 0) { printf("vdim(GA) = %s", vdim(GA)); }
-  GA;
 }
 
 // === CASE B: Pure ODE WITHOUT mu0*mu3 + mu1*mu2 = 0 (7 vars over Q(kap)) ===
-printf("\n=== CASE B: d=5 (j=4) PURE ODE (mu2=1, mu1 free, 7 vars over Q(kap)) ===");
+printf("=== CASE B: d=5 (j=4) PURE ODE (mu2=1, mu1 free, 7 vars over Q(kap)) ===");
 ring RB = (0, kap), (c4, c3, c2, c0, mu3, mu1, mu0), dp;
 minpoly = 272*kap^2 + 24*kap - 3;
 ideal IB = imap(Rv, I_all_v);
