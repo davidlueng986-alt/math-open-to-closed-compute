@@ -1,7 +1,6 @@
-// LEAN 14-equation Pure-Singular system for DEGREE-135-IV-GCD-FOUR (full Jacobian rank 10 in 11 vars!)
-// Drops the 26 high-degree sqFull[25..0] equations; uses ONLY R2, w*b2-1, ode11, ode6..0, eq30..27!
-
-LIB "modstd.lib";
+// DIRECT-OVER-F_32003 + WEIGHTED wp LEAN 14-EQ PROBE for DEGREE-135-IV-GCD-FOUR!
+// Builds entire system directly over F_32003 (<1s!) instead of Q (5.5 min!),
+// then uses weighted wp(18, 9, 1, 3, 4, 3, 2, 4, 3, 2, 1) for slimgb!
 
 proc ucoeff(poly f, int k) {
   matrix C = coeffs(f, u);
@@ -9,7 +8,7 @@ proc ucoeff(poly f, int k) {
   return(C[k + 1, 1]);
 }
 
-ring Ru = 0, (u, t4, t3, t2, t1, t0, a4, a3, a2, a1, a0, w, v6, n0, n1, n2, n3, r0, r1, r2, r3), dp;
+ring Ru = 32003, (u, t4, t3, t2, t1, t0, a4, a3, a2, a1, a0, w, v6, n0, n1, n2, n3, r0, r1, r2, r3), dp;
 
 list r_reg, N_reg, r2_reg, N_inv, Q, Q2, Q3;
 int i, j, k, d, ii;
@@ -145,6 +144,7 @@ poly gA = g * A;
 poly pL_hi = 0;
 for (k = 0; k <= 17; k++) { pL_hi = pL_hi + ucoeff(gA, k) * u^(k + 1) / (k + 1); }
 poly sqHi = Thi^2 - 9*pL_hi*A^2;
+printf("Built sqHi directly over F_32003!");
 
 poly eq34 = ucoeff(sqHi, 34);
 poly eq33 = ucoeff(sqHi, 33);
@@ -196,26 +196,15 @@ ideal Iu = R2, w*b2 - 1,
   ucoeff(odeFull, 6), ucoeff(odeFull, 5), ucoeff(odeFull, 4),
   ucoeff(odeFull, 3), ucoeff(odeFull, 2), ucoeff(odeFull, 1), ucoeff(odeFull, 0);
 
-ring R11 = 0, (t4, a4, w, v6, n1, n2, n3, r0, r1, r2, r3), dp;
-ideal I11 = imap(Ru, Iu);
-printf("=== Generator stats (14 eqs, 11 vars) ===");
-for (k = 1; k <= size(I11); k++) {
-  printf("  gen[%2s]: deg=%s, terms=%s", k, deg(I11[k]), size(I11[k]));
+ring R11p = 32003, (t4, a4, w, v6, n1, n2, n3, r0, r1, r2, r3), wp(18, 9, 1, 3, 4, 3, 2, 4, 3, 2, 1);
+ideal I11p = imap(Ru, Iu);
+printf("=== Generator stats over F_32003 (14 eqs, 11 vars, weighted wp) ===");
+for (k = 1; k <= size(I11p); k++) {
+  printf("  gen[%2s]: wdeg=%s, terms=%s", k, deg(I11p[k]), size(I11p[k]));
 }
 
-ring R11p = 32003, (t4, a4, w, v6, n1, n2, n3, r0, r1, r2, r3), dp;
-ideal I11p = imap(R11, I11);
-printf("=== Running slimgb(I11p) over F_32003 (LEAN 14 eqs) ===");
+printf("=== Running slimgb(I11p) over F_32003 (weighted wp) ===");
 ideal Gp = slimgb(I11p);
 printf("F_32003 slimgb size = %s, dim = %s, Gp[1] = %s", size(Gp), dim(Gp), Gp[1]);
 if (dim(Gp) == 0) { printf("F_32003 vdim = %s", vdim(Gp)); }
-if (size(Gp) == 1 && Gp[1] == 1) {
-  printf("F_32003_LEAN_EMPTY! Starting exact Q modStd(I11, 1)...");
-  setring R11;
-  ideal Gq = modStd(I11, 1);
-  printf("Q modStd(I11, 1) size = %s, Gq[1] = %s", size(Gq), Gq[1]);
-  if (size(Gq) == 1 && Gq[1] == 1) {
-    printf("CERTIFIED_MODSTD_Q_LEAN: DEGREE_135_IV_GCD_FOUR_PROVED_EMPTY_OVER_Q");
-  }
-}
 quit;
