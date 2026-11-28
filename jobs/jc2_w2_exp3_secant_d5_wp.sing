@@ -56,10 +56,11 @@ poly deg1_A = (c0 - 3*mu3)*x1_p - c0;
 poly deg1_B = x1_p - 1;
 poly couple = mu0_sol * mu3 + mu1_sol;
 
-// Verify exact factorization of deg 0 and deg 1 on Branch A & Branch B!
+// Verify exact algebraic identities for deg 0 and deg 1!
 if (vcoeff(ode2, 0) + 3*brA*brB != 0) { printf("ERROR: deg 0!"); quit; }
-if (subst(vcoeff(ode2, 1), c0, 0) != 0) { printf("ERROR: deg 1 at c0=0!"); quit; }
-printf("Exact system built and deg 0/1 factorizations verified!");
+poly d1_check = vcoeff(ode2, 1) - (16*x0_p*(1 - x1_p) + 16*x1_p*(-3*x0_p + number(3)/number(2)*c0^2 - number(3)/number(2)*mu3*c0) - 12*c0^2);
+if (d1_check != 0) { printf("ERROR: deg 1 identity!"); quit; }
+printf("Exact system built and deg 0/1 identities verified!");
 
 ideal I_core_v =
   vcoeff(ode2, 9), vcoeff(ode2, 8), vcoeff(ode2, 6), vcoeff(ode2, 5),
@@ -81,7 +82,6 @@ ring Rp = 32029, (c4, c3, c2, c0, mu3), wp(1, 2, 3, 5, 5);
 int ridx;
 list roots = 16284, 18571;
 
-// Helper to test over F_32029 at both roots
 for (ridx = 1; ridx <= 2; ridx++) {
   int rv = roots[ridx];
   printf("\n================ F_32029, root kap = %s ================", rv);
@@ -136,7 +136,7 @@ for (ridx = 1; ridx <= 2; ridx++) {
   }
 }
 
-// Now run EXACT Q-verified modStd(..., 1) on all 4 sub-branches (PURE first, or COUPLED)!
+// Now run EXACT Q-verified modStd(..., 1) on all 4 sub-branches!
 setring Rq;
 printf("\n================ EXACT Q MODSTD(I, 1) PROOFS ================");
 ideal Q1 = modStd(ideal(I_core, mp, c0, p_x0), 1);
