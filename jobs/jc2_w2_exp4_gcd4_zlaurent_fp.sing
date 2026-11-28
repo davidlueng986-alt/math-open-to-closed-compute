@@ -1,0 +1,393 @@
+// Ultra-fast 9-variable z-Laurent F_32003 diagnostic for DEGREE-135-IV-GCD-FOUR!
+// Key structural breakthroughs:
+//   1. n0 eliminated from R3=0 (exact constant pivot -54).
+//   2. v0 eliminated from Second Residue Law T_3=0 (exact constant pivot -243/125, v0*v6 cancels!).
+//   3. v_{-1}..v_{-11} are 100% independent of T_0 and p_0!
+//   4. E1..E7 = [u^{-1}..u^{-7}](r(u)*V(z(u))) + R2 = 0 give 8 equations in ONLY 8 parameters
+//      (n1, n2, n3, n4, r0, r1, r2, v6) (+ w*b2 - 1 = 0 => 9 variables total)!
+//   5. T_0 first enters v_{-12} with exact constant pivot +2/45 (2*v6 cancels!), so E8=0
+//      eliminates T_0 with constant pivot +2/45, giving E9, E10, E11 in the SAME 9 variables!
+
+system("--ticks-per-sec", 1000);
+int t0_clk = timer;
+
+proc serMul(list Ain, list Bin, int nord) {
+  list Cout;
+  int i, j;
+  for (i = 1; i <= nord; i++) { Cout[i] = poly(0); }
+  int na = size(Ain);
+  int nb = size(Bin);
+  for (i = 1; i <= na; i++) {
+    if (i > nord) { break; }
+    if (Ain[i] == 0) { continue; }
+    for (j = 1; j <= nb; j++) {
+      if (i + j - 1 > nord) { break; }
+      if (Bin[j] == 0) { continue; }
+      Cout[i + j - 1] = Cout[i + j - 1] + Ain[i] * Bin[j];
+    }
+  }
+  return(Cout);
+}
+
+proc serInv(list Fin, int nord) {
+  list sinv;
+  sinv[1] = poly(1);
+  int i, j;
+  for (i = 2; i <= nord; i++) {
+    poly acc = 0;
+    for (j = 2; j <= i; j++) {
+      if (j <= size(Fin) && Fin[j] != 0) {
+        acc = acc + Fin[j] * sinv[i - j + 1];
+      }
+    }
+    sinv[i] = -acc;
+  }
+  return(sinv);
+}
+
+proc serPowThird(list Qin, int nord) {
+  list gser;
+  gser[1] = poly(0);
+  int i;
+  for (i = 2; i <= nord; i++) { gser[i] = Qin[i]; }
+  list pout;
+  pout[1] = poly(1);
+  for (i = 2; i <= nord; i++) { pout[i] = poly(0); }
+  list sterm;
+  sterm[1] = poly(1);
+  number expo = number(1) / number(3);
+  number binom = 1;
+  int kk;
+  for (kk = 1; kk < nord; kk++) {
+    sterm = serMul(sterm, gser, nord);
+    binom = binom * (expo - number(kk - 1)) / number(kk);
+    for (i = 1; i <= nord; i++) {
+      if (sterm[i] != 0) { pout[i] = pout[i] + binom * sterm[i]; }
+    }
+  }
+  return(pout);
+}
+
+proc polyDivByR(list Pin, list rpoly) {
+  int da = size(Pin) - 1;
+  list cur = Pin;
+  list Qout;
+  int i, j;
+  for (i = 1; i <= da - 3; i++) { Qout[i] = poly(0); }
+  for (i = da; i >= 4; i--) {
+    poly cc = cur[i + 1];
+    Qout[i - 3] = cc;
+    if (cc != 0) {
+      for (j = 0; j <= 4; j++) {
+        cur[i - 4 + j + 1] = cur[i - 4 + j + 1] - cc * rpoly[j + 1];
+      }
+    }
+  }
+  list RemOut;
+  for (i = 1; i <= 4; i++) { RemOut[i] = cur[i]; }
+  return(list(Qout, RemOut));
+}
+
+// =========================================================================
+// PART 1: Universal z-Laurent formulas for v0 and vm(1..15) in tiny ring Ru
+// =========================================================================
+ring Ru = 32003, (v0, vm(1..15), v6, v2, v1, T0, bm(1..15)), dp;
+
+int NORD_U = 25; // indices 1..25 correspond to s^0..s^24 (z^8 down to z^{-16} in B'(z) => b_{-15})
+poly v3_u = (number(3) / number(500)) * (500 * v6 - 1001);
+
+// V_list[j+1] = V_{9-j} for j = 0..24 (powers z^9 down to z^{-15})
+list Vu;
+int j;
+for (j = 1; j <= NORD_U; j++) { Vu[j] = poly(0); }
+Vu[1]  = poly(1); // z^9
+Vu[4]  = v6;      // z^6
+Vu[7]  = v3_u;    // z^3
+Vu[8]  = v2;      // z^2
+Vu[9]  = v1;      // z^1
+Vu[10] = v0;      // z^0
+int k;
+for (k = 1; k <= 15; k++) { Vu[10 + k] = vm(k); }
+
+// Solve 2*(1+z^-3)*T' + 3*z^-4*T = 18*V*V' for T_{18-j}, j = 0..24 (z^18 down to z^{-6})
+// Coeff of z^{m-1}: 2*m*T_m + (2*m+9)*T_{m+3} = 9*m * sum_{a+b=m} V_a V_b
+list Tu;
+for (j = 1; j <= NORD_U; j++) { Tu[j] = poly(0); }
+int m, a_idx, b_idx;
+for (j = 0; j < NORD_U; j++) {
+  m = 18 - j;
+  poly rhs = 0;
+  // a = 9 - a_idx, b = 9 - b_idx => a + b = 18 - (a_idx + b_idx) = m => a_idx + b_idx = j
+  for (a_idx = 0; a_idx <= j; a_idx++) {
+    b_idx = j - a_idx;
+    if (a_idx < NORD_U && b_idx < NORD_U) {
+      if (Vu[a_idx + 1] != 0 && Vu[b_idx + 1] != 0) {
+        rhs = rhs + Vu[a_idx + 1] * Vu[b_idx + 1];
+      }
+    }
+  }
+  rhs = number(9 * m) * rhs;
+  poly t_hi = 0;
+  if (j >= 3) { t_hi = Tu[j - 2]; } // index for m+3 is (j-3)+1 = j-2
+  if (m == 0) {
+    Tu[j + 1] = T0;
+  } else {
+    Tu[j + 1] = (rhs - number(2 * m + 9) * t_hi) / number(2 * m);
+  }
+}
+
+list T2u = serMul(Tu, Tu, NORD_U);
+list V2u = serMul(Vu, Vu, NORD_U);
+list V2u_inv = serInv(V2u, NORD_U);
+list pu = serMul(T2u, V2u_inv, NORD_U);
+for (j = 1; j <= NORD_U; j++) { pu[j] = pu[j] / number(9); }
+list dpu;
+for (j = 0; j < NORD_U; j++) { dpu[j + 1] = number(18 - j) * pu[j + 1]; }
+list Vu_inv = serInv(Vu, NORD_U);
+list dBu = serMul(dpu, Vu_inv, NORD_U);
+
+// Sequentially solve vm(1..15) in terms of (v0, v6, v2, v1, T0, bm(1..15))
+// dBu[10 + k] = -k * bm(k) has coeff(-9*k/2) on vm(k)
+list vm_sol;
+for (k = 1; k <= 15; k++) {
+  poly eqk = dBu[10 + k] + number(k) * bm(k);
+  int ii;
+  for (ii = 1; ii < k; ii++) {
+    eqk = subst(eqk, vm(ii), vm_sol[ii]);
+  }
+  poly piv = diff(eqk, vm(k));
+  if (piv != -number(9 * k) / number(2)) {
+    printf("ERROR: universal pivot for vm(%s) = %s", k, piv);
+    quit;
+  }
+  vm_sol[k] = -subst(eqk, vm(k), 0) / piv;
+}
+
+// Eliminate v0 from Second Residue Law T_3 = Tu[16] = 0!
+poly T3u = Tu[16];
+for (k = 1; k <= 6; k++) {
+  T3u = subst(T3u, vm(k), vm_sol[k]);
+}
+poly piv_v0 = diff(T3u, v0);
+if (piv_v0 != -number(243) / number(125)) {
+  printf("ERROR: universal pivot for v0 = %s", piv_v0);
+  quit;
+}
+poly v0_u = -subst(T3u, v0, 0) / piv_v0;
+
+for (k = 1; k <= 15; k++) {
+  vm_sol[k] = subst(vm_sol[k], v0, v0_u);
+}
+
+// Verify T0 does not appear in vm_sol[1..11] and has constant pivot 2/45 in vm_sol[12]!
+for (k = 1; k <= 11; k++) {
+  if (diff(vm_sol[k], T0) != 0) { printf("ERROR: T0 in vm_sol[%s]!", k); quit; }
+}
+poly piv_T0 = diff(vm_sol[12], T0);
+if (piv_T0 != number(2) / number(45)) {
+  printf("ERROR: universal pivot for T0 in vm12 = %s", piv_T0);
+  quit;
+}
+printf("[%s ms] Universal z-Laurent formulas verified! (v0=%s terms, vm12=%s terms, vm15=%s terms)",
+       timer - t0_clk, size(v0_u), size(vm_sol[12]), size(vm_sol[15]));
+
+// Save v0_u and vm_sol[1..15] as an ideal in Ru to map into Rp!
+ideal U_forms = v0_u;
+for (k = 1; k <= 15; k++) { U_forms = U_forms, vm_sol[k]; }
+
+// =========================================================================
+// PART 2: Specialize to DEGREE-135-IV-GCD-FOUR in ONLY 9 variables (+ T0)!
+// =========================================================================
+ring Rp = 32003, (w, n1, n2, n3, n4, r0, r1, r2, v6, T0), dp;
+
+proc buildBhiRem(list rpoly, list Npoly) {
+  list r_s = list(rpoly[5], rpoly[4], rpoly[3], rpoly[2], rpoly[1]);
+  list N_s = list(Npoly[6], Npoly[5], Npoly[4], Npoly[3], Npoly[2], Npoly[1]);
+  list N_inv = serInv(N_s, 10);
+  list r_s2 = serMul(r_s, r_s, 10);
+  list Qs = serMul(r_s2, N_inv, 10);
+  list Qs2 = serMul(Qs, Qs, 10);
+  list Qs3 = serMul(Qs2, Qs, 10);
+
+  number b9 = number(9) / number(2);
+  poly b6 = (number(9) / number(8)) * (4 * v6 - 13);
+  poly b3 = (number(27) / number(500)) * (377 - 125 * v6);
+
+  list B_hi;
+  int mm;
+  for (mm = 0; mm <= 9; mm++) { B_hi[mm + 1] = poly(0); }
+  for (mm = 1; mm <= 9; mm++) {
+    poly cc = b9 * Qs3[9 - mm + 1];
+    if (mm <= 6) { cc = cc + b6 * Qs2[6 - mm + 1]; }
+    if (mm <= 3) { cc = cc + b3 * Qs[3 - mm + 1]; }
+    B_hi[mm + 1] = cc;
+  }
+  list dB_hi;
+  for (mm = 0; mm <= 8; mm++) { dB_hi[mm + 1] = number(mm + 1) * B_hi[mm + 2]; }
+  list qr = polyDivByR(dB_hi, rpoly);
+  return(list(qr[1], qr[2]));
+}
+
+list rpoly = list(r0, r1, r2, poly(0), poly(1));
+list N_zero = list(poly(0), n1, n2, n3, n4, poly(1));
+list N_one  = list(poly(1), n1, n2, n3, n4, poly(1));
+list bres0 = buildBhiRem(rpoly, N_zero);
+list bres1 = buildBhiRem(rpoly, N_one);
+list rem0 = bres0[2];
+list rem1 = bres1[2];
+poly piv_n0 = rem1[4] - rem0[4];
+if (piv_n0 != -54) { printf("ERROR: piv_n0 = %s", piv_n0); quit; }
+poly n0_sol = rem0[4] / number(54);
+
+list Npoly = list(n0_sol, n1, n2, n3, n4, poly(1));
+list bres = buildBhiRem(rpoly, Npoly);
+list remB = bres[2];
+if (remB[4] != 0) { printf("ERROR: R3 nonzero!"); quit; }
+
+poly R2 = remB[3];
+poly b2 = -remB[2] / number(2);
+poly b1 = (number(2) / number(3)) * n4 * b2 - remB[1];
+poly v2_p = (number(2) / number(9)) * b2;
+poly v1_p = (number(2) / number(9)) * b1;
+poly v3_p = (number(3) / number(500)) * (500 * v6 - 1001);
+
+// Compute Q, Z1, Z2 up to order 26 (s^0..s^25) so we can extract bm[1..15] and E[1..11]!
+int NS = 26;
+list r_s = list(rpoly[5], rpoly[4], rpoly[3], rpoly[2], rpoly[1]);
+list N_s = list(Npoly[6], Npoly[5], Npoly[4], Npoly[3], Npoly[2], Npoly[1]);
+list N_inv = serInv(N_s, NS);
+list r_s2 = serMul(r_s, r_s, NS);
+list Qs = serMul(r_s2, N_inv, NS);
+list Qs2 = serMul(Qs, Qs, NS);
+list Qs3 = serMul(Qs2, Qs, NS);
+list Z1 = serPowThird(Qs, NS);
+list Z2 = serMul(Z1, Z1, NS);
+
+// Extract E_B[m] = [u^{-m}](b9 z^9 + b6 z^6 + b3 z^3 + b2 z^2 + b1 z) for m = 1..15
+number b9 = number(9) / number(2);
+poly b6 = (number(9) / number(8)) * (4 * v6 - 13);
+poly b3 = (number(27) / number(500)) * (377 - 125 * v6);
+
+list EB;
+int mm;
+for (mm = 1; mm <= 15; mm++) {
+  EB[mm] = b9 * Qs3[9 + mm + 1] + b6 * Qs2[6 + mm + 1] + b3 * Qs[3 + mm + 1]
+         + b2 * Z2[2 + mm + 1] + b1 * Z1[1 + mm + 1];
+}
+
+// Compute t(s) = 1/z = s * Z1_inv(s) and its powers t^k mod s^16
+list Z1_inv = serInv(Z1, 16);
+list t1;
+t1[1] = poly(0);
+for (mm = 1; mm <= 15; mm++) { t1[mm + 1] = Z1_inv[mm]; }
+
+// t_pow[k] is list of length 16 (indices 1..16 = s^0..s^15)
+list tpow_flat; // store as list of lists
+tpow_flat[1] = t1;
+int kk;
+for (kk = 2; kk <= 15; kk++) {
+  list prev_t = tpow_flat[kk - 1];
+  tpow_flat[kk] = serMul(prev_t, t1, 16);
+}
+
+list bm_p;
+for (kk = 1; kk <= 15; kk++) {
+  poly acc = EB[kk];
+  int jj;
+  for (jj = 1; jj < kk; jj++) {
+    list tj = tpow_flat[jj];
+    acc = acc + bm_p[jj] * tj[kk + 1];
+  }
+  bm_p[kk] = -acc;
+}
+printf("[%s ms] Computed bm[1..15] (bm1=%s, bm6=%s, bm12=%s terms)",
+       timer - t0_clk, size(bm_p[1]), size(bm_p[6]), size(bm_p[12]));
+
+// Map U_forms (v0, vm1..vm15) from Ru into Rp!
+map phi = Ru, 0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+              v6, v2_p, v1_p, T0,
+              bm_p[1], bm_p[2], bm_p[3], bm_p[4], bm_p[5],
+              bm_p[6], bm_p[7], bm_p[8], bm_p[9], bm_p[10],
+              bm_p[11], bm_p[12], bm_p[13], bm_p[14], bm_p[15];
+ideal V_mapped = phi(U_forms);
+poly v0_p = V_mapped[1];
+list vm_p;
+for (kk = 1; kk <= 15; kk++) { vm_p[kk] = V_mapped[kk + 1]; }
+printf("[%s ms] Mapped v0 and vm[1..15] into Rp (v0=%s, vm5=%s, vm11=%s terms)",
+       timer - t0_clk, size(v0_p), size(vm_p[5]), size(vm_p[11]));
+
+// Compute r(u)*V(z(u)) negative powers E_m = [u^{-m}](r(u)*V(z(u))) for m = 1..11!
+// Notice r(u)*z^a = u^{4+a} * r_s(s) * Z_a(s).
+// For a >= 0: we need [u^{-m}] = [s^{4+a+m}] of r_s * Z_a.
+// For a = -k < 0: r(u)*z^{-k} = u^4 * r_s(s) * t(s)^k, so [u^{-m}] = [s^{4+m}] of r_s * t^k!
+list rQ3 = serMul(r_s, Qs3, NS);
+list rQ2 = serMul(r_s, Qs2, NS);
+list rQ1 = serMul(r_s, Qs,  NS);
+list rZ2 = serMul(r_s, Z2,  NS);
+list rZ1 = serMul(r_s, Z1,  NS);
+
+// Precompute r_s * t^k mod s^16 (s^0..s^15 -> up to m = 11 since 4+11=15!)
+list rt_flat;
+for (kk = 1; kk <= 15; kk++) {
+  list tk = tpow_flat[kk];
+  rt_flat[kk] = serMul(r_s, tk, 16);
+}
+
+list Eeq;
+for (mm = 1; mm <= 11; mm++) {
+  poly ee = rQ3[13 + mm + 1]
+          + v6   * rQ2[10 + mm + 1]
+          + v3_p * rQ1[7 + mm + 1]
+          + v2_p * rZ2[6 + mm + 1]
+          + v1_p * rZ1[5 + mm + 1];
+  // v0_p * r(u) is a polynomial in u, so it contributes 0 to u^{-m}!
+  // For k = 1 .. 4+mm: add vm_p[k] * [s^{4+mm}](r_s * t^k)
+  int kmax = 4 + mm;
+  for (kk = 1; kk <= kmax; kk++) {
+    list rtk = rt_flat[kk];
+    ee = ee + vm_p[kk] * rtk[4 + mm + 1];
+  }
+  Eeq[mm] = ee;
+}
+printf("[%s ms] Built E1..E11! Terms: E1=%s, E2=%s, E3=%s, E4=%s, E5=%s, E6=%s, E7=%s, E8=%s",
+       timer - t0_clk, size(Eeq[1]), size(Eeq[2]), size(Eeq[3]), size(Eeq[4]),
+       size(Eeq[5]), size(Eeq[6]), size(Eeq[7]), size(Eeq[8]));
+
+// Eliminate T0 from E8 = 0 (exact constant pivot 2/45)!
+poly piv_T0_E8 = diff(Eeq[8], T0);
+if (piv_T0_E8 != number(2) / number(45)) {
+  printf("ERROR: E8 pivot for T0 = %s", piv_T0_E8);
+  quit;
+}
+poly T0_sol = -subst(Eeq[8], T0, 0) / piv_T0_E8;
+poly E9_elim  = subst(Eeq[9],  T0, T0_sol);
+poly E10_elim = subst(Eeq[10], T0, T0_sol);
+poly E11_elim = subst(Eeq[11], T0, T0_sol);
+printf("[%s ms] Eliminated T0 from E8! (E9=%s, E10=%s, E11=%s terms)",
+       timer - t0_clk, size(E9_elim), size(E10_elim), size(E11_elim));
+
+// Switch to 9-variable ring R9 (NO T0!)
+ring R9 = 32003, (w, n1, n2, n3, n4, r0, r1, r2, v6), dp;
+ideal I7 = imap(Rp, R2), imap(Rp, w * b2 - 1),
+           imap(Rp, Eeq[1]), imap(Rp, Eeq[2]), imap(Rp, Eeq[3]),
+           imap(Rp, Eeq[4]), imap(Rp, Eeq[5]), imap(Rp, Eeq[6]), imap(Rp, Eeq[7]);
+printf("[%s ms] Running slimgb(I7) (9 eqs in 9 vars: R2, w*b2-1, E1..E7)...", timer - t0_clk);
+ideal G7 = slimgb(I7);
+printf("[%s ms] slimgb(I7): size=%s, dim=%s, G7[1]=%s", timer - t0_clk, size(G7), dim(G7), G7[1]);
+
+if (size(G7) == 1 && G7[1] == 1) {
+  printf("F_32003_I7_UNSAT: R2 + E1..E7 + (b2!=0) IS ALREADY [1] MOD 32003!!");
+  quit;
+}
+
+ideal I11 = G7, imap(Rp, E9_elim), imap(Rp, E10_elim), imap(Rp, E11_elim);
+printf("[%s ms] Running slimgb(I11) (+ E9, E10, E11)...", timer - t0_clk);
+ideal G11 = slimgb(I11);
+printf("[%s ms] slimgb(I11): size=%s, dim=%s, G11[1]=%s", timer - t0_clk, size(G11), dim(G11), G11[1]);
+
+if (size(G11) == 1 && G11[1] == 1) {
+  printf("F_32003_I11_UNSAT: DEGREE-135-IV-GCD-FOUR IS [1] MOD 32003!!");
+} else {
+  printf("F_32003_I11_NONEMPTY: dim=%s, mult=%s", dim(G11), mult(G11));
+}
+quit;
