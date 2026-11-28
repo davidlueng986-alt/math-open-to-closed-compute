@@ -1,0 +1,158 @@
+// Ultra-fast Meet-in-the-Middle + Weighted-Ordering Exact Q Singular Proof
+// for SECANT-HEIGHT-FOUR-REALIZATION at d = 5 (j = 4), coupled with mu0*mu3 + mu1*mu2 = 0!
+// Eliminates ONLY x9, x8, x7, x6 top-down (max deg 4!), sets x1 = 1 and x0 = (a0^2 - 2*a0*mu3)/4,
+// and keeps x5, x4, x3, x2 so EVERY equation has low degree (<= 8 instead of 20)!
+
+LIB "modstd.lib";
+system("--ticks-per-sec", 1000);
+int t0_clk = timer;
+
+// Weighted degrevlex matching V -> t*V, a1 -> t^5*a1, X -> t^10*X:
+//   x2(8), x3(7), x4(6), x5(5), a4(1), a3(2), a2(3), a0(5), mu3(5), mu0(17), s(1)
+ring Rq = 0, (x2, x3, x4, x5, mu0, mu3, a0, a2, a3, a4, s), wp(8, 7, 6, 5, 17, 5, 5, 3, 2, 1, 1);
+
+proc divByQS(poly f, number pa, number pb) {
+  number den = pa * pa - number(15) * pb * pb;
+  poly num = f * (pa - pb * s);
+  poly c0 = subst(num, s, 0);
+  poly c1 = subst(diff(num, s), s, 0);
+  poly c2 = subst(diff(diff(num, s), s), s, 0) / number(2);
+  return((c0 + number(15) * c2 + c1 * s) / den);
+}
+
+proc redS2(poly f) {
+  poly c0 = subst(f, s, 0);
+  poly c1 = subst(diff(f, s), s, 0);
+  poly c2 = subst(diff(diff(f, s), s), s, 0) / number(2);
+  return(c0 + number(15) * c2 + c1 * s);
+}
+
+proc polyMul(list A, list B) {
+  int na = size(A);
+  int nb = size(B);
+  list C;
+  int i, j;
+  for (i = 1; i <= na + nb - 1; i++) { C[i] = poly(0); }
+  for (i = 1; i <= na; i++) {
+    if (A[i] == 0) { continue; }
+    for (j = 1; j <= nb; j++) {
+      if (B[j] == 0) { continue; }
+      C[i + j - 1] = C[i + j - 1] + A[i] * B[j];
+    }
+  }
+  return(C);
+}
+
+// a1 = a0 + a2*V^2 + a3*V^3 + a4*V^4 + V^5, mu2 = 1, mu1 = -mu0*mu3
+poly mu1_p = -mu0 * mu3;
+list a1 = list(a0, poly(0), a2, a3, a4, poly(1));
+list a1_2 = polyMul(a1, a1);
+list a1_3 = polyMul(a1_2, a1);
+list a1_4 = polyMul(a1_2, a1_2);
+
+list RHS;
+int m;
+for (m = 0; m <= 20; m++) {
+  poly cc = a1_4[m + 1];
+  if (m <= 15) { cc = cc - 2 * mu3 * a1_3[m + 1]; }
+  if (m >= 1 && m <= 11) { cc = cc + 4 * a1_2[m]; }
+  if (m >= 2 && m <= 7)  { cc = cc - 8 * mu1_p * a1[m - 1]; }
+  if (m == 3)            { cc = cc + 16 * mu0; }
+  RHS[m + 1] = 3 * cc;
+}
+
+list Pterm;
+for (m = 0; m <= 10; m++) {
+  poly cc = (number(3) / number(2)) * a1_2[m + 1];
+  if (m <= 5) { cc = cc - (number(3) / number(2)) * mu3 * a1[m + 1]; }
+  if (m == 1) { cc = cc + poly(1); }
+  Pterm[m + 1] = cc;
+}
+
+list Xp;
+for (m = 1; m <= 11; m++) { Xp[m] = poly(0); }
+Xp[11] = (number(-3) + number(2) * s) / number(68);
+Xp[6]  = x5;
+Xp[5]  = x4;
+Xp[4]  = x3;
+Xp[3]  = x2;
+Xp[2]  = poly(1);
+Xp[1]  = (a0^2 - 2 * a0 * mu3) / number(4);
+
+// Solve ONLY x9, x8, x7, x6 top-down (max deg 4)!
+int k, i, j;
+for (k = 9; k >= 6; k--) {
+  poly rest = 0;
+  int deg_eq = 10 + k;
+  for (i = k + 1; i <= 10; i++) {
+    j = deg_eq - i;
+    if (j >= k + 1 && j <= 10) {
+      poly yj = number(2 * j - 3) * Xp[j + 1] + Pterm[j + 1];
+      rest = rest + 16 * Xp[i + 1] * yj;
+    }
+  }
+  rest = rest + 16 * Xp[11] * Pterm[k + 1];
+  poly diff_eq = redS2(RHS[deg_eq + 1] - rest);
+  number pa = number(16) * number(60 - 6 * k) / number(68);
+  number pb = number(16) * number(4 * k + 28) / number(68);
+  Xp[k + 1] = divByQS(diff_eq, pa, pb);
+}
+
+list Yp;
+for (m = 0; m <= 10; m++) {
+  Yp[m + 1] = number(2 * m - 3) * Xp[m + 1] + Pterm[m + 1];
+}
+list LHS = polyMul(Xp, Yp);
+list ode;
+for (m = 0; m <= 20; m++) {
+  ode[m + 1] = redS2(16 * LHS[m + 1] - RHS[m + 1]);
+}
+for (m = 16; m <= 20; m++) {
+  if (ode[m + 1] != 0) { printf("ERROR: ode[%s] nonzero!", m); quit; }
+}
+if (ode[1] != 0 || ode[2] != 0) { printf("ERROR: ode[0] or ode[1] nonzero!"); quit; }
+printf("[%s ms] Built MITM d=5 system (ode[15..2], 14 low-deg eqs)!", timer - t0_clk);
+
+// =========================================================================
+// CASE 1: a0 = 0 (forces mu3 = 0, mu1 = 0 by all-d theorem!) -> exact Q!
+// =========================================================================
+ideal I_a0zero = s^2 - 15, a0, mu3;
+for (m = 2; m <= 15; m++) { I_a0zero = I_a0zero, ode[m + 1]; }
+printf("[%s ms] Running EXACT Q slimgb(I_a0zero) (d=5, a0=0, mu3=0)...", timer - t0_clk);
+ideal G_a0zero = slimgb(I_a0zero);
+printf("[%s ms] EXACT Q G_a0zero: size=%s, dim=%s, G[1]=%s", timer - t0_clk, size(G_a0zero), dim(G_a0zero), G_a0zero[1]);
+if (size(G_a0zero) == 1 && G_a0zero[1] == 1) {
+  printf("CERTIFIED_Q_EXACT: H4_D5_A0_ZERO_EMPTY_OVER_C");
+}
+
+// =========================================================================
+// CASE 2: Full coupled d=5 (ALL a0, mu3, mu0 with mu2=1, mu1=-mu0*mu3)!
+// =========================================================================
+ideal I_all = s^2 - 15;
+for (m = 2; m <= 15; m++) { I_all = I_all, ode[m + 1]; }
+
+// Fast F_32003 test first!
+ring Rp = 32003, (x2, x3, x4, x5, mu0, mu3, a0, a2, a3, a4, s), wp(8, 7, 6, 5, 17, 5, 5, 3, 2, 1, 1);
+ideal Ip_all = imap(Rq, I_all);
+printf("[%s ms] Running F_32003 slimgb(Ip_all) (MITM wp, d=5, ALL a0, mu0, mu3)...", timer - t0_clk);
+ideal Gp_all = slimgb(Ip_all);
+printf("[%s ms] F_32003 Gp_all: size=%s, dim=%s, Gp_all[1]=%s", timer - t0_clk, size(Gp_all), dim(Gp_all), Gp_all[1]);
+
+if (size(Gp_all) == 1 && Gp_all[1] == 1) {
+  printf("F_32003_UNSAT: H4_D5_COUPLED_EMPTY_MOD_32003!");
+  setring Rq;
+  printf("[%s ms] Running EXACT Q-verified modStd(I_all, 1)...", timer - t0_clk);
+  ideal Gq_all = modStd(I_all, 1);
+  printf("[%s ms] EXACT Q Gq_all: size=%s, Gq_all[1]=%s", timer - t0_clk, size(Gq_all), Gq_all[1]);
+  if (size(Gq_all) == 1 && Gq_all[1] == 1) {
+    printf("CERTIFIED_Q_EXACT: SECANT_H4_D5_COUPLED_ALL_EMPTY_OVER_C");
+  }
+} else {
+  printf("F_32003_NONEMPTY: dim=%s, mult=%s", dim(Gp_all), mult(Gp_all));
+  int lim = size(Gp_all);
+  if (lim > 10) { lim = 10; }
+  for (m = 1; m <= lim; m++) {
+    printf("  Gp_all[%s]: %s", m, Gp_all[m]);
+  }
+}
+quit;
