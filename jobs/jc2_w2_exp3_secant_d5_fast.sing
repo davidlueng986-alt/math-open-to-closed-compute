@@ -1,0 +1,144 @@
+// FAST 5-VARIABLE EXACT Q-PROOF for SECANT-HEIGHT-FOUR-REALIZATION at d = 5 (j = 4, minimal survivor!)
+// Eliminates mu1 (from deg 7, pivot +24) and mu0 (from deg 3, pivot -48),
+// splits deg 0 into exact branches:
+//   Branch A: 4*x0 - c0^2 = 0
+//   Branch B: 4*x0 - c0^2 + 2*c0*mu3 = 0
+// Tests BOTH:
+//   (1) Coupled with mu0*mu3 + mu1*mu2 = 0 (mu2 = 1)
+//   (2) Pure ODE (mu2 = 1, mu0*mu3 + mu1*mu2 NOT assumed!)
+// Uses F_32003 first, then EXACT Q-verified modStd(I, 1) over Q (with 272*kap^2 + 24*kap - 3 in I)!
+
+LIB "modstd.lib";
+
+proc vcoeff(poly f, int k) {
+  matrix C = coeffs(f, V);
+  if (k + 1 > nrows(C)) { return(poly(0)); }
+  return(C[k + 1, 1]);
+}
+
+// Step 1: Build x[9]..x[0] in Q(kap)[V, c4, c3, c2, c0, mu3, mu1, mu0]
+ring Rv = (0, kap), (V, c4, c3, c2, c0, mu3, mu1, mu0), dp;
+minpoly = 272*kap^2 + 24*kap - 3;
+
+poly a1 = V^5 + c4*V^4 + c3*V^3 + c2*V^2 + c0;
+poly RHS = 3*(a1^4 - 2*mu3*a1^3 + 4*V*a1^2 - 8*mu1*V^2*a1 + 16*mu0*V^3);
+poly B = (number(3)/number(2))*a1^2 - (number(3)/number(2))*mu3*a1 + V;
+
+list xc;
+int k, m, dg;
+for (k = 1; k <= 11; k++) { xc[k] = poly(0); }
+xc[11] = poly(kap);
+
+for (m = 1; m <= 10; m++) {
+  dg = 20 - m;
+  poly Xcur = 0;
+  for (k = 10 - m + 1; k <= 10; k++) { Xcur = Xcur + xc[k + 1] * V^k; }
+  poly curLHS = 16 * Xcur * (2*V*diff(Xcur, V) - 3*Xcur + B);
+  poly rem = vcoeff(RHS, dg) - vcoeff(curLHS, dg);
+  number piv = 16 * ((34 - 2*m)*kap + number(3)/number(2));
+  xc[10 - m + 1] = rem / piv;
+}
+
+poly X = 0;
+for (k = 0; k <= 10; k++) { X = X + xc[k + 1] * V^k; }
+poly odeDiff = 16*X*(2*V*diff(X, V) - 3*X + B) - RHS;
+
+for (k = 10; k <= 20; k++) {
+  if (vcoeff(odeDiff, k) != 0) { printf("ERROR: odeDiff nonzero at %s!", k); quit; }
+}
+
+// Verify mu1 and mu0 do NOT appear in X!
+if (diff(X, mu1) != 0 || diff(X, mu0) != 0) { printf("ERROR: mu1/mu0 in X!"); quit; }
+
+// Eliminate mu1 from deg 7 (pivot +24) and mu0 from deg 3 (pivot -48)!
+poly eq7 = vcoeff(odeDiff, 7);
+if (diff(eq7, mu1) != number(24)) { printf("ERROR: eq7 mu1 pivot = %s", diff(eq7, mu1)); quit; }
+poly mu1_sol = -subst(eq7, mu1, 0) / number(24);
+
+poly ode1 = subst(odeDiff, mu1, mu1_sol);
+poly eq3 = vcoeff(ode1, 3);
+if (diff(eq3, mu0) != number(-48)) { printf("ERROR: eq3 mu0 pivot = %s", diff(eq3, mu0)); quit; }
+poly mu0_sol = subst(eq3, mu0, 0) / number(48);
+
+poly ode2 = subst(ode1, mu0, mu0_sol);
+poly x0_p = xc[1];
+poly x1_p = xc[2];
+
+// Verify deg 0 == -3*(4*x0 - c0^2)*(4*x0 - c0^2 + 2*c0*mu3)
+poly brA = 4*x0_p - c0^2;
+poly brB = 4*x0_p - c0^2 + 2*c0*mu3;
+if (vcoeff(ode2, 0) + 3*brA*brB != 0) { printf("ERROR: deg 0 factorization mismatch!"); quit; }
+printf("Verified exact elimination of mu1, mu0 AND deg 0 factorization!");
+
+poly couple = mu0_sol * mu3 + mu1_sol; // mu0*mu3 + mu1*mu2 = 0 with mu2 = 1
+
+ideal I_base_v =
+  vcoeff(ode2, 9), vcoeff(ode2, 8), vcoeff(ode2, 6), vcoeff(ode2, 5),
+  vcoeff(ode2, 4), vcoeff(ode2, 2), vcoeff(ode2, 1);
+
+// Convert from Q(kap) to Q[c4, c3, c2, c0, mu3, kap] + (272*kap^2 + 24*kap - 3)
+// so we can run BOTH F_32003 slimgb AND exact Q modStd(I, 1)!
+ring Rq = 0, (c4, c3, c2, c0, mu3, kap), dp;
+poly mp = 272*kap^2 + 24*kap - 3;
+ideal I_base = imap(Rv, I_base_v), mp;
+poly p_brA = imap(Rv, brA);
+poly p_brB = imap(Rv, brB);
+poly p_couple = imap(Rv, couple);
+
+// --- TEST 1: PURE ODE (WITHOUT mu0*mu3 + mu1*mu2 = 0!) ---
+ring Rp = 32003, (c4, c3, c2, c0, mu3, kap), dp;
+
+// Branch A Pure ODE
+ideal IA_pure_p = imap(Rq, I_base), imap(Rq, p_brA);
+printf("=== F_32003: Branch A PURE ODE (d=5, 6 vars incl kap) ===");
+ideal GAp = slimgb(IA_pure_p);
+printf("F_32003 Branch A PURE: size=%s, dim=%s, G[1]=%s", size(GAp), dim(GAp), GAp[1]);
+
+// Branch B Pure ODE
+ideal IB_pure_p = imap(Rq, I_base), imap(Rq, p_brB);
+printf("=== F_32003: Branch B PURE ODE (d=5, 6 vars incl kap) ===");
+ideal GBp = slimgb(IB_pure_p);
+printf("F_32003 Branch B PURE: size=%s, dim=%s, G[1]=%s", size(GBp), dim(GBp), GBp[1]);
+
+// Branch A Coupled
+ideal IA_coup_p = IA_pure_p, imap(Rq, p_couple);
+printf("=== F_32003: Branch A COUPLED (mu0*mu3+mu1*mu2=0) ===");
+ideal GAc_p = slimgb(IA_coup_p);
+printf("F_32003 Branch A COUPLED: size=%s, dim=%s, G[1]=%s", size(GAc_p), dim(GAc_p), GAc_p[1]);
+
+// Branch B Coupled
+ideal IB_coup_p = IB_pure_p, imap(Rq, p_couple);
+printf("=== F_32003: Branch B COUPLED (mu0*mu3+mu1*mu2=0) ===");
+ideal GBc_p = slimgb(IB_coup_p);
+printf("F_32003 Branch B COUPLED: size=%s, dim=%s, G[1]=%s", size(GBc_p), dim(GBc_p), GBc_p[1]);
+
+// EXACT Q PROOFS!
+setring Rq;
+if (size(GAp) == 1 && GAp[1] == 1) {
+  printf("=== EXACT Q modStd(Branch A PURE, 1) ===");
+  ideal GA_q = modStd(ideal(I_base, p_brA), 1);
+  printf("Q Branch A PURE: size=%s, G[1]=%s", size(GA_q), GA_q[1]);
+  if (size(GA_q) == 1 && GA_q[1] == 1) { printf("CERTIFIED_Q: D5_BRANCH_A_PURE_EMPTY"); }
+} else {
+  if (size(GAc_p) == 1 && GAc_p[1] == 1) {
+    printf("=== EXACT Q modStd(Branch A COUPLED, 1) ===");
+    ideal GAc_q = modStd(ideal(I_base, p_brA, p_couple), 1);
+    printf("Q Branch A COUPLED: size=%s, G[1]=%s", size(GAc_q), GAc_q[1]);
+    if (size(GAc_q) == 1 && GAc_q[1] == 1) { printf("CERTIFIED_Q: D5_BRANCH_A_COUPLED_EMPTY"); }
+  }
+}
+
+if (size(GBp) == 1 && GBp[1] == 1) {
+  printf("=== EXACT Q modStd(Branch B PURE, 1) ===");
+  ideal GB_q = modStd(ideal(I_base, p_brB), 1);
+  printf("Q Branch B PURE: size=%s, G[1]=%s", size(GB_q), GB_q[1]);
+  if (size(GB_q) == 1 && GB_q[1] == 1) { printf("CERTIFIED_Q: D5_BRANCH_B_PURE_EMPTY"); }
+} else {
+  if (size(GBc_p) == 1 && GBc_p[1] == 1) {
+    printf("=== EXACT Q modStd(Branch B COUPLED, 1) ===");
+    ideal GBc_q = modStd(ideal(I_base, p_brB, p_couple), 1);
+    printf("Q Branch B COUPLED: size=%s, G[1]=%s", size(GBc_q), GBc_q[1]);
+    if (size(GBc_q) == 1 && GBc_q[1] == 1) { printf("CERTIFIED_Q: D5_BRANCH_B_COUPLED_EMPTY"); }
+  }
+}
+quit;
