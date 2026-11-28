@@ -1,0 +1,123 @@
+// Pure-Singular 4.4.1 verification for SECANT-HEIGHT-FOUR-REALIZATION
+// Normalized special-fiber ODE:
+//   16*W*(2*V*W' - 3*W + (3/2)*a1^2 - (3/2)*mu3*a1 + mu2*V)
+//     = 3*(a1^4 - 2*mu3*a1^3 + 4*mu2*V*a1^2 - 8*mu1*V^2*a1 + 16*mu0*V^3)
+// Exact boundary conditions from Eq. (81)-(83):
+//   a1(0) = mu3, a1'(0) = 0, deg(a1) = d = j + 1 >= 2 (a_d != 0)
+//   W(0) = -mu3^2/4, W'(0) = mu2, W''(0)/2 = 3*mu0/mu2, deg(W) = 2d
+//   mu0*mu2 != 0, mu0*mu3 + mu1*mu2 = 0.
+// Exhaustive scaling split over C:
+//   Case 1 (delta = 0): mu0 = 1, mu1 = 0, mu2 = 1, mu3 = 0.
+//   Case 2 (delta != 0): mu0 = alpha != 0, mu1 = alpha, mu2 = 1, mu3 = -1.
+
+option(noredefine);
+LIB "polylib.lib";
+
+proc test_case1(int d, int p)
+{
+  printf("=== CASE 1 (delta=0): d=%s (j=%s), char=%s ===", d, d-1, p);
+  int t0 = timer;
+  // Build ring with variables V, a(2..d), w(3..2d), rab
+  string vlist = "V";
+  int k;
+  for (k = 2; k <= d; k++) { vlist = vlist + ",a" + string(k); }
+  for (k = 3; k <= 2*d; k++) { vlist = vlist + ",w" + string(k); }
+  vlist = vlist + ",rab";
+  execute("ring Rtmp = " + string(p) + ",(" + vlist + "),dp;");
+
+  poly a1 = 0;
+  for (k = 2; k <= d; k++) { execute("a1 = a1 + a" + string(k) + "*V^" + string(k) + ";"); }
+  poly W = V + 3*V^2;
+  for (k = 3; k <= 2*d; k++) { execute("W = W + w" + string(k) + "*V^" + string(k) + ";"); }
+
+  poly Wp = diff(W, V);
+  poly ODE = 32*W*(2*V*Wp - 3*W + V) + 48*W*a1^2 - 6*(a1^4 + 4*V*a1^2 + 16*V^3);
+
+  // Extract coefficients of V^4 .. V^(4d)
+  matrix M = coeffs(ODE, V);
+  ideal I = 0;
+  for (k = 5; k <= nrows(M); k++) {
+    if (M[k,1] != 0) { I = I + ideal(M[k,1]); }
+  }
+  execute("I = I + ideal(rab*a" + string(d) + " - 1);");
+
+  // Move to ring without V
+  string vlist2 = "";
+  for (k = 2; k <= d; k++) {
+    if (vlist2 != "") { vlist2 = vlist2 + ","; }
+    vlist2 = vlist2 + "a" + string(k);
+  }
+  for (k = 3; k <= 2*d; k++) { vlist2 = vlist2 + ",w" + string(k); }
+  vlist2 = vlist2 + ",rab";
+  execute("ring R2 = " + string(p) + ",(" + vlist2 + "),dp;");
+  ideal J = imap(Rtmp, I);
+  ideal G = slimgb(J);
+  int is_one = (size(G) == 1 && deg(G[1]) == 0);
+  printf("  RESULT Case 1 d=%s char=%s: GB_is_1=%s, size=%s, time=%s s", d, p, is_one, size(G), timer - t0);
+  return(is_one);
+}
+
+proc test_case2(int d, int p)
+{
+  printf("=== CASE 2 (delta=1): d=%s (j=%s), char=%s ===", d, d-1, p);
+  int t0 = timer;
+  string vlist = "V,al";
+  int k;
+  for (k = 2; k <= d; k++) { vlist = vlist + ",a" + string(k); }
+  for (k = 3; k <= 2*d; k++) { vlist = vlist + ",w" + string(k); }
+  vlist = vlist + ",rab";
+  execute("ring Rtmp = " + string(p) + ",(" + vlist + "),dp;");
+
+  poly a1 = -1;
+  for (k = 2; k <= d; k++) { execute("a1 = a1 + a" + string(k) + "*V^" + string(k) + ";"); }
+  // Use Z = 4*W so all coeffs are integers: Z = -1 + 4*V + 12*al*V^2 + 4*sum w_k V^k
+  // Actually keep W4 = 4*W = -1 + 4*V + 12*al*V^2 + sum w_k V^k (w_k = 4*w_k_orig, invertible)
+  poly W4 = -1 + 4*V + 12*al*V^2;
+  for (k = 3; k <= 2*d; k++) { execute("W4 = W4 + w" + string(k) + "*V^" + string(k) + ";"); }
+
+  poly W4p = diff(W4, V);
+  // 16*W*(2*V*W' - 3*W + (3/2)*a1^2 + (3/2)*a1 + V) = W4*(2*V*W4' - 3*W4 + 6*a1^2 + 6*a1 + 4*V)
+  poly ODE = W4*(2*V*W4p - 3*W4 + 6*a1^2 + 6*a1 + 4*V)
+             - 3*(a1^4 + 2*a1^3 + 4*V*a1^2 - 8*al*V^2*a1 + 16*al*V^3);
+
+  matrix M = coeffs(ODE, V);
+  ideal I = 0;
+  for (k = 5; k <= nrows(M); k++) {
+    if (M[k,1] != 0) { I = I + ideal(M[k,1]); }
+  }
+  execute("I = I + ideal(rab*al*a" + string(d) + " - 1);");
+
+  string vlist2 = "al";
+  for (k = 2; k <= d; k++) { vlist2 = vlist2 + ",a" + string(k); }
+  for (k = 3; k <= 2*d; k++) { vlist2 = vlist2 + ",w" + string(k); }
+  vlist2 = vlist2 + ",rab";
+  execute("ring R2 = " + string(p) + ",(" + vlist2 + "),dp;");
+  ideal J = imap(Rtmp, I);
+  ideal G = slimgb(J);
+  int is_one = (size(G) == 1 && deg(G[1]) == 0);
+  printf("  RESULT Case 2 d=%s char=%s: GB_is_1=%s, size=%s, time=%s s", d, p, is_one, size(G), timer - t0);
+  return(is_one);
+}
+
+// 1. Exact Q proofs for d = 2, 3, 4 (confirming and strengthening Wave 1)
+int r1;
+r1 = test_case1(2, 0);
+r1 = test_case2(2, 0);
+r1 = test_case1(3, 0);
+r1 = test_case2(3, 0);
+r1 = test_case1(4, 0);
+r1 = test_case2(4, 0);
+
+// 2. NEW FRONTIER: d = 5 (j = 4, deg (144, 208), mu = 27)
+r1 = test_case1(5, 32003);
+r1 = test_case1(5, 0);
+r1 = test_case2(5, 32003);
+r1 = test_case2(5, 0);
+
+// 3. BONUS FRONTIER: d = 6 (j = 5, deg (176, 256), mu = 33)
+r1 = test_case1(6, 32003);
+r1 = test_case1(6, 0);
+r1 = test_case2(6, 32003);
+r1 = test_case2(6, 0);
+
+quit;
