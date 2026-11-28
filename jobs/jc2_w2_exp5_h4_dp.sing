@@ -1,0 +1,83 @@
+// Pure-Singular 4.4.1 deterministic exact-Q (slimgb/dp) verifier for SECANT-HEIGHT-FOUR-REALIZATION
+option(noredefine);
+LIB "polylib.lib";
+
+proc run_case1_dp(int d, int p)
+{
+  printf("=== CASE 1 (delta=0, dp/slimgb): d=%s (j=%s), char=%s ===", d, d-1, p);
+  int t0 = timer;
+  string vlist = "V";
+  int k;
+  for (k = 2; k <= d; k++) { vlist = vlist + ",a" + string(k); }
+  for (k = 3; k <= 2*d; k++) { vlist = vlist + ",w" + string(k); }
+  vlist = vlist + ",rab";
+  execute("ring Rtmp = " + string(p) + ",(" + vlist + "),dp;");
+
+  poly a1 = 0;
+  for (k = 2; k <= d; k++) { execute("a1 = a1 + a" + string(k) + "*V^" + string(k) + ";"); }
+  poly W = V + 3*V^2;
+  for (k = 3; k <= 2*d; k++) { execute("W = W + w" + string(k) + "*V^" + string(k) + ";"); }
+
+  poly Wp = diff(W, V);
+  poly ODE = 32*W*(2*V*Wp - 3*W + V) + 48*W*a1^2 - 6*(a1^4 + 4*V*a1^2 + 16*V^3);
+
+  matrix M = coeffs(ODE, V);
+  ideal I = 0;
+  for (k = 5; k <= nrows(M); k++) {
+    if (M[k,1] != 0) { I = I + ideal(M[k,1]); }
+  }
+  execute("I = I + ideal(rab*a" + string(d) + " - 1);");
+
+  string vlist2 = "";
+  for (k = 2; k <= d; k++) {
+    if (vlist2 != "") { vlist2 = vlist2 + ","; }
+    vlist2 = vlist2 + "a" + string(k);
+  }
+  for (k = 3; k <= 2*d; k++) { vlist2 = vlist2 + ",w" + string(k); }
+  vlist2 = vlist2 + ",rab";
+  execute("ring R2 = " + string(p) + ",(" + vlist2 + "),dp;");
+  ideal J = imap(Rtmp, I);
+  ideal G = slimgb(J);
+  int is_one = (size(G) == 1 && deg(G[1]) == 0);
+  printf("  RESULT Case 1 (dp) d=%s char=%s: GB_is_1=%s, size=%s, time=%s s", d, p, is_one, size(G), timer - t0);
+  return(is_one);
+}
+
+proc run_case2_dp(int d, int p)
+{
+  printf("=== CASE 2 (delta=1, dp/slimgb): d=%s (j=%s), char=%s ===", d, d-1, p);
+  int t0 = timer;
+  string vlist = "V,al";
+  int k;
+  for (k = 2; k <= d; k++) { vlist = vlist + ",a" + string(k); }
+  for (k = 3; k <= 2*d; k++) { vlist = vlist + ",w" + string(k); }
+  vlist = vlist + ",rab";
+  execute("ring Rtmp = " + string(p) + ",(" + vlist + "),dp;");
+
+  poly a1 = -1;
+  for (k = 2; k <= d; k++) { execute("a1 = a1 + a" + string(k) + "*V^" + string(k) + ";"); }
+  poly W4 = -1 + 4*V + 12*al*V^2;
+  for (k = 3; k <= 2*d; k++) { execute("W4 = W4 + w" + string(k) + "*V^" + string(k) + ";"); }
+
+  poly W4p = diff(W4, V);
+  poly ODE = W4*(2*V*W4p - 3*W4 + 6*a1^2 + 6*a1 + 4*V)
+             - 3*(a1^4 + 2*a1^3 + 4*V*a1^2 - 8*al*V^2*a1 + 16*al*V^3);
+
+  matrix M = coeffs(ODE, V);
+  ideal I = 0;
+  for (k = 5; k <= nrows(M); k++) {
+    if (M[k,1] != 0) { I = I + ideal(M[k,1]); }
+  }
+  execute("I = I + ideal(rab*al*a" + string(d) + " - 1);");
+
+  string vlist2 = "al";
+  for (k = 2; k <= d; k++) { vlist2 = vlist2 + ",a" + string(k); }
+  for (k = 3; k <= 2*d; k++) { vlist2 = vlist2 + ",w" + string(k); }
+  vlist2 = vlist2 + ",rab";
+  execute("ring R2 = " + string(p) + ",(" + vlist2 + "),dp;");
+  ideal J = imap(Rtmp, I);
+  ideal G = slimgb(J);
+  int is_one = (size(G) == 1 && deg(G[1]) == 0);
+  printf("  RESULT Case 2 (dp) d=%s char=%s: GB_is_1=%s, size=%s, time=%s s", d, p, is_one, size(G), timer - t0);
+  return(is_one);
+}
