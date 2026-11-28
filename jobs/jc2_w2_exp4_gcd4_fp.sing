@@ -1,0 +1,301 @@
+// Fast F_32003 structural diagnostic & Groebner test for DEGREE-135-IV-GCD-FOUR
+// Sole remaining subcase of the specified Degree-135 chain (90, 135).
+// Normalization (WLOG): C0 = 1, r monic deg 4 with r3 = 0, N monic deg 5, M = r^2 + N.
+
+system("--ticks-per-sec", 1000);
+int t0_clk = timer;
+
+ring Rp = 32003, (t4, a4, w, n1, n2, n3, n4, r0, r1, r2, v6), dp;
+
+proc polyDivByR(list A, list r) {
+  int da = size(A) - 1;
+  list cur = A;
+  list Q;
+  int i, j;
+  for (i = 1; i <= da - 3; i++) { Q[i] = poly(0); }
+  for (i = da; i >= 4; i--) {
+    poly c = cur[i + 1];
+    Q[i - 3] = c;
+    if (c != 0) {
+      for (j = 0; j <= 4; j++) {
+        cur[i - 4 + j + 1] = cur[i - 4 + j + 1] - c * r[j + 1];
+      }
+    }
+  }
+  list Rem;
+  for (i = 1; i <= 4; i++) { Rem[i] = cur[i]; }
+  return(list(Q, Rem));
+}
+
+proc serMul(list A, list B, int ord) {
+  list C;
+  int i, j;
+  for (i = 1; i <= ord; i++) { C[i] = poly(0); }
+  int na = size(A);
+  int nb = size(B);
+  for (i = 1; i <= na; i++) {
+    if (i > ord) { break; }
+    if (A[i] == 0) { continue; }
+    for (j = 1; j <= nb; j++) {
+      if (i + j - 1 > ord) { break; }
+      if (B[j] == 0) { continue; }
+      C[i + j - 1] = C[i + j - 1] + A[i] * B[j];
+    }
+  }
+  return(C);
+}
+
+proc serInv(list F, int ord) {
+  list inv;
+  inv[1] = poly(1);
+  int i, j;
+  for (i = 2; i <= ord; i++) {
+    poly s = 0;
+    for (j = 2; j <= i; j++) {
+      if (j <= size(F) && F[j] != 0) {
+        s = s + F[j] * inv[i - j + 1];
+      }
+    }
+    inv[i] = -s;
+  }
+  return(inv);
+}
+
+proc serPowThird(list Q, int ord) {
+  list g;
+  g[1] = poly(0);
+  int i;
+  for (i = 2; i <= ord; i++) { g[i] = Q[i]; }
+  list res;
+  res[1] = poly(1);
+  for (i = 2; i <= ord; i++) { res[i] = poly(0); }
+  list term;
+  term[1] = poly(1);
+  number alpha = number(1) / number(3);
+  number binom = 1;
+  int k;
+  for (k = 1; k < ord; k++) {
+    term = serMul(term, g, ord);
+    binom = binom * (alpha - number(k - 1)) / number(k);
+    for (i = 1; i <= ord; i++) {
+      if (term[i] != 0) { res[i] = res[i] + binom * term[i]; }
+    }
+  }
+  return(res);
+}
+
+proc buildBhiRem(list r, list N) {
+  list r_s = list(r[5], r[4], r[3], r[2], r[1]);
+  list N_s = list(N[6], N[5], N[4], N[3], N[2], N[1]);
+  list N_inv = serInv(N_s, 10);
+  list r_s2 = serMul(r_s, r_s, 10);
+  list Q = serMul(r_s2, N_inv, 10);
+  list Q2 = serMul(Q, Q, 10);
+  list Q3 = serMul(Q2, Q, 10);
+
+  number b9 = number(9) / number(2);
+  poly b6 = (number(9) / number(8)) * (4 * v6 - 13);
+  poly b3 = (number(27) / number(500)) * (377 - 125 * v6);
+
+  list B_hi;
+  int m;
+  for (m = 0; m <= 9; m++) { B_hi[m + 1] = poly(0); }
+  for (m = 1; m <= 9; m++) {
+    poly c = b9 * Q3[9 - m + 1];
+    if (m <= 6) { c = c + b6 * Q2[6 - m + 1]; }
+    if (m <= 3) { c = c + b3 * Q[3 - m + 1]; }
+    B_hi[m + 1] = c;
+  }
+  list dB_hi;
+  for (m = 0; m <= 8; m++) { dB_hi[m + 1] = number(m + 1) * B_hi[m + 2]; }
+  list qr = polyDivByR(dB_hi, r);
+  return(list(qr[1], qr[2], Q, Q2, Q3, r_s));
+}
+
+// 1. Solve n0 from R3 = 0 (pivot -54)
+list r = list(r0, r1, r2, poly(0), poly(1));
+list N_zero = list(poly(0), n1, n2, n3, n4, poly(1));
+list N_one  = list(poly(1), n1, n2, n3, n4, poly(1));
+list res0 = buildBhiRem(r, N_zero);
+list res1 = buildBhiRem(r, N_one);
+poly piv_n0 = res1[2][4] - res0[2][4];
+if (piv_n0 != -54) { printf("ERROR: piv_n0 = %s", piv_n0); quit; }
+poly n0_sol = res0[2][4] / number(54);
+printf("[%s ms] Solved n0 (terms=%s)", timer - t0_clk, size(n0_sol));
+
+list N = list(n0_sol, n1, n2, n3, n4, poly(1));
+list res = buildBhiRem(r, N);
+list g = res[1];
+list remB = res[2];
+list Q = res[3];
+list Q2 = res[4];
+list Q3 = res[5];
+list r_s = res[6];
+
+if (remB[4] != 0) { printf("ERROR: R3 nonzero!"); quit; }
+poly R2 = remB[3];
+poly b2 = -remB[2] / number(2);
+poly b1 = (number(2) / number(3)) * n4 * b2 - remB[1];
+poly v2 = (number(2) / number(9)) * b2;
+poly v1 = (number(2) / number(9)) * b1;
+poly v3 = (number(3) / number(500)) * (500 * v6 - 1001);
+printf("[%s ms] R2 terms=%s, b2 terms=%s, b1 terms=%s", timer - t0_clk, size(R2), size(b2), size(b1));
+
+// 2. Build A_hi (u^13..u^5)
+list Z1 = serPowThird(Q, 10);
+list Z2 = serMul(Z1, Z1, 10);
+list rQ3 = serMul(r_s, Q3, 10);
+list rQ2 = serMul(r_s, Q2, 10);
+list rQ1 = serMul(r_s, Q, 10);
+list rZ2 = serMul(r_s, Z2, 10);
+list rZ1 = serMul(r_s, Z1, 10);
+
+list A_hi;
+int m;
+for (m = 0; m <= 13; m++) { A_hi[m + 1] = poly(0); }
+for (m = 5; m <= 13; m++) {
+  poly c = rQ3[13 - m + 1];
+  if (m <= 10) { c = c + v6 * rQ2[10 - m + 1]; }
+  if (m <= 7)  { c = c + v3 * rQ1[7 - m + 1]; }
+  if (m <= 6)  { c = c + v2 * rZ2[6 - m + 1]; }
+  if (m <= 5)  { c = c + v1 * rZ1[5 - m + 1]; }
+  A_hi[m + 1] = c;
+}
+
+// 3. M = r^2 + N (deg 8)
+list r2_poly = serMul(r, r, 9);
+list M;
+for (m = 0; m <= 8; m++) {
+  poly c = r2_poly[m + 1];
+  if (m <= 5) { c = c + N[m + 1]; }
+  M[m + 1] = c;
+}
+
+proc computeHi(list A_in, list r, list M, list g) {
+  list dA, dr;
+  int k, j, ii, d;
+  for (k = 0; k <= 12; k++) { dA[k + 1] = number(k + 1) * A_in[k + 2]; }
+  for (k = 0; k <= 3; k++) { dr[k + 1] = number(k + 1) * r[k + 2]; }
+  list dAr = serMul(dA, r, 17);
+  list Adr = serMul(A_in, dr, 17);
+  list W;
+  for (k = 1; k <= 17; k++) { W[k] = dAr[k] - Adr[k]; }
+  list RHS = serMul(A_in, W, 30);
+  for (k = 1; k <= 30; k++) { RHS[k] = 18 * RHS[k]; }
+
+  list T;
+  for (k = 1; k <= 23; k++) { T[k] = poly(0); }
+  for (k = 22; k >= 5; k--) {
+    d = k + 7;
+    poly lhs_rest = 0;
+    for (j = 0; j <= 7; j++) {
+      ii = d + 1 - j;
+      if (ii >= 5 && ii <= 22) {
+        lhs_rest = lhs_rest + T[ii + 1] * number(2 * ii - j) * M[j + 1];
+      }
+    }
+    T[k + 1] = (RHS[d + 1] - lhs_rest) / number(2 * k - 8);
+  }
+  list gA = serMul(g, A_in, 18);
+  list pL;
+  pL[1] = poly(0);
+  for (k = 0; k <= 17; k++) { pL[k + 2] = gA[k + 1] / number(k + 1); }
+
+  list T2 = serMul(T, T, 45);
+  list A2 = serMul(A_in, A_in, 27);
+  list pA2 = serMul(pL, A2, 45);
+  list sq;
+  for (k = 1; k <= 45; k++) { sq[k] = T2[k] - 9 * pA2[k]; }
+  return(list(T, pL, RHS, sq));
+}
+
+// 4. Sequentially eliminate a3, a2, a1, a0
+list A = A_hi;
+A[5] = a4;
+
+list tmp;
+tmp = computeHi(A, r, M, g);
+A[4] = tmp[4][35] * (number(16) / number(81));
+tmp = computeHi(A, r, M, g);
+if (tmp[4][35] != 0) { printf("ERROR: eq34 pivot!"); quit; }
+
+A[3] = tmp[4][34] * (number(7) / number(81));
+tmp = computeHi(A, r, M, g);
+if (tmp[4][34] != 0) { printf("ERROR: eq33 pivot!"); quit; }
+
+A[2] = tmp[4][33] * (number(4) / number(81));
+tmp = computeHi(A, r, M, g);
+if (tmp[4][33] != 0) { printf("ERROR: eq32 pivot!"); quit; }
+
+A[1] = tmp[4][32] * (number(5) / number(162));
+tmp = computeHi(A, r, M, g);
+if (tmp[4][32] != 0) { printf("ERROR: eq31 pivot!"); quit; }
+printf("[%s ms] Eliminated a3..a0! A[4..1] terms = %s, %s, %s, %s",
+       timer - t0_clk, size(A[4]), size(A[3]), size(A[2]), size(A[1]));
+
+list T = tmp[1];
+list pL = tmp[2];
+list RHS = tmp[3];
+
+// 5. Solve t3..t0 from ode10..ode7
+T[5] = t4;
+int k, j, ii, d;
+for (k = 3; k >= 0; k--) {
+  d = k + 7;
+  poly lhs_rest = 0;
+  for (j = 0; j <= 8; j++) {
+    ii = d + 1 - j;
+    if (ii > k && ii <= 22) {
+      lhs_rest = lhs_rest + T[ii + 1] * number(2 * ii - j) * M[j + 1];
+    }
+  }
+  T[k + 1] = (RHS[d + 1] - lhs_rest) / number(2 * k - 8);
+}
+
+list dT, dM;
+for (k = 0; k <= 21; k++) { dT[k + 1] = number(k + 1) * T[k + 2]; }
+for (k = 0; k <= 7; k++)  { dM[k + 1] = number(k + 1) * M[k + 2]; }
+list MTp = serMul(M, dT, 30);
+list dMT = serMul(dM, T, 30);
+list ode;
+for (k = 1; k <= 30; k++) { ode[k] = 2 * MTp[k] - dMT[k] - RHS[k]; }
+printf("[%s ms] Built ode11..ode0! terms(ode11)=%s, terms(ode6)=%s, terms(ode0)=%s",
+       timer - t0_clk, size(ode[12]), size(ode[7]), size(ode[1]));
+
+// 6. Solve p0 from eq26
+list T2_full = serMul(T, T, 45);
+list A2_full = serMul(A, A, 27);
+list pA2_0 = serMul(pL, A2_full, 45);
+poly eq26_0 = T2_full[27] - 9 * pA2_0[27];
+pL[1] = eq26_0 / number(9);
+printf("[%s ms] Eliminated p0 (terms=%s)!", timer - t0_clk, size(pL[1]));
+
+// First test I_ode_top = R2, ode11, ode6..ode0, eq30..eq27, w*b2 - 1 (NO low sqFull yet!)
+ideal I_ode = R2, ode[12], w * b2 - 1, tmp[4][31], tmp[4][30], tmp[4][29], tmp[4][28];
+for (k = 0; k <= 6; k++) { I_ode = I_ode, ode[k + 1]; }
+printf("[%s ms] Testing slimgb(I_ode) (14 eqs, 11 vars) over F_32003...", timer - t0_clk);
+ideal G_ode = slimgb(I_ode);
+printf("[%s ms] G_ode: size=%s, dim=%s, G_ode[1]=%s", timer - t0_clk, size(G_ode), dim(G_ode), G_ode[1]);
+
+if (size(G_ode) == 1 && G_ode[1] == 1) {
+  printf("F_32003_UNSAT_FROM_I_ODE_ALONE!");
+  quit;
+}
+
+// Otherwise add eq25..eq15!
+list pA2_full = serMul(pL, A2_full, 45);
+ideal I_full = G_ode;
+for (k = 25; k >= 0; k--) {
+  poly c = T2_full[k + 1] - 9 * pA2_full[k + 1];
+  if (k <= 8) { c = c - M[k + 1]; }
+  I_full = I_full, c;
+}
+printf("[%s ms] Testing slimgb(I_full) over F_32003...", timer - t0_clk);
+ideal G_full = slimgb(I_full);
+printf("[%s ms] G_full: size=%s, dim=%s, G_full[1]=%s", timer - t0_clk, size(G_full), dim(G_full), G_full[1]);
+if (size(G_full) == 1 && G_full[1] == 1) {
+  printf("F_32003_UNSAT_FULL!");
+} else {
+  printf("F_32003_NONEMPTY: dim=%s, mult=%s", dim(G_full), mult(G_full));
+}
+quit;
