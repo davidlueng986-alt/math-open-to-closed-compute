@@ -4,10 +4,9 @@
 //   T^2 - 9*pL*A^2 = M = r^2 + N
 //   B' = g*r, pL' = g*A, deg(g)=4, deg(r)=4, deg(N)=5, deg(A)=13, deg(T)=22
 // Translation gauge: n4 = 2*r3 => z = (r^2/N)^(1/3) = u + O(u^-1)
-// Universal constant rational pivots:
-//   n0 from eq_rB3 (-54), a3..a0 from sq34..sq31 (-81/16, -81/7, -81/4, -162/5),
-//   t3..t0 from ode10..ode7 (-2, -4, -6, -8), p0 from sq26 (-9), t4 from sq23 (-36/5).
-// w*b2 - 1 = 0 excludes b2 = 0 (and automatically excludes degenerate r^2/N = u^3).
+// Keep n0, a3..a0, t3..t0, p0 unexpanded where sparse, or eliminate cleanly with constant pivots.
+// Actually: keep n0 as a variable (eq_rB3 is linear in n0 with const pivot -54 -> instant elimination in slimgb!)
+// and keep a4..a0, t4..t0, p0 eliminated ONLY via exact constant pivots (or kept if sparse)!
 
 LIB "modstd.lib";
 option(prot);
@@ -25,14 +24,15 @@ proc udeg(poly f) {
   return(nrows(C) - 1);
 }
 
-// Exact polynomial quotient and remainder of P by MONIC Q of degree dQ in u
-proc polyQuoMonic(poly P, poly Q, int dQ) {
+// Exact polynomial quotient of P by MONIC Q of degree dQ in u (stopping at minK >= 0)
+proc polyQuoMonic(poly P, poly Q, int dQ, int minK) {
   poly rem = P;
   poly q = 0;
+  poly c = 0;
   int dP = udeg(rem);
   int k;
-  for (k = dP; k >= dQ; k--) {
-    poly c = ucoeff(rem, k);
+  for (k = dP; k >= dQ + minK; k--) {
+    c = ucoeff(rem, k);
     if (c != 0) {
       q = q + c * u^(k - dQ);
       rem = rem - c * u^(k - dQ) * Q;
@@ -41,52 +41,24 @@ proc polyQuoMonic(poly P, poly Q, int dQ) {
   return(q);
 }
 
-proc polyRemMonic(poly P, poly Q, int dQ) {
-  poly rem = P;
-  int dP = udeg(rem);
-  int k;
-  for (k = dP; k >= dQ; k--) {
-    poly c = ucoeff(rem, k);
-    if (c != 0) {
-      rem = rem - c * u^(k - dQ) * Q;
-    }
-  }
-  return(rem);
-}
-
 ring Ru = 0, (u, p0, t4, t3, t2, t1, t0, a4, a3, a2, a1, a0, w, v6, r3, r2, r1, r0, n3, n2, n1, n0), dp;
 
 poly r = u^4 + r3*u^3 + r2*u^2 + r1*u + r0;
-poly Nraw = u^5 + 2*r3*u^4 + n3*u^3 + n2*u^2 + n1*u + n0;
+poly N = u^5 + 2*r3*u^4 + n3*u^3 + n2*u^2 + n1*u + n0;
 
 number b9 = number(9)/number(2);
 poly b6 = (number(9)/number(8))*(4*v6 - 13);
 poly v3 = (number(3)/number(500))*(500*v6 - 1001);
 poly b3 = (number(27)/number(500))*(377 - 125*v6);
 
-// 1. Construct polyB and eliminate n0 from eq_rB3 (constant pivot -54)
-poly N3raw = Nraw^3;
-poly numBraw = b9*r^6 + b6*Nraw*r^4 + b3*Nraw^2*r^2;
-poly polyBraw = polyQuoMonic(numBraw, N3raw, 15);
-poly dpolyBraw = diff(polyBraw, u);
-poly remBraw = polyRemMonic(dpolyBraw, r, 4);
-poly eq_rB3 = ucoeff(remBraw, 3);
-if (diff(eq_rB3, n0) != number(-54)) {
-  printf("ERROR: eq_rB3 n0 pivot = %s", diff(eq_rB3, n0));
-  quit;
-}
-poly n0_sol = subst(eq_rB3, n0, 0) / number(54);
-printf("Eliminated n0 with exact constant pivot -54! size(n0_sol)=%s", size(n0_sol));
-
-// Substitute n0_sol into N and rebuild polyB, g, remB cleanly (n0-free!)
-poly N = subst(Nraw, n0, n0_sol);
+// 1. Construct polyB, g, eq_rB3, eq_rB2, b2, b1 (keeping n0 as a sparse variable!)
 poly N3 = N^3;
 poly numB = b9*r^6 + b6*N*r^4 + b3*N^2*r^2;
-poly polyB = polyQuoMonic(numB, N3, 15);
+poly polyB = polyQuoMonic(numB, N3, 15, 0);
 poly dpolyB = diff(polyB, u);
-poly g = polyQuoMonic(dpolyB, r, 4);
+poly g = polyQuoMonic(dpolyB, r, 4, 0);
 poly remB = dpolyB - g*r;
-if (ucoeff(remB, 3) != 0) { printf("ERROR: remB[3] nonzero after n0_sol!"); quit; }
+poly eq_rB3 = ucoeff(remB, 3);
 poly eq_rB2 = ucoeff(remB, 2);
 poly c2 = -ucoeff(remB, 1) / number(2);
 poly c1 = -ucoeff(remB, 0);
@@ -94,11 +66,12 @@ poly b2 = c2;
 poly b1 = c1;
 poly v2 = (number(2)/number(9))*b2;
 poly v1 = (number(2)/number(9))*b1;
-printf("Built g (deg %s), eq_rB2 (size %s), b2 (size %s)", udeg(g), size(eq_rB2), size(b2));
+printf("Step 1 done: deg(g)=%s, size(eq_rB3)=%s, size(eq_rB2)=%s, size(b2)=%s",
+       udeg(g), size(eq_rB3), size(eq_rB2), size(b2));
 
-// 2. Construct A(u)
+// 2. Construct A(u) (only need deg >= 5 of polyA!)
 poly numA = r^7 + v6*N*r^5 + v3*N^2*r^3;
-poly polyA = polyQuoMonic(numA, N3, 15);
+poly polyA = polyQuoMonic(numA, N3, 15, 5);
 poly extraA = r * (v2*u^2 + v1*u);
 poly A_hi = 0;
 int k;
@@ -106,17 +79,18 @@ for (k = 5; k <= 13; k++) {
   A_hi = A_hi + (ucoeff(polyA, k) + ucoeff(extraA, k)) * u^k;
 }
 poly A = A_hi + a4*u^4 + a3*u^3 + a2*u^2 + a1*u + a0;
+printf("Step 2 done: deg(A)=%s, size(A)=%s", udeg(A), size(A));
 
 // 3. Exact ODE 2*M*T' - M'*T = 18*A*(A'*r - A*r') for t[22]..t[5]
 poly M = r^2 + N;
 poly dM = diff(M, u);
 poly RHS = 18 * A * (diff(A, u)*r - A*diff(r, u));
 
-poly tcoeff[23]; // 1-indexed: tcoeff[k+1] is coeff of u^k
-for (k = 1; k <= 23; k++) { tcoeff[k] = 0; }
-poly mcoeff[9];
+matrix tcoeff[23][1];
+matrix mcoeff[9][1];
 int j, ii, d;
-for (j = 0; j <= 8; j++) { mcoeff[j+1] = ucoeff(M, j); }
+for (j = 0; j <= 8; j++) { mcoeff[j+1, 1] = ucoeff(M, j); }
+matrix rhscoeff = coeffs(RHS, u);
 
 for (k = 22; k >= 5; k--) {
   d = k + 7;
@@ -124,124 +98,77 @@ for (k = 22; k >= 5; k--) {
   for (j = 0; j <= 7; j++) {
     ii = d + 1 - j;
     if (ii >= 5 && ii <= 22) {
-      lhs_rest = lhs_rest + tcoeff[ii+1] * number(2*ii - j) * mcoeff[j+1];
+      lhs_rest = lhs_rest + tcoeff[ii+1, 1] * number(2*ii - j) * mcoeff[j+1, 1];
     }
   }
-  tcoeff[k+1] = (ucoeff(RHS, d) - lhs_rest) / number(2*k - 8);
+  poly rhs_d = 0;
+  if (nrows(rhscoeff) > d) { rhs_d = rhscoeff[d+1, 1]; }
+  tcoeff[k+1, 1] = (rhs_d - lhs_rest) / number(2*k - 8);
 }
+tcoeff[5, 1] = t4;
+tcoeff[4, 1] = t3;
+tcoeff[3, 1] = t2;
+tcoeff[2, 1] = t1;
+tcoeff[1, 1] = t0;
 
-poly Thi = 0;
-for (k = 5; k <= 22; k++) { Thi = Thi + tcoeff[k+1] * u^k; }
+poly Tfull = 0;
+for (k = 0; k <= 22; k++) { Tfull = Tfull + tcoeff[k+1, 1] * u^k; }
+poly odeDiff = 2*M*diff(Tfull, u) - dM*Tfull - RHS;
+matrix odeC = coeffs(odeDiff, u);
+for (k = 12; k <= 29; k++) {
+  if (nrows(odeC) > k && odeC[k+1, 1] != 0) {
+    printf("ERROR: odeDiff nonzero at %s!", k);
+    quit;
+  }
+}
+printf("Step 3 done: odeDiff[12..29] identically 0!");
 
-// 4. Compute pL_hi = int(g*A) and sqHi = Thi^2 - 9*pL_hi*A^2 to eliminate a3..a0
+// 4. Compute pL = int(g*A) + p0 and sqFull = Tfull^2 - 9*pL*A^2 - M
 poly gA = g * A;
-poly pL_hi = 0;
+matrix gAC = coeffs(gA, u);
+poly pL = p0;
 for (k = 0; k <= 17; k++) {
-  pL_hi = pL_hi + ucoeff(gA, k) * u^(k+1) / number(k+1);
+  if (nrows(gAC) > k) {
+    pL = pL + gAC[k+1, 1] * u^(k+1) / number(k+1);
+  }
 }
-poly sqHi = Thi^2 - 9*pL_hi*A^2;
+poly sqFull = Tfull^2 - 9*pL*A^2 - M;
+matrix sqC = coeffs(sqFull, u);
+printf("Step 4 done: sqFull built!");
 
-poly sq34 = ucoeff(sqHi, 34);
-if (diff(sq34, a3) != number(-81)/number(16)) { printf("ERROR: sq34 a3 pivot!"); quit; }
-poly a3_sol = subst(sq34, a3, 0) * (number(16)/number(81));
+// Verify universal constant pivots!
+if (diff(sqC[35, 1], a3) != number(-81)/number(16)) { printf("ERROR: sq34 a3 pivot = %s", diff(sqC[35, 1], a3)); quit; }
+if (diff(odeC[11, 1], t3) != number(-2)) { printf("ERROR: ode10 t3 pivot = %s", diff(odeC[11, 1], t3)); quit; }
+if (diff(sqC[27, 1], p0) != number(-9)) { printf("ERROR: sq26 p0 pivot = %s", diff(sqC[27, 1], p0)); quit; }
+printf("Verified exact constant pivots! Printing generator sizes:");
+printf("  ode11..0: %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
+  size(odeC[12,1]),size(odeC[11,1]),size(odeC[10,1]),size(odeC[9,1]),size(odeC[8,1]),size(odeC[7,1]),
+  size(odeC[6,1]),size(odeC[5,1]),size(odeC[4,1]),size(odeC[3,1]),size(odeC[2,1]),size(odeC[1,1]));
+printf("  sq34..23: %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
+  size(sqC[35,1]),size(sqC[34,1]),size(sqC[33,1]),size(sqC[32,1]),size(sqC[31,1]),size(sqC[30,1]),
+  size(sqC[29,1]),size(sqC[28,1]),size(sqC[27,1]),size(sqC[26,1]),size(sqC[25,1]),size(sqC[24,1]));
 
-poly sq33 = subst(ucoeff(sqHi, 33), a3, a3_sol);
-if (diff(sq33, a2) != number(-81)/number(7)) { printf("ERROR: sq33 a2 pivot!"); quit; }
-poly a2_sol = subst(sq33, a2, 0) * (number(7)/number(81));
+// Build sparse ideal (NO dense substitutions! Let slimgb use linear pivots cleanly!)
+ideal I_u = eq_rB3, eq_rB2, w*b2 - 1;
+for (k = 0; k <= 11; k++) { I_u = I_u, odeC[k+1, 1]; }
+for (k = 23; k <= 34; k++) { I_u = I_u, sqC[k+1, 1]; }
 
-poly sq32 = subst(subst(ucoeff(sqHi, 32), a3, a3_sol), a2, a2_sol);
-if (diff(sq32, a1) != number(-81)/number(4)) { printf("ERROR: sq32 a1 pivot!"); quit; }
-poly a1_sol = subst(sq32, a1, 0) * (number(4)/number(81));
+ring R21 = 0, (p0, t4, t3, t2, t1, t0, a4, a3, a2, a1, a0, w, v6, r3, r2, r1, r0, n3, n2, n1, n0), dp;
+ideal I21 = imap(Ru, I_u);
 
-poly sq31 = subst(subst(subst(ucoeff(sqHi, 31), a3, a3_sol), a2, a2_sol), a1, a1_sol);
-if (diff(sq31, a0) != number(-162)/number(5)) { printf("ERROR: sq31 a0 pivot!"); quit; }
-poly a0_sol = subst(sq31, a0, 0) * (number(5)/number(162));
-printf("Eliminated a3, a2, a1, a0 with exact universal constant pivots!");
+ring R21p = 32003, (p0, t4, t3, t2, t1, t0, a4, a3, a2, a1, a0, w, v6, r3, r2, r1, r0, n3, n2, n1, n0), dp;
+ideal I21p = imap(R21, I21);
+printf("=== Running slimgb(I21p) over F_32003 (27 sparse eqs in 21 vars; 11 linear pivots!) ===");
+ideal G21p = slimgb(I21p);
+printf("F_32003 slimgb(I21p): size = %s, G[1] = %s, dim = %s, vdim = %s",
+       size(G21p), G21p[1], dim(G21p), vdim(G21p));
 
-// Substitute a3..a0 into A, Thi, pL_hi, RHS!
-poly A_s = subst(subst(subst(subst(A, a3, a3_sol), a2, a2_sol), a1, a1_sol), a0, a0_sol);
-poly Thi_s = subst(subst(subst(subst(Thi, a3, a3_sol), a2, a2_sol), a1, a1_sol), a0, a0_sol);
-poly pL_hi_s = subst(subst(subst(subst(pL_hi, a3, a3_sol), a2, a2_sol), a1, a1_sol), a0, a0_sol);
-poly RHS_s = 18 * A_s * (diff(A_s, u)*r - A_s*diff(r, u));
-
-// Top sq equations (independent of t4..t0, p0!)
-poly sqHi_s = Thi_s^2 - 9*pL_hi_s*A_s^2;
-poly f30 = ucoeff(sqHi_s, 30);
-poly f29 = ucoeff(sqHi_s, 29);
-poly f28 = ucoeff(sqHi_s, 28);
-poly f27 = ucoeff(sqHi_s, 27);
-printf("Built f30..f27: sizes = %s, %s, %s, %s", size(f30), size(f29), size(f28), size(f27));
-
-// 5. Full ODE with t4..t0; eliminate t3..t0 from ode10..ode7 (-2, -4, -6, -8)
-poly Tfull = Thi_s + t4*u^4 + t3*u^3 + t2*u^2 + t1*u + t0;
-poly odeDiff = 2*M*diff(Tfull, u) - dM*Tfull - RHS_s;
-poly ode11 = ucoeff(odeDiff, 11);
-
-poly ode10 = ucoeff(odeDiff, 10);
-if (diff(ode10, t3) != number(-2)) { printf("ERROR: ode10 t3 pivot!"); quit; }
-poly t3_sol = subst(ode10, t3, 0) / number(2);
-
-poly ode9 = subst(ucoeff(odeDiff, 9), t3, t3_sol);
-if (diff(ode9, t2) != number(-4)) { printf("ERROR: ode9 t2 pivot!"); quit; }
-poly t2_sol = subst(ode9, t2, 0) / number(4);
-
-poly ode8 = subst(subst(ucoeff(odeDiff, 8), t3, t3_sol), t2, t2_sol);
-if (diff(ode8, t1) != number(-6)) { printf("ERROR: ode8 t1 pivot!"); quit; }
-poly t1_sol = subst(ode8, t1, 0) / number(6);
-
-poly ode7 = subst(subst(subst(ucoeff(odeDiff, 7), t3, t3_sol), t2, t2_sol), t1, t1_sol);
-if (diff(ode7, t0) != number(-8)) { printf("ERROR: ode7 t0 pivot!"); quit; }
-poly t0_sol = subst(ode7, t0, 0) / number(8);
-printf("Eliminated t3, t2, t1, t0 with exact constant pivots -2, -4, -6, -8!");
-
-poly Tfull_s = Thi_s + t4*u^4 + t3_sol*u^3 + t2_sol*u^2 + t1_sol*u + t0_sol;
-poly odeDiff_s = 2*M*diff(Tfull_s, u) - dM*Tfull_s - RHS_s;
-poly ode6 = ucoeff(odeDiff_s, 6);
-poly ode5 = ucoeff(odeDiff_s, 5);
-poly ode4 = ucoeff(odeDiff_s, 4);
-poly ode3 = ucoeff(odeDiff_s, 3);
-poly ode2 = ucoeff(odeDiff_s, 2);
-poly ode1 = ucoeff(odeDiff_s, 1);
-poly ode0 = ucoeff(odeDiff_s, 0);
-printf("Built ode11, ode6..ode0: sizes = %s, %s, %s, %s, %s, %s, %s, %s",
-       size(ode11), size(ode6), size(ode5), size(ode4), size(ode3), size(ode2), size(ode1), size(ode0));
-
-// 6. Eliminate p0 from sq26 (pivot -9) and extract sq25, sq24, sq23
-poly sqFull_raw = Tfull_s^2 - 9*(pL_hi_s + p0)*A_s^2 - M;
-poly sq26 = ucoeff(sqFull_raw, 26);
-if (diff(sq26, p0) != number(-9)) { printf("ERROR: sq26 p0 pivot!"); quit; }
-poly p0_sol = subst(sq26, p0, 0) / number(9);
-poly sq25 = subst(ucoeff(sqFull_raw, 25), p0, p0_sol);
-poly sq24 = subst(ucoeff(sqFull_raw, 24), p0, p0_sol);
-poly sq23 = subst(ucoeff(sqFull_raw, 23), p0, p0_sol);
-if (diff(sq23, t4) != number(-36)/number(5)) {
-  printf("WARNING: sq23 t4 pivot = %s", diff(sq23, t4));
-} else {
-  printf("Verified sq23 t4 universal constant pivot = -36/5!");
-}
-printf("Built sq25, sq24, sq23: sizes = %s, %s, %s", size(sq25), size(sq24), size(sq23));
-
-// Map to 11-variable ring (t4, a4, w, v6, r3, r2, r1, r0, n3, n2, n1)
-ideal I11_u = eq_rB2, ode11, f30, f29, f28, f27, sq25, sq24, sq23,
-              ode6, ode5, ode4, ode3, ode2, ode1, ode0, w*b2 - 1;
-
-ring R11 = 0, (t4, a4, w, v6, r3, r2, r1, r0, n3, n2, n1), dp;
-ideal I11 = imap(Ru, I11_u);
-
-// Probe over F_32003 first!
-ring R11p = 32003, (t4, a4, w, v6, r3, r2, r1, r0, n3, n2, n1), dp;
-ideal I11p = imap(R11, I11);
-printf("=== Running slimgb(I11p) over F_32003 (11 vars, 17 eqs) ===");
-ideal G11p = slimgb(I11p);
-printf("F_32003 slimgb(I11p): size = %s, G[1] = %s, dim = %s, vdim = %s",
-       size(G11p), G11p[1], dim(G11p), vdim(G11p));
-
-if (size(G11p) == 1 && G11p[1] == 1) {
-  printf("UNIT_IDEAL_MOD_32003! Now launching exact Q modStd(I11, 1)...");
-  setring R11;
-  ideal G11q = modStd(I11, 1);
-  printf("Q modStd(I11, 1): size = %s, G[1] = %s", size(G11q), G11q[1]);
-  if (size(G11q) == 1 && G11q[1] == 1) {
+if (size(G21p) == 1 && G21p[1] == 1) {
+  printf("UNIT_IDEAL_MOD_32003! Now launching exact Q modStd(I21, 1)...");
+  setring R21;
+  ideal G21q = modStd(I21, 1);
+  printf("Q modStd(I21, 1): size = %s, G[1] = %s", size(G21q), G21q[1]);
+  if (size(G21q) == 1 && G21q[1] == 1) {
     printf("CERTIFIED_MODSTD_Q: DEGREE_135_IV_GCD_FOUR_PROVED_EMPTY_OVER_Q");
   }
 }
