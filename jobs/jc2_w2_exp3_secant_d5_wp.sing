@@ -56,7 +56,6 @@ poly deg1_A = (c0 - 3*mu3)*x1_p - c0;
 poly deg1_B = x1_p - 1;
 poly couple = mu0_sol * mu3 + mu1_sol;
 
-// Verify exact algebraic identities for deg 0 and deg 1!
 if (vcoeff(ode2, 0) + 3*brA*brB != 0) { printf("ERROR: deg 0!"); quit; }
 poly d1_check = vcoeff(ode2, 1) - (16*x0_p*(1 - x1_p) + 16*x1_p*(-3*x0_p + number(3)/number(2)*c0^2 - number(3)/number(2)*mu3*c0) - 12*c0^2);
 if (d1_check != 0) { printf("ERROR: deg 1 identity!"); quit; }
@@ -84,7 +83,7 @@ list roots = 16284, 18571;
 
 for (ridx = 1; ridx <= 2; ridx++) {
   int rv = roots[ridx];
-  printf("\n================ F_32029, root kap = %s ================", rv);
+  printf("================ F_32029, root kap = %s ================", rv);
   setring Rq;
   ideal Ic_s = subst(I_core, kap, rv);
   poly x0_s = subst(p_x0, kap, rv);
@@ -104,48 +103,63 @@ for (ridx = 1; ridx <= 2; ridx++) {
   poly coupp = imap(Rq, coup_s);
 
   // Sub 1: c0 = 0, x0 = 0
-  ideal G1 = slimgb(ideal(Ic, c0, x0p));
+  ideal I1 = Ic + ideal(c0, x0p);
+  ideal G1 = slimgb(I1);
   printf("  Sub 1 (c0=0, PURE):        size=%s, dim=%s, G[1]=%s", size(G1), dim(G1), G1[1]);
   if (size(G1) != 1 || G1[1] != 1) {
-    ideal G1c = slimgb(ideal(Ic, c0, x0p, coupp));
+    ideal I1c = I1 + ideal(coupp);
+    ideal G1c = slimgb(I1c);
     printf("  Sub 1 (c0=0, COUPLED):     size=%s, dim=%s, G[1]=%s", size(G1c), dim(G1c), G1c[1]);
   }
 
   // Sub 2: mu3 = -c0, brB = 0
-  ideal G2 = slimgb(ideal(Ic, mu3 + c0, brBp));
+  ideal I2 = Ic + ideal(mu3 + c0, brBp);
+  ideal G2 = slimgb(I2);
   printf("  Sub 2 (mu3=-c0, PURE):     size=%s, dim=%s, G[1]=%s", size(G2), dim(G2), G2[1]);
   if (size(G2) != 1 || G2[1] != 1) {
-    ideal G2c = slimgb(ideal(Ic, mu3 + c0, brBp, coupp));
+    ideal I2c = I2 + ideal(coupp);
+    ideal G2c = slimgb(I2c);
     printf("  Sub 2 (mu3=-c0, COUPLED):  size=%s, dim=%s, G[1]=%s", size(G2c), dim(G2c), G2c[1]);
   }
 
   // Sub 3: brB = 0, x1 = 1
-  ideal G3 = slimgb(ideal(Ic, brBp, d1Bp));
+  ideal I3 = Ic + ideal(brBp, d1Bp);
+  ideal G3 = slimgb(I3);
   printf("  Sub 3 (BrB x1=1, PURE):    size=%s, dim=%s, G[1]=%s", size(G3), dim(G3), G3[1]);
   if (size(G3) != 1 || G3[1] != 1) {
-    ideal G3c = slimgb(ideal(Ic, brBp, d1Bp, coupp));
+    ideal I3c = I3 + ideal(coupp);
+    ideal G3c = slimgb(I3c);
     printf("  Sub 3 (BrB x1=1, COUPLED): size=%s, dim=%s, G[1]=%s", size(G3c), dim(G3c), G3c[1]);
   }
 
   // Sub 4: brA = 0, (c0-3*mu3)*x1 - c0 = 0
-  ideal G4 = slimgb(ideal(Ic, brAp, d1Ap));
+  ideal I4 = Ic + ideal(brAp, d1Ap);
+  ideal G4 = slimgb(I4);
   printf("  Sub 4 (BrA d1A, PURE):     size=%s, dim=%s, G[1]=%s", size(G4), dim(G4), G4[1]);
   if (size(G4) != 1 || G4[1] != 1) {
-    ideal G4c = slimgb(ideal(Ic, brAp, d1Ap, coupp));
+    ideal I4c = I4 + ideal(coupp);
+    ideal G4c = slimgb(I4c);
     printf("  Sub 4 (BrA d1A, COUPLED):  size=%s, dim=%s, G[1]=%s", size(G4c), dim(G4c), G4c[1]);
   }
 }
 
 // Now run EXACT Q-verified modStd(..., 1) on all 4 sub-branches!
 setring Rq;
-printf("\n================ EXACT Q MODSTD(I, 1) PROOFS ================");
-ideal Q1 = modStd(ideal(I_core, mp, c0, p_x0), 1);
+printf("================ EXACT Q MODSTD(I, 1) PROOFS ================");
+ideal J1 = I_core + ideal(mp, c0, p_x0);
+ideal Q1 = modStd(J1, 1);
 printf("EXACT Q Sub 1 (c0=0, PURE):    size=%s, G[1]=%s", size(Q1), Q1[1]);
-ideal Q2 = modStd(ideal(I_core, mp, mu3 + c0, p_brB), 1);
+
+ideal J2 = I_core + ideal(mp, mu3 + c0, p_brB);
+ideal Q2 = modStd(J2, 1);
 printf("EXACT Q Sub 2 (mu3=-c0, PURE): size=%s, G[1]=%s", size(Q2), Q2[1]);
-ideal Q3 = modStd(ideal(I_core, mp, p_brB, p_d1B), 1);
+
+ideal J3 = I_core + ideal(mp, p_brB, p_d1B);
+ideal Q3 = modStd(J3, 1);
 printf("EXACT Q Sub 3 (BrB x1=1, PURE):size=%s, G[1]=%s", size(Q3), Q3[1]);
-ideal Q4 = modStd(ideal(I_core, mp, p_brA, p_d1A), 1);
+
+ideal J4 = I_core + ideal(mp, p_brA, p_d1A);
+ideal Q4 = modStd(J4, 1);
 printf("EXACT Q Sub 4 (BrA d1A, PURE): size=%s, G[1]=%s", size(Q4), Q4[1]);
 
 if (size(Q1)==1 && Q1[1]==1 && size(Q2)==1 && Q2[1]==1 && size(Q3)==1 && Q3[1]==1 && size(Q4)==1 && Q4[1]==1) {
