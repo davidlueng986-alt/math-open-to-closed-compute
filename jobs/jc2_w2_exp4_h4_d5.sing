@@ -1,0 +1,186 @@
+// Exact Q-verified Singular proof for SECANT-HEIGHT-FOUR-REALIZATION at d = 5 (j = 4)!
+// ODE (OPPOSITE-EDGE.md Eq. (83)):
+//   16*X*(2*V*X' - 3*X + 3/2*a1^2 - 3/2*mu3*a1 + mu2*V)
+//     = 3*(a1^4 - 2*mu3*a1^3 + 4*mu2*V*a1^2 - 8*mu1*V^2*a1 + 16*mu0*V^3)
+// Exact kernel condition from (u^2): X_1 = mu2.
+// Normalization (WLOG for mu2 != 0, deg_V a1 = 5): a5 = 1, mu2 = 1.
+// Leading V^20: 272*x10^2 + 24*x10 - 3 = 0 => x10 = (-3 + 2*s)/68 where s^2 = 15 (both signs!).
+// Every top-down pivot for x_k (k = 9..0) is strictly nonzero in Q(sqrt(15))!
+// Tests BOTH:
+//   (1) Coupled with mu0*mu3 + mu1*mu2 = 0 (i.e. mu1 = -mu0*mu3)
+//   (2) Uncoupled general (mu0, mu1, mu3) without mu0*mu3 + mu1*mu2 = 0!
+
+LIB "modstd.lib";
+system("--ticks-per-sec", 1000);
+int t0_clk = timer;
+
+// Pure Q ring with s (s^2 = 15) as a variable so both slimgb and modStd work natively!
+ring Rq = 0, (s, a4, a3, a2, a0, mu3, mu1, mu0, w0), dp;
+
+// Helper: multiply two polynomials mod (s^2 - 15)
+proc redS(poly f) {
+  // Replace s^2 -> 15 repeatedly
+  poly r = f;
+  while (deg(r, intvec(1,0,0,0,0,0,0,0,0)) >= 2) {
+    r = subst(r, s^2, 15);
+  }
+  return(r);
+}
+
+// Helper: exact division of poly f (linear in s) by (pa + pb*s) in Q(s)/(s^2-15)
+proc divByQS(poly f, number pa, number pb) {
+  number den = pa * pa - number(15) * pb * pb;
+  poly num = f * (pa - pb * s);
+  // reduce s^2 -> 15
+  poly c0 = subst(num, s, 0);
+  poly c1 = subst(diff(num, s), s, 0);
+  poly c2 = subst(diff(diff(num, s), s), s, 0) / number(2);
+  return((c0 + number(15) * c2 + c1 * s) / den);
+}
+
+proc polyMul(list A, list B) {
+  int na = size(A);
+  int nb = size(B);
+  list C;
+  int i, j;
+  for (i = 1; i <= na + nb - 1; i++) { C[i] = poly(0); }
+  for (i = 1; i <= na; i++) {
+    if (A[i] == 0) { continue; }
+    for (j = 1; j <= nb; j++) {
+      if (B[j] == 0) { continue; }
+      C[i + j - 1] = C[i + j - 1] + A[i] * B[j];
+    }
+  }
+  return(C);
+}
+
+// Build a1 = a0 + 0*V + a2*V^2 + a3*V^3 + a4*V^4 + 1*V^5
+list a1 = list(a0, poly(0), a2, a3, a4, poly(1));
+list a1_2 = polyMul(a1, a1);       // deg 10 (len 11)
+list a1_3 = polyMul(a1_2, a1);     // deg 15 (len 16)
+list a1_4 = polyMul(a1_2, a1_2);   // deg 20 (len 21)
+
+// Build RHS = 3*(a1^4 - 2*mu3*a1^3 + 4*V*a1^2 - 8*mu1*V^2*a1 + 16*mu0*V^3) (deg 20, len 21)
+list RHS;
+int m;
+for (m = 0; m <= 20; m++) {
+  poly cc = a1_4[m + 1];
+  if (m <= 15) { cc = cc - 2 * mu3 * a1_3[m + 1]; }
+  if (m >= 1 && m <= 11) { cc = cc + 4 * a1_2[m]; }
+  if (m >= 2 && m <= 7)  { cc = cc - 8 * mu1 * a1[m - 1]; }
+  if (m == 3)            { cc = cc + 16 * mu0; }
+  RHS[m + 1] = 3 * cc;
+}
+
+// Build P_term = 3/2*a1^2 - 3/2*mu3*a1 + V (deg 10, len 11)
+list Pterm;
+for (m = 0; m <= 10; m++) {
+  poly cc = (number(3) / number(2)) * a1_2[m + 1];
+  if (m <= 5) { cc = cc - (number(3) / number(2)) * mu3 * a1[m + 1]; }
+  if (m == 1) { cc = cc + poly(1); }
+  Pterm[m + 1] = cc;
+}
+
+// Solve X = x0 + x1*V + ... + x10*V^10 top-down!
+// x10 = (-3 + 2*s) / 68
+list Xp;
+for (m = 1; m <= 11; m++) { Xp[m] = poly(0); }
+Xp[11] = (number(-3) + number(2) * s) / number(68);
+
+int k, i, j;
+for (k = 9; k >= 0; k--) {
+  // Equation at V^{10 + k}:
+  // 16 * sum_{i+j = 10+k} Xp[i+1] * ((2*j - 3)*Xp[j+1] + Pterm[j+1]) = RHS[10+k+1]
+  // Terms with i=10 or j=10 give: 16 * [ (2*k + 14)*x10 + 3/2 ] * x_k
+  poly rest = 0;
+  int deg_eq = 10 + k;
+  for (i = k + 1; i <= 10; i++) {
+    j = deg_eq - i;
+    if (j >= k + 1 && j <= 10) {
+      poly yj = number(2 * j - 3) * Xp[j + 1] + Pterm[j + 1];
+      rest = rest + 16 * Xp[i + 1] * yj;
+    }
+  }
+  // Also i = 10, j = k contributes 16 * x10 * Pterm[k+1] (plus the x_k term)
+  // Wait: in the loop above, i=10 => j=k which is NOT in j >= k+1! So add 16*x10*Pterm[k+1]!
+  rest = rest + 16 * Xp[11] * Pterm[k + 1];
+  // Reduce s^2 -> 15 in rest
+  poly diff_eq = RHS[deg_eq + 1] - rest;
+  // Simplify s^2 -> 15
+  poly c0 = subst(diff_eq, s, 0);
+  poly c1 = subst(diff(diff_eq, s), s, 0);
+  poly c2 = subst(diff(diff(diff_eq, s), s), s, 0) / number(2);
+  diff_eq = c0 + number(15) * c2 + c1 * s;
+
+  // Pivot = 16 * ((2*k + 14)*(-3 + 2*s)/68 + 3/2)
+  //       = 16 * ( (-6*k - 42 + 102)/68 + (4*k + 28)/68 * s )
+  //       = 16 * ( (60 - 6*k)/68 + (4*k + 28)/68 * s )
+  number pa = number(16) * number(60 - 6 * k) / number(68);
+  number pb = number(16) * number(4 * k + 28) / number(68);
+  Xp[k + 1] = divByQS(diff_eq, pa, pb);
+}
+printf("[%s ms] Solved x9..x0 top-down in Q(sqrt(15))! (x1 terms=%s, x0 terms=%s)",
+       timer - t0_clk, size(Xp[2]), size(Xp[1]));
+
+// Build full ODE residuals at V^0..V^20 (verify V^20..V^10 are 0 mod s^2-15!)
+list Yp;
+for (m = 0; m <= 10; m++) {
+  Yp[m + 1] = number(2 * m - 3) * Xp[m + 1] + Pterm[m + 1];
+}
+list LHS = polyMul(Xp, Yp);
+list ode;
+for (m = 0; m <= 20; m++) {
+  poly eqm = 16 * LHS[m + 1] - RHS[m + 1];
+  poly c0 = subst(eqm, s, 0);
+  poly c1 = subst(diff(eqm, s), s, 0);
+  poly c2 = subst(diff(diff(eqm, s), s), s, 0) / number(2);
+  ode[m + 1] = c0 + number(15) * c2 + c1 * s;
+}
+for (m = 10; m <= 20; m++) {
+  if (ode[m + 1] != 0) { printf("ERROR: ode[%s] nonzero!", m); quit; }
+}
+printf("[%s ms] Verified ode[20..10] == 0 identically mod (s^2 - 15)!", timer - t0_clk);
+
+// =========================================================================
+// TEST 1: Coupled with mu0*mu3 + mu1*mu2 = 0 (mu1 = -mu0*mu3) AND X_1 = 1!
+// =========================================================================
+ideal I_coupled = s^2 - 15, mu1 + mu0 * mu3, Xp[2] - 1, w0 * mu0 - 1;
+for (m = 0; m <= 9; m++) { I_coupled = I_coupled, ode[m + 1]; }
+
+// First test over F_32003!
+ring Rp = 32003, (s, a4, a3, a2, a0, mu3, mu1, mu0, w0), dp;
+ideal Ip_c = imap(Rq, I_coupled);
+printf("[%s ms] Running F_32003 slimgb(I_coupled) (d=5, mu0*mu3+mu1=0, mu0!=0)...", timer - t0_clk);
+ideal Gp_c = slimgb(Ip_c);
+printf("[%s ms] F_32003 Gp_c: size=%s, dim=%s, Gp_c[1]=%s", timer - t0_clk, size(Gp_c), dim(Gp_c), Gp_c[1]);
+
+// Also test WITHOUT mu0*mu3 + mu1 = 0!
+setring Rq;
+ideal I_gen = s^2 - 15, Xp[2] - 1, w0 * mu0 - 1;
+for (m = 0; m <= 9; m++) { I_gen = I_gen, ode[m + 1]; }
+
+setring Rp;
+ideal Ip_g = imap(Rq, I_gen);
+printf("[%s ms] Running F_32003 slimgb(I_gen) (d=5, general mu, mu0!=0)...", timer - t0_clk);
+ideal Gp_g = slimgb(Ip_g);
+printf("[%s ms] F_32003 Gp_g: size=%s, dim=%s, Gp_g[1]=%s", timer - t0_clk, size(Gp_g), dim(Gp_g), Gp_g[1]);
+
+// If either is [1] mod 32003, IMMEDIATELY run EXACT Q-verified modStd!
+setring Rq;
+if (size(Gp_c) == 1 && Gp_c[1] == 1) {
+  printf("[%s ms] Running EXACT Q-verified modStd(I_coupled, 1)...", timer - t0_clk);
+  ideal Gq_c = modStd(I_coupled, 1);
+  printf("[%s ms] EXACT Q Gq_c: size=%s, Gq_c[1]=%s", timer - t0_clk, size(Gq_c), Gq_c[1]);
+  if (size(Gq_c) == 1 && Gq_c[1] == 1) {
+    printf("CERTIFIED_Q_EXACT: SECANT_H4_D5_COUPLED_EMPTY_OVER_C");
+  }
+}
+if (size(Gp_g) == 1 && Gp_g[1] == 1) {
+  printf("[%s ms] Running EXACT Q-verified modStd(I_gen, 1)...", timer - t0_clk);
+  ideal Gq_g = modStd(I_gen, 1);
+  printf("[%s ms] EXACT Q Gq_g: size=%s, Gq_g[1]=%s", timer - t0_clk, size(Gq_g), Gq_g[1]);
+  if (size(Gq_g) == 1 && Gq_g[1] == 1) {
+    printf("CERTIFIED_Q_EXACT: SECANT_H4_D5_GENERAL_EMPTY_OVER_C");
+  }
+}
+quit;
