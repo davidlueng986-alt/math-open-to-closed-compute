@@ -1,0 +1,127 @@
+// Wave 2 Explorer 6: DEGREE-135-IV-GCD-FOUR weighted-homogeneous (wp) fast Singular solver!
+// Exploits exact quasi-homogeneity weights:
+//   wt(r3..r0) = 1,2,3,4; wt(n3..n0) = 2,3,4,5; wt(v6) = 3;
+//   wt(a4..a0) = 9,10,11,12,13; wt(t4..t0) = 18,19,20,21,22; wt(p0) = 18.
+// Tests:
+//   (A) Exact symbolic check of diff(ode8, p0)
+//   (B) Weighted wp slimgb on ODE-only + top sqDiff (NO bottom deg-20 sqFull[0..21]!)
+//       with and without w*b2 - 1!
+
+proc ucoeff(poly f, int k) {
+  matrix C = coeffs(f, u);
+  if (k + 1 > nrows(C)) { return(poly(0)); }
+  return(C[k + 1, 1]);
+}
+
+proc udiv_q(poly F, poly D, int degF, int degD) {
+  poly rem = F;
+  poly q = 0;
+  poly c;
+  int k;
+  for (k = degF; k >= degD; k--) {
+    c = ucoeff(rem, k);
+    if (c != 0) {
+      q = q + c * u^(k - degD);
+      rem = rem - c * u^(k - degD) * D;
+    }
+  }
+  return(q);
+}
+
+ring Ru = 32003, (u, p0, t4, t3, t2, t1, t0, a4, a3, a2, a1, a0, w, v6, r3, r2, r1, r0, n3, n2, n1, n0), dp;
+
+poly r = u^4 + r3*u^3 + r2*u^2 + r1*u + r0;
+poly N = u^5 + n3*u^3 + n2*u^2 + n1*u + n0;
+
+number b9 = number(9)/number(2);
+poly b6 = number(9)/number(8) * (4*v6 - 13);
+poly v3 = number(3)/number(500) * (500*v6 - 1001);
+poly b3 = number(27)/number(500) * (377 - 125*v6);
+
+poly N3 = N^3;
+poly numB = b9*r^6 + b6*r^4*N + b3*r^2*N^2;
+poly QB = udiv_q(numB, N3, 24, 15);
+poly dQB = diff(QB, u);
+poly g = udiv_q(dQB, r, 8, 4);
+poly rem_r = dQB - g * r;
+
+poly d3 = ucoeff(rem_r, 3);
+poly d2 = ucoeff(rem_r, 2);
+poly d1 = ucoeff(rem_r, 1);
+poly d0 = ucoeff(rem_r, 0);
+
+poly c2 = -d1 / number(2);
+poly c1 = -d0;
+poly b2 = c2;
+poly b1 = c1 - number(4)/number(3)*r3*b2;
+poly v2 = number(2)/number(9)*b2;
+poly v1 = number(2)/number(9)*b1;
+
+poly numA = r^7 + v6*r^5*N + v3*r^3*N^2;
+poly QA = udiv_q(numA, N3, 28, 15);
+poly extraA = r * (v2*(u^2 + number(4)/number(3)*r3*u) + v1*u);
+poly A = a4*u^4 + a3*u^3 + a2*u^2 + a1*u + a0;
+int k;
+for (k = 5; k <= 13; k++) { A = A + ucoeff(QA, k) * u^k; }
+for (k = 5; k <= 6; k++) { A = A + ucoeff(extraA, k) * u^k; }
+
+poly M = r^2 + N;
+poly dM = diff(M, u);
+list mcoeff;
+for (k = 0; k <= 8; k++) { mcoeff[k+1] = ucoeff(M, k); }
+
+poly RHS = 18 * A * (diff(A, u)*r - A*diff(r, u));
+list tcoeff;
+for (k = 1; k <= 23; k++) { tcoeff[k] = poly(0); }
+int j, ii, d;
+poly lhs_rest;
+for (k = 22; k >= 5; k--) {
+  d = k + 7;
+  lhs_rest = 0;
+  for (j = 0; j <= 7; j++) {
+    ii = d + 1 - j;
+    if (ii >= 5 && ii <= 22) {
+      lhs_rest = lhs_rest + tcoeff[ii+1] * (2*ii - j) * mcoeff[j+1];
+    }
+  }
+  tcoeff[k+1] = (ucoeff(RHS, d) - lhs_rest) / number(2*k - 8);
+}
+tcoeff[5] = t4; tcoeff[4] = t3; tcoeff[3] = t2; tcoeff[2] = t1; tcoeff[1] = t0;
+
+poly Tfull = 0;
+for (k = 0; k <= 22; k++) { Tfull = Tfull + tcoeff[k+1] * u^k; }
+poly odeFull = 2*M*diff(Tfull, u) - dM*Tfull - RHS;
+
+poly gA = g * A;
+poly pL = p0;
+for (k = 0; k <= 17; k++) { pL = pL + ucoeff(gA, k) * u^(k+1) / number(k+1); }
+poly sqFull = Tfull^2 - 9*pL*A^2 - M;
+
+printf("System built! Checking sizes of top equations:");
+// Ideal I_core: d3, d2, ode[11..0], sqFull[34..22] (27 eqs in 20 vars, NO w yet!)
+ideal I_core_u = d3, d2;
+for (k = 11; k >= 0; k--) { I_core_u = I_core_u, ucoeff(odeFull, k); }
+for (k = 34; k >= 22; k--) { I_core_u = I_core_u, ucoeff(sqFull, k); }
+printf("I_core_u size = %s (27 eqs in 20 vars, NO sqFull[21..0], NO w)", size(I_core_u));
+
+// Test 1: Pure weighted wp on 20 vars (WITHOUT w*b2 - 1, so quasi-homogeneous!)
+ring R20w = 32003, (p0, t4, t3, t2, t1, t0, a4, a3, a2, a1, a0, v6, r3, r2, r1, r0, n3, n2, n1, n0),
+            wp(18, 18, 19, 20, 21, 22, 9, 10, 11, 12, 13, 3, 1, 2, 3, 4, 2, 3, 4, 5);
+ideal I20 = imap(Ru, I_core_u);
+poly b2_20 = imap(Ru, b2);
+printf("=== Test 1: weighted wp slimgb(I20) (27 eqs in 20 vars, NO w) ===");
+option(prot);
+ideal G20 = slimgb(I20);
+printf("G20 size = %s, dim = %s, vdim = %s", size(G20), dim(G20), vdim(G20));
+if (dim(G20) <= 0) {
+  printf("G20 is 0-dim or empty! Checking reduce(b2, G20):");
+  poly b2_red = reduce(b2_20, G20);
+  printf("reduce(b2, G20) = %s", b2_red);
+}
+// Print any low-degree elements of G20
+for (k = 1; k <= size(G20); k++) {
+  if (size(G20[k]) <= 10) {
+    printf("  G20[%s] = %s", k, G20[k]);
+  }
+}
+quit;
