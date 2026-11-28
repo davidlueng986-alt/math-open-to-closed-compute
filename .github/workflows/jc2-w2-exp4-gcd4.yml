@@ -1,0 +1,22 @@
+name: JC2 W2 Exp4 DEGREE-135-IV-GCD-FOUR F_p Diagnostic
+on:
+  push:
+    branches: ['jc2-w2-exp4-gcd4']
+    paths:
+      - 'jobs/jc2_w2_exp4_gcd4_fp.sing'
+      - '.github/workflows/jc2-w2-exp4-gcd4.yml'
+  workflow_dispatch:
+
+jobs:
+  singular-gcd4-fp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Singular
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq singular
+          Singular --version
+      - name: Run F_32003 Singular diagnostic for DEGREE-135-IV-GCD-FOUR
+        run: Singular -q jobs/jc2_w2_exp4_gcd4_fp.sing
