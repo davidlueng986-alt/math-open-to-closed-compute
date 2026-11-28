@@ -1,0 +1,22 @@
+name: JC2 W2 Exp3 SECANT-HEIGHT-FOUR d=6 Weighted wp Exact Q Proof
+on:
+  push:
+    branches: ['jc2-w2-exp3-secant-d6-wp']
+    paths:
+      - 'jobs/jc2_w2_exp3_secant_d6_wp.sing'
+      - '.github/workflows/jc2-w2-exp3-secant-d6-wp.yml'
+  workflow_dispatch:
+
+jobs:
+  singular-secant-d6-wp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Singular
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq singular
+          Singular --version
+      - name: Run weighted wp 4-sub-branch exact Q proof for d=6 (j=5)
+        run: Singular -q jobs/jc2_w2_exp3_secant_d6_wp.sing
