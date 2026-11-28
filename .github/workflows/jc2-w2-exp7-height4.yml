@@ -1,0 +1,95 @@
+name: JC2 Wave 2 Exp7 Height-Four Secants (Singular 4.4.1 + Lean 4.36)
+
+on:
+  push:
+    branches:
+      - jc2-w2-exp7-height4
+  workflow_dispatch:
+
+jobs:
+  singular-d4-d5-exact-q:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Singular and SymPy
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq singular python3-sympy
+          Singular --version
+      - name: Exact Q-proof for d=4 (all delta) and d=5 (delta=0 and all delta)
+        run: |
+          set -euo pipefail
+          cd jobs/jc2-w2-exp7-height4
+          python3 height4_singular_gen.py --verify-identity --d 4 --mode field_wp --out d4_all_wp.sing
+          python3 height4_singular_gen.py --d 4 --mode poly_dp --out d4_all_dp.sing
+          python3 height4_singular_gen.py --d 5 --delta0 --mode field_wp --out d5_d0_wp.sing
+          python3 height4_singular_gen.py --d 5 --mode field_wp --out d5_all_wp.sing
+          python3 height4_singular_gen.py --d 5 --mode poly_dp --out d5_all_dp.sing
+
+          echo "=== Running d=4 all-delta (Q(sqrt(3)), wp) ==="
+          Singular -q d4_all_wp.sing
+          echo "=== Running d=4 all-delta (Q[w], dp) ==="
+          Singular -q d4_all_dp.sing
+          echo "=== Running d=5 delta=0 (Q(sqrt(15)), wp) ==="
+          Singular -q d5_d0_wp.sing
+          echo "=== Running d=5 all-delta (Q(sqrt(15)), wp) ==="
+          Singular -q d5_all_wp.sing
+          echo "=== Running d=5 all-delta (Q[w], dp) ==="
+          Singular -q d5_all_dp.sing
+
+  singular-d6-delta0-exact-q:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Singular and SymPy
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq singular python3-sympy
+      - name: Exact Q-proof for d=6 (delta=0)
+        run: |
+          set -euo pipefail
+          cd jobs/jc2-w2-exp7-height4
+          python3 height4_singular_gen.py --d 6 --delta0 --mode modp --out d6_d0_modp.sing
+          python3 height4_singular_gen.py --d 6 --delta0 --mode field_wp --out d6_d0_wp.sing
+          echo "=== Running d=6 delta=0 mod 32003 ==="
+          Singular -q d6_d0_modp.sing
+          echo "=== Running d=6 delta=0 exact Q(sqrt(2)) ==="
+          Singular -q d6_d0_wp.sing
+
+  singular-d6-all-delta-exact-q:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Singular and SymPy
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq singular python3-sympy
+      - name: Mod-32003 and Exact Q-proof for d=6 (all delta)
+        run: |
+          set -euo pipefail
+          cd jobs/jc2-w2-exp7-height4
+          python3 height4_singular_gen.py --d 6 --mode modp --out d6_all_modp.sing
+          python3 height4_singular_gen.py --d 6 --mode field_wp --out d6_all_wp.sing
+          echo "=== Running d=6 all-delta mod 32003 ==="
+          Singular -q d6_all_modp.sing
+          echo "=== Running d=6 all-delta exact Q(sqrt(2)) ==="
+          Singular -q d6_all_wp.sing
+
+  lean-all-d-theorems:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Lean 4.36.0 all-d theorems (-DwarningAsError=true)
+        run: |
+          set -euo pipefail
+          LAKE_DIR="$(dirname "$(find /opt /workspace /root /home -maxdepth 3 -name 'lakefile.*' 2>/dev/null | head -n 1)")"
+          echo "Using LAKE_DIR=$LAKE_DIR"
+          cd "$LAKE_DIR"
+          lake env lean --version
+          lake env lean -DwarningAsError=true "$GITHUB_WORKSPACE/jobs/jc2-w2-exp7-height4/Height4AllD.lean"
