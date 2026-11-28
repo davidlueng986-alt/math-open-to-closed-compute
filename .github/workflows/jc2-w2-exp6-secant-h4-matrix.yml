@@ -1,0 +1,26 @@
+name: JC2 W2 Exp6 SECANT-HEIGHT-FOUR Parallel Matrix Q-Proof (d=2..7)
+on:
+  push:
+    branches: ['jc2-w2-exp6-secant-h4']
+    paths:
+      - 'jobs/jc2_w2_exp6_secant_h4_single.sing'
+      - '.github/workflows/jc2-w2-exp6-secant-h4-matrix.yml'
+  workflow_dispatch:
+
+jobs:
+  singular-secant-h4-d:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        d: [2, 3, 4, 5, 6, 7]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Singular
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq singular
+          Singular --version
+      - name: Run coupled SECANT-HEIGHT-FOUR-REALIZATION for d=${{ matrix.d }}
+        run: Singular -q -c "int D_VAL=${{ matrix.d }}; int DO_Q=1;" jobs/jc2_w2_exp6_secant_h4_single.sing
