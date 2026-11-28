@@ -1,0 +1,128 @@
+// Wave 2 Explorer 6: EXACT Q-PROOF for coupled SECANT-HEIGHT-FOUR-REALIZATION at d = 2, 3, 4, 5, 6!
+// Normalization (WLOG over C since c_d != 0 and mu2 = c != 0):
+//   c_d = 1, mu2 = 1, mu0 = alpha (!= 0), mu1 = alpha*delta, mu3 = -delta.
+// Special-fiber coupling (OPPOSITE-EDGE.md Eq. 81-83):
+//   a1(V) = -delta + c2*V^2 + ... + c_{d-1}*V^{d-1} + V^d
+//   X(V)  = -delta^2/4 + V + 3*alpha*V^2 + x3*V^3 + ... + x_{2d-1}*V^{2d-1} + rho*V^{2d}
+//   where 16*(4*d-3)*rho^2 + 24*rho - 3 = 0.
+// Top-down exact elimination of x_{2d-1}..x_3 over Q[rho]/(rho_eq) reduces to ONLY d vars (+ rho, w)!
+
+LIB "modstd.lib";
+
+proc red_rho(poly f, poly rho_eq) {
+  return(reduce(f, std(rho_eq)));
+}
+
+proc solve_d(int d, int do_Q) {
+  printf("=========================================================");
+  printf("SECANT-HEIGHT-FOUR COUPLED TOP-DOWN ELIMINATION: d = %s (j = %s)", d, d - 1);
+  int k, m, deg_eq;
+  string vlist = "V";
+  for (k = d - 1; k >= 2; k--) { vlist = vlist + ",c" + string(k); }
+  vlist = vlist + ",alpha,delta,w,rho";
+
+  string vnoV = "";
+  for (k = d - 1; k >= 2; k--) {
+    if (vnoV != "") { vnoV = vnoV + ","; }
+    vnoV = vnoV + "c" + string(k);
+  }
+  if (vnoV != "") { vnoV = vnoV + ","; }
+  vnoV = vnoV + "alpha,delta,w,rho";
+
+  execute("ring RuQ = 0, (" + vlist + "), dp;");
+  poly rho_eq = 16*(4*d - 3)*rho^2 + 24*rho - 3;
+  ideal R_id = std(rho_eq);
+
+  poly a1 = -delta + V^d;
+  for (k = 2; k <= d - 1; k++) {
+    execute("a1 = a1 + c" + string(k) + "*V^" + string(k) + ";");
+  }
+
+  list Xc;
+  for (k = 1; k <= 2*d + 1; k++) { Xc[k] = poly(0); }
+  Xc[1] = -number(1)/number(4)*delta^2;
+  Xc[2] = poly(1);
+  Xc[3] = 3*alpha;
+  Xc[2*d + 1] = rho;
+
+  poly RHS = 3*(a1^4 + 2*delta*a1^3 + 4*V*a1^2 - 8*alpha*delta*V^2*a1 + 16*alpha*V^3);
+  matrix CR = coeffs(RHS, V);
+
+  // Top-down exact elimination of x_{2d-1}..x_3!
+  number s_rho = number(-3) / number(2*(4*d - 3));
+  number p_rho = number(-3) / number(16*(4*d - 3));
+
+  for (m = 1; m <= 2*d - 3; m++) {
+    k = 2*d - m;
+    deg_eq = 4*d - m;
+    poly Xcur = 0;
+    int j;
+    for (j = 0; j <= 2*d; j++) { Xcur = Xcur + Xc[j+1] * V^j; }
+    poly LHScur = 16*Xcur*(2*V*diff(Xcur, V) - 3*Xcur + number(3)/number(2)*a1^2 + number(3)/number(2)*delta*a1 + V);
+    matrix CL = coeffs(LHScur, V);
+    poly cL = 0;
+    if (deg_eq + 1 <= nrows(CL)) { cL = CL[deg_eq + 1, 1]; }
+    poly cR = 0;
+    if (deg_eq + 1 <= nrows(CR)) { cR = CR[deg_eq + 1, 1]; }
+    poly rem_c = reduce(cL - cR, R_id);
+
+    number A = number(8*(16*d - 4*m - 12));
+    number B = number(24);
+    number denom = B^2 + A*B*s_rho + A^2*p_rho;
+    if (denom == 0) { printf("ERROR: zero pivot at m=%s!", m); quit; }
+    poly inv_p = (-A*rho + B + A*s_rho) / denom;
+    Xc[k+1] = reduce(-rem_c * inv_p, R_id);
+  }
+
+  poly Xfull = 0;
+  for (k = 0; k <= 2*d; k++) { Xfull = Xfull + Xc[k+1] * V^k; }
+  poly ode = 16*Xfull*(2*V*diff(Xfull, V) - 3*Xfull + number(3)/number(2)*a1^2 + number(3)/number(2)*delta*a1 + V) - RHS;
+  matrix CO = coeffs(ode, V);
+
+  // Verify top (4d..2d+3) and bottom (0..3) vanish mod rho_eq!
+  for (k = 0; k <= 3; k++) {
+    if (reduce(CO[k+1, 1], R_id) != 0) { printf("ERROR: bottom V^%s nonzero!", k); quit; }
+  }
+  for (k = 2*d + 3; k <= 4*d; k++) {
+    if (k + 1 <= nrows(CO)) {
+      if (reduce(CO[k+1, 1], R_id) != 0) { printf("ERROR: top V^%s nonzero!", k); quit; }
+    }
+  }
+
+  ideal Iu = rho_eq, w*alpha - 1;
+  for (k = 4; k <= 2*d + 2; k++) {
+    Iu = Iu, reduce(CO[k+1, 1], R_id);
+  }
+  printf("d=%s: Built %s exact equations (incl rho_eq, w*alpha-1) in %s vars!", d, size(Iu), d + 2);
+
+  execute("ring RQ = 0, (" + vnoV + "), dp;");
+  ideal IQ = imap(RuQ, Iu);
+
+  execute("ring Rp = 32003, (" + vnoV + "), dp;");
+  ideal Ip = imap(RQ, IQ);
+  ideal Gp = slimgb(Ip);
+  printf("d=%s F_32003 slimgb: size=%s, dim=%s, Gp[1]=%s", d, size(Gp), dim(Gp), Gp[1]);
+
+  if (do_Q == 1 && size(Gp) == 1 && Gp[1] == 1) {
+    setring RQ;
+    ideal GQ = modStd(IQ, 1);
+    printf("d=%s EXACT Q modStd(IQ, 1): size=%s, GQ[1]=%s", d, size(GQ), GQ[1]);
+    if (size(GQ) == 1 && GQ[1] == 1) {
+      printf("CERTIFIED_MODSTD_Q_EMPTY: SECANT_H4_COUPLED_d=%s", d);
+    }
+    if (d <= 5) {
+      ideal Gdir = slimgb(IQ);
+      printf("d=%s DIRECT Q slimgb(IQ): size=%s, Gdir[1]=%s", d, size(Gdir), Gdir[1]);
+      if (size(Gdir) == 1 && Gdir[1] == 1) {
+        printf("CERTIFIED_DIRECT_Q_EMPTY: SECANT_H4_COUPLED_d=%s", d);
+      }
+    }
+  }
+}
+
+solve_d(2, 1);
+solve_d(3, 1);
+solve_d(4, 1);
+solve_d(5, 1);
+solve_d(6, 1);
+quit;
