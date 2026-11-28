@@ -1,0 +1,131 @@
+// Wave 2 Explorer 6: Turbo std + modStd(IQ, 1) exact Q-proof for coupled SECANT-HEIGHT-FOUR
+// Run with: Singular -q -c "int D_VAL=6; int DELTA_ZERO=0;" jobs/jc2_w2_exp6_secant_h4_turbo.sing
+// Uses std() (13x faster than slimgb on this family!) and exact Q-verified modStd(IQ, 1).
+
+LIB "modstd.lib";
+
+int d = D_VAL;
+int d0 = DELTA_ZERO;
+
+printf("=========================================================");
+printf("SECANT-HEIGHT-FOUR TURBO EXACT Q-PROOF: d = %s (j = %s), delta_zero = %s", d, d - 1, d0);
+
+int k, m, deg_eq, j;
+string vlist = "V";
+for (k = d - 1; k >= 2; k--) { vlist = vlist + ",c" + string(k); }
+if (d0 == 0) {
+  vlist = vlist + ",alpha,delta,w,rho";
+} else {
+  vlist = vlist + ",alpha,w,rho";
+}
+
+string vnoV = "";
+for (k = d - 1; k >= 2; k--) {
+  if (vnoV != "") { vnoV = vnoV + ","; }
+  vnoV = vnoV + "c" + string(k);
+}
+if (vnoV != "") { vnoV = vnoV + ","; }
+if (d0 == 0) {
+  vnoV = vnoV + "alpha,delta,w,rho";
+} else {
+  vnoV = vnoV + "alpha,w,rho";
+}
+
+// Build directly over Q (takes <0.05s!)
+execute("ring RuQ = 0, (" + vlist + "), dp;");
+poly rho_eq = 16*(4*d - 3)*rho^2 + 24*rho - 3;
+ideal R_id = std(rho_eq);
+
+poly del = poly(0);
+if (d0 == 0) { execute("del = delta;"); }
+
+poly a1 = -del + V^d;
+for (k = 2; k <= d - 1; k++) {
+  execute("a1 = a1 + c" + string(k) + "*V^" + string(k) + ";");
+}
+
+list Xc;
+for (k = 1; k <= 2*d + 1; k++) { Xc[k] = poly(0); }
+Xc[1] = -number(1)/number(4)*del^2;
+Xc[2] = poly(1);
+Xc[3] = 3*alpha;
+Xc[2*d + 1] = rho;
+
+poly RHS = 3*(a1^4 + 2*del*a1^3 + 4*V*a1^2 - 8*alpha*del*V^2*a1 + 16*alpha*V^3);
+matrix CR = coeffs(RHS, V);
+
+number s_rho = number(-3) / number(2*(4*d - 3));
+number p_rho = number(-3) / number(16*(4*d - 3));
+
+poly Xcur, LHScur, cL, cR, rem_c, inv_q;
+matrix CL;
+number A, B, denom;
+
+for (m = 1; m <= 2*d - 3; m++) {
+  k = 2*d - m;
+  deg_eq = 4*d - m;
+  Xcur = 0;
+  for (j = 0; j <= 2*d; j++) { Xcur = Xcur + Xc[j+1] * V^j; }
+  LHScur = 16*Xcur*(2*V*diff(Xcur, V) - 3*Xcur + number(3)/number(2)*a1^2 + number(3)/number(2)*del*a1 + V);
+  CL = coeffs(LHScur, V);
+  cL = 0;
+  if (deg_eq + 1 <= nrows(CL)) { cL = CL[deg_eq + 1, 1]; }
+  cR = 0;
+  if (deg_eq + 1 <= nrows(CR)) { cR = CR[deg_eq + 1, 1]; }
+  rem_c = reduce(cL - cR, R_id);
+
+  A = number(8*(16*d - 4*m - 12));
+  B = number(24);
+  denom = B^2 + A*B*s_rho + A^2*p_rho;
+  if (denom == 0) { printf("ERROR: zero pivot at m=%s!", m); quit; }
+  inv_q = (-A*rho + B + A*s_rho) / denom;
+  Xc[k+1] = reduce(-rem_c * inv_q, R_id);
+}
+
+poly Xfull = 0;
+for (k = 0; k <= 2*d; k++) { Xfull = Xfull + Xc[k+1] * V^k; }
+poly ode = 16*Xfull*(2*V*diff(Xfull, V) - 3*Xfull + number(3)/number(2)*a1^2 + number(3)/number(2)*del*a1 + V) - RHS;
+matrix CO = coeffs(ode, V);
+
+for (k = 0; k <= 3; k++) {
+  if (reduce(CO[k+1, 1], R_id) != 0) { printf("ERROR: bottom V^%s nonzero!", k); quit; }
+}
+for (k = 2*d + 3; k <= 4*d; k++) {
+  if (k + 1 <= nrows(CO)) {
+    if (reduce(CO[k+1, 1], R_id) != 0) { printf("ERROR: top V^%s nonzero!", k); quit; }
+  }
+}
+
+ideal Iu = rho_eq, w*alpha - 1;
+for (k = 4; k <= 2*d + 2; k++) {
+  Iu = Iu, reduce(CO[k+1, 1], R_id);
+}
+
+execute("ring RQ = 0, (" + vnoV + "), dp;");
+ideal IQ = imap(RuQ, Iu);
+
+// Fast F_32003 std() check first!
+execute("ring Rp = 32003, (" + vnoV + "), dp;");
+ideal Ip = imap(RQ, IQ);
+printf("d=%s (d0=%s): Built %s eqs! Running F_32003 std(Ip)...", d, d0, size(Ip));
+ideal Gp = std(Ip);
+printf("d=%s (d0=%s) F_32003 std(Ip): size=%s, dim=%s, Gp[1]=%s", d, d0, size(Gp), dim(Gp), Gp[1]);
+
+if (size(Gp) == 1 && Gp[1] == 1) {
+  setring RQ;
+  printf("d=%s (d0=%s): Running EXACT Q-verified modStd(IQ, 1)...", d, d0);
+  ideal GQ = modStd(IQ, 1);
+  printf("d=%s (d0=%s) EXACT Q modStd(IQ, 1): size=%s, GQ[1]=%s", d, d0, size(GQ), GQ[1]);
+  if (size(GQ) == 1 && GQ[1] == 1) {
+    printf("CERTIFIED_MODSTD_Q_EMPTY: SECANT_H4_d=%s_d0=%s", d, d0);
+  }
+  if (d <= 5 && d0 == 0) {
+    printf("d=%s: Running DIRECT deterministic std(IQ) over Q...", d);
+    ideal Gdir = std(IQ);
+    printf("d=%s DIRECT Q std(IQ): size=%s, Gdir[1]=%s", d, size(Gdir), Gdir[1]);
+    if (size(Gdir) == 1 && Gdir[1] == 1) {
+      printf("CERTIFIED_DIRECT_Q_EMPTY: SECANT_H4_d=%s", d);
+    }
+  }
+}
+quit;
