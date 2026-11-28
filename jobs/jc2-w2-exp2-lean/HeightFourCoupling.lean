@@ -94,8 +94,6 @@ theorem symplectic_ode_decoupling {R : Type*} [CommRing R]
     (heq0 : 16 * X * Z - (a1 ^ 4 - 2 * mu3 * a1 ^ 3 + 4 * mu2 * V * a1 ^ 2 - 8 * mu1 * V ^ 2 * a1 + 16 * mu0 * V ^ 3) = 0) :
     8 * X * (4 * VX' - 6 * X + 3 * (a1 ^ 2 - mu3 * a1) + 2 * mu2 * V) =
       3 * (a1 ^ 4 - 2 * mu3 * a1 ^ 3 + 4 * mu2 * V * a1 ^ 2 - 8 * mu1 * V ^ 2 * a1 + 16 * mu0 * V ^ 3) := by
-  have h := congrArg (fun u => 8 * X * u) heq2
-  have h2 := congrArg (fun u => 3 * u) heq0
   have hsum :
       8 * X * (4 * VX' - 6 * X + 3 * (a1 ^ 2 - mu3 * a1) + 2 * mu2 * V - 6 * Z)
       + 3 * (16 * X * Z - (a1 ^ 4 - 2 * mu3 * a1 ^ 3 + 4 * mu2 * V * a1 ^ 2 - 8 * mu1 * V ^ 2 * a1 + 16 * mu0 * V ^ 3)) = 0 := by
