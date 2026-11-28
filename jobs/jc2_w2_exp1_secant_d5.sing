@@ -1,14 +1,6 @@
-// Pure-Singular EXACT Q(sqrt(3d))-PROOF for SECANT-HEIGHT-FOUR-REALIZATION at d=5 (j=4) and d=6 (j=5)!
-// Decoupled ODE (OPPOSITE-EDGE.md Eq. (83)):
-//   16*X*(2*V*X' - 3*X + (3/2)*a1^2 - (3/2)*m3*a1 + m2*V)
-//     = 3*(a1^4 - 2*m3*a1^3 + 4*m2*V*a1^2 - 8*m1*V^2*a1 + 16*m0*V^3)
-// WLOG (for m2 != 0): a1 monic of degree d, a1'(0) = 0, m2 = 1.
-// For all d >= 3:
-//   - s^2 = 3*d, x[2d] = 3 / (4*(2s + 3))
-//   - x[2d-k] solved uniquely top-down with universal pivot 24*(4d + 2s - k)/(2s + 3)
-//   - m1 eliminated from ODE[V^(d+2)] (universal constant pivot +24)
-//   - m0 eliminated from ODE[V^3]     (universal constant pivot -48)
-// Tests BOTH: (A) ODE alone, and (B) ODE + (m0*m3 + m1*m2 = 0)!
+// Pure-Singular FAST F_p + EXACT Q modStd(I, 1) PROOF for SECANT-HEIGHT-FOUR-REALIZATION d=5 (j=4) & d=6 (j=5)!
+// Works in pure Q[vars, s] with (s^2 - 3d) in the ideal (NO slow direct Q(s) coefficient swell!).
+// Tests BOTH: (A) ODE alone (m2=1), and (B) ODE + (m0*m3 + m1*m2 = 0)!
 
 LIB "modstd.lib";
 option(prot);
@@ -18,13 +10,38 @@ proc getc(matrix M, int k) {
   return(M[k + 1, 1]);
 }
 
-// ======================== PART 1: d = 5 (j = 4) ========================
+// Reduce poly f modulo s^2 - D (when s is in the ring)
+proc redS(poly f, int D) {
+  if (f == 0) { return(poly(0)); }
+  matrix C = coeffs(f, s);
+  int nr = nrows(C);
+  poly res0 = 0;
+  poly res1 = 0;
+  number pD = 1;
+  int k;
+  for (k = 0; k < nr; k++) {
+    if (k % 2 == 0) {
+      res0 = res0 + C[k + 1, 1] * pD;
+    } else {
+      res1 = res1 + C[k + 1, 1] * pD;
+      pD = pD * number(D);
+    }
+  }
+  return(res0 + res1 * s);
+}
+
+// Invert (A + B*s) modulo s^2 - D where A, B are rational constants
+proc invLinS(number A, number B, int D) {
+  number den = A*A - number(D)*B*B;
+  return((A - B*s) / den);
+}
+
+// ======================== PART 1: d = 5 (j = 4, s^2 = 15) ========================
 printf("============================================================");
 printf("PART 1: SECANT-HEIGHT-FOUR-REALIZATION d = 5 (j = 4, s^2 = 15)");
 printf("============================================================");
 
-ring R5u = (0, s), (V, c4, c3, c2, c0, m3, m1, m0), dp;
-minpoly = s^2 - 15;
+ring R5u = 0, (V, c4, c3, c2, c0, m3, m1, m0, s), dp;
 
 poly a1 = V^5 + c4*V^4 + c3*V^3 + c2*V^2 + c0;
 poly RHS = 3*(a1^4 - 2*m3*a1^3 + 4*V*a1^2 - 8*m1*V^2*a1 + 16*m0*V^3);
@@ -34,11 +51,11 @@ matrix rhsc = coeffs(RHS, V);
 matrix qc = coeffs(Q, V);
 
 matrix xc[11][1];
-xc[11, 1] = number(3) / (number(4) * (2*s + 3));
+// x[10] = 3 / (4*(2s + 3))
+xc[11, 1] = redS(number(3)/number(4) * invLinS(number(3), number(2), 15), 15);
 
 int k, dg, ii, jj;
-poly lhs_rest, term, qcur;
-number piv;
+poly lhs_rest, term, qcur, invpiv;
 for (k = 1; k <= 10; k++) {
   dg = 20 - k;
   lhs_rest = 0;
@@ -55,8 +72,9 @@ for (k = 1; k <= 10; k++) {
   if (qcur != 0) {
     lhs_rest = lhs_rest + 16 * xc[11, 1] * qcur;
   }
-  piv = number(24) * (20 + 2*s - k) / (2*s + 3);
-  xc[10 - k + 1, 1] = (getc(rhsc, dg) - lhs_rest) / piv;
+  // piv = 24*(20 - k + 2*s) / (3 + 2*s) => 1/piv = (3 + 2*s) / (24*(20 - k + 2*s))
+  invpiv = redS((number(3) + number(2)*s) * invLinS(number(20 - k), number(2), 15) / number(24), 15);
+  xc[10 - k + 1, 1] = redS((getc(rhsc, dg) - lhs_rest) * invpiv, 15);
 }
 
 poly X = 0;
@@ -64,55 +82,74 @@ for (k = 0; k <= 10; k++) { X = X + xc[k+1, 1] * V^k; }
 poly ODE = 16*X*(2*V*diff(X, V) - 3*X + Q) - RHS;
 matrix odec = coeffs(ODE, V);
 for (k = 10; k <= 20; k++) {
-  if (getc(odec, k) != 0) { printf("ERROR: d=5 ODE nonzero at V^%s!", k); quit; }
+  if (redS(getc(odec, k), 15) != 0) { printf("ERROR: d=5 ODE nonzero at V^%s!", k); quit; }
 }
-printf("d=5: ODE[V^10..V^20] identically 0! x[0] size = %s", size(xc[1,1]));
+printf("d=5: ODE[V^10..V^20] identically 0 mod (s^2-15)! x[0] size = %s", size(xc[1,1]));
 
-poly eq7 = getc(odec, 7);
+poly eq7 = redS(getc(odec, 7), 15);
 if (diff(eq7, m1) != number(24)) { printf("ERROR: d=5 m1 pivot = %s", diff(eq7, m1)); quit; }
 poly m1_sol = -subst(eq7, m1, 0) / number(24);
 
-poly eq3 = subst(getc(odec, 3), m1, m1_sol);
+poly eq3 = redS(subst(getc(odec, 3), m1, m1_sol), 15);
 if (diff(eq3, m0) != number(-48)) { printf("ERROR: d=5 m0 pivot = %s", diff(eq3, m0)); quit; }
 poly m0_sol = subst(eq3, m0, 0) / number(48);
 
-ideal I5_ode_u = getc(odec, 9), getc(odec, 8),
-  subst(getc(odec, 6), m1, m1_sol),
-  subst(getc(odec, 5), m1, m1_sol),
-  subst(getc(odec, 4), m1, m1_sol),
-  subst(getc(odec, 2), m1, m1_sol),
-  getc(odec, 1), getc(odec, 0);
-poly eq_mu5 = m0_sol * m3 + m1_sol;
+ideal I5_ode_u =
+  redS(getc(odec, 9), 15),
+  redS(getc(odec, 8), 15),
+  redS(subst(getc(odec, 6), m1, m1_sol), 15),
+  redS(subst(getc(odec, 5), m1, m1_sol), 15),
+  redS(subst(getc(odec, 4), m1, m1_sol), 15),
+  redS(subst(getc(odec, 2), m1, m1_sol), 15),
+  redS(getc(odec, 1), 15),
+  redS(getc(odec, 0), 15),
+  s^2 - 15;
+poly eq_mu5 = redS(m0_sol * m3 + m1_sol, 15);
 
-ring R5 = (0, s), (c4, c3, c2, c0, m3), wp(1, 2, 3, 5, 5);
-minpoly = s^2 - 15;
+ring R5q = 0, (c4, c3, c2, c0, m3, s), dp;
 ideal I5_ode = imap(R5u, I5_ode_u);
 poly eq_mu5_r = imap(R5u, eq_mu5);
 ideal I5_coupled = I5_ode, eq_mu5_r;
 
-printf("=== d=5 (j=4) TEST A: ODE ALONE over Q(sqrt(15)) ===");
-ideal G5_ode = slimgb(I5_ode);
-printf("d=5 ODE ALONE slimgb: size=%s, G[1]=%s, dim=%s, vdim=%s",
-       size(G5_ode), G5_ode[1], dim(G5_ode), vdim(G5_ode));
-if (size(G5_ode) == 1 && G5_ode[1] == 1) {
-  printf("CERTIFIED_Q_SQRT15: SECANT_HEIGHT_4_D5_ODE_ALONE_EXCLUDED");
+ring R5p = 32009, (c4, c3, c2, c0, m3, s), dp;
+ideal I5_ode_p = imap(R5q, I5_ode);
+ideal I5_coup_p = imap(R5q, I5_coupled);
+
+printf("=== d=5 (j=4) F_32009 TEST A: ODE ALONE ===");
+ideal G5_ode_p = slimgb(I5_ode_p);
+printf("d=5 F_32009 ODE ALONE: size=%s, G[1]=%s, dim=%s, vdim=%s",
+       size(G5_ode_p), G5_ode_p[1], dim(G5_ode_p), vdim(G5_ode_p));
+
+printf("=== d=5 (j=4) F_32009 TEST B: ODE + (m0*m3 + m1*m2 = 0) ===");
+ideal G5_coup_p = slimgb(I5_coup_p);
+printf("d=5 F_32009 COUPLED: size=%s, G[1]=%s, dim=%s, vdim=%s",
+       size(G5_coup_p), G5_coup_p[1], dim(G5_coup_p), vdim(G5_coup_p));
+
+setring R5q;
+if (size(G5_ode_p) == 1 && G5_ode_p[1] == 1) {
+  printf("=== d=5 (j=4) EXACT Q PROOF A: modStd(I5_ode, 1) ===");
+  ideal G5_ode_q = modStd(I5_ode, 1);
+  printf("d=5 EXACT Q ODE ALONE: size=%s, G[1]=%s", size(G5_ode_q), G5_ode_q[1]);
+  if (size(G5_ode_q) == 1 && G5_ode_q[1] == 1) {
+    printf("CERTIFIED_MODSTD_Q: SECANT_HEIGHT_4_D5_ODE_ALONE_EXCLUDED_OVER_C");
+  }
 } else {
-  printf("=== d=5 (j=4) TEST B: ODE + (m0*m3 + m1*m2 = 0) over Q(sqrt(15)) ===");
-  ideal G5_coup = slimgb(I5_coupled);
-  printf("d=5 COUPLED slimgb: size=%s, G[1]=%s, dim=%s, vdim=%s",
-         size(G5_coup), G5_coup[1], dim(G5_coup), vdim(G5_coup));
-  if (size(G5_coup) == 1 && G5_coup[1] == 1) {
-    printf("CERTIFIED_Q_SQRT15: SECANT_HEIGHT_4_D5_COUPLED_EXCLUDED");
+  if (size(G5_coup_p) == 1 && G5_coup_p[1] == 1) {
+    printf("=== d=5 (j=4) EXACT Q PROOF B: modStd(I5_coupled, 1) ===");
+    ideal G5_coup_q = modStd(I5_coupled, 1);
+    printf("d=5 EXACT Q COUPLED: size=%s, G[1]=%s", size(G5_coup_q), G5_coup_q[1]);
+    if (size(G5_coup_q) == 1 && G5_coup_q[1] == 1) {
+      printf("CERTIFIED_MODSTD_Q: SECANT_HEIGHT_4_D5_COUPLED_EXCLUDED_OVER_C");
+    }
   }
 }
 
-// ======================== PART 2: d = 6 (j = 5) ========================
+// ======================== PART 2: d = 6 (j = 5, s^2 = 18) ========================
 printf("============================================================");
 printf("PART 2: SECANT-HEIGHT-FOUR-REALIZATION d = 6 (j = 5, s^2 = 18)");
 printf("============================================================");
 
-ring R6u = (0, s), (V, c5, c4, c3, c2, c0, m3, m1, m0), dp;
-minpoly = s^2 - 18;
+ring R6u = 0, (V, c5, c4, c3, c2, c0, m3, m1, m0, s), dp;
 
 poly a1_6 = V^6 + c5*V^5 + c4*V^4 + c3*V^3 + c2*V^2 + c0;
 poly RHS6 = 3*(a1_6^4 - 2*m3*a1_6^3 + 4*V*a1_6^2 - 8*m1*V^2*a1_6 + 16*m0*V^3);
@@ -122,10 +159,9 @@ matrix rhsc6 = coeffs(RHS6, V);
 matrix qc6 = coeffs(Q6, V);
 
 matrix xc6[13][1];
-xc6[13, 1] = number(3) / (number(4) * (2*s + 3));
+xc6[13, 1] = redS(number(3)/number(4) * invLinS(number(3), number(2), 18), 18);
 
-poly lhs_rest6, term6, qcur6;
-number piv6;
+poly lhs_rest6, term6, qcur6, invpiv6;
 for (k = 1; k <= 12; k++) {
   dg = 24 - k;
   lhs_rest6 = 0;
@@ -142,8 +178,8 @@ for (k = 1; k <= 12; k++) {
   if (qcur6 != 0) {
     lhs_rest6 = lhs_rest6 + 16 * xc6[13, 1] * qcur6;
   }
-  piv6 = number(24) * (24 + 2*s - k) / (2*s + 3);
-  xc6[12 - k + 1, 1] = (getc(rhsc6, dg) - lhs_rest6) / piv6;
+  invpiv6 = redS((number(3) + number(2)*s) * invLinS(number(24 - k), number(2), 18) / number(24), 18);
+  xc6[12 - k + 1, 1] = redS((getc(rhsc6, dg) - lhs_rest6) * invpiv6, 18);
 }
 
 poly X6 = 0;
@@ -151,46 +187,67 @@ for (k = 0; k <= 12; k++) { X6 = X6 + xc6[k+1, 1] * V^k; }
 poly ODE6 = 16*X6*(2*V*diff(X6, V) - 3*X6 + Q6) - RHS6;
 matrix odec6 = coeffs(ODE6, V);
 for (k = 12; k <= 24; k++) {
-  if (getc(odec6, k) != 0) { printf("ERROR: d=6 ODE nonzero at V^%s!", k); quit; }
+  if (redS(getc(odec6, k), 18) != 0) { printf("ERROR: d=6 ODE nonzero at V^%s!", k); quit; }
 }
-printf("d=6: ODE[V^12..V^24] identically 0! x[0] size = %s", size(xc6[1,1]));
+printf("d=6: ODE[V^12..V^24] identically 0 mod (s^2-18)! x[0] size = %s", size(xc6[1,1]));
 
-poly eq8_6 = getc(odec6, 8);
+poly eq8_6 = redS(getc(odec6, 8), 18);
 if (diff(eq8_6, m1) != number(24)) { printf("ERROR: d=6 m1 pivot = %s", diff(eq8_6, m1)); quit; }
 poly m1_6 = -subst(eq8_6, m1, 0) / number(24);
 
-poly eq3_6 = subst(getc(odec6, 3), m1, m1_6);
+poly eq3_6 = redS(subst(getc(odec6, 3), m1, m1_6), 18);
 if (diff(eq3_6, m0) != number(-48)) { printf("ERROR: d=6 m0 pivot = %s", diff(eq3_6, m0)); quit; }
 poly m0_6 = subst(eq3_6, m0, 0) / number(48);
 
-ideal I6_ode_u = getc(odec6, 11), getc(odec6, 10), getc(odec6, 9),
-  subst(getc(odec6, 7), m1, m1_6),
-  subst(getc(odec6, 6), m1, m1_6),
-  subst(getc(odec6, 5), m1, m1_6),
-  subst(getc(odec6, 4), m1, m1_6),
-  subst(getc(odec6, 2), m1, m1_6),
-  getc(odec6, 1), getc(odec6, 0);
-poly eq_mu6 = m0_6 * m3 + m1_6;
+ideal I6_ode_u =
+  redS(getc(odec6, 11), 18),
+  redS(getc(odec6, 10), 18),
+  redS(getc(odec6, 9), 18),
+  redS(subst(getc(odec6, 7), m1, m1_6), 18),
+  redS(subst(getc(odec6, 6), m1, m1_6), 18),
+  redS(subst(getc(odec6, 5), m1, m1_6), 18),
+  redS(subst(getc(odec6, 4), m1, m1_6), 18),
+  redS(subst(getc(odec6, 2), m1, m1_6), 18),
+  redS(getc(odec6, 1), 18),
+  redS(getc(odec6, 0), 18),
+  s^2 - 18;
+poly eq_mu6 = redS(m0_6 * m3 + m1_6, 18);
 
-ring R6 = (0, s), (c5, c4, c3, c2, c0, m3), wp(1, 2, 3, 4, 6, 6);
-minpoly = s^2 - 18;
+ring R6q = 0, (c5, c4, c3, c2, c0, m3, s), dp;
 ideal I6_ode = imap(R6u, I6_ode_u);
 poly eq_mu6_r = imap(R6u, eq_mu6);
 ideal I6_coupled = I6_ode, eq_mu6_r;
 
-printf("=== d=6 (j=5) TEST A: ODE ALONE over Q(sqrt(18)) ===");
-ideal G6_ode = slimgb(I6_ode);
-printf("d=6 ODE ALONE slimgb: size=%s, G[1]=%s, dim=%s, vdim=%s",
-       size(G6_ode), G6_ode[1], dim(G6_ode), vdim(G6_ode));
-if (size(G6_ode) == 1 && G6_ode[1] == 1) {
-  printf("CERTIFIED_Q_SQRT18: SECANT_HEIGHT_4_D6_ODE_ALONE_EXCLUDED");
+ring R6p = 32009, (c5, c4, c3, c2, c0, m3, s), dp;
+ideal I6_ode_p = imap(R6q, I6_ode);
+ideal I6_coup_p = imap(R6q, I6_coupled);
+
+printf("=== d=6 (j=5) F_32009 TEST A: ODE ALONE ===");
+ideal G6_ode_p = slimgb(I6_ode_p);
+printf("d=6 F_32009 ODE ALONE: size=%s, G[1]=%s, dim=%s, vdim=%s",
+       size(G6_ode_p), G6_ode_p[1], dim(G6_ode_p), vdim(G6_ode_p));
+
+printf("=== d=6 (j=5) F_32009 TEST B: ODE + (m0*m3 + m1*m2 = 0) ===");
+ideal G6_coup_p = slimgb(I6_coup_p);
+printf("d=6 F_32009 COUPLED: size=%s, G[1]=%s, dim=%s, vdim=%s",
+       size(G6_coup_p), G6_coup_p[1], dim(G6_coup_p), vdim(G6_coup_p));
+
+setring R6q;
+if (size(G6_ode_p) == 1 && G6_ode_p[1] == 1) {
+  printf("=== d=6 (j=5) EXACT Q PROOF A: modStd(I6_ode, 1) ===");
+  ideal G6_ode_q = modStd(I6_ode, 1);
+  printf("d=6 EXACT Q ODE ALONE: size=%s, G[1]=%s", size(G6_ode_q), G6_ode_q[1]);
+  if (size(G6_ode_q) == 1 && G6_ode_q[1] == 1) {
+    printf("CERTIFIED_MODSTD_Q: SECANT_HEIGHT_4_D6_ODE_ALONE_EXCLUDED_OVER_C");
+  }
 } else {
-  printf("=== d=6 (j=5) TEST B: ODE + (m0*m3 + m1*m2 = 0) over Q(sqrt(18)) ===");
-  ideal G6_coup = slimgb(I6_coupled);
-  printf("d=6 COUPLED slimgb: size=%s, G[1]=%s, dim=%s, vdim=%s",
-         size(G6_coup), G6_coup[1], dim(G6_coup), vdim(G6_coup));
-  if (size(G6_coup) == 1 && G6_coup[1] == 1) {
-    printf("CERTIFIED_Q_SQRT18: SECANT_HEIGHT_4_D6_COUPLED_EXCLUDED");
+  if (size(G6_coup_p) == 1 && G6_coup_p[1] == 1) {
+    printf("=== d=6 (j=5) EXACT Q PROOF B: modStd(I6_coupled, 1) ===");
+    ideal G6_coup_q = modStd(I6_coupled, 1);
+    printf("d=6 EXACT Q COUPLED: size=%s, G[1]=%s", size(G6_coup_q), G6_coup_q[1]);
+    if (size(G6_coup_q) == 1 && G6_coup_q[1] == 1) {
+      printf("CERTIFIED_MODSTD_Q: SECANT_HEIGHT_4_D6_COUPLED_EXCLUDED_OVER_C");
+    }
   }
 }
 quit;
