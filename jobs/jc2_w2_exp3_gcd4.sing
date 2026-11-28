@@ -1,0 +1,289 @@
+// Pure-Singular exact system for DEGREE-135-IV-GCD-FOUR (n23 = 1, deg g = 4, deg r = 4, deg N = 5)
+// Normalized C0 = 1, r and N monic, u-translated so n4 = 2*r3 (hence z = (r^2/N)^(1/3) = u + O(u^-1)).
+// Eliminates n0 (pivot -54), a3 (-81/16), a2 (-81/7), a1 (-81/4), a0 (-162/5),
+// t3 (-2), t2 (-4), t1 (-6), t0 (-8), p0 (-9) with exact constant rational pivots -> 11 vars!
+
+LIB "modstd.lib";
+
+proc ucoeff(poly f, int k) {
+  matrix C = coeffs(f, u);
+  if (k + 1 > nrows(C)) { return(0); }
+  return(C[k + 1, 1]);
+}
+
+ring Ru = 0, (u, p0, t4, t3, t2, t1, t0, a4, a3, a2, a1, a0, w, v6, n0, n1, n2, n3, r0, r1, r2, r3), dp;
+
+// 1. Truncated series for Q(w) = w^3 * r^2 / N up to w^9 (1-indexed: [k+1] is coeff of w^k)
+poly r_reg[10];
+poly N_reg[10];
+int i, j, k, d, ii;
+for (i = 1; i <= 10; i++) { r_reg[i] = 0; N_reg[i] = 0; }
+r_reg[1] = 1; r_reg[2] = r3; r_reg[3] = r2; r_reg[4] = r1; r_reg[5] = r0;
+N_reg[1] = 1; N_reg[2] = 2*r3; N_reg[3] = n3; N_reg[4] = n2; N_reg[5] = n1; N_reg[6] = n0;
+
+poly r2_reg[10];
+for (i = 1; i <= 10; i++) { r2_reg[i] = 0; }
+for (i = 0; i <= 4; i++) {
+  for (j = 0; j <= 4; j++) {
+    if (i + j <= 9) { r2_reg[i + j + 1] = r2_reg[i + j + 1] + r_reg[i + 1] * r_reg[j + 1]; }
+  }
+}
+
+poly N_inv[10];
+N_inv[1] = 1;
+for (k = 1; k <= 9; k++) {
+  poly s = 0;
+  for (j = 1; j <= 5; j++) {
+    if (j <= k) { s = s + N_reg[j + 1] * N_inv[k - j + 1]; }
+  }
+  N_inv[k + 1] = -s;
+}
+
+poly Q[10];
+for (i = 1; i <= 10; i++) { Q[i] = 0; }
+for (i = 0; i <= 9; i++) {
+  for (j = 0; j <= 9 - i; j++) {
+    Q[i + j + 1] = Q[i + j + 1] + r2_reg[i + 1] * N_inv[j + 1];
+  }
+}
+
+poly Q2[10];
+for (i = 1; i <= 10; i++) { Q2[i] = 0; }
+for (i = 0; i <= 6; i++) {
+  for (j = 0; j <= 6 - i; j++) {
+    Q2[i + j + 1] = Q2[i + j + 1] + Q[i + 1] * Q[j + 1];
+  }
+}
+
+poly Q3[10];
+for (i = 1; i <= 10; i++) { Q3[i] = 0; }
+for (i = 0; i <= 6; i++) {
+  for (j = 0; j <= 9 - i; j++) {
+    Q3[i + j + 1] = Q3[i + j + 1] + Q2[i + 1] * Q[j + 1];
+  }
+}
+
+// 2. Universal Laurent Laws for B(u) and division by r(u)
+number b9 = number(9)/number(2);
+poly b6 = (number(9)/number(8)) * (4*v6 - 13);
+poly v3 = (number(3)/number(500)) * (500*v6 - 1001);
+poly b3 = (number(27)/number(500)) * (377 - 125*v6);
+
+poly polyB[10];
+for (j = 0; j <= 9; j++) {
+  poly val = b9 * Q3[9 - j + 1];
+  if (j <= 6) { val = val + b6 * Q2[6 - j + 1]; }
+  if (j <= 3) { val = val + b3 * Q[3 - j + 1]; }
+  polyB[j + 1] = val;
+}
+
+poly remB[9];
+for (j = 0; j <= 8; j++) { remB[j + 1] = (j + 1) * polyB[j + 2]; }
+
+poly r_poly[5];
+r_poly[1] = r0; r_poly[2] = r1; r_poly[3] = r2; r_poly[4] = r3; r_poly[5] = 1;
+poly g_poly[5];
+for (k = 8; k >= 4; k--) {
+  poly q = remB[k + 1];
+  g_poly[k - 4 + 1] = q;
+  for (j = 0; j <= 4; j++) {
+    remB[k - 4 + j + 1] = remB[k - 4 + j + 1] - q * r_poly[j + 1];
+  }
+}
+
+poly R3 = remB[4];
+poly R2 = remB[3];
+poly R1 = remB[2];
+poly R0 = remB[1];
+
+if (diff(R3, n0) != number(-54)) { printf("ERROR: R3 n0 pivot = %s", diff(R3, n0)); quit; }
+poly n0_sol = subst(R3, n0, 0) * (number(1)/number(54));
+printf("Eliminated n0 from R3 = 0 (pivot -54).");
+
+R2 = subst(R2, n0, n0_sol);
+R1 = subst(R1, n0, n0_sol);
+R0 = subst(R0, n0, n0_sol);
+poly b2 = -R1 * (number(1)/number(2));
+poly b1 = -R0;
+poly v2 = (number(2)/number(9)) * b2;
+poly v1 = (number(2)/number(9)) * b1;
+
+poly g = 0;
+for (j = 0; j <= 4; j++) { g = g + subst(g_poly[j + 1], n0, n0_sol) * u^j; }
+poly r = u^4 + r3*u^3 + r2*u^2 + r1*u + r0;
+poly N = u^5 + 2*r3*u^4 + n3*u^3 + n2*u^2 + n1*u + n0_sol;
+
+// Substitute n0_sol into Q, Q2, Q3 needed for A
+for (i = 1; i <= 10; i++) {
+  Q[i]  = subst(Q[i],  n0, n0_sol);
+  Q2[i] = subst(Q2[i], n0, n0_sol);
+  Q3[i] = subst(Q3[i], n0, n0_sol);
+}
+
+// 3. Build A(u) = poly(r * V) with symbolic a4..a0
+poly rQ3[9];
+poly rQ2[6];
+poly rQ1[3];
+for (i = 1; i <= 9; i++) { rQ3[i] = 0; }
+for (i = 1; i <= 6; i++) { rQ2[i] = 0; }
+for (i = 1; i <= 3; i++) { rQ1[i] = 0; }
+for (i = 0; i <= 4; i++) {
+  for (j = 0; j <= 8 - i; j++) { rQ3[i + j + 1] = rQ3[i + j + 1] + r_reg[i + 1] * Q3[j + 1]; }
+  for (j = 0; j <= 5 - i; j++) { rQ2[i + j + 1] = rQ2[i + j + 1] + r_reg[i + 1] * Q2[j + 1]; }
+  for (j = 0; j <= 2 - i; j++) { rQ1[i + j + 1] = rQ1[i + j + 1] + r_reg[i + 1] * Q[j + 1]; }
+}
+
+poly A = a4*u^4 + a3*u^3 + a2*u^2 + a1*u + a0;
+for (j = 5; j <= 13; j++) {
+  poly val = rQ3[13 - j + 1];
+  if (j <= 10) { val = val + v6 * rQ2[10 - j + 1]; }
+  if (j <= 7)  { val = val + v3 * rQ1[7 - j + 1]; }
+  A = A + val * u^j;
+}
+A = A + v2*u^6 + (v2*r3 + v1)*u^5;
+
+// 4. Exact ODE 2*M*T' - M'*T = 18*A*(A'*r - A*r')
+poly M = r^2 + N;
+poly dM = diff(M, u);
+poly RHS = 18 * A * (diff(A, u)*r - A*diff(r, u));
+
+poly mcoeff[9];
+for (j = 0; j <= 8; j++) { mcoeff[j + 1] = ucoeff(M, j); }
+
+poly tcoeff[23];
+for (k = 1; k <= 23; k++) { tcoeff[k] = 0; }
+
+for (k = 22; k >= 5; k--) {
+  d = k + 7;
+  poly lhs_rest = 0;
+  for (j = 0; j <= 7; j++) {
+    ii = d + 1 - j;
+    if (ii >= 5 && ii <= 22) {
+      lhs_rest = lhs_rest + tcoeff[ii + 1] * (2*ii - j) * mcoeff[j + 1];
+    }
+  }
+  tcoeff[k + 1] = (ucoeff(RHS, d) - lhs_rest) / (2*k - 8);
+}
+
+poly Thi = 0;
+for (k = 5; k <= 22; k++) { Thi = Thi + tcoeff[k + 1] * u^k; }
+poly odeHi = 2*M*diff(Thi, u) - dM*Thi - RHS;
+for (k = 12; k <= 29; k++) {
+  if (ucoeff(odeHi, k) != 0) { printf("ERROR: odeHi nonzero at %s!", k); quit; }
+}
+printf("Verified odeHi[12..29] == 0 identically!");
+
+// 5. Compute sqDiff_hi = Thi^2 - 9*pL_hi*A^2 to eliminate a3, a2, a1, a0
+poly gA = g * A;
+poly pL_hi = 0;
+for (k = 0; k <= 17; k++) {
+  pL_hi = pL_hi + ucoeff(gA, k) * u^(k + 1) / (k + 1);
+}
+poly sqHi = Thi^2 - 9*pL_hi*A^2;
+for (k = 35; k <= 44; k++) {
+  if (ucoeff(sqHi, k) != 0) { printf("ERROR: sqHi nonzero at %s!", k); quit; }
+}
+printf("Verified sqHi[35..44] == 0 identically!");
+
+poly eq34 = ucoeff(sqHi, 34);
+poly eq33 = ucoeff(sqHi, 33);
+poly eq32 = ucoeff(sqHi, 32);
+poly eq31 = ucoeff(sqHi, 31);
+
+if (diff(eq34, a3) != number(-81)/number(16)) { printf("ERROR: eq34 a3 = %s", diff(eq34, a3)); quit; }
+poly a3_sol = subst(eq34, a3, 0) * (number(16)/number(81));
+
+poly eq33_s = subst(eq33, a3, a3_sol);
+if (diff(eq33_s, a2) != number(-81)/number(7)) { printf("ERROR: eq33 a2 = %s", diff(eq33_s, a2)); quit; }
+poly a2_sol = subst(eq33_s, a2, 0) * (number(7)/number(81));
+
+poly eq32_s = subst(subst(eq32, a3, a3_sol), a2, a2_sol);
+if (diff(eq32_s, a1) != number(-81)/number(4)) { printf("ERROR: eq32 a1 = %s", diff(eq32_s, a1)); quit; }
+poly a1_sol = subst(eq32_s, a1, 0) * (number(4)/number(81));
+
+poly eq31_s = subst(subst(subst(eq31, a3, a3_sol), a2, a2_sol), a1, a1_sol);
+if (diff(eq31_s, a0) != number(-162)/number(5)) { printf("ERROR: eq31 a0 = %s", diff(eq31_s, a0)); quit; }
+poly a0_sol = subst(eq31_s, a0, 0) * (number(5)/number(162));
+
+printf("Eliminated a3, a2, a1, a0 with exact constant pivots!");
+
+// Substitute a3..a0 into A, RHS, tcoeff[5..22]
+A = subst(subst(subst(subst(A, a3, a3_sol), a2, a2_sol), a1, a1_sol), a0, a0_sol);
+RHS = 18 * A * (diff(A, u)*r - A*diff(r, u));
+for (k = 5; k <= 22; k++) {
+  tcoeff[k + 1] = subst(subst(subst(subst(tcoeff[k + 1], a3, a3_sol), a2, a2_sol), a1, a1_sol), a0, a0_sol);
+}
+tcoeff[5] = t4;
+
+// Solve t[3], t[2], t[1], t[0] from ode10, ode9, ode8, ode7 (pivots -2, -4, -6, -8)
+for (k = 3; k >= 0; k--) {
+  d = k + 7;
+  poly lhs_rest = 0;
+  for (j = 0; j <= 7; j++) {
+    ii = d + 1 - j;
+    if (ii >= k + 1 && ii <= 22) {
+      lhs_rest = lhs_rest + tcoeff[ii + 1] * (2*ii - j) * mcoeff[j + 1];
+    }
+  }
+  tcoeff[k + 1] = (ucoeff(RHS, d) - lhs_rest) / (2*k - 8);
+}
+
+poly Tfull = 0;
+for (k = 0; k <= 22; k++) { Tfull = Tfull + tcoeff[k + 1] * u^k; }
+poly odeFull = 2*M*diff(Tfull, u) - dM*Tfull - RHS;
+for (k = 7; k <= 10; k++) {
+  if (ucoeff(odeFull, k) != 0) { printf("ERROR: odeFull nonzero at %s!", k); quit; }
+}
+printf("Solved t3, t2, t1, t0 (pivots -2,-4,-6,-8) and verified odeFull[7..10] == 0!");
+
+// Compute full pL and eliminate p0 from eq26 (pivot -9)
+gA = g * A;
+poly pL_0 = 0;
+for (k = 0; k <= 17; k++) {
+  pL_0 = pL_0 + ucoeff(gA, k) * u^(k + 1) / (k + 1);
+}
+poly sq0 = Tfull^2 - 9*pL_0*A^2 - M;
+poly eq26_0 = ucoeff(sq0, 26);
+// sqFull = sq0 - 9*p0*A^2, coeff at u^26 is eq26_0 - 9*p0 = 0 -> p0 = eq26_0 / 9
+poly p0_sol = eq26_0 * (number(1)/number(9));
+poly sqFull = sq0 - 9*p0_sol*A^2;
+if (ucoeff(sqFull, 26) != 0) { printf("ERROR: sqFull[26] != 0!"); quit; }
+printf("Eliminated p0 from eq26 = 0 (pivot -9)!");
+
+// Collect equations in 11 vars: (t4, a4, w, v6, n1, n2, n3, r0, r1, r2, r3)
+ideal Iu = R2, w*b2 - 1,
+  ucoeff(odeFull, 11),
+  ucoeff(odeFull, 6), ucoeff(odeFull, 5), ucoeff(odeFull, 4),
+  ucoeff(odeFull, 3), ucoeff(odeFull, 2), ucoeff(odeFull, 1), ucoeff(odeFull, 0),
+  ucoeff(sqFull, 30), ucoeff(sqFull, 29), ucoeff(sqFull, 28), ucoeff(sqFull, 27),
+  ucoeff(sqFull, 25), ucoeff(sqFull, 24), ucoeff(sqFull, 23), ucoeff(sqFull, 22),
+  ucoeff(sqFull, 21), ucoeff(sqFull, 20), ucoeff(sqFull, 19), ucoeff(sqFull, 18),
+  ucoeff(sqFull, 17), ucoeff(sqFull, 16), ucoeff(sqFull, 15), ucoeff(sqFull, 14),
+  ucoeff(sqFull, 13), ucoeff(sqFull, 12), ucoeff(sqFull, 11), ucoeff(sqFull, 10),
+  ucoeff(sqFull, 9),  ucoeff(sqFull, 8),  ucoeff(sqFull, 7),  ucoeff(sqFull, 6),
+  ucoeff(sqFull, 5),  ucoeff(sqFull, 4),  ucoeff(sqFull, 3),  ucoeff(sqFull, 2),
+  ucoeff(sqFull, 1),  ucoeff(sqFull, 0);
+
+printf("Total generators in Iu = %s", size(Iu));
+
+ring R11 = 0, (t4, a4, w, v6, n1, n2, n3, r0, r1, r2, r3), dp;
+ideal I11 = imap(Ru, Iu);
+
+ring R11p = 32003, (t4, a4, w, v6, n1, n2, n3, r0, r1, r2, r3), dp;
+ideal I11p = imap(R11, I11);
+printf("=== Running slimgb(I11p) over F_32003 (11 vars) ===");
+ideal Gp = slimgb(I11p);
+printf("F_32003 slimgb size = %s, dim = %s, Gp[1] = %s", size(Gp), dim(Gp), Gp[1]);
+if (dim(Gp) == 0) {
+  printf("F_32003 vdim = %s", vdim(Gp));
+}
+if (size(Gp) == 1 && Gp[1] == 1) {
+  printf("F_32003_EMPTY_PROVED! Starting exact Q modStd(I11, 1)...");
+  setring R11;
+  ideal Gq = modStd(I11, 1);
+  printf("Q modStd(I11, 1) size = %s, Gq[1] = %s", size(Gq), Gq[1]);
+  if (size(Gq) == 1 && Gq[1] == 1) {
+    printf("CERTIFIED_MODSTD_Q: DEGREE_135_IV_GCD_FOUR_PROVED_EMPTY_OVER_Q");
+  }
+}
+quit;
