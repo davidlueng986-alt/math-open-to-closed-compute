@@ -1,11 +1,12 @@
 // Parameterized pure-Singular 4.4.1 solver for SECANT-HEIGHT-FOUR-REALIZATION
-// Uses weighted reverse-lex ordering wp(...) matched to the ODE quasi-homogeneity!
+// Uses quasi-homogeneous weighted reverse-lex ordering wp(...) + modStd over Q!
 option(noredefine);
 LIB "polylib.lib";
+LIB "modstd.lib";
 
-proc run_case1(int d, int p)
+proc run_case1(int d, int p, int use_mod)
 {
-  printf("=== CASE 1 (delta=0): d=%s (j=%s), char=%s ===", d, d-1, p);
+  printf("=== CASE 1 (delta=0): d=%s (j=%s), char=%s, modStd=%s ===", d, d-1, p, use_mod);
   int t0 = timer;
   string vlist = "V";
   int k;
@@ -29,7 +30,6 @@ proc run_case1(int d, int p)
   }
   execute("I = I + ideal(rab*a" + string(d) + " - 1);");
 
-  // Weighted ordering wp: wt(a_k) = k, wt(w_k) = k, wt(rab) = 1
   string vlist2 = "";
   string wts = "";
   for (k = 2; k <= d; k++) {
@@ -45,15 +45,20 @@ proc run_case1(int d, int p)
   wts = wts + ",1";
   execute("ring R2 = " + string(p) + ",(" + vlist2 + "),wp(" + wts + ");");
   ideal J = imap(Rtmp, I);
-  ideal G = std(J);
+  ideal G;
+  if (p == 0 && use_mod == 1) {
+    G = modStd(J);
+  } else {
+    G = std(J);
+  }
   int is_one = (size(G) == 1 && deg(G[1]) == 0);
-  printf("  RESULT Case 1 d=%s char=%s: GB_is_1=%s, size=%s, time=%s s", d, p, is_one, size(G), timer - t0);
+  printf("  RESULT Case 1 d=%s char=%s modStd=%s: GB_is_1=%s, size=%s, time=%s s", d, p, use_mod, is_one, size(G), timer - t0);
   return(is_one);
 }
 
-proc run_case2(int d, int p)
+proc run_case2(int d, int p, int use_mod)
 {
-  printf("=== CASE 2 (delta=1): d=%s (j=%s), char=%s ===", d, d-1, p);
+  printf("=== CASE 2 (delta=1): d=%s (j=%s), char=%s, modStd=%s ===", d, d-1, p, use_mod);
   int t0 = timer;
   string vlist = "V,al";
   int k;
@@ -78,10 +83,9 @@ proc run_case2(int d, int p)
   }
   execute("I = I + ideal(rab*al*a" + string(d) + " - 1);");
 
-  // Weighted ordering wp: wt(al) = 3, wt(a_k) = k, wt(w_k) = k, wt(rab) = 1
-  // (Notice: in Case 2, al*V^3 has weight 3 - 3 = 0, matching a1^4 at V^0!)
+  // Corrected quasi-homogeneous weights: wt(al) = 2, wt(a_k) = k, wt(w_k) = k, wt(rab) = 1
   string vlist2 = "al";
-  string wts = "3";
+  string wts = "2";
   for (k = 2; k <= d; k++) {
     vlist2 = vlist2 + ",a" + string(k);
     wts = wts + "," + string(k);
@@ -94,8 +98,13 @@ proc run_case2(int d, int p)
   wts = wts + ",1";
   execute("ring R2 = " + string(p) + ",(" + vlist2 + "),wp(" + wts + ");");
   ideal J = imap(Rtmp, I);
-  ideal G = std(J);
+  ideal G;
+  if (p == 0 && use_mod == 1) {
+    G = modStd(J);
+  } else {
+    G = std(J);
+  }
   int is_one = (size(G) == 1 && deg(G[1]) == 0);
-  printf("  RESULT Case 2 d=%s char=%s: GB_is_1=%s, size=%s, time=%s s", d, p, is_one, size(G), timer - t0);
+  printf("  RESULT Case 2 d=%s char=%s modStd=%s: GB_is_1=%s, size=%s, time=%s s", d, p, use_mod, is_one, size(G), timer - t0);
   return(is_one);
 }
