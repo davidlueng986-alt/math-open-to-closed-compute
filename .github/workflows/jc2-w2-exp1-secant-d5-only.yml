@@ -1,0 +1,22 @@
+name: JC2 W2 Exp1 SECANT-HEIGHT-FOUR d=5 Complete Exact Q-Proof
+on:
+  push:
+    branches: ['jc2-w2-exp1-secant-d5-only']
+    paths:
+      - 'jobs/jc2_w2_exp1_secant_d5_only.sing'
+      - '.github/workflows/jc2-w2-exp1-secant-d5-only.yml'
+  workflow_dispatch:
+
+jobs:
+  singular-secant-d5-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Singular
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq singular
+          Singular --version
+      - name: Run complete standalone d=5 (j=4) exact Q-proof
+        run: Singular -q jobs/jc2_w2_exp1_secant_d5_only.sing
