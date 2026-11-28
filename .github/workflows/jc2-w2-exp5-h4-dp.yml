@@ -1,0 +1,40 @@
+name: JC2 W2 Exp5 Height-Four Deterministic dp/slimgb
+on:
+  push:
+    branches: ['jc2-w2-exp5-h4']
+    paths:
+      - 'jobs/jc2_w2_exp5_h4_dp.sing'
+      - '.github/workflows/jc2-w2-exp5-h4-dp.yml'
+  workflow_dispatch:
+
+jobs:
+  dp-matrix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: case2_d23_q_dp
+            cmd: 'int r; r=run_case2_dp(2,0); r=run_case2_dp(3,0);'
+          - name: case2_d4_fp_dp
+            cmd: 'int r; r=run_case2_dp(4,32003);'
+          - name: case2_d4_q_dp
+            cmd: 'int r; r=run_case2_dp(4,0);'
+          - name: case1_d5_q_dp
+            cmd: 'int r; r=run_case1_dp(5,0);'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Singular
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq singular
+          Singular --version
+      - name: Run ${{ matrix.name }}
+        run: |
+          cat > run_dp.sing << 'EOF'
+          < "jobs/jc2_w2_exp5_h4_dp.sing";
+          ${{ matrix.cmd }}
+          quit;
+          EOF
+          Singular -q run_dp.sing
