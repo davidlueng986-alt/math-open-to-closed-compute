@@ -56,8 +56,8 @@ theorem top_down_pivot_strict_pos (d k : ℤ)
   nlinarith
 
 /-- Theorem 4b: All-d binomial exclusion core contradiction:
-for all d >= 2, no element x of a commutative ring of char 0 (represented over Q)
-can satisfy both (8d - 4)*x + 3 = 0 and 16*(4d - 3)*x^2 + 24*x - 3 = 0. -/
+for all d >= 2, no rational (or complex, via the exact polynomial identity)
+x can satisfy both (8d - 4)*x + 3 = 0 and 16*(4d - 3)*x^2 + 24*x - 3 = 0. -/
 theorem binomial_leading_contradiction (d : ℤ) (hd : 2 ≤ d) (x : ℚ)
     (hlin : (8 * (d : ℚ) - 4) * x + 3 = 0)
     (hquad : 16 * (4 * (d : ℚ) - 3) * x ^ 2 + 24 * x - 3 = 0) : False := by
@@ -88,14 +88,14 @@ theorem square_completion_cancellation {R : Type*} [CommRing R]
     4 * ((9 * dlt ^ 2 - 24 * V) * a1 ^ 2 + 12 * dlt * V * (1 + 6 * alpha * V) * a1 + 4 * V ^ 2 * (1 - 36 * alpha * V)) := by
   ring
 
-/-- Exact symplectic ODE decoupling identity from [eta^2] and [eta^0]. -/
+/-- Exact symplectic ODE decoupling identity from [eta^2] and [eta^0] (cleared denominators). -/
 theorem symplectic_ode_decoupling {R : Type*} [CommRing R]
     (X VX' Z a1 mu0 mu1 mu2 mu3 V : R)
-    (heq2 : 2 * VX' - 3 * X + 3 * (a1 ^ 2 - mu3 * a1) / 2 + mu2 * V - 3 * Z = 0)
+    (heq2 : 4 * VX' - 6 * X + 3 * (a1 ^ 2 - mu3 * a1) + 2 * mu2 * V - 6 * Z = 0)
     (heq0 : 16 * X * Z - (a1 ^ 4 - 2 * mu3 * a1 ^ 3 + 4 * mu2 * V * a1 ^ 2 - 8 * mu1 * V ^ 2 * a1 + 16 * mu0 * V ^ 3) = 0) :
-    16 * X * (2 * VX' - 3 * X + 3 * (a1 ^ 2 - mu3 * a1) / 2 + mu2 * V) =
+    8 * X * (4 * VX' - 6 * X + 3 * (a1 ^ 2 - mu3 * a1) + 2 * mu2 * V) =
       3 * (a1 ^ 4 - 2 * mu3 * a1 ^ 3 + 4 * mu2 * V * a1 ^ 2 - 8 * mu1 * V ^ 2 * a1 + 16 * mu0 * V ^ 3) := by
-  linear_combination 16 * X * heq2 + 3 * heq0
+  linear_combination 8 * X * heq2 + 3 * heq0
 
 #print axioms exact_p_v_degree_rigidity
 #print axioms exact_d_eq_j_succ
