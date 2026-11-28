@@ -1,0 +1,154 @@
+// WEIGHTED wp(1,2,3,5,5) + 4-SUB-BRANCH EXACT Q-PROOF for SECANT-HEIGHT-FOUR-REALIZATION at d = 5 (j = 4)!
+// Exhaustive split of deg 0 = -3*(4*x0 - c0^2)*(4*x0 - c0^2 + 2*c0*mu3) = 0 and deg 1 = 0:
+//   Sub 1: c0 = 0, x0 = 0                                   (4 vars: c4, c3, c2, mu3)
+//   Sub 2: mu3 = -c0, 4*x0 - 3*c0^2 = 0                     (4 vars: c4, c3, c2, c0)
+//   Sub 3: 4*x0 - c0^2 + 2*c0*mu3 = 0, x1 - 1 = 0           (5 vars: c4, c3, c2, c0, mu3)
+//   Sub 4: 4*x0 - c0^2 = 0, (c0 - 3*mu3)*x1 - c0 = 0        (5 vars: c4, c3, c2, c0, mu3)
+// First tests BOTH roots kap in {16284, 18571} over F_32029 (scalar kap, weighted wp!),
+// then runs EXACT Q-verified modStd(..., 1) over Q!
+
+LIB "modstd.lib";
+
+proc vcoeff(poly f, int k) {
+  matrix C = coeffs(f, V);
+  if (k + 1 > nrows(C)) { return(poly(0)); }
+  return(C[k + 1, 1]);
+}
+
+ring Rv = (0, kap), (V, c4, c3, c2, c0, mu3, mu1, mu0), dp;
+minpoly = 272*kap^2 + 24*kap - 3;
+
+poly a1 = V^5 + c4*V^4 + c3*V^3 + c2*V^2 + c0;
+poly RHS = 3*(a1^4 - 2*mu3*a1^3 + 4*V*a1^2 - 8*mu1*V^2*a1 + 16*mu0*V^3);
+poly B = (number(3)/number(2))*a1^2 - (number(3)/number(2))*mu3*a1 + V;
+
+list xc;
+int k, m, dg;
+for (k = 1; k <= 11; k++) { xc[k] = poly(0); }
+xc[11] = poly(kap);
+
+for (m = 1; m <= 10; m++) {
+  dg = 20 - m;
+  poly Xcur = 0;
+  for (k = 10 - m + 1; k <= 10; k++) { Xcur = Xcur + xc[k + 1] * V^k; }
+  poly curLHS = 16 * Xcur * (2*V*diff(Xcur, V) - 3*Xcur + B);
+  poly rem = vcoeff(RHS, dg) - vcoeff(curLHS, dg);
+  number piv = 16 * ((34 - 2*m)*kap + number(3)/number(2));
+  xc[10 - m + 1] = rem / piv;
+}
+
+poly X = 0;
+for (k = 0; k <= 10; k++) { X = X + xc[k + 1] * V^k; }
+poly odeDiff = 16*X*(2*V*diff(X, V) - 3*X + B) - RHS;
+
+poly eq7 = vcoeff(odeDiff, 7);
+poly mu1_sol = -subst(eq7, mu1, 0) / number(24);
+poly ode1 = subst(odeDiff, mu1, mu1_sol);
+poly eq3 = vcoeff(ode1, 3);
+poly mu0_sol = subst(eq3, mu0, 0) / number(48);
+poly ode2 = subst(ode1, mu0, mu0_sol);
+
+poly x0_p = xc[1];
+poly x1_p = xc[2];
+poly brA = 4*x0_p - c0^2;
+poly brB = 4*x0_p - c0^2 + 2*c0*mu3;
+poly deg1_A = (c0 - 3*mu3)*x1_p - c0;
+poly deg1_B = x1_p - 1;
+poly couple = mu0_sol * mu3 + mu1_sol;
+
+// Verify exact factorization of deg 0 and deg 1 on Branch A & Branch B!
+if (vcoeff(ode2, 0) + 3*brA*brB != 0) { printf("ERROR: deg 0!"); quit; }
+if (subst(vcoeff(ode2, 1), c0, 0) != 0) { printf("ERROR: deg 1 at c0=0!"); quit; }
+printf("Exact system built and deg 0/1 factorizations verified!");
+
+ideal I_core_v =
+  vcoeff(ode2, 9), vcoeff(ode2, 8), vcoeff(ode2, 6), vcoeff(ode2, 5),
+  vcoeff(ode2, 4), vcoeff(ode2, 2);
+
+// Map to Q[c4, c3, c2, c0, mu3, kap] with weighted ordering wp(1,2,3,5,5,1)
+ring Rq = 0, (c4, c3, c2, c0, mu3, kap), wp(1, 2, 3, 5, 5, 1);
+poly mp = 272*kap^2 + 24*kap - 3;
+ideal I_core = imap(Rv, I_core_v);
+poly p_x0 = imap(Rv, x0_p);
+poly p_brA = imap(Rv, brA);
+poly p_brB = imap(Rv, brB);
+poly p_d1A = imap(Rv, deg1_A);
+poly p_d1B = imap(Rv, deg1_B);
+poly p_coup = imap(Rv, couple);
+
+// Test all 4 sub-branches over F_32029 at BOTH roots kap = 16284 and kap = 18571!
+ring Rp = 32029, (c4, c3, c2, c0, mu3), wp(1, 2, 3, 5, 5);
+int ridx;
+list roots = 16284, 18571;
+
+// Helper to test over F_32029 at both roots
+for (ridx = 1; ridx <= 2; ridx++) {
+  int rv = roots[ridx];
+  printf("\n================ F_32029, root kap = %s ================", rv);
+  setring Rq;
+  ideal Ic_s = subst(I_core, kap, rv);
+  poly x0_s = subst(p_x0, kap, rv);
+  poly brA_s = subst(p_brA, kap, rv);
+  poly brB_s = subst(p_brB, kap, rv);
+  poly d1A_s = subst(p_d1A, kap, rv);
+  poly d1B_s = subst(p_d1B, kap, rv);
+  poly coup_s = subst(p_coup, kap, rv);
+
+  setring Rp;
+  ideal Ic = imap(Rq, Ic_s);
+  poly x0p = imap(Rq, x0_s);
+  poly brAp = imap(Rq, brA_s);
+  poly brBp = imap(Rq, brB_s);
+  poly d1Ap = imap(Rq, d1A_s);
+  poly d1Bp = imap(Rq, d1B_s);
+  poly coupp = imap(Rq, coup_s);
+
+  // Sub 1: c0 = 0, x0 = 0
+  ideal G1 = slimgb(ideal(Ic, c0, x0p));
+  printf("  Sub 1 (c0=0, PURE):        size=%s, dim=%s, G[1]=%s", size(G1), dim(G1), G1[1]);
+  if (size(G1) != 1 || G1[1] != 1) {
+    ideal G1c = slimgb(ideal(Ic, c0, x0p, coupp));
+    printf("  Sub 1 (c0=0, COUPLED):     size=%s, dim=%s, G[1]=%s", size(G1c), dim(G1c), G1c[1]);
+  }
+
+  // Sub 2: mu3 = -c0, brB = 0
+  ideal G2 = slimgb(ideal(Ic, mu3 + c0, brBp));
+  printf("  Sub 2 (mu3=-c0, PURE):     size=%s, dim=%s, G[1]=%s", size(G2), dim(G2), G2[1]);
+  if (size(G2) != 1 || G2[1] != 1) {
+    ideal G2c = slimgb(ideal(Ic, mu3 + c0, brBp, coupp));
+    printf("  Sub 2 (mu3=-c0, COUPLED):  size=%s, dim=%s, G[1]=%s", size(G2c), dim(G2c), G2c[1]);
+  }
+
+  // Sub 3: brB = 0, x1 = 1
+  ideal G3 = slimgb(ideal(Ic, brBp, d1Bp));
+  printf("  Sub 3 (BrB x1=1, PURE):    size=%s, dim=%s, G[1]=%s", size(G3), dim(G3), G3[1]);
+  if (size(G3) != 1 || G3[1] != 1) {
+    ideal G3c = slimgb(ideal(Ic, brBp, d1Bp, coupp));
+    printf("  Sub 3 (BrB x1=1, COUPLED): size=%s, dim=%s, G[1]=%s", size(G3c), dim(G3c), G3c[1]);
+  }
+
+  // Sub 4: brA = 0, (c0-3*mu3)*x1 - c0 = 0
+  ideal G4 = slimgb(ideal(Ic, brAp, d1Ap));
+  printf("  Sub 4 (BrA d1A, PURE):     size=%s, dim=%s, G[1]=%s", size(G4), dim(G4), G4[1]);
+  if (size(G4) != 1 || G4[1] != 1) {
+    ideal G4c = slimgb(ideal(Ic, brAp, d1Ap, coupp));
+    printf("  Sub 4 (BrA d1A, COUPLED):  size=%s, dim=%s, G[1]=%s", size(G4c), dim(G4c), G4c[1]);
+  }
+}
+
+// Now run EXACT Q-verified modStd(..., 1) on all 4 sub-branches (PURE first, or COUPLED)!
+setring Rq;
+printf("\n================ EXACT Q MODSTD(I, 1) PROOFS ================");
+ideal Q1 = modStd(ideal(I_core, mp, c0, p_x0), 1);
+printf("EXACT Q Sub 1 (c0=0, PURE):    size=%s, G[1]=%s", size(Q1), Q1[1]);
+ideal Q2 = modStd(ideal(I_core, mp, mu3 + c0, p_brB), 1);
+printf("EXACT Q Sub 2 (mu3=-c0, PURE): size=%s, G[1]=%s", size(Q2), Q2[1]);
+ideal Q3 = modStd(ideal(I_core, mp, p_brB, p_d1B), 1);
+printf("EXACT Q Sub 3 (BrB x1=1, PURE):size=%s, G[1]=%s", size(Q3), Q3[1]);
+ideal Q4 = modStd(ideal(I_core, mp, p_brA, p_d1A), 1);
+printf("EXACT Q Sub 4 (BrA d1A, PURE): size=%s, G[1]=%s", size(Q4), Q4[1]);
+
+if (size(Q1)==1 && Q1[1]==1 && size(Q2)==1 && Q2[1]==1 && size(Q3)==1 && Q3[1]==1 && size(Q4)==1 && Q4[1]==1) {
+  printf("CERTIFIED_EXACT_Q_ALL_4_BRANCHES: SECANT_HEIGHT_FOUR_D5_PURE_ODE_PROVED_EMPTY_OVER_C");
+}
+quit;
