@@ -1,0 +1,22 @@
+name: JC2 W2 Exp3 DEGREE-135-IV-GCD-FOUR Pure-Singular Probe
+on:
+  push:
+    branches: ['jc2-w2-exp3-gcd4']
+    paths:
+      - 'jobs/jc2_w2_exp3_gcd4.sing'
+      - '.github/workflows/jc2-w2-exp3-gcd4.yml'
+  workflow_dispatch:
+
+jobs:
+  singular-gcd4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Singular
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq singular
+          Singular --version
+      - name: Run pure-Singular DEGREE-135-IV-GCD-FOUR script
+        run: Singular -q jobs/jc2_w2_exp3_gcd4.sing
