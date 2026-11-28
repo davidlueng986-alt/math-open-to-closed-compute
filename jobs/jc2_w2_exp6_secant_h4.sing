@@ -1,0 +1,86 @@
+// Wave 2 Explorer 6: SECANT-HEIGHT-FOUR-REALIZATION coupled with special fiber (Eq. 81-83)
+// Exact normalized ODE (alpha = c = 1 WLOG since mu0*mu2 != 0):
+//   mu0 = 1, mu1 = delta, mu2 = 1, mu3 = -delta
+//   a1(V) = -delta + c2*V^2 + ... + cd*V^d        (a1(0) = mu3, a1'(0) = 0)
+//   X(V)  = -delta^2/4 + V + 3*V^2 + x3*V^3 + ... + x_{2d}*V^{2d}
+//   16*X*(2*V*X' - 3*X + 3/2*a1^2 + 3/2*delta*a1 + V)
+//     = 3*(a1^4 + 2*delta*a1^3 + 4*V*a1^2 - 8*delta*V^2*a1 + 16*V^3)
+// Tests exact Q exclusion for d = 2, 3, 4, 5 (and F_32003 for d = 5, 6)!
+
+LIB "modstd.lib";
+
+proc test_d(int d, int do_Q) {
+  printf("==========================================");
+  printf("Testing coupled SECANT-HEIGHT-FOUR ODE at d = %s", d);
+  int nc = d - 1;       // c2..cd
+  int nx = 2*d - 2;     // x3..x_{2d}
+  int k;
+
+  // Build ring over F_32003 first
+  string vlist = "V";
+  for (k = 2*d; k >= 3; k--) { vlist = vlist + ",x" + string(k); }
+  for (k = d; k >= 2; k--) { vlist = vlist + ",c" + string(k); }
+  vlist = vlist + ",delta";
+
+  string vnoV = "";
+  for (k = 2*d; k >= 3; k--) {
+    if (vnoV != "") { vnoV = vnoV + ","; }
+    vnoV = vnoV + "x" + string(k);
+  }
+  for (k = d; k >= 2; k--) { vnoV = vnoV + ",c" + string(k); }
+  vnoV = vnoV + ",delta";
+
+  // Build over Q in Ru
+  execute("ring RuQ = 0, (" + vlist + "), dp;");
+  poly a1 = -delta;
+  for (k = 2; k <= d; k++) {
+    execute("a1 = a1 + c" + string(k) + "*V^" + string(k) + ";");
+  }
+  poly X = -number(1)/number(4)*delta^2 + V + 3*V^2;
+  for (k = 3; k <= 2*d; k++) {
+    execute("X = X + x" + string(k) + "*V^" + string(k) + ";");
+  }
+  poly ode = 16*X*(2*V*diff(X, V) - 3*X + number(3)/number(2)*a1^2 + number(3)/number(2)*delta*a1 + V)
+             - 3*(a1^4 + 2*delta*a1^3 + 4*V*a1^2 - 8*delta*V^2*a1 + 16*V^3);
+
+  matrix C = coeffs(ode, V);
+  for (k = 0; k <= 3; k++) {
+    if (C[k+1, 1] != 0) { printf("ERROR: coeff V^%s nonzero!", k); quit; }
+  }
+  ideal Iu = C[5, 1];
+  for (k = 5; k <= 4*d; k++) {
+    Iu = Iu, C[k+1, 1];
+  }
+  printf("Built %s exact equations in %s vars (deg V^4..V^%s)", size(Iu), nc + nx + 1, 4*d);
+
+  // Map to Q ring without V
+  execute("ring RQ = 0, (" + vnoV + "), dp;");
+  ideal IQ = imap(RuQ, Iu);
+
+  // Fast F_32003 check
+  execute("ring Rp = 32003, (" + vnoV + "), dp;");
+  ideal Ip = imap(RQ, IQ);
+  ideal Gp = slimgb(Ip);
+  printf("d=%s F_32003 slimgb: size=%s, dim=%s, Gp[1]=%s", d, size(Gp), dim(Gp), Gp[1]);
+
+  // Also test delta = 0 over F_32003!
+  ideal Ip0 = subst(Ip, delta, 0);
+  ideal Gp0 = slimgb(Ip0);
+  printf("d=%s (delta=0) F_32003 slimgb: size=%s, dim=%s, Gp0[1]=%s", d, size(Gp0), dim(Gp0), Gp0[1]);
+
+  if (do_Q == 1 && size(Gp) == 1 && Gp[1] == 1) {
+    setring RQ;
+    ideal GQ = modStd(IQ, 1);
+    printf("d=%s EXACT Q modStd(IQ, 1): size=%s, GQ[1]=%s", d, size(GQ), GQ[1]);
+    if (size(GQ) == 1 && GQ[1] == 1) {
+      printf("CERTIFIED_Q_EMPTY: SECANT_H4_COUPLED_d=%s", d);
+    }
+  }
+}
+
+test_d(2, 1);
+test_d(3, 1);
+test_d(4, 1);
+test_d(5, 1);
+test_d(6, 0);
+quit;
