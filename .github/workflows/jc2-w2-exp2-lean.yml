@@ -1,0 +1,34 @@
+name: JC2 Wave 2 Exp 2 Lean 4.36 Verification
+on:
+  push:
+    branches: ['jc2-w2-exp2-lean']
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile HeightFourCoupling.lean with strict Lean 4.36
+        run: |
+          set -euo pipefail
+          mkdir -p work_lean out
+          cp jobs/jc2-w2-exp2-lean/HeightFourCoupling.lean work_lean/
+          cd /opt/mathlib4
+          lake env lean --version
+          export LEAN_PATH="$GITHUB_WORKSPACE/work_lean"
+          lake env lean --root="$GITHUB_WORKSPACE/work_lean" -DwarningAsError=true \
+            -o "$GITHUB_WORKSPACE/work_lean/HeightFourCoupling.olean" \
+            "$GITHUB_WORKSPACE/work_lean/HeightFourCoupling.lean" 2>&1 | tee "$GITHUB_WORKSPACE/out/lean.log"
+          echo "LEAN_VERIFICATION_PASSED"
