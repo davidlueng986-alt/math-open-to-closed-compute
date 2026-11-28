@@ -1,0 +1,24 @@
+name: JC2 W2 Exp4 SECANT-H4 d=5 MITM Exact Q Proof
+
+on:
+  push:
+    branches: [ jc2-w2-exp4-gcd4 ]
+    paths:
+      - 'jobs/jc2_w2_exp4_h4_d5_mitm.sing'
+      - '.github/workflows/jc2-w2-exp4-h4-d5-mitm.yml'
+  workflow_dispatch:
+
+jobs:
+  singular-h4-d5-mitm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Singular
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq singular
+          Singular --version
+      - name: Run MITM exact Q Singular proof for SECANT-H4 d=5 (j=4)
+        run: |
+          Singular -q jobs/jc2_w2_exp4_h4_d5_mitm.sing
