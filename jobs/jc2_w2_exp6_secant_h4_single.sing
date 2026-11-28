@@ -1,0 +1,151 @@
+// Wave 2 Explorer 6: Single-d exact Q-proof for coupled SECANT-HEIGHT-FOUR-REALIZATION
+// Run with: Singular -q -c "int D_VAL=5; int DO_Q=1;" jobs/jc2_w2_exp6_secant_h4_single.sing
+// Exact top-down elimination over Q[rho]/(16*(4*d-3)*rho^2 + 24*rho - 3) with c_d = 1, c = 1.
+
+LIB "modstd.lib";
+
+int d = D_VAL;
+int do_Q = DO_Q;
+
+printf("=========================================================");
+printf("SECANT-HEIGHT-FOUR COUPLED TOP-DOWN ELIMINATION: d = %s (j = %s)", d, d - 1);
+
+int k, m, deg_eq, j;
+string vlist = "V";
+for (k = d - 1; k >= 2; k--) { vlist = vlist + ",c" + string(k); }
+vlist = vlist + ",alpha,delta,w,rho";
+
+string vnoV = "";
+for (k = d - 1; k >= 2; k--) {
+  if (vnoV != "") { vnoV = vnoV + ","; }
+  vnoV = vnoV + "c" + string(k);
+}
+if (vnoV != "") { vnoV = vnoV + ","; }
+vnoV = vnoV + "alpha,delta,w,rho";
+
+// First build over F_32003 (instant, <0.2s!) to check emptiness immediately!
+execute("ring RuP = 32003, (" + vlist + "), dp;");
+poly rho_eq_p = 16*(4*d - 3)*rho^2 + 24*rho - 3;
+ideal R_id_p = std(rho_eq_p);
+
+poly a1_p = -delta + V^d;
+for (k = 2; k <= d - 1; k++) {
+  execute("a1_p = a1_p + c" + string(k) + "*V^" + string(k) + ";");
+}
+list Xc_p;
+for (k = 1; k <= 2*d + 1; k++) { Xc_p[k] = poly(0); }
+Xc_p[1] = -number(1)/number(4)*delta^2;
+Xc_p[2] = poly(1);
+Xc_p[3] = 3*alpha;
+Xc_p[2*d + 1] = rho;
+
+poly RHS_p = 3*(a1_p^4 + 2*delta*a1_p^3 + 4*V*a1_p^2 - 8*alpha*delta*V^2*a1_p + 16*alpha*V^3);
+matrix CR_p = coeffs(RHS_p, V);
+
+number s_rho_p = number(-3) / number(2*(4*d - 3));
+number p_rho_p = number(-3) / number(16*(4*d - 3));
+
+for (m = 1; m <= 2*d - 3; m++) {
+  k = 2*d - m;
+  deg_eq = 4*d - m;
+  poly Xcur = 0;
+  for (j = 0; j <= 2*d; j++) { Xcur = Xcur + Xc_p[j+1] * V^j; }
+  poly LHScur = 16*Xcur*(2*V*diff(Xcur, V) - 3*Xcur + number(3)/number(2)*a1_p^2 + number(3)/number(2)*delta*a1_p + V);
+  matrix CL = coeffs(LHScur, V);
+  poly cL = 0;
+  if (deg_eq + 1 <= nrows(CL)) { cL = CL[deg_eq + 1, 1]; }
+  poly cR = 0;
+  if (deg_eq + 1 <= nrows(CR_p)) { cR = CR_p[deg_eq + 1, 1]; }
+  poly rem_c = reduce(cL - cR, R_id_p);
+
+  number A = number(8*(16*d - 4*m - 12));
+  number B = number(24);
+  number denom = B^2 + A*B*s_rho_p + A^2*p_rho_p;
+  poly inv_p = (-A*rho + B + A*s_rho_p) / denom;
+  Xc_p[k+1] = reduce(-rem_c * inv_p, R_id_p);
+}
+
+poly Xfull_p = 0;
+for (k = 0; k <= 2*d; k++) { Xfull_p = Xfull_p + Xc_p[k+1] * V^k; }
+poly ode_p = 16*Xfull_p*(2*V*diff(Xfull_p, V) - 3*Xfull_p + number(3)/number(2)*a1_p^2 + number(3)/number(2)*delta*a1_p + V) - RHS_p;
+matrix CO_p = coeffs(ode_p, V);
+
+ideal Iu_p = rho_eq_p, w*alpha - 1;
+for (k = 4; k <= 2*d + 2; k++) {
+  Iu_p = Iu_p, reduce(CO_p[k+1, 1], R_id_p);
+}
+
+execute("ring Rp = 32003, (" + vnoV + "), dp;");
+ideal Ip = imap(RuP, Iu_p);
+printf("d=%s: Built %s equations in %s vars over F_32003! Running slimgb...", d, size(Ip), d + 2);
+ideal Gp = slimgb(Ip);
+printf("d=%s F_32003 slimgb: size=%s, dim=%s, Gp[1]=%s", d, size(Gp), dim(Gp), Gp[1]);
+
+// Also test delta = 0 over F_32003
+ideal Ip0 = subst(Ip, delta, 0);
+ideal Gp0 = slimgb(Ip0);
+printf("d=%s (delta=0) F_32003 slimgb: size=%s, dim=%s, Gp0[1]=%s", d, size(Gp0), dim(Gp0), Gp0[1]);
+
+// If empty over F_32003 and do_Q == 1, build over Q and run EXACT Q modStd(IQ, 1)!
+if (do_Q == 1 && size(Gp) == 1 && Gp[1] == 1) {
+  execute("ring RuQ = 0, (" + vlist + "), dp;");
+  poly rho_eq_q = 16*(4*d - 3)*rho^2 + 24*rho - 3;
+  ideal R_id_q = std(rho_eq_q);
+  poly a1_q = -delta + V^d;
+  for (k = 2; k <= d - 1; k++) {
+    execute("a1_q = a1_q + c" + string(k) + "*V^" + string(k) + ";");
+  }
+  list Xc_q;
+  for (k = 1; k <= 2*d + 1; k++) { Xc_q[k] = poly(0); }
+  Xc_q[1] = -number(1)/number(4)*delta^2;
+  Xc_q[2] = poly(1);
+  Xc_q[3] = 3*alpha;
+  Xc_q[2*d + 1] = rho;
+  poly RHS_q = 3*(a1_q^4 + 2*delta*a1_q^3 + 4*V*a1_q^2 - 8*alpha*delta*V^2*a1_q + 16*alpha*V^3);
+  matrix CR_q = coeffs(RHS_q, V);
+  number s_rho_q = number(-3) / number(2*(4*d - 3));
+  number p_rho_q = number(-3) / number(16*(4*d - 3));
+  for (m = 1; m <= 2*d - 3; m++) {
+    k = 2*d - m;
+    deg_eq = 4*d - m;
+    poly Xcur = 0;
+    for (j = 0; j <= 2*d; j++) { Xcur = Xcur + Xc_q[j+1] * V^j; }
+    poly LHScur = 16*Xcur*(2*V*diff(Xcur, V) - 3*Xcur + number(3)/number(2)*a1_q^2 + number(3)/number(2)*delta*a1_q + V);
+    matrix CL = coeffs(LHScur, V);
+    poly cL = 0;
+    if (deg_eq + 1 <= nrows(CL)) { cL = CL[deg_eq + 1, 1]; }
+    poly cR = 0;
+    if (deg_eq + 1 <= nrows(CR_q)) { cR = CR_q[deg_eq + 1, 1]; }
+    poly rem_c = reduce(cL - cR, R_id_q);
+    number A = number(8*(16*d - 4*m - 12));
+    number B = number(24);
+    number denom = B^2 + A*B*s_rho_q + A^2*p_rho_q;
+    poly inv_q = (-A*rho + B + A*s_rho_q) / denom;
+    Xc_q[k+1] = reduce(-rem_c * inv_q, R_id_q);
+  }
+  poly Xfull_q = 0;
+  for (k = 0; k <= 2*d; k++) { Xfull_q = Xfull_q + Xc_q[k+1] * V^k; }
+  poly ode_q = 16*Xfull_q*(2*V*diff(Xfull_q, V) - 3*Xfull_q + number(3)/number(2)*a1_q^2 + number(3)/number(2)*delta*a1_q + V) - RHS_q;
+  matrix CO_q = coeffs(ode_q, V);
+  for (k = 0; k <= 3; k++) {
+    if (reduce(CO_q[k+1, 1], R_id_q) != 0) { printf("ERROR Q: bottom V^%s nonzero!", k); quit; }
+  }
+  for (k = 2*d + 3; k <= 4*d; k++) {
+    if (k + 1 <= nrows(CO_q)) {
+      if (reduce(CO_q[k+1, 1], R_id_q) != 0) { printf("ERROR Q: top V^%s nonzero!", k); quit; }
+    }
+  }
+  ideal Iu_q = rho_eq_q, w*alpha - 1;
+  for (k = 4; k <= 2*d + 2; k++) {
+    Iu_q = Iu_q, reduce(CO_q[k+1, 1], R_id_q);
+  }
+  execute("ring RQ = 0, (" + vnoV + "), dp;");
+  ideal IQ = imap(RuQ, Iu_q);
+  printf("d=%s: Running EXACT Q-verified modStd(IQ, 1)...", d);
+  ideal GQ = modStd(IQ, 1);
+  printf("d=%s EXACT Q modStd(IQ, 1): size=%s, GQ[1]=%s", d, size(GQ), GQ[1]);
+  if (size(GQ) == 1 && GQ[1] == 1) {
+    printf("CERTIFIED_MODSTD_Q_EMPTY: SECANT_H4_COUPLED_d=%s", d);
+  }
+}
+quit;
