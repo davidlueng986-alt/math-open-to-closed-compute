@@ -1,0 +1,194 @@
+// Pure-Singular EXACT Q-PROOF for SECANT-HEIGHT-FOUR-REALIZATION at d=5 (j=4) and d=6 (j=5)!
+// Decoupled ODE (OPPOSITE-EDGE.md Eq. (83)):
+//   16*X*(2*V*X' - 3*X + (3/2)*a1^2 - (3/2)*m3*a1 + m2*V)
+//     = 3*(a1^4 - 2*m3*a1^3 + 4*m2*V*a1^2 - 8*m1*V^2*a1 + 16*m0*V^3)
+// WLOG (for m2 != 0): a1 monic of degree d, a1'(0) = 0, m2 = 1.
+// For all d >= 3:
+//   - s^2 = 3*d, x[2d] = 3 / (4*(2s + 3)) = (3*(2s - 3)) / (4*(12*d - 9))
+//   - x[2d-k] solved uniquely top-down with universal pivot 24*(4d + 2s - k)/(2s + 3)
+//   - m1 eliminated from ODE[V^(d+2)] (universal constant pivot +24)
+//   - m0 eliminated from ODE[V^3]     (universal constant pivot -48)
+// Tests BOTH: (A) ODE alone, and (B) ODE + (m0*m3 + m1*m2 = 0)!
+
+LIB "modstd.lib";
+option(prot);
+
+// ======================== PART 1: d = 5 (j = 4) ========================
+printf("============================================================");
+printf("PART 1: SECANT-HEIGHT-FOUR-REALIZATION d = 5 (j = 4, s^2 = 15)");
+printf("============================================================");
+
+ring R5u = (0, s), (V, c4, c3, c2, c0, m3, m1, m0), dp;
+minpoly = s^2 - 15;
+
+poly a1 = V^5 + c4*V^4 + c3*V^3 + c2*V^2 + c0;
+poly RHS = 3*(a1^4 - 2*m3*a1^3 + 4*V*a1^2 - 8*m1*V^2*a1 + 16*m0*V^3);
+poly Q = (number(3)/number(2))*a1^2 - (number(3)/number(2))*m3*a1 + V;
+
+matrix rhsc = coeffs(RHS, V);
+matrix qc = coeffs(Q, V);
+
+proc getc(matrix M, int k) {
+  if (k < 0 || nrows(M) <= k) { return(poly(0)); }
+  return(M[k + 1, 1]);
+}
+
+matrix xc[11][1]; // 1-indexed: xc[k+1,1] = x_k
+xc[11, 1] = number(3) / (number(4) * (2*s + 3));
+
+int k, deg, i, j;
+for (k = 1; k <= 10; k++) {
+  deg = 20 - k;
+  poly lhs_rest = 0;
+  for (i = 10 - k + 1; i <= 10; i++) {
+    j = deg - i;
+    if (j != 10 - k && j >= 0 && j <= 10) {
+      poly term = number(2*j - 3)*xc[j+1, 1] + getc(qc, j);
+      if (term != 0 && xc[i+1, 1] != 0) {
+        lhs_rest = lhs_rest + 16 * xc[i+1, 1] * term;
+      }
+    }
+  }
+  poly qcur = getc(qc, 10 - k);
+  if (qcur != 0) {
+    lhs_rest = lhs_rest + 16 * xc[11, 1] * qcur;
+  }
+  number piv = number(24) * (20 + 2*s - k) / (2*s + 3);
+  xc[10 - k + 1, 1] = (getc(rhsc, deg) - lhs_rest) / piv;
+}
+
+poly X = 0;
+for (k = 0; k <= 10; k++) { X = X + xc[k+1, 1] * V^k; }
+poly ODE = 16*X*(2*V*diff(X, V) - 3*X + Q) - RHS;
+matrix odec = coeffs(ODE, V);
+for (k = 10; k <= 20; k++) {
+  if (getc(odec, k) != 0) { printf("ERROR: d=5 ODE nonzero at V^%s!", k); quit; }
+}
+printf("d=5: ODE[V^10..V^20] identically 0!");
+
+// Eliminate m1 from ODE[V^7] (pivot +24) and m0 from ODE[V^3] (pivot -48)
+poly eq7 = getc(odec, 7);
+if (diff(eq7, m1) != number(24)) { printf("ERROR: d=5 m1 pivot = %s", diff(eq7, m1)); quit; }
+poly m1_sol = -subst(eq7, m1, 0) / number(24);
+
+poly eq3 = subst(getc(odec, 3), m1, m1_sol);
+if (diff(eq3, m0) != number(-48)) { printf("ERROR: d=5 m0 pivot = %s", diff(eq3, m0)); quit; }
+poly m0_sol = subst(eq3, m0, 0) / number(48);
+
+ideal I5_ode_u = getc(odec, 9), getc(odec, 8),
+  subst(getc(odec, 6), m1, m1_sol),
+  subst(getc(odec, 5), m1, m1_sol),
+  subst(getc(odec, 4), m1, m1_sol),
+  subst(getc(odec, 2), m1, m1_sol),
+  getc(odec, 1), getc(odec, 0);
+poly eq_mu5 = m0_sol * m3 + m1_sol;
+
+// Map to 5-var ring over Q(s) (s^2 = 15) with weighted ordering wp(1, 2, 3, 5, 5)!
+ring R5 = (0, s), (c4, c3, c2, c0, m3), wp(1, 2, 3, 5, 5);
+minpoly = s^2 - 15;
+ideal I5_ode = imap(R5u, I5_ode_u);
+poly eq_mu5_r = imap(R5u, eq_mu5);
+ideal I5_coupled = I5_ode, eq_mu5_r;
+
+printf("=== d=5 (j=4) TEST A: ODE ALONE over Q(sqrt(15)) ===");
+ideal G5_ode = slimgb(I5_ode);
+printf("d=5 ODE ALONE slimgb: size=%s, G[1]=%s, dim=%s, vdim=%s",
+       size(G5_ode), G5_ode[1], dim(G5_ode), vdim(G5_ode));
+if (size(G5_ode) == 1 && G5_ode[1] == 1) {
+  printf("CERTIFIED_Q_SQRT15: SECANT_HEIGHT_4_D5_ODE_ALONE_EXCLUDED");
+} else {
+  printf("=== d=5 (j=4) TEST B: ODE + (m0*m3 + m1*m2 = 0) over Q(sqrt(15)) ===");
+  ideal G5_coup = slimgb(I5_coupled);
+  printf("d=5 COUPLED slimgb: size=%s, G[1]=%s, dim=%s, vdim=%s",
+         size(G5_coup), G5_coup[1], dim(G5_coup), vdim(G5_coup));
+  if (size(G5_coup) == 1 && G5_coup[1] == 1) {
+    printf("CERTIFIED_Q_SQRT15: SECANT_HEIGHT_4_D5_COUPLED_EXCLUDED");
+  }
+}
+
+// ======================== PART 2: d = 6 (j = 5) ========================
+printf("============================================================");
+printf("PART 2: SECANT-HEIGHT-FOUR-REALIZATION d = 6 (j = 5, s^2 = 18)");
+printf("============================================================");
+
+ring R6u = (0, s), (V, c5, c4, c3, c2, c0, m3, m1, m0), dp;
+minpoly = s^2 - 18;
+
+poly a1_6 = V^6 + c5*V^5 + c4*V^4 + c3*V^3 + c2*V^2 + c0;
+poly RHS6 = 3*(a1_6^4 - 2*m3*a1_6^3 + 4*V*a1_6^2 - 8*m1*V^2*a1_6 + 16*m0*V^3);
+poly Q6 = (number(3)/number(2))*a1_6^2 - (number(3)/number(2))*m3*a1_6 + V;
+
+matrix rhsc6 = coeffs(RHS6, V);
+matrix qc6 = coeffs(Q6, V);
+
+matrix xc6[13][1];
+xc6[13, 1] = number(3) / (number(4) * (2*s + 3));
+
+for (k = 1; k <= 12; k++) {
+  deg = 24 - k;
+  poly lhs_rest6 = 0;
+  for (i = 12 - k + 1; i <= 12; i++) {
+    j = deg - i;
+    if (j != 12 - k && j >= 0 && j <= 12) {
+      poly term6 = number(2*j - 3)*xc6[j+1, 1] + getc(qc6, j);
+      if (term6 != 0 && xc6[i+1, 1] != 0) {
+        lhs_rest6 = lhs_rest6 + 16 * xc6[i+1, 1] * term6;
+      }
+    }
+  }
+  poly qcur6 = getc(qc6, 12 - k);
+  if (qcur6 != 0) {
+    lhs_rest6 = lhs_rest6 + 16 * xc6[13, 1] * qcur6;
+  }
+  number piv6 = number(24) * (24 + 2*s - k) / (2*s + 3);
+  xc6[12 - k + 1, 1] = (getc(rhsc6, deg) - lhs_rest6) / piv6;
+}
+
+poly X6 = 0;
+for (k = 0; k <= 12; k++) { X6 = X6 + xc6[k+1, 1] * V^k; }
+poly ODE6 = 16*X6*(2*V*diff(X6, V) - 3*X6 + Q6) - RHS6;
+matrix odec6 = coeffs(ODE6, V);
+for (k = 12; k <= 24; k++) {
+  if (getc(odec6, k) != 0) { printf("ERROR: d=6 ODE nonzero at V^%s!", k); quit; }
+}
+printf("d=6: ODE[V^12..V^24] identically 0!");
+
+poly eq8_6 = getc(odec6, 8);
+if (diff(eq8_6, m1) != number(24)) { printf("ERROR: d=6 m1 pivot = %s", diff(eq8_6, m1)); quit; }
+poly m1_6 = -subst(eq8_6, m1, 0) / number(24);
+
+poly eq3_6 = subst(getc(odec6, 3), m1, m1_6);
+if (diff(eq3_6, m0) != number(-48)) { printf("ERROR: d=6 m0 pivot = %s", diff(eq3_6, m0)); quit; }
+poly m0_6 = subst(eq3_6, m0, 0) / number(48);
+
+ideal I6_ode_u = getc(odec6, 11), getc(odec6, 10), getc(odec6, 9),
+  subst(getc(odec6, 7), m1, m1_6),
+  subst(getc(odec6, 6), m1, m1_6),
+  subst(getc(odec6, 5), m1, m1_6),
+  subst(getc(odec6, 4), m1, m1_6),
+  subst(getc(odec6, 2), m1, m1_6),
+  getc(odec6, 1), getc(odec6, 0);
+poly eq_mu6 = m0_6 * m3 + m1_6;
+
+ring R6 = (0, s), (c5, c4, c3, c2, c0, m3), wp(1, 2, 3, 4, 6, 6);
+minpoly = s^2 - 18;
+ideal I6_ode = imap(R6u, I6_ode_u);
+poly eq_mu6_r = imap(R6u, eq_mu6);
+ideal I6_coupled = I6_ode, eq_mu6_r;
+
+printf("=== d=6 (j=5) TEST A: ODE ALONE over Q(sqrt(18)) ===");
+ideal G6_ode = slimgb(I6_ode);
+printf("d=6 ODE ALONE slimgb: size=%s, G[1]=%s, dim=%s, vdim=%s",
+       size(G6_ode), G6_ode[1], dim(G6_ode), vdim(G6_ode));
+if (size(G6_ode) == 1 && G6_ode[1] == 1) {
+  printf("CERTIFIED_Q_SQRT18: SECANT_HEIGHT_4_D6_ODE_ALONE_EXCLUDED");
+} else {
+  printf("=== d=6 (j=5) TEST B: ODE + (m0*m3 + m1*m2 = 0) over Q(sqrt(18)) ===");
+  ideal G6_coup = slimgb(I6_coupled);
+  printf("d=6 COUPLED slimgb: size=%s, G[1]=%s, dim=%s, vdim=%s",
+         size(G6_coup), G6_coup[1], dim(G6_coup), vdim(G6_coup));
+  if (size(G6_coup) == 1 && G6_coup[1] == 1) {
+    printf("CERTIFIED_Q_SQRT18: SECANT_HEIGHT_4_D6_COUPLED_EXCLUDED");
+  }
+}
+quit;
