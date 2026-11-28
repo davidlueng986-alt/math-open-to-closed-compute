@@ -1,0 +1,101 @@
+// Parameterized pure-Singular 4.4.1 solver for SECANT-HEIGHT-FOUR-REALIZATION
+// Uses weighted reverse-lex ordering wp(...) matched to the ODE quasi-homogeneity!
+option(noredefine);
+LIB "polylib.lib";
+
+proc run_case1(int d, int p)
+{
+  printf("=== CASE 1 (delta=0): d=%s (j=%s), char=%s ===", d, d-1, p);
+  int t0 = timer;
+  string vlist = "V";
+  int k;
+  for (k = 2; k <= d; k++) { vlist = vlist + ",a" + string(k); }
+  for (k = 3; k <= 2*d; k++) { vlist = vlist + ",w" + string(k); }
+  vlist = vlist + ",rab";
+  execute("ring Rtmp = " + string(p) + ",(" + vlist + "),dp;");
+
+  poly a1 = 0;
+  for (k = 2; k <= d; k++) { execute("a1 = a1 + a" + string(k) + "*V^" + string(k) + ";"); }
+  poly W = V + 3*V^2;
+  for (k = 3; k <= 2*d; k++) { execute("W = W + w" + string(k) + "*V^" + string(k) + ";"); }
+
+  poly Wp = diff(W, V);
+  poly ODE = 32*W*(2*V*Wp - 3*W + V) + 48*W*a1^2 - 6*(a1^4 + 4*V*a1^2 + 16*V^3);
+
+  matrix M = coeffs(ODE, V);
+  ideal I = 0;
+  for (k = 5; k <= nrows(M); k++) {
+    if (M[k,1] != 0) { I = I + ideal(M[k,1]); }
+  }
+  execute("I = I + ideal(rab*a" + string(d) + " - 1);");
+
+  // Weighted ordering wp: wt(a_k) = k, wt(w_k) = k, wt(rab) = 1
+  string vlist2 = "";
+  string wts = "";
+  for (k = 2; k <= d; k++) {
+    if (vlist2 != "") { vlist2 = vlist2 + ","; wts = wts + ","; }
+    vlist2 = vlist2 + "a" + string(k);
+    wts = wts + string(k);
+  }
+  for (k = 3; k <= 2*d; k++) {
+    vlist2 = vlist2 + ",w" + string(k);
+    wts = wts + "," + string(k);
+  }
+  vlist2 = vlist2 + ",rab";
+  wts = wts + ",1";
+  execute("ring R2 = " + string(p) + ",(" + vlist2 + "),wp(" + wts + ");");
+  ideal J = imap(Rtmp, I);
+  ideal G = std(J);
+  int is_one = (size(G) == 1 && deg(G[1]) == 0);
+  printf("  RESULT Case 1 d=%s char=%s: GB_is_1=%s, size=%s, time=%s s", d, p, is_one, size(G), timer - t0);
+  return(is_one);
+}
+
+proc run_case2(int d, int p)
+{
+  printf("=== CASE 2 (delta=1): d=%s (j=%s), char=%s ===", d, d-1, p);
+  int t0 = timer;
+  string vlist = "V,al";
+  int k;
+  for (k = 2; k <= d; k++) { vlist = vlist + ",a" + string(k); }
+  for (k = 3; k <= 2*d; k++) { vlist = vlist + ",w" + string(k); }
+  vlist = vlist + ",rab";
+  execute("ring Rtmp = " + string(p) + ",(" + vlist + "),dp;");
+
+  poly a1 = -1;
+  for (k = 2; k <= d; k++) { execute("a1 = a1 + a" + string(k) + "*V^" + string(k) + ";"); }
+  poly W4 = -1 + 4*V + 12*al*V^2;
+  for (k = 3; k <= 2*d; k++) { execute("W4 = W4 + w" + string(k) + "*V^" + string(k) + ";"); }
+
+  poly W4p = diff(W4, V);
+  poly ODE = W4*(2*V*W4p - 3*W4 + 6*a1^2 + 6*a1 + 4*V)
+             - 3*(a1^4 + 2*a1^3 + 4*V*a1^2 - 8*al*V^2*a1 + 16*al*V^3);
+
+  matrix M = coeffs(ODE, V);
+  ideal I = 0;
+  for (k = 5; k <= nrows(M); k++) {
+    if (M[k,1] != 0) { I = I + ideal(M[k,1]); }
+  }
+  execute("I = I + ideal(rab*al*a" + string(d) + " - 1);");
+
+  // Weighted ordering wp: wt(al) = 3, wt(a_k) = k, wt(w_k) = k, wt(rab) = 1
+  // (Notice: in Case 2, al*V^3 has weight 3 - 3 = 0, matching a1^4 at V^0!)
+  string vlist2 = "al";
+  string wts = "3";
+  for (k = 2; k <= d; k++) {
+    vlist2 = vlist2 + ",a" + string(k);
+    wts = wts + "," + string(k);
+  }
+  for (k = 3; k <= 2*d; k++) {
+    vlist2 = vlist2 + ",w" + string(k);
+    wts = wts + "," + string(k);
+  }
+  vlist2 = vlist2 + ",rab";
+  wts = wts + ",1";
+  execute("ring R2 = " + string(p) + ",(" + vlist2 + "),wp(" + wts + ");");
+  ideal J = imap(Rtmp, I);
+  ideal G = std(J);
+  int is_one = (size(G) == 1 && deg(G[1]) == 0);
+  printf("  RESULT Case 2 d=%s char=%s: GB_is_1=%s, size=%s, time=%s s", d, p, is_one, size(G), timer - t0);
+  return(is_one);
+}
