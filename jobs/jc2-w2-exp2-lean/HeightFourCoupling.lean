@@ -41,7 +41,7 @@ theorem exact_q_v_degree_rigidity (j i k : ℤ)
 
 /-- Theorem 4a: All-d top-down pivot nonvanishing inequality for every d >= 2
 and every 1 <= k <= 2d - 2. Since 3k^2 < d*(8d - 2k - 6)^2, the pivot
-3k +/- (8d - 2k - 6)*sqrt(3d) never vanishes over C. -/
+3k ± (8d - 2k - 6)*sqrt(3d) never vanishes over C. -/
 theorem top_down_pivot_strict_pos (d k : ℤ)
     (hd : 2 ≤ d) (hk1 : 1 ≤ k) (hk2 : k ≤ 2 * d - 2) :
     3 * k ^ 2 < d * (8 * d - 2 * k - 6) ^ 2 := by
