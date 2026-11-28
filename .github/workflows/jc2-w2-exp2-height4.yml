@@ -1,0 +1,39 @@
+name: JC2 Wave 2 Exp 2 Height-Four Coupled ODE
+on:
+  push:
+    branches: ['jc2-w2-exp2-height4']
+    paths:
+      - 'jobs/jc2-w2-exp2-height4/**'
+      - '.github/workflows/jc2-w2-exp2-height4.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: read
+jobs:
+  eliminate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-sage:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Singular 4.4.1 exact QQ & modular elimination for coupled Height-Four ODE
+        run: |
+          set -euo pipefail
+          sage --version
+          sage -c 'from sage.interfaces.singular import singular; print(singular.version())'
+          sage jobs/jc2-w2-exp2-height4/solve_height4.sage out/height4 2>&1 | tee out_run.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jc2-w2-exp2-height4-results
+          path: |
+            out/height4/summary.json
+            out_run.log
+          retention-days: 30
