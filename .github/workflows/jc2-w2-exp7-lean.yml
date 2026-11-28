@@ -1,0 +1,28 @@
+name: JC2 Wave 2 Exp7 Lean 4.36 All-d Proofs
+
+on:
+  push:
+    branches:
+      - jc2-w2-exp7-height4
+    paths:
+      - 'jobs/jc2-w2-exp7-height4/Height4AllD.lean'
+      - '.github/workflows/jc2-w2-exp7-lean.yml'
+  workflow_dispatch:
+
+jobs:
+  lean-all-d-theorems:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: ghcr.io/davidlueng986-alt/math-compute-lean:sha-a8ed7fee0a7647cdc0cd1873e18a4499c336107a
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Lean 4.36.0 all-d theorems (-DwarningAsError=true)
+        shell: bash
+        run: |
+          set -euo pipefail
+          LAKE_DIR="$(dirname "$(find /opt /workspace /root /home / -maxdepth 3 -name 'lakefile.*' 2>/dev/null | head -n 1)")"
+          echo "Using LAKE_DIR=$LAKE_DIR"
+          cd "$LAKE_DIR"
+          lake env lean --version
+          lake env lean -DwarningAsError=true "$GITHUB_WORKSPACE/jobs/jc2-w2-exp7-height4/Height4AllD.lean"
