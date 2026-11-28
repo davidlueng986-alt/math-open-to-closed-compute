@@ -1,0 +1,198 @@
+// Pure-Singular COMPLETE EXACT Q-PROOF for SECANT-HEIGHT-FOUR-REALIZATION at d = 5 (j = 4)!
+// Covers ALL m2 in C (both m2 != 0 via m2 = 1, AND m2 = 0 via c4=1 / c4=0,c3=1 / c4=c3=0,c2=1)!
+// Uses weighted degrevlex wp(1, 2, 3, 5, 5, 1) + fast F_32009 + exact Q-verified modStd(I, 1)!
+
+LIB "modstd.lib";
+option(prot);
+
+proc getc(matrix M, int k) {
+  if (k < 0 || nrows(M) <= k) { return(poly(0)); }
+  return(M[k + 1, 1]);
+}
+
+proc redS(poly f, int D) {
+  if (f == 0) { return(poly(0)); }
+  matrix C = coeffs(f, s);
+  int nr = nrows(C);
+  poly res0 = 0;
+  poly res1 = 0;
+  number pD = 1;
+  int k;
+  for (k = 0; k < nr; k++) {
+    if (k % 2 == 0) {
+      res0 = res0 + C[k + 1, 1] * pD;
+    } else {
+      res1 = res1 + C[k + 1, 1] * pD;
+      pD = pD * number(D);
+    }
+  }
+  return(res0 + res1 * s);
+}
+
+proc invLinS(number A, number B, int D) {
+  number den = A*A - number(D)*B*B;
+  return((A - B*s) / den);
+}
+
+ring R5u = 0, (V, c4, c3, c2, c0, m3, m2, m1, m0, s), dp;
+
+poly a1 = V^5 + c4*V^4 + c3*V^3 + c2*V^2 + c0;
+poly RHS = 3*(a1^4 - 2*m3*a1^3 + 4*m2*V*a1^2 - 8*m1*V^2*a1 + 16*m0*V^3);
+poly Q = (number(3)/number(2))*a1^2 - (number(3)/number(2))*m3*a1 + m2*V;
+
+matrix rhsc = coeffs(RHS, V);
+matrix qc = coeffs(Q, V);
+
+matrix xc[11][1];
+xc[11, 1] = redS(number(3)/number(4) * invLinS(number(3), number(2), 15), 15);
+
+int k, dg, ii, jj;
+poly lhs_rest, term, qcur, invpiv;
+for (k = 1; k <= 10; k++) {
+  dg = 20 - k;
+  lhs_rest = 0;
+  for (ii = 10 - k + 1; ii <= 10; ii++) {
+    jj = dg - ii;
+    if (jj != 10 - k && jj >= 0 && jj <= 10) {
+      term = number(2*jj - 3)*xc[jj+1, 1] + getc(qc, jj);
+      if (term != 0 && xc[ii+1, 1] != 0) {
+        lhs_rest = lhs_rest + 16 * xc[ii+1, 1] * term;
+      }
+    }
+  }
+  qcur = getc(qc, 10 - k);
+  if (qcur != 0) {
+    lhs_rest = lhs_rest + 16 * xc[11, 1] * qcur;
+  }
+  invpiv = redS((number(3) + number(2)*s) * invLinS(number(20 - k), number(2), 15) / number(24), 15);
+  xc[10 - k + 1, 1] = redS((getc(rhsc, dg) - lhs_rest) * invpiv, 15);
+}
+
+poly X = 0;
+for (k = 0; k <= 10; k++) { X = X + xc[k+1, 1] * V^k; }
+poly ODE = 16*X*(2*V*diff(X, V) - 3*X + Q) - RHS;
+matrix odec = coeffs(ODE, V);
+for (k = 10; k <= 20; k++) {
+  if (redS(getc(odec, k), 15) != 0) { printf("ERROR: d=5 ODE nonzero at V^%s!", k); quit; }
+}
+printf("d=5: ODE[V^10..V^20] identically 0 mod (s^2-15)!");
+
+poly eq7 = redS(getc(odec, 7), 15);
+if (diff(eq7, m1) != number(24)) { printf("ERROR: m1 pivot!"); quit; }
+poly m1_sol = -subst(eq7, m1, 0) / number(24);
+
+poly eq3 = redS(subst(getc(odec, 3), m1, m1_sol), 15);
+if (diff(eq3, m0) != number(-48)) { printf("ERROR: m0 pivot!"); quit; }
+poly m0_sol = subst(eq3, m0, 0) / number(48);
+
+ideal I_gen =
+  redS(getc(odec, 9), 15),
+  redS(getc(odec, 8), 15),
+  redS(subst(getc(odec, 6), m1, m1_sol), 15),
+  redS(subst(getc(odec, 5), m1, m1_sol), 15),
+  redS(subst(getc(odec, 4), m1, m1_sol), 15),
+  redS(subst(getc(odec, 2), m1, m1_sol), 15),
+  redS(getc(odec, 1), 15),
+  redS(getc(odec, 0), 15),
+  s^2 - 15;
+poly eq_mu = redS(m0_sol * m3 + m1_sol * m2, 15);
+
+// ======================== CASE 1: m2 = 1 (all m2 != 0) ========================
+printf("============================================================");
+printf("CASE 1: d = 5, m2 = 1 (all m2 != 0)");
+printf("============================================================");
+ideal I_m2_1_u = subst(I_gen, m2, 1);
+poly mu_m2_1_u = subst(eq_mu, m2, 1);
+
+ring Rq1 = 0, (c4, c3, c2, c0, m3, s), wp(1, 2, 3, 5, 5, 1);
+ideal I1_ode = imap(R5u, I_m2_1_u);
+ideal I1_coup = I1_ode, imap(R5u, mu_m2_1_u);
+
+ring Rp1 = 32009, (c4, c3, c2, c0, m3, s), wp(1, 2, 3, 5, 5, 1);
+ideal G1_ode_p = slimgb(imap(Rq1, I1_ode));
+printf("CASE 1A (ODE ALONE) F_32009: size=%s, G[1]=%s, dim=%s, vdim=%s",
+       size(G1_ode_p), G1_ode_p[1], dim(G1_ode_p), vdim(G1_ode_p));
+ideal G1_coup_p = slimgb(imap(Rq1, I1_coup));
+printf("CASE 1B (COUPLED)   F_32009: size=%s, G[1]=%s, dim=%s, vdim=%s",
+       size(G1_coup_p), G1_coup_p[1], dim(G1_coup_p), vdim(G1_coup_p));
+
+setring Rq1;
+if (size(G1_ode_p) == 1 && G1_ode_p[1] == 1) {
+  ideal G1_ode_q = modStd(I1_ode, 1);
+  printf("CASE 1A EXACT Q modStd(I,1): size=%s, G[1]=%s", size(G1_ode_q), G1_ode_q[1]);
+  if (size(G1_ode_q) == 1 && G1_ode_q[1] == 1) {
+    printf("CERTIFIED_MODSTD_Q: D5_M2_NEQ_0_ODE_ALONE_EMPTY");
+  }
+} else {
+  if (size(G1_coup_p) == 1 && G1_coup_p[1] == 1) {
+    ideal G1_coup_q = modStd(I1_coup, 1);
+    printf("CASE 1B EXACT Q modStd(I,1): size=%s, G[1]=%s", size(G1_coup_q), G1_coup_q[1]);
+    if (size(G1_coup_q) == 1 && G1_coup_q[1] == 1) {
+      printf("CERTIFIED_MODSTD_Q: D5_M2_NEQ_0_COUPLED_EMPTY");
+    }
+  }
+}
+
+// ======================== CASE 2: m2 = 0 (3 subcases: c4=1; c4=0,c3=1; c4=c3=0,c2=1) ========================
+printf("============================================================");
+printf("CASE 2: d = 5, m2 = 0 (a1 not in C[V^5])");
+printf("============================================================");
+setring R5u;
+ideal I_m2_0_u = subst(I_gen, m2, 0);
+poly mu_m2_0_u = subst(eq_mu, m2, 0);
+
+// Subcase 2a: c4 = 1
+setring Rq1;
+ideal I2a_ode = subst(imap(R5u, I_m2_0_u), c4, 1);
+ideal I2a_coup = I2a_ode, subst(imap(R5u, mu_m2_0_u), c4, 1);
+ideal I2b_ode = subst(subst(imap(R5u, I_m2_0_u), c4, 0), c3, 1);
+ideal I2b_coup = I2b_ode, subst(subst(imap(R5u, mu_m2_0_u), c4, 0), c3, 1);
+ideal I2c_ode = subst(subst(subst(imap(R5u, I_m2_0_u), c4, 0), c3, 0), c2, 1);
+ideal I2c_coup = I2c_ode, subst(subst(subst(imap(R5u, mu_m2_0_u), c4, 0), c3, 0), c2, 1);
+
+setring Rp1;
+ideal G2a_ode_p = slimgb(imap(Rq1, I2a_ode));
+ideal G2a_coup_p = slimgb(imap(Rq1, I2a_coup));
+ideal G2b_ode_p = slimgb(imap(Rq1, I2b_ode));
+ideal G2b_coup_p = slimgb(imap(Rq1, I2b_coup));
+ideal G2c_ode_p = slimgb(imap(Rq1, I2c_ode));
+ideal G2c_coup_p = slimgb(imap(Rq1, I2c_coup));
+printf("CASE 2a (m2=0,c4=1)       F_32009: ODE=%s, COUPLED=%s", G2a_ode_p[1], G2a_coup_p[1]);
+printf("CASE 2b (m2=0,c4=0,c3=1)  F_32009: ODE=%s, COUPLED=%s", G2b_ode_p[1], G2b_coup_p[1]);
+printf("CASE 2c (m2=0,c4=c3=0,c2=1) F_32009: ODE=%s, COUPLED=%s", G2c_ode_p[1], G2c_coup_p[1]);
+
+setring Rq1;
+if (size(G2a_ode_p) == 1 && G2a_ode_p[1] == 1) {
+  ideal G2a_q = modStd(I2a_ode, 1);
+  printf("CASE 2a ODE ALONE Q: G[1]=%s", G2a_q[1]);
+  if (size(G2a_q) == 1 && G2a_q[1] == 1) { printf("CERTIFIED_MODSTD_Q: D5_M2_0_2A_ODE_EMPTY"); }
+} else {
+  if (size(G2a_coup_p) == 1 && G2a_coup_p[1] == 1) {
+    ideal G2a_q = modStd(I2a_coup, 1);
+    printf("CASE 2a COUPLED Q: G[1]=%s", G2a_q[1]);
+    if (size(G2a_q) == 1 && G2a_q[1] == 1) { printf("CERTIFIED_MODSTD_Q: D5_M2_0_2A_COUPLED_EMPTY"); }
+  }
+}
+if (size(G2b_ode_p) == 1 && G2b_ode_p[1] == 1) {
+  ideal G2b_q = modStd(I2b_ode, 1);
+  printf("CASE 2b ODE ALONE Q: G[1]=%s", G2b_q[1]);
+  if (size(G2b_q) == 1 && G2b_q[1] == 1) { printf("CERTIFIED_MODSTD_Q: D5_M2_0_2B_ODE_EMPTY"); }
+} else {
+  if (size(G2b_coup_p) == 1 && G2b_coup_p[1] == 1) {
+    ideal G2b_q = modStd(I2b_coup, 1);
+    printf("CASE 2b COUPLED Q: G[1]=%s", G2b_q[1]);
+    if (size(G2b_q) == 1 && G2b_q[1] == 1) { printf("CERTIFIED_MODSTD_Q: D5_M2_0_2B_COUPLED_EMPTY"); }
+  }
+}
+if (size(G2c_ode_p) == 1 && G2c_ode_p[1] == 1) {
+  ideal G2c_q = modStd(I2c_ode, 1);
+  printf("CASE 2c ODE ALONE Q: G[1]=%s", G2c_q[1]);
+  if (size(G2c_q) == 1 && G2c_q[1] == 1) { printf("CERTIFIED_MODSTD_Q: D5_M2_0_2C_ODE_EMPTY"); }
+} else {
+  if (size(G2c_coup_p) == 1 && G2c_coup_p[1] == 1) {
+    ideal G2c_q = modStd(I2c_coup, 1);
+    printf("CASE 2c COUPLED Q: G[1]=%s", G2c_q[1]);
+    if (size(G2c_q) == 1 && G2c_q[1] == 1) { printf("CERTIFIED_MODSTD_Q: D5_M2_0_2C_COUPLED_EMPTY"); }
+  }
+}
+quit;
