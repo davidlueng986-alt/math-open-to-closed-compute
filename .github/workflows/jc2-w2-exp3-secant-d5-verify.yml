@@ -1,0 +1,22 @@
+name: JC2 W2 Exp3 SECANT-HEIGHT-FOUR d=5 Direct Deterministic Q(kap) Verification
+on:
+  push:
+    branches: ['jc2-w2-exp3-secant-d5-verify']
+    paths:
+      - 'jobs/jc2_w2_exp3_secant_d5_verify.sing'
+      - '.github/workflows/jc2-w2-exp3-secant-d5-verify.yml'
+  workflow_dispatch:
+
+jobs:
+  singular-secant-d5-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Singular
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq singular
+          Singular --version
+      - name: Run direct deterministic Q(kap) + F_32051 verification for d=5 (j=4)
+        run: Singular -q jobs/jc2_w2_exp3_secant_d5_verify.sing
