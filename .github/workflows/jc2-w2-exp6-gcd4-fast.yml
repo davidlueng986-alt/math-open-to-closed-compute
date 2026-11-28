@@ -1,0 +1,22 @@
+name: JC2 W2 Exp6 DEGREE-135-IV-GCD-FOUR Weighted wp Probe
+on:
+  push:
+    branches: ['jc2-w2-exp6-gcd4']
+    paths:
+      - 'jobs/jc2_w2_exp6_gcd4_fast.sing'
+      - '.github/workflows/jc2-w2-exp6-gcd4-fast.yml'
+  workflow_dispatch:
+
+jobs:
+  singular-gcd4-wp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Singular
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq singular
+          Singular --version
+      - name: Run weighted wp Singular probe for DEGREE-135-IV-GCD-FOUR
+        run: Singular -q jobs/jc2_w2_exp6_gcd4_fast.sing
